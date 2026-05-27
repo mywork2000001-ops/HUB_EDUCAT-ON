@@ -8,6 +8,7 @@ Usage
 -----
     python global_parser.py --project P001 --file path/to/book.pdf
     python global_parser.py --project P001 --file book.pdf --lang az --dpi 200 --verbose
+    python global_parser.py --project P001 --file book.pdf --pages 5   # Vision Workflow, first 5 pages
 
 Dependencies
 ------------
@@ -21,14 +22,20 @@ Optional (OCR fallback):
 from __future__ import annotations
 
 import argparse
+import io
 import json
 import logging
 import re
 import sys
 import time
-from dataclasses import dataclass, field, asdict
+from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Optional
+
+# Force UTF-8 on Windows consoles (cp1252 can't encode checkmarks / arrows)
+if sys.platform == "win32":
+    sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8", errors="replace")
+    sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding="utf-8", errors="replace")
 
 # ── Optional dependency guards ─────────────────────────────────────────────
 try:
@@ -39,7 +46,6 @@ except ImportError:
 
 try:
     from PIL import Image
-    import io
     PILLOW_AVAILABLE = True
 except ImportError:
     PILLOW_AVAILABLE = False
@@ -91,7 +97,6 @@ class _ColourFormatter(logging.Formatter):
         prefix  = _Colour.wrap(f"[{tag}]", colour, _Colour.BOLD)
         ts_str  = _Colour.wrap(ts, _Colour.DIM)
         msg     = record.getMessage()
-        # Colour specific patterns inline
         msg = re.sub(r"(\bOK\b|✓)", _Colour.wrap(r"\1", _Colour.GREEN, _Colour.BOLD), msg)
         msg = re.sub(r"(\bERROR\b|✗)", _Colour.wrap(r"\1", _Colour.RED, _Colour.BOLD), msg)
         msg = re.sub(r"(\bWARN\b|⚠)", _Colour.wrap(r"\1", _Colour.YELLOW, _Colour.BOLD), msg)
@@ -132,6 +137,15 @@ class ExtractedImage:
 
 
 @dataclass
+class PageImage:
+    page:       int
+    filename:   str     # relative path from PROJECTS_ROOT
+    width:      int
+    height:     int
+    dpi:        int
+
+
+@dataclass
 class ExtractedQuestion:
     id:      int
     text:    MultiLang
@@ -148,6 +162,7 @@ class ParseResult:
     page_count:   int
     questions:    list[ExtractedQuestion] = field(default_factory=list)
     images:       list[ExtractedImage]   = field(default_factory=list)
+    page_images:  list[PageImage]        = field(default_factory=list)
     ocr_pages:    list[int]              = field(default_factory=list)
     errors:       list[str]              = field(default_factory=list)
     elapsed_sec:  float                  = 0.0
@@ -157,35 +172,33 @@ class ParseResult:
 # Regex Patterns
 # ══════════════════════════════════════════════════════════════════════════════
 
-# Question starters: "1.", "2)", "Q1", "Q1.", "Sual 1", "Вопрос 1"
 _RE_QUESTION = re.compile(
     r"""
-    ^                               # start of string (or line)
+    ^
     (?:
-        (?P<numbered>               # numbered: 1.  2)  3-
-            (?P<qnum>\d{1,3})       # number 1–999
+        (?P<numbered>
+            (?P<qnum>\d{1,3})
             [\.\)\-\s]
         )
         |
-        (?P<q_prefixed>             # prefixed: Q1  Q.1  Sual 3  Вопрос 5
+        (?P<q_prefixed>
             (?:Q|Sual|Вопрос|Question)\.?\s*
             (?P<qnum2>\d{1,3})
         )
     )
     \s*
-    (?P<body>.+)                    # question body
+    (?P<body>.+)
     """,
     re.VERBOSE | re.IGNORECASE | re.MULTILINE,
 )
 
-# Option starters: "A)", "B.", "C-", "(D)", "а)", "б)"  (latin + cyrillic)
 _RE_OPTION = re.compile(
     r"""
     ^
     (?:
-        \(?                          # optional opening paren
-        (?P<letter>[A-Ea-eА-ДаА-Еа-е])  # letter A-E or А-Д (Cyrillic)
-        [\.\)\-]                     # separator
+        \(?
+        (?P<letter>[A-Ea-eА-ДаА-Еа-е])
+        [\.\)\-]
         \)?
     )
     \s*
@@ -194,7 +207,6 @@ _RE_OPTION = re.compile(
     re.VERBOSE | re.MULTILINE,
 )
 
-# Blank / near-blank page: used to flag OCR candidates
 _RE_WHITESPACE_ONLY = re.compile(r"^\s*$")
 
 
@@ -212,13 +224,15 @@ class EduParser:
     2. process_pages()     — iterate pages → extract text + images
     3. parse_questions()   — apply regex heuristics
     4. save_json()         — write raw_data.json
-    5. print_summary()     — colourised report
+    5. [vision path]       — render page images + write manifest.json
+    6. print_summary()     — colourised report
     """
 
     PROJECTS_ROOT = Path(__file__).resolve().parent.parent   # …/Projects/
-    WEBP_QUALITY  = 80
-    WEBP_MAX_W    = 1000
-    VECTOR_DPI    = 150   # DPI for rendering vector-only page regions
+    WEBP_QUALITY  = 85
+    WEBP_MAX_W    = 1200
+    VECTOR_DPI    = 150
+    VISION_DPI    = 300   # full-page render DPI for scanned books
 
     # ── Construction ──────────────────────────────────────────────────────────
 
@@ -228,12 +242,14 @@ class EduParser:
         pdf_path:   Path,
         lang:       str  = "az",
         dpi:        int  = 150,
+        pages:      Optional[int] = None,
         verbose:    bool = False,
     ) -> None:
         self.project_id = project_id.upper()
         self.pdf_path   = pdf_path.resolve()
         self.lang       = lang.lower()
         self.dpi        = dpi
+        self.page_limit = pages   # None = all pages
         self.verbose    = verbose
 
         self._setup_logging()
@@ -253,12 +269,10 @@ class EduParser:
 
     def _setup_paths(self) -> None:
         """Resolve all I/O paths from project ID."""
-        # Find project folder: first match P001_* under PROJECTS_ROOT
         candidates = sorted(self.PROJECTS_ROOT.glob(f"{self.project_id}_*"))
         if candidates:
             self.project_dir = candidates[0]
         else:
-            # Auto-create if the project folder doesn't exist yet
             self.project_dir = self.PROJECTS_ROOT / self.project_id
             self.project_dir.mkdir(parents=True, exist_ok=True)
             self.log.warning(f"Project folder not found — created {self.project_dir}")
@@ -266,10 +280,18 @@ class EduParser:
         self.assets_dir = self.project_dir / "assets" / "img"
         self.assets_dir.mkdir(parents=True, exist_ok=True)
 
-        self.json_out = self.project_dir / "raw_data.json"
+        # Vision Workflow: page renders live under <root>/assets/img/<project_id>/pages/
+        self.pages_dir = self.PROJECTS_ROOT / "assets" / "img" / self.project_id / "pages"
+        self.pages_dir.mkdir(parents=True, exist_ok=True)
+
+        self.json_out     = self.project_dir / "raw_data.json"
+        self.manifest_out = self.PROJECTS_ROOT / "assets" / "img" / self.project_id / "manifest.json"
+
         self.log.debug(f"Project dir  : {self.project_dir}")
         self.log.debug(f"Assets dir   : {self.assets_dir}")
+        self.log.debug(f"Pages dir    : {self.pages_dir}")
         self.log.debug(f"JSON output  : {self.json_out}")
+        self.log.debug(f"Manifest     : {self.manifest_out}")
 
     def _check_dependencies(self) -> None:
         if not PYMUPDF_AVAILABLE:
@@ -287,7 +309,10 @@ class EduParser:
         """Full pipeline: open → process → parse → save → report."""
         t0 = time.perf_counter()
         self.log.info(_Colour.wrap(f"Starting EduParser  ·  {self.pdf_path.name}", _Colour.BOLD))
-        self.log.info(f"Project: {self.project_id}  |  Lang hint: {self.lang.upper()}  |  DPI: {self.dpi}")
+        self.log.info(
+            f"Project: {self.project_id}  |  Lang hint: {self.lang.upper()}  |  DPI: {self.dpi}"
+            + (f"  |  Page limit: {self.page_limit}" if self.page_limit else "")
+        )
 
         self._result = ParseResult(
             project_id=self.project_id,
@@ -297,39 +322,146 @@ class EduParser:
 
         with fitz.open(str(self.pdf_path)) as doc:
             self._doc = doc
-            self._result.page_count = len(doc)
-            self.log.info(f"Opened PDF: {len(doc)} pages")
+            total_pages = len(doc)
+            self._result.page_count = total_pages
+
+            limit = min(self.page_limit, total_pages) if self.page_limit else total_pages
+            self.log.info(f"Opened PDF: {total_pages} total pages  |  Processing: {limit}")
 
             raw_blocks: list[dict] = []
             for page_num, page in enumerate(doc, start=1):
-                self.log.debug(f"  Processing page {page_num}/{len(doc)} …")
+                if page_num > limit:
+                    break
+                self.log.debug(f"  Processing page {page_num}/{limit} …")
                 blocks = self._process_page(page, page_num)
                 raw_blocks.extend(blocks)
 
         questions = self._parse_questions(raw_blocks)
         self._result.questions = questions
 
+        # Vision Workflow: if every processed page was image-only, build manifest
+        processed = limit if self.page_limit else self._result.page_count
+        all_scanned = (
+            len(self._result.ocr_pages) == processed
+            and processed > 0
+            and not raw_blocks
+        )
+        has_page_images = bool(self._result.page_images)
+
+        if all_scanned or has_page_images:
+            self._save_manifest()
+
         self._result.elapsed_sec = time.perf_counter() - t0
         self._save_json()
         self._print_summary()
         return self._result
 
+    # ── Vision Workflow ───────────────────────────────────────────────────────
+
+    def render_pages_to_images(
+        self,
+        doc: "fitz.Document",
+        page_limit: Optional[int] = None,
+    ) -> list[PageImage]:
+        """
+        Render each PDF page to a full-resolution WebP image at VISION_DPI.
+        Saves to pages_dir and returns a list of PageImage records.
+        Public so it can be called standalone without running the full pipeline.
+        """
+        total = len(doc)
+        limit = min(page_limit, total) if page_limit else total
+        results: list[PageImage] = []
+
+        self.log.info(
+            _Colour.wrap(f"Vision Workflow: rendering {limit} page(s) at {self.VISION_DPI} DPI …", _Colour.MAGENTA)
+        )
+
+        mat = fitz.Matrix(self.VISION_DPI / 72, self.VISION_DPI / 72)
+
+        for page_num in range(1, limit + 1):
+            page = doc[page_num - 1]
+            try:
+                pix      = page.get_pixmap(matrix=mat, alpha=False)
+                img_data = pix.tobytes("png")
+
+                filename     = f"page_{page_num:03d}.webp"
+                out_path     = self.pages_dir / filename
+                rel_path     = f"assets/img/{self.project_id}/pages/{filename}"
+
+                self._save_page_webp(img_data, out_path)
+
+                pi = PageImage(
+                    page=page_num,
+                    filename=rel_path,
+                    width=pix.width,
+                    height=pix.height,
+                    dpi=self.VISION_DPI,
+                )
+                results.append(pi)
+                self.log.info(
+                    f"  ✓ Page {page_num:>3}/{limit}  →  {filename}  "
+                    f"({pix.width}×{pix.height} px)"
+                )
+            except Exception as exc:
+                msg = f"Page render failed page={page_num}: {exc}"
+                self.log.warning(f"  ⚠ {msg}")
+                self._result.errors.append(msg)
+
+        return results
+
+    def _save_page_webp(self, raw_bytes: bytes, out_path: Path) -> None:
+        """Save raw PNG bytes as high-quality WebP for AI Vision consumption."""
+        img = Image.open(io.BytesIO(raw_bytes)).convert("RGB")
+        # No downscaling for vision pages — preserve full resolution
+        img.save(str(out_path), "WEBP", quality=90, method=6)
+
+    def _save_manifest(self) -> None:
+        """Write manifest.json listing all rendered page images."""
+        r = self._result
+        payload = {
+            "project_id":   r.project_id,
+            "source_file":  Path(r.source_file).name,
+            "generated":    time.strftime("%Y-%m-%dT%H:%M:%S"),
+            "total_pages":  r.page_count,
+            "rendered_pages": len(r.page_images),
+            "vision_dpi":   self.VISION_DPI,
+            "pages_dir":    str(self.pages_dir),
+            "pages": [
+                {
+                    "page":     pi.page,
+                    "filename": pi.filename,
+                    "width":    pi.width,
+                    "height":   pi.height,
+                    "dpi":      pi.dpi,
+                }
+                for pi in r.page_images
+            ],
+        }
+        with self.manifest_out.open("w", encoding="utf-8") as f:
+            json.dump(payload, f, ensure_ascii=False, indent=2)
+        self.log.info(f"✓ Manifest saved → {self.manifest_out}")
+
     # ── Page Processing ───────────────────────────────────────────────────────
 
     def _process_page(self, page: "fitz.Page", page_num: int) -> list[dict]:
-        """Extract text blocks and images from a single page."""
-        # ── Text ─────────────────────────────────────────────────────────────
+        """Extract text blocks and images from a single page.
+
+        Always renders a full-page vision image so every page ends up in
+        the manifest regardless of whether it carries a text layer.
+        """
+        # Vision Workflow: render full page unconditionally
+        self._render_page_to_vision(page, page_num)
+
         raw_text = page.get_text("text").strip()
 
         if _RE_WHITESPACE_ONLY.match(raw_text):
             self._handle_ocr_page(page, page_num)
             return []
 
-        # Structured blocks: each block → (x0,y0,x1,y1, text, block_no, block_type)
         text_blocks = page.get_text("blocks")
         parsed_blocks = []
         for b in text_blocks:
-            if b[6] != 0:   # type 0 = text, 1 = image
+            if b[6] != 0:
                 continue
             text = b[4].strip()
             if text:
@@ -339,11 +471,38 @@ class EduParser:
                     "text": text,
                 })
 
-        # ── Images ───────────────────────────────────────────────────────────
         self._extract_raster_images(page, page_num)
         self._extract_vector_regions(page, page_num)
 
         return parsed_blocks
+
+    def _render_page_to_vision(self, page: "fitz.Page", page_num: int) -> None:
+        """Render the full page at VISION_DPI and store a PageImage record."""
+        try:
+            mat      = fitz.Matrix(self.VISION_DPI / 72, self.VISION_DPI / 72)
+            pix      = page.get_pixmap(matrix=mat, alpha=False)
+            img_data = pix.tobytes("png")
+
+            filename = f"page_{page_num:03d}.webp"
+            out_path = self.pages_dir / filename
+            rel_path = f"assets/img/{self.project_id}/pages/{filename}"
+
+            self._save_page_webp(img_data, out_path)
+
+            self._result.page_images.append(PageImage(
+                page=page_num,
+                filename=rel_path,
+                width=pix.width,
+                height=pix.height,
+                dpi=self.VISION_DPI,
+            ))
+            self.log.info(
+                f"  [vision] page {page_num:>3}  →  {filename}  ({pix.width}x{pix.height} px)"
+            )
+        except Exception as exc:
+            msg = f"Vision render failed page={page_num}: {exc}"
+            self.log.warning(f"  WARN {msg}")
+            self._result.errors.append(msg)
 
     # ── Image Extraction ──────────────────────────────────────────────────────
 
@@ -353,7 +512,7 @@ class EduParser:
         if not image_list:
             return
 
-        doc = page.parent   # fitz.Document reference
+        doc = page.parent
         for img_index, img_info in enumerate(image_list, start=1):
             xref = img_info[0]
             try:
@@ -362,7 +521,6 @@ class EduParser:
                 img_w = base_image.get("width", 0)
                 img_h = base_image.get("height", 0)
 
-                # Skip tiny images (icons / decorations < 50px)
                 if img_w < 50 or img_h < 50:
                     self.log.debug(f"    Skipping tiny image {img_index} ({img_w}×{img_h})")
                     continue
@@ -387,16 +545,11 @@ class EduParser:
                 self._result.errors.append(msg)
 
     def _extract_vector_regions(self, page: "fitz.Page", page_num: int) -> None:
-        """
-        Detect vector drawing clusters and render each bounding-box region
-        as a high-res pixmap, then save as WebP.
-        Strategy: group drawing paths by proximity; ignore single-line rules.
-        """
+        """Detect vector drawing clusters and render each region as WebP."""
         drawings = page.get_drawings()
         if not drawings:
             return
 
-        # Aggregate all path bboxes
         all_rects = [fitz.Rect(d["rect"]) for d in drawings if d.get("rect")]
         if not all_rects:
             return
@@ -404,18 +557,15 @@ class EduParser:
         clusters = self._cluster_rects(all_rects, gap=20)
 
         for cluster_idx, cluster_rect in enumerate(clusters, start=1):
-            # Skip thin horizontal/vertical rules (width or height < 5pt)
             if cluster_rect.width < 5 or cluster_rect.height < 5:
                 continue
-            # Skip very small clusters (likely decorative lines)
             if cluster_rect.width * cluster_rect.height < 2000:
                 continue
 
             try:
-                # Render just the cluster region at VECTOR_DPI
-                mat = fitz.Matrix(self.VECTOR_DPI / 72, self.VECTOR_DPI / 72)
-                clip = cluster_rect + fitz.Rect(-4, -4, 4, 4)   # 4pt padding
-                pix = page.get_pixmap(matrix=mat, clip=clip, alpha=False)
+                mat  = fitz.Matrix(self.VECTOR_DPI / 72, self.VECTOR_DPI / 72)
+                clip = cluster_rect + fitz.Rect(-4, -4, 4, 4)
+                pix  = page.get_pixmap(matrix=mat, clip=clip, alpha=False)
                 img_bytes = pix.tobytes("png")
 
                 filename = f"p{page_num:03d}_vector_{cluster_idx:02d}.webp"
@@ -441,11 +591,7 @@ class EduParser:
 
     @staticmethod
     def _cluster_rects(rects: list["fitz.Rect"], gap: float = 20) -> list["fitz.Rect"]:
-        """
-        Greedy 1D clustering: merge rectangles whose bounding boxes are within
-        `gap` points of each other on at least one axis.
-        Returns a list of merged bounding Rect per cluster.
-        """
+        """Greedy proximity clustering: merge rects within `gap` points of each other."""
         if not rects:
             return []
 
@@ -454,7 +600,6 @@ class EduParser:
         for rect in rects:
             merged = False
             for cluster in clusters:
-                # Check proximity to any existing member
                 for member in cluster:
                     expanded = member + fitz.Rect(-gap, -gap, gap, gap)
                     if expanded.intersects(rect):
@@ -466,7 +611,6 @@ class EduParser:
             if not merged:
                 clusters.append([rect])
 
-        # Build union rect per cluster
         result = []
         for cluster in clusters:
             union = cluster[0]
@@ -488,49 +632,42 @@ class EduParser:
             )
         img.save(str(out_path), "WEBP", quality=self.WEBP_QUALITY, method=6)
 
-    # ── OCR Fallback ──────────────────────────────────────────────────────────
+    # ── OCR / Vision Fallback ─────────────────────────────────────────────────
 
     def _handle_ocr_page(self, page: "fitz.Page", page_num: int) -> None:
-        """Called when a page has no extractable text (likely scanned)."""
+        """
+        Called when a page has no extractable text (scanned image).
+        Vision render was already done by _render_page_to_vision; this method
+        only records the page as OCR-needed and optionally runs Tesseract.
+        """
         self._result.ocr_pages.append(page_num)
 
+        # Optional Tesseract OCR on top
         if TESSERACT_AVAILABLE:
-            self.log.info(f"  Page {page_num}: no text — running Tesseract OCR …")
+            self.log.info(f"  Page {page_num}: running Tesseract OCR …")
             try:
-                mat = fitz.Matrix(200 / 72, 200 / 72)   # 200 DPI for OCR quality
+                mat = fitz.Matrix(200 / 72, 200 / 72)
                 pix = page.get_pixmap(matrix=mat, alpha=False)
                 img = Image.frombytes("RGB", [pix.width, pix.height], pix.samples)
-                lang_map = {"az": "aze", "ru": "rus", "en": "eng"}
+                lang_map  = {"az": "aze", "ru": "rus", "en": "eng"}
                 tess_lang = lang_map.get(self.lang, "eng")
                 text = pytesseract.image_to_string(img, lang=tess_lang)
                 if text.strip():
                     self.log.info(
                         f"  ✓ Tesseract extracted {len(text.split())} words from page {page_num}"
                     )
-                    # Re-inject as a synthetic text block for downstream parsing
-                    return [{"page": page_num, "bbox": [0, 0, 0, 0], "text": text, "ocr": True}]
             except Exception as exc:
                 self.log.warning(f"  ⚠ Tesseract failed on page {page_num}: {exc}")
         else:
             self.log.warning(
-                f"  ⚠ Page {page_num} has no text (scanned image). "
-                "Install pytesseract + Tesseract binary for OCR, "
-                "or use AI Vision (GPT-4o / Claude) for structured extraction."
+                f"  ⚠ Page {page_num}: no text layer detected. "
+                "Page image saved for AI Vision processing."
             )
 
     # ── Question Parsing ──────────────────────────────────────────────────────
 
     def _parse_questions(self, raw_blocks: list[dict]) -> list[ExtractedQuestion]:
-        """
-        Apply heuristic regex to raw text blocks and assemble ExtractedQuestion objects.
-
-        Strategy
-        --------
-        1. Walk blocks in page order.
-        2. A QUESTION_START pattern opens a new question context.
-        3. OPTION_START patterns accumulate into the current question's options list.
-        4. Anything else before the next question start is appended to the last question body.
-        """
+        """Apply heuristic regex to raw text blocks and assemble ExtractedQuestion objects."""
         questions: list[ExtractedQuestion] = []
         current_q: Optional[_QBuilder] = None
 
@@ -543,7 +680,6 @@ class EduParser:
 
                 q_match = _RE_QUESTION.match(line)
                 if q_match:
-                    # Flush previous question
                     if current_q:
                         questions.append(current_q.build(self.lang))
 
@@ -562,7 +698,6 @@ class EduParser:
                     current_q.add_option(opt_match.group("body").strip())
                     continue
 
-                # Continuation text — append to current question body
                 if current_q:
                     current_q.append_body(line)
 
@@ -585,12 +720,12 @@ class EduParser:
             "generated":   time.strftime("%Y-%m-%dT%H:%M:%S"),
             "questions": [
                 {
-                    "id":     q.id,
-                    "page":   q.page,
-                    "text":   q.text.as_dict(),
+                    "id":      q.id,
+                    "page":    q.page,
+                    "text":    q.text.as_dict(),
                     "options": q.options.as_dict(),
-                    "images": q.images,
-                    "raw":    q.raw,
+                    "images":  q.images,
+                    "raw":     q.raw,
                 }
                 for q in r.questions
             ],
@@ -603,6 +738,16 @@ class EduParser:
                     "source":   img.source,
                 }
                 for img in r.images
+            ],
+            "page_images": [
+                {
+                    "page":     pi.page,
+                    "filename": pi.filename,
+                    "width":    pi.width,
+                    "height":   pi.height,
+                    "dpi":      pi.dpi,
+                }
+                for pi in r.page_images
             ],
             "diagnostics": {
                 "ocr_pages":   r.ocr_pages,
@@ -629,24 +774,29 @@ class EduParser:
             val_str = _Colour.wrap(str(value), colour) if colour else str(value)
             print(f"  {label:<26} {val_str}")
 
-        row("Project",         r.project_id,                _Colour.CYAN)
-        row("Source file",     Path(r.source_file).name)
-        row("Pages processed", r.page_count)
-        row("Questions parsed",len(r.questions),             _Colour.GREEN if r.questions else _Colour.YELLOW)
-        row("Images extracted",len(r.images),                _Colour.GREEN if r.images    else _Colour.YELLOW)
-        row("OCR pages",       len(r.ocr_pages) or "none",   _Colour.YELLOW if r.ocr_pages else "")
-        row("Errors",          len(r.errors)    or "none",   _Colour.RED    if r.errors    else _Colour.GREEN)
-        row("Elapsed",         f"{r.elapsed_sec:.2f}s")
-        row("Output",          str(self.json_out),           _Colour.CYAN)
+        row("Project",          r.project_id,                 _Colour.CYAN)
+        row("Source file",      Path(r.source_file).name)
+        row("Pages processed",  r.page_count)
+        row("Questions parsed", len(r.questions),              _Colour.GREEN if r.questions  else _Colour.YELLOW)
+        row("Images extracted", len(r.images),                 _Colour.GREEN if r.images     else _Colour.YELLOW)
+        row("Page renders",     len(r.page_images),            _Colour.MAGENTA if r.page_images else "")
+        row("OCR pages",        len(r.ocr_pages) or "none",    _Colour.YELLOW if r.ocr_pages else "")
+        row("Errors",           len(r.errors)    or "none",    _Colour.RED    if r.errors    else _Colour.GREEN)
+        row("Elapsed",          f"{r.elapsed_sec:.2f}s")
+        row("JSON output",      str(self.json_out),            _Colour.CYAN)
+
+        if r.page_images:
+            row("Manifest",     str(self.manifest_out),        _Colour.MAGENTA)
 
         if r.ocr_pages:
             pages_str = ", ".join(str(p) for p in r.ocr_pages)
-            print(f"\n  {_Colour.wrap('⚠  OCR pages (no text layer):', _Colour.YELLOW)} {pages_str}")
-            if not TESSERACT_AVAILABLE:
-                print(
-                    f"  {_Colour.wrap('   → Install pytesseract + Tesseract binary', _Colour.DIM)}\n"
-                    f"  {_Colour.wrap('   → Or use AI Vision (GPT-4o / Claude) for structured extraction', _Colour.DIM)}"
-                )
+            print(f"\n  {_Colour.wrap('⚠  Scanned pages (no text layer):', _Colour.YELLOW)} {pages_str}")
+            print(
+                f"  {_Colour.wrap('   → Page images saved to: ' + str(self.pages_dir), _Colour.MAGENTA)}"
+            )
+            print(
+                f"  {_Colour.wrap('   → Feed manifest.json to Claude / GPT-4o Vision for extraction', _Colour.DIM)}"
+            )
 
         if r.errors:
             print(f"\n  {_Colour.wrap('Errors:', _Colour.RED)}")
@@ -656,7 +806,9 @@ class EduParser:
                 print(f"    … and {len(r.errors) - 5} more (see raw_data.json → diagnostics.errors)")
 
         status_colour = _Colour.GREEN if not r.errors else _Colour.YELLOW
-        status_label  = "OK — ready for template generation" if not r.errors else "WARN — completed with errors"
+        status_label  = "OK — ready for Vision / template generation" if r.page_images else "OK — ready for template generation"
+        if r.errors:
+            status_label = "WARN — completed with errors"
         print(f"\n  {_Colour.wrap(status_label, status_colour, _Colour.BOLD)}")
         print(f"{sep}\n")
 
@@ -687,7 +839,6 @@ class _QBuilder:
     def build(self, lang: str) -> ExtractedQuestion:
         text = MultiLang()
         opts = MultiLangList()
-        # Place extracted text in the primary language slot
         setattr(text, lang, self._body)
         setattr(opts, lang, self._opts)
         return ExtractedQuestion(
@@ -712,7 +863,8 @@ def _build_arg_parser() -> argparse.ArgumentParser:
             "Part of the Global EDU-Platform (Interactive Education Network)\n\n"
             "Examples:\n"
             "  python global_parser.py --project P001 --file book.pdf\n"
-            "  python global_parser.py --project P001 --file book.pdf --lang ru --dpi 200 --verbose"
+            "  python global_parser.py --project P001 --file book.pdf --lang ru --dpi 200 --verbose\n"
+            "  python global_parser.py --project P001 --file book.pdf --pages 5"
         ),
         formatter_class=argparse.RawDescriptionHelpFormatter,
     )
@@ -720,14 +872,14 @@ def _build_arg_parser() -> argparse.ArgumentParser:
         "--project", "-p",
         required=True,
         metavar="PROJECT_ID",
-        help="Project identifier, e.g. P001  (must match a folder P001_* under Projects/)",
+        help="Project identifier, e.g. P001",
     )
     p.add_argument(
         "--file", "-f",
         required=True,
         metavar="PDF_PATH",
         type=Path,
-        help="Path to the source PDF file (absolute or relative to current directory)",
+        help="Path to the source PDF file (absolute or relative to CWD)",
     )
     p.add_argument(
         "--lang", "-l",
@@ -740,7 +892,14 @@ def _build_arg_parser() -> argparse.ArgumentParser:
         default=150,
         type=int,
         metavar="N",
-        help="Resolution for vector region rendering (default: 150). Higher = sharper but slower.",
+        help="Resolution for vector region rendering (default: 150)",
+    )
+    p.add_argument(
+        "--pages",
+        default=None,
+        type=int,
+        metavar="N",
+        help="Limit processing to the first N pages (default: all pages)",
     )
     p.add_argument(
         "--verbose", "-v",
@@ -756,7 +915,6 @@ def main() -> None:
 
     pdf_path: Path = args.file
     if not pdf_path.is_absolute():
-        # Resolve relative to CWD first, then fall back to books/ directory
         if not pdf_path.exists():
             books_path = Path(__file__).resolve().parent.parent / "books" / pdf_path
             if books_path.exists():
@@ -773,6 +931,7 @@ def main() -> None:
         pdf_path=pdf_path,
         lang=args.lang,
         dpi=args.dpi,
+        pages=args.pages,
         verbose=args.verbose,
     )
     edu.run()
