@@ -10,11 +10,12 @@ You are the **Lead Systems Architect & Automation Engineer**.
 All work is organized into a scalable hierarchy:
 
 - **Root**: `C:/Users/Administrator/Documents/Claude/Projects/`
-- **Central Hub**: `index.html` (The Master Entry Point for all subjects).
-- **Shared Core**: `/_Shared_Core/` (Global `style.css` and `script.js` to ensure 100% UI consistency).
-- **Project Folders**: `P[ID]_[Subject]_[Grade]`
-  - _Example:_ `P001_Math_5_DIM` (Current primary project).
-  - _Internal Structure:_ `/assets/img/`, `Lesson-X.html`.
+- **Central Hub**: `index.html` (The Master Entry Point — 2-card dashboard: P001 + P002).
+- **Shared Core**: `/_Shared_Core/` (Global `style.css`, `script.js`, `textbook_engine.js`, `textbook_template.html`).
+- **Project Folders**: `P[ID]_[Subject]_[Grade/Type]`
+  - **P001_Math_5_DIM**: DIM test bank — `Lesson-X.html` files (17 lessons, 1–17).
+  - **P002_Math_5_Darslik**: Interactive textbook — `Movzu-X.html` files (mövzular 18+).
+    - Internal: `/assets/img/`, `/core/`.
 
 ## 3. TECHNICAL STANDARDS
 
@@ -48,8 +49,8 @@ You must switch models based on task complexity to minimize costs:
 
 ## 6. PROJECT INVENTORY
 
-- **P001_Math_5_DIM**: Interactive tests based on 2025 DİM materials. (17+ Lessons).
-- **P002_Next_Project**: [Waiting for PDF]
+- **P001_Math_5_DIM**: DİM 2025 test bank. Exactly 17 lessons (Lesson-1 → Lesson-17). MCQ engine only.
+- **P002_Math_5_Darslik**: Interactive textbook. 4-Pillar system (Theory · Practice · Evaluation · Gamification). Files: `Movzu-18.html` → `Movzu-N.html`. Engine: `_Shared_Core/textbook_engine.js`. Template: `_Shared_Core/textbook_template.html`.
 
 ## 7. OPERATIONAL RULES
 

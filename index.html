@@ -7,22 +7,23 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="./_Shared_Core/style.css" />
   <style>
-    /* Hub-specific overrides */
     .hero-gradient {
-      background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 50%, #064e3b 100%);
+      background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 50%, #3b0764 100%);
     }
     .dark .hero-gradient {
-      background: linear-gradient(135deg, #020617 0%, #0f172a 50%, #022c22 100%);
+      background: linear-gradient(135deg, #020617 0%, #0f172a 50%, #1e0536 100%);
     }
-    .hero-glow {
-      position: absolute;
-      width: 600px; height: 600px;
-      border-radius: 50%;
-      background: radial-gradient(circle, rgba(16,185,129,0.15) 0%, transparent 70%);
-      top: -150px; right: -150px;
-      pointer-events: none;
+    .hero-glow-green {
+      position: absolute; width: 500px; height: 500px; border-radius: 50%;
+      background: radial-gradient(circle, rgba(16,185,129,0.12) 0%, transparent 70%);
+      top: -120px; left: -80px; pointer-events: none;
     }
-    .subject-card {
+    .hero-glow-purple {
+      position: absolute; width: 500px; height: 500px; border-radius: 50%;
+      background: radial-gradient(circle, rgba(139,92,246,0.12) 0%, transparent 70%);
+      top: -100px; right: -80px; pointer-events: none;
+    }
+    .platform-card {
       background: var(--surface);
       border: 1px solid var(--border);
       border-radius: var(--radius);
@@ -35,78 +36,50 @@
       overflow: hidden;
       position: relative;
     }
-    .subject-card:hover {
+    .platform-card:hover {
       box-shadow: var(--shadow-lg);
-      transform: translateY(-4px) scale(1.01);
-      border-color: var(--primary);
+      transform: translateY(-5px) scale(1.015);
     }
-    .subject-card::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      opacity: 0;
+    .platform-card::before {
+      content: ''; position: absolute; inset: 0; opacity: 0;
       transition: opacity 0.3s;
-      background: linear-gradient(135deg, var(--primary-light), transparent);
     }
-    .subject-card:hover::before { opacity: 1; }
-    .card-accent {
-      height: 4px;
-      width: 100%;
-      background: linear-gradient(90deg, var(--primary), var(--primary-hover));
-    }
+    .card-p001::before { background: linear-gradient(135deg, rgba(16,185,129,0.06), transparent); }
+    .card-p001:hover { border-color: #10b981; }
+    .card-p001:hover::before { opacity: 1; }
+    .card-p002::before { background: linear-gradient(135deg, rgba(99,102,241,0.06), transparent); }
+    .card-p002:hover { border-color: #6366f1; }
+    .card-p002:hover::before { opacity: 1; }
+
+    .card-accent { height: 5px; width: 100%; }
     .stat-chip {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.4rem;
-      padding: 0.2rem 0.6rem;
-      border-radius: 9999px;
-      font-size: 0.7rem;
-      font-weight: 600;
-      background: var(--primary-light);
-      color: var(--primary);
+      display: inline-flex; align-items: center; gap: 0.4rem;
+      padding: 0.2rem 0.6rem; border-radius: 9999px;
+      font-size: 0.7rem; font-weight: 600;
     }
-    .lang-cycle {
-      min-width: 2.5rem;
-      text-align: center;
-      font-weight: 700;
-      font-size: 0.8rem;
-      letter-spacing: 0.05em;
+    .pillar-tag {
+      display: inline-flex; align-items: center; padding: 0.15rem 0.5rem;
+      border-radius: 9999px; font-size: 0.65rem; font-weight: 700;
+      background: var(--surface-2); color: var(--muted);
     }
-    .coming-soon {
-      opacity: 0.55;
-      cursor: default;
-      pointer-events: none;
-    }
-    .coming-soon-badge {
-      font-size: 0.65rem;
-      font-weight: 700;
-      background: var(--border);
-      color: var(--muted);
-      padding: 0.15rem 0.5rem;
-      border-radius: 9999px;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-    }
-    /* SVG icon sizes */
-    svg.icon { display: block; }
-    /* Particle dots decoration */
+    .lang-cycle { min-width: 2.5rem; text-align: center; font-weight: 700; font-size: 0.8rem; letter-spacing: 0.05em; }
     .dots-pattern {
-      background-image: radial-gradient(circle, rgba(255,255,255,0.06) 1px, transparent 1px);
-      background-size: 24px 24px;
+      background-image: radial-gradient(circle, rgba(255,255,255,0.05) 1px, transparent 1px);
+      background-size: 22px 22px;
     }
+    svg.icon { display: block; }
   </style>
 </head>
 <body>
 
-<!-- ── HEADER ──────────────────────────────────────────────── -->
+<!-- ── HEADER ─────────────────────────────────────────── -->
 <header class="sticky top-0 z-50 backdrop-blur-md"
         style="background: rgba(var(--surface-rgb, 255,255,255), 0.9); border-bottom: 1px solid var(--border);">
   <div class="container">
     <div class="flex items-center justify-between py-3 gap-3">
-      <!-- Logo -->
       <a href="./index.html" class="flex items-center gap-3 no-underline">
         <div class="w-10 h-10 rounded-xl flex items-center justify-center text-white font-black text-sm"
-             style="background: linear-gradient(135deg, var(--primary) 0%, var(--primary-hover) 100%);">
+             style="background: linear-gradient(135deg, #10b981 0%, #6366f1 100%);">
           IEN
         </div>
         <div class="hidden sm:block">
@@ -114,12 +87,8 @@
           <p class="text-xs" style="color:var(--muted)" id="siteTagline">Rəqəmsal Tədris Ekosistemi</p>
         </div>
       </a>
-
-      <!-- Controls -->
       <div class="flex items-center gap-2">
-        <!-- Language cycler -->
         <button onclick="LangManager.cycle()" class="btn-icon lang-cycle" id="langBtn">AZ</button>
-        <!-- Theme toggle -->
         <button onclick="ThemeManager.toggle()" class="btn-icon" aria-label="Toggle theme">
           <svg class="icon" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
             <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
@@ -130,32 +99,29 @@
   </div>
 </header>
 
-<!-- ── HERO ────────────────────────────────────────────────── -->
+<!-- ── HERO ───────────────────────────────────────────── -->
 <section class="hero-gradient dots-pattern relative overflow-hidden py-20 sm:py-28">
-  <div class="hero-glow"></div>
+  <div class="hero-glow-green"></div>
+  <div class="hero-glow-purple"></div>
   <div class="container relative z-10 text-center text-white">
-    <!-- Badge -->
     <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full mb-6 text-xs font-semibold tracking-wider"
-         style="background: rgba(16,185,129,0.2); border: 1px solid rgba(16,185,129,0.4); color:#6ee7b7;">
-      <svg width="12" height="12" fill="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="12"/></svg>
+         style="background: rgba(99,102,241,0.2); border: 1px solid rgba(99,102,241,0.4); color:#a5b4fc;">
+      <svg width="10" height="10" fill="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="12"/></svg>
       <span id="heroBadge">BETA — 2025/2026 Tədris İli</span>
     </div>
-
     <h1 class="text-4xl sm:text-6xl font-black leading-tight mb-5 tracking-tight" id="heroTitle">
       Interactive<br/>
-      <span style="color:#34d399;">Education</span> Network
+      <span style="background:linear-gradient(90deg,#34d399,#818cf8);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">Education</span> Network
     </h1>
     <p class="text-lg sm:text-xl max-w-2xl mx-auto mb-8" style="color:#94a3b8;" id="heroSubtitle">
-      PDF dərsliklərindən interaktiv test platformasına — çoxdilli, ağıllı, sürətli.
+      PDF dərsliklərindən interaktiv öyrənmə platformasına — çoxdilli, ağıllı, sürətli.
     </p>
-
-    <!-- Hero stats -->
     <div class="flex flex-wrap justify-center gap-6 text-sm" style="color:#94a3b8;">
       <div class="flex items-center gap-2">
         <svg width="16" height="16" fill="none" stroke="#34d399" stroke-width="2" viewBox="0 0 24 24">
-          <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2"/>
+          <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"/>
         </svg>
-        <span id="statLessons">17+ Dərs</span>
+        <span id="statProjects">2 Platforma</span>
       </div>
       <div class="flex items-center gap-2">
         <svg width="16" height="16" fill="none" stroke="#34d399" stroke-width="2" viewBox="0 0 24 24">
@@ -167,97 +133,118 @@
         <svg width="16" height="16" fill="none" stroke="#34d399" stroke-width="2" viewBox="0 0 24 24">
           <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
         </svg>
-        <span id="statDim">DİM 2025 Materialları</span>
+        <span id="statDim">DİM 2025 · 4 Sütunlu Sistem</span>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ── PROJECTS GRID ────────────────────────────────────────── -->
+<!-- ── DASHBOARD ─────────────────────────────────────── -->
 <main class="container py-14">
 
   <div class="flex items-center justify-between mb-8 gap-4 flex-wrap">
     <div>
-      <h2 class="text-2xl font-bold" id="sectionTitle">Fənn Portalları</h2>
-      <p class="text-sm mt-1" style="color:var(--muted)" id="sectionSubtitle">Bir dərsdən tam kursadək — öyrən, sına, inkişaf et</p>
+      <h2 class="text-2xl font-bold" id="sectionTitle">Platforma Seçimi</h2>
+      <p class="text-sm mt-1" style="color:var(--muted)" id="sectionSubtitle">Hədəfinizə uyğun platformanı seçin</p>
     </div>
-    <span class="badge badge-success" id="projectCount">1 Aktiv Layihə</span>
+    <span class="badge badge-success" id="projectCount">2 Aktiv Platforma</span>
   </div>
 
-  <div class="card-grid" id="projectGrid">
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:1.5rem;">
 
-    <!-- ── P001 · Math Grade 5 ─────────────────────────────── -->
-    <a href="./P001_Math_5_DIM/index.html" class="subject-card fade-in" style="animation-delay:0.05s">
+    <!-- ── CARD A: DIM 2025 Test Platform ──────────────── -->
+    <a href="./P001_Math_5_DIM/index.html" class="platform-card card-p001 fade-in" style="animation-delay:0.05s">
       <div class="card-accent" style="background:linear-gradient(90deg,#10b981,#0ea5e9);"></div>
-      <div class="p-6 flex flex-col gap-4 flex-1 relative z-10">
-        <!-- Icon row -->
+      <div class="p-7 flex flex-col gap-5 flex-1 relative z-10">
         <div class="flex items-start justify-between">
-          <div class="w-14 h-14 rounded-2xl flex items-center justify-center text-white text-2xl font-black"
+          <div class="w-16 h-16 rounded-2xl flex items-center justify-center text-white text-3xl font-black"
                style="background:linear-gradient(135deg,#10b981,#059669);">
             ∑
           </div>
-          <div class="flex flex-col items-end gap-1">
-            <span class="badge badge-success">Aktiv</span>
-            <span class="stat-chip">
+          <div class="flex flex-col items-end gap-2">
+            <span class="badge badge-success" id="p001Badge">Aktiv</span>
+            <span class="stat-chip" style="background:var(--primary-light);color:var(--primary)">
               <svg width="10" height="10" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                 <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"/>
               </svg>
-              22+ dərs
+              17 test
             </span>
           </div>
         </div>
 
-        <!-- Text -->
         <div>
-          <p class="text-xs font-semibold uppercase tracking-widest mb-1" style="color:var(--primary)">
-            P001 · V Sinif
+          <p class="text-xs font-semibold uppercase tracking-widest mb-1" style="color:#10b981">
+            P001 · V Sinif · DİM
           </p>
-          <h3 class="text-xl font-bold leading-snug mb-2" id="p001Title">Riyaziyyat</h3>
+          <h3 class="text-2xl font-black leading-snug mb-2" id="p001Title">DİM 2025 Test Platforması</h3>
           <p class="text-sm leading-relaxed" style="color:var(--muted)" id="p001Desc">
-            DİM 2025 materialları əsasında interaktiv testlər. Mövzu izahları, anlıq qiymətləndirmə.
+            DİM 2025 materialları əsasında 17 interaktiv test modulu. Anlıq qiymətləndirmə, 340+ sual.
           </p>
         </div>
 
-        <!-- Meta chips -->
-        <div class="flex flex-wrap gap-2 text-xs">
-          <span class="px-2 py-0.5 rounded-full font-medium" style="background:var(--border);color:var(--muted)">DİM 2025</span>
-          <span class="px-2 py-0.5 rounded-full font-medium" style="background:var(--border);color:var(--muted)">KaTeX</span>
-          <span class="px-2 py-0.5 rounded-full font-medium" style="background:var(--border);color:var(--muted)">AZ · RU</span>
+        <div class="flex flex-wrap gap-2">
+          <span class="pillar-tag">📝 MCQ Testlər</span>
+          <span class="pillar-tag">⚡ Anlıq Cavab</span>
+          <span class="pillar-tag">DİM 2025</span>
+          <span class="pillar-tag">KaTeX</span>
         </div>
 
-        <!-- CTA -->
-        <div class="flex items-center gap-2 mt-auto pt-2" style="color:var(--primary)">
-          <span class="text-sm font-semibold" id="p001Cta">Dərslərə keç</span>
-          <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+        <div class="flex items-center gap-2 mt-auto pt-1" style="color:#10b981;">
+          <span class="text-sm font-bold" id="p001Cta">Testlərə keç</span>
+          <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
             <path d="M5 12h14M12 5l7 7-7 7"/>
           </svg>
         </div>
       </div>
     </a>
 
-    <!-- ── P002 · Placeholder (Coming Soon) ───────────────── -->
-    <div class="subject-card coming-soon" aria-hidden="true">
-      <div class="card-accent" style="background:var(--border);"></div>
-      <div class="p-6 flex flex-col gap-4 flex-1">
+    <!-- ── CARD B: Interactive Textbook Platform ────────── -->
+    <a href="./P002_Math_5_Darslik/index.html" class="platform-card card-p002 fade-in" style="animation-delay:0.1s">
+      <div class="card-accent" style="background:linear-gradient(90deg,#6366f1,#8b5cf6);"></div>
+      <div class="p-7 flex flex-col gap-5 flex-1 relative z-10">
         <div class="flex items-start justify-between">
-          <div class="w-14 h-14 rounded-2xl flex items-center justify-center text-3xl"
-               style="background:var(--surface-2);">
-            ?
+          <div class="w-16 h-16 rounded-2xl flex items-center justify-center text-white text-3xl"
+               style="background:linear-gradient(135deg,#6366f1,#4f46e5);">
+            📖
           </div>
-          <span class="coming-soon-badge">Tezliklə</span>
+          <div class="flex flex-col items-end gap-2">
+            <span class="badge badge-success" id="p002Badge">Aktiv</span>
+            <span class="stat-chip" style="background:#ede9fe;color:#6d28d9">
+              4 Sütun
+            </span>
+          </div>
         </div>
+
         <div>
-          <p class="text-xs font-semibold uppercase tracking-widest mb-1" style="color:var(--muted)">P002</p>
-          <h3 class="text-xl font-bold leading-snug mb-2" style="color:var(--muted)" id="p002Title">Növbəti Fənn</h3>
-          <p class="text-sm" style="color:var(--muted)" id="p002Desc">PDF yüklənməsi gözlənilir...</p>
+          <p class="text-xs font-semibold uppercase tracking-widest mb-1" style="color:#6366f1">
+            P002 · V Sinif · Dərslik
+          </p>
+          <h3 class="text-2xl font-black leading-snug mb-2" id="p002Title">İnteraktiv Riyaziyyat Dərsliyi</h3>
+          <p class="text-sm leading-relaxed" style="color:var(--muted)" id="p002Desc">
+            4 sütunlu öyrənmə sistemi: Nəzəriyyə, Tapşırıqlar, Testlər, Viktorina. PDF-dən tam interaktiv formata.
+          </p>
+        </div>
+
+        <div class="flex flex-wrap gap-2">
+          <span class="pillar-tag">📘 Nəzəriyyə</span>
+          <span class="pillar-tag">✍️ Tapşırıqlar</span>
+          <span class="pillar-tag">📝 Testlər</span>
+          <span class="pillar-tag">🏆 Viktorina</span>
+        </div>
+
+        <div class="flex items-center gap-2 mt-auto pt-1" style="color:#6366f1;">
+          <span class="text-sm font-bold" id="p002Cta">Dərsliyə keç</span>
+          <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+            <path d="M5 12h14M12 5l7 7-7 7"/>
+          </svg>
         </div>
       </div>
-    </div>
+    </a>
 
-  </div><!-- /card-grid -->
+  </div>
 </main>
 
-<!-- ── FOOTER ───────────────────────────────────────────────── -->
+<!-- ── FOOTER ─────────────────────────────────────────── -->
 <footer class="border-t mt-8 py-8" style="border-color:var(--border)">
   <div class="container flex flex-col sm:flex-row items-center justify-between gap-4 text-sm" style="color:var(--muted)">
     <p>
@@ -265,71 +252,78 @@
       &nbsp;·&nbsp; <span id="footerYear">2026</span>
     </p>
     <div class="flex items-center gap-4">
-      <span id="footerStack">Tailwind · KaTeX · Vanilla JS</span>
-      <span class="badge badge-success" style="font-size:0.65rem;" id="footerVersion">v1.0.0</span>
+      <span id="footerStack">Tailwind · MathJax · Vanilla JS</span>
+      <span class="badge badge-success" style="font-size:0.65rem;" id="footerVersion">v2.0.0</span>
     </div>
   </div>
 </footer>
 
-<!-- ── SCRIPTS ──────────────────────────────────────────────── -->
+<!-- ── SCRIPTS ─────────────────────────────────────────── -->
 <script src="./_Shared_Core/script.js"></script>
 <script>
-  /* ── i18n strings ───────────────────────────────────────── */
   const STRINGS = {
     az: {
       siteTagline:    'Rəqəmsal Tədris Ekosistemi',
       heroBadge:      'BETA — 2025/2026 Tədris İli',
-      heroSubtitle:   'PDF dərsliklərindən interaktiv test platformasına — çoxdilli, ağıllı, sürətli.',
-      statLessons:    '22+ Dərs',
+      heroSubtitle:   'PDF dərsliklərindən interaktiv öyrənmə platformasına — çoxdilli, ağıllı, sürətli.',
+      statProjects:   '2 Platforma',
       statLangs:      'AZ · RU · EN',
-      statDim:        'DİM 2025 Materialları',
-      sectionTitle:   'Fənn Portalları',
-      sectionSubtitle:'Bir dərsdən tam kursadək — öyrən, sına, inkişaf et',
-      projectCount:   '1 Aktiv Layihə',
-      p001Title:      'Riyaziyyat',
-      p001Desc:       'DİM 2025 materialları əsasında interaktiv testlər. Mövzu izahları, anlıq qiymətləndirmə.',
-      p001Cta:        'Dərslərə keç',
-      p002Title:      'Növbəti Fənn',
-      p002Desc:       'PDF yüklənməsi gözlənilir...',
-      footerStack:    'Tailwind · KaTeX · Vanilla JS',
+      statDim:        'DİM 2025 · 4 Sütunlu Sistem',
+      sectionTitle:   'Platforma Seçimi',
+      sectionSubtitle:'Hədəfinizə uyğun platformanı seçin',
+      projectCount:   '2 Aktiv Platforma',
+      p001Badge:      'Aktiv',
+      p001Title:      'DİM 2025 Test Platforması',
+      p001Desc:       'DİM 2025 materialları əsasında 17 interaktiv test modulu. Anlıq qiymətləndirmə, 340+ sual.',
+      p001Cta:        'Testlərə keç',
+      p002Badge:      'Aktiv',
+      p002Title:      'İnteraktiv Riyaziyyat Dərsliyi',
+      p002Desc:       '4 sütunlu öyrənmə sistemi: Nəzəriyyə, Tapşırıqlar, Testlər, Viktorina.',
+      p002Cta:        'Dərsliyə keç',
+      footerStack:    'Tailwind · MathJax · Vanilla JS',
     },
     ru: {
       siteTagline:    'Цифровая Образовательная Экосистема',
       heroBadge:      'BETA — Учебный год 2025/2026',
       heroSubtitle:   'От PDF-учебников к интерактивной платформе — мультиязычно, умно, быстро.',
-      statLessons:    '22+ Уроков',
+      statProjects:   '2 Платформы',
       statLangs:      'АЗ · РУ · EN',
-      statDim:        'Материалы DİM 2025',
-      sectionTitle:   'Порталы предметов',
-      sectionSubtitle:'От одного урока до полного курса — учись, проверяй, развивайся',
-      projectCount:   '1 Активный проект',
-      p001Title:      'Математика',
-      p001Desc:       'Интерактивные тесты на основе материалов DİM 2025. Разборы тем, мгновенная оценка.',
-      p001Cta:        'Перейти к урокам',
-      p002Title:      'Следующий предмет',
-      p002Desc:       'Ожидается загрузка PDF...',
-      footerStack:    'Tailwind · KaTeX · Vanilla JS',
+      statDim:        'DİM 2025 · Система 4 Столпов',
+      sectionTitle:   'Выбор платформы',
+      sectionSubtitle:'Выберите платформу, подходящую для вашей цели',
+      projectCount:   '2 Активные платформы',
+      p001Badge:      'Активен',
+      p001Title:      'Тестовая платформа DİM 2025',
+      p001Desc:       '17 интерактивных тестовых модулей на основе материалов DİM 2025. Мгновенная оценка, 340+ вопросов.',
+      p001Cta:        'Перейти к тестам',
+      p002Badge:      'Активен',
+      p002Title:      'Интерактивный учебник математики',
+      p002Desc:       'Система 4 столпов: Теория, Упражнения, Тесты, Викторина.',
+      p002Cta:        'Открыть учебник',
+      footerStack:    'Tailwind · MathJax · Vanilla JS',
     },
     en: {
       siteTagline:    'Digital Learning Ecosystem',
       heroBadge:      'BETA — Academic Year 2025/2026',
-      heroSubtitle:   'From PDF textbooks to an interactive test platform — multilingual, smart, fast.',
-      statLessons:    '22+ Lessons',
+      heroSubtitle:   'From PDF textbooks to an interactive learning platform — multilingual, smart, fast.',
+      statProjects:   '2 Platforms',
       statLangs:      'AZ · RU · EN',
-      statDim:        'DİM 2025 Materials',
-      sectionTitle:   'Subject Portals',
-      sectionSubtitle:'From a single lesson to a full course — learn, test, grow',
-      projectCount:   '1 Active Project',
-      p001Title:      'Mathematics',
-      p001Desc:       'Interactive tests based on DİM 2025 materials. Topic explanations, instant grading.',
-      p001Cta:        'Go to lessons',
-      p002Title:      'Next Subject',
-      p002Desc:       'Waiting for PDF upload...',
-      footerStack:    'Tailwind · KaTeX · Vanilla JS',
+      statDim:        'DİM 2025 · 4-Pillar System',
+      sectionTitle:   'Platform Selection',
+      sectionSubtitle:'Choose the platform that fits your goal',
+      projectCount:   '2 Active Platforms',
+      p001Badge:      'Active',
+      p001Title:      'DİM 2025 Test Platform',
+      p001Desc:       '17 interactive test modules based on DİM 2025 materials. Instant grading, 340+ questions.',
+      p001Cta:        'Go to tests',
+      p002Badge:      'Active',
+      p002Title:      'Interactive Math Textbook',
+      p002Desc:       '4-pillar learning system: Theory, Practice, Tests, Gamification.',
+      p002Cta:        'Open textbook',
+      footerStack:    'Tailwind · MathJax · Vanilla JS',
     },
   };
 
-  /* ── Boot ───────────────────────────────────────────────── */
   onReady(() => {
     ThemeManager.init();
     LangManager.init(STRINGS);

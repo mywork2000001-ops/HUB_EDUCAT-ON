@@ -1,0 +1,197 @@
+<!doctype html>
+<html lang="az">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Mövzu [ID] — [TITLE] · P002 Dərslik</title>
+  <link rel="stylesheet" href="../../_Shared_Core/style.css"/>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" async></script>
+  <style>
+    /* ── Tab bar ─────────────────────────────── */
+    .tab-bar { display:flex; gap:4px; padding:4px; border-radius:12px; background:var(--surface-2); }
+    .tab-btn {
+      flex:1; padding:8px 12px; border:none; border-radius:9px; cursor:pointer;
+      font-weight:700; font-size:0.78rem; color:var(--muted);
+      background:transparent; transition:all 0.2s; display:flex; align-items:center;
+      justify-content:center; gap:6px;
+    }
+    .tab-btn.active { background:var(--surface); color:var(--primary); box-shadow:var(--shadow); }
+    .tab-btn:hover:not(.active) { color:var(--text); }
+
+    /* ── Theory panel ────────────────────────── */
+    .theory-block {
+      background:var(--surface); border:1px solid var(--border); border-radius:12px;
+      padding:1.25rem 1.5rem; margin-bottom:1rem; box-shadow:var(--shadow);
+    }
+    .theory-rule {
+      background:var(--primary-light); border-left:4px solid var(--primary);
+      border-radius:0 8px 8px 0; padding:1rem 1.25rem; margin:0.75rem 0;
+    }
+    .theory-example {
+      background:var(--surface-2); border-radius:8px; padding:0.75rem 1rem; margin:0.5rem 0;
+      font-family:'JetBrains Mono',monospace; font-size:0.88rem;
+    }
+
+    /* ── Practice panel ──────────────────────── */
+    .practice-item {
+      background:var(--surface); border:1px solid var(--border); border-radius:12px;
+      padding:1rem 1.25rem; margin-bottom:0.75rem;
+    }
+    .practice-input {
+      border:2px solid var(--border); border-radius:8px; padding:6px 12px;
+      font-size:0.9rem; background:var(--surface-2); color:var(--text);
+      outline:none; transition:border-color 0.2s; width:100%; max-width:220px; margin-top:8px;
+    }
+    .practice-input:focus { border-color:var(--primary); }
+    .practice-feedback { font-weight:700; font-size:0.85rem; margin-top:6px; min-height:1.2em; }
+    .practice-feedback.correct { color:#10b981; }
+    .practice-feedback.wrong   { color:#ef4444; }
+
+    /* ── Evaluation panel ────────────────────── */
+    .eval-question { background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:1rem 1.25rem; margin-bottom:0.75rem; }
+    .eval-opts { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:10px; }
+    .eval-opt {
+      padding:8px 12px; border:2px solid var(--border); border-radius:9px; cursor:pointer;
+      font-size:0.85rem; font-weight:600; background:var(--surface-2); color:var(--text);
+      transition:all 0.15s; text-align:left;
+    }
+    .eval-opt:hover { border-color:var(--primary); }
+    .eval-opt.opt-correct { background:#d1fae5; border-color:#10b981; color:#065f46; }
+    .eval-opt.opt-wrong   { background:#fee2e2; border-color:#ef4444; color:#991b1b; }
+    #evalScore { font-weight:700; color:var(--primary); }
+
+    /* ── Gamification panel ──────────────────── */
+    .quiz-wrap { max-width:560px; margin:0 auto; }
+    .quiz-timer-bar { height:5px; background:var(--border); border-radius:99px; margin-bottom:1rem; overflow:hidden; }
+    .quiz-progress-inner { height:100%; background:var(--primary); border-radius:99px; transition:width 0.4s; }
+    #quizQuestion { font-size:1.05rem; font-weight:700; margin-bottom:1rem; min-height:3em; }
+    .quiz-opts { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+    .quiz-opt {
+      padding:10px 14px; border:2px solid var(--border); border-radius:10px; cursor:pointer;
+      font-size:0.9rem; font-weight:600; background:var(--surface); color:var(--text);
+      transition:all 0.15s; text-align:left;
+    }
+    .quiz-opt:hover { border-color:var(--primary); transform:translateY(-1px); }
+    .quiz-opt.quiz-correct { background:#d1fae5; border-color:#10b981; color:#065f46; }
+    .quiz-opt.quiz-wrong   { background:#fee2e2; border-color:#ef4444; color:#991b1b; }
+    .quiz-result { text-align:center; padding:2rem; }
+    .quiz-result-score { font-size:3rem; font-weight:900; color:var(--primary); }
+    .quiz-retry {
+      margin-top:1rem; padding:10px 28px; border:none; border-radius:10px;
+      background:var(--primary); color:#fff; font-weight:700; cursor:pointer; font-size:0.9rem;
+    }
+  </style>
+</head>
+<body class="min-h-screen">
+
+<!-- Header -->
+<header class="border-b sticky top-0 z-50" style="background:var(--surface);border-color:var(--border);">
+  <div class="max-w-4xl mx-auto px-4 h-14 flex items-center justify-between">
+    <div class="flex items-center gap-3">
+      <a href="../index.html" class="text-sm font-semibold" style="color:var(--muted)">&larr; Dərslik</a>
+      <span style="color:var(--border)">|</span>
+      <span class="font-black" style="background:linear-gradient(135deg,#6366f1,#8b5cf6);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">Mövzu [ID] &middot; [SHORT TITLE]</span>
+    </div>
+    <button onclick="document.documentElement.classList.toggle('dark')"
+            class="w-8 h-8 rounded-lg border flex items-center justify-center text-sm"
+            style="border-color:var(--border);background:var(--surface-2)">&#127769;</button>
+  </div>
+</header>
+
+<div class="max-w-4xl mx-auto px-4 py-6">
+
+  <!-- Title card -->
+  <div class="rounded-2xl p-5 mb-6 text-white" style="background:linear-gradient(135deg,#6366f1,#8b5cf6)">
+    <p class="text-xs font-semibold uppercase tracking-widest opacity-75 mb-1">P002 &middot; V Sinif Dərslik</p>
+    <h1 class="text-xl font-black">[FULL TITLE]</h1>
+    <p class="text-sm opacity-80 mt-1">[SUBTITLE / PAGE RANGE]</p>
+  </div>
+
+  <!-- 4-Pillar Tab Bar -->
+  <div class="tab-bar mb-6">
+    <button class="tab-btn" data-tab="theory">📘 Nəzəriyyə</button>
+    <button class="tab-btn" data-tab="practice">✍️ Tapşırıqlar</button>
+    <button class="tab-btn" data-tab="evaluation">📝 Testlər</button>
+    <button class="tab-btn" data-tab="gamification">🏆 Viktorina</button>
+  </div>
+
+  <!-- ── PILLAR 1: THEORY ────────────────────────────────── -->
+  <div data-panel="theory" class="hidden">
+    <div class="theory-block">
+      <h2 class="font-bold text-lg mb-3">[Section Title]</h2>
+      <p class="text-sm leading-relaxed" style="color:var(--muted)">[Explanation text...]</p>
+
+      <div class="theory-rule">
+        <strong>Qayda:</strong> [Rule text with math: \( formula \)]
+      </div>
+
+      <div class="theory-example">
+        Nümunə: \( expression = result \)
+      </div>
+    </div>
+    <!-- Add more theory-block sections as needed -->
+  </div>
+
+  <!-- ── PILLAR 2: PRACTICE ──────────────────────────────── -->
+  <div data-panel="practice" class="hidden">
+    <!-- data-answer must be the exact expected string -->
+    <div class="practice-item" data-answer="42">
+      <p class="font-semibold text-sm">[Question text]</p>
+      <input class="practice-input" placeholder="cavab..."/>
+      <div class="practice-feedback"></div>
+    </div>
+    <!-- Repeat practice-item blocks -->
+  </div>
+
+  <!-- ── PILLAR 3: EVALUATION ────────────────────────────── -->
+  <div data-panel="evaluation" class="hidden">
+    <div class="flex items-center justify-between mb-4">
+      <h3 class="font-bold">MCQ Testi</h3>
+      <span class="text-sm" style="color:var(--muted)">Nəticə: <span id="evalScore">0/0</span></span>
+    </div>
+
+    <!-- data-correct = value of correct option -->
+    <div class="eval-question" data-correct="A">
+      <p class="font-semibold text-sm">[Question]</p>
+      <div class="eval-opts">
+        <button class="eval-opt" data-val="A">A) [Option]</button>
+        <button class="eval-opt" data-val="B">B) [Option]</button>
+        <button class="eval-opt" data-val="C">C) [Option]</button>
+        <button class="eval-opt" data-val="D">D) [Option]</button>
+      </div>
+    </div>
+    <!-- Repeat eval-question blocks -->
+  </div>
+
+  <!-- ── PILLAR 4: GAMIFICATION ──────────────────────────── -->
+  <div data-panel="gamification" class="hidden">
+    <div class="quiz-wrap">
+      <div class="flex items-center justify-between mb-3">
+        <span class="text-sm font-semibold" style="color:var(--muted)">Xal: <strong id="quizScore" style="color:var(--primary)">0</strong></span>
+        <span class="text-sm font-mono font-bold" id="quizTimer" style="color:var(--muted)">15</span>
+      </div>
+      <div class="quiz-timer-bar"><div class="quiz-progress-inner" id="quizProgress" style="width:0%"></div></div>
+
+      <div id="quizContainer" data-questions='[
+        {"q":"[Question 1]","opts":["A","B","C","D"],"ans":0},
+        {"q":"[Question 2]","opts":["A","B","C","D"],"ans":1}
+      ]'>
+        <p id="quizQuestion">Yüklənir...</p>
+        <div class="quiz-opts">
+          <button class="quiz-opt"></button>
+          <button class="quiz-opt"></button>
+          <button class="quiz-opt"></button>
+          <button class="quiz-opt"></button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /container -->
+
+<script src="../../_Shared_Core/script.js"></script>
+<script src="../../_Shared_Core/textbook_engine.js"></script>
+<script>document.addEventListener('DOMContentLoaded', () => { ThemeManager.init(); });</script>
+</body>
+</html>
