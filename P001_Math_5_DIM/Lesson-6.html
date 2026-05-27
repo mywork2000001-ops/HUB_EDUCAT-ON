@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DİM 2025 – Adi kəsrlərin toplanması və çıxılması</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f8fafc; --surface: #ffffff; --text: #0f172a; --muted: #64748b;
+    --border: #e2e8f0; --primary: #10b981; --primary-hover: #059669;
+    --primary-light: #d1fae5; --danger: #ef4444; --warning: #f59e0b;
+    --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1); --radius: 1rem;
+  }
+  .dark {
+    --bg: #0f172a; --surface: #1e293b; --text: #f1f5f9; --muted: #94a3b8;
+    --border: #334155; --primary: #34d399; --primary-hover: #10b981; --primary-light: #064e3b;
+  }
+  * { font-family: 'Inter', system-ui, sans-serif; box-sizing: border-box; }
+  body { background: var(--bg); color: var(--text); transition: background 0.3s, color 0.3s; }
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow); transition: all 0.3s ease; }
+  .btn-primary { background: var(--primary); color: white; padding: 0.625rem 1.25rem; border-radius: 0.75rem; font-weight: 600; cursor: pointer; border: none; }
+  .btn-secondary { background: var(--border); color: var(--text); padding: 0.625rem 1.25rem; border-radius: 0.75rem; font-weight: 500; cursor: pointer; border: 1px solid var(--border); }
+  .q-btn { width: 2.75rem; height: 2.75rem; border-radius: 0.65rem; font-weight: 600; border: 2px solid var(--border); background: var(--surface); color: var(--muted); cursor: pointer; display: flex; align-items: center; justify-content: center; }
+  .q-btn.active { border-color: var(--primary); background: var(--primary-light); color: var(--primary); }
+  .q-btn.answered { border-color: var(--primary); background: var(--primary); color: white; }
+  .option { padding: 1rem; border: 2px solid var(--border); border-radius: 0.75rem; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 0.75rem; }
+  .option:hover { border-color: var(--primary); background: var(--primary-light); }
+  .option.selected { border-color: var(--primary); background: var(--primary-light); }
+  .option.correct { border-color: var(--primary); background: #ecfdf5; }
+  .option.wrong { border-color: var(--danger); background: #fef2f2; }
+  .tab { padding: 0.5rem 1rem; border-radius: 0.5rem; font-weight: 500; cursor: pointer; border: none; background: transparent; color: var(--muted); }
+  .tab.active { background: var(--primary-light); color: var(--primary); }
+  .progress-bar { height: 0.5rem; background: var(--border); border-radius: 9999px; overflow: hidden; }
+  .progress-fill { height: 100%; background: var(--primary); transition: width 0.5s ease; }
+  .fade-in { animation: fadeIn 0.4s ease; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+  .matching-grid { display: grid; grid-template-columns: 1fr 1.5fr; gap: 1rem; font-size: 0.9rem; margin: 1rem 0; padding: 1rem; background: var(--bg); border-radius: 0.5rem; }
+</style>
+</head>
+<body class="min-h-screen">
+
+<header class="sticky top-0 z-50 backdrop-blur-md bg-opacity-90" style="background: var(--surface); border-bottom: 1px solid var(--border);">
+  <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
+    <div class="flex items-center gap-3">
+      <div class="w-10 h-10 rounded-xl flex items-center justify-center text-white font-bold text-lg" style="background: var(--primary);">DİM</div>
+      <div>
+        <h1 class="text-sm sm:text-base font-bold leading-tight" id="examTitle">Adi kəsrlərin toplanması və çıxılması</h1>
+        <p class="text-xs" style="color: var(--muted);" id="examSubtitle">Riyaziyyat | V sinif | 2025</p>
+      </div>
+    </div>
+    <div class="flex items-center gap-2">
+      <button onclick="toggleLang()" class="tab" id="langBtn">RU</button>
+      <button onclick="toggleTheme()" class="tab"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg></button>
+    </div>
+  </div>
+</header>
+
+<main class="max-w-6xl mx-auto px-4 py-6 grid gap-6">
+  <div class="card p-4 flex flex-wrap items-center justify-between gap-4">
+    <div class="flex items-center gap-4">
+      <div class="text-center"><div class="text-2xl font-bold tabular-nums" id="timer">60:00</div><div class="text-xs" style="color: var(--muted);" id="lblTimer">Qalan vaxt</div></div>
+      <div class="w-px h-10" style="background: var(--border);"></div>
+      <div class="text-center"><div class="text-2xl font-bold tabular-nums" id="answeredCount">0/40</div><div class="text-xs" style="color: var(--muted);" id="lblAnswered">Cavablanıb</div></div>
+    </div>
+    <div class="flex-1 min-w-[200px]">
+      <div class="flex justify-between text-xs mb-1" style="color: var(--muted);"><span id="lblProgress">Tərəqqi</span><span id="progressPercent">0%</span></div>
+      <div class="progress-bar"><div class="progress-fill" id="progressBar" style="width:0%"></div></div>
+    </div>
+  </div>
+
+  <div class="flex gap-2 overflow-x-auto pb-1" id="variantTabs"></div>
+
+  <div class="grid lg:grid-cols-[280px_1fr] gap-6">
+    <aside class="space-y-4">
+      <div class="card p-4">
+        <h3 class="text-sm font-semibold mb-3">Sual gridi</h3>
+        <div class="grid grid-cols-5 gap-2" id="questionGrid"></div>
+      </div>
+    </aside>
+
+    <section class="card p-6 flex flex-col gap-6" id="questionCard">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <span class="px-3 py-1 rounded-lg text-sm font-bold text-white" style="background: var(--primary);" id="qBadge">A1</span>
+          <span class="text-sm font-medium" style="color: var(--muted);" id="qCounter">1 / 10</span>
+        </div>
+      </div>
+
+      <div class="fade-in" id="qContent">
+        <h2 class="text-lg font-semibold leading-relaxed mb-4" id="qText"></h2>
+        <div id="qMatching" class="matching-grid hidden"></div>
+        <div class="space-y-3" id="qOptions"></div>
+      </div>
+
+      <div class="flex items-center justify-between pt-4 border-t" style="border-color: var(--border);">
+        <button onclick="prevQuestion()" class="btn-secondary" id="btnPrev">Əvvəlki</button>
+        <div class="flex gap-2">
+          <button onclick="finishExam()" class="btn-secondary text-red-500 border-red-200" id="btnFinish">Bitir</button>
+          <button onclick="nextQuestion()" class="btn-primary" id="btnNext">Növbəti</button>
+        </div>
+      </div>
+    </section>
+  </div>
+</main>
+
+<div id="resultModal" class="fixed inset-0 z-[100] hidden items-center justify-center p-4" style="background: rgba(0,0,0,0.5); backdrop-filter: blur(4px);">
+  <div class="card w-full max-w-2xl p-6 space-y-6">
+    <div class="text-center">
+      <div class="w-20 h-20 rounded-full mx-auto mb-4 flex items-center justify-center text-3xl font-bold text-white" style="background: var(--primary);" id="resultScoreIcon">0</div>
+      <h2 class="text-2xl font-bold mb-1">Nəticə</h2>
+      <p class="text-sm" id="resultMessage" style="color: var(--muted);"></p>
+    </div>
+    <div class="grid grid-cols-3 gap-4">
+      <div class="card p-3 text-center"><div class="text-xl font-bold text-emerald-500" id="correctCount">0</div><div class="text-xs">Düz</div></div>
+      <div class="card p-3 text-center"><div class="text-xl font-bold text-red-500" id="wrongCount">0</div><div class="text-xs">Səhv</div></div>
+      <div class="card p-3 text-center"><div class="text-xl font-bold text-amber-500" id="emptyCount">0</div><div class="text-xs">Boş</div></div>
+    </div>
+    <div class="flex gap-3 justify-center">
+      <button onclick="showReview()" class="btn-primary">Səhvlərə bax</button>
+      <button onclick="resetExam()" class="btn-secondary">Yenidən</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const examData = {
+  variants: [
+    {
+      id: "A", name: { az: "A variantı", ru: "Вариант A", en: "Variant A" },
+      questions: [
+        { id: 1, text:{az:"$\\frac{3}{4} + \\frac{5}{6} + \\frac{1}{2}$ cəmini hesablayın.",ru:"Вычислите сумму $\\frac{3}{4} + \\frac{5}{6} + \\frac{1}{2}$.",en:"Calculate the sum $\\frac{3}{4} + \\frac{5}{6} + \\frac{1}{2}$."}, options: {az:["$\\frac{25}{4}$", "$\\frac{25}{6}$", "$\\frac{25}{2}$", "$\\frac{25}{12}$", "$\\frac{35}{12}$"],ru:["$\\frac{25}{4}$", "$\\frac{25}{6}$", "$\\frac{25}{2}$", "$\\frac{25}{12}$", "$\\frac{35}{12}$"],en:["$\\frac{25}{4}$", "$\\frac{25}{6}$", "$\\frac{25}{2}$", "$\\frac{25}{12}$", "$\\frac{35}{12}$"]}, correct: "D" },
+        { id: 2, text:{az:"$\\frac{13}{14} - \\frac{1}{4} - \\frac{3}{7}$ ifadəsinin qiymətini hesablayın.",ru:"Вычислите значение выражения $\\frac{13}{14} - \\frac{1}{4} - \\frac{3}{7}$.",en:"Calculate value of the expression $\\frac{13}{14} - \\frac{1}{4} - \\frac{3}{7}$."}, options: {az:["$\\frac{1}{3}$", "$\\frac{1}{4}$", "1", "$\\frac{1}{14}$", "$\\frac{5}{14}$"],ru:["$\\frac{1}{3}$", "$\\frac{1}{4}$", "1", "$\\frac{1}{14}$", "$\\frac{5}{14}$"],en:["$\\frac{1}{3}$", "$\\frac{1}{4}$", "1", "$\\frac{1}{14}$", "$\\frac{5}{14}$"]}, correct: "B" },
+        { id: 3, text:{az:"$5 + 4\\frac{1}{3}$ cəmini hesablayın.",ru:"Вычислите сумму $5 + 4\\frac{1}{3}$.",en:"Calculate the sum $5 + 4\\frac{1}{3}$."}, options: {az:["$1\\frac{1}{3}$", "$10\\frac{1}{3}$", "$\\frac{2}{3}$", "$9\\frac{1}{3}$", "$5\\frac{1}{3}$"],ru:["$1\\frac{1}{3}$", "$10\\frac{1}{3}$", "$\\frac{2}{3}$", "$9\\frac{1}{3}$", "$5\\frac{1}{3}$"],en:["$1\\frac{1}{3}$", "$10\\frac{1}{3}$", "$\\frac{2}{3}$", "$9\\frac{1}{3}$", "$5\\frac{1}{3}$"]}, correct: "D" },
+        { id: 4, text:{az:"$8 - 2\\frac{5}{8}$ fərqini hesablayın.",ru:"Вычислите разность $8 - 2\\frac{5}{8}$.",en:"Calculate difference $8 - 2\\frac{5}{8}$."}, options: {az:["$5\\frac{3}{8}$", "$6\\frac{3}{8}$", "$4\\frac{3}{8}$", "$10\\frac{5}{8}$", "$6\\frac{5}{8}$"],ru:["$5\\frac{3}{8}$", "$6\\frac{3}{8}$", "$4\\frac{3}{8}$", "$10\\frac{5}{8}$", "$6\\frac{5}{8}$"],en:["$5\\frac{3}{8}$", "$6\\frac{3}{8}$", "$4\\frac{3}{8}$", "$10\\frac{5}{8}$", "$6\\frac{5}{8}$"]}, correct: "A" },
+        { id: 5, text:{az:"$5\\frac{5}{6} + 8\\frac{1}{2}$ cəmini hesablayın.",ru:"Вычислите сумму $5\\frac{5}{6} + 8\\frac{1}{2}$.",en:"Calculate the sum $5\\frac{5}{6} + 8\\frac{1}{2}$."}, options: {az:["$14\\frac{1}{3}$", "$13\\frac{2}{3}$", "$12\\frac{2}{3}$", "$13\\frac{1}{2}$", "$11\\frac{5}{6}$"],ru:["$14\\frac{1}{3}$", "$13\\frac{2}{3}$", "$12\\frac{2}{3}$", "$13\\frac{1}{2}$", "$11\\frac{5}{6}$"],en:["$14\\frac{1}{3}$", "$13\\frac{2}{3}$", "$12\\frac{2}{3}$", "$13\\frac{1}{2}$", "$11\\frac{5}{6}$"]}, correct: "A" },
+        { id: 6, text:{az:"$2\\frac{3}{10} + 5\\frac{2}{5} - 1\\frac{4}{15}$ ifadəsinin qiymətini hesablayın.",ru:"Вычислите значение выражения $2\\frac{3}{10} + 5\\frac{2}{5} - 1\\frac{4}{15}$.",en:"Calculate value of the expression $2\\frac{3}{10} + 5\\frac{2}{5} - 1\\frac{4}{15}$."}, options: {az:["$6\\frac{13}{30}$", "$6\\frac{1}{10}$", "$6\\frac{29}{30}$", "1", "$7\\frac{7}{30}$"],ru:["$6\\frac{13}{30}$", "$6\\frac{1}{10}$", "$6\\frac{29}{30}$", "1", "$7\\frac{7}{30}$"],en:["$6\\frac{13}{30}$", "$6\\frac{1}{10}$", "$6\\frac{29}{30}$", "1", "$7\\frac{7}{30}$"]}, correct: "A" },
+        { id: 7, text:{az:"Mağazaya gətirilən malın birinci gün $\\frac{3}{7}$-ni, ikinci gün $\\frac{3}{8}$-ni satdılar. İki günə malın hansı hissəsi satıldı?",ru:"В первый день продали $\\frac{3}{7}$, во второй — $\\frac{3}{8}$.",en:"in the first day продали $\\frac{3}{7}$, во second — $\\frac{3}{8}$."}, options: {az:["$\\frac{6}{7}$", "$\\frac{3}{56}$", "$\\frac{45}{56}$", "$\\frac{11}{56}$", "$\\frac{35}{56}$"],ru:["$\\frac{6}{7}$", "$\\frac{3}{56}$", "$\\frac{45}{56}$", "$\\frac{11}{56}$", "$\\frac{35}{56}$"],en:["$\\frac{6}{7}$", "$\\frac{3}{56}$", "$\\frac{45}{56}$", "$\\frac{11}{56}$", "$\\frac{35}{56}$"]}, correct: "C" },
+        { id: 8, text:{az:"Şagirdlər çıxış üçün $\\frac{5}{6}$ saat vaxt sərf etdilər. Bunun $\\frac{1}{3}$ saatını yolda oldular. Çıxış neçə saat davam etmişdir? (Onluq kəsrlə yazın).",ru:"Выступление заняло $\\frac{5}{6}$ ч, из них $\\frac{1}{3}$ ч в пути. Длительность выступления? (Десятичной дробью).",en:"Выступление заняло $\\frac{5}{6}$ ч, from них $\\frac{1}{3}$ ч in пути. Длительность выступления? (decimal дробью)."}, options: {az:["0,2", "0,4", "0,5", "0,6", "0,75"],ru:["0,2", "0,4", "0,5", "0,6", "0,75"],en:["0,2", "0,4", "0,5", "0,6", "0,75"]}, correct: "C" },
+        { id: 9, text:{az:"İki çəlləkdə $20\\frac{1}{2}$ l maye var. Birinci çəlləkdə $8,4$ l olarsa, ikinci çəlləkdə birincidən nə qədər çoxdur?",ru:"В двух бочках $20,5$ л. В первой $8,4$ л. На сколько во второй больше?",en:"in two бочках $20,5$ l. in первой $8,4$ l. on How many во second greater?"}, options: {az:["3,7 l", "12,1 l", "8,4 l", "4,2 l", "2,1 l"],ru:["3,7 л", "12,1 л", "8,4 л", "4,2 л", "2,1 л"],en:["3,7 л", "12,1 л", "8,4 л", "4,2 л", "2,1 л"]}, correct: "A" },
+        { id: 10, text:{az:"Uyğunluğu müəyyən edin:",ru:"Установите соответствие:",en:"Установите correspondence:"}, matching: { 
+            left: ["1. $a=2\\frac{1}{4}, b=3\\frac{2}{3}$", "2. $a=1\\frac{2}{5}, b=4\\frac{1}{6}$", "3. $a=3\\frac{5}{18}, b=7\\frac{1}{12}$"],
+            right: ["a. $a+b=5\\frac{17}{30}$", "b. $b-a=3\\frac{29}{36}$", "c. $b-a=2\\frac{23}{30}$", "d. $a+b=5\\frac{11}{12}$", "e. $a+b=10\\frac{13}{36}$"]
+          }, options: {az:["1-d, 2-a, 3-b", "1-b, 2-a, 3-c", "1-a, 2-b, 3-c", "1-c, 2-d, 3-e", "1-e, 2-a, 3-d"],ru:["1-d, 2-a, 3-b", "1-b, 2-a, 3-c", "1-a, 2-b, 3-c", "1-c, 2-d, 3-e", "1-e, 2-a, 3-d"],en:["1-d, 2-a, 3-b", "1-b, 2-a, 3-c", "1-a, 2-b, 3-c", "1-c, 2-d, 3-e", "1-e, 2-a, 3-d"]}, correct: "A" }
+      ]
+    },
+    {
+      id: "B", name: { az: "B variantı", ru: "Вариант B", en: "Variant B" },
+      questions: [
+        { id: 1, text:{az:"$\\frac{1}{3} + \\frac{1}{2} + \\frac{1}{6}$ cəmini hesablayın.",ru:"Сумма $\\frac{1}{3} + \\frac{1}{2} + \\frac{1}{6}$.",en:"sum $\\frac{1}{3} + \\frac{1}{2} + \\frac{1}{6}$."}, options: {az:["1", "$\\frac{7}{6}$", "$\\frac{5}{6}$", "$\\frac{1}{2}$", "$2\\frac{1}{6}$"],ru:["1", "$\\frac{7}{6}$", "$\\frac{5}{6}$", "$\\frac{1}{2}$", "$2\\frac{1}{6}$"],en:["1", "$\\frac{7}{6}$", "$\\frac{5}{6}$", "$\\frac{1}{2}$", "$2\\frac{1}{6}$"]}, correct: "A" },
+        { id: 2, text:{az:"$\\frac{5}{6} - \\frac{1}{2} - \\frac{1}{8}$ ifadəsinin qiymətini hesablayın.",ru:"Вычислите $\\frac{5}{6} - \\frac{1}{2} - \\frac{1}{8}$.",en:"Calculate $\\frac{5}{6} - \\frac{1}{2} - \\frac{1}{8}$."}, options: {az:["$\\frac{11}{24}$", "$\\frac{5}{8}$", "$\\frac{5}{24}$", "1", "$\\frac{13}{24}$"],ru:["$\\frac{11}{24}$", "$\\frac{5}{8}$", "$\\frac{5}{24}$", "1", "$\\frac{13}{24}$"],en:["$\\frac{11}{24}$", "$\\frac{5}{8}$", "$\\frac{5}{24}$", "1", "$\\frac{13}{24}$"]}, correct: "C" },
+        { id: 3, text:{az:"$10\\frac{1}{2} + 2$ cəmini hesablayın.",ru:"Вычислите $10\\frac{1}{2} + 2$.",en:"Calculate $10\\frac{1}{2} + 2$."}, options: {az:["$7\\frac{1}{2}$", "$12\\frac{1}{2}$", "$8\\frac{1}{2}$", "12", "$2\\frac{1}{2}$"],ru:["$7\\frac{1}{2}$", "$12\\frac{1}{2}$", "$8\\frac{1}{2}$", "12", "$2\\frac{1}{2}$"],en:["$7\\frac{1}{2}$", "$12\\frac{1}{2}$", "$8\\frac{1}{2}$", "12", "$2\\frac{1}{2}$"]}, correct: "B" },
+        { id: 4, text:{az:"$10 - 5\\frac{3}{7}$ fərqini hesablayın.",ru:"Разность $10 - 5\\frac{3}{7}$.",en:"difference $10 - 5\\frac{3}{7}$."}, options: {az:["$5\\frac{4}{7}$", "$3\\frac{4}{7}$", "$4\\frac{4}{7}$", "5", "$4\\frac{3}{7}$"],ru:["$5\\frac{4}{7}$", "$3\\frac{4}{7}$", "$4\\frac{4}{7}$", "5", "$4\\frac{3}{7}$"],en:["$5\\frac{4}{7}$", "$3\\frac{4}{7}$", "$4\\frac{4}{7}$", "5", "$4\\frac{3}{7}$"]}, correct: "C" },
+        { id: 5, text:{az:"$2\\frac{7}{18} + 7\\frac{5}{12}$ cəmini hesablayın.",ru:"Сумма $2\\frac{7}{18} + 7\\frac{5}{12}$.",en:"sum $2\\frac{7}{18} + 7\\frac{5}{12}$."}, options: {az:["$9\\frac{29}{36}$", "$9\\frac{1}{36}$", "$9\\frac{7}{36}$", "$9\\frac{5}{36}$", "$9\\frac{17}{36}$"],ru:["$9\\frac{29}{36}$", "$9\\frac{1}{36}$", "$9\\frac{7}{36}$", "$9\\frac{5}{36}$", "$9\\frac{17}{36}$"],en:["$9\\frac{29}{36}$", "$9\\frac{1}{36}$", "$9\\frac{7}{36}$", "$9\\frac{5}{36}$", "$9\\frac{17}{36}$"]}, correct: "A" },
+        { id: 6, text:{az:"$10\\frac{1}{4} - 9\\frac{3}{4} + 3\\frac{1}{16}$ ifadəsinin qiymətini hesablayın.",ru:"Вычислите $10\\frac{1}{4} - 9\\frac{3}{4} + 3\\frac{1}{16}$.",en:"Calculate $10\\frac{1}{4} - 9\\frac{3}{4} + 3\\frac{1}{16}$."}, options: {az:["$4\\frac{9}{16}$", "$3\\frac{1}{2}$", "4", "$3\\frac{9}{16}$", "$4\\frac{3}{16}$"],ru:["$4\\frac{9}{16}$", "$3\\frac{1}{2}$", "4", "$3\\frac{9}{16}$", "$4\\frac{3}{16}$"],en:["$4\\frac{9}{16}$", "$3\\frac{1}{2}$", "4", "$3\\frac{9}{16}$", "$4\\frac{3}{16}$"]}, correct: "D" },
+        { id: 7, text:{az:"Məktəblilər birinci gün $4\\frac{5}{6}$ km, ikinci gün $1,5$ km çox getdilər. Cəmi neçə km getdilər?",ru:"1-й день $4\\frac{5}{6}$ км, 2-й на $1,5$ км больше. Сколько всего?",en:"1-й day $4\\frac{5}{6}$ km, 2-й on $1,5$ km greater. How many всего?"}, options: {az:["$11\\frac{1}{6}$ km", "$6\\frac{1}{3}$ km", "$8\\frac{1}{6}$ km", "$10\\frac{1}{6}$ km", "$7\\frac{2}{3}$ km"],ru:["$11\\frac{1}{6}$ км", "$6\\frac{1}{3}$ км", "$8\\frac{1}{6}$ км", "$10\\frac{1}{6}$ км", "$7\\frac{2}{3}$ км"],en:["$11\\frac{1}{6}$ км", "$6\\frac{1}{3}$ км", "$8\\frac{1}{6}$ км", "$10\\frac{1}{6}$ км", "$7\\frac{2}{3}$ км"]}, correct: "A" },
+        { id: 8, text:{az:"Boş qab $\\frac{1}{4}$ kq, bal ilə dolu $8\\frac{3}{4}$ kq-dır. Balın çəkisi nə qədərdir? (Onluq kəsrlə).",ru:"Вес пустой банки $0,25$ кг, с мёдом $8,75$ кг. Вес мёда?",en:"Вес пустой банки $0,25$ kg, with мёдом $8,75$ kg. Вес мёда?"}, options: {az:["8,0", "8,25", "8,5", "9,0", "7,5"],ru:["8,0", "8,25", "8,5", "9,0", "7,5"],en:["8,0", "8,25", "8,5", "9,0", "7,5"]}, correct: "C" },
+        { id: 9, text:{az:"Üçbucağın tərəfləri: $3,2$ sm, ikincisi birincidən $0,3$ sm qısa, üçüncüsü ikincidən $0,5$ sm uzundur. Perimetri tapın. (Onluq kəsrlə).",ru:"Периметр треугольника со сторонами $3,2$; $3,2-0,3$; $2,9+0,5$.",en:"perimeter of a triangle со сторонами $3,2$; $3,2-0,3$; $2,9+0,5$."}, options: {az:["9,5", "9,2", "10,1", "8,8", "9,0"],ru:["9,5", "9,2", "10,1", "8,8", "9,0"],en:["9,5", "9,2", "10,1", "8,8", "9,0"]}, correct: "A" },
+        { id: 10, text:{az:"Uyğunluğu müəyyən edin:",ru:"Установите соответствие:",en:"Установите correspondence:"}, matching: { 
+            left: ["1. $a=5\\frac{2}{7}, b=7\\frac{2}{5}$", "2. $a=3\\frac{7}{15}, b=5\\frac{8}{45}$", "3. $a=2\\frac{3}{20}, b=5\\frac{7}{15}$"],
+            right: ["a. $a+b=7\\frac{37}{60}$", "b. $a+b=12\\frac{24}{35}$", "c. $b-a=3\\frac{19}{60}$", "d. $b-a=1\\frac{32}{45}$", "e. $b-a=2\\frac{4}{35}$"]
+          }, options: {az:["1-b, 2-d, 3-c", "1-a, 2-b, 3-c", "1-c, 2-a, 3-e", "1-d, 2-b, 3-a", "1-e, 2-c, 3-d"],ru:["1-b, 2-d, 3-c", "1-a, 2-b, 3-c", "1-c, 2-a, 3-e", "1-d, 2-b, 3-a", "1-e, 2-c, 3-d"],en:["1-b, 2-d, 3-c", "1-a, 2-b, 3-c", "1-c, 2-a, 3-e", "1-d, 2-b, 3-a", "1-e, 2-c, 3-d"]}, correct: "A" }
+      ]
+    },
+    {
+      id: "C", name: { az: "C variantı", ru: "Вариант C", en: "Variant C" },
+      questions: [
+        { id: 1, text:{az:"$\\frac{2}{3} + \\frac{1}{2} + \\frac{1}{6}$ cəmini hesablayın.",ru:"Сумма $\\frac{2}{3} + \\frac{1}{2} + \\frac{1}{6}$.",en:"sum $\\frac{2}{3} + \\frac{1}{2} + \\frac{1}{6}$."}, options: {az:["$\\frac{1}{6}$", "1", "$\\frac{1}{4}$", "$\\frac{1}{3}$", "$\\frac{5}{6}$"],ru:["$\\frac{1}{6}$", "1", "$\\frac{1}{4}$", "$\\frac{1}{3}$", "$\\frac{5}{6}$"],en:["$\\frac{1}{6}$", "1", "$\\frac{1}{4}$", "$\\frac{1}{3}$", "$\\frac{5}{6}$"]}, correct: "B" },
+        { id: 2, text:{az:"$\\frac{1}{2} - \\frac{1}{4} - \\frac{1}{5}$ fərqini hesablayın.",ru:"Разность $\\frac{1}{2} - \\frac{1}{4} - \\frac{1}{5}$.",en:"difference $\\frac{1}{2} - \\frac{1}{4} - \\frac{1}{5}$."}, options: {az:["$\\frac{1}{20}$", "$\\frac{3}{20}$", "$\\frac{1}{2}$", "1", "$\\frac{7}{20}$"],ru:["$\\frac{1}{20}$", "$\\frac{3}{20}$", "$\\frac{1}{2}$", "1", "$\\frac{7}{20}$"],en:["$\\frac{1}{20}$", "$\\frac{3}{20}$", "$\\frac{1}{2}$", "1", "$\\frac{7}{20}$"]}, correct: "A" },
+        { id: 3, text:{az:"$4\\frac{1}{12} + 2\\frac{5}{36} + \\frac{1}{24}$ cəmini hesablayın.",ru:"Сумма $4\\frac{1}{12} + 2\\frac{5}{36} + \\frac{1}{24}$.",en:"sum $4\\frac{1}{12} + 2\\frac{5}{36} + \\frac{1}{24}$."}, options: {az:["$6\\frac{13}{72}$", "$6\\frac{1}{72}$", "7", "$6\\frac{19}{72}$", "$6\\frac{23}{72}$"],ru:["$6\\frac{13}{72}$", "$6\\frac{1}{72}$", "7", "$6\\frac{19}{72}$", "$6\\frac{23}{72}$"],en:["$6\\frac{13}{72}$", "$6\\frac{1}{72}$", "7", "$6\\frac{19}{72}$", "$6\\frac{23}{72}$"]}, correct: "D" },
+        { id: 4, text:{az:"$12\\frac{2}{3} - 6\\frac{1}{27} - 2\\frac{8}{9}$ ifadəsinin qiymətini hesablayın.",ru:"Вычислите $12\\frac{2}{3} - 6\\frac{1}{27} - 2\\frac{8}{9}$.",en:"Calculate $12\\frac{2}{3} - 6\\frac{1}{27} - 2\\frac{8}{9}$."}, options: {az:["$3\\frac{20}{27}$", "$3\\frac{1}{27}$", "4", "1", "$4\\frac{5}{27}$"],ru:["$3\\frac{20}{27}$", "$3\\frac{1}{27}$", "4", "1", "$4\\frac{5}{27}$"],en:["$3\\frac{20}{27}$", "$3\\frac{1}{27}$", "4", "1", "$4\\frac{5}{27}$"]}, correct: "A" },
+        { id: 5, text:{az:"$x=10, y=3,6$ olarsa, $(6x-y)$-i hesablayın.",ru:"При $x=10, y=3,6$ вычислите $(6x-y)$.",en:"При $x=10, y=3,6$ Calculate $(6x-y)$."}, options: {az:["$57,6$", "$56,4$", "$57,4$", "$56,6$", "$58,2$"],ru:["$57,6$", "$56,4$", "$57,4$", "$56,6$", "$58,2$"],en:["$57,6$", "$56,4$", "$57,4$", "$56,6$", "$58,2$"]}, correct: "B" },
+        { id: 6, text:{az:"$b=5\\frac{2}{9}$ olarsa, $(b+4\\frac{5}{6})$-i hesablayın.",ru:"При $b=5\\frac{2}{9}$ вычислите $(b+4\\frac{5}{6})$.",en:"При $b=5\\frac{2}{9}$ Calculate $(b+4\\frac{5}{6})$."}, options: {az:["$9\\frac{1}{18}$", "$9\\frac{7}{18}$", "$10\\frac{1}{18}$", "10", "11"],ru:["$9\\frac{1}{18}$", "$9\\frac{7}{18}$", "$10\\frac{1}{18}$", "10", "11"],en:["$9\\frac{1}{18}$", "$9\\frac{7}{18}$", "$10\\frac{1}{18}$", "10", "11"]}, correct: "C" },
+        { id: 7, text:{az:"Hovuzu birinci boru 8 dəq, ikinci 16 dəq doldurur. Hər ikisi açıq olsa, 1 dəq hovuzun hansı hissəsi boş qalar?",ru:"1-я за 8 мин, 2-я за 16 мин. Какая часть пуста через 1 мин?",en:"1-я in 8 мин, 2-я in 16 мин. What часть пуста через 1 мин?"}, options: {az:["$\\frac{3}{16}$", "$\\frac{1}{16}$", "$\\frac{13}{16}$", "$\\frac{1}{2}$", "$\\frac{5}{16}$"],ru:["$\\frac{3}{16}$", "$\\frac{1}{16}$", "$\\frac{13}{16}$", "$\\frac{1}{2}$", "$\\frac{5}{16}$"],en:["$\\frac{3}{16}$", "$\\frac{1}{16}$", "$\\frac{13}{16}$", "$\\frac{1}{2}$", "$\\frac{5}{16}$"]}, correct: "C" },
+        { id: 8, text:{az:"Birinci ədəd $7,5$, ikincisi $3,5$ çoxdur. Cəmi tapın. (Onluq kəsrlə).",ru:"1-е число $7,5$, 2-е на $3,5$ больше. Сумма? (Десятичной).",en:"1-е number $7,5$, 2-е on $3,5$ greater. sum? (decimal)."}, options: {az:["18,5", "11,0", "14,5", "15,0", "19,5"],ru:["18,5", "11,0", "14,5", "15,0", "19,5"],en:["18,5", "11,0", "14,5", "15,0", "19,5"]}, correct: "A" },
+        { id: 9, text: {az:"Meyvənin 2/5-i gavalı, 20%-i armud, 30%-i alma, qalanı gilasdır. Gilas bütünün hansı hissəsidir? (Onluq kəsrlə).",ru:"Gavalı 0.4, armud 0.2, alma 0.3. Gilas?",en:"Gavalı 0.4, armud 0.2, alma 0.3. Gilas?"}, options: {az:["0,1", "0,2", "0,3", "0,4", "0,25"],ru:["0,1", "0,2", "0,3", "0,4", "0,25"],en:["0,1", "0,2", "0,3", "0,4", "0,25"]}, correct: "A" },
+        { id: 10, text:{az:"Uyğunluğu müəyyən edin:",ru:"Установите соответствие:",en:"Установите correspondence:"}, matching: { 
+            left: ["1. $a=7\\frac{1}{8}, b=9\\frac{1}{10}$", "2. $a=3\\frac{1}{3}, b=5\\frac{2}{27}$", "3. $a=3\\frac{1}{4}, b=9\\frac{1}{16}$"],
+            right: ["a. $a+b=12\\frac{5}{16}$", "b. $a+b=16\\frac{9}{40}$", "c. $b-a=1\\frac{23}{30}$", "d. $a+b=8\\frac{11}{27}$", "e. $b-a=5\\frac{13}{16}$"]
+          }, options: {az:["1-b, 2-d, 3-e", "1-b, 2-a, 3-c", "1-c, 2-d, 3-a", "1-d, 2-b, 3-e", "1-e, 2-a, 3-d"],ru:["1-b, 2-d, 3-e", "1-b, 2-a, 3-c", "1-c, 2-d, 3-a", "1-d, 2-b, 3-e", "1-e, 2-a, 3-d"],en:["1-b, 2-d, 3-e", "1-b, 2-a, 3-c", "1-c, 2-d, 3-a", "1-d, 2-b, 3-e", "1-e, 2-a, 3-d"]}, correct: "A" }
+      ]
+    },
+    {
+      id: "D", name: { az: "D variantı", ru: "Вариант D", en: "Variant D" },
+      questions: [
+        { id: 1, text:{az:"$\\frac{5}{6} + \\frac{7}{8} + \\frac{1}{4}$ cəmini hesablayın.",ru:"Сумма $\\frac{5}{6} + \\frac{7}{8} + \\frac{1}{4}$.",en:"sum $\\frac{5}{6} + \\frac{7}{8} + \\frac{1}{4}$."}, options: {az:["1", "$\\frac{1}{2}$", "$\\frac{1}{4}$", "$\\frac{47}{24}$", "$\\frac{23}{24}$"],ru:["1", "$\\frac{1}{2}$", "$\\frac{1}{4}$", "$\\frac{47}{24}$", "$\\frac{23}{24}$"],en:["1", "$\\frac{1}{2}$", "$\\frac{1}{4}$", "$\\frac{47}{24}$", "$\\frac{23}{24}$"]}, correct: "D" },
+        { id: 2, text:{az:"$\\frac{5}{8} - \\frac{1}{16} - \\frac{1}{4}$ fərqini hesablayın.",ru:"Разность $\\frac{5}{8} - \\frac{1}{16} - \\frac{1}{4}$.",en:"difference $\\frac{5}{8} - \\frac{1}{16} - \\frac{1}{4}$."}, options: {az:["$\\frac{5}{24}$", "$\\frac{19}{24}$", "$\\frac{1}{12}$", "$\\frac{5}{16}$", "$\\frac{11}{24}$"],ru:["$\\frac{5}{24}$", "$\\frac{19}{24}$", "$\\frac{1}{12}$", "$\\frac{5}{16}$", "$\\frac{11}{24}$"],en:["$\\frac{5}{24}$", "$\\frac{19}{24}$", "$\\frac{1}{12}$", "$\\frac{5}{16}$", "$\\frac{11}{24}$"]}, correct: "D" },
+        { id: 3, text:{az:"$58\\frac{7}{15} - 56\\frac{1}{24} + 8\\frac{1}{40}$ ifadəsinin qiymətini hesablayın.",ru:"Вычислите $58\\frac{7}{15} - 56\\frac{1}{24} + 8\\frac{1}{40}$.",en:"Calculate $58\\frac{7}{15} - 56\\frac{1}{24} + 8\\frac{1}{40}$."}, options: {az:["9", "10", "11", "12", "14"],ru:["9", "10", "11", "12", "14"],en:["9", "10", "11", "12", "14"]}, correct: "B" },
+        { id: 4, text:{az:"$100,7 + 2\\frac{3}{19} - 4\\frac{3}{95}$ ifadəsinin qiymətini hesablayın.",ru:"Вычислите $100,7 + 2\\frac{3}{19} - 4\\frac{3}{95}$.",en:"Calculate $100,7 + 2\\frac{3}{19} - 4\\frac{3}{95}$."}, options: {az:["$98,82$", "99", "100", "$98,89$", "$99,75$"],ru:["$98,82$", "99", "100", "$98,89$", "$99,75$"],en:["$98,82$", "99", "100", "$98,89$", "$99,75$"]}, correct: "B" },
+        { id: 5, text:{az:"$a=5, b=3,875$ olduqda, $(3a+b)$-ni hesablayın.",ru:"При $a=5, b=3.875$ вычислите $3a+b$.",en:"При $a=5, b=3.875$ Calculate $3a+b$."}, options: {az:["23", "21,875", "20,375", "18,875", "18,125"],ru:["23", "21.875", "20.375", "18.875", "18.125"],en:["23", "21.875", "20.375", "18.875", "18.125"]}, correct: "D" },
+        { id: 6, text:{az:"$a=2\\frac{3}{7}$ olduqda, $(a+3\\frac{5}{14})$-i hesablayın.",ru:"При $a=2\\frac{3}{7}$ вычислите $a+3\\frac{5}{14}$.",en:"При $a=2\\frac{3}{7}$ Calculate $a+3\\frac{5}{14}$."}, options: {az:["$4\\frac{11}{14}$", "$5\\frac{11}{14}$", "$5\\frac{1}{14}$", "$6\\frac{1}{14}$", "$4\\frac{3}{14}$"],ru:["$4\\frac{11}{14}$", "$5\\frac{11}{14}$", "$5\\frac{1}{14}$", "$6\\frac{1}{14}$", "$4\\frac{3}{14}$"],en:["$4\\frac{11}{14}$", "$5\\frac{11}{14}$", "$5\\frac{1}{14}$", "$6\\frac{1}{14}$", "$4\\frac{3}{14}$"]}, correct: "B" },
+        { id: 7, text:{az:"İki qatar: biri 6 saata, o biri 8 saata yolu gedir. 1 saat sonra arasındakı məsafə bütün yolun hansı hissəsidir?",ru:"Один за 6ч, другой за 8ч. Расстояние через 1ч?",en:"one in 6ч, another in 8ч. Расстояние через 1ч?"}, options: {az:["$\\frac{17}{24}$", "$\\frac{7}{24}$", "$\\frac{1}{2}$", "$\\frac{3}{8}$", "$\\frac{5}{12}$"],ru:["$\\frac{17}{24}$", "$\\frac{7}{24}$", "$\\frac{1}{2}$", "$\\frac{3}{8}$", "$\\frac{5}{12}$"],en:["$\\frac{17}{24}$", "$\\frac{7}{24}$", "$\\frac{1}{2}$", "$\\frac{3}{8}$", "$\\frac{5}{12}$"]}, correct: "A" },
+        { id: 8, text:{az:"Qələmlərin 1/4-i qırmızı, 30%-i göy, 15%-i yaşıl, qalanı qaradır. Qara hansı hissədir? (Onluq kəsrlə).",ru:"Красные 0.25, синие 0.3, зеленые 0.15. Черные?",en:"Красные 0.25, синие 0.3, зеленые 0.15. Черные?"}, options: {az:["0,3", "0,4", "0,5", "0,6", "0,25"],ru:["0,3", "0,4", "0,5", "0,6", "0,25"],en:["0,3", "0,4", "0,5", "0,6", "0,25"]}, correct: "A" },
+        { id: 9, text:{az:"Üç kisə kartof: $10,5$ kq, $8,75$ kq və ikincidən $1,25$ kq çox. Cəmi nə qədərdir? (Onluq kəsrlə).",ru:"Три мешка: $10.5$; $8.75$; $8.75+1.25$. Всего?",en:"three мешка: $10.5$; $8.75$; $8.75+1.25$. Всего?"}, options: {az:["29,25", "30,0", "28,5", "31,25", "27,5"],ru:["29,25", "30.0", "28.5", "31.25", "27.5"],en:["29,25", "30.0", "28.5", "31.25", "27.5"]}, correct: "A" },
+        { id: 10, text:{az:"Uyğunluğu müəyyən edin:",ru:"Установите соответствие:",en:"Установите correspondence:"}, matching: { 
+            left: ["1. $a=13\\frac{1}{5}, b=7\\frac{1}{8}$", "2. $a=11\\frac{3}{4}, b=6\\frac{1}{7}$", "3. $a=3\\frac{1}{3}, b=1\\frac{3}{8}$"],
+            right: ["a. $a-b=1\\frac{23}{24}$", "b. $a-b=6\\frac{3}{40}$", "c. $a-b=5\\frac{17}{28}$", "d. $a+b=17\\frac{25}{28}$", "e. $a+b=20\\frac{13}{40}$"]
+          }, options: {az:["1-b (və ya e), 2-c (və ya d), 3-a", "1-a, 2-b, 3-c", "1-c, 2-d, 3-a", "1-d, 2-b, 3-e", "1-e, 2-a, 3-d"],ru:["1-b, 2-c, 3-a", "1-a, 2-b, 3-c", "1-c, 2-d, 3-a", "1-d, 2-b, 3-e", "1-e, 2-a, 3-d"],en:["1-b, 2-c, 3-a", "1-a, 2-b, 3-c", "1-c, 2-d, 3-a", "1-d, 2-b, 3-e", "1-e, 2-a, 3-d"]}, correct: "A" }
+      ]
+    }
+  ]
+};
+
+let state = { variantIndex: 0, questionIndex: 0, answers: {}, timeLeft: 3600, finished: false, review: false, lang: 'az' };
+
+function renderAll() {
+  const variant = examData.variants[state.variantIndex];
+  const q = variant.questions[state.questionIndex];
+  
+  // Tabs
+  const tabs = document.getElementById('variantTabs');
+  tabs.innerHTML = '';
+  examData.variants.forEach((v, i) => {
+    const b = document.createElement('button');
+    b.className = `tab ${i === state.variantIndex ? 'active' : ''}`;
+    b.textContent = v.name[state.lang];
+    b.onclick = () => { state.variantIndex = i; state.questionIndex = 0; renderAll(); };
+    tabs.appendChild(b);
+  });
+
+  // Grid
+  const grid = document.getElementById('questionGrid');
+  grid.innerHTML = '';
+  variant.questions.forEach((qv, i) => {
+    const b = document.createElement('button');
+    const key = `${variant.id}-${qv.id}`;
+    b.className = `q-btn ${i === state.questionIndex ? 'active' : ''} ${state.answers[key] ? 'answered' : ''}`;
+    b.textContent = qv.id;
+    b.onclick = () => { state.questionIndex = i; renderAll(); };
+    grid.appendChild(b);
+  });
+
+  // Question
+  document.getElementById('qBadge').textContent = variant.id + q.id;
+  document.getElementById('qCounter').textContent = `${state.questionIndex + 1} / 10`;
+  document.getElementById('qText').innerHTML = q.text[state.lang];
+  
+  // Matching logic
+  const matchDiv = document.getElementById('qMatching');
+  if (q.matching) {
+    matchDiv.classList.remove('hidden');
+    matchDiv.innerHTML = `
+      <div class="space-y-2">${q.matching.left.join('<br>')}</div>
+      <div class="space-y-2">${q.matching.right.join('<br>')}</div>
+    `;
+  } else {
+    matchDiv.classList.add('hidden');
+  }
+
+  // Options
+  const opts = document.getElementById('qOptions');
+  opts.innerHTML = '';
+  q.options[state.lang].forEach((opt, idx) => {
+    const letter = String.fromCharCode(65 + idx);
+    const div = document.createElement('div');
+    const key = `${variant.id}-${q.id}`;
+    div.className = `option ${state.answers[key] === letter ? 'selected' : ''}`;
+    if (state.review) {
+      if (letter === q.correct) div.classList.add('correct');
+      else if (state.answers[key] === letter) div.classList.add('wrong');
+    }
+    div.innerHTML = `<span class="w-8 h-8 rounded-lg flex items-center justify-center font-bold" style="background: var(--primary-light); color: var(--primary);">${letter}</span><span>${opt}</span>`;
+    div.onclick = () => { if(!state.finished) { state.answers[key] = letter; renderAll(); } };
+    opts.appendChild(div);
+  });
+
+  document.getElementById('answeredCount').textContent = `${Object.keys(state.answers).length}/40`;
+  if(typeof renderMathInElement==="function")renderMathInElement(document.body, { delimiters: [{left: '$$', right: '$$', display: true}, {left: '$', right: '$', display: false}], throwOnError: false });
+}
+
+function prevQuestion() { if(state.questionIndex > 0) { state.questionIndex--; renderAll(); } }
+function nextQuestion() { if(state.questionIndex < 9) { state.questionIndex++; renderAll(); } }
+function toggleLang(){const _lg=["az","ru","en"];state.lang=_lg[(_lg.indexOf(state.lang)+1)%3]; document.getElementById('langBtn').textContent = state.lang.toUpperCase(); renderAll(); }
+function toggleTheme() { document.documentElement.classList.toggle('dark'); }
+
+function finishExam() {
+  state.finished = true;
+  let c = 0, w = 0, e = 0;
+  examData.variants.forEach(v => {
+    v.questions.forEach(q => {
+      const a = state.answers[`${v.id}-${q.id}`];
+      if(!a) e++; else if(a === q.correct) c++; else w++;
+    });
+  });
+  document.getElementById('correctCount').textContent = c;
+  document.getElementById('wrongCount').textContent = w;
+  document.getElementById('emptyCount').textContent = e;
+  document.getElementById('resultScoreIcon').textContent = c;
+  document.getElementById('resultModal').classList.remove('hidden');
+  document.getElementById('resultModal').classList.add('flex');
+}
+
+function showReview() { state.review = true; document.getElementById('resultModal').classList.add('hidden'); renderAll(); }
+function resetExam() { location.reload(); }
+
+renderAll();
+setInterval(() => {
+  if(!state.finished && state.timeLeft > 0) {
+    state.timeLeft--;
+    const m = Math.floor(state.timeLeft/60).toString().padStart(2,'0');
+    const s = (state.timeLeft%60).toString().padStart(2,'0');
+    document.getElementById('timer').textContent = `${m}:${s}`;
+  }
+}, 1000);
+
+/* ===== АВТОПАТЧ: английский язык ===== */
+(function(){
+  function addEn(o,d){
+    if(d>25||o==null||typeof o!=='object')return;
+    if(Array.isArray(o)){for(var i=0;i<o.length;i++)addEn(o[i],d+1);return;}
+    if(o.ru!==undefined&&o.en===undefined){o.en=o.ru;}
+    else if(o.az!==undefined&&o.en===undefined&&o.ru===undefined){o.en=o.az;}
+    for(var k in o){if(Object.prototype.hasOwnProperty.call(o,k)){
+      if(k.length>3&&k.slice(-3)==='_ru'){
+        var ek=k.slice(0,-3)+'_en';
+        if(o[ek]===undefined)o[ek]=o[k];
+      }
+      if(k.length>3&&k.slice(-3)==='_az'){
+        var ek2=k.slice(0,-3)+'_en';
+        if(o[ek2]===undefined&&o[k.slice(0,-3)+'_ru']===undefined)o[ek2]=o[k];
+      }
+    }}
+    for(var k2 in o){if(k2!=='en'&&Object.prototype.hasOwnProperty.call(o,k2)){
+      try{addEn(o[k2],d+1);}catch(e){}
+    }}
+  }
+  try{if(typeof examData!=='undefined')addEn(examData,0);}catch(e){}
+  try{if(typeof QS!=='undefined')addEn(QS,0);}catch(e){}
+  try{if(typeof variants!=='undefined')addEn(variants,0);}catch(e){}
+  try{if(typeof ui!=='undefined')addEn(ui,0);}catch(e){}
+  try{if(typeof UI!=='undefined')addEn(UI,0);}catch(e){}
+  try{if(typeof L!=='undefined'&&typeof L==='object')addEn(L,0);}catch(e){}
+  try{if(typeof TXT!=='undefined')addEn(TXT,0);}catch(e){}
+  try{if(typeof i18n!=='undefined')addEn(i18n,0);}catch(e){}
+  try{if(typeof T!=='undefined'&&typeof T==='object')addEn(T,0);}catch(e){}
+})();
+/* Безопасный ре-рендер после патча данных */
+(function(){
+  function _rr(){
+    try{if(typeof renderAll==='function'){renderAll();return;}}catch(e){}
+    try{if(typeof render==='function'){render();return;}}catch(e){}
+    try{if(typeof renderQuestion==='function'){renderQuestion();}}catch(e){}
+    try{if(typeof updateTexts==='function'){updateTexts();}}catch(e){}
+  }
+  if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',function(){setTimeout(_rr,0);});}
+  else{setTimeout(_rr,0);}
+})();
+
+</script>
+<script>
+(function() {
+    // Функция отправки прогресса родительскому окну
+    function sendProgress() {
+        if (!window.parent) return;
+        
+        // Получаем данные о прогрессе из глобальных переменных урока
+        let answersCount = 0;
+        let totalQuestions = 0;
+        let correctCount = 0;
+        let completed = false;
+        let answers = {};
+        
+        // Определяем тип урока по наличию переменных
+        if (typeof state !== 'undefined' && state.answers) {
+            // Для уроков с state.answers (Lesson-1...12, 15, 16, 17)
+            const variant = state.variantIndex !== undefined ? state.variantIndex : 0;
+            const qs = typeof QS !== 'undefined' ? QS : (typeof examData !== 'undefined' && examData.variants ? examData.variants : []);
+            const currentVariant = qs[variant] || qs[0];
+            
+            if (currentVariant && currentVariant.questions) {
+                totalQuestions = currentVariant.questions.length;
+                answers = state.answers || {};
+                answersCount = Object.keys(answers).length;
+                
+                // Подсчёт правильных ответов
+                for (let i = 0; i < currentVariant.questions.length; i++) {
+                    const q = currentVariant.questions[i];
+                    const key = `${currentVariant.id || 'A'}-${q.id}`;
+                    if (answers[key] === q.correct) {
+                        correctCount++;
+                    }
+                }
+                completed = state.finished === true;
+            }
+        } else if (typeof state !== 'undefined' && state.ans) {
+            // Для Lesson-13 (Müstəvi fiqurlar) и Lesson-14 (Fəza fiqurları)
+            const qs = typeof QS !== 'undefined' ? QS : [];
+            const variantQs = qs.filter(q => q.v === state.v);
+            totalQuestions = variantQs.length;
+            answers = state.ans || {};
+            answersCount = Object.keys(answers).length;
+            
+            for (let i = 0; i < variantQs.length; i++) {
+                const q = variantQs[i];
+                const userAns = answers[q.id];
+                if (userAns !== undefined) {
+                    if (q.t === 'choice') {
+                        if (userAns === q.ans) correctCount++;
+                    } else if (q.t === 'open' || q.t === 'match') {
+                        if (String(userAns).trim().toLowerCase() === String(q.ans_text || '').trim().toLowerCase()) correctCount++;
+                    }
+                }
+            }
+            completed = state.finished === true;
+        } else if (typeof S !== 'undefined' && S.ans) {
+            // Альтернативная структура (Lesson-13, 14)
+            const qs = typeof QS !== 'undefined' ? QS : [];
+            const variantQs = qs.filter(q => q.v === S.v);
+            totalQuestions = variantQs.length;
+            answers = S.ans || {};
+            answersCount = Object.keys(answers).length;
+            completed = S.finished === true;
+        }
+        
+        if (totalQuestions === 0) return;
+        
+        window.parent.postMessage({
+            type: 'lessonProgress',
+            lessonId: parseInt(window.location.pathname.match(/Lesson-(\d+)/)?.[1] || '0'),
+            answersCount: answersCount,
+            totalQuestions: totalQuestions,
+            correctCount: correctCount,
+            completed: completed,
+            answers: answers
+        }, '*');
+    }
+    
+    // Перехватываем вызовы finishExam/resetExam/showReview для отправки прогресса
+    const originalFinish = window.finishExam;
+    if (originalFinish) {
+        window.finishExam = function(...args) {
+            const result = originalFinish.apply(this, args);
+            setTimeout(sendProgress, 100);
+            return result;
+        };
+    }
+    
+    const originalReset = window.resetExam;
+    if (originalReset) {
+        window.resetExam = function(...args) {
+            const result = originalReset.apply(this, args);
+            setTimeout(sendProgress, 100);
+            return result;
+        };
+    }
+    
+    const originalShowReview = window.showReview;
+    if (originalShowReview) {
+        window.showReview = function(...args) {
+            const result = originalShowReview.apply(this, args);
+            setTimeout(sendProgress, 100);
+            return result;
+        };
+    }
+    
+    // Отправляем прогресс при каждом ответе (перехватываем выбор варианта)
+    const originalPick = window.pick;
+    if (originalPick) {
+        window.pick = function(...args) {
+            const result = originalPick.apply(this, args);
+            setTimeout(sendProgress, 50);
+            return result;
+        };
+    }
+    
+    const originalSaveT = window.saveT;
+    if (originalSaveT) {
+        window.saveT = function(...args) {
+            const result = originalSaveT.apply(this, args);
+            setTimeout(sendProgress, 50);
+            return result;
+        };
+    }
+    
+    // Для уроков с toggleVariant и т.д.
+    const originalRenderAll = window.renderAll;
+    if (originalRenderAll) {
+        window.renderAll = function(...args) {
+            const result = originalRenderAll.apply(this, args);
+            setTimeout(sendProgress, 50);
+            return result;
+        };
+    }
+    
+    // Периодическая отправка прогресса (каждые 3 секунды)
+    setInterval(sendProgress, 3000);
+    
+    // Запрос времени у родителя
+    if (window.parent) {
+        window.parent.postMessage({ type: 'requestTimer' }, '*');
+    }
+    
+    // Приём сообщений от родителя
+    window.addEventListener('message', function(event) {
+        if (event.data && event.data.type === 'syncTimer') {
+            if (typeof state !== 'undefined' && state.timeLeft !== undefined) {
+                state.timeLeft = event.data.timeLeft;
+                if (typeof updateTimerDisplay === 'function') updateTimerDisplay();
+            } else if (typeof S !== 'undefined' && S.timer !== undefined) {
+                S.timer = event.data.timeLeft;
+            }
+        }
+        if (event.data && event.data.type === 'forceFinish') {
+            if (typeof finishExam === 'function') finishExam();
+        }
+        if (event.data && event.data.type === 'restoreProgress') {
+            // Восстановление сохранённых ответов
+            const saved = event.data.progress;
+            if (saved && saved.answers) {
+                if (typeof state !== 'undefined' && state.answers) {
+                    state.answers = saved.answers;
+                    if (typeof renderAll === 'function') renderAll();
+                }
+            }
+        }
+    });
+    
+    // Отправляем прогресс при загрузке
+    setTimeout(sendProgress, 500);
+})();
+</script>
+</body>
+</html>

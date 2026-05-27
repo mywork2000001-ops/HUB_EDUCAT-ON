@@ -1,0 +1,340 @@
+<!doctype html>
+<html lang="az" class="">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Interactive Education Network</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="./_Shared_Core/style.css" />
+  <style>
+    /* Hub-specific overrides */
+    .hero-gradient {
+      background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 50%, #064e3b 100%);
+    }
+    .dark .hero-gradient {
+      background: linear-gradient(135deg, #020617 0%, #0f172a 50%, #022c22 100%);
+    }
+    .hero-glow {
+      position: absolute;
+      width: 600px; height: 600px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(16,185,129,0.15) 0%, transparent 70%);
+      top: -150px; right: -150px;
+      pointer-events: none;
+    }
+    .subject-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      transition: all 0.35s cubic-bezier(0.34,1.56,0.64,1);
+      text-decoration: none;
+      color: var(--text);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      position: relative;
+    }
+    .subject-card:hover {
+      box-shadow: var(--shadow-lg);
+      transform: translateY(-4px) scale(1.01);
+      border-color: var(--primary);
+    }
+    .subject-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      transition: opacity 0.3s;
+      background: linear-gradient(135deg, var(--primary-light), transparent);
+    }
+    .subject-card:hover::before { opacity: 1; }
+    .card-accent {
+      height: 4px;
+      width: 100%;
+      background: linear-gradient(90deg, var(--primary), var(--primary-hover));
+    }
+    .stat-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.2rem 0.6rem;
+      border-radius: 9999px;
+      font-size: 0.7rem;
+      font-weight: 600;
+      background: var(--primary-light);
+      color: var(--primary);
+    }
+    .lang-cycle {
+      min-width: 2.5rem;
+      text-align: center;
+      font-weight: 700;
+      font-size: 0.8rem;
+      letter-spacing: 0.05em;
+    }
+    .coming-soon {
+      opacity: 0.55;
+      cursor: default;
+      pointer-events: none;
+    }
+    .coming-soon-badge {
+      font-size: 0.65rem;
+      font-weight: 700;
+      background: var(--border);
+      color: var(--muted);
+      padding: 0.15rem 0.5rem;
+      border-radius: 9999px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    /* SVG icon sizes */
+    svg.icon { display: block; }
+    /* Particle dots decoration */
+    .dots-pattern {
+      background-image: radial-gradient(circle, rgba(255,255,255,0.06) 1px, transparent 1px);
+      background-size: 24px 24px;
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── HEADER ──────────────────────────────────────────────── -->
+<header class="sticky top-0 z-50 backdrop-blur-md"
+        style="background: rgba(var(--surface-rgb, 255,255,255), 0.9); border-bottom: 1px solid var(--border);">
+  <div class="container">
+    <div class="flex items-center justify-between py-3 gap-3">
+      <!-- Logo -->
+      <a href="./index.html" class="flex items-center gap-3 no-underline">
+        <div class="w-10 h-10 rounded-xl flex items-center justify-center text-white font-black text-sm"
+             style="background: linear-gradient(135deg, var(--primary) 0%, var(--primary-hover) 100%);">
+          IEN
+        </div>
+        <div class="hidden sm:block">
+          <p class="font-bold text-base leading-tight" id="siteName">Interactive Education Network</p>
+          <p class="text-xs" style="color:var(--muted)" id="siteTagline">Rəqəmsal Tədris Ekosistemi</p>
+        </div>
+      </a>
+
+      <!-- Controls -->
+      <div class="flex items-center gap-2">
+        <!-- Language cycler -->
+        <button onclick="LangManager.cycle()" class="btn-icon lang-cycle" id="langBtn">AZ</button>
+        <!-- Theme toggle -->
+        <button onclick="ThemeManager.toggle()" class="btn-icon" aria-label="Toggle theme">
+          <svg class="icon" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- ── HERO ────────────────────────────────────────────────── -->
+<section class="hero-gradient dots-pattern relative overflow-hidden py-20 sm:py-28">
+  <div class="hero-glow"></div>
+  <div class="container relative z-10 text-center text-white">
+    <!-- Badge -->
+    <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full mb-6 text-xs font-semibold tracking-wider"
+         style="background: rgba(16,185,129,0.2); border: 1px solid rgba(16,185,129,0.4); color:#6ee7b7;">
+      <svg width="12" height="12" fill="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="12"/></svg>
+      <span id="heroBadge">BETA — 2025/2026 Tədris İli</span>
+    </div>
+
+    <h1 class="text-4xl sm:text-6xl font-black leading-tight mb-5 tracking-tight" id="heroTitle">
+      Interactive<br/>
+      <span style="color:#34d399;">Education</span> Network
+    </h1>
+    <p class="text-lg sm:text-xl max-w-2xl mx-auto mb-8" style="color:#94a3b8;" id="heroSubtitle">
+      PDF dərsliklərindən interaktiv test platformasına — çoxdilli, ağıllı, sürətli.
+    </p>
+
+    <!-- Hero stats -->
+    <div class="flex flex-wrap justify-center gap-6 text-sm" style="color:#94a3b8;">
+      <div class="flex items-center gap-2">
+        <svg width="16" height="16" fill="none" stroke="#34d399" stroke-width="2" viewBox="0 0 24 24">
+          <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2"/>
+        </svg>
+        <span id="statLessons">17+ Dərs</span>
+      </div>
+      <div class="flex items-center gap-2">
+        <svg width="16" height="16" fill="none" stroke="#34d399" stroke-width="2" viewBox="0 0 24 24">
+          <path d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129"/>
+        </svg>
+        <span id="statLangs">AZ · RU · EN</span>
+      </div>
+      <div class="flex items-center gap-2">
+        <svg width="16" height="16" fill="none" stroke="#34d399" stroke-width="2" viewBox="0 0 24 24">
+          <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+        </svg>
+        <span id="statDim">DİM 2025 Materialları</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── PROJECTS GRID ────────────────────────────────────────── -->
+<main class="container py-14">
+
+  <div class="flex items-center justify-between mb-8 gap-4 flex-wrap">
+    <div>
+      <h2 class="text-2xl font-bold" id="sectionTitle">Fənn Portalları</h2>
+      <p class="text-sm mt-1" style="color:var(--muted)" id="sectionSubtitle">Bir dərsdən tam kursadək — öyrən, sına, inkişaf et</p>
+    </div>
+    <span class="badge badge-success" id="projectCount">1 Aktiv Layihə</span>
+  </div>
+
+  <div class="card-grid" id="projectGrid">
+
+    <!-- ── P001 · Math Grade 5 ─────────────────────────────── -->
+    <a href="./P001_Math_5_DIM/index.html" class="subject-card fade-in" style="animation-delay:0.05s">
+      <div class="card-accent" style="background:linear-gradient(90deg,#10b981,#0ea5e9);"></div>
+      <div class="p-6 flex flex-col gap-4 flex-1 relative z-10">
+        <!-- Icon row -->
+        <div class="flex items-start justify-between">
+          <div class="w-14 h-14 rounded-2xl flex items-center justify-center text-white text-2xl font-black"
+               style="background:linear-gradient(135deg,#10b981,#059669);">
+            ∑
+          </div>
+          <div class="flex flex-col items-end gap-1">
+            <span class="badge badge-success">Aktiv</span>
+            <span class="stat-chip">
+              <svg width="10" height="10" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"/>
+              </svg>
+              17 dərs
+            </span>
+          </div>
+        </div>
+
+        <!-- Text -->
+        <div>
+          <p class="text-xs font-semibold uppercase tracking-widest mb-1" style="color:var(--primary)">
+            P001 · V Sinif
+          </p>
+          <h3 class="text-xl font-bold leading-snug mb-2" id="p001Title">Riyaziyyat</h3>
+          <p class="text-sm leading-relaxed" style="color:var(--muted)" id="p001Desc">
+            DİM 2025 materialları əsasında interaktiv testlər. Mövzu izahları, anlıq qiymətləndirmə.
+          </p>
+        </div>
+
+        <!-- Meta chips -->
+        <div class="flex flex-wrap gap-2 text-xs">
+          <span class="px-2 py-0.5 rounded-full font-medium" style="background:var(--border);color:var(--muted)">DİM 2025</span>
+          <span class="px-2 py-0.5 rounded-full font-medium" style="background:var(--border);color:var(--muted)">KaTeX</span>
+          <span class="px-2 py-0.5 rounded-full font-medium" style="background:var(--border);color:var(--muted)">AZ · RU</span>
+        </div>
+
+        <!-- CTA -->
+        <div class="flex items-center gap-2 mt-auto pt-2" style="color:var(--primary)">
+          <span class="text-sm font-semibold" id="p001Cta">Dərslərə keç</span>
+          <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+            <path d="M5 12h14M12 5l7 7-7 7"/>
+          </svg>
+        </div>
+      </div>
+    </a>
+
+    <!-- ── P002 · Placeholder (Coming Soon) ───────────────── -->
+    <div class="subject-card coming-soon" aria-hidden="true">
+      <div class="card-accent" style="background:var(--border);"></div>
+      <div class="p-6 flex flex-col gap-4 flex-1">
+        <div class="flex items-start justify-between">
+          <div class="w-14 h-14 rounded-2xl flex items-center justify-center text-3xl"
+               style="background:var(--surface-2);">
+            ?
+          </div>
+          <span class="coming-soon-badge">Tezliklə</span>
+        </div>
+        <div>
+          <p class="text-xs font-semibold uppercase tracking-widest mb-1" style="color:var(--muted)">P002</p>
+          <h3 class="text-xl font-bold leading-snug mb-2" style="color:var(--muted)" id="p002Title">Növbəti Fənn</h3>
+          <p class="text-sm" style="color:var(--muted)" id="p002Desc">PDF yüklənməsi gözlənilir...</p>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /card-grid -->
+</main>
+
+<!-- ── FOOTER ───────────────────────────────────────────────── -->
+<footer class="border-t mt-8 py-8" style="border-color:var(--border)">
+  <div class="container flex flex-col sm:flex-row items-center justify-between gap-4 text-sm" style="color:var(--muted)">
+    <p>
+      <span class="font-semibold" style="color:var(--text)">Interactive Education Network</span>
+      &nbsp;·&nbsp; <span id="footerYear">2026</span>
+    </p>
+    <div class="flex items-center gap-4">
+      <span id="footerStack">Tailwind · KaTeX · Vanilla JS</span>
+      <span class="badge badge-success" style="font-size:0.65rem;" id="footerVersion">v1.0.0</span>
+    </div>
+  </div>
+</footer>
+
+<!-- ── SCRIPTS ──────────────────────────────────────────────── -->
+<script src="./_Shared_Core/script.js"></script>
+<script>
+  /* ── i18n strings ───────────────────────────────────────── */
+  const STRINGS = {
+    az: {
+      siteTagline:    'Rəqəmsal Tədris Ekosistemi',
+      heroBadge:      'BETA — 2025/2026 Tədris İli',
+      heroSubtitle:   'PDF dərsliklərindən interaktiv test platformasına — çoxdilli, ağıllı, sürətli.',
+      statLessons:    '17+ Dərs',
+      statLangs:      'AZ · RU · EN',
+      statDim:        'DİM 2025 Materialları',
+      sectionTitle:   'Fənn Portalları',
+      sectionSubtitle:'Bir dərsdən tam kursadək — öyrən, sına, inkişaf et',
+      projectCount:   '1 Aktiv Layihə',
+      p001Title:      'Riyaziyyat',
+      p001Desc:       'DİM 2025 materialları əsasında interaktiv testlər. Mövzu izahları, anlıq qiymətləndirmə.',
+      p001Cta:        'Dərslərə keç',
+      p002Title:      'Növbəti Fənn',
+      p002Desc:       'PDF yüklənməsi gözlənilir...',
+      footerStack:    'Tailwind · KaTeX · Vanilla JS',
+    },
+    ru: {
+      siteTagline:    'Цифровая Образовательная Экосистема',
+      heroBadge:      'BETA — Учебный год 2025/2026',
+      heroSubtitle:   'От PDF-учебников к интерактивной платформе — мультиязычно, умно, быстро.',
+      statLessons:    '17+ Уроков',
+      statLangs:      'АЗ · РУ · EN',
+      statDim:        'Материалы DİM 2025',
+      sectionTitle:   'Порталы предметов',
+      sectionSubtitle:'От одного урока до полного курса — учись, проверяй, развивайся',
+      projectCount:   '1 Активный проект',
+      p001Title:      'Математика',
+      p001Desc:       'Интерактивные тесты на основе материалов DİM 2025. Разборы тем, мгновенная оценка.',
+      p001Cta:        'Перейти к урокам',
+      p002Title:      'Следующий предмет',
+      p002Desc:       'Ожидается загрузка PDF...',
+      footerStack:    'Tailwind · KaTeX · Vanilla JS',
+    },
+    en: {
+      siteTagline:    'Digital Learning Ecosystem',
+      heroBadge:      'BETA — Academic Year 2025/2026',
+      heroSubtitle:   'From PDF textbooks to an interactive test platform — multilingual, smart, fast.',
+      statLessons:    '17+ Lessons',
+      statLangs:      'AZ · RU · EN',
+      statDim:        'DİM 2025 Materials',
+      sectionTitle:   'Subject Portals',
+      sectionSubtitle:'From a single lesson to a full course — learn, test, grow',
+      projectCount:   '1 Active Project',
+      p001Title:      'Mathematics',
+      p001Desc:       'Interactive tests based on DİM 2025 materials. Topic explanations, instant grading.',
+      p001Cta:        'Go to lessons',
+      p002Title:      'Next Subject',
+      p002Desc:       'Waiting for PDF upload...',
+      footerStack:    'Tailwind · KaTeX · Vanilla JS',
+    },
+  };
+
+  /* ── Boot ───────────────────────────────────────────────── */
+  onReady(() => {
+    ThemeManager.init();
+    LangManager.init(STRINGS);
+    document.getElementById('footerYear').textContent = new Date().getFullYear();
+  });
+</script>
+</body>
+</html>
