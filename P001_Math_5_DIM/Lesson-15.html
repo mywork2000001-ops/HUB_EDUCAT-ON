@@ -4,6 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Statistika və Məlumatların Təsviri — DİM | 5-ci sinif</title>
+    <link rel="stylesheet" href="style.css" />
     <style>
       @import url("https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=JetBrains+Mono:wght@400;700&display=swap");
       :root {
@@ -662,7 +663,7 @@
         <div class="vtabs" id="VT"></div>
       </div>
       <div class="hdr-r">
-        <button class="bsm" onclick="toggleLang()" id="LB">AZ / RU</button>
+        <div class="lang-selector"><button onclick="setLang('az')" class="lang-btn active" id="lbAZ">AZ</button><button onclick="setLang('ru')" class="lang-btn" id="lbRU">RU</button><button onclick="setLang('en')" class="lang-btn" id="lbEN">EN</button></div>
         <button class="bicn" onclick="toggleDark()" id="DB" title="Tema">
           <svg
             width="17"
@@ -2075,16 +2076,17 @@
         if (rb) rb.textContent = L.restart;
       }
 
-      function toggleLang() {
-        const _lg = ["az", "ru", "en"];
-        S.lang = _lg[(_lg.indexOf(S.lang) + 1) % 3];
-        document.getElementById("LB").textContent = {
-          az: "RU",
-          ru: "EN",
-          en: "AZ",
-        }[S.lang];
+      function setLang(l) {
+        S.lang = l;
+        ['az','ru','en'].forEach(x => {
+          const el = document.getElementById('lb'+x.toUpperCase());
+          if(el) el.classList.toggle('active', x===l);
+        });
         renderAll();
         applyUI();
+      }
+      function toggleLang() {
+        setLang(['az','ru','en'][(['az','ru','en'].indexOf(S.lang)+1)%3]);
       }
       function toggleDark() {
         S.dark = !S.dark;
