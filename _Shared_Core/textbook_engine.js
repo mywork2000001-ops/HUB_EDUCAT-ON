@@ -49,11 +49,16 @@ const TextbookEngine = (() => {
 
   /* ── Language switcher ───────────────────────────────────── */
   function initLang() {
-    document.querySelectorAll('[data-lang-btn]').forEach(btn => {
+    /* support both [data-lang-btn] (old format) and [data-lang] (mid format) */
+    const btns = document.querySelectorAll('[data-lang-btn],[data-lang]');
+    btns.forEach(btn => {
+      const l = btn.dataset.langBtn || btn.dataset.lang;
       btn.addEventListener('click', () => {
-        lang = btn.dataset.langBtn;
-        document.querySelectorAll('[data-lang-btn]').forEach(b =>
-          b.classList.toggle('lang-active', b.dataset.langBtn === lang));
+        lang = l;
+        btns.forEach(b => {
+          const bl = b.dataset.langBtn || b.dataset.lang;
+          b.classList.toggle('lang-active', bl === lang);
+        });
         applyLang();
       });
     });
@@ -62,7 +67,7 @@ const TextbookEngine = (() => {
   function applyLang() {
     document.querySelectorAll('[data-az],[data-ru],[data-en]').forEach(el => {
       const val = el.dataset[lang] || el.dataset.az;
-      if (val !== undefined) el.textContent = val;
+      if (val !== undefined) el.innerHTML = val;
     });
     updateExamLang();
     updateChallengeLang();
@@ -154,7 +159,7 @@ const TextbookEngine = (() => {
       const opts = q['opts_' + lang] || q.opts_az || q.opts || [];
       qEl.querySelectorAll('.exam-opt').forEach((b, j) => { b.textContent = opts[j] || b.textContent; });
       const hintEl = qEl.querySelector('.exam-hint');
-      if (hintEl && q.hint) hintEl.textContent = q.hint[lang] || q.hint.az || '';
+      if (hintEl && q.hint) hintEl.innerHTML = q.hint[lang] || q.hint.az || '';
     });
   }
 
@@ -300,17 +305,117 @@ const TextbookEngine = (() => {
     return arr;
   }
 
+  /* ── Auto-render for new-format [data-movzu] files ──────── */
+  function initMovzu() {
+    const movzuEl = document.querySelector('[data-movzu]');
+    if (!movzuEl) return;
+
+    const num     = movzuEl.dataset.movzu;
+    const titleAz = movzuEl.dataset.titleAz || '';
+    const titleRu = movzuEl.dataset.titleRu || titleAz;
+    const titleEn = movzuEl.dataset.titleEn || titleAz;
+    const section = movzuEl.dataset.section ? `· Bölmə ${movzuEl.dataset.section}` : '';
+
+    /* inject sticky header */
+    const hdr = document.createElement('header');
+    hdr.className = 'tb-header';
+    hdr.innerHTML =
+      `<a href="index.html" class="tb-back">← P002</a>` +
+      `<div style="flex:1;min-width:0">` +
+        `<span class="tb-title" data-az="${titleAz}" data-ru="${titleRu}" data-en="${titleEn}">${titleAz}</span>` +
+        (section ? `<span style="font-size:.7rem;color:var(--muted);display:block">${section}</span>` : '') +
+      `</div>` +
+      `<div class="tb-controls">` +
+        `<button class="lang-btn lang-active" data-lang-btn="az">AZ</button>` +
+        `<button class="lang-btn" data-lang-btn="ru">RU</button>` +
+        `<button class="lang-btn" data-lang-btn="en">EN</button>` +
+        `<button id="darkToggle" class="dark-btn">🌙</button>` +
+      `</div>`;
+    document.body.insertBefore(hdr, document.body.firstChild);
+
+    /* make #app-root the tb-main scrollable container */
+    const appRoot = document.getElementById('app-root');
+    if (appRoot) appRoot.classList.add('tb-main');
+
+    /* build tab nav from [data-pillar] sections */
+    const nav = document.createElement('nav');
+    nav.className = 'tb-tabs';
+
+    movzuEl.querySelectorAll(':scope > [data-pillar]').forEach((pillar, i) => {
+      const key = pillar.dataset.pillar;
+      const az  = LANG.az[key] || key;
+      const ru  = LANG.ru[key] || key;
+      const en  = LANG.en[key] || key;
+
+      const btn = document.createElement('button');
+      btn.className = 'tb-tab' + (i === 0 ? ' tab-active' : '');
+      btn.dataset.tab = key;
+      btn.dataset.az  = az;
+      btn.dataset.ru  = ru;
+      btn.dataset.en  = en;
+      btn.textContent = az;
+      nav.appendChild(btn);
+
+      pillar.setAttribute('data-panel', key);
+      if (i !== 0) pillar.classList.add('hidden');
+
+      /* inject exam container into empty exam pillar */
+      if (key === 'exam' && !pillar.children.length) {
+        pillar.innerHTML =
+          `<div class="exam-header">` +
+            `<span class="exam-score-lbl" data-az="${az}" data-ru="${ru}" data-en="${en}">${az}</span>` +
+            `<span class="exam-score-val"><strong id="examScore">0/0</strong></span>` +
+          `</div>` +
+          `<div id="examContainer"></div>`;
+      }
+
+      /* inject challenge area into empty challenge pillar */
+      if (key === 'challenge' && !pillar.children.length) {
+        pillar.innerHTML = `<div id="challengeArea"></div>`;
+      }
+    });
+
+    if (appRoot) appRoot.insertBefore(nav, movzuEl);
+
+    /* apply CSS classes to theory data-block elements */
+    movzuEl.querySelectorAll('[data-block]').forEach(block => {
+      const type = block.dataset.block;
+      if (type === 'svg') {
+        block.style.cssText += 'text-align:center;margin:.75rem 0';
+      } else if (type === 'worked-example') {
+        block.classList.add('theory-example');
+      } else if (type === 'rule') {
+        block.classList.add('theory-block', 'theory-rule');
+      } else {
+        block.classList.add('theory-block');
+      }
+
+      /* render data-title-* as translated <h3> */
+      const taz = block.dataset.titleAz;
+      if (taz && !block.querySelector('h3')) {
+        const h3 = document.createElement('h3');
+        h3.className = 'theory-h2';
+        h3.dataset.az = taz;
+        h3.dataset.ru = block.dataset.titleRu || taz;
+        h3.dataset.en = block.dataset.titleEn || taz;
+        h3.textContent = taz;
+        block.insertBefore(h3, block.firstChild);
+      }
+    });
+  }
+
   /* ── Public init ─────────────────────────────────────────── */
   function init() {
+    initMovzu();   /* must run first — injects header, nav, panel attrs */
     initTabs();
     initLang();
     initPractice();
     initSimulation();
     initExam();
     initChallenge();
-    /* dark mode toggle */
     const dm = document.getElementById('darkToggle');
     if (dm) dm.addEventListener('click', () => document.documentElement.classList.toggle('dark'));
+    applyLang();   /* populate data-az/ru/en elements on first load */
   }
 
   return { init, examClick, chStart, chAnswer, examClick };
