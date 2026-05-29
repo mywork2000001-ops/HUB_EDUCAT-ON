@@ -89,6 +89,8 @@ let state = {
   lang:          "az",
 };
 
+let _slideDir = "right"; // "right" = forward, "left" = backward
+
 /* ── Persistence ── */
 function loadState() {
   try {
@@ -188,7 +190,7 @@ function renderVariantTabs() {
     const btn = document.createElement("button");
     btn.className = "tab " + (i === state.variantIndex ? "active" : "");
     btn.textContent = v.name[state.lang];
-    btn.onclick = () => { state.variantIndex = i; state.questionIndex = 0; renderAll(); };
+    btn.onclick = () => { _slideDir = "right"; state.variantIndex = i; state.questionIndex = 0; renderAll(); };
     container.appendChild(btn);
   });
 }
@@ -205,7 +207,7 @@ function renderQuestionGrid() {
     if (i === state.questionIndex) btn.classList.add("active");
     if (state.answers[key]) btn.classList.add("answered");
     btn.textContent = q.id;
-    btn.onclick = () => { state.questionIndex = i; renderAll(); };
+    btn.onclick = () => { _slideDir = i > state.questionIndex ? "right" : "left"; state.questionIndex = i; renderAll(); };
     container.appendChild(btn);
   });
 }
@@ -217,6 +219,14 @@ function renderQuestion() {
   const key     = variant.id + "-" + q.id;
   const saved   = state.answers[key];
   const L       = state.lang;
+
+  /* Slide animation */
+  const content = document.getElementById("qContent");
+  if (content) {
+    content.classList.remove("slide-in-right", "slide-in-left", "fade-in");
+    void content.offsetWidth; // force reflow
+    content.classList.add(_slideDir === "right" ? "slide-in-right" : "slide-in-left");
+  }
 
   const set = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
 
@@ -301,12 +311,12 @@ function renderAll() {
 
 /* ── Navigation ── */
 function prevQuestion() {
-  if (state.questionIndex > 0) { state.questionIndex--; renderAll(); }
+  if (state.questionIndex > 0) { _slideDir = "left"; state.questionIndex--; renderAll(); }
 }
 
 function nextQuestion() {
   const variant = examData.variants[state.variantIndex];
-  if (state.questionIndex < variant.questions.length - 1) { state.questionIndex++; renderAll(); }
+  if (state.questionIndex < variant.questions.length - 1) { _slideDir = "right"; state.questionIndex++; renderAll(); }
 }
 
 /* ── Timer ── */
@@ -367,6 +377,55 @@ function showResults() {
                        .replace("{p}", Math.round((r.correct / r.total) * 100));
   set("resultMessage", msg);
 
+  /* ── Build wrong-answers list ── */
+  const wrongItems = [];
+  examData.variants.forEach(v => {
+    v.questions.forEach(q => {
+      const ans = state.answers[v.id + "-" + q.id];
+      if (ans && ans !== q.correct) {
+        wrongItems.push({ vId: v.id, q, userAns: ans });
+      }
+    });
+  });
+
+  let wrongSect = document.getElementById("wrongAnswersList");
+  if (!wrongSect) {
+    wrongSect = document.createElement("div");
+    wrongSect.id = "wrongAnswersList";
+    wrongSect.style.marginTop = "0";
+    const modal = document.getElementById("resultModal");
+    const inner = modal && modal.querySelector(".card");
+    if (inner) {
+      const btnRow = inner.querySelector(".flex.gap-3.justify-center");
+      if (btnRow) inner.insertBefore(wrongSect, btnRow);
+      else inner.appendChild(wrongSect);
+    }
+  }
+
+  if (wrongItems.length === 0) {
+    wrongSect.innerHTML = "";
+    wrongSect.style.display = "none";
+  } else {
+    const labels = { az: "Səhv cavablar", ru: "Неверные ответы", en: "Wrong answers" };
+    wrongSect.style.display = "";
+    wrongSect.innerHTML =
+      `<div class="wrong-summary-title">✗ ${labels[state.lang] || labels.az}</div>` +
+      wrongItems.map(item => {
+        const rawText = item.q.text[state.lang] || item.q.text.az;
+        const plain = rawText.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim();
+        const excerpt = plain.length > 55 ? plain.substring(0, 55) + "…" : plain;
+        return `<div class="wrong-item">
+          <span class="wrong-item-num">${item.vId}${item.q.id}</span>
+          <span class="wrong-item-text" title="${plain}">${excerpt}</span>
+          <span class="wrong-item-answers">
+            <span class="wrong-item-user">${item.userAns}</span>
+            <span class="wrong-item-arrow">→</span>
+            <span class="wrong-item-correct">${item.q.correct}</span>
+          </span>
+        </div>`;
+      }).join("");
+  }
+
   const modal = document.getElementById("resultModal");
   if (modal) { modal.classList.remove("hidden"); modal.classList.add("flex"); }
 }
@@ -395,8 +454,8 @@ function resetExam() {
 /* ── Keyboard shortcuts ── */
 document.addEventListener("keydown", e => {
   if (state.finished && !state.review) return;
-  if (e.key === "ArrowLeft")  prevQuestion();
-  if (e.key === "ArrowRight") nextQuestion();
+  if (e.key === "ArrowLeft")  { _slideDir = "left";  prevQuestion(); }
+  if (e.key === "ArrowRight") { _slideDir = "right"; nextQuestion(); }
   if (e.key >= "1" && e.key <= "5") {
     const variant = examData.variants[state.variantIndex];
     const q       = variant.questions[state.questionIndex];

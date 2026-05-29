@@ -1,0 +1,693 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Урок 9 — Итоговая контрольная. Глава 4: Проценты</title>
+    <style>
+      :root {
+        --bg-dark: #0f0f1a;
+        --bg-card: rgba(255, 255, 255, 0.05);
+        --bg-glass: rgba(255, 255, 255, 0.08);
+        --border-glass: rgba(255, 255, 255, 0.15);
+        --text-primary: #e8e8f0;
+        --text-secondary: #a0a0b8;
+        --accent: #c084fc;
+        --accent-dim: rgba(192, 132, 252, 0.2);
+        --accent-warm: #fcc419;
+        --accent-warm-dim: rgba(252, 196, 25, 0.2);
+        --accent-blue: #4dabf7;
+        --accent-blue-dim: rgba(77, 171, 247, 0.2);
+        --accent-red: #ff6b6b;
+        --accent-red-dim: rgba(255, 107, 107, 0.2);
+        --accent-green: #00d4aa;
+        --success: #51cf66;
+        --error: #ff6b6b;
+        --warning: #fcc419;
+      }
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      body {
+        font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+        background: var(--bg-dark);
+        color: var(--text-primary);
+        min-height: 100vh;
+        overflow-x: hidden;
+        line-height: 1.6;
+      }
+      .bg-animation {
+        position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;
+        background:
+          radial-gradient(ellipse at 15% 25%, rgba(192,132,252,0.08) 0%, transparent 50%),
+          radial-gradient(ellipse at 85% 75%, rgba(77,171,247,0.08) 0%, transparent 50%),
+          radial-gradient(ellipse at 50% 50%, rgba(252,196,25,0.05) 0%, transparent 60%);
+      }
+      .bg-animation::before {
+        content: ""; position: absolute; width: 200%; height: 200%; top: -50%; left: -50%;
+        background: repeating-linear-gradient(0deg, transparent, transparent 40px,
+          rgba(255,255,255,0.015) 40px, rgba(255,255,255,0.015) 41px);
+        animation: bgMove 20s linear infinite;
+      }
+      @keyframes bgMove { 0% { transform: translateY(0); } 100% { transform: translateY(40px); } }
+      nav {
+        position: fixed; top: 0; left: 0; right: 0;
+        background: rgba(15,15,26,0.9); backdrop-filter: blur(20px);
+        border-bottom: 1px solid var(--border-glass); z-index: 1000; padding: 0 24px;
+      }
+      .nav-container {
+        max-width: 1200px; margin: 0 auto; display: flex;
+        justify-content: space-between; align-items: center; height: 60px; gap: 16px;
+      }
+      .logo { font-size: 1.1rem; font-weight: 700; color: var(--accent); white-space: nowrap; }
+      .nav-back {
+        display: inline-flex; align-items: center; gap: 8px; color: var(--text-secondary);
+        text-decoration: none; font-size: 0.875rem; font-weight: 500;
+        padding: 6px 14px; border-radius: 8px; border: 1px solid var(--border-glass);
+        background: var(--bg-glass); transition: all 0.2s; white-space: nowrap;
+      }
+      .nav-back:hover { color: var(--accent); border-color: var(--accent); background: var(--accent-dim); }
+      main { max-width: 900px; margin: 0 auto; padding: 80px 20px 60px; }
+      .card {
+        background: var(--bg-card); border: 1px solid var(--border-glass);
+        border-radius: 20px; padding: 28px; margin-bottom: 24px;
+      }
+      .card-title {
+        display: flex; align-items: center; gap: 12px; font-size: 1.15rem;
+        font-weight: 700; margin-bottom: 20px;
+      }
+      .icon {
+        width: 40px; height: 40px; border-radius: 10px;
+        display: flex; align-items: center; justify-content: center; font-size: 1.1rem;
+      }
+      .btn {
+        padding: 12px 24px; border-radius: 12px; border: none; cursor: pointer;
+        font-weight: 600; font-size: 0.95rem; transition: all 0.25s;
+        display: inline-flex; align-items: center; gap: 8px;
+      }
+      .btn-primary { background: var(--accent); color: #0f0f1a; }
+      .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(192,132,252,0.35); }
+      .btn-secondary {
+        background: var(--bg-glass); color: var(--text-primary);
+        border: 1px solid var(--border-glass);
+      }
+      .btn-secondary:hover { border-color: var(--accent); color: var(--accent); }
+      .btn-danger { background: var(--error); color: #fff; }
+      .btn-danger:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(255,107,107,0.35); }
+
+      /* Hero */
+      .hero { text-align: center; padding: 50px 20px 40px; }
+      .hero-badge {
+        display: inline-flex; align-items: center; gap: 8px;
+        background: var(--accent-dim); border: 1px solid var(--accent);
+        color: var(--accent); font-size: 0.78rem; font-weight: 700;
+        letter-spacing: 0.08em; text-transform: uppercase;
+        padding: 6px 16px; border-radius: 999px; margin-bottom: 24px;
+      }
+      .hero h1 {
+        font-size: clamp(2rem, 5vw, 3rem); font-weight: 800; letter-spacing: -0.02em;
+        background: linear-gradient(135deg, #fff 30%, var(--accent) 100%);
+        -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+        margin-bottom: 16px;
+      }
+      .hero p { font-size: 1.05rem; color: var(--text-secondary); max-width: 600px; margin: 0 auto 32px; }
+
+      /* Topic tags */
+      .topics-grid {
+        display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 12px; margin-bottom: 24px;
+      }
+      .topic-tag {
+        display: flex; align-items: center; gap: 10px;
+        background: var(--bg-glass); border: 1px solid var(--border-glass);
+        border-radius: 10px; padding: 10px 14px; font-size: 0.875rem;
+      }
+      .topic-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+
+      /* Difficulty chips */
+      .difficulty-row { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 24px; }
+      .diff-chip {
+        display: flex; align-items: center; gap: 8px;
+        padding: 8px 16px; border-radius: 8px; font-size: 0.875rem; font-weight: 600;
+        border: 1px solid transparent;
+      }
+      .diff-easy { background: rgba(81,207,102,0.15); color: var(--success); border-color: rgba(81,207,102,0.3); }
+      .diff-medium { background: rgba(252,196,25,0.15); color: var(--warning); border-color: rgba(252,196,25,0.3); }
+      .diff-hard { background: rgba(255,107,107,0.15); color: var(--error); border-color: rgba(255,107,107,0.3); }
+
+      /* Mode cards */
+      .mode-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin-bottom: 24px; }
+      .mode-card {
+        background: var(--bg-glass); border: 2px solid var(--border-glass);
+        border-radius: 16px; padding: 24px; cursor: pointer; transition: all 0.3s; text-align: center;
+      }
+      .mode-card:hover { border-color: var(--accent); background: var(--accent-dim); transform: translateY(-2px); }
+      .mode-card.selected { border-color: var(--accent); background: var(--accent-dim); }
+      .mode-icon { font-size: 2.2rem; margin-bottom: 10px; }
+      .mode-title { font-size: 1rem; font-weight: 700; margin-bottom: 6px; }
+      .mode-desc { color: var(--text-secondary); font-size: 0.8rem; line-height: 1.5; }
+
+      /* Quiz */
+      .quiz-container { background: var(--bg-glass); border: 1px solid var(--border-glass); border-radius: 16px; padding: 28px; }
+      .quiz-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 12px; }
+      .quiz-meta { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+      .quiz-counter { font-size: 1rem; font-weight: 600; color: var(--text-secondary); }
+      .quiz-diff {
+        font-size: 0.75rem; font-weight: 700; padding: 3px 10px; border-radius: 999px;
+        text-transform: uppercase; letter-spacing: 0.05em;
+      }
+      .quiz-diff.easy { background: rgba(81,207,102,0.2); color: var(--success); }
+      .quiz-diff.medium { background: rgba(252,196,25,0.2); color: var(--warning); }
+      .quiz-diff.hard { background: rgba(255,107,107,0.2); color: var(--error); }
+      .quiz-topic { font-size: 0.75rem; color: var(--text-secondary); background: var(--bg-glass); padding: 3px 10px; border-radius: 6px; }
+      .progress-bar { flex: 1; height: 6px; background: rgba(255,255,255,0.08); border-radius: 3px; overflow: hidden; min-width: 80px; }
+      .progress-fill { height: 100%; background: var(--accent); border-radius: 3px; transition: width 0.4s; }
+      .quiz-question {
+        font-size: 1.25rem; font-weight: 600; text-align: center;
+        margin-bottom: 28px; padding: 24px; background: var(--bg-card);
+        border-radius: 14px; line-height: 1.6;
+      }
+      .quiz-options { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+      .quiz-option {
+        display: flex; align-items: center; gap: 14px; padding: 16px 20px;
+        background: var(--bg-card); border: 2px solid var(--border-glass);
+        border-radius: 12px; cursor: pointer; transition: all 0.2s; font-size: 0.95rem;
+      }
+      .quiz-option:hover { border-color: var(--accent); background: var(--accent-dim); }
+      .quiz-option.correct { border-color: var(--success); background: rgba(81,207,102,0.15); }
+      .quiz-option.wrong { border-color: var(--error); background: rgba(255,107,107,0.12); }
+      .quiz-option.disabled { pointer-events: none; }
+      .option-letter {
+        width: 32px; height: 32px; border-radius: 8px; background: var(--bg-glass);
+        display: flex; align-items: center; justify-content: center;
+        font-weight: 700; font-size: 0.9rem; flex-shrink: 0;
+      }
+      .explanation {
+        display: none; margin-top: 20px; padding: 16px 20px;
+        background: rgba(192,132,252,0.07); border-left: 3px solid var(--accent);
+        border-radius: 0 12px 12px 0; font-size: 0.9rem; color: var(--text-secondary);
+        line-height: 1.7;
+      }
+      .explanation.show { display: block; animation: fadeIn 0.3s ease; }
+      @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+      /* Timer */
+      .timer {
+        position: fixed; top: 70px; right: 20px;
+        background: var(--bg-card); border: 1px solid var(--border-glass);
+        padding: 12px 20px; border-radius: 12px; font-size: 1.4rem; font-weight: 700;
+        color: var(--accent); z-index: 999;
+      }
+      .timer.warning { color: var(--warning); }
+      .timer.danger { color: var(--error); animation: pulse 0.5s infinite; }
+      @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.5; } }
+
+      /* Results */
+      .results-page { text-align: center; }
+      .grade-badge {
+        display: inline-block; font-size: 4rem; font-weight: 900;
+        padding: 20px 40px; border-radius: 20px; margin-bottom: 24px;
+        line-height: 1;
+      }
+      .grade-5 { background: rgba(81,207,102,0.15); color: var(--success); border: 2px solid rgba(81,207,102,0.4); }
+      .grade-4 { background: rgba(77,171,247,0.15); color: var(--accent-blue); border: 2px solid rgba(77,171,247,0.4); }
+      .grade-3 { background: rgba(252,196,25,0.15); color: var(--warning); border: 2px solid rgba(252,196,25,0.4); }
+      .grade-2 { background: rgba(255,107,107,0.15); color: var(--error); border: 2px solid rgba(255,107,107,0.4); }
+      .score-circle {
+        width: 200px; height: 200px; border-radius: 50%;
+        background: conic-gradient(var(--accent) calc(var(--score) * 3.6deg), var(--bg-glass) 0);
+        margin: 0 auto 24px; display: flex; align-items: center;
+        justify-content: center; position: relative;
+      }
+      .score-circle::before {
+        content: ""; position: absolute; width: 170px; height: 170px;
+        background: var(--bg-dark); border-radius: 50%;
+      }
+      .score-value { position: relative; font-size: 2.8rem; font-weight: 800; color: var(--accent); }
+      .score-msg { font-size: 1.4rem; font-weight: 700; margin-bottom: 28px; }
+      .breakdown-grid {
+        display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+        gap: 14px; max-width: 640px; margin: 0 auto 28px;
+      }
+      .breakdown-item { background: var(--bg-glass); padding: 16px; border-radius: 12px; }
+      .breakdown-value { font-size: 1.5rem; font-weight: 700; color: var(--accent); }
+      .breakdown-label { font-size: 0.8rem; color: var(--text-secondary); margin-top: 4px; }
+
+      /* Topic scores */
+      .topic-scores { margin-top: 28px; text-align: left; }
+      .topic-scores-title { font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em; color: var(--text-secondary); margin-bottom: 14px; }
+      .topic-score-row {
+        display: flex; align-items: center; gap: 12px;
+        padding: 10px 0; border-bottom: 1px solid var(--border-glass);
+      }
+      .topic-score-row:last-child { border-bottom: none; }
+      .topic-score-name { flex: 1; font-size: 0.875rem; }
+      .topic-score-bar { width: 120px; height: 6px; background: var(--bg-glass); border-radius: 3px; overflow: hidden; }
+      .topic-score-fill { height: 100%; border-radius: 3px; }
+      .topic-score-pct { font-size: 0.85rem; font-weight: 700; min-width: 36px; text-align: right; }
+
+      /* Wrong answers review */
+      .wrong-list { margin-top: 8px; }
+      .wrong-item {
+        display: flex; align-items: flex-start; gap: 12px; padding: 12px 0;
+        border-bottom: 1px solid var(--border-glass);
+      }
+      .wrong-item:last-child { border-bottom: none; }
+      .wrong-num {
+        background: rgba(255,107,107,0.2); color: var(--error);
+        padding: 2px 8px; border-radius: 6px; font-weight: 700; font-size: 0.8rem; flex-shrink: 0; min-width: 28px; text-align: center;
+      }
+      .wrong-text { flex: 1; font-size: 0.875rem; line-height: 1.5; }
+      .wrong-ans { display: flex; gap: 8px; align-items: center; flex-shrink: 0; }
+      .ans-user { background: rgba(255,107,107,0.2); color: var(--error); padding: 2px 8px; border-radius: 6px; font-weight: 700; font-size: 0.8rem; }
+      .ans-arrow { color: var(--text-secondary); font-size: 0.75rem; }
+      .ans-correct { background: rgba(81,207,102,0.2); color: var(--success); padding: 2px 8px; border-radius: 6px; font-weight: 700; font-size: 0.8rem; }
+
+      @media (max-width: 768px) {
+        .hero h1 { font-size: 2rem; }
+        .nav-back span { display: none; }
+        .timer { top: 70px; right: 10px; font-size: 1rem; padding: 10px 16px; }
+        .card { padding: 16px; }
+        main { padding: 70px 12px 40px; }
+        .quiz-options { grid-template-columns: 1fr; }
+        .mode-grid { grid-template-columns: 1fr; }
+        .quiz-meta { flex-direction: column; align-items: flex-start; gap: 6px; }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="bg-animation"></div>
+
+    <nav>
+      <div class="nav-container">
+        <div class="logo">🏆 Урок 9</div>
+        <a href="index.html" class="nav-back">← <span>К главе 4</span></a>
+      </div>
+    </nav>
+
+    <main>
+
+      <!-- ===== START SCREEN ===== -->
+      <div id="startScreen">
+        <div class="hero">
+          <div class="hero-badge">🎓 Итоговая контрольная</div>
+          <h1>Глава 4: Проценты</h1>
+          <p>Полный срез знаний по всем темам главы. 30 вопросов трёх уровней сложности с пошаговым разбором ошибок.</p>
+        </div>
+
+        <div class="card">
+          <div class="card-title"><span class="icon" style="background:var(--accent-dim)">📚</span>Темы контрольной</div>
+          <div class="topics-grid">
+            <div class="topic-tag"><div class="topic-dot" style="background:#00d4aa"></div><span>Понятие процента</span></div>
+            <div class="topic-tag"><div class="topic-dot" style="background:#4dabf7"></div><span>Дроби ↔ проценты</span></div>
+            <div class="topic-tag"><div class="topic-dot" style="background:#ff6b6b"></div><span>Процент от числа</span></div>
+            <div class="topic-tag"><div class="topic-dot" style="background:#c084fc"></div><span>Число по проценту</span></div>
+            <div class="topic-tag"><div class="topic-dot" style="background:#fcc419"></div><span>Сколько % от числа</span></div>
+            <div class="topic-tag"><div class="topic-dot" style="background:#51cf66"></div><span>Скидки и наценки</span></div>
+            <div class="topic-tag"><div class="topic-dot" style="background:#ff6b6b"></div><span>Диаграммы</span></div>
+            <div class="topic-tag"><div class="topic-dot" style="background:#c084fc"></div><span>Смешанные задачи</span></div>
+          </div>
+          <div class="difficulty-row">
+            <div class="diff-chip diff-easy">✅ Лёгкие — 10 вопросов</div>
+            <div class="diff-chip diff-medium">⚡ Средние — 12 вопросов</div>
+            <div class="diff-chip diff-hard">🔥 Сложные — 8 вопросов</div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title"><span class="icon" style="background:var(--accent-blue-dim)">⚙️</span>Выберите режим</div>
+          <div class="mode-grid">
+            <div class="mode-card" id="modeClassic" onclick="selectMode('classic')">
+              <div class="mode-icon">📋</div>
+              <div class="mode-title">Классический</div>
+              <div class="mode-desc">Без ограничения времени. Отображается верный ответ после каждого вопроса.</div>
+            </div>
+            <div class="mode-card" id="modeExam" onclick="selectMode('exam')">
+              <div class="mode-icon">📝</div>
+              <div class="mode-title">Экзаменационный</div>
+              <div class="mode-desc">45 минут. Ответы показываются только в итоге. Строгий режим.</div>
+            </div>
+            <div class="mode-card" id="modeSpeed" onclick="selectMode('speed')">
+              <div class="mode-icon">⚡</div>
+              <div class="mode-title">Скоростной</div>
+              <div class="mode-desc">20 минут, 30 вопросов. На скорость и точность.</div>
+            </div>
+          </div>
+          <div style="text-align:center;">
+            <button class="btn btn-primary" id="startBtn" onclick="startTest()" style="font-size:1.1rem;padding:14px 36px;" disabled>
+              Начать контрольную →
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== QUIZ SCREEN ===== -->
+      <div id="quizScreen" style="display:none;">
+        <div class="timer" id="quizTimer" style="display:none;">45:00</div>
+        <div class="card" style="margin-bottom:16px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;">
+            <div style="font-weight:700;font-size:1rem;">🏆 Итоговая контрольная</div>
+            <div style="display:flex;align-items:center;gap:12px;">
+              <span id="scoreDisplay" style="color:var(--success);font-weight:700;font-size:0.9rem;"></span>
+              <button class="btn btn-danger" onclick="confirmAbort()" style="padding:6px 14px;font-size:0.8rem;">Завершить</button>
+            </div>
+          </div>
+        </div>
+        <div class="quiz-container">
+          <div class="quiz-header">
+            <div class="quiz-meta">
+              <span class="quiz-counter">Вопрос <span id="q-num">1</span> / 30</span>
+              <span class="quiz-diff easy" id="q-diff">Лёгкий</span>
+              <span class="quiz-topic" id="q-topic">Понятие %</span>
+            </div>
+            <div class="progress-bar"><div class="progress-fill" id="q-progress"></div></div>
+          </div>
+          <div class="quiz-question" id="q-text"></div>
+          <div class="quiz-options" id="q-options"></div>
+          <div class="explanation" id="q-explanation"></div>
+          <div style="display:flex;justify-content:flex-end;margin-top:24px;">
+            <button class="btn btn-primary" onclick="nextQ()" id="q-next" disabled>Далее →</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== RESULTS SCREEN ===== -->
+      <div id="resultsScreen" style="display:none;">
+        <div class="card">
+          <div class="results-page">
+            <div class="grade-badge" id="gradeBadge">5</div>
+            <div class="score-circle" id="rCircle" style="--score:0"><div class="score-value" id="rPct">0%</div></div>
+            <div class="score-msg" id="rMsg"></div>
+            <div class="breakdown-grid">
+              <div class="breakdown-item"><div class="breakdown-value" id="rCorrect">0</div><div class="breakdown-label">Верных ответов</div></div>
+              <div class="breakdown-item"><div class="breakdown-value" id="rWrong">0</div><div class="breakdown-label">Ошибок</div></div>
+              <div class="breakdown-item"><div class="breakdown-value" id="rTime">—</div><div class="breakdown-label">Время</div></div>
+              <div class="breakdown-item"><div class="breakdown-value" id="rMastery">—</div><div class="breakdown-label">Уровень</div></div>
+            </div>
+
+            <!-- Topic breakdown -->
+            <div class="topic-scores" id="topicBreakdown"></div>
+
+            <div style="display:flex;gap:16px;justify-content:center;flex-wrap:wrap;margin-top:28px;">
+              <button class="btn btn-primary" onclick="restartTest()">Пройти ещё раз</button>
+              <button class="btn btn-secondary" onclick="toggleWrongReview()">Разбор ошибок</button>
+              <a href="index.html" class="btn btn-secondary">← К главе</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Wrong answers review -->
+        <div id="wrongReview" style="display:none;">
+          <div class="card">
+            <div class="card-title"><span class="icon" style="background:var(--accent-red-dim)">❌</span>Разбор ошибок</div>
+            <div class="wrong-list" id="wrongList"></div>
+          </div>
+        </div>
+      </div>
+
+    </main>
+
+    <script>
+      // ======================== DATA ========================
+      const QUESTIONS = [
+        // EASY (1-10) ─ basic concept + conversions
+        { id:1, diff:"easy", topic:"Понятие %", q:"1% = ?", options:["1/100","1/10","1/1000","10/100"], correct:0, exp:"1% означает одну сотую, то есть 1/100." },
+        { id:2, diff:"easy", topic:"Понятие %", q:"Что такое 100%?", options:["Целое число","Половина","Двойное число","Четверть"], correct:0, exp:"100% — это целое. Всё число целиком равно 100%." },
+        { id:3, diff:"easy", topic:"Дроби ↔ %", q:"1/2 = ?%", options:["50%","25%","75%","5%"], correct:0, exp:"1/2 = 0,5 = 50%. Делим числитель на знаменатель и умножаем на 100." },
+        { id:4, diff:"easy", topic:"Дроби ↔ %", q:"1/4 = ?%", options:["25%","50%","4%","20%"], correct:0, exp:"1/4 = 0,25 = 25%. Четверть — это 25%." },
+        { id:5, diff:"easy", topic:"Дроби ↔ %", q:"0,1 = ?%", options:["10%","1%","100%","0,1%"], correct:0, exp:"0,1 × 100 = 10%." },
+        { id:6, diff:"easy", topic:"% от числа", q:"10% от 80 = ?", options:["8","80","0,8","18"], correct:0, exp:"10% = 0,1. 80 × 0,1 = 8." },
+        { id:7, diff:"easy", topic:"% от числа", q:"50% от 60 = ?", options:["30","50","6","12"], correct:0, exp:"50% = половина. 60 ÷ 2 = 30." },
+        { id:8, diff:"easy", topic:"% от числа", q:"25% от 40 = ?", options:["10","25","4","20"], correct:0, exp:"25% = ¼. 40 ÷ 4 = 10." },
+        { id:9, diff:"easy", topic:"Сколько % от числа", q:"20 от 100 составляет ?%", options:["20%","2%","200%","10%"], correct:0, exp:"20 ÷ 100 × 100% = 20%." },
+        { id:10, diff:"easy", topic:"Понятие %", q:"50% от числа 200 = ?", options:["100","50","200","150"], correct:0, exp:"50% = половина. 200 ÷ 2 = 100." },
+
+        // MEDIUM (11-22) ─ formula, real-world
+        { id:11, diff:"medium", topic:"% от числа", q:"30% от 150 = ?", options:["45","30","15","50"], correct:0, exp:"150 × 0,30 = 45." },
+        { id:12, diff:"medium", topic:"% от числа", q:"15% от 200 = ?", options:["30","15","25","20"], correct:0, exp:"200 × 0,15 = 30." },
+        { id:13, diff:"medium", topic:"Число по %", q:"20% числа равно 14. Найдите число:", options:["70","28","140","56"], correct:0, exp:"14 ÷ 0,20 = 70." },
+        { id:14, diff:"medium", topic:"Сколько % от числа", q:"15 от 60 составляет ?%", options:["25%","15%","30%","20%"], correct:0, exp:"15 ÷ 60 × 100 = 25%." },
+        { id:15, diff:"medium", topic:"Скидки", q:"Цена 800 руб. Скидка 20%. Новая цена:", options:["640 руб.","160 руб.","800 руб.","600 руб."], correct:0, exp:"800 × (1 − 0,20) = 800 × 0,80 = 640 руб." },
+        { id:16, diff:"medium", topic:"% от числа", q:"7% от 300 = ?", options:["21","28","70","14"], correct:0, exp:"300 × 0,07 = 21." },
+        { id:17, diff:"medium", topic:"Число по %", q:"5% числа равно 12. Найдите число:", options:["240","60","120","24"], correct:0, exp:"12 ÷ 0,05 = 240." },
+        { id:18, diff:"medium", topic:"Дроби ↔ %", q:"3/5 = ?%", options:["60%","30%","35%","50%"], correct:0, exp:"3 ÷ 5 = 0,6. 0,6 × 100 = 60%." },
+        { id:19, diff:"medium", topic:"Сколько % от числа", q:"45 от 180 = ?%", options:["25%","20%","30%","45%"], correct:0, exp:"45 ÷ 180 × 100 = 25%." },
+        { id:20, diff:"medium", topic:"Скидки", q:"Товар 1500 руб. Наценка 40%. Новая цена:", options:["2100 руб.","1600 руб.","1940 руб.","1900 руб."], correct:0, exp:"1500 × 1,40 = 2100 руб." },
+        { id:21, diff:"medium", topic:"% от числа", q:"Класс 30 учеников. 60% сдали на «5». Сколько?", options:["18","12","15","20"], correct:0, exp:"30 × 0,60 = 18 учеников." },
+        { id:22, diff:"medium", topic:"Диаграммы", q:"В круговой диаграмме сектор «спорт» = 72°. Это ?%", options:["20%","72%","25%","18%"], correct:0, exp:"72° ÷ 360° × 100% = 20%." },
+
+        // HARD (23-30) ─ multi-step, fractions, combined
+        { id:23, diff:"hard", topic:"Смешанные", q:"Зарплата 40 000 руб., НДФЛ 13%. Чистыми получит:", options:["34 800 руб.","35 200 руб.","36 000 руб.","37 200 руб."], correct:0, exp:"40 000 × (1 − 0,13) = 40 000 × 0,87 = 34 800 руб." },
+        { id:24, diff:"hard", topic:"Число по %", q:"35% числа равно 49. Найдите число:", options:["140","98","70","175"], correct:0, exp:"49 ÷ 0,35 = 140." },
+        { id:25, diff:"hard", topic:"Смешанные", q:"Цена выросла на 20%, потом упала на 20%. Итоговое изменение:", options:["−4%","0%","+4%","−2%"], correct:0, exp:"1,20 × 0,80 = 0,96. Итог: −4% от начальной цены." },
+        { id:26, diff:"hard", topic:"Смешанные", q:"12,5% от 640 = ?", options:["80","64","100","90"], correct:0, exp:"12,5% = ⅛. 640 ÷ 8 = 80." },
+        { id:27, diff:"hard", topic:"Сколько % от числа", q:"Сторона квадрата 12 см. Периметр равен 48 см. 48 — это ?% от 60:", options:["80%","75%","48%","60%"], correct:0, exp:"48 ÷ 60 × 100% = 80%." },
+        { id:28, diff:"hard", topic:"Скидки", q:"Цена после 30% скидки = 910 руб. Начальная цена:", options:["1300 руб.","1200 руб.","1400 руб.","1100 руб."], correct:0, exp:"910 ÷ 0,70 = 1300 руб." },
+        { id:29, diff:"hard", topic:"Смешанные", q:"Из 800 кг зерна 15% влажность. Сколько кг сухого вещества?", options:["680 кг","650 кг","560 кг","720 кг"], correct:0, exp:"Влага: 800 × 0,15 = 120 кг. Сухое: 800 − 120 = 680 кг." },
+        { id:30, diff:"hard", topic:"Смешанные", q:"Прибыль в январе 25 000 руб., в феврале на 8% больше. Прибыль в феврале:", options:["27 000 руб.","25 800 руб.","28 000 руб.","26 000 руб."], correct:0, exp:"25 000 × 1,08 = 27 000 руб." },
+      ];
+
+      const TOPIC_COLORS = {
+        "Понятие %":     "#00d4aa",
+        "Дроби ↔ %":    "#4dabf7",
+        "% от числа":   "#ff6b6b",
+        "Число по %":   "#c084fc",
+        "Сколько % от числа": "#fcc419",
+        "Скидки":       "#51cf66",
+        "Диаграммы":    "#ff6b6b",
+        "Смешанные":    "#c084fc",
+      };
+
+      // ======================== STATE ========================
+      const S = {
+        mode: null,          // 'classic' | 'exam' | 'speed'
+        cur: 0,
+        score: 0,
+        answers: [],         // user answer index per question
+        startTime: 0,
+        timer: null,
+        timeLeft: 0,
+      };
+
+      // ======================== MODE SELECTION ========================
+      function selectMode(m) {
+        S.mode = m;
+        document.querySelectorAll(".mode-card").forEach(c => c.classList.remove("selected"));
+        document.getElementById("mode" + m.charAt(0).toUpperCase() + m.slice(1)).classList.add("selected");
+        document.getElementById("startBtn").disabled = false;
+      }
+
+      function startTest() {
+        if (!S.mode) return;
+        S.cur = 0; S.score = 0; S.answers = []; S.startTime = Date.now();
+        document.getElementById("startScreen").style.display = "none";
+        document.getElementById("resultsScreen").style.display = "none";
+        document.getElementById("quizScreen").style.display = "block";
+
+        if (S.mode === "exam") {
+          S.timeLeft = 45 * 60;
+          showTimer();
+        } else if (S.mode === "speed") {
+          S.timeLeft = 20 * 60;
+          showTimer();
+        } else {
+          document.getElementById("quizTimer").style.display = "none";
+        }
+
+        renderQuestion();
+      }
+
+      function showTimer() {
+        const el = document.getElementById("quizTimer");
+        el.style.display = "block";
+        updateTimerDisplay();
+        if (S.timer) clearInterval(S.timer);
+        S.timer = setInterval(() => {
+          S.timeLeft--;
+          updateTimerDisplay();
+          if (S.timeLeft <= 0) { clearInterval(S.timer); finishTest(); }
+        }, 1000);
+      }
+      function updateTimerDisplay() {
+        const m = Math.floor(S.timeLeft / 60), sec = S.timeLeft % 60;
+        const el = document.getElementById("quizTimer");
+        el.textContent = m + ":" + sec.toString().padStart(2, "0");
+        if (S.timeLeft <= 60) el.className = "timer danger";
+        else if (S.timeLeft <= 300) el.className = "timer warning";
+        else el.className = "timer";
+      }
+
+      // ======================== QUESTION RENDER ========================
+      function renderQuestion() {
+        const q = QUESTIONS[S.cur];
+        document.getElementById("q-num").textContent = S.cur + 1;
+        document.getElementById("q-progress").style.width = ((S.cur + 1) / QUESTIONS.length * 100) + "%";
+        document.getElementById("q-text").textContent = q.q;
+        const diffEl = document.getElementById("q-diff");
+        diffEl.textContent = { easy: "Лёгкий", medium: "Средний", hard: "Сложный" }[q.diff];
+        diffEl.className = "quiz-diff " + q.diff;
+        document.getElementById("q-topic").textContent = q.topic;
+        document.getElementById("q-next").disabled = true;
+        const expl = document.getElementById("q-explanation");
+        expl.className = "explanation";
+        if (S.mode === "classic") {
+          document.getElementById("scoreDisplay").textContent = "✅ " + S.score + "/" + S.cur;
+        }
+
+        const optsDiv = document.getElementById("q-options");
+        optsDiv.innerHTML = "";
+        q.options.forEach((opt, i) => {
+          const div = document.createElement("div");
+          div.className = "quiz-option";
+          div.innerHTML = '<div class="option-letter">' + String.fromCharCode(65 + i) + "</div><div>" + opt + "</div>";
+          div.onclick = () => selectAnswer(i, div);
+          optsDiv.appendChild(div);
+        });
+      }
+
+      function selectAnswer(idx, el) {
+        if (!document.getElementById("q-next").disabled) return;
+        const q = QUESTIONS[S.cur];
+        const ok = idx === q.correct;
+        if (ok) S.score++;
+        S.answers[S.cur] = idx;
+
+        if (S.mode === "classic" || S.mode === "speed") {
+          document.querySelectorAll("#q-options .quiz-option").forEach((opt, i) => {
+            opt.classList.add("disabled");
+            if (i === q.correct) opt.classList.add("correct");
+            else if (i === idx && !ok) opt.classList.add("wrong");
+          });
+          if (S.mode === "classic") {
+            const expl = document.getElementById("q-explanation");
+            expl.textContent = (ok ? "✅ Верно! " : "❌ Неверно. ") + q.exp;
+            expl.className = "explanation show";
+          }
+        } else {
+          // Exam: just mark selected, no feedback
+          document.querySelectorAll("#q-options .quiz-option").forEach(opt => opt.classList.add("disabled"));
+          el.style.borderColor = "var(--accent)";
+          el.style.background = "var(--accent-dim)";
+        }
+        document.getElementById("q-next").disabled = false;
+        if (S.mode === "classic") {
+          document.getElementById("scoreDisplay").textContent = "✅ " + S.score + "/" + (S.cur + 1);
+        }
+      }
+
+      function nextQ() {
+        if (S.cur < QUESTIONS.length - 1) {
+          S.cur++;
+          renderQuestion();
+        } else {
+          finishTest();
+        }
+      }
+
+      function confirmAbort() {
+        if (confirm("Завершить контрольную досрочно? Незаотвеченные вопросы будут засчитаны как ошибки.")) {
+          finishTest();
+        }
+      }
+
+      // ======================== RESULTS ========================
+      function finishTest() {
+        if (S.timer) clearInterval(S.timer);
+        const elapsed = Math.floor((Date.now() - S.startTime) / 1000);
+        document.getElementById("quizScreen").style.display = "none";
+        document.getElementById("quizTimer").style.display = "none";
+        document.getElementById("resultsScreen").style.display = "block";
+
+        const pct = Math.round(S.score / QUESTIONS.length * 100);
+        const m = Math.floor(elapsed / 60), sec = elapsed % 60;
+
+        // Grade
+        let grade, gradeClass, msg;
+        if (pct >= 90)      { grade = "5"; gradeClass = "grade-5"; msg = "🏆 Отлично! Вы освоили всю главу!"; }
+        else if (pct >= 75) { grade = "4"; gradeClass = "grade-4"; msg = "👍 Хорошо! Небольшие пробелы — повторите отмеченные темы."; }
+        else if (pct >= 55) { grade = "3"; gradeClass = "grade-3"; msg = "📖 Удовлетворительно. Нужно проработать слабые темы."; }
+        else                { grade = "2"; gradeClass = "grade-2"; msg = "💪 Нужна серьёзная работа над главой. Начните с теории!"; }
+
+        let mastery = "Начальный";
+        if (pct >= 90) mastery = "Эксперт";
+        else if (pct >= 75) mastery = "Продвинутый";
+        else if (pct >= 55) mastery = "Средний";
+
+        const badge = document.getElementById("gradeBadge");
+        badge.textContent = grade;
+        badge.className = "grade-badge " + gradeClass;
+        document.getElementById("rCircle").style.setProperty("--score", pct);
+        document.getElementById("rPct").textContent = pct + "%";
+        document.getElementById("rMsg").textContent = msg;
+        document.getElementById("rCorrect").textContent = S.score;
+        document.getElementById("rWrong").textContent = QUESTIONS.length - S.score;
+        document.getElementById("rTime").textContent = m + ":" + sec.toString().padStart(2, "0");
+        document.getElementById("rMastery").textContent = mastery;
+
+        renderTopicBreakdown();
+        buildWrongList();
+      }
+
+      function renderTopicBreakdown() {
+        const topicMap = {};
+        QUESTIONS.forEach((q, i) => {
+          if (!topicMap[q.topic]) topicMap[q.topic] = { total: 0, correct: 0 };
+          topicMap[q.topic].total++;
+          if (S.answers[i] === q.correct) topicMap[q.topic].correct++;
+        });
+
+        const container = document.getElementById("topicBreakdown");
+        const rows = Object.entries(topicMap).map(([topic, d]) => {
+          const pct = Math.round(d.correct / d.total * 100);
+          const color = TOPIC_COLORS[topic] || "var(--accent)";
+          return `<div class="topic-score-row">
+            <div class="topic-score-name">${topic}</div>
+            <div class="topic-score-bar"><div class="topic-score-fill" style="width:${pct}%;background:${color};"></div></div>
+            <div class="topic-score-pct" style="color:${pct>=70?'var(--success)':pct>=50?'var(--warning)':'var(--error)'}">${pct}%</div>
+          </div>`;
+        }).join("");
+        container.innerHTML = `<div class="topic-scores-title">Результаты по темам</div>${rows}`;
+      }
+
+      function buildWrongList() {
+        const wrongs = QUESTIONS.filter((q, i) => S.answers[i] !== undefined && S.answers[i] !== q.correct);
+        const list = document.getElementById("wrongList");
+        if (wrongs.length === 0) {
+          list.innerHTML = "<p style='color:var(--success);text-align:center;padding:20px;'>🎉 Ни одной ошибки! Идеальный результат!</p>";
+          return;
+        }
+        const LTRS = ["A","B","C","D"];
+        list.innerHTML = wrongs.map(q => {
+          const userIdx = S.answers[q.id - 1];
+          const userAns = userIdx !== undefined ? LTRS[userIdx] + ": " + q.options[userIdx] : "—";
+          const corrAns = LTRS[q.correct] + ": " + q.options[q.correct];
+          return `<div class="wrong-item">
+            <div class="wrong-num">${q.id}</div>
+            <div style="flex:1;">
+              <div class="wrong-text">${q.q}</div>
+              <div style="font-size:0.8rem;color:var(--text-secondary);margin-top:4px;">${q.exp}</div>
+            </div>
+            <div class="wrong-ans">
+              <span class="ans-user">${userAns}</span>
+              <span class="ans-arrow">→</span>
+              <span class="ans-correct">${corrAns}</span>
+            </div>
+          </div>`;
+        }).join("");
+      }
+
+      function toggleWrongReview() {
+        const el = document.getElementById("wrongReview");
+        el.style.display = el.style.display === "none" ? "block" : "none";
+        if (el.style.display === "block") el.scrollIntoView({ behavior: "smooth" });
+      }
+
+      function restartTest() {
+        document.getElementById("resultsScreen").style.display = "none";
+        document.getElementById("wrongReview").style.display = "none";
+        document.getElementById("startScreen").style.display = "block";
+        S.mode = null;
+        document.querySelectorAll(".mode-card").forEach(c => c.classList.remove("selected"));
+        document.getElementById("startBtn").disabled = true;
+      }
+    </script>
+  </body>
+</html>

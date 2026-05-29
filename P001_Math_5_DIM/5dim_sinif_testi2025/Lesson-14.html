@@ -339,6 +339,79 @@
           transform: translateY(0);
         }
       }
+      .wrong-summary { margin-top: 1rem; }
+      .wrong-summary-title { font-size:0.72rem;font-weight:800;text-transform:uppercase;letter-spacing:0.07em;color:#ef4444;margin-bottom:0.5rem; }
+      .wrong-item { display:flex;align-items:center;gap:0.65rem;padding:0.5rem 0.75rem;border-radius:0.55rem;border:1px solid rgba(239,68,68,0.25);background:rgba(239,68,68,0.07);margin-bottom:0.35rem; }
+      .wrong-item-num { font-weight:800;font-size:0.78rem;color:#ef4444;flex-shrink:0;min-width:1.8rem; }
+      .wrong-item-text { font-size:0.78rem;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap; }
+      .wrong-item-user { background:rgba(239,68,68,0.2);color:#ef4444;padding:0.1rem 0.45rem;border-radius:0.3rem;font-weight:800;font-size:0.75rem; }
+      .wrong-item-correct { background:rgba(34,197,94,0.2);color:#22c55e;padding:0.1rem 0.45rem;border-radius:0.3rem;font-weight:800;font-size:0.75rem; }
+      .wrong-item-arrow { color:#64748b;font-size:0.7rem; }
+
+      /* ── Slide animations ── */
+      @keyframes slideInRight {
+        from { opacity: 0; transform: translateX(52px); }
+        to   { opacity: 1; transform: translateX(0); }
+      }
+      @keyframes slideInLeft {
+        from { opacity: 0; transform: translateX(-52px); }
+        to   { opacity: 1; transform: translateX(0); }
+      }
+
+      /* ── Qnb active state ── */
+      .qnb.active {
+        background: linear-gradient(135deg, #0ea5e9, #38bdf8);
+        border-color: var(--primary);
+        color: #fff;
+        box-shadow: 0 0 0 3px rgba(14,165,233,0.22);
+        transform: scale(1.08);
+      }
+      .qnb.active.ok {
+        background: linear-gradient(135deg, #0ea5e9, #10b981);
+        border-color: #10b981;
+      }
+
+      /* ── Prev / Next nav row ── */
+      .qnav-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        margin-top: 16px;
+      }
+      .qnav-prev, .qnav-next {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        padding: 11px 22px;
+        border-radius: 12px;
+        border: 2px solid var(--border);
+        background: var(--card);
+        color: var(--text);
+        font-family: "Nunito", sans-serif;
+        font-weight: 800;
+        font-size: 0.9rem;
+        cursor: pointer;
+        transition: all 0.2s;
+      }
+      .qnav-prev:hover:not(:disabled), .qnav-next:hover:not(:disabled) {
+        border-color: var(--primary);
+        color: var(--primary);
+        transform: translateY(-1px);
+      }
+      .qnav-prev:disabled, .qnav-next:disabled {
+        opacity: 0.3;
+        cursor: not-allowed;
+      }
+      .qnav-counter {
+        font-family: "JetBrains Mono", monospace;
+        font-weight: 900;
+        font-size: 1.05rem;
+        color: var(--muted);
+        min-width: 60px;
+        text-align: center;
+      }
+
       .qcard:hover {
         border-color: rgba(14, 165, 233, 0.3);
         box-shadow: 0 6px 28px rgba(14, 165, 233, 0.11);
@@ -749,6 +822,11 @@
         </div>
       </div>
       <div id="QW"></div>
+      <div class="qnav-row" id="NAV_ROW">
+        <button class="qnav-prev" id="BTN_PREV" onclick="prevQ()" disabled>← <span id="L_prev">Geri</span></button>
+        <span class="qnav-counter" id="QC">1 / —</span>
+        <button class="qnav-next" id="BTN_NEXT" onclick="nextQ()"><span id="L_next">İrəli</span> →</button>
+      </div>
     </main>
 
     <div class="mover" id="MO">
@@ -1176,7 +1254,8 @@
       ];
 
       /* ── STATE ── */
-      let S={v:"A",lang:"az",dark:false,timer:3600,tid:null,ans:{},hint:{}};
+      let S={v:"A",lang:"az",dark:false,timer:3600,tid:null,ans:{},hint:{},qi:0};
+      let _slideDir14="right";
 
       window.addEventListener("DOMContentLoaded",()=>{
         buildTabs();renderAll();applyUI();
@@ -1196,10 +1275,65 @@
             const b=document.createElement("button");
             b.className="vtab"+(S.v===v?" active":"");
             b.textContent="Variant "+v;
-            b.onclick=()=>{S.v=v;S.ans={};S.hint={};buildTabs();renderAll()};
+            b.onclick=()=>{S.v=v;S.ans={};S.hint={};S.qi=0;_slideDir14="right";buildTabs();renderAll()};
             el.appendChild(b);
           });
         });
+      }
+
+      function showQ(idx){
+        const qs=QS.filter(q=>q.v===S.v);
+        if(idx<0||idx>=qs.length)return;
+        S.qi=idx;
+        // nav buttons — active + answered states
+        document.getElementById("QN").querySelectorAll(".qnb").forEach((b,i)=>{
+          const isActive=i===idx,isOk=S.ans[qs[i].id]!==undefined;
+          b.className="qnb"+(isActive?" active":"")+(isOk?" ok":"");
+        });
+        // counter + prev/next enable
+        const qc=document.getElementById("QC");if(qc)qc.textContent=(idx+1)+" / "+qs.length;
+        const bp=document.getElementById("BTN_PREV"),bn=document.getElementById("BTN_NEXT");
+        if(bp)bp.disabled=(idx===0);
+        if(bn)bn.disabled=(idx===qs.length-1);
+        // build card HTML
+        const q=qs[idx],_UL=UIL[S.lang]||UIL.az;
+        const badge=q.t==="choice"?_UL.badgeC:q.t==="match"?_UL.badgeM:_UL.badgeO;
+        let h=`<div class="qhdr"><span class="qnum">${_UL.sual} ${idx+1}</span><span class="qtbadge">${badge}</span></div>
+                <div class="qtxt">${q[S.lang]||q.az}</div>`;
+        if(q.fig&&F[q.fig])h+=`<div class="figbox">${F[q.fig]}</div>`;
+        if(q.t==="choice"){
+          h+=`<div class="ogrid">`;
+          (q.opts[S.lang]||q.opts.az).forEach((o,oi)=>{
+            h+=`<button class="obtn${S.ans[q.id]===oi?" sel":""}" onclick="pick('${q.id}',${oi})">${o}</button>`;
+          });
+          h+=`</div>`;
+        }else if(q.t==="match"){
+          h+=`<div class="mwrap"><div class="mcol">${(q.left[S.lang]||q.left.az).map(l=>`<div class="mit">${l}</div>`).join("")}</div>
+              <div class="mcol">${(q.right[S.lang]||q.right.az).map(r=>`<div class="mit">${r}</div>`).join("")}</div></div>
+              <div class="mbox"><label>${_UL.mlabel}</label>
+              <input class="minp" type="text" placeholder="1-?, 2-?, 3-?" value="${S.ans[q.id]||""}"
+                     onchange="saveT('${q.id}',this.value)"/></div>`;
+        }else{
+          h+=`<input class="oinp" type="text" placeholder="Cavabınızı yazın..."
+                   value="${S.ans[q.id]||""}" onchange="saveT('${q.id}',this.value)"/>`;
+        }
+        if(q.hint){
+          const hv=S.hint[q.id];
+          h+=`<button class="hbtn" onclick="tHint('${q.id}')">💡 ${_UL.hint}</button>
+              <div class="hint${hv?" show":""}" id="H${q.id}">💡 ${(q.hint[S.lang]||q.hint.az)}</div>`;
+        }
+        const wrap=document.getElementById("QW");
+        const card=document.createElement("div");
+        card.className="qcard";card.id="qCARD";
+        card.innerHTML=h;
+        wrap.innerHTML="";wrap.appendChild(card);
+        // slide animation
+        card.style.animation="none";card.offsetHeight;
+        card.style.animation=_slideDir14==="right"
+          ?"slideInRight .27s cubic-bezier(0.25,0.46,0.45,0.94) both"
+          :"slideInLeft .27s cubic-bezier(0.25,0.46,0.45,0.94) both";
+        window.scrollTo({top:0,behavior:"instant"});
+        upStat();
       }
 
       function renderAll(){
@@ -1208,53 +1342,22 @@
         const nav=document.getElementById("QN");nav.innerHTML="";
         qs.forEach((q,i)=>{
           const b=document.createElement("button");
-          b.className="qnb"+(S.ans[q.id]!==undefined?" ok":"");
+          b.className="qnb"+(i===S.qi?" active":"")+(S.ans[q.id]!==undefined?" ok":"");
           b.textContent=i+1;
-          b.onclick=()=>{const _e=document.getElementById("q"+q.id);if(_e)_e.scrollIntoView({behavior:"smooth",block:"nearest",inline:"nearest"});};
+          b.onclick=()=>{_slideDir14=i>S.qi?"right":"left";showQ(i);};
           nav.appendChild(b);
         });
-        const done=qs.filter(q=>S.ans[q.id]!==undefined).length;
-        document.getElementById("PRG").textContent=done+"/"+qs.length;
-        document.getElementById("PFI").style.width=(qs.length?done/qs.length*100:0)+"%";
-        const wrap=document.getElementById("QW");wrap.innerHTML="";
-        qs.forEach((q,i)=>{
-          const card=document.createElement("div");
-          card.className="qcard";card.id="q"+q.id;
-          card.style.animationDelay=(i*0.04)+"s";
-          const _UL=UIL[S.lang]||UIL.az;const badge=q.t==="choice"?_UL.badgeC:q.t==="match"?_UL.badgeM:_UL.badgeO;
-          let h=`<div class="qhdr"><span class="qnum">${_UL.sual} ${i+1}</span><span class="qtbadge">${badge}</span></div>
-                  <div class="qtxt">${q[S.lang]||q.az}</div>`;
-          if(q.fig&&F[q.fig])h+=`<div class="figbox">${F[q.fig]}</div>`;
-          if(q.t==="choice"){
-            h+=`<div class="ogrid">`;
-            (q.opts[S.lang]||q.opts.az).forEach((o,oi)=>{
-              h+=`<button class="obtn${S.ans[q.id]===oi?" sel":""}" onclick="pick('${q.id}',${oi})">${o}</button>`;
-            });
-            h+=`</div>`;
-          } else if(q.t==="match"){
-            h+=`<div class="mwrap"><div class="mcol">${(q.left[S.lang]||q.left.az).map(l=>`<div class="mit">${l}</div>`).join("")}</div>
-                <div class="mcol">${(q.right[S.lang]||q.right.az).map(r=>`<div class="mit">${r}</div>`).join("")}</div></div>
-                <div class="mbox"><label>${_UL.mlabel}</label>
-                <input class="minp" type="text" placeholder="1-?, 2-?, 3-?" value="${S.ans[q.id]||""}"
-                       onchange="saveT('${q.id}',this.value)"/></div>`;
-          } else {
-            h+=`<input class="oinp" type="text" placeholder="Cavabınızı yazın..."
-                     value="${S.ans[q.id]||""}" onchange="saveT('${q.id}',this.value)"/>`;
-          }
-          if(q.hint){
-            const hv=S.hint[q.id];
-            h+=`<button class="hbtn" onclick="tHint('${q.id}')">💡 ${_UL.hint}</button>
-                <div class="hint${hv?" show":""}" id="H${q.id}">💡 ${(q.hint[S.lang]||q.hint.az)}</div>`;
-          }
-          card.innerHTML=h;wrap.appendChild(card);
-        });
+        if(S.qi>=qs.length)S.qi=0;
+        showQ(S.qi);
       }
+
+      function prevQ(){if(S.qi>0){_slideDir14="left";S.qi--;showQ(S.qi);}}
+      function nextQ(){const qs=QS.filter(q=>q.v===S.v);if(S.qi<qs.length-1){_slideDir14="right";S.qi++;showQ(S.qi);}}
 
       function pick(id,oi){
         S.ans[id]=oi;
-        document.getElementById("q"+id).querySelectorAll(".obtn").forEach((b,i)=>{
-          b.className="obtn"+(i===oi?" sel":"");
-        });
+        const card=document.getElementById("qCARD");
+        if(card)card.querySelectorAll(".obtn").forEach((b,i)=>{b.className="obtn"+(i===oi?" sel":"");});
         upStat();
       }
       function saveT(id,v){
@@ -1272,7 +1375,8 @@
         document.getElementById("PRG").textContent=done+"/"+qs.length;
         document.getElementById("PFI").style.width=(qs.length?done/qs.length*100:0)+"%";
         document.getElementById("QN").querySelectorAll(".qnb").forEach((b,i)=>{
-          b.className="qnb"+(S.ans[qs[i].id]!==undefined?" ok":"");
+          const isActive=i===S.qi,isOk=S.ans[qs[i].id]!==undefined;
+          b.className="qnb"+(isActive?" active":"")+(isOk?" ok":"");
         });
       }
 
@@ -1280,21 +1384,25 @@
        az:{time:"Zaman",prog:"Tərəqqi",vari:"Variant",nav:"Sual Naviqasiyası",
            cor:"Düzgün",wr:"Səhv",bl:"Boş",tm:"Vaxt",fin:"✓ Bitir",
            restart:"🔄 Yenidən başla",badgeC:"Test",badgeM:"Uyğunluq",badgeO:"Açıq",sual:"SUAL",
-           mlabel:"CAVABINIZI YAZIN (məs: 1-a, 2-b, 3-c):",hint:"İpucu"},
+           mlabel:"CAVABINIZI YAZIN (məs: 1-a, 2-b, 3-c):",hint:"İpucu",
+           prev:"Geri",next:"İrəli"},
        ru:{time:"Время",prog:"Прогресс",vari:"Вариант",nav:"Навигация",
            cor:"Верно",wr:"Неверно",bl:"Пусто",tm:"Время",fin:"✓ Завершить",
            restart:"🔄 Начать заново",badgeC:"Тест",badgeM:"Соответствие",badgeO:"Открытый",sual:"ВОПРОС",
-           mlabel:"ВАШ ОТВЕТ (напр: 1-a, 2-b, 3-c):",hint:"Подсказка"},
+           mlabel:"ВАШ ОТВЕТ (напр: 1-a, 2-b, 3-c):",hint:"Подсказка",
+           prev:"Назад",next:"Вперёд"},
        en:{time:"Time",prog:"Progress",vari:"Variant",nav:"Question navigation",
            cor:"Correct",wr:"Wrong",bl:"Empty",tm:"Time",fin:"✓ Finish",
            restart:"🔄 Restart",badgeC:"Test",badgeM:"Matching",badgeO:"Open",sual:"QUESTION",
-           mlabel:"WRITE YOUR ANSWER (e.g. 1-a, 2-b, 3-c):",hint:"Hint"}
+           mlabel:"WRITE YOUR ANSWER (e.g. 1-a, 2-b, 3-c):",hint:"Hint",
+           prev:"Back",next:"Next"}
       };
       function applyUI(){
        const L=UIL[S.lang]||UIL.az;
        const set=(id,v)=>{const e=document.getElementById(id);if(e)e.textContent=v;};
        set("L_time",L.time);set("L_prog",L.prog);set("L_var",L.vari);set("L_nav",L.nav);
        set("L_cor",L.cor);set("L_wr",L.wr);set("L_bl",L.bl);set("L_tm",L.tm);
+       set("L_prev",L.prev);set("L_next",L.next);
        const fb=document.querySelector(".bfin");if(fb)fb.textContent=L.fin;
        const rb=document.querySelector(".brest");if(rb)rb.textContent=L.restart;
       }
@@ -1324,9 +1432,55 @@
         document.getElementById("RBL").textContent=bl;
         const _el=3600-S.timer;const m=Math.floor(_el/60),sc=_el%60;
         document.getElementById("RTM").textContent=m+":"+String(sc).padStart(2,"0");
+        /* ── wrong answers list ── */
+        const LTRS_W = ["A","B","C","D","E"];
+        const wqList = qs.filter(q => q.t === "choice" && S.ans[q.id] !== undefined && S.ans[q.id] !== q.ans);
+        let wsEl = document.getElementById("wrongSumLS");
+        if (!wsEl) {
+          wsEl = document.createElement("div");
+          wsEl.id = "wrongSumLS";
+          wsEl.className = "wrong-summary";
+          const mbody = document.querySelector("#MO .mbody");
+          if (mbody) {
+            const brest = mbody.querySelector(".brest");
+            if (brest) mbody.insertBefore(wsEl, brest); else mbody.appendChild(wsEl);
+          }
+        }
+        if (wqList.length === 0) {
+          wsEl.innerHTML = ""; wsEl.style.display = "none";
+        } else {
+          const lbl = {az:"Səhv cavablar",ru:"Неверные ответы",en:"Wrong answers"};
+          wsEl.style.display = "";
+          wsEl.innerHTML = `<div class="wrong-summary-title">✗ ${lbl[S.lang]||lbl.az}</div>` +
+            wqList.map(q => {
+              const raw = q[S.lang] || q.az || "";
+              const plain = raw.replace(/<[^>]+>/g," ").replace(/\s+/g," ").trim();
+              const excr = plain.length > 55 ? plain.slice(0,55)+"…" : plain;
+              return `<div class="wrong-item">
+                <span class="wrong-item-num">${q.id}</span>
+                <span class="wrong-item-text" title="${plain}">${excr}</span>
+                <span style="display:flex;gap:.3rem;align-items:center;flex-shrink:0">
+                  <span class="wrong-item-user">${LTRS_W[S.ans[q.id]]||S.ans[q.id]}</span>
+                  <span class="wrong-item-arrow">→</span>
+                  <span class="wrong-item-correct">${LTRS_W[q.ans]||q.ans}</span>
+                </span>
+              </div>`;
+            }).join("");
+        }
         document.getElementById("MO").classList.add("show");
       }
-      function restart(){S.ans={};S.hint={};S.timer=3600;document.getElementById("MO").classList.remove("show");renderAll();}
+      function restart(){S.ans={};S.hint={};S.timer=3600;S.qi=0;_slideDir14="right";document.getElementById("MO").classList.remove("show");renderAll();}
+
+      document.addEventListener("keydown",e=>{
+        if(document.getElementById("MO").classList.contains("show"))return;
+        if(e.target.tagName==="INPUT")return;
+        if(e.key==="ArrowLeft"||e.key==="ArrowUp"){e.preventDefault();prevQ();}
+        if(e.key==="ArrowRight"||e.key==="ArrowDown"){e.preventDefault();nextQ();}
+        if(e.key>="1"&&e.key<="5"){
+          const qs=QS.filter(q=>q.v===S.v),q=qs[S.qi];
+          if(q&&q.t==="choice"){const oi=parseInt(e.key)-1;const opts=q.opts[S.lang]||q.opts.az;if(oi<opts.length)pick(q.id,oi);}
+        }
+      });
 
       /* ===== АВТОПАТЧ: английский язык ===== */
       (function(){

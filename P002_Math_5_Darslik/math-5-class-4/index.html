@@ -1,0 +1,740 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Математика 5 — Глава 4: Проценты</title>
+    <style>
+      :root {
+        --bg-dark: #0f0f1a;
+        --bg-card: rgba(255, 255, 255, 0.05);
+        --bg-glass: rgba(255, 255, 255, 0.08);
+        --border-glass: rgba(255, 255, 255, 0.15);
+        --text-primary: #e8e8f0;
+        --text-secondary: #a0a0b8;
+        --accent: #00d4aa;
+        --accent-dim: rgba(0, 212, 170, 0.2);
+        --accent-warm: #ff6b6b;
+        --accent-warm-dim: rgba(255, 107, 107, 0.2);
+        --accent-blue: #4dabf7;
+        --accent-blue-dim: rgba(77, 171, 247, 0.2);
+        --accent-purple: #c084fc;
+        --accent-purple-dim: rgba(192, 132, 252, 0.2);
+        --success: #51cf66;
+        --success-dim: rgba(81, 207, 102, 0.2);
+        --warning: #fcc419;
+        --warning-dim: rgba(252, 196, 25, 0.2);
+      }
+
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+
+      body {
+        font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+        background: var(--bg-dark);
+        color: var(--text-primary);
+        min-height: 100vh;
+        overflow-x: hidden;
+        line-height: 1.6;
+      }
+
+      /* ── Background ── */
+      .bg-animation {
+        position: fixed;
+        top: 0; left: 0;
+        width: 100%; height: 100%;
+        z-index: -1;
+        background:
+          radial-gradient(ellipse at 15% 20%, rgba(0, 212, 170, 0.08) 0%, transparent 50%),
+          radial-gradient(ellipse at 85% 75%, rgba(77, 171, 247, 0.08) 0%, transparent 50%),
+          radial-gradient(ellipse at 50% 50%, rgba(255, 107, 107, 0.05) 0%, transparent 60%),
+          #0f0f1a;
+      }
+      .bg-animation::before {
+        content: "";
+        position: absolute;
+        width: 200%; height: 200%;
+        top: -50%; left: -50%;
+        background: repeating-linear-gradient(
+          0deg,
+          transparent, transparent 40px,
+          rgba(255, 255, 255, 0.015) 40px,
+          rgba(255, 255, 255, 0.015) 41px
+        );
+        animation: bgMove 20s linear infinite;
+      }
+      @keyframes bgMove {
+        0%   { transform: translateY(0); }
+        100% { transform: translateY(40px); }
+      }
+
+      /* ── Nav ── */
+      nav {
+        position: fixed;
+        top: 0; left: 0; right: 0;
+        background: rgba(15, 15, 26, 0.88);
+        backdrop-filter: blur(20px);
+        border-bottom: 1px solid var(--border-glass);
+        z-index: 1000;
+        padding: 0 24px;
+      }
+      .nav-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        height: 60px;
+        gap: 16px;
+      }
+      .logo {
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: var(--accent);
+        white-space: nowrap;
+      }
+      .nav-back {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        color: var(--text-secondary);
+        text-decoration: none;
+        font-size: 0.875rem;
+        font-weight: 500;
+        padding: 6px 14px;
+        border-radius: 8px;
+        border: 1px solid var(--border-glass);
+        background: var(--bg-glass);
+        transition: all 0.2s;
+      }
+      .nav-back:hover {
+        color: var(--accent);
+        border-color: var(--accent);
+        background: var(--accent-dim);
+      }
+      .breadcrumb {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 0.8rem;
+        color: var(--text-secondary);
+      }
+      .breadcrumb a {
+        color: var(--text-secondary);
+        text-decoration: none;
+        transition: color 0.2s;
+      }
+      .breadcrumb a:hover { color: var(--accent); }
+      .breadcrumb span { color: var(--border-glass); }
+
+      /* ── Main Content ── */
+      main {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 100px 24px 60px;
+      }
+
+      /* ── Hero ── */
+      .hero {
+        text-align: center;
+        padding: 60px 20px 48px;
+      }
+      .hero-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: var(--accent-dim);
+        border: 1px solid var(--accent);
+        color: var(--accent);
+        font-size: 0.78rem;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        padding: 6px 16px;
+        border-radius: 999px;
+        margin-bottom: 24px;
+      }
+      .hero h1 {
+        font-size: clamp(2rem, 5vw, 3.2rem);
+        font-weight: 800;
+        letter-spacing: -0.02em;
+        background: linear-gradient(135deg, #fff 30%, var(--accent) 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin-bottom: 16px;
+        line-height: 1.2;
+      }
+      .hero p {
+        font-size: 1.05rem;
+        color: var(--text-secondary);
+        max-width: 600px;
+        margin: 0 auto 32px;
+      }
+      .hero-stats {
+        display: flex;
+        justify-content: center;
+        gap: 32px;
+        flex-wrap: wrap;
+      }
+      .stat-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 4px;
+      }
+      .stat-number {
+        font-size: 2rem;
+        font-weight: 800;
+        color: var(--accent);
+        line-height: 1;
+      }
+      .stat-label {
+        font-size: 0.78rem;
+        color: var(--text-secondary);
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+      }
+      .divider {
+        width: 1px;
+        height: 40px;
+        background: var(--border-glass);
+        align-self: center;
+      }
+
+      /* ── Progress Bar ── */
+      .progress-block {
+        background: var(--bg-glass);
+        border: 1px solid var(--border-glass);
+        border-radius: 16px;
+        padding: 20px 28px;
+        margin-bottom: 48px;
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        flex-wrap: wrap;
+      }
+      .progress-label {
+        font-size: 0.85rem;
+        color: var(--text-secondary);
+        white-space: nowrap;
+      }
+      .progress-bar-wrap {
+        flex: 1;
+        min-width: 160px;
+        background: rgba(255,255,255,0.07);
+        border-radius: 999px;
+        height: 8px;
+        overflow: hidden;
+      }
+      .progress-bar-fill {
+        height: 100%;
+        border-radius: 999px;
+        background: linear-gradient(90deg, var(--accent), var(--accent-blue));
+        width: 22%;
+        transition: width 1s ease;
+      }
+      .progress-count {
+        font-size: 0.85rem;
+        font-weight: 700;
+        color: var(--accent);
+        white-space: nowrap;
+      }
+
+      /* ── Lesson Grid ── */
+      .section-header {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 24px;
+      }
+      .section-title {
+        font-size: 1.2rem;
+        font-weight: 700;
+        color: var(--text-primary);
+      }
+      .section-line {
+        flex: 1;
+        height: 1px;
+        background: var(--border-glass);
+      }
+
+      .lessons-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+        gap: 20px;
+      }
+
+      .lesson-card {
+        background: var(--bg-glass);
+        border: 1px solid var(--border-glass);
+        border-radius: 16px;
+        padding: 24px;
+        text-decoration: none;
+        color: var(--text-primary);
+        transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+        position: relative;
+        overflow: hidden;
+      }
+      .lesson-card::before {
+        content: "";
+        position: absolute;
+        top: 0; left: 0; right: 0;
+        height: 3px;
+        background: var(--card-accent, var(--accent));
+        border-radius: 16px 16px 0 0;
+        opacity: 0.6;
+        transition: opacity 0.3s;
+      }
+      .lesson-card:hover {
+        transform: translateY(-4px);
+        border-color: var(--card-accent, var(--accent));
+        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+      }
+      .lesson-card:hover::before { opacity: 1; }
+      .lesson-card.locked {
+        opacity: 0.55;
+        pointer-events: none;
+        cursor: not-allowed;
+      }
+      .lesson-card.locked:hover { transform: none; }
+
+      .card-top {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 12px;
+      }
+      .lesson-num {
+        width: 44px; height: 44px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.1rem;
+        font-weight: 800;
+        background: var(--card-accent-dim, var(--accent-dim));
+        color: var(--card-accent, var(--accent));
+        flex-shrink: 0;
+      }
+      .lesson-status {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        font-size: 0.7rem;
+        font-weight: 700;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        padding: 4px 10px;
+        border-radius: 999px;
+        white-space: nowrap;
+      }
+      .status-available {
+        background: var(--success-dim);
+        color: var(--success);
+        border: 1px solid rgba(81, 207, 102, 0.3);
+      }
+      .status-coming {
+        background: var(--warning-dim);
+        color: var(--warning);
+        border: 1px solid rgba(252, 196, 25, 0.3);
+      }
+      .status-locked {
+        background: rgba(255,255,255,0.05);
+        color: var(--text-secondary);
+        border: 1px solid var(--border-glass);
+      }
+
+      .lesson-title {
+        font-size: 1.05rem;
+        font-weight: 700;
+        color: var(--text-primary);
+        line-height: 1.3;
+      }
+      .lesson-desc {
+        font-size: 0.83rem;
+        color: var(--text-secondary);
+        line-height: 1.5;
+      }
+
+      .lesson-tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+      }
+      .tag {
+        font-size: 0.68rem;
+        font-weight: 600;
+        padding: 3px 9px;
+        border-radius: 999px;
+        background: var(--bg-card);
+        color: var(--text-secondary);
+        border: 1px solid var(--border-glass);
+      }
+
+      .card-footer {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding-top: 12px;
+        border-top: 1px solid var(--border-glass);
+        font-size: 0.78rem;
+        color: var(--text-secondary);
+      }
+      .card-meta {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+      .card-arrow {
+        color: var(--card-accent, var(--accent));
+        font-size: 1.1rem;
+        transition: transform 0.2s;
+      }
+      .lesson-card:hover .card-arrow { transform: translateX(4px); }
+
+      /* ── Info Block ── */
+      .info-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 16px;
+        margin-top: 48px;
+      }
+      .info-card {
+        background: var(--bg-glass);
+        border: 1px solid var(--border-glass);
+        border-radius: 14px;
+        padding: 20px;
+        display: flex;
+        gap: 14px;
+        align-items: flex-start;
+      }
+      .info-icon {
+        width: 40px; height: 40px;
+        border-radius: 10px;
+        display: flex; align-items: center; justify-content: center;
+        font-size: 1.2rem;
+        flex-shrink: 0;
+      }
+      .info-title { font-size: 0.85rem; font-weight: 700; margin-bottom: 4px; }
+      .info-text  { font-size: 0.78rem; color: var(--text-secondary); line-height: 1.5; }
+
+      /* ── Footer ── */
+      footer {
+        text-align: center;
+        padding: 40px 24px;
+        font-size: 0.8rem;
+        color: var(--text-secondary);
+        border-top: 1px solid var(--border-glass);
+        margin-top: 60px;
+      }
+      footer a { color: var(--accent); text-decoration: none; }
+
+      @media (max-width: 640px) {
+        .hero-stats  { gap: 16px; }
+        .divider     { display: none; }
+        .lessons-grid { grid-template-columns: 1fr; }
+        nav { padding: 0 16px; }
+        .breadcrumb { display: none; }
+        main { padding: 88px 16px 40px; }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="bg-animation"></div>
+
+    <!-- ── NAV ── -->
+    <nav>
+      <div class="nav-container">
+        <div class="logo">📐 Математика 5 — Глава 4</div>
+        <div class="breadcrumb">
+          <a href="../../index.html">Платформа</a>
+          <span>›</span>
+          <a href="../index.html">Математика 5</a>
+          <span>›</span>
+          <span style="color: var(--accent);">Глава 4</span>
+        </div>
+        <a href="../index.html" class="nav-back">← Назад</a>
+      </div>
+    </nav>
+
+    <!-- ── MAIN ── -->
+    <main>
+
+      <!-- Hero -->
+      <div class="hero">
+        <div class="hero-badge">📚 Математика · 5-й класс · Глава 4</div>
+        <h1>Проценты</h1>
+        <p>9 уроков для полного освоения темы — от понятия процента до решения сложных задач в повседневной жизни.</p>
+        <div class="hero-stats">
+          <div class="stat-item">
+            <div class="stat-number">9</div>
+            <div class="stat-label">уроков</div>
+          </div>
+          <div class="divider"></div>
+          <div class="stat-item">
+            <div class="stat-number">2</div>
+            <div class="stat-label">доступно</div>
+          </div>
+          <div class="divider"></div>
+          <div class="stat-item">
+            <div class="stat-number">270+</div>
+            <div class="stat-label">заданий</div>
+          </div>
+          <div class="divider"></div>
+          <div class="stat-item">
+            <div class="stat-number">AZ · RU</div>
+            <div class="stat-label">языки</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Progress -->
+      <div class="progress-block">
+        <div class="progress-label">Прогресс по главе</div>
+        <div class="progress-bar-wrap">
+          <div class="progress-bar-fill" id="progressFill"></div>
+        </div>
+        <div class="progress-count">9 / 9 уроков</div>
+      </div>
+
+      <!-- Grid Header -->
+      <div class="section-header">
+        <div class="section-title">Все уроки</div>
+        <div class="section-line"></div>
+      </div>
+
+      <!-- ── LESSON CARDS ── -->
+      <div class="lessons-grid">
+
+        <!-- Lesson 1 -->
+        <a href="Lesson-1.html" class="lesson-card"
+           style="--card-accent:#00d4aa; --card-accent-dim:rgba(0,212,170,0.15);">
+          <div class="card-top">
+            <div class="lesson-num">1</div>
+            <div class="lesson-status status-available">✓ Доступен</div>
+          </div>
+          <div class="lesson-title">Понятие процента</div>
+          <div class="lesson-desc">Что такое 1%. Визуализация на круге, таблице и столбике. Переводы: дроби ↔ проценты ↔ десятичные дроби.</div>
+          <div class="lesson-tags">
+            <span class="tag">Теория</span>
+            <span class="tag">Примеры</span>
+            <span class="tag">Тренажёр</span>
+            <span class="tag">30 вопросов</span>
+          </div>
+          <div class="card-footer">
+            <div class="card-meta">📖 Теория · Задачи · Аттестация</div>
+            <div class="card-arrow">→</div>
+          </div>
+        </a>
+
+        <!-- Lesson 2 -->
+        <a href="Lesson-2.html" class="lesson-card"
+           style="--card-accent:#4dabf7; --card-accent-dim:rgba(77,171,247,0.15);">
+          <div class="card-top">
+            <div class="lesson-num">2</div>
+            <div class="lesson-status status-available">✓ Доступен</div>
+          </div>
+          <div class="lesson-title">Сотая часть числа</div>
+          <div class="lesson-desc">Переводы дробей и десятичных чисел в проценты и обратно. Таблица основных значений и шаблонные вычисления.</div>
+          <div class="lesson-tags">
+            <span class="tag">Дроби</span>
+            <span class="tag">Перевод</span>
+            <span class="tag">Тренажёр</span>
+            <span class="tag">30 вопросов</span>
+          </div>
+          <div class="card-footer">
+            <div class="card-meta">📖 Теория · Задачи · Аттестация</div>
+            <div class="card-arrow">→</div>
+          </div>
+        </a>
+
+        <!-- Lesson 3 -->
+        <a href="Lesson-3.html" class="lesson-card"
+           style="--card-accent:#ff6b6b; --card-accent-dim:rgba(255,107,107,0.15);">
+          <div class="card-top">
+            <div class="lesson-num">3</div>
+            <div class="lesson-status status-available">✓ Доступен</div>
+          </div>
+          <div class="lesson-title">Нахождение процента от числа</div>
+          <div class="lesson-desc">Формула: P% от N = N × P ÷ 100. Пошаговые алгоритмы, скидки, налоги, тренажёр и аттестация.</div>
+          <div class="lesson-tags">
+            <span class="tag">Формула</span>
+            <span class="tag">Скидки</span>
+            <span class="tag">Тренажёр</span>
+            <span class="tag">30 вопросов</span>
+          </div>
+          <div class="card-footer">
+            <div class="card-meta">📖 Теория · Задачи · Аттестация</div>
+            <div class="card-arrow">→</div>
+          </div>
+        </a>
+
+        <!-- Lesson 4 -->
+        <a href="Lesson-4.html" class="lesson-card"
+           style="--card-accent:#c084fc; --card-accent-dim:rgba(192,132,252,0.15);">
+          <div class="card-top">
+            <div class="lesson-num">4</div>
+            <div class="lesson-status status-coming">⏳ Скоро</div>
+          </div>
+          <div class="lesson-title">Нахождение числа по проценту</div>
+          <div class="lesson-desc">Обратная задача: если P% числа равно A, найти само число. Формула, алгоритм, типичные ошибки.</div>
+          <div class="lesson-tags">
+            <span class="tag">Обратная задача</span>
+            <span class="tag">Формула</span>
+          </div>
+          <div class="card-footer">
+            <div class="card-meta">🔒 В разработке</div>
+            <div class="card-arrow" style="color:var(--text-secondary)">→</div>
+          </div>
+        </a>
+
+        <!-- Lesson 5 -->
+        <div class="lesson-card locked"
+             style="--card-accent:#fcc419; --card-accent-dim:rgba(252,196,25,0.15);">
+          <div class="card-top">
+            <div class="lesson-num">5</div>
+            <div class="lesson-status status-locked">🔒 Заблокирован</div>
+          </div>
+          <div class="lesson-title">Сколько процентов одно число составляет от другого</div>
+          <div class="lesson-desc">Формула: A / B × 100%. Сравнение величин, круговые диаграммы, доля и процент.</div>
+          <div class="lesson-tags">
+            <span class="tag">Сравнение</span>
+            <span class="tag">Диаграммы</span>
+          </div>
+          <div class="card-footer">
+            <div class="card-meta">🔒 Недоступно</div>
+            <div class="card-arrow" style="color:var(--text-secondary)">→</div>
+          </div>
+        </div>
+
+        <!-- Lesson 6 -->
+        <div class="lesson-card locked"
+             style="--card-accent:#00d4aa; --card-accent-dim:rgba(0,212,170,0.15);">
+          <div class="card-top">
+            <div class="lesson-num">6</div>
+            <div class="lesson-status status-locked">🔒 Заблокирован</div>
+          </div>
+          <div class="lesson-title">Увеличение и уменьшение на проценты</div>
+          <div class="lesson-desc">Наценка, скидка, рост цен. «Увеличить на 20%» = умножить на 1,2. Обратная операция.</div>
+          <div class="lesson-tags">
+            <span class="tag">Наценка</span>
+            <span class="tag">Скидка</span>
+          </div>
+          <div class="card-footer">
+            <div class="card-meta">🔒 Недоступно</div>
+            <div class="card-arrow" style="color:var(--text-secondary)">→</div>
+          </div>
+        </div>
+
+        <!-- Lesson 7 -->
+        <div class="lesson-card locked"
+             style="--card-accent:#4dabf7; --card-accent-dim:rgba(77,171,247,0.15);">
+          <div class="card-top">
+            <div class="lesson-num">7</div>
+            <div class="lesson-status status-locked">🔒 Заблокирован</div>
+          </div>
+          <div class="lesson-title">Диаграммы и проценты</div>
+          <div class="lesson-desc">Построение и чтение круговых, столбчатых и линейных диаграмм. Связь секторов диаграммы с процентами.</div>
+          <div class="lesson-tags">
+            <span class="tag">Диаграммы</span>
+            <span class="tag">SVG</span>
+          </div>
+          <div class="card-footer">
+            <div class="card-meta">🔒 Недоступно</div>
+            <div class="card-arrow" style="color:var(--text-secondary)">→</div>
+          </div>
+        </div>
+
+        <!-- Lesson 8 -->
+        <div class="lesson-card locked"
+             style="--card-accent:#ff6b6b; --card-accent-dim:rgba(255,107,107,0.15);">
+          <div class="card-top">
+            <div class="lesson-num">8</div>
+            <div class="lesson-status status-locked">🔒 Заблокирован</div>
+          </div>
+          <div class="lesson-title">Смешанные задачи на проценты</div>
+          <div class="lesson-desc">Многошаговые задачи, комбинирующие все три типа. Банк, магазин, спорт: реальные контексты.</div>
+          <div class="lesson-tags">
+            <span class="tag">Смешанные</span>
+            <span class="tag">Практика</span>
+          </div>
+          <div class="card-footer">
+            <div class="card-meta">🔒 Недоступно</div>
+            <div class="card-arrow" style="color:var(--text-secondary)">→</div>
+          </div>
+        </div>
+
+        <!-- Lesson 9 -->
+        <a href="Lesson-9.html" class="lesson-card"
+           style="--card-accent:#c084fc; --card-accent-dim:rgba(192,132,252,0.15);">
+          <div class="card-top">
+            <div class="lesson-num">9</div>
+            <div class="lesson-status status-available">✓ Доступен</div>
+          </div>
+          <div class="lesson-title">Итоговая контрольная</div>
+          <div class="lesson-desc">Полный срез по всем темам главы. 30 вопросов трёх уровней сложности. Разбор ошибок по темам.</div>
+          <div class="lesson-tags">
+            <span class="tag">Контрольная</span>
+            <span class="tag">3 режима</span>
+            <span class="tag">30 вопросов</span>
+          </div>
+          <div class="card-footer">
+            <div class="card-meta">🏆 Классический · Экзамен · Скорость</div>
+            <div class="card-arrow">→</div>
+          </div>
+        </a>
+
+      </div>
+      <!-- /lessons-grid -->
+
+      <!-- Info Grid -->
+      <div class="info-grid">
+        <div class="info-card">
+          <div class="info-icon" style="background:var(--accent-dim); color:var(--accent);">🎯</div>
+          <div>
+            <div class="info-title">Теория + Примеры</div>
+            <div class="info-text">Каждый урок содержит пошаговую теорию, разобранные примеры и алгоритм решения.</div>
+          </div>
+        </div>
+        <div class="info-card">
+          <div class="info-icon" style="background:var(--accent-blue-dim); color:var(--accent-blue);">🏋️</div>
+          <div>
+            <div class="info-title">Интерактивный тренажёр</div>
+            <div class="info-text">Немедленная обратная связь, подсказки и разбор ошибок после каждого ответа.</div>
+          </div>
+        </div>
+        <div class="info-card">
+          <div class="info-icon" style="background:var(--accent-warm-dim); color:var(--accent-warm);">📊</div>
+          <div>
+            <div class="info-title">Аттестация</div>
+            <div class="info-text">30 вопросов в каждом уроке с аналитикой слабых мест и итоговым баллом.</div>
+          </div>
+        </div>
+        <div class="info-card">
+          <div class="info-icon" style="background:var(--accent-purple-dim); color:var(--accent-purple);">🌐</div>
+          <div>
+            <div class="info-title">Два языка</div>
+            <div class="info-text">Весь контент доступен на русском и азербайджанском языке с полным переводом.</div>
+          </div>
+        </div>
+      </div>
+
+    </main>
+
+    <footer>
+      <p>Математика 5-й класс · Глава 4 · Проценты &nbsp;|&nbsp; <a href="../../index.html">Вернуться на платформу</a></p>
+    </footer>
+
+    <script>
+      // Animate progress bar on load
+      window.addEventListener("load", () => {
+        setTimeout(() => {
+          document.getElementById("progressFill").style.width = "22%";
+        }, 300);
+      });
+    </script>
+  </body>
+</html>

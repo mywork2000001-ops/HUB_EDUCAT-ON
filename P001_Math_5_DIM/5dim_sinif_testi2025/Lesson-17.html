@@ -1,957 +1,229 @@
-﻿<!doctype html>
+<!doctype html>
 <html lang="az">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>İllik Material — Yekunlaşdırıcı Test | DİM V sinif</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css"
+    />
+    <script
+      defer
+      src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"
+    ></script>
+    <script
+      defer
+      src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
+      onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}]})"
+    ></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
     <link rel="stylesheet" href="style.css" />
     <style>
-      @import url("https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=JetBrains+Mono:wght@400;700&display=swap");
-      :root {
-        --primary: #4f46e5;
-        --pl: #818cf8;
-        --secondary: #10b981;
-        --danger: #ef4444;
-        --warning: #f59e0b;
-        --bg: #f0f9ff;
-        --card: #fff;
-        --text: #0c4a6e;
-        --muted: #64748b;
-        --border: #bae6fd;
-        --sidebar: 280px;
-      }
-      .dark {
-        --bg: #0a1929;
-        --card: #0f2744;
-        --text: #e0f2fe;
-        --muted: #7dd3fc;
-        --border: #1e4976;
-      }
-      * {
-        box-sizing: border-box;
-        margin: 0;
-        padding: 0;
-      }
-      body {
-        font-family: "Nunito", sans-serif;
-        background: var(--bg);
-        color: var(--text);
-        min-height: 100vh;
-        transition:
-          background 0.3s,
-          color 0.3s;
-      }
-      .frac {
-        display: inline-block;
-        text-align: center;
-        vertical-align: middle;
-        font-family: "JetBrains Mono", monospace;
-      }
-      .frac .num {
-        display: block;
-        border-bottom: 1.5px solid currentColor;
-        padding: 0 3px;
-        font-size: 0.85em;
-        line-height: 1.3;
-      }
-      .frac .den {
-        display: block;
-        padding: 0 3px;
-        font-size: 0.85em;
-        line-height: 1.3;
-      }
-
-      /* HEADER */
-      .hdr {
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        z-index: 200;
-        background: rgba(240, 249, 255, 0.95);
-        backdrop-filter: blur(14px);
-        border-bottom: 2px solid var(--border);
-        height: 58px;
-        padding: 0 16px;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        transition: background 0.3s;
-        gap: 8px;
-      }
-      .dark .hdr {
-        background: rgba(10, 25, 41, 0.95);
-      }
-      .logo {
-        font-size: 1rem;
-        font-weight: 900;
-        background: linear-gradient(135deg, var(--primary), var(--pl));
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
-        white-space: nowrap;
-      }
-      .vtabs {
-        display: flex;
-        gap: 3px;
-        background: var(--bg);
-        border-radius: 10px;
-        padding: 3px;
-        flex-wrap: wrap;
-        overflow-x: visible;
-        scrollbar-width: none;
-        max-width: none;
-      }
-      .vtabs::-webkit-scrollbar {
-        display: none;
-      }
-      .dark .vtabs {
-        background: #0a1929;
-      }
-      .vtab {
-        padding: 4px 10px;
-        border-radius: 7px;
-        border: none;
-        cursor: pointer;
-        font-family: "Nunito", sans-serif;
-        font-weight: 800;
-        font-size: 0.75rem;
-        color: var(--muted);
-        background: transparent;
-        transition: all 0.2s;
-        white-space: nowrap;
-        flex-shrink: 0;
-      }
-      .vtab.active {
-        background: var(--primary);
-        color: #fff;
-        box-shadow: 0 2px 8px rgba(79, 70, 229, 0.4);
-      }
-      .hdr-r {
-        display: flex;
-        align-items: center;
-        gap: 6px;
-        flex-shrink: 0;
-      }
-      .tmr-wrap {
-        display: flex;
-        align-items: center;
-        gap: 5px;
-        padding: 5px 10px;
-        border-radius: 9px;
-        border: 2px solid var(--border);
-        background: var(--card);
-      }
-      .tmr-icn {
-        font-size: 0.9rem;
-      }
-      #TMR {
-        font-family: "JetBrains Mono", monospace;
-        font-size: 0.85rem;
-        font-weight: 700;
-        color: var(--text);
-        min-width: 42px;
-      }
-      .bicn {
-        width: 34px;
-        height: 34px;
-        border-radius: 9px;
-        border: 2px solid var(--border);
-        background: var(--card);
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        transition: all 0.2s;
-        color: var(--text);
-        font-family: "Nunito", sans-serif;
-        font-weight: 800;
-        font-size: 0.75rem;
-      }
-      .bicn:hover {
-        border-color: var(--primary);
-        color: var(--primary);
-      }
-      .bfin {
-        padding: 7px 14px;
-        border-radius: 9px;
-        border: none;
-        background: var(--primary);
-        color: #fff;
-        font-family: "Nunito", sans-serif;
-        font-weight: 800;
-        font-size: 0.8rem;
-        cursor: pointer;
-        transition: all 0.2s;
-      }
-      .bfin:hover {
-        background: #4338ca;
-        transform: translateY(-1px);
-      }
-
-      /* LAYOUT */
-      .layout {
-        display: flex;
-        padding-top: 58px;
-        min-height: 100vh;
-      }
-
-      /* SIDEBAR */
-      .sidebar {
-        position: fixed;
-        left: 0;
-        top: 58px;
-        bottom: 0;
-        width: var(--sidebar);
-        background: var(--card);
-        border-right: 2px solid var(--border);
-        overflow-y: auto;
-        padding: 16px;
-        display: flex;
-        flex-direction: column;
-        gap: 12px;
-        scrollbar-width: thin;
-        z-index: 100;
-      }
-      .sidebar::-webkit-scrollbar {
-        width: 4px;
-      }
-      .sidebar::-webkit-scrollbar-thumb {
-        background: var(--border);
-        border-radius: 4px;
-      }
-
-      .scard {
-        background: var(--bg);
-        border-radius: 12px;
-        border: 2px solid var(--border);
-        padding: 11px 12px;
-        display: flex;
-        align-items: center;
-        gap: 9px;
-      }
-      .dark .scard {
-        background: #071525;
-      }
-      .sicn {
-        width: 36px;
-        height: 36px;
-        border-radius: 9px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        flex-shrink: 0;
-      }
-      .sicn.b {
-        background: #eff6ff;
-        color: #3b82f6;
-      }
-      .dark .sicn.b {
-        background: #1e3a8a;
-        color: #93c5fd;
-      }
-      .sicn.g {
-        background: #ecfdf5;
-        color: var(--secondary);
-      }
-      .dark .sicn.g {
-        background: #064e3b;
-        color: #6ee7b7;
-      }
-      .sicn.y {
-        background: #fffbeb;
-        color: var(--warning);
-      }
-      .dark .sicn.y {
-        background: #78350f;
-        color: #fcd34d;
-      }
-      .slbl {
-        font-size: 0.62rem;
-        font-weight: 800;
-        letter-spacing: 0.07em;
-        text-transform: uppercase;
-        color: var(--muted);
-      }
-      .sval {
-        font-size: 1.1rem;
-        font-weight: 900;
-        color: var(--text);
-        font-family: "JetBrains Mono", monospace;
-      }
-
-      .pbar {
-        height: 4px;
-        background: var(--border);
-        border-radius: 99px;
-        overflow: hidden;
-        margin-top: 6px;
-      }
-      .pfil {
-        height: 100%;
-        background: linear-gradient(90deg, var(--primary), var(--pl));
-        border-radius: 99px;
-        transition: width 0.4s;
-      }
-
-      .qlabel {
-        font-size: 0.65rem;
-        font-weight: 800;
-        color: var(--muted);
-        letter-spacing: 0.07em;
-        text-transform: uppercase;
-        margin-bottom: 4px;
-      }
-      .qnav {
-        display: grid;
-        grid-template-columns: repeat(5, 1fr);
-        gap: 4px;
-      }
-      .qnb {
-        width: 100%;
-        aspect-ratio: 1;
-        border-radius: 7px;
-        border: 2px solid var(--border);
-        background: var(--card);
-        font-weight: 800;
-        font-size: 0.72rem;
-        cursor: pointer;
-        color: var(--text);
-        transition: all 0.18s;
-        font-family: "Nunito", sans-serif;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-      }
-      .qnb.done {
-        background: rgba(79, 70, 229, 0.15);
-        border-color: var(--primary);
-        color: var(--primary);
-      }
-      .qnb.active {
-        background: var(--primary);
-        border-color: var(--primary);
-        color: #fff;
-        transform: scale(1.05);
-        box-shadow: 0 2px 8px rgba(79, 70, 229, 0.4);
-      }
-      .qnb:hover:not(.active) {
-        border-color: var(--primary);
-        color: var(--primary);
-      }
-
-      /* MAIN CONTENT */
-      .main {
-        margin-left: var(--sidebar);
-        flex: 1;
-        padding: 20px 24px 60px;
-        min-width: 0;
-      }
-
-      .banner {
-        background: linear-gradient(135deg, #0ea5e9, #4338ca);
-        border-radius: 16px;
-        padding: 18px 22px;
-        margin-bottom: 20px;
-        color: #fff;
-        display: flex;
-        align-items: center;
-        gap: 14px;
-      }
-      .banner-icon {
-        font-size: 2rem;
-      }
-      .banner-title {
-        font-size: 1.1rem;
-        font-weight: 900;
-      }
-      .banner-sub {
-        font-size: 0.78rem;
-        opacity: 0.85;
-        margin-top: 2px;
-        font-weight: 700;
-      }
-
-      /* QUESTION CARD */
-      @keyframes cardIn {
-        from {
-          opacity: 0;
-          transform: translateY(8px);
-        }
-        to {
-          opacity: 1;
-          transform: translateY(0);
-        }
-      }
-      .qcard {
-        background: var(--card);
-        border-radius: 16px;
-        border: 2px solid var(--border);
-        padding: 24px;
-        animation: cardIn 0.25s ease both;
-        min-height: 300px;
-      }
-
-      .qhdr {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        margin-bottom: 14px;
-        flex-wrap: wrap;
-      }
-      .qnum {
-        background: var(--primary);
-        color: #fff;
-        font-weight: 900;
-        font-size: 0.73rem;
-        padding: 4px 11px;
-        border-radius: 20px;
-        letter-spacing: 0.04em;
-      }
-      .qtbadge {
-        background: var(--bg);
-        color: var(--muted);
-        font-weight: 800;
-        font-size: 0.63rem;
-        padding: 3px 9px;
-        border-radius: 20px;
-        letter-spacing: 0.06em;
-        text-transform: uppercase;
-        border: 1.5px solid var(--border);
-      }
-      .qnav-btn {
-        padding: 4px 10px;
-        border-radius: 7px;
-        border: 2px solid var(--border);
-        background: var(--card);
-        color: var(--text);
-        font-family: "Nunito", sans-serif;
-        font-weight: 800;
-        font-size: 0.75rem;
-        cursor: pointer;
-        transition: all 0.2s;
-      }
-      .qnav-btn:hover {
-        border-color: var(--primary);
-        color: var(--primary);
-      }
-
-      .qtxt {
-        font-size: 0.98rem;
-        font-weight: 700;
-        line-height: 1.8;
-        margin-bottom: 16px;
-        color: var(--text);
-      }
-      .qshape {
-        text-align: center;
-        margin: 8px 0 14px;
-        opacity: 0.9;
-      }
-
-      .ogrid {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 8px;
-      }
-      @media (max-width: 560px) {
-        .ogrid {
-          grid-template-columns: 1fr;
-        }
-      }
-      .obtn {
-        text-align: left;
-        padding: 11px 14px;
-        border-radius: 11px;
-        border: 2px solid var(--border);
-        background: var(--card);
-        color: var(--text);
-        font-family: "Nunito", sans-serif;
-        font-weight: 700;
-        font-size: 0.88rem;
-        cursor: pointer;
-        transition: all 0.2s;
-        line-height: 1.5;
-      }
-      .obtn:hover {
-        border-color: var(--primary);
-        background: rgba(79, 70, 229, 0.05);
-      }
-      .obtn.sel {
-        border-color: var(--primary);
-        background: rgba(79, 70, 229, 0.12);
-        color: var(--primary);
-      }
-
-      .mwrap {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 12px;
-        margin-top: 8px;
-      }
-      @media (max-width: 520px) {
-        .mwrap {
-          grid-template-columns: 1fr;
-        }
-      }
-      .mcol {
-        display: flex;
-        flex-direction: column;
-        gap: 6px;
-      }
-      .mit {
-        padding: 8px 12px;
-        border-radius: 8px;
-        background: var(--bg);
-        border: 2px solid var(--border);
-        font-weight: 700;
-        font-size: 0.83rem;
-        line-height: 1.5;
-      }
-      .mbox {
-        margin-top: 10px;
-        padding: 12px;
-        border-radius: 11px;
-        background: rgba(79, 70, 229, 0.05);
-        border: 2px solid rgba(79, 70, 229, 0.2);
-      }
-      .mbox label {
-        font-size: 0.7rem;
-        font-weight: 800;
-        color: var(--primary);
-        display: block;
-        margin-bottom: 6px;
-        letter-spacing: 0.05em;
-      }
-      .minp,
-      .oinp {
-        width: 100%;
-        padding: 9px 12px;
-        border-radius: 9px;
-        border: 2px solid var(--border);
-        background: var(--card);
-        color: var(--text);
-        font-family: "Nunito", sans-serif;
-        font-weight: 700;
-        font-size: 0.9rem;
-        transition: border-color 0.2s;
-      }
-      .minp:focus,
-      .oinp:focus {
-        outline: none;
-        border-color: var(--primary);
-      }
-      .oinp {
-        font-family: "JetBrains Mono", monospace;
-        margin-top: 8px;
-      }
-
-      .hbtn {
-        margin-top: 10px;
-        padding: 5px 12px;
-        border-radius: 8px;
-        border: 2px solid var(--warning);
-        background: transparent;
-        color: var(--warning);
-        font-family: "Nunito", sans-serif;
-        font-weight: 800;
-        font-size: 0.74rem;
-        cursor: pointer;
-        transition: all 0.2s;
-      }
-      .hbtn:hover {
-        background: var(--warning);
-        color: #fff;
-      }
-      .hint {
-        display: none;
-        margin-top: 8px;
-        padding: 9px 12px;
-        border-radius: 9px;
-        background: rgba(245, 158, 11, 0.08);
-        border: 2px solid rgba(245, 158, 11, 0.25);
-        font-size: 0.8rem;
-        font-weight: 700;
-        color: var(--warning);
-        line-height: 1.6;
-      }
-      .hint.show {
-        display: block;
-      }
-
-      .qprog {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        margin-top: 18px;
-        padding-top: 14px;
-        border-top: 2px solid var(--border);
-      }
-      .qprog span {
-        font-size: 0.7rem;
-        font-weight: 800;
-        color: var(--muted);
-        white-space: nowrap;
-      }
-      .qpbar {
-        flex: 1;
-        height: 4px;
-        background: var(--border);
-        border-radius: 99px;
-        overflow: hidden;
-      }
-      .qpfil {
-        height: 100%;
-        background: linear-gradient(90deg, var(--primary), var(--pl));
-        border-radius: 99px;
-        transition: width 0.4s;
-      }
-
-      /* RESULT MODAL */
-      .mover {
-        position: fixed;
-        inset: 0;
-        background: rgba(0, 0, 0, 0.6);
-        backdrop-filter: blur(6px);
-        z-index: 300;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        padding: 18px;
-        opacity: 0;
-        pointer-events: none;
-        transition: opacity 0.3s;
-      }
-      .mover.show {
-        opacity: 1;
-        pointer-events: all;
-      }
-      .modal {
-        background: var(--card);
-        border-radius: 20px;
-        max-width: 440px;
-        width: 100%;
-        overflow: hidden;
-        box-shadow: 0 24px 80px rgba(0, 0, 0, 0.3);
-        transform: scale(0.9);
-        transition: transform 0.3s;
-      }
-      .mover.show .modal {
-        transform: scale(1);
-      }
-      .mhdr {
-        background: linear-gradient(135deg, var(--primary), var(--pl));
-        padding: 28px;
-        text-align: center;
-      }
-      .mscore {
-        font-size: 3rem;
-        font-weight: 900;
-        color: #fff;
-      }
-      .msub {
-        font-size: 0.88rem;
-        color: rgba(255, 255, 255, 0.85);
-        font-weight: 700;
-        margin-top: 3px;
-      }
-      .mbody {
-        padding: 22px;
-      }
-      .rgrid {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 9px;
-        margin-bottom: 18px;
-      }
-      .rbox {
-        padding: 13px;
-        border-radius: 12px;
-        text-align: center;
-        border: 2px solid var(--border);
-      }
-      .rbox-num {
-        font-size: 1.6rem;
-        font-weight: 900;
-        font-family: "JetBrains Mono", monospace;
-      }
-      .rbox-lbl {
-        font-size: 0.67rem;
-        font-weight: 800;
-        color: var(--muted);
-        letter-spacing: 0.06em;
-        text-transform: uppercase;
-        margin-top: 2px;
-      }
-      .rbox.ok .rbox-num {
-        color: var(--secondary);
-      }
-      .rbox.wr .rbox-num {
-        color: var(--danger);
-      }
-      .rbox.bl .rbox-num {
-        color: var(--muted);
-      }
-      .rbox.tm .rbox-num {
-        color: var(--primary);
-      }
-      .mbtns {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 9px;
-      }
-      .mbtn {
-        padding: 11px;
-        border-radius: 11px;
-        border: none;
-        font-family: "Nunito", sans-serif;
-        font-weight: 800;
-        font-size: 0.85rem;
-        cursor: pointer;
-        transition: all 0.2s;
-      }
-      .mbtn.p {
-        background: var(--primary);
-        color: #fff;
-      }
-      .mbtn.p:hover {
-        background: #4338ca;
-      }
-      .mbtn.s {
-        background: var(--bg);
-        color: var(--text);
-        border: 2px solid var(--border);
-      }
-      .mbtn.s:hover {
-        border-color: var(--primary);
-        color: var(--primary);
-      }
-
-      /* MOBILE */
-      @media (max-width: 768px) {
-        :root {
-          --sidebar: 0px;
-        }
-        .sidebar {
-          display: none;
-        }
-        .main {
-          margin-left: 0;
-          padding: 14px 12px 60px;
-        }
-        .mob-nav {
-          display: flex !important;
-        }
-      }
-      .mob-nav {
-        display: none;
-        overflow-x: auto;
-        background: var(--card);
-        border-bottom: 2px solid var(--border);
-        padding: 8px 12px;
-        gap: 4px;
-        position: fixed;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        z-index: 150;
-        scrollbar-width: none;
-      }
-      .mob-nav::-webkit-scrollbar {
-        display: none;
-      }
+      /* Slide animations */
+      @keyframes slideInRight{from{opacity:0;transform:translateX(40px)}to{opacity:1;transform:translateX(0)}}
+      @keyframes slideInLeft{from{opacity:0;transform:translateX(-40px)}to{opacity:1;transform:translateX(0)}}
+      .slide-in-right{animation:slideInRight 0.27s cubic-bezier(.25,.46,.45,.94) both}
+      .slide-in-left{animation:slideInLeft 0.27s cubic-bezier(.25,.46,.45,.94) both}
+      /* Fraction display */
+      .frac{display:inline-block;text-align:center;vertical-align:middle}
+      .frac .num{display:block;border-bottom:1.5px solid currentColor;padding:0 3px;font-size:.85em;line-height:1.3}
+      .frac .den{display:block;padding:0 3px;font-size:.85em;line-height:1.3}
+      /* Modal show state */
+      .mover.show{opacity:1!important;pointer-events:all!important}
+      .mover.show .modal{transform:scale(1)!important}
+      /* Variant tabs (JS-built) */
+      .vtab{padding:6px 14px;border-radius:8px;border:none;cursor:pointer;font-weight:700;font-size:0.8rem;color:var(--muted);background:transparent;transition:all 0.2s;white-space:nowrap}
+      .vtab.active{background:var(--primary);color:#fff;box-shadow:0 2px 8px rgba(0,0,0,0.2)}
+      /* Question grid nav buttons (JS-built) */
+      .qnb{width:100%;aspect-ratio:1;border-radius:7px;border:2px solid var(--border);background:var(--surface);font-weight:700;font-size:0.72rem;cursor:pointer;color:var(--text);transition:all 0.18s;display:flex;align-items:center;justify-content:center}
+      .qnb.done{background:var(--primary-light);border-color:var(--primary);color:var(--primary)}
+      .qnb.active{background:var(--primary);border-color:var(--primary);color:#fff;transform:scale(1.05);box-shadow:0 2px 8px rgba(0,0,0,0.2)}
+      .qnb:hover:not(.active){border-color:var(--primary);color:var(--primary)}
+      /* Question card content (JS-built) */
+      .qhdr{display:flex;align-items:center;gap:8px;margin-bottom:14px;flex-wrap:wrap}
+      .qnum{background:var(--primary);color:#fff;font-weight:800;font-size:0.75rem;padding:4px 12px;border-radius:20px;letter-spacing:0.04em}
+      .qtbadge{background:var(--bg);color:var(--muted);font-weight:700;font-size:0.68rem;padding:3px 10px;border-radius:20px;letter-spacing:0.05em;text-transform:uppercase;border:1.5px solid var(--border)}
+      .qnav-btn{padding:5px 12px;border-radius:7px;border:2px solid var(--border);background:var(--surface);color:var(--text);font-weight:700;font-size:0.78rem;cursor:pointer;transition:all 0.2s}
+      .qnav-btn:hover{border-color:var(--primary);color:var(--primary)}
+      .qtxt{font-size:0.98rem;font-weight:600;line-height:1.8;margin-bottom:16px;color:var(--text)}
+      .qshape{text-align:center;margin:8px 0 14px;opacity:0.9}
+      /* Options grid (JS-built) */
+      .ogrid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+      @media(max-width:560px){.ogrid{grid-template-columns:1fr}}
+      .obtn{text-align:left;padding:11px 14px;border-radius:11px;border:2px solid var(--border);background:var(--surface);color:var(--text);font-weight:600;font-size:0.88rem;cursor:pointer;transition:all 0.2s;line-height:1.5}
+      .obtn:hover{border-color:var(--primary);background:var(--primary-light)}
+      .obtn.sel{border-color:var(--primary);background:var(--primary-light);color:var(--primary);font-weight:700}
+      /* Match question (JS-built) */
+      .mwrap{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:8px}
+      @media(max-width:520px){.mwrap{grid-template-columns:1fr}}
+      .mcol{display:flex;flex-direction:column;gap:6px}
+      .mit{padding:8px 12px;border-radius:8px;background:var(--bg);border:2px solid var(--border);font-weight:600;font-size:0.83rem;line-height:1.5}
+      .mbox{margin-top:10px;padding:12px;border-radius:11px;background:var(--primary-light);border:2px solid var(--primary)}
+      .mbox label{font-size:0.7rem;font-weight:700;color:var(--primary);display:block;margin-bottom:6px;letter-spacing:0.05em}
+      .minp,.oinp{width:100%;padding:9px 12px;border-radius:9px;border:2px solid var(--border);background:var(--surface);color:var(--text);font-weight:600;font-size:0.9rem;transition:border-color 0.2s}
+      .minp:focus,.oinp:focus{outline:none;border-color:var(--primary)}
+      .oinp{margin-top:8px}
+      /* Hint (JS-built) */
+      .hbtn{margin-top:10px;padding:5px 12px;border-radius:8px;border:2px solid var(--warning);background:transparent;color:var(--warning);font-weight:700;font-size:0.74rem;cursor:pointer;transition:all 0.2s}
+      .hbtn:hover{background:var(--warning);color:#fff}
+      .hint{display:none;margin-top:8px;padding:9px 12px;border-radius:9px;background:rgba(245,158,11,0.08);border:2px solid rgba(245,158,11,0.25);font-size:0.8rem;font-weight:600;color:var(--warning);line-height:1.6}
+      .hint.show{display:block}
+      /* Progress bar inside question (JS-built) */
+      .qprog{display:flex;align-items:center;gap:10px;margin-top:18px;padding-top:14px;border-top:2px solid var(--border)}
+      .qprog span{font-size:0.7rem;font-weight:700;color:var(--muted);white-space:nowrap}
+      .qpbar{flex:1;height:4px;background:var(--border);border-radius:99px;overflow:hidden}
+      .qpfil{height:100%;background:var(--primary);border-radius:99px;transition:width 0.4s}
+      /* Wrong answers summary in modal */
+      .wrong-summary{margin-top:1rem}
+      .wrong-summary-title{font-size:0.72rem;font-weight:800;text-transform:uppercase;letter-spacing:0.07em;color:#ef4444;margin-bottom:0.5rem}
+      .wrong-item{display:flex;align-items:center;gap:0.65rem;padding:0.5rem 0.75rem;border-radius:0.55rem;border:1px solid rgba(239,68,68,0.25);background:rgba(239,68,68,0.07);margin-bottom:0.35rem}
+      .wrong-item-num{font-weight:800;font-size:0.78rem;color:#ef4444;flex-shrink:0;min-width:1.8rem}
+      .wrong-item-text{font-size:0.78rem;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+      .wrong-item-user{background:rgba(239,68,68,0.2);color:#ef4444;padding:0.1rem 0.45rem;border-radius:0.3rem;font-weight:800;font-size:0.75rem}
+      .wrong-item-correct{background:rgba(34,197,94,0.2);color:#22c55e;padding:0.1rem 0.45rem;border-radius:0.3rem;font-weight:800;font-size:0.75rem}
+      .wrong-item-arrow{color:#64748b;font-size:0.7rem}
     </style>
   </head>
-  <body>
-    <div class="hdr">
-      <div style="display: flex; align-items: center; gap: 10px; min-width: 0">
-        <div class="logo">📙 DİM V</div>
-        <div class="vtabs" id="VT"></div>
-      </div>
-      <div class="hdr-r">
-        <div class="tmr-wrap">
-          <span class="tmr-icn">⏱</span>
-          <span id="TMR">60:00</span>
+  <body class="min-h-screen">
+    <header
+      class="sticky top-0 z-50 backdrop-blur-md bg-opacity-90"
+      style="background: var(--surface); border-bottom: 1px solid var(--border)"
+    >
+      <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <div
+            class="w-10 h-10 rounded-xl flex items-center justify-center text-white font-bold text-lg"
+            style="background: var(--primary)"
+          >
+            DİM
+          </div>
+          <div>
+            <h1 class="text-sm sm:text-base font-bold leading-tight">
+              İllik Material — Yekunlaşdırıcı Test
+            </h1>
+            <p class="text-xs" style="color: var(--muted)">
+              Riyaziyyat | V sinif | DİM 2025 | A–H Variant
+            </p>
+          </div>
         </div>
-        <div class="lang-selector">
-          <button onclick="setLang('az')" class="lang-btn active" id="lbAZ">
-            AZ</button
-          ><button onclick="setLang('ru')" class="lang-btn" id="lbRU">RU</button
-          ><button onclick="setLang('en')" class="lang-btn" id="lbEN">
-            EN
+        <div class="flex items-center gap-3">
+          <div class="lang-selector">
+            <button onclick="setLang('az')" class="lang-btn active" id="lbAZ">AZ</button>
+            <button onclick="setLang('ru')" class="lang-btn" id="lbRU">RU</button>
+            <button onclick="setLang('en')" class="lang-btn" id="lbEN">EN</button>
+          </div>
+          <button onclick="toggleDark()" class="tab" aria-label="Dark mode" id="DB">
+            <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+            </svg>
           </button>
         </div>
-        <button class="bicn" id="DB" onclick="toggleDark()">
-          <svg
-            width="15"
-            height="15"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2.2"
-          >
-            <circle cx="12" cy="12" r="5" />
-            <line x1="12" y1="1" x2="12" y2="3" />
-            <line x1="12" y1="21" x2="12" y2="23" />
-            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
-            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
-            <line x1="1" y1="12" x2="3" y2="12" />
-            <line x1="21" y1="12" x2="23" y2="12" />
-            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
-            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
-          </svg>
-        </button>
-        <button class="bfin" onclick="showRes()">✓</button>
       </div>
-    </div>
+    </header>
 
-    <div class="layout">
-      <!-- SIDEBAR -->
-      <div class="sidebar">
-        <div class="scard">
-          <div class="sicn b">
-            <svg
-              width="18"
-              height="18"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2.2"
-            >
-              <path d="M9 11l3 3L22 4" />
-              <path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11" />
-            </svg>
+    <main class="max-w-6xl mx-auto px-4 py-6 grid gap-6">
+      <!-- Stats row -->
+      <div class="card p-4 flex flex-wrap items-center justify-between gap-4">
+        <div class="flex items-center gap-4">
+          <div class="text-center">
+            <div class="text-2xl font-bold tabular-nums" id="TMR">60:00</div>
+            <div class="text-xs" style="color: var(--muted)" id="SLBL_TIME">Vaxt</div>
           </div>
-          <div>
-            <div class="slbl" id="SLBL_DONE">Tamamlandı</div>
-            <div class="sval" id="PRG">0/20</div>
+          <div class="w-px h-10" style="background: var(--border)"></div>
+          <div class="text-center">
+            <div class="text-2xl font-bold tabular-nums" id="PRG">0/20</div>
+            <div class="text-xs" style="color: var(--muted)" id="SLBL_DONE">Tamamlandı</div>
+          </div>
+          <div class="w-px h-10" style="background: var(--border)"></div>
+          <div class="text-center">
+            <div class="text-xl font-bold" id="VAR">A</div>
+            <div class="text-xs" style="color: var(--muted)" id="SLBL_VAR">Variant</div>
           </div>
         </div>
-        <div class="scard">
-          <div class="sicn g">
-            <svg
-              width="18"
-              height="18"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2.2"
-            >
-              <circle cx="12" cy="12" r="10" />
-              <polyline points="12 6 12 12 16 14" />
-            </svg>
+        <div class="flex-1 min-w-[200px]">
+          <div class="flex justify-between text-xs mb-1" style="color: var(--muted)">
+            <span id="SLBL_PRG">İrəliləyiş</span><span id="PCT">0%</span>
           </div>
-          <div>
-            <div class="slbl" id="SLBL_TIME">Vaxt</div>
-            <div class="sval" id="TMR2">60:00</div>
+          <div class="progress-bar">
+            <div class="progress-fill" id="PFI" style="width: 0%"></div>
           </div>
         </div>
-        <div class="scard">
-          <div class="sicn y">
-            <svg
-              width="18"
-              height="18"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2.2"
-            >
-              <polygon
-                points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"
-              />
-            </svg>
+        <button onclick="showRes()" class="btn-primary" style="white-space:nowrap">✓ Bitir</button>
+      </div>
+
+      <!-- Variant tabs -->
+      <div class="flex gap-2 overflow-x-auto pb-1" id="VT"></div>
+
+      <!-- Two-column layout -->
+      <div class="grid lg:grid-cols-[280px_1fr] gap-6">
+        <aside class="space-y-4">
+          <div class="card p-4">
+            <h3 class="text-sm font-semibold mb-3">Suallar</h3>
+            <div class="grid grid-cols-5 gap-2" id="QN"></div>
           </div>
-          <div>
-            <div class="slbl" id="SLBL_VAR">Variant</div>
-            <div class="sval" id="VAR">A</div>
-          </div>
-        </div>
-        <div>
-          <div
-            style="
-              display: flex;
-              justify-content: space-between;
-              align-items: center;
-              margin-bottom: 5px;
-            "
-          >
-            <div class="slbl" id="SLBL_PRG">İrəliləyiş</div>
-            <div
-              style="
-                font-size: 0.72rem;
-                font-weight: 800;
-                color: var(--primary);
-              "
-              id="PCT"
-            >
-              0%
+          <div class="card p-4">
+            <h3 class="text-sm font-semibold mb-2">İzah</h3>
+            <div class="flex items-center gap-2 text-xs mb-1" style="color: var(--muted)">
+              <span class="w-3 h-3 rounded-sm border" style="border-color: var(--border); background: var(--surface)"></span>
+              <span>Cavabsız</span>
+            </div>
+            <div class="flex items-center gap-2 text-xs mb-1" style="color: var(--muted)">
+              <span class="w-3 h-3 rounded-sm" style="background: var(--primary)"></span>
+              <span>Cavablanıb</span>
+            </div>
+            <div class="flex items-center gap-2 text-xs" style="color: var(--muted)">
+              <span class="w-3 h-3 rounded-sm" style="background: var(--primary-light); border: 2px solid var(--primary)"></span>
+              <span>Cari sual</span>
             </div>
           </div>
-          <div class="pbar">
-            <div class="pfil" id="PFI" style="width: 0%"></div>
-          </div>
-        </div>
-        <div>
-          <div class="qlabel">Suallar</div>
-          <div class="qnav" id="QN"></div>
-        </div>
-      </div>
+          <!-- TMR2 hidden for JS timer sync compatibility -->
+          <span id="TMR2" style="display:none">60:00</span>
+        </aside>
 
-      <!-- MAIN -->
-      <div class="main">
-        <div class="banner">
-          <div class="banner-icon">📗</div>
-          <div>
-            <div class="banner-title">İLLİK MATERİAL — Yekunlaşdırıcı Test</div>
-            <div class="banner-sub">
-              Riyaziyyat · V sinif · DİM · İllik Material · ⏱ 60 dəqiqə
-            </div>
-          </div>
-        </div>
-        <div class="qcard" id="QAREA"></div>
+        <section class="card p-6" id="questionCard">
+          <div id="QAREA" class="fade-in"></div>
+        </section>
       </div>
-    </div>
-
-    <!-- Mobile bottom nav -->
-    <div class="mob-nav" id="MOB_NAV"></div>
+    </main>
 
     <!-- Result Modal -->
-    <div class="mover" id="MO">
-      <div class="modal">
-        <div class="mhdr">
-          <div class="mscore" id="RSC">-</div>
-          <div class="msub" id="RSB"></div>
+    <div
+      id="MO"
+      class="mover"
+      style="position:fixed;inset:0;background:rgba(0,0,0,0.6);backdrop-filter:blur(6px);z-index:300;display:flex;align-items:center;justify-content:center;padding:18px;opacity:0;pointer-events:none;transition:opacity 0.3s"
+    >
+      <div class="modal" style="background:var(--surface);border-radius:20px;max-width:480px;width:100%;overflow:hidden;box-shadow:0 24px 80px rgba(0,0,0,0.3);transform:scale(0.9);transition:transform 0.3s">
+        <div style="background:var(--primary);padding:28px;text-align:center">
+          <div style="font-size:3rem;font-weight:900;color:#fff" id="RSC">-</div>
+          <div style="font-size:0.88rem;color:rgba(255,255,255,0.85);font-weight:700;margin-top:3px" id="RSB"></div>
         </div>
-        <div class="mbody">
-          <div class="rgrid">
-            <div class="rbox ok">
-              <div class="rbox-num" id="RCO">-</div>
-              <div class="rbox-lbl" id="RLBL_CO">Doğru</div>
+        <div style="padding:22px">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:18px">
+            <div class="card p-3 text-center" style="background:var(--bg)">
+              <div class="text-xl font-bold text-emerald-500" id="RCO">-</div>
+              <div class="text-xs" style="color:var(--muted)" id="RLBL_CO">Doğru</div>
             </div>
-            <div class="rbox wr">
-              <div class="rbox-num" id="RWR">-</div>
-              <div class="rbox-lbl" id="RLBL_WR">Səhv</div>
+            <div class="card p-3 text-center" style="background:var(--bg)">
+              <div class="text-xl font-bold text-red-500" id="RWR">-</div>
+              <div class="text-xs" style="color:var(--muted)" id="RLBL_WR">Səhv</div>
             </div>
-            <div class="rbox bl">
-              <div class="rbox-num" id="RBL">-</div>
-              <div class="rbox-lbl" id="RLBL_BL">Boş</div>
+            <div class="card p-3 text-center" style="background:var(--bg)">
+              <div class="text-xl font-bold text-amber-500" id="RBL">-</div>
+              <div class="text-xs" style="color:var(--muted)" id="RLBL_BL">Boş</div>
             </div>
-            <div class="rbox tm">
-              <div class="rbox-num" id="RTM">-</div>
-              <div class="rbox-lbl" id="RLBL_TM">Vaxt</div>
+            <div class="card p-3 text-center" style="background:var(--bg)">
+              <div class="text-xl font-bold" style="color:var(--primary)" id="RTM">-</div>
+              <div class="text-xs" style="color:var(--muted)" id="RLBL_TM">Vaxt</div>
             </div>
           </div>
-          <div class="mbtns">
-            <button class="mbtn p" id="RBTN_RESTART" onclick="restart()">
-              🔄 Yenidən başla
-            </button>
-            <button
-              class="mbtn s"
-              id="RBTN_CLOSE"
-              onclick="document.getElementById('MO').classList.remove('show')"
-            >
-              Bağla
-            </button>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:9px">
+            <button class="btn-primary" id="RBTN_RESTART" onclick="restart()">&#x1F504; Yenidən başla</button>
+            <button class="btn-secondary" id="RBTN_CLOSE" onclick="document.getElementById('MO').classList.remove('show')">Bağla</button>
           </div>
         </div>
       </div>
@@ -4565,6 +3837,7 @@ V. A number ending in 3 is divisible by 3`,
         const qs = getQs(),
           L = T[S.lang];
         if (idx < 0 || idx >= qs.length) return;
+        const _sd = (S.activeQ == null || idx >= S.activeQ) ? "right" : "left";
         S.activeQ = idx;
         const q = qs[idx];
         // update sidebar highlight
@@ -4634,7 +3907,9 @@ V. A number ending in 3 is divisible by 3`,
         area.innerHTML = h;
         area.style.animation = "none";
         area.offsetHeight;
-        area.style.animation = "cardIn .25s ease both";
+        area.style.animation = _sd === "right"
+          ? "slideInRight .27s cubic-bezier(0.25,0.46,0.45,0.94) both"
+          : "slideInLeft .27s cubic-bezier(0.25,0.46,0.45,0.94) both";
       }
 
       function pick(id, oi, btn) {
@@ -4732,6 +4007,41 @@ V. A number ending in 3 is divisible by 3`,
         document.getElementById("RLBL_WR").textContent = L.wrong;
         document.getElementById("RLBL_BL").textContent = L.blank;
         document.getElementById("RLBL_TM").textContent = L.time;
+        /* ── wrong answers list ── */
+        const LTRS_W = ["A","B","C","D","E"];
+        const wqList = qs.filter(q => q.t === "choice" && S.ans[q.id] !== undefined && S.ans[q.id] !== q.ans);
+        let wsEl = document.getElementById("wrongSumLS");
+        if (!wsEl) {
+          wsEl = document.createElement("div");
+          wsEl.id = "wrongSumLS";
+          wsEl.className = "wrong-summary";
+          const mbody = document.querySelector("#MO .mbody");
+          if (mbody) {
+            const mbtns = mbody.querySelector(".mbtns");
+            if (mbtns) mbody.insertBefore(wsEl, mbtns); else mbody.appendChild(wsEl);
+          }
+        }
+        if (wqList.length === 0) {
+          wsEl.innerHTML = ""; wsEl.style.display = "none";
+        } else {
+          const lbl = {az:"Səhv cavablar",ru:"Неверные ответы",en:"Wrong answers"};
+          wsEl.style.display = "";
+          wsEl.innerHTML = `<div class="wrong-summary-title">✗ ${lbl[S.lang]||lbl.az}</div>` +
+            wqList.map(q => {
+              const qtext = q[S.lang] || q.en || q.az || "";
+              const plain = qtext.replace(/<[^>]+>/g," ").replace(/\s+/g," ").trim();
+              const excr = plain.length > 55 ? plain.slice(0,55)+"…" : plain;
+              return `<div class="wrong-item">
+                <span class="wrong-item-num">${q.id}</span>
+                <span class="wrong-item-text" title="${plain}">${excr}</span>
+                <span style="display:flex;gap:.3rem;align-items:center;flex-shrink:0">
+                  <span class="wrong-item-user">${LTRS_W[S.ans[q.id]]||S.ans[q.id]}</span>
+                  <span class="wrong-item-arrow">→</span>
+                  <span class="wrong-item-correct">${LTRS_W[q.ans]||q.ans}</span>
+                </span>
+              </div>`;
+            }).join("");
+        }
         document.getElementById("MO").classList.add("show");
       }
       function restart() {

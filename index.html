@@ -89,9 +89,15 @@
       </a>
       <div class="flex items-center gap-2">
         <button onclick="LangManager.cycle()" class="btn-icon lang-cycle" id="langBtn">AZ</button>
-        <button onclick="ThemeManager.toggle()" class="btn-icon" aria-label="Toggle theme">
-          <svg class="icon" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+        <button onclick="ThemeManager.toggle()" class="btn-icon" aria-label="Toggle theme" id="themeBtn">
+          <!-- moon: shown in light mode -->
+          <svg id="iconMoon" class="icon" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
             <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+          </svg>
+          <!-- sun: shown in dark mode -->
+          <svg id="iconSun" class="icon" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="display:none">
+            <circle cx="12" cy="12" r="5"/>
+            <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
           </svg>
         </button>
       </div>
@@ -133,7 +139,7 @@
         <svg width="16" height="16" fill="none" stroke="#34d399" stroke-width="2" viewBox="0 0 24 24">
           <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
         </svg>
-        <span id="statDim">DİM 2025 · 4 Sütunlu Sistem</span>
+        <span id="statDim">DİM 2025 · 3 Fəsil · 43 Dərs</span>
       </div>
     </div>
   </div>
@@ -252,8 +258,8 @@
       &nbsp;·&nbsp; <span id="footerYear">2026</span>
     </p>
     <div class="flex items-center gap-4">
-      <span id="footerStack">Tailwind · MathJax · Vanilla JS</span>
-      <span class="badge badge-success" style="font-size:0.65rem;" id="footerVersion">v2.0.0</span>
+      <span id="footerStack">Tailwind · KaTeX · Vanilla JS</span>
+      <span class="badge badge-success" style="font-size:0.65rem;" id="footerVersion">v2.1.0</span>
     </div>
   </div>
 </footer>
@@ -280,7 +286,7 @@
       p002Title:      'İnteraktiv Riyaziyyat Dərsliyi',
       p002Desc:       '3 fəsil · 43 dərs · Duolingo üslublu: XP, seriya, nailiyyətlər. Müəllim paneli daxildir.',
       p002Cta:        'Dərsliyə keç',
-      footerStack:    'Tailwind · MathJax · Vanilla JS',
+      footerStack:    'Tailwind · KaTeX · Vanilla JS',
     },
     ru: {
       siteTagline:    'Цифровая Образовательная Экосистема',
@@ -300,7 +306,7 @@
       p002Title:      'Интерактивный учебник математики',
       p002Desc:       '3 главы · 43 урока · Duolingo-стиль: XP, серии, достижения. Панель учителя включена.',
       p002Cta:        'Открыть учебник',
-      footerStack:    'Tailwind · MathJax · Vanilla JS',
+      footerStack:    'Tailwind · KaTeX · Vanilla JS',
     },
     en: {
       siteTagline:    'Digital Learning Ecosystem',
@@ -320,14 +326,25 @@
       p002Title:      'Interactive Math Textbook',
       p002Desc:       '3 chapters · 43 lessons · Duolingo-style: XP, streaks, achievements. Teacher panel included.',
       p002Cta:        'Open textbook',
-      footerStack:    'Tailwind · MathJax · Vanilla JS',
+      footerStack:    'Tailwind · KaTeX · Vanilla JS',
     },
   };
 
   onReady(() => {
-    ThemeManager.init();
     LangManager.init(STRINGS);
     document.getElementById('footerYear').textContent = new Date().getFullYear();
+
+    // sync sun/moon icon with current theme
+    function syncThemeIcon() {
+      const isDark = document.documentElement.classList.contains('dark');
+      document.getElementById('iconMoon').style.display = isDark ? 'none' : '';
+      document.getElementById('iconSun').style.display  = isDark ? '' : 'none';
+    }
+    syncThemeIcon();
+
+    // patch ThemeManager.toggle to also update icon
+    const _origToggle = ThemeManager.toggle.bind(ThemeManager);
+    ThemeManager.toggle = () => { _origToggle(); syncThemeIcon(); };
   });
 </script>
 </body>
