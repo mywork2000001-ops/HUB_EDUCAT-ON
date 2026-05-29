@@ -1,0 +1,951 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Математика 5 класс — Натуральные числа и действия с ними</title>
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-light: #dbeafe;
+            --secondary: #f59e0b;
+            --success: #10b981;
+            --danger: #ef4444;
+            --bg: #f8fafc;
+            --card: #ffffff;
+            --text: #1e293b;
+            --text-light: #64748b;
+            --border: #e2e8f0;
+            --radius: 16px;
+            --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+        }
+        nav {
+            position: sticky;
+            top: 0;
+            background: rgba(255,255,255,0.9);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border);
+            z-index: 100;
+            padding: 1rem 0;
+        }
+        .container { max-width: 960px; margin: 0 auto; padding: 0 1.5rem; }
+        .nav-inner {
+            display: flex;
+            gap: 0.5rem;
+            overflow-x: auto;
+            padding-bottom: 0.5rem;
+        }
+        .nav-btn {
+            flex-shrink: 0;
+            padding: 0.5rem 1rem;
+            border: 1px solid var(--border);
+            background: var(--card);
+            border-radius: 999px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+            color: var(--text);
+        }
+        .nav-btn:hover, .nav-btn.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+        header {
+            background: linear-gradient(135deg, var(--primary) 0%, #1d4ed8 100%);
+            color: white;
+            padding: 3rem 0;
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        header h1 { font-size: 2rem; margin-bottom: 0.5rem; }
+        header p { opacity: 0.9; font-size: 1.1rem; }
+        .section-title {
+            font-size: 1.5rem;
+            margin: 2rem 0 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .badge {
+            background: var(--secondary);
+            color: white;
+            font-size: 0.75rem;
+            padding: 0.25rem 0.5rem;
+            border-radius: 999px;
+            font-weight: 700;
+        }
+        .modules-grid {
+            display: grid;
+            gap: 1rem;
+            margin-bottom: 3rem;
+        }
+        .module-card {
+            background: var(--card);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            border: 1px solid var(--border);
+        }
+        .module-header {
+            padding: 1.25rem;
+            background: var(--primary-light);
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 700;
+            color: var(--primary);
+            border-bottom: 1px solid transparent;
+            transition: 0.2s;
+        }
+        .module-header:hover { background: #bfdbfe; }
+        .module-header.open { border-bottom-color: var(--border); }
+        .module-body {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease;
+        }
+        .module-body.expanded { max-height: 2000px; }
+        .module-content {
+            padding: 1.5rem;
+        }
+        .module-content h4 {
+            color: var(--primary);
+            margin: 1.2rem 0 0.5rem;
+            font-size: 1.05rem;
+        }
+        .module-content p, .module-content li {
+            margin-bottom: 0.5rem;
+            color: var(--text-light);
+        }
+        .module-content ul { margin-left: 1.2rem; }
+        .example-box {
+            background: #f0fdf4;
+            border-left: 4px solid var(--success);
+            padding: 1rem;
+            border-radius: 0 var(--radius) var(--radius) 0;
+            margin: 0.75rem 0;
+        }
+        .example-box.error {
+            background: #fef2f2;
+            border-left-color: var(--danger);
+        }
+        .example-box.info {
+            background: #eff6ff;
+            border-left-color: var(--primary);
+        }
+        .math { font-family: 'Courier New', monospace; font-weight: 700; color: var(--text); }
+        .fraction {
+            display: inline-block;
+            text-align: center;
+            vertical-align: middle;
+            margin: 0 0.2rem;
+        }
+        .fraction > span { display: block; padding: 0 0.2rem; }
+        .fraction span.numer { border-bottom: 1px solid currentColor; }
+        .test-grid, .quiz-grid {
+            display: grid;
+            gap: 1.25rem;
+            margin-bottom: 3rem;
+        }
+        .question-card {
+            background: var(--card);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            padding: 1.5rem;
+            border: 1px solid var(--border);
+        }
+        .question-card h3 {
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+            color: var(--text);
+        }
+        .options {
+            display: grid;
+            gap: 0.5rem;
+        }
+        .option {
+            padding: 0.75rem 1rem;
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        .option:hover { border-color: var(--primary); background: var(--primary-light); }
+        .option.correct { border-color: var(--success); background: #ecfdf5; }
+        .option.wrong { border-color: var(--danger); background: #fef2f2; }
+        .option.disabled { pointer-events: none; opacity: 0.7; }
+        .explanation {
+            margin-top: 1rem;
+            padding: 1rem;
+            background: #eff6ff;
+            border-radius: 12px;
+            display: none;
+            font-size: 0.95rem;
+            color: var(--text);
+            border-left: 4px solid var(--primary);
+        }
+        .explanation.show { display: block; animation: fadeIn 0.3s; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; } }
+        .progress-bar {
+            height: 8px;
+            background: var(--border);
+            border-radius: 999px;
+            overflow: hidden;
+            margin: 1rem 0;
+        }
+        .progress-fill {
+            height: 100%;
+            background: var(--success);
+            width: 0%;
+            transition: width 0.5s;
+        }
+        .btn {
+            display: inline-block;
+            padding: 0.75rem 1.5rem;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: 0.2s;
+        }
+        .btn:hover { background: #1d4ed8; transform: translateY(-1px); }
+        .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        .result-box {
+            background: var(--card);
+            border-radius: var(--radius);
+            padding: 2rem;
+            text-align: center;
+            box-shadow: var(--shadow);
+            margin: 2rem 0;
+            display: none;
+        }
+        .result-box.show { display: block; }
+        .score-big { font-size: 3rem; font-weight: 800; color: var(--primary); }
+        .review-item {
+            text-align: left;
+            margin: 1rem 0;
+            padding: 1rem;
+            background: var(--bg);
+            border-radius: 12px;
+        }
+        .review-item.correct-review { border-left: 4px solid var(--success); }
+        .review-item.wrong-review { border-left: 4px solid var(--danger); }
+        footer {
+            text-align: center;
+            padding: 2rem;
+            color: var(--text-light);
+            border-top: 1px solid var(--border);
+            margin-top: 2rem;
+        }
+        .hidden { display: none; }
+        .multi-column {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+        }
+        @media (max-width: 640px) {
+            header h1 { font-size: 1.5rem; }
+            .module-header { font-size: 0.95rem; }
+        }
+    </style>
+</head>
+<body>
+
+<<nav>
+    <div class="container">
+        <div class="nav-inner">
+            <button class="nav-btn active" onclick="scrollToId('modules')">📚 Теория</button>
+            <button class="nav-btn" onclick="scrollToId('test30')">📝 Тест (30)</button>
+            <button class="nav-btn" onclick="scrollToId('quiz15')">🏆 Викторина (15)</button>
+        </div>
+    </div>
+</nav>
+
+<<header>
+    <div class="container">
+        <h1>Натуральные числа и действия с ними</h1>
+        <p>Интерактивный урок для 5 класса • Все темы, примеры и задания из учебника</p>
+    </div>
+</header>
+
+<<main class="container">
+
+    <!-- ==================== ТЕОРИЯ: 12 МОДУЛЕЙ ==================== -->
+    <section id="modules">
+        <h2 class="section-title"><span class="badge">ТЕОРИЯ</span> Модульный курс</h2>
+        
+        <div class="modules-grid">
+
+            <!-- Модуль 1 -->
+            <div class="module-card">
+                <div class="module-header" onclick="toggleModule(this)">
+                    <span>📘 Модуль 1. Натуральные числа, разряды и округление</span>
+                    <span>▼</span>
+                </div>
+                <div class="module-body">
+                    <div class="module-content">
+                        <p><strong>Натуральные числа</strong> — это числа, которые используют для счёта предметов: 1, 2, 3, 4, 5 и так далее.</p>
+                        <h4>Разряды и классы</h4>
+                        <p>Каждая цифра в числе занимает определённый <strong>разряд</strong>. Разряды объединяются в <strong>классы</strong> по три:</p>
+                        <ul>
+                            <li><span class="math">единицы, десятки, сотни</span> — класс <strong>единиц</strong></li>
+                            <li><span class="math">единицы тысяч, десятки тысяч, сотни тысяч</span> — класс <strong>тысяч</strong></li>
+                            <li><span class="math">единицы миллионов, десятки миллионов, сотни миллионов</span> — класс <strong>миллионов</strong></li>
+                            <li><span class="math">единицы миллиардов...</span> — класс <strong>миллиардов</strong></li>
+                        </ul>
+                        <div class="example-box info">
+                            <strong>Пример из №2:</strong><br>
+                            В числе <span class="math">1 784 032</span> цифра <span class="math">1</span> стоит в разряде <strong>миллионов</strong>.<<br>
+                            В числе <span class="math">147 901 655</span> цифра <span class="math">4</span> стоит в разряде <strong>десятков миллионов</strong>.<<br>
+                            В числе <span class="math">92 876 200</span> цифра <span class="math">9</span> стоит в разряде <strong>десятков миллионов</strong>.
+                        </div>
+                        <h4>Округление</h4>
+                        <p>Чтобы округлить число до нужного разряда:</p>
+                        <ol>
+                            <li>Найдите цифру этого разряда.</li>
+                            <li>Посмотрите на <strong>следующую</strong> цифру справа.</li>
+                            <li>Если она <span class="math">0, 1, 2, 3, 4</span> — замените все цифры справа нулями (цифра разряда не меняется).</li>
+                            <li>Если она <span class="math">5, 6, 7, 8, 9</span> — увеличьте цифру разряда на 1, остальные замените нулями.</li>
+                        </ol>
+                        <div class="example-box">
+                            <strong>Пример:</strong> Округлим <span class="math">147 901 655</span> до десятков миллионов.<br>
+                            Цифра десятков миллионов — <span class="math">4</span>. Следующая цифра — <span class="math">7</span> (≥5).<<br>
+                            Увеличиваем 4 на 1 → 5. Заменяем остальное нулями: <span class="math">150 000 000</span>.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Модуль 2 -->
+            <div class="module-card">
+                <div class="module-header" onclick="toggleModule(this)">
+                    <span>🏛️ Модуль 2. Римские цифры</span>
+                    <span>▼</span>
+                </div>
+                <div class="module-body">
+                    <div class="module-content">
+                        <p><strong>Основные символы:</strong></p>
+                        <ul>
+                            <li><span class="math">I = 1</span></li>
+                            <li><span class="math">V = 5</span></li>
+                            <li><span class="math">X = 10</span></li>
+                            <li><span class="math">L = 50</span></li>
+                            <li><span class="math">C = 100</span></li>
+                            <li><span class="math">D = 500</span></li>
+                            <li><span class="math">M = 1000</span></li>
+                        </ul>
+                        <h4>Правила чтения</h4>
+                        <ul>
+                            <li>Если <strong>меньшая</strong> цифра стоит <strong>перед</strong> большей — <strong>вычитаем</strong>: <span class="math">IV = 5 − 1 = 4</span>, <span class="math">XL = 50 − 10 = 40</span>.</li>
+                            <li>Если <strong>меньшая</strong> (или равная) стоит <strong>после</strong> большей — <strong>складываем</strong>: <span class="math">VI = 5 + 1 = 6</span>, <span class="math">XII = 10 + 1 + 1 = 12</span>.</li>
+                        </ul>
+                        <div class="example-box">
+                            <strong>Разбор задания №3:</strong><br>
+                            <div class="multi-column">
+                                <div>
+                                    <span class="math">4 = IV</span><br>
+                                    <span class="math">VIII = 8</span><br>
+                                    <span class="math">12 = XII</span><br>
+                                    <span class="math">16 = XVI</span><br>
+                                    <span class="math">XIX = 19</span><br>
+                                    <span class="math">23 = XXIII</span><br>
+                                    <span class="math">XXV = 25</span>
+                                </div>
+                                <div>
+                                    <span class="math">40 = XL</span><br>
+                                    <span class="math">LV = 55</span><br>
+                                    <span class="math">62 = LXII</span><br>
+                                    <span class="math">103 = CIII</span><br>
+                                    <span class="math">111 = CXI</span><br>
+                                    <span class="math">129 = CXXIX</span><br>
+                                    <span class="math">XXXIV = 34</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Модуль 3 -->
+            <div class="module-card">
+                <div class="module-header" onclick="toggleModule(this)">
+                    <span>✖️ Модуль 3. Умножение столбиком (заполнение клеток)</span>
+                    <span>▼</span>
+                </div>
+                <div class="module-body">
+                    <div class="module-content">
+                        <p>В задаче №1 нужно было восстановить цифры в столбике умножения.</p>
+                        
+                        <h4>Пример 1: <span class="math">23 × 17</span></h4>
+                        <div class="example-box">
+                            Решение:<br>
+                            <span class="math">23 × 7 = 161</span><br>
+                            <span class="math">23 × 10 = 230</span><br>
+                            <span class="math">161 + 230 = 391</span><br>
+                            <em>Проверка:</em> <span class="math">23 × 17 = 391</span> ✓
+                        </div>
+
+                        <h4>Пример 2: <span class="math">143 × 13</span></h4>
+                        <div class="example-box">
+                            Решение:<br>
+                            <span class="math">143 × 3 = 429</span> (вторая строка: □29 → 429)<br>
+                            <span class="math">143 × 10 = 1430</span> (третья строка: 1□3 → 143, сдвинутая)<br>
+                            <span class="math">429 + 1430 = 1859</span> (итог: □□5□ → 1859)<br>
+                            <em>Проверка:</em> десятки итога: <span class="math">2 + 3 = 5</span> ✓
+                        </div>
+
+                        <h4>Пример 3: <span class="math">49 × 37</span></h4>
+                        <div class="example-box">
+                            Решение:<br>
+                            <span class="math">49 × 7 = 343</span> (первая частичная)<br>
+                            <span class="math">49 × 30 = 1470</span> → в столбике пишем <span class="math">147</span> (сдвиг)<br>
+                            <span class="math">343 + 1470 = 1813</span><br>
+                            <em>Проверка:</em> <span class="math">49 × 37 = 1813</span> ✓
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Модуль 4 -->
+            <div class="module-card">
+                <div class="module-header" onclick="toggleModule(this)">
+                    <span>🔃 Модуль 4. Расположение чисел и сравнение</span>
+                    <span>▼</span>
+                </div>
+                <div class="module-body">
+                    <div class="module-content">
+                        <h4>Убывание (от большего к меньшему)</h4>
+                        <div class="example-box">
+                            <strong>№5 (левая часть):</strong><br>
+                            <span class="math">39 461 067 > 39 457 803 > 7 084 623</span><br>
+                            <em>Правило:</em> сравниваем слева направо по разрядам. Первые два числа начинаются одинаково (39 млн), но <span class="math">461 067 > 457 803</span>.
+                        </div>
+
+                        <h4>Возрастание (от меньшего к большему)</h4>
+                        <div class="example-box">
+                            <strong>№5 (правая часть):</strong><br>
+                            <span class="math">396 912 867 < 5 482 095 361 < 5 482 301 361</span><br>
+                            <em>Пояснение:</em> первое число — сотни миллионов, два других — миллиарды. Среди двух последних сравниваем разряды: <span class="math">095 361 < 301 361</span>.
+                        </div>
+
+                        <h4>Сравнение через вычисления (№8)</h4>
+                        <div class="example-box">
+                            <span class="math">6² = 36</span> и <span class="math">7² = 49</span> → <span class="math">36 < 49</span><br>
+                            <span class="math">4³ = 64</span> и <span class="math">8² = 64</span> → <span class="math">64 = 64</span><br>
+                            <span class="math">7³ − 10 = 343 − 10 = 333</span> и <span class="math">17² + 100 = 289 + 100 = 389</span> → <span class="math">333 < 389</span><br>
+                            <span class="math">20² + 8³ = 400 + 512 = 912</span> и <span class="math">25² − 9² = 625 − 81 = 544</span> → <span class="math">912 > 544</span><br>
+                            <span class="math">10³ = 1000</span> и <span class="math">30² + 5² = 900 + 25 = 925</span> → <span class="math">1000 > 925</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Модуль 5 -->
+            <div class="module-card">
+                <div class="module-header" onclick="toggleModule(this)">
+                    <span>➕ Модуль 5. Сложение, вычитание и деление многозначных чисел</span>
+                    <span>▼</span>
+                </div>
+                <div class="module-body">
+                    <div class="module-content">
+                        <h4>№6 — точные вычисления</h4>
+                        <div class="example-box">
+                            <strong>Сложение:</strong><br>
+                            <span class="math">258 875 125 + 9 475 587 963 = 9 734 463 088</span>
+                        </div>
+                        <div class="example-box">
+                            <strong>Вычитание:</strong><br>
+                            <span class="math">27 022 358 − 583 148 = 26 439 210</span>
+                        </div>
+                        <div class="example-box">
+                            <strong>Деление:</strong><br>
+                            <span class="math">162 599 073 : 487 = 333 879</span><br>
+                            <em>Проверка:</em> <span class="math">333 879 × 487 = 162 599 073</span> ✓
+                        </div>
+
+                        <h4>№4 — сравнение сумм без вычислений</h4>
+                        <div class="example-box info">
+                            Дано: <span class="math">a = 295 436 281</span>, <span class="math">b = 16 345 241</span>, <span class="math">c = 115 345 782</span>.<<br>
+                            Сравним <span class="math">a + b</span> и <span class="math">b + c</span>.<<br>
+                            Число <span class="math">b</span> одинаково, значит сравниваем <span class="math">a</span> и <span class="math">c</span>.<<br>
+                            <span class="math">a > c</span> (295 млн > 115 млн), поэтому <span class="math">a + b > b + c</span>.<<br>
+                            <em>Проверка на калькуляторе:</em> <span class="math">311 781 522 > 131 691 023</span> ✓
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Модуль 6 -->
+            <div class="module-card">
+                <div class="module-header" onclick="toggleModule(this)">
+                    <span>⚡ Модуль 6. Свойства умножения</span>
+                    <span>▼</span>
+                </div>
+                <div class="module-body">
+                    <div class="module-content">
+                        <p><strong>Свойства:</strong> сочетательное, переместительное, распределительное.</p>
+                        <div class="example-box info">
+                            Дано: <span class="math">a · b = 12</span> и <span class="math">a · c = 18</span>
+                        </div>
+                        <div class="example-box">
+                            <strong>1)</strong> <span class="math">(5 · a) · b = 5 · (a · b) = 5 · 12 = 60</span><br>
+                            (сочетательное свойство)
+                        </div>
+                        <div class="example-box">
+                            <strong>2)</strong> <span class="math">a · 4 · c = 4 · (a · c) = 4 · 18 = 72</span><br>
+                            (переместительное и сочетательное)
+                        </div>
+                        <div class="example-box">
+                            <strong>3)</strong> <span class="math">a · (b + c) = a·b + a·c = 12 + 18 = 30</span><br>
+                            (распределительное свойство)
+                        </div>
+                        <div class="example-box">
+                            <strong>4)</strong> <span class="math">a · a · b · c = (a·b) · (a·c) = 12 · 18 = 216</span><br>
+                            (группировка множителей)
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Модуль 7 -->
+            <div class="module-card">
+                <div class="module-header" onclick="toggleModule(this)">
+                    <span>🎯 Модуль 7. Порядок действий и степени</span>
+                    <span>▼</span>
+                </div>
+                <div class="module-body">
+                    <div class="module-content">
+                        <p><strong>Порядок:</strong> 1) действия в скобках; 2) степени; 3) умножение и деление; 4) сложение и вычитание.</p>
+                        <h4>№10 — разбор каждого примера</h4>
+                        <div class="example-box">
+                            <strong>а)</strong> <span class="math">(63 − (3² + 7)) · 3</span><br>
+                            = <span class="math">(63 − (9 + 7)) · 3</span><br>
+                            = <span class="math">(63 − 16) · 3</span><br>
+                            = <span class="math">47 · 3 = 141</span>
+                        </div>
+                        <div class="example-box">
+                            <strong>б)</strong> <span class="math">162 : (47 − (7² − 4))</span><br>
+                            = <span class="math">162 : (47 − (49 − 4))</span><br>
+                            = <span class="math">162 : (47 − 45)</span><br>
+                            = <span class="math">162 : 2 = 81</span>
+                        </div>
+                        <div class="example-box">
+                            <strong>в)</strong> <span class="math">484 : (43·3 − 5³) + 5²</span><br>
+                            = <span class="math">484 : (129 − 125) + 25</span><br>
+                            = <span class="math">484 : 4 + 25</span><br>
+                            = <span class="math">121 + 25 = 146</span>
+                        </div>
+                        <div class="example-box">
+                            <strong>г)</strong> <span class="math">(26:13 + 3·5) : (5² − 2³)</span><br>
+                            = <span class="math">(2 + 15) : (25 − 8)</span><br>
+                            = <span class="math">17 : 17 = 1</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Модуль 8 -->
+            <div class="module-card">
+                <div class="module-header" onclick="toggleModule(this)">
+                    <span>🔗 Модуль 8. НОД и НОК</span>
+                    <span>▼</span>
+                </div>
+                <div class="module-body">
+                    <div class="module-content">
+                        <p><strong>НОД (наибольший общий делитель)</strong> — самое большое число, на которое делятся оба числа.</p>
+                        <p><strong>НОК (наименьшее общее кратное)</strong> — самое маленькое число, которое делится на оба числа.</p>
+                        
+                        <div class="example-box">
+                            <strong>№11:</strong><br>
+                            <span class="math">НОД(9, 15) = 3</span> (делители 9: 1,3,9; делители 15: 1,3,5,15)<br>
+                            <span class="math">НОК(10, 20) = 20</span> (20 делится на 10 и на 20)<br>
+                            <span class="math">НОК(8, 9) = 72</span> (числа взаимно простые, НОК = 8·9)<br>
+                            <span class="math">НОД(48, 36) = 12</span> (48=12·4, 36=12·3)
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Модуль 9 -->
+            <div class="module-card">
+                <div class="module-header" onclick="toggleModule(this)">
+                    <span>🏗️ Модуль 9. Изменение числа по разрядам</span>
+                    <span>▼</span>
+                </div>
+                <div class="module-body">
+                    <div class="module-content">
+                        <p><strong>№12:</strong> Если цифру в разряде сотен тысяч уменьшить на 7, а в разряде сотен увеличить на 4, то:</p>
+                        <div class="example-box">
+                            Изменение = <span class="math">−7 × 100 000 + 4 × 100</span><br>
+                            = <span class="math">−700 000 + 400</span><br>
+                            = <span class="math">−699 600</span><br>
+                            <strong>Ответ:</strong> число уменьшится на <span class="math">699 600</span>.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Модуль 10 -->
+            <div class="module-card">
+                <div class="module-header" onclick="toggleModule(this)">
+                    <span>📖 Модуль 10. Задачи на разность</span>
+                    <span>▼</span>
+                </div>
+                <div class="module-body">
+                    <div class="module-content">
+                        <p><strong>№13:</strong> В библиотеке 254 529 книг и 476 661 газета. На сколько книг меньше?</p>
+                        <div class="example-box">
+                            <span class="math">476 661 − 254 529 = 222 132</span><br>
+                            <strong>Ответ:</strong> книг меньше на <span class="math">222 132</span>.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Модуль 11 -->
+            <div class="module-card">
+                <div class="module-header" onclick="toggleModule(this)">
+                    <span>✨ Модуль 11. Совершенные числа</span>
+                    <span>▼</span>
+                </div>
+                <div class="module-body">
+                    <div class="module-content">
+                        <p><strong>Совершенное число</strong> — натуральное число, равное сумме всех своих делителей, кроме себя.</p>
+                        <div class="example-box">
+                            <strong>№14 — проверка:</strong><br>
+                            <span class="math">4:</span> 1 + 2 = 3 ≠ 4<br>
+                            <span class="math">12:</span> 1+2+3+4+6 = 16 ≠ 12<br>
+                            <span class="math">15:</span> 1+3+5 = 9 ≠ 15<br>
+                            <span class="math">20:</span> 1+2+4+5+10 = 22 ≠ 20<br>
+                            <span class="math">28:</span> 1+2+4+7+14 = <strong>28</strong> ✓<<br>
+                            <span class="math">35:</span> 1+5+7 = 13 ≠ 35<br>
+                            <strong>Ответ:</strong> совершенное число — <span class="math">28</span>.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Модуль 12 -->
+            <div class="module-card">
+                <div class="module-header" onclick="toggleModule(this)">
+                    <span>🚀 Модуль 12. НОК в жизни + STEAM «Паркер»</span>
+                    <span>▼</span>
+                </div>
+                <div class="module-body">
+                    <div class="module-content">
+                        <h4>№15 — лекарства</h4>
+                        <p>Одно лекарство каждые 6 часов, другое каждые 9 часов. Если приняли одновременно, следующий раз — через <strong>НОК(6, 9)</strong>.</p>
+                        <div class="example-box">
+                            <span class="math">НОК(6, 9) = 18</span><br>
+                            <strong>Ответ:</strong> через <span class="math">18</span> часов.
+                        </div>
+
+                        <h4>STEAM: Солнечный зонд «Паркер»</h4>
+                        <ul>
+                            <li><strong>Расстояние Земля — Солнце:</strong> ≈ 150 000 000 км (1 астрономическая единица).</li>
+                            <li><strong>Максимальная скорость:</strong> ≈ 692 000 км/ч (рекорд для космических аппаратов).</li>
+                            <li><strong>Минимальное приближение:</strong> ≈ 6 900 000 км от поверхности Солнца.</li>
+                            <li><strong>Почему не расплавится?</strong> Мощный углеродно-композитный теплозащитный щит толщиной ~11 см отражает излучение; автономная система охлаждения поддерживает работу прибора в тени.</li>
+                            <li><strong>Время сигнала:</strong> при минимальном расстоянии ~8.5 млн км / 300 000 км/с ≈ <strong>28 секунд</strong>. В среднем ~150 млн км ≈ <strong>8 минут 20 секунд</strong>.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- ==================== ТЕСТ 30 ==================== -->
+    <section id="test30">
+        <h2 class="section-title"><span class="badge">ТЕСТ</span> 30 закрытых вопросов с объяснением</h2>
+        <p style="color: var(--text-light); margin-bottom:1rem;">Нажмите на вариант ответа — сразу увидите объяснение. В конце подсчёт баллов.</p>
+        <div class="progress-bar"><div class="progress-fill" id="testProgress"></div></div>
+        <div class="test-grid" id="testContainer"></div>
+        <div class="result-box" id="testResult">
+            <div class="score-big" id="testScore">0/30</div>
+            <p>Вы ответили правильно!</p>
+            <button class="btn" onclick="resetTest()">Пройти заново</button>
+        </div>
+    </section>
+
+    <!-- ==================== ВИКТОРИНА 15 ==================== -->
+    <section id="quiz15">
+        <h2 class="section-title"><span class="badge">ВИКТОРИНА</span> 15 вопросов — итоговый зачёт</h2>
+        <p style="color: var(--text-light); margin-bottom:1rem;">Отвечайте по очереди. В конце разбор всех вопросов.</p>
+        <div id="quizContainer">
+            <div class="question-card" id="quizCard">
+                <h3 id="quizQuestion">Загрузка...</h3>
+                <div class="options" id="quizOptions"></div>
+            </div>
+            <div class="result-box" id="quizResult">
+                <div class="score-big" id="quizScore">0/15</div>
+                <p id="quizMessage">Отличная работа!</p>
+                <button class="btn" onclick="resetQuiz()">Пройти заново</button>
+                <div id="quizReview" style="margin-top:2rem; text-align:left;"></div>
+            </div>
+        </div>
+    </section>
+
+</main>
+
+<<footer>
+    <div class="container">
+        <p>Математика 5 класс • Раздел 1. Натуральные числа и действия с ними • Учебная страница</p>
+    </div>
+</footer>
+
+<script>
+// ==================== НАВИГАЦИЯ ====================
+function scrollToId(id) {
+    document.getElementById(id).scrollIntoView({ behavior: 'smooth' });
+    document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+    event.target.classList.add('active');
+}
+
+function toggleModule(header) {
+    const body = header.nextElementSibling;
+    const isOpen = body.classList.contains('expanded');
+    document.querySelectorAll('.module-body').forEach(b => b.classList.remove('expanded'));
+    document.querySelectorAll('.module-header').forEach(h => h.classList.remove('open'));
+    if (!isOpen) {
+        body.classList.add('expanded');
+        header.classList.add('open');
+    }
+}
+
+// ==================== ДАННЫЕ ТЕСТА 30 ====================
+const testData = [
+    { q: "Какое из чисел является натуральным?", options: ["0", "1", "−5", "0.5"], correct: 1, expl: "Натуральные числа — это 1, 2, 3... (для счёта). 0 не считается натуральным в школьном курсе РФ." },
+    { q: "В числе 1 784 032 цифра 1 стоит в разряде...", options: ["тысяч", "миллионов", "сотен", "десятков миллионов"], correct: 1, expl: "Класс миллионов: 1 миллион 784 тысячи 32. Цифра 1 — в разряде миллионов." },
+    { q: "Округлите 147 901 655 до десятков миллионов.", options: ["140 000 000", "148 000 000", "150 000 000", "147 900 000"], correct: 2, expl: "Цифра десятков миллионов — 4. Следующая цифра (миллионы) = 7 (≥5), значит 4 увеличиваем на 1 → 5. Получаем 150 000 000." },
+    { q: "Как записать число 4 римскими цифрами?", options: ["VI", "IV", "IIII", "V"], correct: 1, expl: "IV = 5 − 1 = 4. Правило вычитания: меньшая цифра перед большей." },
+    { q: "XXV — это какое число?", options: ["15", "35", "25", "45"], correct: 2, expl: "XX = 20, V = 5. Складываем: 20 + 5 = 25." },
+    { q: "Расшифруйте: XXXIV", options: ["36", "34", "26", "44"], correct: 1, expl: "XXX = 30, IV = 4. 30 + 4 = 34." },
+    { q: "Восстановите пример: 143 × 13 = ?", options: ["1 573", "1 859", "2 574", "1 729"], correct: 1, expl: "143 × 3 = 429; 143 × 10 = 1 430; 429 + 1 430 = 1 859." },
+    { q: "49 × 37 = ?", options: ["1 713", "1 813", "1 923", "1 623"], correct: 1, expl: "49 × 7 = 343; 49 × 30 = 1 470; 343 + 1 470 = 1 813." },
+    { q: "Расположите в порядке убывания: 39 461 067, 7 084 623, 39 457 803. Какое первое?", options: ["7 084 623", "39 457 803", "39 461 067", "равны"], correct: 2, expl: "39 461 067 > 39 457 803 (сравниваем тысячи: 461 > 457) > 7 084 623." },
+    { q: "Расположите в порядке возрастания. Какое последнее?", options: ["396 912 867", "5 482 095 361", "5 482 301 361", "все равны"], correct: 2, expl: "396 млн < 5 млрд 482 млн 095 тыс < 5 млрд 482 млн 301 тыс. Последнее — 5 482 301 361." },
+    { q: "258 875 125 + 9 475 587 963 = ?", options: ["9 734 463 088", "9 734 453 088", "9 824 463 088", "10 734 463 088"], correct: 0, expl: "Складываем столбиком: 258 875 125 + 9 475 587 963 = 9 734 463 088." },
+    { q: "27 022 358 − 583 148 = ?", options: ["26 439 210", "27 605 506", "26 539 210", "26 449 210"], correct: 0, expl: "27 022 358 − 583 148 = 26 439 210." },
+    { q: "162 599 073 : 487 = ?", options: ["333 879", "323 879", "343 879", "334 879"], correct: 0, expl: "Проверка: 333 879 × 487 = 162 599 073. Результат верен." },
+    { q: "Предположите без вычислений: a + b или b + c больше, если a > c?", options: ["a + b", "b + c", "равны", "нельзя знать"], correct: 0, expl: "К b прибавляем большее число (a > c), значит a + b > b + c." },
+    { q: "52 · 21 088 сравните с 925 226 (приблизительно).", options: ["=", "<", ">", "≈"], correct: 2, expl: "Оценка: 50 × 20 000 = 1 000 000. Точно: 52 × 21 088 = 1 096 576. Значит 1 096 576 > 925 226." },
+    { q: "(5 · a) · b = ?, если a · b = 12", options: ["17", "60", "50", "25"], correct: 1, expl: "(5·a)·b = 5·(a·b) = 5·12 = 60 (сочетательное свойство)." },
+    { q: "a · 4 · c = ?, если a · c = 18", options: ["72", "22", "68", "54"], correct: 0, expl: "a·4·c = 4·(a·c) = 4·18 = 72." },
+    { q: "a · (b + c) = ?, если a·b=12 и a·c=18", options: ["30", "216", "20", "36"], correct: 0, expl: "Распределительное свойство: a·b + a·c = 12 + 18 = 30." },
+    { q: "a · a · b · c = ?", options: ["30", "60", "216", "108"], correct: 2, expl: "Группируем: (a·b)·(a·c) = 12·18 = 216." },
+    { q: "6² ? 7². Вставьте знак.", options: ["=", ">", "<", "≥"], correct: 2, expl: "6² = 36, 7² = 49. 36 < 49." },
+    { q: "4³ ? 8². Вставьте знак.", options: ["=", ">", "<", "≠"], correct: 0, expl: "4³ = 64, 8² = 64. 64 = 64." },
+    { q: "7³ − 10 ? 17² + 100. Вставьте знак.", options: ["<<", ">", "=", "≈"], correct: 0, expl: "7³ − 10 = 343 − 10 = 333. 17² + 100 = 289 + 100 = 389. 333 < 389." },
+    { q: "20² + 8³ ? 25² − 9². Вставьте знак.", options: [">", "<", "=", "≈"], correct: 0, expl: "400 + 512 = 912. 625 − 81 = 544. 912 > 544." },
+    { q: "10³ ? 30² + 5². Вставьте знак.", options: [">", "<", "=", "≈"], correct: 0, expl: "1000 > 900 + 25 = 925." },
+    { q: "(63 − (3² + 7)) · 3 = ?", options: ["141", "131", "151", "121"], correct: 0, expl: "3²=9; 9+7=16; 63−16=47; 47·3=141." },
+    { q: "162 : (47 − (7² − 4)) = ?", options: ["81", "41", "71", "91"], correct: 0, expl: "7²=49; 49−4=45; 47−45=2; 162:2=81." },
+    { q: "484 : (43·3 − 5³) + 5² = ?", options: ["146", "126", "136", "156"], correct: 0, expl: "43·3=129; 5³=125; 129−125=4; 484:4=121; 121+25=146." },
+    { q: "НОД(9, 15) = ?", options: ["1", "3", "5", "45"], correct: 1, expl: "Делители 9: 1,3,9. Делители 15: 1,3,5,15. Общий наибольший — 3." },
+    { q: "НОК(8, 9) = ?", options: ["17", "72", "1", "36"], correct: 1, expl: "8 и 9 взаимно простые (НОД=1), поэтому НОК = 8·9 = 72." },
+    { q: "НОД(48, 36) = ?", options: ["6", "12", "18", "24"], correct: 1, expl: "48 = 12·4, 36 = 12·3. НОД = 12." }
+];
+
+// ==================== РЕНДЕР ТЕСТА 30 ====================
+const testContainer = document.getElementById('testContainer');
+let testAnswers = new Array(testData.length).fill(null);
+
+testData.forEach((item, idx) => {
+    const card = document.createElement('div');
+    card.className = 'question-card';
+    card.innerHTML = `
+        <h3><span style="color:var(--primary)">№${idx+1}.</span> ${item.q}</h3>
+        <div class="options" id="opts-${idx}"></div>
+        <div class="explanation" id="expl-${idx}"></div>
+    `;
+    testContainer.appendChild(card);
+    
+    const optsDiv = document.getElementById(`opts-${idx}`);
+    item.options.forEach((opt, optIdx) => {
+        const btn = document.createElement('div');
+        btn.className = 'option';
+        btn.textContent = opt;
+        btn.onclick = () => selectTestOption(idx, optIdx, btn);
+        optsDiv.appendChild(btn);
+    });
+});
+
+function selectTestOption(qIdx, optIdx, btnEl) {
+    const item = testData[qIdx];
+    const opts = document.getElementById(`opts-${qIdx}`).children;
+    const expl = document.getElementById(`expl-${qIdx}`);
+    
+    for (let o of opts) { o.classList.add('disabled'); }
+    
+    if (optIdx === item.correct) {
+        btnEl.classList.add('correct');
+        expl.innerHTML = `<strong>✅ Правильно!</strong> ${item.expl}`;
+    } else {
+        btnEl.classList.add('wrong');
+        opts[item.correct].classList.add('correct');
+        expl.innerHTML = `<strong>❌ Неверно.</strong> ${item.expl}`;
+    }
+    expl.classList.add('show');
+    
+    testAnswers[qIdx] = (optIdx === item.correct);
+    updateTestProgress();
+}
+
+function updateTestProgress() {
+    const answered = testAnswers.filter(a => a !== null).length;
+    const correct = testAnswers.filter(a => a === true).length;
+    document.getElementById('testProgress').style.width = (answered / testData.length * 100) + '%';
+    
+    if (answered === testData.length) {
+        document.getElementById('testScore').textContent = `${correct}/${testData.length}`;
+        document.getElementById('testResult').classList.add('show');
+        document.getElementById('testResult').scrollIntoView({ behavior: 'smooth' });
+    }
+}
+
+function resetTest() {
+    testAnswers.fill(null);
+    document.getElementById('testProgress').style.width = '0%';
+    document.getElementById('testResult').classList.remove('show');
+    testData.forEach((item, idx) => {
+        const opts = document.getElementById(`opts-${idx}`).children;
+        for (let o of opts) {
+            o.className = 'option';
+            o.classList.remove('disabled', 'correct', 'wrong');
+        }
+        document.getElementById(`expl-${idx}`).classList.remove('show');
+    });
+    scrollToId('test30');
+}
+
+// ==================== ДАННЫЕ ВИКТОРИНЫ 15 ====================
+const quizData = [
+    { q: "В числе 92 876 200 цифра 9 находится в разряде...", options: ["миллионов", "десятков миллионов", "сотен миллионов", "тысяч"], correct: 1, expl: "92 млн → 9 — в разряде десятков миллионов." },
+    { q: "Округлите 69 998 910 528 до миллиардов.", options: ["69 000 000 000", "70 000 000 000", "68 000 000 000", "60 000 000 000"], correct: 1, expl: "Цифра миллиардов — 9. Следующая (сотни миллионов) = 9 (≥5), значит 9+1=10, перенос. Итог: 70 млрд." },
+    { q: "XXXIV — это...", options: ["26", "34", "36", "44"], correct: 1, expl: "XXX = 30, IV = 4. Итого 34." },
+    { q: "LV — это...", options: ["45", "55", "65", "75"], correct: 1, expl: "L = 50, V = 5. 50 + 5 = 55." },
+    { q: "Какая сумма больше: a+b или b+c, если a > c?", options: ["a+b", "b+c", "равны", "зависит от b"], correct: 0, expl: "Одинаковое слагаемое b. Чем больше второе слагаемое, тем больше сумма. a > c ⇒ a+b > b+c." },
+    { q: "484 : (43·3 − 5³) + 5² = ?", options: ["121", "146", "136", "171"], correct: 1, expl: "129−125=4; 484:4=121; 121+25=146." },
+    { q: "(26:13 + 3·5) : (5² − 2³) = ?", options: ["1", "2", "17", "0"], correct: 0, expl: "(2+15):(25−8) = 17:17 = 1." },
+    { q: "НОК(10, 20) = ?", options: ["10", "20", "30", "200"], correct: 1, expl: "20 делится и на 10, и на 20. НОК = 20." },
+    { q: "Число уменьшилось на 699 600. Что изменилось?", options: ["сотни −7, десятки +4", "сотни тысяч −7, сотни +4", "тысячи −7, сотни +4", "миллионы −7, сотни +4"], correct: 1, expl: "−7·100 000 + 4·100 = −700 000 + 400 = −699 600." },
+    { q: "Какое число совершенное (равно сумме делителей, кроме себя)?", options: ["12", "20", "28", "35"], correct: 2, expl: "1+2+4+7+14 = 28. Только 28." },
+    { q: "Лекарства каждые 6 и 9 часов. Через сколько часов вместе?", options: ["3", "15", "18", "54"], correct: 2, expl: "НОК(6,9)=18. Через 18 часов." },
+    { q: "52 · 21 088 сравните с 925 226.", options: ["=", "<", ">", "≈"], correct: 2, expl: "Точно: 1 096 576 > 925 226." },
+    { q: "159 285 − 62 450 ? 116 835", options: ["=", "<", ">", "≈"], correct: 1, expl: "159 285 − 62 450 = 96 835. 96 835 < 116 835." },
+    { q: "Расстояние от Земли до Солнца примерно...", options: ["15 млн км", "150 млн км", "1.5 млн км", "1 500 км"], correct: 1, expl: "≈ 150 000 000 км (1 астрономическая единица)." },
+    { q: "Сигнал от зонда «Паркер» на минимальном расстоянии до Земли идёт примерно...", options: ["1 секунду", "28 секунд", "8 минут", "1 час"], correct: 1, expl: "На минимальном расстоянии ~8.5 млн км ÷ 300 000 км/с ≈ 28 секунд." }
+];
+
+// ==================== ЛОГИКА ВИКТОРИНЫ 15 ====================
+let quizIndex = 0;
+let quizScore = 0;
+let quizUserAnswers = [];
+
+const quizCard = document.getElementById('quizCard');
+const quizQuestion = document.getElementById('quizQuestion');
+const quizOptions = document.getElementById('quizOptions');
+const quizResult = document.getElementById('quizResult');
+const quizScoreEl = document.getElementById('quizScore');
+const quizReview = document.getElementById('quizReview');
+
+function renderQuizQuestion() {
+    if (quizIndex >= quizData.length) {
+        showQuizResult();
+        return;
+    }
+    const q = quizData[quizIndex];
+    quizQuestion.innerHTML = `<span style="color:var(--primary)">Вопрос ${quizIndex+1}/${quizData.length}.</span> ${q.q}`;
+    quizOptions.innerHTML = '';
+    q.options.forEach((opt, i) => {
+        const btn = document.createElement('div');
+        btn.className = 'option';
+        btn.textContent = opt;
+        btn.onclick = () => answerQuiz(i);
+        quizOptions.appendChild(btn);
+    });
+}
+
+function answerQuiz(optIdx) {
+    const q = quizData[quizIndex];
+    const opts = quizOptions.children;
+    quizUserAnswers.push({ question: q.q, correct: optIdx === q.correct, chosen: q.options[optIdx], correctAnswer: q.options[q.correct], expl: q.expl });
+    
+    for (let o of opts) { o.classList.add('disabled'); }
+    
+    if (optIdx === q.correct) {
+        opts[optIdx].classList.add('correct');
+        quizScore++;
+    } else {
+        opts[optIdx].classList.add('wrong');
+        opts[q.correct].classList.add('correct');
+    }
+    
+    // Показываем краткое объяснение прямо здесь
+    const miniExpl = document.createElement('div');
+    miniExpl.className = 'explanation show';
+    miniExpl.style.marginTop = '1rem';
+    miniExpl.innerHTML = `<strong>${optIdx === q.correct ? '✅' : '❌'}</strong> ${q.expl}<br><button class="btn" style="margin-top:0.5rem" onclick="nextQuiz()">Далее →</button>`;
+    quizCard.appendChild(miniExpl);
+}
+
+function nextQuiz() {
+    const expl = quizCard.querySelector('.explanation.show');
+    if (expl) expl.remove();
+    quizIndex++;
+    renderQuizQuestion();
+}
+
+function showQuizResult() {
+    quizCard.classList.add('hidden');
+    quizResult.classList.add('show');
+    quizScoreEl.textContent = `${quizScore}/${quizData.length}`;
+    
+    let html = '<h3 style="margin-bottom:1rem">📋 Разбор вопросов:</h3>';
+    quizUserAnswers.forEach((ua, i) => {
+        html += `
+            <div class="review-item ${ua.correct ? 'correct-review' : 'wrong-review'}">
+                <strong>${i+1}.</strong> ${ua.question}<br>
+                <span style="color:${ua.correct ? 'var(--success)' : 'var(--danger)'}">
+                    Ваш ответ: ${ua.chosen} ${ua.correct ? '✓' : '✗'}
+                </span><br>
+                ${!ua.correct ? `<span style="color:var(--text-light)">Правильно: <strong>${ua.correctAnswer}</strong></span><br>` : ''}
+                <em>${ua.expl}</em>
+            </div>
+        `;
+    });
+    quizReview.innerHTML = html;
+}
+
+function resetQuiz() {
+    quizIndex = 0;
+    quizScore = 0;
+    quizUserAnswers = [];
+    quizResult.classList.remove('show');
+    quizCard.classList.remove('hidden');
+    renderQuizQuestion();
+    scrollToId('quiz15');
+}
+
+// Инициализация
+renderQuizQuestion();
+</script>
+
+</body>
+</html>

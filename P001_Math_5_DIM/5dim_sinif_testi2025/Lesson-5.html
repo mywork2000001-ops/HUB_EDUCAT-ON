@@ -1,0 +1,397 @@
+﻿<!DOCTYPE html>
+<html lang="az">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DİM 2025 – Adi kəsrlərin müqayisəsi</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body class="min-h-screen">
+
+<header class="sticky top-0 z-50 backdrop-blur-md bg-opacity-90" style="background: var(--surface); border-bottom: 1px solid var(--border);">
+  <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
+    <div class="flex items-center gap-3">
+      <div class="w-10 h-10 rounded-xl flex items-center justify-center text-white font-bold text-lg" style="background: var(--primary);">DİM</div>
+      <div>
+        <h1 class="text-sm sm:text-base font-bold leading-tight" id="examTitle">Adi kəsrlərin müqayisəsi</h1>
+        <p class="text-xs" style="color: var(--muted);" id="examSubtitle">Riyaziyyat | V sinif | Dövlət İmtahan Mərkəzi 2025</p>
+      </div>
+    </div>
+    <div class="flex items-center gap-2">
+      <div class="lang-selector"><button onclick="setLang('az')" class="lang-btn active" id="lbAZ">AZ</button><button onclick="setLang('ru')" class="lang-btn" id="lbRU">RU</button><button onclick="setLang('en')" class="lang-btn" id="lbEN">EN</button></div>
+      <button onclick="toggleTheme()" class="tab"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg></button>
+    </div>
+  </div>
+</header>
+
+<main class="max-w-6xl mx-auto px-4 py-6 grid gap-6">
+  <div class="card p-4 flex flex-wrap items-center justify-between gap-4">
+    <div class="flex items-center gap-4">
+      <div class="text-center"><div class="text-2xl font-bold tabular-nums" id="timer">60:00</div><div class="text-xs" style="color: var(--muted);" id="lblTimer">Qalan vaxt</div></div>
+      <div class="w-px h-10" style="background: var(--border);"></div>
+      <div class="text-center"><div class="text-2xl font-bold tabular-nums" id="answeredCount">0/40</div><div class="text-xs" style="color: var(--muted);" id="lblAnswered">Cavablanıb</div></div>
+    </div>
+    <div class="flex-1 min-w-[200px]">
+      <div class="flex justify-between text-xs mb-1" style="color: var(--muted);"><span id="lblProgress">Ümumi progress</span><span id="progressPercent">0%</span></div>
+      <div class="progress-bar"><div class="progress-fill" id="progressBar" style="width:0%"></div></div>
+    </div>
+  </div>
+
+  <div class="flex gap-2 overflow-x-auto pb-1" id="variantTabs"></div>
+
+  <div class="grid lg:grid-cols-[280px_1fr] gap-6">
+    <aside class="space-y-4">
+      <div class="card p-4">
+        <h3 class="text-sm font-semibold mb-3">Sual gridi</h3>
+        <div class="grid grid-cols-5 gap-2" id="questionGrid"></div>
+      </div>
+    </aside>
+
+    <section class="card p-6 flex flex-col gap-6" id="questionCard">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <span class="px-3 py-1 rounded-lg text-sm font-bold text-white" style="background: var(--primary);" id="qBadge">A1</span>
+          <span class="text-sm font-medium" style="color: var(--muted);" id="qCounter">1 / 10</span>
+        </div>
+      </div>
+
+      <div class="fade-in" id="qContent">
+        <h2 class="text-lg font-semibold leading-relaxed mb-4" id="qText"></h2>
+        <div id="qMatching" class="matching-grid hidden"></div>
+        <div class="space-y-3" id="qOptions"></div>
+      </div>
+
+      <div class="flex items-center justify-between pt-4 border-t" style="border-color: var(--border);">
+        <button onclick="prevQuestion()" class="btn-secondary" id="btnPrev">Əvvəlki</button>
+        <div class="flex gap-2">
+          <button onclick="finishExam()" class="btn-secondary text-red-500 border-red-200" id="btnFinish">Bitir</button>
+          <button onclick="nextQuestion()" class="btn-primary" id="btnNext">Növbəti</button>
+        </div>
+      </div>
+    </section>
+  </div>
+</main>
+
+<div id="resultModal" class="fixed inset-0 z-[100] hidden items-center justify-center p-4" style="background: rgba(0,0,0,0.5); backdrop-filter: blur(4px);">
+  <div class="card w-full max-w-2xl p-6 space-y-6">
+    <div class="text-center">
+      <div class="w-20 h-20 rounded-full mx-auto mb-4 flex items-center justify-center text-3xl font-bold text-white" style="background: var(--primary);" id="resultScoreIcon">0</div>
+      <h2 class="text-2xl font-bold mb-1">İmtahan Nəticəsi</h2>
+      <p class="text-sm" id="resultMessage" style="color: var(--muted);"></p>
+    </div>
+    <div class="grid grid-cols-3 gap-4">
+      <div class="card p-3 text-center"><div class="text-xl font-bold text-emerald-500" id="correctCount">0</div><div class="text-xs">Düz</div></div>
+      <div class="card p-3 text-center"><div class="text-xl font-bold text-red-500" id="wrongCount">0</div><div class="text-xs">Səhv</div></div>
+      <div class="card p-3 text-center"><div class="text-xl font-bold text-amber-500" id="emptyCount">0</div><div class="text-xs">Boş</div></div>
+    </div>
+    <div class="flex gap-3 justify-center">
+      <button onclick="showReview()" class="btn-primary">Cavablara bax</button>
+      <button onclick="resetExam()" class="btn-secondary">Yenidən başla</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const STORAGE_KEY = "dim2025_lesson5_v1";
+const examData = {
+  variants: [
+    {
+      id: "A", name: { az: "A variantı", ru: "Вариант A", en: "Variant A" },
+      questions: [
+        { id: 1, text:{az:"115:31 nisbətinin tam hissəsini tapın.",ru:"Найдите целую часть отношения 115:31.",en:"Find the integer part of the ratio 115:31."}, options: {az:["1", "2", "3", "4", "5"],ru:["1", "2", "3", "4", "5"],en:["1", "2", "3", "4", "5"]}, correct: "C" },
+        { id: 2, text:{az:"19 kq konfeti bərabər olmaqla 6 yerə böldülər. Hər payda neçə kiloqram konfet var?",ru:"19 кг конфет разделили поровну на 6 частей. Сколько кг в каждой части?",en:"19 kg of candy divided equally into 6 parts. How much kg in each part?"}, options: {az:["3 kq", "$3\\frac{1}{6}$ kq", "$\\frac{6}{19}$ kq", "4 kq", "$3\\frac{5}{6}$ kq"],ru:["3 кг", "$3\\frac{1}{6}$ кг", "$\\frac{6}{19}$ кг", "4 кг", "$3\\frac{5}{6}$ кг"],en:["3 kg", "$3\\frac{1}{6}$ kg", "$\\frac{6}{19}$ kg", "4 kg", "$3\\frac{5}{6}$ kg"]}, correct: "B" },
+        { id: 3, text:{az:"Doğru bərabərliyi göstərin.",ru:"Укажите верное равенство.",en:"Indicate correct equality."}, options: {az:["$\\frac{9}{13} = \\frac{19}{23}$", "$\\frac{24}{27} = \\frac{14}{17}$", "$\\frac{2}{3} = \\frac{20}{30}$", "$\\frac{38}{27} = \\frac{14}{17}$", "$\\frac{4}{5} = \\frac{5}{6}$"],ru:["$\\frac{9}{13} = \\frac{19}{23}$", "$\\frac{24}{27} = \\frac{14}{17}$", "$\\frac{2}{3} = \\frac{20}{30}$", "$\\frac{38}{27} = \\frac{14}{17}$", "$\\frac{4}{5} = \\frac{5}{6}$"],en:["$\\frac{9}{13} = \\frac{19}{23}$", "$\\frac{24}{27} = \\frac{14}{17}$", "$\\frac{2}{3} = \\frac{20}{30}$", "$\\frac{38}{27} = \\frac{14}{17}$", "$\\frac{4}{5} = \\frac{5}{6}$"]}, correct: "C" },
+        { id: 4, text:{az:"$\\frac{18}{909}$ kəsrini ixtisar edin, sürət və məxrəcinin cəmini tapın.",ru:"Сократите дробь $\\frac{18}{909}$ и найдите сумму числителя и знаменателя.",en:"Reduce the fraction $\\frac{18}{909}$ and find the sum of numerator and denominator."}, options: {az:["103", "104", "105", "106", "102"],ru:["103", "104", "105", "106", "102"],en:["103", "104", "105", "106", "102"]}, correct: "A" },
+        { id: 5, text:{az:"$\\frac{5}{8}, \\frac{3}{4}$ və $\\frac{13}{24}$ kəsrlərinin azalma sırasını göstərin.",ru:"Укажите порядок убывания дробей $\\frac{5}{8}, \\frac{3}{4}$ и $\\frac{13}{24}$.",en:"Indicate the descending order of the fractions $\\frac{5}{8}, \\frac{3}{4}$ and $\\frac{13}{24}$."}, options: {az:["$\\frac{5}{8}; \\frac{3}{4}; \\frac{13}{24}$", "$\\frac{13}{24}; \\frac{5}{8}; \\frac{3}{4}$", "$\\frac{3}{4}; \\frac{5}{8}; \\frac{13}{24}$", "$\\frac{3}{4}; \\frac{13}{24}; \\frac{5}{8}$", "$\\frac{13}{24}; \\frac{3}{4}; \\frac{5}{8}$"],ru:["$\\frac{5}{8}; \\frac{3}{4}; \\frac{13}{24}$", "$\\frac{13}{24}; \\frac{5}{8}; \\frac{3}{4}$", "$\\frac{3}{4}; \\frac{5}{8}; \\frac{13}{24}$", "$\\frac{3}{4}; \\frac{13}{24}; \\frac{5}{8}$", "$\\frac{13}{24}; \\frac{3}{4}; \\frac{5}{8}$"],en:["$\\frac{5}{8}; \\frac{3}{4}; \\frac{13}{24}$", "$\\frac{13}{24}; \\frac{5}{8}; \\frac{3}{4}$", "$\\frac{3}{4}; \\frac{5}{8}; \\frac{13}{24}$", "$\\frac{3}{4}; \\frac{13}{24}; \\frac{5}{8}$", "$\\frac{13}{24}; \\frac{3}{4}; \\frac{5}{8}$"]}, correct: "C" },
+        { id: 6, text:{az:"$\\frac{17 \\cdot 5}{51 \\cdot 15}$ kəsrini ixtisar edin.",ru:"Сократите дробь $\\frac{17 \\cdot 5}{51 \\cdot 15}$.",en:"Reduce the fraction $\\frac{17 \\cdot 5}{51 \\cdot 15}$."}, options: {az:["$\\frac{3}{9}$", "$\\frac{1}{6}$", "$\\frac{3}{8}$", "$\\frac{1}{9}$", "$\\frac{5}{6}$"],ru:["$\\frac{3}{9}$", "$\\frac{1}{6}$", "$\\frac{3}{8}$", "$\\frac{1}{9}$", "$\\frac{5}{6}$"],en:["$\\frac{3}{9}$", "$\\frac{1}{6}$", "$\\frac{3}{8}$", "$\\frac{1}{9}$", "$\\frac{5}{6}$"]}, correct: "D" },
+        { id: 7, text:{az:"Səyyah birinci gün yolun $\\frac{5}{17}$ hissəsini, ikinci gün isə $\\frac{4}{17}$ hissəsini getdi. Yolun hansı hissəsi qaldı?",ru:"Путешественник прошел в 1-й день $\\frac{5}{17}$, во 2-й $\\frac{4}{17}$ пути. Сколько осталось?",en:"A traveler covered $\\frac{5}{17}$ of the journey on day 1 and $\\frac{4}{17}$ on day 2. What fraction of the journey remains?"}, options: {az:["$\\frac{7}{17}$", "$\\frac{1}{17}$", "$\\frac{9}{17}$", "$\\frac{8}{17}$", "$\\frac{6}{17}$"],ru:["$\\frac{7}{17}$", "$\\frac{1}{17}$", "$\\frac{9}{17}$", "$\\frac{8}{17}$", "$\\frac{6}{17}$"],en:["$\\frac{7}{17}$", "$\\frac{1}{17}$", "$\\frac{9}{17}$", "$\\frac{8}{17}$", "$\\frac{6}{17}$"]}, correct: "D" },
+        { id: 8, text:{az:"$\\frac{3}{7}, \\frac{12}{12}, \\frac{35}{49}, \\frac{137}{50}, \\frac{55}{67}, \\frac{223}{223}$ ədədlərindən neçəsi düzgün olmayan kəsirdir?",ru:"Сколько из чисел неправильные дроби?",en:"How many of the numbers $\\frac{3}{7}, \\frac{12}{12}, \\frac{35}{49}, \\frac{137}{50}, \\frac{55}{67}, \\frac{223}{223}$ are improper fractions?"}, options: {az:["1", "2", "3", "4", "5"],ru:["1", "2", "3", "4", "5"],en:["1", "2", "3", "4", "5"]}, correct: "C" },
+        { id: 9, text:{az:"$\\frac{7}{12}, \\frac{5}{32}$ və $\\frac{4}{15}$ kəsrlərinin ən kiçik ortaq məxrəcini tapın.",ru:"Найдите НОЗ дробей $\\frac{7}{12}, \\frac{5}{32}$ и $\\frac{4}{15}$.",en:"Find the least common denominator of fractions $\\frac{7}{12}, \\frac{5}{32}$ and $\\frac{4}{15}$."}, options: {az:["480", "120", "240", "960", "360"],ru:["480", "120", "240", "960", "360"],en:["480", "120", "240", "960", "360"]}, correct: "A" },
+        { id: 10, text:{az:"$a$ və $b$ ədədləri üçün uyğunluğu müəyyən edin:",ru:"Установите соответствие для $a$ и $b$:",en:"Determine the correspondence for $a$ and $b$:"}, matching: {
+            left: ["1. $a=\\frac{11}{19}, b=\\frac{11}{23}$", "2. $a=\\frac{5}{18}, b=\\frac{7}{12}$", "3. $a=\\frac{16}{20}, b=\\frac{4}{5}$"],
+            right: ["a. $a < b$", "b. $a = 2b$", "c. $a > b$", "d. $a = b$", "e. $b = 2a$"]
+          }, options: {az:["1-c, 2-a, 3-d", "1-b, 2-a, 3-c", "1-a, 2-b, 3-d", "1-d, 2-c, 3-a", "1-c, 2-d, 3-b"],ru:["1-c, 2-a, 3-d", "1-b, 2-a, 3-c", "1-a, 2-b, 3-d", "1-d, 2-c, 3-a", "1-c, 2-d, 3-b"],en:["1-c, 2-a, 3-d", "1-b, 2-a, 3-c", "1-a, 2-b, 3-d", "1-d, 2-c, 3-a", "1-c, 2-d, 3-b"]}, correct: "A" }
+      ]
+    },
+    {
+      id: "B", name: { az: "B variantı", ru: "Вариант B", en: "Variant B" },
+      questions: [
+        { id: 1, text:{az:"231:17 nisbətinin kəsr hissəsini tapın.",ru:"Найдите дробную часть 231:17.",en:"Find the fractional part of 231:17."}, options: {az:["$\\frac{10}{17}$", "$\\frac{11}{13}$", "$\\frac{10}{13}$", "$\\frac{1}{13}$", "$\\frac{14}{17}$"],ru:["$\\frac{10}{17}$", "$\\frac{11}{13}$", "$\\frac{10}{13}$", "$\\frac{1}{13}$", "$\\frac{14}{17}$"],en:["$\\frac{10}{17}$", "$\\frac{11}{13}$", "$\\frac{10}{13}$", "$\\frac{1}{13}$", "$\\frac{14}{17}$"]}, correct: "A" },
+        { id: 2, text:{az:"35 kq balığı 6 nəfər arasında bərabər böldükdə, hərəyə nə qədər balıq düşər?",ru:"35 кг рыбы на 6 человек. Сколько каждому?",en:"35 kg of fish divided equally among 6 people. How much does each person get?"}, options: {az:["5 kq", "$\\frac{6}{35}$ kq", "$5\\frac{5}{6}$ kq", "6 kq", "$5\\frac{1}{6}$ kq"],ru:["5 кг", "$\\frac{6}{35}$ кг", "$5\\frac{5}{6}$ кг", "6 кг", "$5\\frac{1}{6}$ кг"],en:["5 kg", "$\\frac{6}{35}$ kg", "$5\\frac{5}{6}$ kg", "6 kg", "$5\\frac{1}{6}$ kg"]}, correct: "C" },
+        { id: 3, text:{az:"Doğru bərabərliyi göstərin.",ru:"Верное равенство:",en:"Indicate the correct equality."}, options: {az:["$\\frac{15}{17} = \\frac{5}{7}$", "$\\frac{9}{11} = \\frac{19}{21}$", "$\\frac{2}{5} = \\frac{20}{50}$", "$\\frac{22}{33} = \\frac{20}{35}$", "$\\frac{11}{12} = \\frac{12}{13}$"],ru:["$\\frac{15}{17} = \\frac{5}{7}$", "$\\frac{9}{11} = \\frac{19}{21}$", "$\\frac{2}{5} = \\frac{20}{50}$", "$\\frac{22}{33} = \\frac{20}{35}$", "$\\frac{11}{12} = \\frac{12}{13}$"],en:["$\\frac{15}{17} = \\frac{5}{7}$", "$\\frac{9}{11} = \\frac{19}{21}$", "$\\frac{2}{5} = \\frac{20}{50}$", "$\\frac{22}{33} = \\frac{20}{35}$", "$\\frac{11}{12} = \\frac{12}{13}$"]}, correct: "C" },
+        { id: 4, text:{az:"$\\frac{30}{99}$ kəsrini ixtisar edin, sürət və məxrəcinin cəmini tapın.",ru:"Сократите $\\frac{30}{99}$ и найдите сумму.",en:"Reduce the fraction $\\frac{30}{99}$ and find the sum of numerator and denominator."}, options: {az:["22", "43", "44", "51", "18"],ru:["22", "43", "44", "51", "18"],en:["22", "43", "44", "51", "18"]}, correct: "B" },
+        { id: 5, text:{az:"$\\frac{5}{6}, \\frac{13}{18}$ və $\\frac{8}{9}$ kəsrlərinin artma sırasını göstərin.",ru:"Порядок возрастания $\\frac{5}{6}, \\frac{13}{18}, \\frac{8}{9}$.",en:"Indicate the ascending order of the fractions $\\frac{5}{6}, \\frac{13}{18}, \\frac{8}{9}$."}, options: {az:["$\\frac{5}{6}; \\frac{13}{18}; \\frac{8}{9}$", "$\\frac{13}{18}; \\frac{5}{6}; \\frac{8}{9}$", "$\\frac{8}{9}; \\frac{5}{6}; \\frac{13}{18}$", "$\\frac{13}{18}; \\frac{8}{9}; \\frac{5}{6}$", "$\\frac{8}{13}; \\frac{5}{9}; \\frac{18}{6}$"],ru:["$\\frac{5}{6}; \\frac{13}{18}; \\frac{8}{9}$", "$\\frac{13}{18}; \\frac{5}{6}; \\frac{8}{9}$", "$\\frac{8}{9}; \\frac{5}{6}; \\frac{13}{18}$", "$\\frac{13}{18}; \\frac{8}{9}; \\frac{5}{6}$", "$\\frac{8}{13}; \\frac{5}{9}; \\frac{18}{6}$"],en:["$\\frac{5}{6}; \\frac{13}{18}; \\frac{8}{9}$", "$\\frac{13}{18}; \\frac{5}{6}; \\frac{8}{9}$", "$\\frac{8}{9}; \\frac{5}{6}; \\frac{13}{18}$", "$\\frac{13}{18}; \\frac{8}{9}; \\frac{5}{6}$", "$\\frac{8}{13}; \\frac{5}{9}; \\frac{18}{6}$"]}, correct: "B" },
+        { id: 6, text:{az:"$\\frac{11 \\cdot 15}{75 \\cdot 121}$ kəsrini ixtisar edin.",ru:"Сократите $\\frac{11 \\cdot 15}{75 \\cdot 121}$.",en:"Reduce the fraction $\\frac{11 \\cdot 15}{75 \\cdot 121}$."}, options: {az:["$\\frac{3}{16}$", "$\\frac{13}{165}$", "$\\frac{1}{55}$", "$\\frac{1}{15}$", "$\\frac{3}{55}$"],ru:["$\\frac{3}{16}$", "$\\frac{13}{165}$", "$\\frac{1}{55}$", "$\\frac{1}{15}$", "$\\frac{3}{55}$"],en:["$\\frac{3}{16}$", "$\\frac{13}{165}$", "$\\frac{1}{55}$", "$\\frac{1}{15}$", "$\\frac{3}{55}$"]}, correct: "C" },
+        { id: 7, text:{az:"Usta əvvəlcə işin $\\frac{2}{5}$ hissəsini, sonra $\\frac{1}{5}$ hissəsini gördü. Nə qədər qaldı?",ru:"Мастер сделал 2/5, потом 1/5 работы. Сколько осталось?",en:"A craftsman completed $\\frac{2}{5}$ of the work first, then $\\frac{1}{5}$ more. How much is left?"}, options: {az:["$\\frac{2}{5}$", "$\\frac{4}{5}$", "1", "$\\frac{3}{4}$", "$\\frac{3}{5}$"],ru:["$\\frac{2}{5}$", "$\\frac{4}{5}$", "1", "$\\frac{3}{4}$", "$\\frac{3}{5}$"],en:["$\\frac{2}{5}$", "$\\frac{4}{5}$", "1", "$\\frac{3}{4}$", "$\\frac{3}{5}$"]}, correct: "A" },
+        { id: 8, text:{az:"$\\frac{3}{5}, \\frac{13}{7}, \\frac{14}{15}, \\frac{19}{19}, \\frac{23}{35}, \\frac{122}{121}$ kəsrlərindən neçəsi düzgün kəsirdir?",ru:"Сколько из них правильные?",en:"How many of the fractions $\\frac{3}{5}, \\frac{13}{7}, \\frac{14}{15}, \\frac{19}{19}, \\frac{23}{35}, \\frac{122}{121}$ are proper fractions?"}, options: {az:["1", "2", "3", "4", "5"],ru:["1", "2", "3", "4", "5"],en:["1", "2", "3", "4", "5"]}, correct: "C" },
+        { id: 9, text:{az:"$\\frac{7}{30}, \\frac{13}{45}$ və $\\frac{21}{65}$ kəsrlərinin ən kiçik ortaq məxrəcini tapın.",ru:"Найдите НОЗ 7/30, 13/45, 21/65.",en:"Find the least common denominator of $\\frac{7}{30}, \\frac{13}{45}$, and $\\frac{21}{65}$."}, options: {az:["390", "1170", "585", "130", "780"],ru:["390", "1170", "585", "130", "780"],en:["390", "1170", "585", "130", "780"]}, correct: "B" },
+        { id: 10, text:{az:"$a$ və $b$ ədədləri üçün uyğunluğu müəyyən edin:",ru:"Установите соответствие:",en:"Determine the correspondence for $a$ and $b$:"}, matching: {
+            left: ["1. $a=\\frac{5}{24}, b=\\frac{13}{36}$", "2. $a=\\frac{13}{37}, b=\\frac{13}{57}$", "3. $a=\\frac{24}{60}, b=\\frac{2}{5}$"],
+            right: ["a. $a > b$", "b. $a = 3b$", "c. $a < b$", "d. $a = b$", "e. $b = 3a$"]
+          }, options: {az:["1-c, 2-a, 3-d", "1-a, 2-b, 3-c", "1-b, 2-d, 3-e", "1-d, 2-a, 3-b", "1-e, 2-c, 3-a"],ru:["1-c, 2-a, 3-d", "1-a, 2-b, 3-c", "1-b, 2-d, 3-e", "1-d, 2-a, 3-b", "1-e, 2-c, 3-a"],en:["1-c, 2-a, 3-d", "1-a, 2-b, 3-c", "1-b, 2-d, 3-e", "1-d, 2-a, 3-b", "1-e, 2-c, 3-a"]}, correct: "A" }
+      ]
+    },
+    {
+      id: "C", name: { az: "C variantı", ru: "Вариант C", en: "Variant C" },
+      questions: [
+        { id: 1, text:{az:"168:13 nisbətinin kəsr hissəsini tapın.",ru:"Найдите дробную часть 168:13.",en:"Find the fractional part of 168:13."}, options: {az:["$\\frac{12}{13}$", "$\\frac{11}{13}$", "$\\frac{5}{13}$", "$\\frac{1}{13}$", "$\\frac{7}{13}$"],ru:["$\\frac{12}{13}$", "$\\frac{11}{13}$", "$\\frac{5}{13}$", "$\\frac{1}{13}$", "$\\frac{7}{13}$"],en:["$\\frac{12}{13}$", "$\\frac{11}{13}$", "$\\frac{5}{13}$", "$\\frac{1}{13}$", "$\\frac{7}{13}$"]}, correct: "A" },
+        { id: 2, text:{az:"21 m uzunluğu olan ipi 5 bərabər hissəyə böldülər. Hər hissənin uzunluğu?",ru:"Веревку 21 м на 5 частей. Длина части?",en:"A 21 m rope was divided into 5 equal parts. What is the length of each part?"}, options: {az:["4 m", "$4\\frac{1}{5}$ m", "$\\frac{5}{21}$ m", "5 m", "$4\\frac{2}{5}$ m"],ru:["4 м", "$4\\frac{1}{5}$ м", "$\\frac{5}{21}$ м", "5 м", "$4\\frac{2}{5}$ м"],en:["4 m", "$4\\frac{1}{5}$ m", "$\\frac{5}{21}$ m", "5 m", "$4\\frac{2}{5}$ m"]}, correct: "B" },
+        { id: 3, text:{az:"Doğru olmayan bərabərliyi göstərin.",ru:"Укажите неверное равенство.",en:"Indicate the incorrect equality."}, options: {az:["$\\frac{24}{48} = \\frac{1}{2}$", "$\\frac{7}{9} = \\frac{14}{18}$", "$\\frac{26}{53} = \\frac{25}{52}$", "$1 = \\frac{18}{18}$", "$\\frac{13}{14} = \\frac{26}{28}$"],ru:["$\\frac{24}{48} = \\frac{1}{2}$", "$\\frac{7}{9} = \\frac{14}{18}$", "$\\frac{26}{53} = \\frac{25}{52}$", "$1 = \\frac{18}{18}$", "$\\frac{13}{14} = \\frac{26}{28}$"],en:["$\\frac{24}{48} = \\frac{1}{2}$", "$\\frac{7}{9} = \\frac{14}{18}$", "$\\frac{26}{53} = \\frac{25}{52}$", "$1 = \\frac{18}{18}$", "$\\frac{13}{14} = \\frac{26}{28}$"]}, correct: "C" },
+        { id: 4, text:{az:"$\\frac{600}{5050}$ kəsrini ixtisar edin, sürət və məxrəcinin cəmini tapın.",ru:"Сократите 600/5050 и найдите сумму.",en:"Reduce the fraction $\\frac{600}{5050}$ and find the sum of numerator and denominator."}, options: {az:["102", "113", "112", "105", "101"],ru:["102", "113", "112", "105", "101"],en:["102", "113", "112", "105", "101"]}, correct: "B" },
+        { id: 5, text:{az:"$\\frac{4}{5}, \\frac{7}{15}$ və $\\frac{23}{45}$ kəsrlərinin azalma sırasını göstərin.",ru:"Укажите порядок убывания.",en:"Indicate the descending order of the fractions $\\frac{4}{5}, \\frac{7}{15}$ and $\\frac{23}{45}$."}, options: {az:["$\\frac{23}{45}; \\frac{7}{15}; \\frac{4}{5}$", "$\\frac{4}{5}; \\frac{23}{45}; \\frac{7}{15}$", "$\\frac{4}{5}; \\frac{7}{15}; \\frac{23}{45}$", "$\\frac{7}{15}; \\frac{4}{5}; \\frac{23}{45}$", "$\\frac{7}{23}; \\frac{4}{15}; \\frac{5}{45}$"],ru:["$\\frac{23}{45}; \\frac{7}{15}; \\frac{4}{5}$", "$\\frac{4}{5}; \\frac{23}{45}; \\frac{7}{15}$", "$\\frac{4}{5}; \\frac{7}{15}; \\frac{23}{45}$", "$\\frac{7}{15}; \\frac{4}{5}; \\frac{23}{45}$", "$\\frac{7}{23}; \\frac{4}{15}; \\frac{5}{45}$"],en:["$\\frac{23}{45}; \\frac{7}{15}; \\frac{4}{5}$", "$\\frac{4}{5}; \\frac{23}{45}; \\frac{7}{15}$", "$\\frac{4}{5}; \\frac{7}{15}; \\frac{23}{45}$", "$\\frac{7}{15}; \\frac{4}{5}; \\frac{23}{45}$", "$\\frac{7}{23}; \\frac{4}{15}; \\frac{5}{45}$"]}, correct: "B" },
+        { id: 6, text:{az:"$\\frac{16 \\cdot 25}{64 \\cdot 125}$ kəsrini ixtisar edin.",ru:"Сократите.",en:"Reduce the fraction $\\frac{16 \\cdot 25}{64 \\cdot 125}$."}, options: {az:["$\\frac{20}{80}$", "$\\frac{1}{20}$", "$\\frac{9}{20}$", "$\\frac{1}{4}$", "$\\frac{4}{25}$"],ru:["$\\frac{20}{80}$", "$\\frac{1}{20}$", "$\\frac{9}{20}$", "$\\frac{1}{4}$", "$\\frac{4}{25}$"],en:["$\\frac{20}{80}$", "$\\frac{1}{20}$", "$\\frac{9}{20}$", "$\\frac{1}{4}$", "$\\frac{4}{25}$"]}, correct: "B" },
+        { id: 7, text:{az:"Hovuzun $\\frac{7}{13}$ hissəsini bir boru, $\\frac{5}{13}$ hissəsini digəri doldurdu. Nə qədər boş qaldı?",ru:"Одна труба 7/13, вторая 5/13. Сколько пусто?",en:"One pipe filled $\\frac{7}{13}$ of the pool, another pipe filled $\\frac{5}{13}$. What fraction of the pool remained empty?"}, options: {az:["$\\frac{3}{13}$", "$\\frac{2}{13}$", "$\\frac{6}{13}$", "$\\frac{1}{13}$", "$\\frac{5}{13}$"],ru:["$\\frac{3}{13}$", "$\\frac{2}{13}$", "$\\frac{6}{13}$", "$\\frac{1}{13}$", "$\\frac{5}{13}$"],en:["$\\frac{3}{13}$", "$\\frac{2}{13}$", "$\\frac{6}{13}$", "$\\frac{1}{13}$", "$\\frac{5}{13}$"]}, correct: "D" },
+        { id: 8, text:{az:"$\\frac{5}{14}, \\frac{24}{11}, \\frac{31}{25}, \\frac{31}{31}, \\frac{100}{91}, \\frac{13}{175}$ neçəsi düzgün olmayan kəsirdir?",ru:"Сколько неправильных?",en:"How many of the fractions $\\frac{5}{14}, \\frac{24}{11}, \\frac{31}{25}, \\frac{31}{31}, \\frac{100}{91}, \\frac{13}{175}$ are improper fractions?"}, options: {az:["1", "2", "3", "4", "5"],ru:["1", "2", "3", "4", "5"],en:["1", "2", "3", "4", "5"]}, correct: "D" },
+        { id: 9, text:{az:"$\\frac{11}{32}, \\frac{3}{40}$ və $\\frac{7}{80}$ kəsrlərinin ən kiçik ortaq məxrəcini tapın.",ru:"НОЗ 11/32, 3/40, 7/80.",en:"Find the least common denominator of $\\frac{11}{32}, \\frac{3}{40}$ and $\\frac{7}{80}$."}, options: {az:["40", "80", "160", "20", "120"],ru:["40", "80", "160", "20", "120"],en:["40", "80", "160", "20", "120"]}, correct: "C" },
+        { id: 10, text:{az:"Uyğunluğu müəyyən edin:",ru:"Соответствие:",en:"Determine the correspondence for $a$ and $b$:"}, matching: {
+            left: ["1. $a=\\frac{16}{17}, b=\\frac{16}{13}$", "2. $a=\\frac{5}{12}, b=\\frac{7}{18}$", "3. $a=\\frac{28}{42}, b=\\frac{2}{3}$"],
+            right: ["a. $a > b$", "b. $a = 3b$", "c. $a < b$", "d. $b = 3a$", "e. $a = b$"]
+          }, options: {az:["1-c, 2-a, 3-e", "1-a, 2-b, 3-c", "1-b, 2-c, 3-a", "1-d, 2-a, 3-b", "1-a, 2-c, 3-e"],ru:["1-c, 2-a, 3-e", "1-a, 2-b, 3-c", "1-b, 2-c, 3-a", "1-d, 2-a, 3-b", "1-a, 2-c, 3-e"],en:["1-c, 2-a, 3-e", "1-a, 2-b, 3-c", "1-b, 2-c, 3-a", "1-d, 2-a, 3-b", "1-a, 2-c, 3-e"]}, correct: "A" }
+      ]
+    },
+    {
+      id: "D", name: { az: "D variantı", ru: "Вариант D", en: "Variant D" },
+      questions: [
+        { id: 1, text:{az:"127:35 nisbətinin tam hissəsini tapın.",ru:"Целая часть 127:35.",en:"Find the integer part of the ratio 127:35."}, options: {az:["1", "2", "3", "4", "5"],ru:["1", "2", "3", "4", "5"],en:["1", "2", "3", "4", "5"]}, correct: "C" },
+        { id: 2, text:{az:"5 kq almanı 7 bərabər hissəyə böldülər. Hər hissə neçə kq?",ru:"5 кг яблок на 7 частей. Вес части?",en:"5 kg of apples were divided into 7 equal parts. What is the weight of each part?"}, options: {az:["$1\\frac{2}{5}$ kq", "$\\frac{5}{7}$ kq", "$\\frac{1}{2}$ kq", "$\\frac{1}{7}$ kq", "$\\frac{3}{7}$ kq"],ru:["$1\\frac{2}{5}$ кг", "$\\frac{5}{7}$ кг", "$\\frac{1}{2}$ кг", "$\\frac{1}{7}$ кг", "$\\frac{3}{7}$ кг"],en:["$1\\frac{2}{5}$ kg", "$\\frac{5}{7}$ kg", "$\\frac{1}{2}$ kg", "$\\frac{1}{7}$ kg", "$\\frac{3}{7}$ kg"]}, correct: "B" },
+        { id: 3, text:{az:"Doğru olmayan bərabərliyi göstərin.",ru:"Неверное равенство:",en:"Indicate the incorrect equality."}, options: {az:["$5 = \\frac{15}{3}$", "$\\frac{5}{7} = \\frac{50}{70}$", "$\\frac{70}{90} = \\frac{7}{9}$", "$\\frac{45}{122} = \\frac{35}{112}$", "$\\frac{25}{26} = \\frac{50}{52}$"],ru:["$5 = \\frac{15}{3}$", "$\\frac{5}{7} = \\frac{50}{70}$", "$\\frac{70}{90} = \\frac{7}{9}$", "$\\frac{45}{122} = \\frac{35}{112}$", "$\\frac{25}{26} = \\frac{50}{52}$"],en:["$5 = \\frac{15}{3}$", "$\\frac{5}{7} = \\frac{50}{70}$", "$\\frac{70}{90} = \\frac{7}{9}$", "$\\frac{45}{122} = \\frac{35}{112}$", "$\\frac{25}{26} = \\frac{50}{52}$"]}, correct: "D" },
+        { id: 4, text:{az:"$\\frac{54}{522}$ kəsrini ixtisar edin, cəmini tapın.",ru:"Сократите и найдите сумму.",en:"Reduce the fraction $\\frac{54}{522}$ and find the sum of numerator and denominator."}, options: {az:["32", "31", "23", "29", "15"],ru:["32", "31", "23", "29", "15"],en:["32", "31", "23", "29", "15"]}, correct: "A" },
+        { id: 5, text:{az:"$\\frac{6}{7}, \\frac{11}{14}$ və $\\frac{5}{28}$ artma sırasını göstərin.",ru:"Порядок возрастания.",en:"Indicate the ascending order of the fractions $\\frac{6}{7}, \\frac{11}{14}$ and $\\frac{5}{28}$."}, options: {az:["$\\frac{5}{28}; \\frac{11}{14}; \\frac{6}{7}$", "$\\frac{5}{28}; \\frac{6}{7}; \\frac{11}{14}$", "$\\frac{11}{14}; \\frac{6}{7}; \\frac{5}{28}$", "$\\frac{11}{14}; \\frac{5}{28}; \\frac{6}{7}$", "$\\frac{6}{7}; \\frac{11}{14}; \\frac{5}{28}$"],ru:["$\\frac{5}{28}; \\frac{11}{14}; \\frac{6}{7}$", "$\\frac{5}{28}; \\frac{6}{7}; \\frac{11}{14}$", "$\\frac{11}{14}; \\frac{6}{7}; \\frac{5}{28}$", "$\\frac{11}{14}; \\frac{5}{28}; \\frac{6}{7}$", "$\\frac{6}{7}; \\frac{11}{14}; \\frac{5}{28}$"],en:["$\\frac{5}{28}; \\frac{11}{14}; \\frac{6}{7}$", "$\\frac{5}{28}; \\frac{6}{7}; \\frac{11}{14}$", "$\\frac{11}{14}; \\frac{6}{7}; \\frac{5}{28}$", "$\\frac{11}{14}; \\frac{5}{28}; \\frac{6}{7}$", "$\\frac{6}{7}; \\frac{11}{14}; \\frac{5}{28}$"]}, correct: "A" },
+        { id: 6, text:{az:"$\\frac{36 \\cdot 125}{6 \\cdot 250}$ kəsrini ixtisar edin.",ru:"Сократите.",en:"Reduce the fraction $\\frac{36 \\cdot 125}{6 \\cdot 250}$."}, options: {az:["3", "$\\frac{1}{3}$", "$\\frac{5}{18}$", "$\\frac{1}{4}$", "$\\frac{1}{5}$"],ru:["3", "$\\frac{1}{3}$", "$\\frac{5}{18}$", "$\\frac{1}{4}$", "$\\frac{1}{5}$"],en:["3", "$\\frac{1}{3}$", "$\\frac{5}{18}$", "$\\frac{1}{4}$", "$\\frac{1}{5}$"]}, correct: "A" },
+        { id: 7, text:{az:"Ağacların $\\frac{5}{11}$ hissəsi alma, $\\frac{1}{11}$ hissəsi armuddur. Digərləri hansı hissədir?",ru:"5/11 яблони, 1/11 груши. Остальные?",en:"$\\frac{5}{11}$ of the trees are apple trees and $\\frac{1}{11}$ are pear trees. What fraction are the remaining trees?"}, options: {az:["$\\frac{1}{11}$", "$\\frac{4}{11}$", "$\\frac{6}{11}$", "$\\frac{5}{11}$", "$\\frac{5}{11}$"],ru:["$\\frac{1}{11}$", "$\\frac{4}{11}$", "$\\frac{6}{11}$", "$\\frac{5}{11}$", "$\\frac{5}{11}$"],en:["$\\frac{1}{11}$", "$\\frac{4}{11}$", "$\\frac{6}{11}$", "$\\frac{5}{11}$", "$\\frac{5}{11}$"]}, correct: "B" },
+        { id: 8, text:{az:"$\\frac{7}{8}, \\frac{20}{19}, \\frac{45}{52}, \\frac{60}{60}, \\frac{101}{93}, \\frac{19}{120}$ kəsrlərindən neçəsi düzgün kəsirdir?",ru:"Сколько правильных?",en:"How many of the fractions $\\frac{7}{8}, \\frac{20}{19}, \\frac{45}{52}, \\frac{60}{60}, \\frac{101}{93}, \\frac{19}{120}$ are proper fractions?"}, options: {az:["2", "3", "4", "5", "6"],ru:["2", "3", "4", "5", "6"],en:["2", "3", "4", "5", "6"]}, correct: "B" },
+        { id: 9, text:{az:"$\\frac{2}{21}, \\frac{5}{84}$ və $\\frac{3}{70}$ ƏKOB tapın.",ru:"НОЗ 2/21, 5/84, 3/70.",en:"Find the least common denominator of $\\frac{2}{21}, \\frac{5}{84}$ and $\\frac{3}{70}$."}, options: {az:["420", "840", "210", "168", "1260"],ru:["420", "840", "210", "168", "1260"],en:["420", "840", "210", "168", "1260"]}, correct: "A" },
+        { id: 10, text:{az:"Uyğunluğu müəyyən edin:",ru:"Соответствие:",en:"Determine the correspondence for $a$ and $b$:"}, matching: {
+            left: ["1. $a=\\frac{7}{36}, b=\\frac{5}{24}$", "2. $a=\\frac{21}{17}, b=\\frac{21}{19}$", "3. $a=\\frac{36}{48}, b=\\frac{3}{4}$"],
+            right: ["a. $a < b$", "b. $a = 2b$", "c. $a > b$", "d. $a = b$", "e. $b = 2a$"]
+          }, options: {az:["1-a, 2-c, 3-d", "1-b, 2-a, 3-c", "1-c, 2-a, 3-b", "1-d, 2-b, 3-a", "1-a, 2-b, 3-e"],ru:["1-a, 2-c, 3-d", "1-b, 2-a, 3-c", "1-c, 2-a, 3-b", "1-d, 2-b, 3-a", "1-a, 2-b, 3-e"],en:["1-a, 2-c, 3-d", "1-b, 2-a, 3-c", "1-c, 2-a, 3-b", "1-d, 2-b, 3-a", "1-a, 2-b, 3-e"]}, correct: "A" }
+      ]
+    }
+  ]
+};
+
+
+/* ===== АВТОПАТЧ: английский язык ===== */
+(function(){
+  function addEn(o,d){
+    if(d>25||o==null||typeof o!=='object')return;
+    if(Array.isArray(o)){for(var i=0;i<o.length;i++)addEn(o[i],d+1);return;}
+    if(o.ru!==undefined&&o.en===undefined){o.en=o.ru;}
+    else if(o.az!==undefined&&o.en===undefined&&o.ru===undefined){o.en=o.az;}
+    for(var k in o){if(Object.prototype.hasOwnProperty.call(o,k)){
+      if(k.length>3&&k.slice(-3)==='_ru'){
+        var ek=k.slice(0,-3)+'_en';
+        if(o[ek]===undefined)o[ek]=o[k];
+      }
+      if(k.length>3&&k.slice(-3)==='_az'){
+        var ek2=k.slice(0,-3)+'_en';
+        if(o[ek2]===undefined&&o[k.slice(0,-3)+'_ru']===undefined)o[ek2]=o[k];
+      }
+    }}
+    for(var k2 in o){if(k2!=='en'&&Object.prototype.hasOwnProperty.call(o,k2)){
+      try{addEn(o[k2],d+1);}catch(e){}
+    }}
+  }
+  try{if(typeof examData!=='undefined')addEn(examData,0);}catch(e){}
+  try{if(typeof QS!=='undefined')addEn(QS,0);}catch(e){}
+  try{if(typeof variants!=='undefined')addEn(variants,0);}catch(e){}
+  try{if(typeof ui!=='undefined')addEn(ui,0);}catch(e){}
+  try{if(typeof UI!=='undefined')addEn(UI,0);}catch(e){}
+  try{if(typeof L!=='undefined'&&typeof L==='object')addEn(L,0);}catch(e){}
+  try{if(typeof TXT!=='undefined')addEn(TXT,0);}catch(e){}
+  try{if(typeof i18n!=='undefined')addEn(i18n,0);}catch(e){}
+  try{if(typeof T!=='undefined'&&typeof T==='object')addEn(T,0);}catch(e){}
+})();
+/* Безопасный ре-рендер после патча данных */
+(function(){
+  function _rr(){
+    try{if(typeof renderAll==='function'){renderAll();return;}}catch(e){}
+    try{if(typeof render==='function'){render();return;}}catch(e){}
+    try{if(typeof renderQuestion==='function'){renderQuestion();}}catch(e){}
+    try{if(typeof updateTexts==='function'){updateTexts();}}catch(e){}
+  }
+  if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',function(){setTimeout(_rr,0);});}
+  else{setTimeout(_rr,0);}
+})();
+
+</script>
+<script src="script.js"></script>
+<script>
+(function() {
+    // Функция отправки прогресса родительскому окну
+    function sendProgress() {
+        if (!window.parent) return;
+        
+        // Получаем данные о прогрессе из глобальных переменных урока
+        let answersCount = 0;
+        let totalQuestions = 0;
+        let correctCount = 0;
+        let completed = false;
+        let answers = {};
+        
+        // Определяем тип урока по наличию переменных
+        if (typeof state !== 'undefined' && state.answers) {
+            // Для уроков с state.answers (Lesson-1...12, 15, 16, 17)
+            const variant = state.variantIndex !== undefined ? state.variantIndex : 0;
+            const qs = typeof QS !== 'undefined' ? QS : (typeof examData !== 'undefined' && examData.variants ? examData.variants : []);
+            const currentVariant = qs[variant] || qs[0];
+            
+            if (currentVariant && currentVariant.questions) {
+                totalQuestions = currentVariant.questions.length;
+                answers = state.answers || {};
+                answersCount = Object.keys(answers).length;
+                
+                // Подсчёт правильных ответов
+                for (let i = 0; i < currentVariant.questions.length; i++) {
+                    const q = currentVariant.questions[i];
+                    const key = `${currentVariant.id || 'A'}-${q.id}`;
+                    if (answers[key] === q.correct) {
+                        correctCount++;
+                    }
+                }
+                completed = state.finished === true;
+            }
+        } else if (typeof state !== 'undefined' && state.ans) {
+            // Для Lesson-13 (Müstəvi fiqurlar) и Lesson-14 (Fəza fiqurları)
+            const qs = typeof QS !== 'undefined' ? QS : [];
+            const variantQs = qs.filter(q => q.v === state.v);
+            totalQuestions = variantQs.length;
+            answers = state.ans || {};
+            answersCount = Object.keys(answers).length;
+            
+            for (let i = 0; i < variantQs.length; i++) {
+                const q = variantQs[i];
+                const userAns = answers[q.id];
+                if (userAns !== undefined) {
+                    if (q.t === 'choice') {
+                        if (userAns === q.ans) correctCount++;
+                    } else if (q.t === 'open' || q.t === 'match') {
+                        if (String(userAns).trim().toLowerCase() === String(q.ans_text || '').trim().toLowerCase()) correctCount++;
+                    }
+                }
+            }
+            completed = state.finished === true;
+        } else if (typeof S !== 'undefined' && S.ans) {
+            // Альтернативная структура (Lesson-13, 14)
+            const qs = typeof QS !== 'undefined' ? QS : [];
+            const variantQs = qs.filter(q => q.v === S.v);
+            totalQuestions = variantQs.length;
+            answers = S.ans || {};
+            answersCount = Object.keys(answers).length;
+            completed = S.finished === true;
+        }
+        
+        if (totalQuestions === 0) return;
+        
+        window.parent.postMessage({
+            type: 'lessonProgress',
+            lessonId: parseInt(window.location.pathname.match(/Lesson-(\d+)/)?.[1] || '0'),
+            answersCount: answersCount,
+            totalQuestions: totalQuestions,
+            correctCount: correctCount,
+            completed: completed,
+            answers: answers
+        }, '*');
+    }
+    
+    // Перехватываем вызовы finishExam/resetExam/showReview для отправки прогресса
+    const originalFinish = window.finishExam;
+    if (originalFinish) {
+        window.finishExam = function(...args) {
+            const result = originalFinish.apply(this, args);
+            setTimeout(sendProgress, 100);
+            return result;
+        };
+    }
+    
+    const originalReset = window.resetExam;
+    if (originalReset) {
+        window.resetExam = function(...args) {
+            const result = originalReset.apply(this, args);
+            setTimeout(sendProgress, 100);
+            return result;
+        };
+    }
+    
+    const originalShowReview = window.showReview;
+    if (originalShowReview) {
+        window.showReview = function(...args) {
+            const result = originalShowReview.apply(this, args);
+            setTimeout(sendProgress, 100);
+            return result;
+        };
+    }
+    
+    // Отправляем прогресс при каждом ответе (перехватываем выбор варианта)
+    const originalPick = window.pick;
+    if (originalPick) {
+        window.pick = function(...args) {
+            const result = originalPick.apply(this, args);
+            setTimeout(sendProgress, 50);
+            return result;
+        };
+    }
+    
+    const originalSaveT = window.saveT;
+    if (originalSaveT) {
+        window.saveT = function(...args) {
+            const result = originalSaveT.apply(this, args);
+            setTimeout(sendProgress, 50);
+            return result;
+        };
+    }
+    
+    // Для уроков с toggleVariant и т.д.
+    const originalRenderAll = window.renderAll;
+    if (originalRenderAll) {
+        window.renderAll = function(...args) {
+            const result = originalRenderAll.apply(this, args);
+            setTimeout(sendProgress, 50);
+            return result;
+        };
+    }
+    
+    // Периодическая отправка прогресса (каждые 3 секунды)
+    setInterval(sendProgress, 3000);
+    
+    // Запрос времени у родителя
+    if (window.parent) {
+        window.parent.postMessage({ type: 'requestTimer' }, '*');
+    }
+    
+    // Приём сообщений от родителя
+    window.addEventListener('message', function(event) {
+        if (event.data && event.data.type === 'syncTimer') {
+            if (typeof state !== 'undefined' && state.timeLeft !== undefined) {
+                state.timeLeft = event.data.timeLeft;
+                if (typeof updateTimerDisplay === 'function') updateTimerDisplay();
+            } else if (typeof S !== 'undefined' && S.timer !== undefined) {
+                S.timer = event.data.timeLeft;
+            }
+        }
+        if (event.data && event.data.type === 'forceFinish') {
+            if (typeof finishExam === 'function') finishExam();
+        }
+        if (event.data && event.data.type === 'restoreProgress') {
+            // Восстановление сохранённых ответов
+            const saved = event.data.progress;
+            if (saved && saved.answers) {
+                if (typeof state !== 'undefined' && state.answers) {
+                    state.answers = saved.answers;
+                    if (typeof renderAll === 'function') renderAll();
+                }
+            }
+        }
+    });
+    
+    // Отправляем прогресс при загрузке
+    setTimeout(sendProgress, 500);
+})();
+</script>
+</body>
+</html>

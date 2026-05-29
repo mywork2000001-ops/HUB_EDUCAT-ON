@@ -1,0 +1,764 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Урок 1.4. Сложение и вычитание натуральных чисел — 5 класс</title>
+<style>
+  :root {
+    --primary:#2563eb; --primary-dark:#1d4ed8; --secondary:#0d9488; --accent:#f59e0b;
+    --bg:#f8fafc; --card:#ffffff; --text:#1e293b; --text-light:#64748b; --border:#e2e8f0;
+    --success:#10b981; --danger:#ef4444; --radius:12px;
+    --shadow:0 4px 6px -1px rgb(0 0 0 / .1), 0 2px 4px -2px rgb(0 0 0 / .1);
+    --shadow-lg:0 10px 15px -3px rgb(0 0 0 / .1), 0 4px 6px -4px rgb(0 0 0 / .1);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;background:var(--bg);color:var(--text);line-height:1.6}
+  header{background:linear-gradient(135deg,var(--primary),var(--secondary));color:#fff;padding:2rem 1rem;text-align:center;position:sticky;top:0;z-index:100;box-shadow:var(--shadow-lg)}
+  header h1{font-size:1.55rem;font-weight:700;letter-spacing:-.02em}
+  header p{opacity:.95;margin-top:.25rem;font-size:.95rem}
+  nav{background:var(--card);border-bottom:1px solid var(--border);display:flex;gap:.25rem;overflow-x:auto;padding:.5rem;position:sticky;top:calc(60px + 2rem);z-index:90}
+  nav button{flex:1 0 auto;min-width:130px;padding:.6rem 1rem;border:none;background:transparent;color:var(--text-light);font-weight:600;cursor:pointer;border-radius:var(--radius);transition:all .2s;white-space:nowrap}
+  nav button:hover{background:var(--bg);color:var(--primary)}
+  nav button.active{background:var(--primary);color:#fff;box-shadow:var(--shadow)}
+  nav button.done{position:relative}
+  nav button.done::after{content:"✓";position:absolute;top:2px;right:6px;font-size:.65rem;color:var(--success);background:#fff;border-radius:50%;width:14px;height:14px;display:flex;align-items:center;justify-content:center;box-shadow:0 0 0 1px var(--success)}
+  main{max-width:980px;margin:0 auto;padding:1.5rem 1rem 4rem}
+  section.module{display:none;animation:fadeIn .4s ease}
+  section.module.active{display:block}
+  @keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+  .card{background:var(--card);border-radius:var(--radius);padding:1.5rem;margin-bottom:1.25rem;box-shadow:var(--shadow);border:1px solid var(--border)}
+  .card h2{font-size:1.25rem;margin-bottom:.75rem;color:var(--primary-dark)}
+  .card h3{font-size:1.05rem;margin:1rem 0 .5rem;color:var(--secondary)}
+  .card p,.card li{margin-bottom:.5rem}
+  .card ul{padding-left:1.25rem}
+  .badge{display:inline-block;padding:.25rem .6rem;border-radius:999px;font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.04em;background:#eef2ff;color:var(--primary);margin-bottom:.5rem}
+  .badge.teal{background:#f0fdfa;color:var(--secondary)}
+  .badge.gold{background:#fffbeb;color:#b45309}
+  .badge.red{background:#fef2f2;color:var(--danger)}
+  .example-box{background:#f8fafc;border-left:4px solid var(--primary);padding:1rem;border-radius:0 var(--radius) var(--radius) 0;margin:.75rem 0}
+  .example-box .label{font-weight:700;color:var(--primary);font-size:.85rem;text-transform:uppercase;margin-bottom:.25rem}
+  .math{font-family:"Courier New",Courier,monospace;background:#f1f5f9;padding:.1rem .3rem;border-radius:4px;font-size:.95em}
+  .step{display:flex;gap:.75rem;margin:.5rem 0;align-items:flex-start}
+  .step-num{flex-shrink:0;width:28px;height:28px;display:flex;align-items:center;justify-content:center;background:var(--primary);color:#fff;border-radius:50%;font-size:.8rem;font-weight:700}
+  .step-body{flex:1}
+  .hint{font-size:.85rem;color:var(--text-light);margin-top:.25rem;font-style:italic}
+  .table-wrap{overflow-x:auto}
+  table{width:100%;border-collapse:collapse;margin:.75rem 0;font-size:.95rem}
+  th,td{border:1px solid var(--border);padding:.5rem .75rem;text-align:center}
+  th{background:#f8fafc;font-weight:600}
+  td{text-align:left}
+  .two-col{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+  @media(max-width:720px){.two-col{grid-template-columns:1fr}nav{position:relative;top:0}header{position:relative}}
+  .quiz-grid{display:grid;gap:1rem}
+  .question{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:1.25rem}
+  .question h4{font-size:1rem;margin-bottom:.75rem}
+  .options label{display:block;padding:.6rem .8rem;border:1px solid var(--border);border-radius:8px;margin-bottom:.4rem;cursor:pointer;transition:all .15s;font-size:.95rem}
+  .options label:hover{border-color:var(--primary);background:#f8fafc}
+  .options input[type="radio"]{margin-right:.5rem;accent-color:var(--primary)}
+  .options label.correct{border-color:var(--success);background:#ecfdf5}
+  .options label.wrong{border-color:var(--danger);background:#fef2f2}
+  .btn{display:inline-flex;align-items:center;gap:.4rem;padding:.65rem 1.25rem;border:none;border-radius:var(--radius);background:var(--primary);color:#fff;font-weight:600;cursor:pointer;transition:background .2s,transform .1s;font-size:.95rem;margin-top:.5rem}
+  .btn:hover{background:var(--primary-dark)}
+  .btn:active{transform:scale(.98)}
+  .btn.secondary{background:var(--secondary)}
+  .btn.secondary:hover{background:#0f766e}
+  .btn.outline{background:#fff;color:var(--primary);border:2px solid var(--primary)}
+  .btn.outline:hover{background:#eef2ff}
+  .result-box{margin-top:1rem;padding:1rem;border-radius:var(--radius);font-weight:600;display:none}
+  .result-box.show{display:block}
+  .result-box.good{background:#d1fae5;color:#065f46}
+  .result-box.mid{background:#fef3c7;color:#92400e}
+  .result-box.bad{background:#fee2e2;color:#991b1b}
+  .progress-bar{height:6px;background:var(--border);border-radius:3px;overflow:hidden;margin-bottom:1rem}
+  .progress-bar .fill{height:100%;background:linear-gradient(90deg,var(--primary),var(--secondary));width:0%;transition:width .5s ease}
+  .rule-box{background:#fff;border:2px solid var(--border);border-radius:var(--radius);padding:1rem;margin:.5rem 0;position:relative;padding-left:2.5rem}
+  .rule-box .num{position:absolute;left:.75rem;top:.9rem;width:24px;height:24px;background:var(--primary);color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:700}
+  footer{text-align:center;padding:2rem 1rem;color:var(--text-light);font-size:.85rem;border-top:1px solid var(--border);margin-top:2rem}
+  .intro-hero{text-align:center;padding:2rem 1rem}
+  .intro-hero h2{font-size:1.5rem;margin-bottom:.5rem}
+  .intro-hero p{color:var(--text-light);max-width:600px;margin:0 auto 1.5rem}
+  .formula{background:#f1f5f9;padding:.75rem;border-radius:var(--radius);font-family:monospace;text-align:center;margin:.5rem 0;font-size:1.05rem}
+  .pairing{display:inline-block;background:#dbeafe;padding:.4rem .8rem;border-radius:6px;margin:.2rem;font-weight:600}
+</style>
+<base target="_blank">
+</head>
+<body>
+<header>
+  <h1>Урок 1.4. Сложение и вычитание натуральных чисел</h1>
+  <p>Натуральные числа и действия с ними — модульный интерактивный курс, 5 класс</p>
+</header>
+
+<nav id="navbar">
+  <button class="active" onclick="goTo('intro')">Начало</button>
+  <button onclick="goTo('m1')">Модуль 1: Свойства</button>
+  <button onclick="goTo('m2')">Модуль 2: Удобный способ</button>
+  <button onclick="goTo('m3')">Модуль 3: Методы</button>
+  <button onclick="goTo('m4')">Модуль 4: Приближение</button>
+  <button onclick="goTo('m5')">Модуль 5: Задачи</button>
+  <button onclick="goTo('test')">Тест (30)</button>
+  <button onclick="goTo('quiz')">Викторина (15)</button>
+</nav>
+
+<main>
+
+<!-- INTRO -->
+<section id="intro" class="module active">
+  <div class="intro-hero card">
+    <h2>Добро пожаловать на урок!</h2>
+    <p>За этот урок ты освоишь <strong>свойства сложения</strong>, научишься складывать и вычитать <strong>удобным способом</strong>, вычислять <strong>в развёрнутой форме</strong>, <strong>столбиком</strong>, <strong>методом компенсации</strong> и делать <strong>приближённые вычисления</strong>.</p>
+    <div class="two-col" style="margin-top:1rem">
+      <div class="card" style="border-top:4px solid var(--primary)">
+        <div class="badge">Модуль 1–2</div>
+        <h3>Свойства и удобный способ</h3>
+        <p>Свойство нуля, переместительное и сочетательное свойства. Сложение удобными парами.</p>
+      </div>
+      <div class="card" style="border-top:4px solid var(--secondary)">
+        <div class="badge teal">Модули 3–5</div>
+        <h3>Методы вычислений и задачи</h3>
+        <p>Развёрнутая форма, столбик, компенсация, приближённые вычисления, решение задач.</p>
+      </div>
+    </div>
+    <div style="margin-top:1.5rem">
+      <button class="btn" onclick="goTo('m1')">Начать обучение →</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="badge gold">Исследование-обсуждение</div>
+    <p>Айнур устно определила, что ответ на пример, записанный на доске, равен <strong>500</strong>.</p>
+    <div class="formula">1 + 2 + 3 + 4 + 5 + 95 + 96 + 97 + 98 + 99 = ?</div>
+    <p><strong>Как она это определила?</strong></p>
+    <div class="example-box">
+      <div class="label">Разгадка Айнур</div>
+      <p>Она заметила удобные пары:</p>
+      <p>
+        <span class="pairing">1 + 99 = 100</span>
+        <span class="pairing">2 + 98 = 100</span>
+        <span class="pairing">3 + 97 = 100</span>
+        <span class="pairing">4 + 96 = 100</span>
+        <span class="pairing">5 + 95 = 100</span>
+      </p>
+      <p>Получилось <strong>5 пар</strong>, каждая даёт <strong>100</strong>. Сумма: <span class="math">5 × 100 = 500</span>.</p>
+      <p class="hint">Айнур использовала переместительное и сочетательное свойства сложения!</p>
+    </div>
+  </div>
+</section>
+
+<!-- MODULE 1: PROPERTIES -->
+<section id="m1" class="module">
+  <div class="card">
+    <div class="badge">Модуль 1</div>
+    <h2>Свойства сложения</h2>
+    <p>Сумму и разность можно найти удобным способом, используя свойства сложения.</p>
+  </div>
+
+  <div class="card">
+    <h3>1. Свойство нуля</h3>
+    <div class="formula">2 + 0 = 0 + 2 = 2</div>
+    <p>Если к числу прибавить нуль, получится само число.</p>
+    <div class="formula">a + 0 = 0 + a = a</div>
+  </div>
+
+  <div class="card">
+    <h3>2. Переместительное свойство</h3>
+    <div class="formula">2 + 3 = 3 + 2</div>
+    <p>От перестановки мест слагаемых сумма <strong>не меняется</strong>.</p>
+    <div class="formula">a + b = b + a</div>
+    <p class="hint">Благодаря этому свойству можно менять порядок слагаемых, чтобы сложение было удобнее.</p>
+  </div>
+
+  <div class="card">
+    <h3>3. Сочетательное свойство</h3>
+    <div class="formula">2 + 3 + 4 = (2 + 3) + 4 = 2 + (3 + 4)</div>
+    <p>При сложении трёх слагаемых два рядом стоящих слагаемых можно заменить их суммой.</p>
+    <div class="formula">a + b + c = (a + b) + c = a + (b + c)</div>
+    <p class="hint">Это свойство позволяет группировать слагаемые в удобные пары.</p>
+  </div>
+
+  <div class="card">
+    <div class="badge gold">Вывод</div>
+    <p>Благодаря этим трём свойствам мы можем:</p>
+    <ul>
+      <li>Менять порядок слагаемых (переместительное)</li>
+      <li>Группировать их в удобные пары (сочетательное)</li>
+      <li>Не бояться нуля (свойство нуля)</li>
+    </ul>
+  </div>
+
+  <div style="text-align:center;margin:1.5rem 0">
+    <button class="btn outline" onclick="goTo('intro')">← Назад</button>
+    <button class="btn" onclick="markDone('m1'); goTo('m2')">Модуль 2 →</button>
+  </div>
+</section>
+
+<!-- MODULE 2: CONVENIENT METHOD -->
+<section id="m2" class="module">
+  <div class="card">
+    <div class="badge teal">Модуль 2</div>
+    <h2>Удобный способ сложения</h2>
+    <p>Сложите удобным способом, используя свойства сложения.</p>
+  </div>
+
+  <div class="card">
+    <div class="example-box">
+      <div class="label">Образец</div>
+      <p><span class="math">29 + 23 + 107 + 41</span></p>
+      <p><strong>Решение:</strong></p>
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-body">Переставим и сгруппируем удобные пары: <span class="math">(29 + 41) + (23 + 107)</span></div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-body">Считаем каждую пару: <span class="math">29 + 41 = 70</span> и <span class="math">23 + 107 = 130</span></div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-body">Складываем результаты: <span class="math">70 + 130 = 200</span></div>
+      </div>
+      <p style="margin-top:.5rem"><strong>Объяснение:</strong> Переместительное и сочетательное свойства сложения позволяют складывать числа в удобной последовательности.</p>
+    </div>
+
+    <h3>Задание 1. Решения</h3>
+    <div class="two-col">
+      <div>
+        <p><strong>а)</strong> <span class="math">33 + 15 + 17</span></p>
+        <p class="hint">= <span class="math">(33 + 17) + 15 = 50 + 15 = 65</span></p>
+        <p><strong>б)</strong> <span class="math">104 + 50 + 16 + 150</span></p>
+        <p class="hint">= <span class="math">(104 + 16) + (50 + 150) = 120 + 200 = 320</span></p>
+      </div>
+      <div>
+        <p><strong>в)</strong> <span class="math">120 + 240 + 360 + 180</span></p>
+        <p class="hint">= <span class="math">(120 + 180) + (240 + 360) = 300 + 600 = 900</span></p>
+        <p><strong>г)</strong> <span class="math">212 + 546 + 188 + 154</span></p>
+        <p class="hint">= <span class="math">(212 + 188) + (546 + 154) = 400 + 700 = 1100</span></p>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Задание 2. Впишите подходящие числа</h3>
+    <div class="two-col">
+      <div>
+        <p><strong>а)</strong> <span class="math">400 + 0 = 400</span> (свойство нуля)</p>
+        <p><strong>б)</strong> <span class="math">33 + 55 = 55 + 33</span> (переместительное)</p>
+      </div>
+      <div>
+        <p><strong>в)</strong> <span class="math">(3 + 4) + 5 = 3 + (4 + 5)</span> (сочетательное)</p>
+        <p><strong>г)</strong> <span class="math">9 − (6 − 2) = (9 − 6) + 2</span> (вычитание разности)</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Задание 3. Буквенные выражения</h3>
+    <div class="two-col">
+      <div>
+        <p><strong>а)</strong> <span class="math">a + 7 = 7 + a</span></p>
+        <p><strong>б)</strong> <span class="math">(b + 10) + 90 = b + 100</span></p>
+      </div>
+      <div>
+        <p><strong>в)</strong> <span class="math">283 + c + 107 = 390 + c</span> (или <span class="math">(283 + 107) + c</span>)</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Задание 4. Найдите значения, если <span class="math">a + b = 7</span></h3>
+    <div class="two-col">
+      <div>
+        <p><strong>а)</strong> <span class="math">(a + 3) + b = (a + b) + 3 = 7 + 3 = 10</span></p>
+        <p><strong>б)</strong> <span class="math">b + (9 + a) = (a + b) + 9 = 7 + 9 = 16</span></p>
+      </div>
+      <div>
+        <p><strong>в)</strong> <span class="math">a + (b + 2) = (a + b) + 2 = 7 + 2 = 9</span></p>
+        <p><strong>г)</strong> <span class="math">(a + 5) + (b + 11) = (a + b) + 16 = 7 + 16 = 23</span></p>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Задание 5. Верны ли утверждения?</h3>
+    <p><strong>а)</strong> «Сумма двух любых натуральных чисел больше любого из слагаемых»</p>
+    <p class="hint"><strong>Верно.</strong> Если оба числа натуральные (начинаются с 1), то сумма всегда больше каждого из слагаемых. Например: <span class="math">3 + 5 = 8 &gt; 3</span> и <span class="math">8 &gt; 5</span>.</p>
+    <p><strong>б)</strong> «Разность двух натуральных чисел всегда больше вычитаемого»</p>
+    <p class="hint"><strong>Неверно.</strong> Контрпример: <span class="math">10 − 8 = 2</span>, а <span class="math">2 &lt; 8</span> (разность меньше вычитаемого).</p>
+  </div>
+
+  <div style="text-align:center;margin:1.5rem 0">
+    <button class="btn outline" onclick="goTo('m1')">← Модуль 1</button>
+    <button class="btn" onclick="markDone('m2'); goTo('m3')">Модуль 3 →</button>
+  </div>
+</section>
+
+<!-- MODULE 3: METHODS -->
+<section id="m3" class="module">
+  <div class="card">
+    <div class="badge red">Модуль 3</div>
+    <h2>Разные методы сложения и вычитания</h2>
+    <p>Сумму и разность можно найти удобным способом, используя свойства сложения и вычитания.</p>
+  </div>
+
+  <div class="card">
+    <h3>Задание 6. Развёрнутая форма</h3>
+    <div class="example-box">
+      <div class="label">Образец</div>
+      <p><span class="math">2 372 + 3 514</span></p>
+      <p><strong>Решение:</strong></p>
+      <p><span class="math">2 372 = 2 000 + 300 + 70 + 2</span></p>
+      <p><span class="math">3 514 = 3 000 + 500 + 10 + 4</span></p>
+      <p>Складываем по разрядам:</p>
+      <p><span class="math">(2 000 + 3 000) + (300 + 500) + (70 + 10) + (2 + 4) = 5 000 + 800 + 80 + 6 = 5 886</span></p>
+      <p><strong>Объяснение:</strong> Числа записываются в развёрнутой форме. Соответствующие значения разрядов складываются по переместительному и сочетательному свойствам. Ответы складываются.</p>
+    </div>
+
+    <div class="two-col">
+      <div>
+        <p><strong>а)</strong> <span class="math">2 862 + 6 137 = 8 999</span></p>
+        <p class="hint">= (2000+6000) + (800+100) + (60+30) + (2+7) = 8000+900+90+9</p>
+        <p><strong>б)</strong> <span class="math">96 586 − 80 235 = 16 351</span></p>
+        <p class="hint">= (90000-80000) + (6000-0) + (500-200) + (80-30) + (6-5)</p>
+        <p><strong>в)</strong> <span class="math">52 578 225 − 41 466 124 = 11 112 101</span></p>
+      </div>
+      <div>
+        <p><strong>г)</strong> <span class="math">208 996 − 105 = 208 891</span></p>
+        <p><strong>д)</strong> <span class="math">280 053 358 + 44 520 = 280 097 878</span></p>
+        <p><strong>е)</strong> <span class="math">485 288 511 + 304 610 482 = 789 898 993</span></p>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Задание 7. Столбик (проверьте на калькуляторе)</h3>
+    <div class="two-col">
+      <div>
+        <p><strong>а)</strong> <span class="math">28 348 + 963 850 = 992 198</span></p>
+        <p><strong>б)</strong> <span class="math">78 500 552 − 8 862 678 = 69 637 874</span></p>
+      </div>
+      <div>
+        <p><strong>в)</strong> <span class="math">8 759 622 + 352 855 = 9 112 477</span></p>
+        <p><strong>г)</strong> <span class="math">28 100 000 − 19 256 199 = 8 843 801</span></p>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Задание 8. Вычитание по частям (развёрнутая форма вычитаемого)</h3>
+    <div class="example-box">
+      <div class="label">Образец</div>
+      <p><span class="math">652 745 − 550 200</span></p>
+      <p><strong>Решение:</strong></p>
+      <p><span class="math">652 745 − 550 200 = 652 745 − 500 000 − 50 000 − 200</span></p>
+      <p><span class="math">= 152 745 − 50 000 − 200 = 102 745 − 200 = 102 545</span></p>
+      <p><strong>Объяснение:</strong> Разрядные значения цифр вычитаемого по частям вычитаются из уменьшаемого (500 000, 50 000, 200).</p>
+    </div>
+    <div class="two-col">
+      <div>
+        <p><strong>а)</strong> <span class="math">627 211 − 103 100 = 524 111</span></p>
+        <p class="hint">= 627211 − 100000 − 3000 − 100 = 527211 − 3000 − 100 = 524211 − 100</p>
+      </div>
+      <div>
+        <p><strong>б)</strong> <span class="math">2 537 240 + 360 150 = 2 897 390</span></p>
+        <p><strong>в)</strong> <span class="math">368 580 866 − 200 380 600 = 168 200 266</span></p>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Задание 9. Метод компенсации</h3>
+    <div class="example-box">
+      <div class="label">Образец</div>
+      <p><span class="math">365 000 + 197 000</span></p>
+      <p><strong>Решение:</strong></p>
+      <p>Чтобы дополнить второе слагаемое до 200 000, из первого слагаемого вычитается 3 000, а ко второму прибавляется 3 000.</p>
+      <p><span class="math">365 000 + 197 000 = (365 000 − 3 000) + (197 000 + 3 000) = 362 000 + 200 000 = 562 000</span></p>
+      <p><strong>Объяснение:</strong> Сумма не изменяется, если одно слагаемое уменьшить, а другое увеличить на одно и то же число.</p>
+    </div>
+    <div class="two-col">
+      <div>
+        <p><strong>а)</strong> <span class="math">2 003 + 1 216</span></p>
+        <p class="hint">= (2003−3) + (1216+3) = 2000 + 1219 = <strong>3 219</strong></p>
+        <p><strong>б)</strong> <span class="math">1 280 + 2 030</span></p>
+        <p class="hint">= (1280+30) + (2030−30) = 1310 + 2000 = <strong>3 310</strong> (или наоборот)</p>
+      </div>
+      <div>
+        <p><strong>в)</strong> <span class="math">4 960 − 1 999</span></p>
+        <p class="hint">= 4960 − 2000 + 1 = 2960 + 1 = <strong>2 961</strong></p>
+        <p><strong>г)</strong> <span class="math">596 000 − 302 000</span></p>
+        <p class="hint">= (596000+2000) − (302000+2000)? Нет, проще: = 596000 − 300000 − 2000 = 296000 − 2000 = <strong>294 000</strong></p>
+      </div>
+    </div>
+  </div>
+
+  <div style="text-align:center;margin:1.5rem 0">
+    <button class="btn outline" onclick="goTo('m2')">← Модуль 2</button>
+    <button class="btn" onclick="markDone('m3'); goTo('m4')">Модуль 4 →</button>
+  </div>
+</section>
+
+<!-- MODULE 4: APPROXIMATE -->
+<section id="m4" class="module">
+  <div class="card">
+    <div class="badge gold">Модуль 4</div>
+    <h2>Приблизительные вычисления</h2>
+    <p>Можно предположить ответ, заменив числа на близкие к ним и более удобные для вычисления числа.</p>
+  </div>
+
+  <div class="card">
+    <h3>Правило приближённых вычислений</h3>
+    <div class="two-col">
+      <div class="example-box">
+        <div class="label">Пример сложения</div>
+        <p><span class="math">12 385 + 26 821</span></p>
+        <p>≈ <span class="math">12 000 + 27 000 = 39 000</span></p>
+        <p class="hint">12 385 близко к 12 000, 26 821 близко к 27 000.</p>
+      </div>
+      <div class="example-box" style="border-left-color:var(--secondary)">
+        <div class="label">Пример вычитания</div>
+        <p><span class="math">652 251 − 248 577</span></p>
+        <p>≈ <span class="math">650 000 − 250 000 = 400 000</span></p>
+        <p class="hint">Округлили до десятков тысяч для удобства.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Задание 10. Предположите, затем найдите точный ответ</h3>
+    <div class="two-col">
+      <div>
+        <p><strong>а)</strong> <span class="math">586 330 + 388 249</span></p>
+        <p class="hint">Приближённо: 586000+388000 ≈ 974000. Точно: <strong>974 579</strong></p>
+        <p><strong>б)</strong> <span class="math">3 899 286 − 2 652 185</span></p>
+        <p class="hint">Приближённо: 3900000−2650000 ≈ 1250000. Точно: <strong>1 247 101</strong></p>
+      </div>
+      <div>
+        <p><strong>в)</strong> <span class="math">62 850 966 + 33 865 339</span></p>
+        <p class="hint">Приближённо: 62850000+33870000 ≈ 96720000. Точно: <strong>96 716 305</strong></p>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Задание 11. Округлите, затем вычислите точно</h3>
+    <div class="two-col">
+      <div>
+        <p><strong>а)</strong> <span class="math">1 549 999 + 456 523</span></p>
+        <p class="hint">До миллионов: 1500000+500000=2000000. Точно: <strong>2 006 522</strong></p>
+        <p><strong>б)</strong> <span class="math">25 866 356 − 16 453 125</span></p>
+        <p class="hint">До миллионов: 26000000−16000000=10000000. Точно: <strong>9 413 231</strong></p>
+      </div>
+      <div>
+        <p><strong>в)</strong> <span class="math">19 885 + 70 455 + 9 654</span></p>
+        <p class="hint">До тысяч: 20000+70000+10000=100000. Точно: <strong>99 994</strong></p>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Задание 12. Сравните (сначала предположите, затем точно)</h3>
+    <p><strong>а)</strong> <span class="math">58 368 + 21 800</span> и <span class="math">86 547 − 17 289</span></p>
+    <p class="hint">Приближённо: 58368+21800≈80000; 86547−17289≈70000. Точно: <strong>80 168 &gt; 69 258</strong>. Первое больше.</p>
+    <p><strong>б)</strong> <span class="math">496 877 − 418 366</span> и <span class="math">42 286 + 39 633</span></p>
+    <p class="hint">Приближённо: 496877−418366≈80000; 42286+39633≈82000. Точно: <strong>78 511 &lt; 81 919</strong>. Второе больше.</p>
+  </div>
+
+  <div class="card">
+    <h3>Задание 13. Проверьте правдоподобность приближённо</h3>
+    <p><strong>а)</strong> <span class="math">23 658 + 14 203 = 47 851</span>?</p>
+    <p class="hint">Приближённо: 24000 + 14000 = 38000. 47851 далеко от 38000. <strong>Неверно.</strong> Точно: 37861.</p>
+    <p><strong>б)</strong> <span class="math">69 882 + 21 460 = 170 851 − 40 900</span>?</p>
+    <p class="hint">Приближённо: 70000+21000=91000; 170000−41000=129000. 91000 ≠ 129000. <strong>Неверно.</strong></p>
+    <p><strong>в)</strong> <span class="math">46 275 + 49 315 = 100 000</span>?</p>
+    <p class="hint">Приближённо: 46000+49000=95000. Близко к 100000. Точно: <strong>95 590 ≠ 100 000</strong>. Неверно.</p>
+  </div>
+
+  <div style="text-align:center;margin:1.5rem 0">
+    <button class="btn outline" onclick="goTo('m3')">← Модуль 3</button>
+    <button class="btn" onclick="markDone('m4'); goTo('m5')">Модуль 5 →</button>
+  </div>
+</section>
+
+<!-- MODULE 5: PROBLEMS -->
+<section id="m5" class="module">
+  <div class="card">
+    <div class="badge">Модуль 5</div>
+    <h2>Решение задач</h2>
+    <p>Задачи из учебника с полными решениями.</p>
+  </div>
+
+  <div class="card">
+    <h3>Задача 14. Люди, потребляющие меньше суточной нормы пищи (2020 год)</h3>
+    <p>Дано:</p>
+    <ul>
+      <li>Африка: <span class="math">282 000 000</span> человек</li>
+      <li>Азия: <span class="math">418 000 000</span> человек</li>
+      <li>Северная и Южная Америка: <span class="math">60 000 000</span> человек</li>
+    </ul>
+    <p><strong>Вопрос:</strong> Каково общее число людей?</p>
+    <div class="example-box">
+      <div class="label">Решение</div>
+      <p><span class="math">282 000 000 + 418 000 000 + 60 000 000</span></p>
+      <p>Удобно сначала сложить 282 и 418:</p>
+      <p><span class="math">282 + 418 = 700</span>, значит <span class="math">282 000 000 + 418 000 000 = 700 000 000</span></p>
+      <p>Затем: <span class="math">700 000 000 + 60 000 000 = 760 000 000</span></p>
+      <p><strong>Ответ:</strong> <span class="math">760 000 000</span> человек.</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Задача 15. Сумма наибольших чисел</h3>
+    <p>Найдите сумму наибольшего десятизначного числа и наибольшего семизначного числа.</p>
+    <ul>
+      <li>Наибольшее десятизначное: <span class="math">9 999 999 999</span></li>
+      <li>Наибольшее семизначное: <span class="math">9 999 999</span></li>
+    </ul>
+    <div class="example-box">
+      <div class="label">Проверка ответов</div>
+      <p><strong>Анар:</strong> <span class="math">10 009 999 998</span></p>
+      <p><strong>Лала:</strong> <span class="math">11 999 999 198</span></p>
+      <p><strong>Точное решение:</strong></p>
+      <p><span class="math">9 999 999 999 + 9 999 999 = 10 009 999 998</span></p>
+      <p>Приближённо: 10 000 000 000 + 10 000 000 = 10 010 000 000</p>
+      <p><strong>Правильный ответ — Анара.</strong></p>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Задача 16. Объём природного газа в Азербайджане (м³)</h3>
+    <div class="table-wrap">
+      <table>
+        <tr><th>Год</th><th>Объём газа (м³)</th></tr>
+        <tr><td>2016</td><td><span class="math">29 331 000</span></td></tr>
+        <tr><td>2017</td><td><span class="math">28 596 000</span></td></tr>
+        <tr><td>2019</td><td><span class="math">30 490 000</span></td></tr>
+        <tr><td>2020</td><td><span class="math">35 610 000</span></td></tr>
+        <tr><td>2021</td><td><span class="math">37 140 000</span></td></tr>
+      </table>
+    </div>
+    <p>Найдите общий объём четырьмя способами:</p>
+    <div class="two-col">
+      <div>
+        <p><strong>а)</strong> Предположив:</p>
+        <p class="hint">≈ 29+29+30+36+37 млн ≈ 161 млн</p>
+        <p><strong>б)</strong> Округлив до миллионов:</p>
+        <p class="hint">29+29+30+36+37 = 161 млн</p>
+      </div>
+      <div>
+        <p><strong>в)</strong> Записав столбиком:</p>
+        <p class="hint">29331000 + 28596000 + 30490000 + 35610000 + 37140000</p>
+        <p><strong>г)</strong> На калькуляторе:</p>
+        <p class="hint"><strong>161 167 000</strong> м³</p>
+      </div>
+    </div>
+  </div>
+
+  <div style="text-align:center;margin:1.5rem 0">
+    <button class="btn outline" onclick="goTo('m4')">← Модуль 4</button>
+    <button class="btn" onclick="markDone('m5'); goTo('test')">Перейти к тесту →</button>
+  </div>
+</section>
+
+<!-- TEST 30 -->
+<section id="test" class="module">
+  <div class="card">
+    <div class="badge">Тест</div>
+    <h2>Закрытый тест — 30 вопросов</h2>
+    <p>Выбери один правильный ответ. Набери <strong>25 и более баллов</strong> для отличного результата!</p>
+    <div class="progress-bar"><div class="fill" id="testProgress"></div></div>
+    <div id="testBox" class="quiz-grid"></div>
+    <div style="text-align:center;margin-top:1rem">
+      <button class="btn" id="testBtn" onclick="checkTest()">Проверить тест</button>
+      <button class="btn secondary" style="display:none" id="testReset" onclick="resetTest()">Пройти заново</button>
+    </div>
+    <div id="testResult" class="result-box"></div>
+  </div>
+</section>
+
+<!-- QUIZ 15 -->
+<section id="quiz" class="module">
+  <div class="card">
+    <div class="badge gold">Викторина</div>
+    <h2>Викторина — 15 вопросов</h2>
+    <p>Задания повышенной сложности на понимание. Набери <strong>12 и более баллов</strong>!</p>
+    <div class="progress-bar"><div class="fill" id="quizProgress"></div></div>
+    <div id="quizBox" class="quiz-grid"></div>
+    <div style="text-align:center;margin-top:1rem">
+      <button class="btn" id="quizBtn" onclick="checkQuiz()">Проверить викторину</button>
+      <button class="btn secondary" style="display:none" id="quizReset" onclick="resetQuiz()">Пройти заново</button>
+    </div>
+    <div id="quizResult" class="result-box"></div>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <p>Интерактивный урок «Сложение и вычитание натуральных чисел» • 5 класс • Статический модульный сайт</p>
+</footer>
+
+<script>
+// ===== TEST 30 =====
+const testQuestions=[
+  {q:"Если к числу прибавить нуль, получится...",options:["нуль","само число","число, большее на 1","неопределённо"],correct:1},
+  {q:"Какое свойство выражает равенство a + b = b + a?",options:["свойство нуля","переместительное","сочетательное","распределительное"],correct:1},
+  {q:"Какое свойство выражает равенство (a + b) + c = a + (b + c)?",options:["свойство нуля","переместительное","сочетательное","распределительное"],correct:2},
+  {q:"Сколько будет 29 + 23 + 107 + 41 (удобным способом)?",options:["190","200","210","180"],correct:1},
+  {q:"Сколько будет 33 + 15 + 17?",options:["55","60","65","70"],correct:2},
+  {q:"Сколько будет 104 + 50 + 16 + 150?",options:["300","310","320","330"],correct:2},
+  {q:"Сколько будет 120 + 240 + 360 + 180?",options:["800","850","900","950"],correct:2},
+  {q:"Сколько будет 212 + 546 + 188 + 154?",options:["1000","1100","1200","900"],correct:1},
+  {q:"Чему равно 400 + □, если результат 400?",options:["0","1","400","100"],correct:0},
+  {q:"Чему равно 33 + □ = 55 + 33?",options:["33","55","88","0"],correct:1},
+  {q:"Чему равно (3 + 4) + 5 = □ + (4 + 5)?",options:["3","4","5","9"],correct:0},
+  {q:"Чему равно 9 − (6 − 2) = (9 − 6) + □?",options:["1","2","3","4"],correct:1},
+  {q:"Чему равно a + □ = 7 + a?",options:["0","1","7","a"],correct:2},
+  {q:"Чему равно (b + 10) + 90?",options:["b + 10","b + 90","b + 100","b + 900"],correct:2},
+  {q:"Если a + b = 7, то (a + 3) + b равно...",options:["7","9","10","3"],correct:2},
+  {q:"Если a + b = 7, то b + (9 + a) равно...",options:["9","15","16","7"],correct:2},
+  {q:"Если a + b = 7, то a + (b + 2) равно...",options:["7","8","9","10"],correct:2},
+  {q:"Если a + b = 7, то (a + 5) + (b + 11) равно...",options:["16","18","23","28"],correct:2},
+  {q:"Верно ли: сумма двух натуральных чисел больше любого слагаемого?",options:["Всегда верно","Неверно","Только если числа чётные","Только если числа нечётные"],correct:0},
+  {q:"Верно ли: разность двух натуральных чисел всегда больше вычитаемого?",options:["Всегда верно","Неверно","Только при вычитании нуля","Только если уменьшаемое больше"],correct:1},
+  {q:"Сколько будет 2 372 + 3 514 (в развёрнутой форме)?",options:["5886","5786","5986","4886"],correct:0},
+  {q:"Сколько будет 2 862 + 6 137?",options:["8999","9000","8990","9009"],correct:0},
+  {q:"Сколько будет 96 586 − 80 235?",options:["16 351","16 251","15 351","17 351"],correct:0},
+  {q:"Методом компенсации: 365 000 + 197 000 = ?",options:["552 000","562 000","572 000","582 000"],correct:1},
+  {q:"Методом компенсации: 4 960 − 1 999 = ?",options:["2 960","2 961","2 962","3 000"],correct:1},
+  {q:"Приближённо: 12 385 + 26 821 ≈ ?",options:["38 000","39 000","40 000","37 000"],correct:1},
+  {q:"Приближённо: 652 251 − 248 577 ≈ ?",options:["300 000","400 000","500 000","350 000"],correct:1},
+  {q:"Задача 14. Общее число людей (млн): 282 + 418 + 60 = ?",options:["660","760","860","700"],correct:1},
+  {q:"Наибольшее десятизначное число — это...",options:["1 000 000 000","9 999 999 999","999 999 999","10 000 000 000"],correct:1},
+  {q:"Сумма наибольшего десятизначного и семизначного чисел равна...",options:["10 009 999 998","11 999 999 198","9 999 999 999","10 000 000 000"],correct:0}
+];
+
+// ===== QUIZ 15 =====
+const quizQuestions=[
+  {q:"Почему Айнур быстро нашла 1+2+3+4+5+95+96+97+98+99?",options:["Сложила все подряд","Сочетала пары, дающие 100","Умножила на 10","Использовала калькулятор"],correct:1},
+  {q:"Какое свойство позволяет записать 33+15+17 как (33+17)+15?",options:["Только переместительное","Только сочетательное","Переместительное и сочетательное","Свойство нуля"],correct:2},
+  {q:"Почему при методе компенсации сумма не меняется?",options:["Потому что одно слагаемое уменьшают, а другое увеличивают на одно число","Потому что нуль не меняет сумму","Потому что числа округляют","Это магия математики"],correct:0},
+  {q:"В развёрнутой форме число 2 372 записывается как...",options:["2000+300+70+2","2+3+7+2","2372","200+30+7+2"],correct:0},
+  {q:"Может ли сумма двух натуральных чисел быть равна одному из слагаемых?",options:["Да, если второе равно 0","Нет, если натуральные числа начинаются с 1","Да, всегда","Нет, никогда"],correct:1},
+  {q:"Какие пары удобны в примере 212+546+188+154?",options:["212+546 и 188+154","212+188 и 546+154","212+154 и 546+188","Нет удобных пар"],correct:1},
+  {q:"При вычитании 4960−1999 методом компенсации мы...",options:["Вычитаем 2000 и прибавляем 1","Вычитаем 2000 и вычитаем 1","Прибавляем 2000 и вычитаем 1","Округляем до тысяч"],correct:0},
+  {q:"Почему 12 385 + 26 821 ≈ 12 000 + 27 000?",options:["Потому что так точнее","Заменили на близкие удобные числа","Потому что учебник так сказал","Это ошибка"],correct:1},
+  {q:"Проверка правдоподобия: 23 658 + 14 203 = 47 851. Приближённо...",options:["24 000+14 000=38 000, а 47 851 далеко — неверно","24 000+14 000=38 000, значит верно","23 000+14 000=37 000, всё равно верно","Нельзя проверить приближённо"],correct:0},
+  {q:"Общий объём газа (2016–2021) приближённо...",options:["150 млн","160 млн","161 млн","170 млн"],correct:2},
+  {q:"Сколько нулей в числе 10 009 999 998?",options:["6","7","8","9"],correct:1},
+  {q:"Наибольшее семизначное число + 1 = ?",options:["9 999 999","10 000 000","1 000 000","999 999"],correct:1},
+  {q:"Почему ответ Лалы (11 999 999 198) неверен?",options:["Она прибавила лишнюю 1 в разряде миллиардов","Она забыла про разряды","Она не использовала столбик","Это просто догадка"],correct:0},
+  {q:"В столбик цифры складывают...",options:["Слева направо","Справа налево (по разрядам)","Как попало","Только единицы"],correct:1},
+  {q:"Что общего между переместительным и сочетательным свойствами?",options:["Оба упрощают вычисления, позволяя менять порядок и группировку","Оба связаны с нулём","Оба работают только для двух чисел","Оба — это одно и то же"],correct:0}
+];
+
+// ===== NAVIGATION =====
+function goTo(id){
+  document.querySelectorAll('.module').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  document.querySelectorAll('nav button').forEach(b=>b.classList.remove('active'));
+  const btn=Array.from(document.querySelectorAll('nav button')).find(b=>b.getAttribute('onclick').includes("'"+id+"'"));
+  if(btn)btn.classList.add('active');
+  window.scrollTo({top:0,behavior:'smooth'});
+  if(id==='test')renderTest();
+  if(id==='quiz')renderQuiz();
+}
+function markDone(id){
+  const btn=Array.from(document.querySelectorAll('nav button')).find(b=>b.getAttribute('onclick').includes("'"+id+"'"));
+  if(btn){btn.classList.add('done');localStorage.setItem('done_'+id,'1');}
+}
+['m1','m2','m3','m4','m5'].forEach(id=>{if(localStorage.getItem('done_'+id))markDone(id);});
+
+// ===== RENDER TEST =====
+function renderTest(){
+  const box=document.getElementById('testBox');
+  if(box.dataset.rendered)return;
+  box.innerHTML=testQuestions.map((q,i)=>`
+    <div class="question" id="tq${i}">
+      <h4>${i+1}. ${q.q}</h4>
+      <div class="options">
+        ${q.options.map((opt,j)=>`<label><input type="radio" name="t${i}" value="${j}"> ${opt}</label>`).join('')}
+      </div>
+    </div>
+  `).join('');
+  box.dataset.rendered='1';
+}
+function checkTest(){
+  let score=0;
+  testQuestions.forEach((q,i)=>{
+    const val=document.querySelector(`input[name="t${i}"]:checked`);
+    const opts=document.querySelectorAll(`#tq${i} label`);
+    opts.forEach((lab,j)=>{
+      lab.classList.remove('correct','wrong');
+      if(j===q.correct)lab.classList.add('correct');
+      else if(val&&parseInt(val.value)===j)lab.classList.add('wrong');
+    });
+    if(val&&parseInt(val.value)===q.correct)score++;
+  });
+  const res=document.getElementById('testResult');
+  const pct=Math.round(score/testQuestions.length*100);
+  res.className='result-box show '+(pct>=83?'good':pct>=60?'mid':'bad');
+  res.innerHTML=`<div>Результат: <strong>${score} из ${testQuestions.length}</strong> (${pct}%)</div>
+    <div style="margin-top:.25rem;font-size:.9rem">${pct>=83?'Отлично! Ты отлично усвоил материал.':pct>=60?'Хорошо, но есть над чем поработать.':'Рекомендую повторить теорию и примеры.'}</div>`;
+  document.getElementById('testBtn').style.display='none';
+  document.getElementById('testReset').style.display='inline-flex';
+  document.getElementById('testProgress').style.width=pct+'%';
+  localStorage.setItem('testScore',score);
+}
+function resetTest(){
+  document.getElementById('testBox').innerHTML='';
+  delete document.getElementById('testBox').dataset.rendered;
+  document.getElementById('testResult').className='result-box';
+  document.getElementById('testBtn').style.display='inline-flex';
+  document.getElementById('testReset').style.display='none';
+  document.getElementById('testProgress').style.width='0%';
+  renderTest();
+}
+
+// ===== RENDER QUIZ =====
+function renderQuiz(){
+  const box=document.getElementById('quizBox');
+  if(box.dataset.rendered)return;
+  box.innerHTML=quizQuestions.map((q,i)=>`
+    <div class="question" id="qq${i}">
+      <h4>${i+1}. ${q.q}</h4>
+      <div class="options">
+        ${q.options.map((opt,j)=>`<label><input type="radio" name="q${i}" value="${j}"> ${opt}</label>`).join('')}
+      </div>
+    </div>
+  `).join('');
+  box.dataset.rendered='1';
+}
+function checkQuiz(){
+  let score=0;
+  quizQuestions.forEach((q,i)=>{
+    const val=document.querySelector(`input[name="q${i}"]:checked`);
+    const opts=document.querySelectorAll(`#qq${i} label`);
+    opts.forEach((lab,j)=>{
+      lab.classList.remove('correct','wrong');
+      if(j===q.correct)lab.classList.add('correct');
+      else if(val&&parseInt(val.value)===j)lab.classList.add('wrong');
+    });
+    if(val&&parseInt(val.value)===q.correct)score++;
+  });
+  const res=document.getElementById('quizResult');
+  const pct=Math.round(score/quizQuestions.length*100);
+  res.className='result-box show '+(pct>=80?'good':pct>=50?'mid':'bad');
+  res.innerHTML=`<div>Результат: <strong>${score} из ${quizQuestions.length}</strong> (${pct}%)</div>
+    <div style="margin-top:.25rem;font-size:.9rem">${pct>=80?'Блестяще! Глубокое понимание темы.':pct>=50?'Неплохо, но внимательнее читай условия.':'Рекомендую вернуться к теории и примерам.'}</div>`;
+  document.getElementById('quizBtn').style.display='none';
+  document.getElementById('quizReset').style.display='inline-flex';
+  document.getElementById('quizProgress').style.width=pct+'%';
+  localStorage.setItem('quizScore',score);
+}
+function resetQuiz(){
+  document.getElementById('quizBox').innerHTML='';
+  delete document.getElementById('quizBox').dataset.rendered;
+  document.getElementById('quizResult').className='result-box';
+  document.getElementById('quizBtn').style.display='inline-flex';
+  document.getElementById('quizReset').style.display='none';
+  document.getElementById('quizProgress').style.width='0%';
+  renderQuiz();
+}
+</script>
+</body>
+</html>

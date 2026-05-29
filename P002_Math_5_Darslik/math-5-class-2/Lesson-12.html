@@ -1,0 +1,1242 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Урок: Нахождение части числа и числа по его части</title>
+<style>
+:root {
+  --primary: #4f46e5; --primary-light: #6366f1; --secondary: #10b981;
+  --danger: #ef4444; --warning: #f59e0b; --bg: #f1f5f9;
+  --card: #ffffff; --text: #1e293b; --text-light: #64748b;
+  --border: #e2e8f0;
+  --shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -2px rgba(0,0,0,0.1);
+  --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -4px rgba(0,0,0,0.1);
+  --radius: 12px; --transition: all 0.3s ease;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: var(--bg); color: var(--text); line-height: 1.6; overflow-x: hidden;
+}
+#top-progress { position: fixed; top: 0; left: 0; right: 0; height: 4px; background: var(--border); z-index: 1000; }
+#top-progress-bar { height: 100%; width: 0%; background: linear-gradient(90deg, var(--primary), var(--primary-light)); transition: width 0.4s ease; }
+#sidebar { position: fixed; top: 0; left: 0; width: 260px; height: 100vh; background: var(--card); border-right: 1px solid var(--border); padding: 24px 16px; overflow-y: auto; z-index: 900; transition: var(--transition); }
+#sidebar h2 { font-size: 1.05rem; color: var(--primary); margin-bottom: 20px; padding-bottom: 12px; border-bottom: 2px solid var(--border); line-height: 1.4; }
+.nav-item { display: flex; align-items: center; justify-content: space-between; padding: 10px 12px; margin-bottom: 6px; border-radius: 8px; cursor: pointer; transition: var(--transition); font-size: 0.9rem; }
+.nav-item:hover, .nav-item.active { background: #eef2ff; color: var(--primary); }
+.nav-item .nav-progress { font-size: 0.75rem; color: var(--text-light); background: var(--bg); padding: 2px 6px; border-radius: 4px; }
+.nav-item.active .nav-progress { color: var(--primary); }
+#sidebar-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 899; }
+#burger-btn { display: none; position: fixed; top: 12px; left: 12px; z-index: 901; background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 8px 12px; cursor: pointer; font-size: 1.2rem; box-shadow: var(--shadow); }
+#main-content { margin-left: 260px; padding: 32px; min-height: 100vh; transition: var(--transition); }
+.section { display: none; animation: fadeIn 0.5s ease; }
+.section.active { display: block; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+.card { background: var(--card); border-radius: var(--radius); padding: 24px; margin-bottom: 20px; box-shadow: var(--shadow); border: 1px solid var(--border); }
+.card h2 { color: var(--primary); margin-bottom: 16px; font-size: 1.4rem; }
+.card h3 { color: var(--text); margin: 20px 0 12px; font-size: 1.15rem; }
+.fraction { display: inline-flex; flex-direction: column; align-items: center; vertical-align: middle; margin: 0 3px; font-size: 0.95em; }
+.fraction .num { border-bottom: 1.5px solid var(--text); padding: 0 4px; text-align: center; }
+.fraction .den { padding: 0 4px; text-align: center; }
+.formula-box { background: #f8fafc; border-left: 4px solid var(--primary); padding: 16px 20px; margin: 16px 0; border-radius: 0 8px 8px 0; font-size: 1.1rem; overflow-x: auto; }
+.btn { display: inline-flex; align-items: center; gap: 6px; padding: 10px 20px; border: none; border-radius: 8px; cursor: pointer; font-size: 0.95rem; font-weight: 500; transition: var(--transition); }
+.btn-primary { background: var(--primary); color: white; }
+.btn-primary:hover { background: var(--primary-light); transform: translateY(-1px); }
+.btn-secondary { background: var(--secondary); color: white; }
+.btn-warning { background: var(--warning); color: white; }
+.btn-danger { background: var(--danger); color: white; }
+.btn-outline { background: transparent; border: 2px solid var(--primary); color: var(--primary); }
+.btn-outline:hover { background: var(--primary); color: white; }
+.toggle-block { border: 1px solid var(--border); border-radius: 8px; margin: 12px 0; overflow: hidden; }
+.toggle-header { background: #f8fafc; padding: 12px 16px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; font-weight: 500; transition: var(--transition); }
+.toggle-header:hover { background: #f1f5f9; }
+.toggle-icon { transition: transform 0.3s; }
+.toggle-block.open .toggle-icon { transform: rotate(180deg); }
+.toggle-body { max-height: 0; overflow: hidden; transition: max-height 0.4s ease; background: var(--card); }
+.toggle-block.open .toggle-body { max-height: 2000px; padding: 16px; }
+.error-card { background: #fef2f2; border: 1px solid #fecaca; border-radius: 8px; padding: 16px; margin: 12px 0; display: flex; gap: 12px; align-items: flex-start; }
+.error-icon { background: var(--danger); color: white; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; flex-shrink: 0; }
+.quiz-mini { background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px; padding: 16px; margin: 16px 0; }
+.quiz-mini h4 { color: #166534; margin-bottom: 12px; }
+.quiz-option { display: block; width: 100%; text-align: left; padding: 10px 14px; margin: 6px 0; border: 2px solid var(--border); border-radius: 8px; background: var(--card); cursor: pointer; transition: var(--transition); }
+.quiz-option:hover { border-color: var(--primary); }
+.quiz-option.correct { border-color: var(--secondary); background: #f0fdf4; }
+.quiz-option.wrong { border-color: var(--danger); background: #fef2f2; }
+.quiz-option.disabled { pointer-events: none; opacity: 0.7; }
+.quiz-feedback { margin-top: 12px; padding: 12px; border-radius: 8px; display: none; }
+.quiz-feedback.show { display: block; }
+.practice-item { border: 1px solid var(--border); border-radius: 8px; padding: 16px; margin: 10px 0; background: var(--card); }
+.practice-item.solved { border-color: var(--secondary); background: #f0fdf4; }
+.practice-item.failed { border-color: var(--danger); background: #fef2f2; }
+.practice-input { padding: 8px 12px; border: 2px solid var(--border); border-radius: 6px; font-size: 1rem; width: 140px; margin-right: 8px; }
+.practice-input:focus { outline: none; border-color: var(--primary); }
+.practice-status { display: inline-block; margin-left: 8px; font-size: 1.2rem; }
+.test-container, .quiz-container { max-width: 800px; margin: 0 auto; }
+.test-question, .quiz-question { background: var(--card); border-radius: var(--radius); padding: 24px; margin-bottom: 20px; box-shadow: var(--shadow); border: 1px solid var(--border); }
+.test-question h3, .quiz-question h3 { font-size: 1.1rem; margin-bottom: 16px; color: var(--text); }
+.test-option, .quiz-option-big { display: block; width: 100%; padding: 12px 16px; margin: 8px 0; border: 2px solid var(--border); border-radius: 8px; background: var(--card); cursor: pointer; text-align: left; transition: var(--transition); }
+.test-option:hover, .quiz-option-big:hover { border-color: var(--primary); }
+.test-option.correct, .quiz-option-big.correct { border-color: var(--secondary); background: #f0fdf4; }
+.test-option.wrong, .quiz-option-big.wrong { border-color: var(--danger); background: #fef2f2; }
+.test-option.disabled, .quiz-option-big.disabled { pointer-events: none; }
+.test-explanation { margin-top: 12px; padding: 12px; background: #f8fafc; border-radius: 8px; display: none; font-size: 0.95rem; }
+.test-explanation.show { display: block; }
+.timer-box { position: sticky; top: 8px; background: var(--card); border: 2px solid var(--warning); border-radius: 8px; padding: 12px 20px; text-align: center; font-size: 1.2rem; font-weight: bold; color: var(--warning); margin-bottom: 20px; z-index: 50; }
+.result-box { text-align: center; padding: 40px 20px; background: var(--card); border-radius: var(--radius); box-shadow: var(--shadow); }
+.result-score { font-size: 3rem; font-weight: bold; color: var(--primary); }
+.result-grade { font-size: 1.5rem; margin: 12px 0; }
+.svg-container { background: var(--card); border-radius: var(--radius); padding: 20px; margin: 16px 0; text-align: center; overflow-x: auto; }
+.svg-container svg { max-width: 100%; height: auto; }
+@media (max-width: 900px) { #sidebar { transform: translateX(-100%); box-shadow: var(--shadow-lg); } #sidebar.open { transform: translateX(0); } #sidebar-overlay.show { display: block; } #main-content { margin-left: 0; padding: 20px; padding-top: 60px; } #burger-btn { display: block; } }
+@media (max-width: 600px) { #main-content { padding: 16px; padding-top: 60px; } .card { padding: 16px; } .formula-box { font-size: 1rem; padding: 12px; } }
+.grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+.grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+@media (max-width: 768px) { .grid-2, .grid-3 { grid-template-columns: 1fr; } }
+.highlight { background: #fef9c3; padding: 2px 6px; border-radius: 4px; font-weight: 500; }
+.info-card { background: #eff6ff; border-left: 4px solid #3b82f6; padding: 14px 18px; border-radius: 0 8px 8px 0; margin: 12px 0; }
+.step-box { display: flex; gap: 12px; margin: 12px 0; align-items: flex-start; }
+.step-number { background: var(--primary); color: white; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; flex-shrink: 0; }
+.step-body { flex: 1; }
+table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 0.95rem; }
+th, td { border: 1px solid var(--border); padding: 10px 12px; text-align: left; }
+th { background: #f8fafc; font-weight: 600; }
+</style>
+<base target="_blank">
+</head>
+<body>
+<div id="top-progress"><div id="top-progress-bar"></div></div>
+<button id="burger-btn" onclick="toggleSidebar()">&#9776;</button>
+<div id="sidebar-overlay" onclick="toggleSidebar()"></div>
+<nav id="sidebar">
+  <h2>&#128218; Часть числа и число по части</h2>
+  <div class="nav-item active" onclick="showSection('mod1')" data-section="mod1">
+    <span>1. Часть от числа</span><span class="nav-progress" id="prog-mod1">0%</span>
+  </div>
+  <div class="nav-item" onclick="showSection('mod2')" data-section="mod2">
+    <span>2. Число по части</span><span class="nav-progress" id="prog-mod2">0%</span>
+  </div>
+  <div class="nav-item" onclick="showSection('mod3')" data-section="mod3">
+    <span>3. Часть одного от другого</span><span class="nav-progress" id="prog-mod3">0%</span>
+  </div>
+  <div class="nav-item" onclick="showSection('mod4')" data-section="mod4">
+    <span>4. Задачи из жизни</span><span class="nav-progress" id="prog-mod4">0%</span>
+  </div>
+  <div class="nav-item" onclick="showSection('mod5')" data-section="mod5">
+    <span>5. Тренажёр</span><span class="nav-progress" id="prog-mod5">0%</span>
+  </div>
+  <div style="margin-top: 24px; border-top: 2px solid var(--border); padding-top: 16px;">
+    <div class="nav-item" onclick="showSection('test')" data-section="test"><span>&#128221; Итоговый тест</span></div>
+    <div class="nav-item" onclick="showSection('quiz')" data-section="quiz"><span>&#9889; Викторина</span></div>
+  </div>
+</nav>
+<main id="main-content">
+<section id="mod1" class="section active">
+  <div class="card">
+    <h2>1. Нахождение части числа</h2>
+    <div class="info-card">
+      <strong>Определение:</strong> Часть числа — это результат умножения данного числа на дробь, которая выражает эту часть.
+    </div>
+    <h3>&#128214; Точное правило из учебника</h3>
+    <p><strong>Чтобы найти часть от числа, нужно умножить число на эту дробь.</strong></p>
+    <div class="formula-box">
+      <span class="fraction"><span class="num">m</span><span class="den">n</span></span> от числа a = a &middot; <span class="fraction"><span class="num">m</span><span class="den">n</span></span> = <span class="fraction"><span class="num">a &middot; m</span><span class="den">n</span></span>
+    </div>
+    <h3>&#128483;&#65039; Простыми словами</h3>
+    <p>Если нужно найти, например, <span class="fraction"><span class="num">3</span><span class="den">4</span></span> от 8, это значит: раздели 8 на 4 части и возьми 3 таких части. Проще всего — просто умножить 8 на <span class="fraction"><span class="num">3</span><span class="den">4</span></span>.</p>
+    <h3>&#128202; Визуализация: отрезок, разбитый на части</h3>
+    <div class="svg-container">
+      <svg width="600" height="200" viewBox="0 0 600 200">
+        <line x1="50" y1="80" x2="550" y2="80" stroke="#334155" stroke-width="2"/>
+        <text x="50" y="110" font-size="14" fill="#64748b">0</text>
+        <text x="550" y="110" font-size="14" fill="#64748b">8</text>
+        <line x1="50" y1="75" x2="50" y2="85" stroke="#334155" stroke-width="2"/>
+        <line x1="175" y1="75" x2="175" y2="85" stroke="#334155" stroke-width="2"/>
+        <line x1="300" y1="75" x2="300" y2="85" stroke="#334155" stroke-width="2"/>
+        <line x1="425" y1="75" x2="425" y2="85" stroke="#334155" stroke-width="2"/>
+        <line x1="550" y1="75" x2="550" y2="85" stroke="#334155" stroke-width="2"/>
+        <text x="112" y="70" font-size="13" fill="#64748b">2</text>
+        <text x="237" y="70" font-size="13" fill="#64748b">2</text>
+        <text x="362" y="70" font-size="13" fill="#64748b">2</text>
+        <text x="487" y="70" font-size="13" fill="#64748b">2</text>
+        <rect x="50" y="55" width="375" height="20" fill="#6366f1" opacity="0.3" rx="4"/>
+        <text x="237" y="45" font-size="16" fill="#4f46e5" font-weight="bold">3/4 от 8 = 6</text>
+        <text x="300" y="150" font-size="14" fill="#64748b" text-anchor="middle">8 разделили на 4 равные части по 2, взяли 3 части = 6</text>
+        <line x1="425" y1="80" x2="425" y2="130" stroke="#ef4444" stroke-width="1.5" stroke-dasharray="4"/>
+        <text x="425" y="145" font-size="13" fill="#ef4444">оставшаяся 1/4 = 2</text>
+      </svg>
+    </div>
+    <h3>&#9999;&#65039; Пошаговый пример 1 (из учебника)</h3>
+    <div class="toggle-block" id="ex1">
+      <div class="toggle-header" onclick="toggleBlock('ex1')">
+        <span>Найти <span class="fraction"><span class="num">3</span><span class="den">4</span></span> от 8</span>
+        <span class="toggle-icon">&#9660;</span>
+      </div>
+      <div class="toggle-body">
+        <div class="step-box">
+          <div class="step-number">1</div>
+          <div class="step-body">
+            <strong>Записываем по правилу:</strong><br>
+            <span class="fraction"><span class="num">3</span><span class="den">4</span></span> от 8 = 8 &middot; <span class="fraction"><span class="num">3</span><span class="den">4</span></span>
+          </div>
+        </div>
+        <div class="step-box">
+          <div class="step-number">2</div>
+          <div class="step-body">
+            <strong>Умножаем:</strong><br>
+            8 &middot; <span class="fraction"><span class="num">3</span><span class="den">4</span></span> = <span class="fraction"><span class="num">8 &middot; 3</span><span class="den">4</span></span> = <span class="fraction"><span class="num"><s>8</s>&sup2; &middot; 3</span><span class="den"><s>4</s>&ordm;</span></span> = <span class="fraction"><span class="num">6</span><span class="den">1</span></span> = <strong>6</strong>
+          </div>
+        </div>
+        <div class="step-box">
+          <div class="step-number">3</div>
+          <div class="step-body">
+            <strong>Проверка:</strong> найдем, какую часть 6 составляет от 8.<br>
+            6 : 8 = <span class="fraction"><span class="num">6</span><span class="den">8</span></span> = <span class="fraction"><span class="num">3</span><span class="den">4</span></span> &#10003;
+          </div>
+        </div>
+      </div>
+    </div>
+    <h3>&#9999;&#65039; Пошаговый пример 2 (образец из учебника)</h3>
+    <div class="toggle-block" id="ex2">
+      <div class="toggle-header" onclick="toggleBlock('ex2')">
+        <span>Найти <span class="fraction"><span class="num">5</span><span class="den">6</span></span> от 12 кг</span>
+        <span class="toggle-icon">&#9660;</span>
+      </div>
+      <div class="toggle-body">
+        <div class="step-box">
+          <div class="step-number">1</div>
+          <div class="step-body">
+            <strong>Число 12 умножается на дробь:</strong><br>
+            12 &middot; <span class="fraction"><span class="num">5</span><span class="den">6</span></span> = <span class="fraction"><span class="num">12 &middot; 5</span><span class="den">6</span></span>
+          </div>
+        </div>
+        <div class="step-box">
+          <div class="step-number">2</div>
+          <div class="step-body">
+            <strong>Сокращаем и находим произведение:</strong><br>
+            <span class="fraction"><span class="num"><s>12</s>&sup2; &middot; 5</span><span class="den"><s>6</s>&ordm;</span></span> = <span class="fraction"><span class="num">10</span><span class="den">1</span></span> = <strong>10 (кг)</strong>
+          </div>
+        </div>
+        <div class="step-box">
+          <div class="step-number">3</div>
+          <div class="step-body">
+            <strong>Проверка:</strong> находим, какую часть 10 кг составляют от 12 кг.<br>
+            10 : 12 = <span class="fraction"><span class="num">10</span><span class="den">12</span></span> = <span class="fraction"><span class="num">5</span><span class="den">6</span></span> &#10003;<br>
+            Значит, 10 кг это <span class="fraction"><span class="num">5</span><span class="den">6</span></span> от 12 кг.
+          </div>
+        </div>
+      </div>
+    </div>
+    <h3>&#128203; Задачи из учебника (задание 1)</h3>
+    <div class="grid-3">
+      <div class="card" style="padding: 16px;">
+        <strong>а)</strong> <span class="fraction"><span class="num">3</span><span class="den">4</span></span> от 1 м<br>
+        <span style="color: var(--text-light); font-size: 0.9rem;">1 &middot; 3/4 = 3/4 м = 75 см</span>
+      </div>
+      <div class="card" style="padding: 16px;">
+        <strong>б)</strong> <span class="fraction"><span class="num">1</span><span class="den">3</span></span> от 6 кг<br>
+        <span style="color: var(--text-light); font-size: 0.9rem;">6 &middot; 1/3 = 2 кг</span>
+      </div>
+      <div class="card" style="padding: 16px;">
+        <strong>в)</strong> <span class="fraction"><span class="num">3</span><span class="den">5</span></span> от 15 манатов<br>
+        <span style="color: var(--text-light); font-size: 0.9rem;">15 &middot; 3/5 = 9 манатов</span>
+      </div>
+    </div>
+    <h3>&#9888;&#65039; Типичные ошибки</h3>
+    <div class="error-card">
+      <div class="error-icon">!</div>
+      <div>
+        <strong>Ошибка 1:</strong> Вместо умножения делить число на дробь.<br>
+        <em>Неправильно:</em> 3/4 от 8 = 8 : 3/4. <em>Правильно:</em> 3/4 от 8 = 8 &middot; 3/4 = 6.
+      </div>
+    </div>
+    <div class="error-card">
+      <div class="error-icon">!</div>
+      <div>
+        <strong>Ошибка 2:</strong> Забыть сократить перед умножением.<br>
+        <em>Совет:</em> Всегда сокращай числитель целого числа со знаменателем дроби.
+      </div>
+    </div>
+    <div class="error-card">
+      <div class="error-icon">!</div>
+      <div>
+        <strong>Ошибка 3:</strong> Путать «найти часть от числа» и «найти число по части».<br>
+        <em>Часть от числа</em> &rarr; умножаем. <em>Число по части</em> &rarr; делим.
+      </div>
+    </div>
+    <h3>&#129513; Мини-проверка</h3>
+    <div class="quiz-mini" id="mini1">
+      <h4>Вопрос 1: Чему равна 3/5 от 25?</h4>
+      <button class="quiz-option" onclick="checkMini(this, false, 'mini1')">5</button>
+      <button class="quiz-option" onclick="checkMini(this, true, 'mini1')">15</button>
+      <button class="quiz-option" onclick="checkMini(this, false, 'mini1')">20</button>
+      <button class="quiz-option" onclick="checkMini(this, false, 'mini1')">10</button>
+      <div class="quiz-feedback" id="fb-mini1"></div>
+    </div>
+    <div class="quiz-mini" id="mini2">
+      <h4>Вопрос 2: Какое действие используется для нахождения части от числа?</h4>
+      <button class="quiz-option" onclick="checkMini(this, false, 'mini2')">Деление</button>
+      <button class="quiz-option" onclick="checkMini(this, true, 'mini2')">Умножение</button>
+      <button class="quiz-option" onclick="checkMini(this, false, 'mini2')">Сложение</button>
+      <button class="quiz-option" onclick="checkMini(this, false, 'mini2')">Вычитание</button>
+      <div class="quiz-feedback" id="fb-mini2"></div>
+    </div>
+    <h3>&#128204; Вывод по модулю</h3>
+    <div class="info-card">
+      <strong>Чтобы найти часть от числа — умножаем число на дробь.</strong> Не забудь сократить и проверить ответ: найденная часть, делённая на целое число, должна дать исходную дробь.
+    </div>
+  </div>
+</section>
+<section id="mod2" class="section">
+  <div class="card">
+    <h2>2. Нахождение числа по его части</h2>
+    <div class="info-card">
+      <strong>Определение:</strong> Если известна часть числа (результат) и дробь, которая выражает эту часть, то исходное число находится делением результата на эту дробь.
+    </div>
+    <h3>&#128214; Точное правило из учебника</h3>
+    <p><strong>Чтобы найти число по его части, нужно число разделить на эту дробь.</strong></p>
+    <div class="formula-box">
+      Если <span class="fraction"><span class="num">m</span><span class="den">n</span></span> от числа x равны a, то x = a : <span class="fraction"><span class="num">m</span><span class="den">n</span></span> = a &middot; <span class="fraction"><span class="num">n</span><span class="den">m</span></span>
+    </div>
+    <h3>&#128483;&#65039; Простыми словами</h3>
+    <p>Это <span class="highlight">обратная задача</span>: нам известна часть (например, 6 — это 3/4 от какого-то числа), и нужно найти целое число. Делим известную часть на дробь — это то же самое, что умножить на перевернутую дробь.</p>
+    <h3>&#128202; Визуализация: обратное действие</h3>
+    <div class="svg-container">
+      <svg width="600" height="220" viewBox="0 0 600 220">
+        <rect x="50" y="20" width="400" height="40" fill="#e2e8f0" stroke="#94a3b8" stroke-width="2" rx="4"/>
+        <rect x="50" y="20" width="300" height="40" fill="#6366f1" opacity="0.3" rx="4"/>
+        <text x="200" y="45" font-size="14" fill="#4f46e5" font-weight="bold">3/4 от числа = 6</text>
+        <text x="470" y="45" font-size="14" fill="#64748b">?</text>
+        <line x1="250" y1="70" x2="250" y2="100" stroke="#1e293b" stroke-width="2" marker-end="url(#arrow)"/>
+        <text x="260" y="90" font-size="13" fill="#1e293b">6 : 3/4 = 8</text>
+        <rect x="50" y="120" width="400" height="40" fill="#10b981" opacity="0.2" stroke="#10b981" stroke-width="2" rx="4"/>
+        <text x="250" y="145" font-size="16" fill="#065f46" font-weight="bold">Искомое число = 8</text>
+        <text x="300" y="190" font-size="14" fill="#64748b">Проверка: 8 &middot; 3/4 = 6 &#10003;</text>
+        <defs>
+          <marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
+            <path d="M0,0 L0,6 L9,3 z" fill="#1e293b"/>
+          </marker>
+        </defs>
+      </svg>
+    </div>
+    <h3>&#9999;&#65039; Пошаговый пример 1 (из учебника)</h3>
+    <div class="toggle-block" id="ex3">
+      <div class="toggle-header" onclick="toggleBlock('ex3')">
+        <span>Найти число, <span class="fraction"><span class="num">3</span><span class="den">4</span></span> которого равны 6</span>
+        <span class="toggle-icon">&#9660;</span>
+      </div>
+      <div class="toggle-body">
+        <div class="step-box">
+          <div class="step-number">1</div>
+          <div class="step-body">
+            <strong>Записываем по правилу:</strong><br>
+            Число = 6 : <span class="fraction"><span class="num">3</span><span class="den">4</span></span>
+          </div>
+        </div>
+        <div class="step-box">
+          <div class="step-number">2</div>
+          <div class="step-body">
+            <strong>Делим на дробь (умножаем на обратную):</strong><br>
+            6 : <span class="fraction"><span class="num">3</span><span class="den">4</span></span> = 6 &middot; <span class="fraction"><span class="num">4</span><span class="den">3</span></span> = <span class="fraction"><span class="num"><s>6</s>&sup2; &middot; 4</span><span class="den"><s>3</s>&ordm;</span></span> = <span class="fraction"><span class="num">8</span><span class="den">1</span></span> = <strong>8</strong>
+          </div>
+        </div>
+        <div class="step-box">
+          <div class="step-number">3</div>
+          <div class="step-body">
+            <strong>Проверка:</strong> найдем 3/4 от 8.<br>
+            8 &middot; <span class="fraction"><span class="num">3</span><span class="den">4</span></span> = <span class="fraction"><span class="num"><s>8</s>&sup2; &middot; 3</span><span class="den"><s>4</s>&ordm;</span></span> = 6 &#10003;
+          </div>
+        </div>
+        <div class="step-box">
+          <div class="step-number">4</div>
+          <div class="step-body">
+            <strong>Ответ:</strong> 8 — это число, <span class="fraction"><span class="num">3</span><span class="den">4</span></span> которого равны 6.
+          </div>
+        </div>
+      </div>
+    </div>
+    <h3>&#9999;&#65039; Пошаговый пример 2 (образец из учебника)</h3>
+    <div class="toggle-block" id="ex4">
+      <div class="toggle-header" onclick="toggleBlock('ex4')">
+        <span>Найти длину дороги, <span class="fraction"><span class="num">3</span><span class="den">7</span></span> части которой равны 9 м</span>
+        <span class="toggle-icon">&#9660;</span>
+      </div>
+      <div class="toggle-body">
+        <div class="step-box">
+          <div class="step-number">1</div>
+          <div class="step-body">
+            <strong>Записываем по правилу:</strong><br>
+            Длина дороги = 9 : <span class="fraction"><span class="num">3</span><span class="den">7</span></span>
+          </div>
+        </div>
+        <div class="step-box">
+          <div class="step-number">2</div>
+          <div class="step-body">
+            <strong>Делим на дробь:</strong><br>
+            9 : <span class="fraction"><span class="num">3</span><span class="den">7</span></span> = 9 &middot; <span class="fraction"><span class="num">7</span><span class="den">3</span></span> = <span class="fraction"><span class="num"><s>9</s>&sup3; &middot; 7</span><span class="den"><s>3</s>&ordm;</span></span> = 3 &middot; 7 = <strong>21 (м)</strong>
+          </div>
+        </div>
+        <div class="step-box">
+          <div class="step-number">3</div>
+          <div class="step-body">
+            <strong>Проверка:</strong> найдем <span class="fraction"><span class="num">3</span><span class="den">7</span></span> от 21 м.<br>
+            21 &middot; <span class="fraction"><span class="num">3</span><span class="den">7</span></span> = <span class="fraction"><span class="num"><s>21</s>&sup3; &middot; 3</span><span class="den"><s>7</s>&ordm;</span></span> = 9 м &#10003;
+          </div>
+        </div>
+        <div class="step-box">
+          <div class="step-number">4</div>
+          <div class="step-body">
+            <strong>Ответ:</strong> длина дороги, <span class="fraction"><span class="num">3</span><span class="den">7</span></span> которой составляют 9 м, равна <strong>21 м</strong>.
+          </div>
+        </div>
+      </div>
+    </div>
+    <h3>&#128203; Задачи из учебника (задание 3)</h3>
+    <div class="grid-3">
+      <div class="card" style="padding: 16px;">
+        <strong>а)</strong> Число, <span class="fraction"><span class="num">3</span><span class="den">4</span></span> которого равны 9<br>
+        <span style="color: var(--text-light); font-size: 0.9rem;">9 : 3/4 = 9 &middot; 4/3 = 12</span>
+      </div>
+      <div class="card" style="padding: 16px;">
+        <strong>б)</strong> Число, <span class="fraction"><span class="num">7</span><span class="den">10</span></span> которого равны 14<br>
+        <span style="color: var(--text-light); font-size: 0.9rem;">14 : 7/10 = 14 &middot; 10/7 = 20</span>
+      </div>
+      <div class="card" style="padding: 16px;">
+        <strong>в)</strong> Число, <span class="fraction"><span class="num">3</span><span class="den">8</span></span> которого равны 15<br>
+        <span style="color: var(--text-light); font-size: 0.9rem;">15 : 3/8 = 15 &middot; 8/3 = 40</span>
+      </div>
+    </div>
+    <h3>&#9888;&#65039; Типичные ошибки</h3>
+    <div class="error-card">
+      <div class="error-icon">!</div>
+      <div>
+        <strong>Ошибка 1:</strong> Вместо деления умножить известную часть на дробь (это уменьшит число ещё сильнее).<br>
+        <em>Неправильно:</em> 6 &middot; 3/4 = 4&#189;. <em>Правильно:</em> 6 : 3/4 = 8.
+      </div>
+    </div>
+    <div class="error-card">
+      <div class="error-icon">!</div>
+      <div>
+        <strong>Ошибка 2:</strong> Перевернуть не ту дробь (делимое вместо делителя).<br>
+        <em>Неправильно:</em> 6 : 3/4 = 6 &middot; 3/4. <em>Правильно:</em> 6 : 3/4 = 6 &middot; 4/3.
+      </div>
+    </div>
+    <h3>&#129513; Мини-проверка</h3>
+    <div class="quiz-mini" id="mini3">
+      <h4>Вопрос 1: Число, 2/5 которого равны 6. Найти число.</h4>
+      <button class="quiz-option" onclick="checkMini(this, false, 'mini3')">2.4</button>
+      <button class="quiz-option" onclick="checkMini(this, false, 'mini3')">12</button>
+      <button class="quiz-option" onclick="checkMini(this, true, 'mini3')">15</button>
+      <button class="quiz-option" onclick="checkMini(this, false, 'mini3')">10</button>
+      <div class="quiz-feedback" id="fb-mini3"></div>
+    </div>
+    <div class="quiz-mini" id="mini4">
+      <h4>Вопрос 2: Какое действие для нахождения числа по части?</h4>
+      <button class="quiz-option" onclick="checkMini(this, false, 'mini4')">Умножение</button>
+      <button class="quiz-option" onclick="checkMini(this, true, 'mini4')">Деление</button>
+      <button class="quiz-option" onclick="checkMini(this, false, 'mini4')">Сложение</button>
+      <button class="quiz-option" onclick="checkMini(this, false, 'mini4')">Вычитание</button>
+      <div class="quiz-feedback" id="fb-mini4"></div>
+    </div>
+    <h3>&#128204; Вывод по модулю</h3>
+    <div class="info-card">
+      <strong>Чтобы найти число по его части — делим известную часть на дробь</strong> (или умножаем на обратную дробь). Всегда проверяй: найденное число, умноженное на дробь, должно дать известную часть.
+    </div>
+  </div>
+</section>
+<section id="mod3" class="section">
+  <div class="card">
+    <h2>3. Нахождение части одного числа от другого</h2>
+    <div class="info-card">
+      <strong>Определение:</strong> Чтобы найти, какую часть одно число составляет от другого, нужно первое число разделить на второе.
+    </div>
+    <h3>&#128214; Правило</h3>
+    <p>Чтобы найти, какую часть число <em>a</em> составляет от числа <em>b</em> (где <em>b</em> &gt; <em>a</em>), следует первое число разделить на второе:</p>
+    <div class="formula-box">
+      a : b = <span class="fraction"><span class="num">a</span><span class="den">b</span></span>
+    </div>
+    <h3>&#128483;&#65039; Простыми словами</h3>
+    <p>Например, число 6 составляет <span class="fraction"><span class="num">3</span><span class="den">4</span></span> от числа 8. Как это узнать? Просто делим 6 на 8 и сокращаем дробь.</p>
+    <h3>&#128202; Визуализация</h3>
+    <div class="svg-container">
+      <svg width="500" height="180" viewBox="0 0 500 180">
+        <rect x="50" y="30" width="300" height="30" fill="#e2e8f0" stroke="#94a3b8" stroke-width="2" rx="4"/>
+        <text x="200" y="50" font-size="14" fill="#64748b">8 (целое)</text>
+        <rect x="50" y="90" width="225" height="30" fill="#6366f1" opacity="0.3" stroke="#6366f1" stroke-width="2" rx="4"/>
+        <text x="162" y="110" font-size="14" fill="#4f46e5" font-weight="bold">6 (часть)</text>
+        <text x="250" y="155" font-size="18" fill="#1e293b" font-weight="bold">6 : 8 = 6/8 = 3/4</text>
+      </svg>
+    </div>
+    <h3>&#9999;&#65039; Пример из учебника</h3>
+    <div class="toggle-block" id="ex5">
+      <div class="toggle-header" onclick="toggleBlock('ex5')">
+        <span>Какую часть число 6 составляет от числа 8?</span>
+        <span class="toggle-icon">&#9660;</span>
+      </div>
+      <div class="toggle-body">
+        <div class="step-box">
+          <div class="step-number">1</div>
+          <div class="step-body">
+            <strong>Делим первое число на второе:</strong><br>
+            6 : 8 = <span class="fraction"><span class="num">6</span><span class="den">8</span></span>
+          </div>
+        </div>
+        <div class="step-box">
+          <div class="step-number">2</div>
+          <div class="step-body">
+            <strong>Сокращаем дробь:</strong><br>
+            <span class="fraction"><span class="num">6</span><span class="den">8</span></span> = <span class="fraction"><span class="num"><s>6</s>&sup3;</span><span class="den"><s>8</s>&#8308;</span></span> = <span class="fraction"><span class="num">3</span><span class="den">4</span></span>
+          </div>
+        </div>
+        <div class="step-box">
+          <div class="step-number">3</div>
+          <div class="step-body">
+            <strong>Ответ:</strong> число 6 составляет <span class="fraction"><span class="num">3</span><span class="den">4</span></span> от числа 8.
+          </div>
+        </div>
+      </div>
+    </div>
+    <h3>&#128203; Таблица: сравнение трёх типов задач</h3>
+    <table>
+      <tr>
+        <th>Тип задачи</th><th>Дано</th><th>Найти</th><th>Действие</th>
+      </tr>
+      <tr>
+        <td>Часть от числа</td><td>Число и дробь</td><td>Часть</td><td>Умножение</td>
+      </tr>
+      <tr>
+        <td>Число по части</td><td>Часть и дробь</td><td>Число</td><td>Деление</td>
+      </tr>
+      <tr>
+        <td>Часть одного от другого</td><td>Два числа</td><td>Дробь</td><td>Деление</td>
+      </tr>
+    </table>
+    <h3>&#9888;&#65039; Типичные ошибки</h3>
+    <div class="error-card">
+      <div class="error-icon">!</div>
+      <div>
+        <strong>Ошибка:</strong> Путать порядок чисел при делении.<br>
+        <em>Неправильно:</em> «6 от 8» = 8:6. <em>Правильно:</em> «6 от 8» = 6:8.
+      </div>
+    </div>
+    <h3>&#129513; Мини-проверка</h3>
+    <div class="quiz-mini" id="mini5">
+      <h4>Вопрос: Какую часть 10 составляет от 25?</h4>
+      <button class="quiz-option" onclick="checkMini(this, false, 'mini5')">5/2</button>
+      <button class="quiz-option" onclick="checkMini(this, true, 'mini5')">2/5</button>
+      <button class="quiz-option" onclick="checkMini(this, false, 'mini5')">3/5</button>
+      <button class="quiz-option" onclick="checkMini(this, false, 'mini5')">1/2</button>
+      <div class="quiz-feedback" id="fb-mini5"></div>
+    </div>
+    <h3>&#128204; Вывод по модулю</h3>
+    <div class="info-card">
+      <strong>Чтобы найти, какую часть a составляет от b — делим a на b и сокращаем.</strong> Главное — не перепутать порядок чисел!
+    </div>
+  </div>
+</section>
+
+<section id="mod4" class="section">
+  <div class="card">
+    <h2>4. Задачи из жизни</h2>
+    <h3>&#9999;&#65039; Задача 1 (из учебника, №6 — машина)</h3>
+    <p><strong>Условие:</strong> Машина проехала 120 км. Это расстояние составляет <span class="fraction"><span class="num">3</span><span class="den">7</span></span> всего пути. Сколько ещё километров нужно проехать машине?</p>
+    <div class="toggle-block" id="ex6">
+      <div class="toggle-header" onclick="toggleBlock('ex6')">
+        <span>Показать решение</span>
+        <span class="toggle-icon">&#9660;</span>
+      </div>
+      <div class="toggle-body">
+        <div class="step-box">
+          <div class="step-number">1</div>
+          <div class="step-body">
+            <strong>Найдём весь путь:</strong><br>
+            Весь путь = 120 : <span class="fraction"><span class="num">3</span><span class="den">7</span></span> = 120 &middot; <span class="fraction"><span class="num">7</span><span class="den">3</span></span> = <span class="fraction"><span class="num"><s>120</s>&#8308;&#8304; &middot; 7</span><span class="den"><s>3</s>&ordm;</span></span> = 280 (км)
+          </div>
+        </div>
+        <div class="step-box">
+          <div class="step-number">2</div>
+          <div class="step-body">
+            <strong>Найдём оставшееся расстояние:</strong><br>
+            Осталось = 280 &minus; 120 = <strong>160 (км)</strong>
+          </div>
+        </div>
+        <div class="step-box">
+          <div class="step-number">3</div>
+          <div class="step-body">
+            <strong>Другой способ:</strong><br>
+            Если пройдено <span class="fraction"><span class="num">3</span><span class="den">7</span></span>, то осталось <span class="fraction"><span class="num">4</span><span class="den">7</span></span> пути.<br>
+            Осталось = 280 &middot; <span class="fraction"><span class="num">4</span><span class="den">7</span></span> = <span class="fraction"><span class="num"><s>280</s>&#8308;&#8304; &middot; 4</span><span class="den"><s>7</s>&ordm;</span></span> = 160 (км)
+          </div>
+        </div>
+        <p style="margin-top:12px"><strong>Ответ:</strong> нужно проехать ещё <strong>160 км</strong>.</p>
+      </div>
+    </div>
+    <h3>&#9999;&#65039; Задача 2 (из учебника, №7 — доход работника)</h3>
+    <p><strong>Условие:</strong> Доход работника за месяц составляет 640 манатов. <span class="fraction"><span class="num">1</span><span class="den">8</span></span> дохода он потратил на коммунальные платежи, а <span class="fraction"><span class="num">4</span><span class="den">7</span></span> от оставшейся суммы — на продукты.</p>
+    <p><strong>Вопросы:</strong> Сколько денег осталось после этих расходов? Какую часть от всех денег составляют оставшиеся деньги?</p>
+    <div class="toggle-block" id="ex7">
+      <div class="toggle-header" onclick="toggleBlock('ex7')">
+        <span>Показать решение</span>
+        <span class="toggle-icon">&#9660;</span>
+      </div>
+      <div class="toggle-body">
+        <div class="step-box">
+          <div class="step-number">1</div>
+          <div class="step-body">
+            <strong>Коммунальные платежи:</strong><br>
+            640 &middot; <span class="fraction"><span class="num">1</span><span class="den">8</span></span> = <span class="fraction"><span class="num"><s>640</s>&#8312;&#8304;</span><span class="den"><s>8</s>&ordm;</span></span> = 80 (манатов)
+          </div>
+        </div>
+        <div class="step-box">
+          <div class="step-number">2</div>
+          <div class="step-body">
+            <strong>Осталось после коммунальных:</strong><br>
+            640 &minus; 80 = 560 (манатов)
+          </div>
+        </div>
+        <div class="step-box">
+          <div class="step-number">3</div>
+          <div class="step-body">
+            <strong>Продукты:</strong><br>
+            560 &middot; <span class="fraction"><span class="num">4</span><span class="den">7</span></span> = <span class="fraction"><span class="num"><s>560</s>&#8312;&#8304; &middot; 4</span><span class="den"><s>7</s>&ordm;</span></span> = 320 (манатов)
+          </div>
+        </div>
+        <div class="step-box">
+          <div class="step-number">4</div>
+          <div class="step-body">
+            <strong>Осталось после продуктов:</strong><br>
+            560 &minus; 320 = 240 (манатов)<br>
+            Или: 640 &minus; 80 &minus; 320 = 240 (манатов)
+          </div>
+        </div>
+        <div class="step-box">
+          <div class="step-number">5</div>
+          <div class="step-body">
+            <strong>Какую часть оставшиеся деньги составляют от всех:</strong><br>
+            240 : 640 = <span class="fraction"><span class="num">240</span><span class="den">640</span></span> = <span class="fraction"><span class="num">3</span><span class="den">8</span></span>
+          </div>
+        </div>
+        <p style="margin-top:12px"><strong>Ответ:</strong> осталось <strong>240 манатов</strong>, что составляет <span class="fraction"><span class="num">3</span><span class="den">8</span></span> от всех денег.</p>
+      </div>
+    </div>
+    <h3>&#9999;&#65039; Задача 3 (из учебника, №5а — пустые клетки)</h3>
+    <p><strong>Условие:</strong> <span class="fraction"><span class="num">3</span><span class="den">4</span></span> от 16 м равны &#9633; см.</p>
+    <div class="toggle-block" id="ex8">
+      <div class="toggle-header" onclick="toggleBlock('ex8')">
+        <span>Показать решение</span>
+        <span class="toggle-icon">&#9660;</span>
+      </div>
+      <div class="toggle-body">
+        <div class="step-box">
+          <div class="step-number">1</div>
+          <div class="step-body">
+            <strong>Сначала найдём часть в метрах:</strong><br>
+            16 &middot; <span class="fraction"><span class="num">3</span><span class="den">4</span></span> = <span class="fraction"><span class="num"><s>16</s>&#8308; &middot; 3</span><span class="den"><s>4</s>&ordm;</span></span> = 12 (м)
+          </div>
+        </div>
+        <div class="step-box">
+          <div class="step-number">2</div>
+          <div class="step-body">
+            <strong>Переведём в сантиметры:</strong><br>
+            12 м = 12 &middot; 100 = <strong>1200 см</strong>
+          </div>
+        </div>
+        <p style="margin-top:12px"><strong>Ответ:</strong> <strong>1200 см</strong>.</p>
+      </div>
+    </div>
+    <h3>&#128202; Визуализация: схема задачи с машиной</h3>
+    <div class="svg-container">
+      <svg width="600" height="200" viewBox="0 0 600 200">
+        <rect x="50" y="30" width="500" height="40" fill="#e2e8f0" stroke="#94a3b8" stroke-width="2" rx="4"/>
+        <rect x="50" y="30" width="214" height="40" fill="#6366f1" opacity="0.4" rx="4"/>
+        <text x="157" y="55" font-size="14" fill="#4f46e5" font-weight="bold">120 км (3/7)</text>
+        <rect x="264" y="30" width="286" height="40" fill="#10b981" opacity="0.3" rx="4"/>
+        <text x="407" y="55" font-size="14" fill="#065f46" font-weight="bold">? км (4/7)</text>
+        <text x="300" y="110" font-size="16" fill="#1e293b" font-weight="bold">Весь путь = 120 : 3/7 = 280 км</text>
+        <text x="300" y="140" font-size="14" fill="#64748b">Осталось = 280 &minus; 120 = 160 км</text>
+        <line x1="50" y1="80" x2="50" y2="95" stroke="#64748b" stroke-width="1"/>
+        <line x1="550" y1="80" x2="550" y2="95" stroke="#64748b" stroke-width="1"/>
+        <text x="300" y="95" font-size="13" fill="#64748b" text-anchor="middle">280 км</text>
+      </svg>
+    </div>
+    <h3>&#9888;&#65039; Типичные ошибки</h3>
+    <div class="error-card">
+      <div class="error-icon">!</div>
+      <div>
+        <strong>Ошибка 1:</strong> В задаче с машиной найти «весь путь», но забыть вычесть пройденное расстояние.<br>
+        <em>Совет:</em> Внимательно читай вопрос: «сколько ещё нужно проехать», а не «каков весь путь».
+      </div>
+    </div>
+    <div class="error-card">
+      <div class="error-icon">!</div>
+      <div>
+        <strong>Ошибка 2:</strong> В задаче с доходом применить 4/7 ко всей сумме, а не к оставшейся.<br>
+        <em>Совет:</em> «4/7 от оставшейся суммы» — значит, сначала вычитаем коммунальные, потом считаем 4/7 от остатка.
+      </div>
+    </div>
+    <div class="error-card">
+      <div class="error-icon">!</div>
+      <div>
+        <strong>Ошибка 3:</strong> Забыть перевести единицы измерения (м &rarr; см, кг &rarr; г).<br>
+        <em>Совет:</em> Всегда проверяй единицы в ответе.
+      </div>
+    </div>
+    <h3>&#129513; Мини-проверка</h3>
+    <div class="quiz-mini" id="mini6">
+      <h4>Вопрос: Машина проехала 120 км — это 3/7 пути. Сколько ещё км?</h4>
+      <button class="quiz-option" onclick="checkMini(this, false, 'mini6')">120</button>
+      <button class="quiz-option" onclick="checkMini(this, false, 'mini6')">280</button>
+      <button class="quiz-option" onclick="checkMini(this, true, 'mini6')">160</button>
+      <button class="quiz-option" onclick="checkMini(this, false, 'mini6')">200</button>
+      <div class="quiz-feedback" id="fb-mini6"></div>
+    </div>
+    <h3>&#128204; Вывод по модулю</h3>
+    <div class="info-card">
+      В текстовых задачах важно определить: <strong>1)</strong> какой тип задачи (часть от числа / число по части); <strong>2)</strong> от какого числа берётся часть (всего или оставшегося); <strong>3)</strong> правильные единицы измерения.
+    </div>
+  </div>
+</section>
+<section id="mod5" class="section">
+  <div class="card">
+    <h2>5. Тренажёр практики</h2>
+    <p style="color: var(--text-light); margin-bottom: 16px;">Реши задачи из учебника. Введи ответ числом (целым или дробью, например: 3/4, 10, 2 1/3).</p>
+    <div id="practice-container"></div>
+    <div style="margin-top: 20px; text-align: center;">
+      <button class="btn btn-primary" onclick="checkAllPractice()">Проверить все</button>
+      <button class="btn btn-outline" onclick="resetPractice()">Сбросить прогресс</button>
+    </div>
+    <div id="practice-summary" style="margin-top: 20px; text-align: center; font-size: 1.1rem;"></div>
+  </div>
+</section>
+
+<section id="test" class="section">
+  <div class="test-container">
+    <div class="card">
+      <h2>&#128221; Итоговый тест (30 вопросов)</h2>
+      <p style="color: var(--text-light); margin-bottom: 16px;">Выбери один правильный ответ. После выбора ответ будет заблокирован и показано объяснение.</p>
+      <div id="test-container"></div>
+      <div style="text-align: center; margin-top: 24px;">
+        <button class="btn btn-primary" id="test-finish-btn" onclick="finishTest()" style="display:none;">Завершить тест</button>
+      </div>
+      <div id="test-result" class="result-box" style="display:none; margin-top: 24px;"></div>
+    </div>
+  </div>
+</section>
+
+<section id="quiz" class="section">
+  <div class="quiz-container">
+    <div class="card">
+      <h2>&#9889; Викторина (15 вопросов)</h2>
+      <p style="color: var(--text-light); margin-bottom: 16px;">На прохождение 10 минут. Вопросы в случайном порядке.</p>
+      <div class="timer-box" id="quiz-timer">10:00</div>
+      <div id="quiz-progress" style="margin-bottom: 16px; font-weight: 500;">Вопрос 1 из 15</div>
+      <div id="quiz-container"></div>
+      <div id="quiz-result" class="result-box" style="display:none; margin-top: 24px;"></div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<script>
+function gcd(a, b) { return b ? gcd(b, a % b) : Math.abs(a); }
+
+function parseFraction(str) {
+  str = str.trim().replace(/\s+/g, ' ');
+  let mixed = str.match(/^(\d+)\s+(\d+)\/(\d+)$/);
+  if (mixed) {
+    let w = parseInt(mixed[1]), n = parseInt(mixed[2]), d = parseInt(mixed[3]);
+    return { num: w * d + n, den: d };
+  }
+  let simple = str.match(/^(\d+)\/(\d+)$/);
+  if (simple) return { num: parseInt(simple[1]), den: parseInt(simple[2]) };
+  let whole = str.match(/^(\d+)$/);
+  if (whole) return { num: parseInt(whole[1]), den: 1 };
+  return null;
+}
+
+function normalizeFraction(f) {
+  if (!f) return null;
+  let g = gcd(f.num, f.den);
+  return { num: f.num / g, den: f.den / g };
+}
+
+function fractionEquals(a, b) {
+  if (!a || !b) return false;
+  let na = normalizeFraction(a), nb = normalizeFraction(b);
+  return na.num === nb.num && na.den === nb.den;
+}
+
+function toMixedString(f) {
+  if (!f) return '';
+  let g = gcd(f.num, f.den);
+  let n = f.num / g, d = f.den / g;
+  if (d === 1) return String(n);
+  let w = Math.floor(n / d);
+  let r = n % d;
+  if (w === 0) return n + '/' + d;
+  return w + ' ' + r + '/' + d;
+}
+
+const LS_KEY = 'part_of_number_lesson_v1';
+function loadState() {
+  try { return JSON.parse(localStorage.getItem(LS_KEY)) || {}; } catch { return {}; }
+}
+function saveState(state) { localStorage.setItem(LS_KEY, JSON.stringify(state)); }
+function markVisited(section) {
+  let s = loadState();
+  s.visited = s.visited || {};
+  s.visited[section] = true;
+  saveState(s);
+  updateNavProgress();
+}
+
+function toggleSidebar() {
+  document.getElementById('sidebar').classList.toggle('open');
+  document.getElementById('sidebar-overlay').classList.toggle('show');
+}
+
+function showSection(id) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  let nav = document.querySelector('.nav-item[data-section="' + id + '"]');
+  if (nav) nav.classList.add('active');
+  markVisited(id);
+  updateTopProgress();
+  if (id === 'mod5') renderPractice();
+  if (id === 'test') renderTest();
+  if (id === 'quiz') startQuiz();
+  window.scrollTo(0, 0);
+}
+
+function updateNavProgress() {
+  let s = loadState();
+  let visited = s.visited || {};
+  let modules = ['mod1','mod2','mod3','mod4','mod5'];
+  modules.forEach(m => {
+    let el = document.getElementById('prog-' + m);
+    if (el) el.textContent = visited[m] ? '100%' : '0%';
+  });
+}
+
+function updateTopProgress() {
+  let s = loadState();
+  let visited = s.visited || {};
+  let total = 7;
+  let done = 0;
+  ['mod1','mod2','mod3','mod4','mod5','test','quiz'].forEach(k => { if (visited[k]) done++; });
+  let pct = Math.round(done / total * 100);
+  document.getElementById('top-progress-bar').style.width = pct + '%';
+}
+
+function toggleBlock(id) { document.getElementById(id).classList.toggle('open'); }
+
+function checkMini(btn, isCorrect, quizId) {
+  let container = document.getElementById(quizId);
+  let buttons = container.querySelectorAll('.quiz-option');
+  buttons.forEach(b => b.classList.add('disabled'));
+  if (isCorrect) {
+    btn.classList.add('correct');
+    document.getElementById('fb-' + quizId).innerHTML = '<span style="color: var(--secondary); font-weight: 500;">&#9989; Правильно! Отличная работа.</span>';
+  } else {
+    btn.classList.add('wrong');
+    buttons.forEach(b => {
+      if (b.getAttribute('onclick').includes('true')) b.classList.add('correct');
+    });
+    document.getElementById('fb-' + quizId).innerHTML = '<span style="color: var(--danger); font-weight: 500;">&#10060; Неверно. Правильный ответ выделен зелёным.</span>';
+  }
+  document.getElementById('fb-' + quizId).classList.add('show');
+}
+
+const practiceData = [
+  { q: '3/4 от 1 м = ? (см)', a: '75' },
+  { q: '1/3 от 6 кг = ? (кг)', a: '2' },
+  { q: '3/5 от 15 манатов = ?', a: '9' },
+  { q: '3/5 от 25 метров = ? (м)', a: '15' },
+  { q: '1/2 от 34 литров = ? (л)', a: '17' },
+  { q: '2/3 от 144 мм = ? (мм)', a: '96' },
+  { q: '7/9 от 270 г = ? (г)', a: '210' },
+  { q: '1/3 от 3 часов = ? (ч)', a: '1' },
+  { q: '1/4 от 6 метров = ? (м)', a: '1.5' },
+  { q: '5/7 от 63 литров = ? (л)', a: '45' },
+  { q: '3/4 от 120 км = ? (км)', a: '90' },
+  { q: '5/6 от 8 тонн = ? (т)', a: '20/3' },
+  { q: 'Число, 3/4 которого равны 9', a: '12' },
+  { q: 'Число, 7/10 которого равны 14', a: '20' },
+  { q: 'Число, 3/8 которого равны 15', a: '40' },
+  { q: 'Длина отрезка, 1/4 которого равна 1 см', a: '4' },
+  { q: 'Объём бидона, 1/3 которого равна 3 л', a: '9' },
+  { q: 'Масса кита, 2/5 которой равны 6 т', a: '15' },
+  { q: 'Длина верёвки, 2/3 которой равны 8 м', a: '12' },
+  { q: '3/4 от 16 м = ? (см)', a: '1200' },
+  { q: 'Объём аквариума, 5/8 которого составляют 40 л', a: '64' },
+  { q: 'Какую часть 10 составляет от 25?', a: '2/5' },
+  { q: 'Какую часть 12 составляет от 18?', a: '2/3' },
+  { q: 'Какую часть 8 составляет от 20?', a: '2/5' },
+  { q: 'Машина проехала 120 км — это 3/7 пути. Весь путь?', a: '280' },
+];
+
+function renderPractice() {
+  let container = document.getElementById('practice-container');
+  let s = loadState();
+  let solved = s.practice || {};
+  let html = '';
+  practiceData.forEach((item, i) => {
+    let status = solved[i];
+    let cls = status === 'correct' ? 'solved' : (status === 'wrong' ? 'failed' : '');
+    let statusIcon = status === 'correct' ? '&#9989;' : (status === 'wrong' ? '&#10060;' : '');
+    html += '<div class="practice-item ' + cls + '" id="pr-' + i + '">';
+    html += '<div style="font-weight: 500; margin-bottom: 8px;">' + (i+1) + '. ' + item.q + '</div>';
+    html += '<input type="text" class="practice-input" id="inp-' + i + '" placeholder="Ответ" onkeydown="if(event.key===\'Enter\')checkPractice(' + i + ')" value="' + (solved[i+'_val'] || '') + '">';
+    html += '<button class="btn btn-primary" onclick="checkPractice(' + i + ')" style="padding: 8px 14px; font-size: 0.85rem;">Проверить</button>';
+    html += '<button class="btn btn-warning" onclick="showHint(' + i + ')" style="padding: 8px 14px; font-size: 0.85rem; margin-left: 6px;">Подсказка</button>';
+    html += '<span class="practice-status" id="st-' + i + '">' + statusIcon + '</span>';
+    html += '<div id="hint-' + i + '" style="display:none; margin-top: 8px; color: var(--text-light); font-size: 0.9rem; background: #fffbeb; padding: 8px 12px; border-radius: 6px;"></div>';
+    html += '<div id="fb-' + i + '" style="margin-top: 8px; font-weight: 500;"></div>';
+    html += '</div>';
+  });
+  container.innerHTML = html;
+  updatePracticeSummary();
+}
+
+function showHint(i) {
+  let item = practiceData[i];
+  let hintEl = document.getElementById('hint-' + i);
+  if (item.q.includes('от')) {
+    hintEl.innerHTML = '<strong>Подсказка:</strong> Чтобы найти часть от числа — УМНОЖЬ число на дробь. Не забудь сократить!';
+  } else if (item.q.includes('которого') || item.q.includes('которой')) {
+    hintEl.innerHTML = '<strong>Подсказка:</strong> Чтобы найти число по части — ДЕЛИ известную часть на дробь (или умножь на обратную).';
+  } else if (item.q.includes('часть')) {
+    hintEl.innerHTML = '<strong>Подсказка:</strong> Чтобы найти, какую часть a составляет от b — ДЕЛИ a на b и сократи.';
+  } else {
+    hintEl.innerHTML = '<strong>Подсказка:</strong> Определи тип задачи: часть от числа (умножение) или число по части (деление).';
+  }
+  hintEl.style.display = 'block';
+}
+
+function checkPractice(i) {
+  let val = document.getElementById('inp-' + i).value.trim().replace(',', '.');
+  let correct = practiceData[i].a;
+  let parsed = parseFraction(val);
+  let correctParsed = parseFraction(correct);
+  let isCorrect = fractionEquals(parsed, correctParsed);
+  if (!isCorrect && val === correct) isCorrect = true;
+  let fb = document.getElementById('fb-' + i);
+  let st = document.getElementById('st-' + i);
+  let itemEl = document.getElementById('pr-' + i);
+  let s = loadState();
+  s.practice = s.practice || {};
+  s.practice[i+'_val'] = val;
+  if (isCorrect) {
+    fb.innerHTML = '<span style="color: var(--secondary);">&#9989; Верно!</span>';
+    st.textContent = '&#9989;';
+    itemEl.classList.add('solved');
+    itemEl.classList.remove('failed');
+    s.practice[i] = 'correct';
+  } else {
+    fb.innerHTML = '<span style="color: var(--danger);">&#10060; Неверно. Правильный ответ: ' + correct + '</span>';
+    st.textContent = '&#10060;';
+    itemEl.classList.add('failed');
+    itemEl.classList.remove('solved');
+    s.practice[i] = 'wrong';
+  }
+  saveState(s);
+  updatePracticeSummary();
+}
+
+function checkAllPractice() {
+  practiceData.forEach((_, i) => checkPractice(i));
+}
+
+function resetPractice() {
+  let s = loadState();
+  s.practice = {};
+  saveState(s);
+  renderPractice();
+}
+
+function updatePracticeSummary() {
+  let s = loadState();
+  let solved = s.practice || {};
+  let correct = 0, total = practiceData.length;
+  for (let i = 0; i < total; i++) if (solved[i] === 'correct') correct++;
+  document.getElementById('practice-summary').innerHTML = 
+    'Решено правильно: <strong>' + correct + '</strong> из ' + total + ' (' + Math.round(correct/total*100) + '%)';
+}
+
+const testData = [
+  { q: 'Чему равна 3/4 от 8?', options: ['4', '6', '8', '12'], correct: 1, expl: '8 · 3/4 = 24/4 = 6' },
+  { q: 'Какое действие для нахождения части от числа?', options: ['Деление', 'Умножение', 'Сложение', 'Вычитание'], correct: 1, expl: 'Часть от числа находится УМНОЖЕНИЕМ числа на дробь.' },
+  { q: 'Чему равна 2/5 от 25?', options: ['5', '10', '15', '20'], correct: 1, expl: '25 · 2/5 = 50/5 = 10' },
+  { q: 'Чему равна 5/6 от 12 кг?', options: ['8 кг', '10 кг', '12 кг', '15 кг'], correct: 1, expl: '12 · 5/6 = 60/6 = 10 кг' },
+  { q: 'Число, 3/4 которого равны 9. Найти число.', options: ['6', '8', '12', '15'], correct: 2, expl: '9 : 3/4 = 9 · 4/3 = 12' },
+  { q: 'Какое действие для нахождения числа по части?', options: ['Умножение', 'Деление', 'Сложение', 'Вычитание'], correct: 1, expl: 'Число по части находится ДЕЛЕНИЕМ известной части на дробь.' },
+  { q: 'Число, 2/5 которого равны 6. Найти число.', options: ['10', '12', '15', '20'], correct: 2, expl: '6 : 2/5 = 6 · 5/2 = 15' },
+  { q: 'Длина дороги, 3/7 которой равны 9 м.', options: ['18 м', '21 м', '24 м', '27 м'], correct: 1, expl: '9 : 3/7 = 9 · 7/3 = 21 м' },
+  { q: 'Какую часть 6 составляет от 8?', options: ['1/2', '2/3', '3/4', '4/5'], correct: 2, expl: '6 : 8 = 6/8 = 3/4' },
+  { q: 'Какую часть 10 составляет от 25?', options: ['1/3', '2/5', '3/5', '1/2'], correct: 1, expl: '10 : 25 = 10/25 = 2/5' },
+  { q: '3/4 от 16 м = ? (см)', options: ['800 см', '1000 см', '1200 см', '1600 см'], correct: 2, expl: '16 · 3/4 = 12 м = 1200 см' },
+  { q: '1/3 от 6 кг = ?', options: ['1 кг', '2 кг', '3 кг', '4 кг'], correct: 1, expl: '6 · 1/3 = 2 кг' },
+  { q: '3/5 от 15 манатов = ?', options: ['6', '9', '12', '15'], correct: 1, expl: '15 · 3/5 = 45/5 = 9' },
+  { q: 'Число, 7/10 которого равны 14.', options: ['18', '20', '22', '24'], correct: 1, expl: '14 : 7/10 = 14 · 10/7 = 20' },
+  { q: 'Число, 3/8 которого равны 15.', options: ['30', '35', '40', '45'], correct: 2, expl: '15 : 3/8 = 15 · 8/3 = 40' },
+  { q: 'Объём бидона, 1/3 которого равна 3 л.', options: ['6 л', '9 л', '12 л', '15 л'], correct: 1, expl: '3 : 1/3 = 3 · 3 = 9 л' },
+  { q: 'Масса кита, 2/5 которой равны 6 т.', options: ['12 т', '15 т', '18 т', '20 т'], correct: 1, expl: '6 : 2/5 = 6 · 5/2 = 15 т' },
+  { q: 'Длина верёвки, 2/3 которой равны 8 м.', options: ['10 м', '12 м', '14 м', '16 м'], correct: 1, expl: '8 : 2/3 = 8 · 3/2 = 12 м' },
+  { q: 'Машина проехала 120 км — это 3/7 пути. Весь путь?', options: ['240 км', '260 км', '280 км', '300 км'], correct: 2, expl: '120 : 3/7 = 120 · 7/3 = 280 км' },
+  { q: 'Машина проехала 120 км — это 3/7 пути. Сколько ещё км?', options: ['120 км', '160 км', '180 км', '200 км'], correct: 1, expl: 'Весь путь 280 км. Осталось: 280 − 120 = 160 км' },
+  { q: '5/7 от 63 литров = ?', options: ['35 л', '40 л', '45 л', '50 л'], correct: 2, expl: '63 · 5/7 = 315/7 = 45 л' },
+  { q: '3/4 от 120 км = ?', options: ['80 км', '85 км', '90 км', '95 км'], correct: 2, expl: '120 · 3/4 = 360/4 = 90 км' },
+  { q: 'Объём аквариума, 5/8 которого составляют 40 л.', options: ['56 л', '60 л', '64 л', '68 л'], correct: 2, expl: '40 : 5/8 = 40 · 8/5 = 64 л' },
+  { q: 'Какую часть 12 составляет от 18?', options: ['1/2', '2/3', '3/4', '4/5'], correct: 1, expl: '12 : 18 = 12/18 = 2/3' },
+  { q: 'Какую часть 8 составляет от 20?', options: ['1/3', '2/5', '3/5', '1/2'], correct: 1, expl: '8 : 20 = 8/20 = 2/5' },
+  { q: '7/9 от 270 г = ?', options: ['180 г', '200 г', '210 г', '240 г'], correct: 2, expl: '270 · 7/9 = 1890/9 = 210 г' },
+  { q: '1/4 от 6 метров = ?', options: ['1 м', '1.5 м', '2 м', '2.5 м'], correct: 1, expl: '6 · 1/4 = 6/4 = 3/2 = 1.5 м' },
+  { q: 'Доход 640 манатов. 1/8 на коммунальные. Сколько потрачено?', options: ['70 ман', '75 ман', '80 ман', '85 ман'], correct: 2, expl: '640 · 1/8 = 80 манатов' },
+  { q: '2/3 от 144 мм = ?', options: ['88 мм', '92 мм', '96 мм', '100 мм'], correct: 2, expl: '144 · 2/3 = 288/3 = 96 мм' },
+  { q: 'Длина отрезка, 1/4 которого равна 1 см.', options: ['2 см', '3 см', '4 см', '5 см'], correct: 2, expl: '1 : 1/4 = 1 · 4 = 4 см' },
+];
+
+function renderTest() {
+  let container = document.getElementById('test-container');
+  let s = loadState();
+  let answers = s.testAnswers || {};
+  let html = '';
+  testData.forEach((item, i) => {
+    let answered = answers[i] !== undefined;
+    let isCorrect = answers[i] === item.correct;
+    html += '<div class="test-question" id="tq-' + i + '">';
+    html += '<h3>' + (i+1) + '. ' + item.q + '</h3>';
+    item.options.forEach((opt, j) => {
+      let cls = '';
+      if (answered) {
+        if (j === item.correct) cls = 'correct';
+        else if (j === answers[i]) cls = 'wrong';
+      }
+      html += '<button class="test-option ' + cls + (answered ? ' disabled' : '') + '" onclick="answerTest(' + i + ',' + j + ')">' + opt + '</button>';
+    });
+    html += '<div class="test-explanation ' + (answered ? 'show' : '') + '" id="te-' + i + '">' + item.expl + '</div>';
+    html += '</div>';
+  });
+  container.innerHTML = html;
+  let allAnswered = Object.keys(answers).length === testData.length;
+  document.getElementById('test-finish-btn').style.display = allAnswered ? 'inline-flex' : 'none';
+  if (allAnswered && s.testFinished) showTestResult();
+}
+
+function answerTest(i, j) {
+  let s = loadState();
+  s.testAnswers = s.testAnswers || {};
+  s.testAnswers[i] = j;
+  saveState(s);
+  renderTest();
+}
+
+function finishTest() {
+  let s = loadState();
+  s.testFinished = true;
+  saveState(s);
+  showTestResult();
+  markVisited('test');
+  updateTopProgress();
+}
+
+function showTestResult() {
+  let s = loadState();
+  let answers = s.testAnswers || {};
+  let correct = 0;
+  let wrongQuestions = [];
+  testData.forEach((item, i) => {
+    if (answers[i] === item.correct) correct++;
+    else wrongQuestions.push({ num: i+1, q: item.q, correct: item.options[item.correct], your: item.options[answers[i]] || '—' });
+  });
+  let pct = Math.round(correct / testData.length * 100);
+  let grade = pct >= 90 ? 5 : pct >= 70 ? 4 : pct >= 50 ? 3 : 2;
+  let color = grade >= 4 ? 'var(--secondary)' : (grade === 3 ? 'var(--warning)' : 'var(--danger)');
+  let html = '<div class="result-score" style="color:' + color + '">' + correct + '/' + testData.length + '</div>';
+  html += '<div class="result-grade">Процент: ' + pct + '% | Оценка: <span style="color:' + color + '">' + grade + '</span></div>';
+  html += '<p style="margin: 16px 0;">' + (grade >= 4 ? 'Отличный результат! Ты хорошо усвоил тему.' : grade === 3 ? 'Хорошо, но есть над чем поработать.' : 'Рекомендуется повторить теорию и прорешать тренажёр.') + '</p>';
+  if (wrongQuestions.length > 0) {
+    html += '<h3 style="margin-top: 24px;">&#10060; Ошибки:</h3>';
+    html += '<div style="text-align: left; max-width: 600px; margin: 0 auto;">';
+    wrongQuestions.forEach(w => {
+      html += '<div style="background: #fef2f2; border: 1px solid #fecaca; border-radius: 8px; padding: 12px; margin: 8px 0;">';
+      html += '<strong>Вопрос ' + w.num + ':</strong> ' + w.q + '<br>';
+      html += '<span style="color: var(--danger);">Твой ответ: ' + w.your + '</span> | ';
+      html += '<span style="color: var(--secondary);">Правильно: ' + w.correct + '</span>';
+      html += '</div>';
+    });
+    html += '</div>';
+  }
+  html += '<div style="margin-top: 24px;">';
+  html += '<button class="btn btn-primary" onclick="resetTest()">Пройти заново</button>';
+  html += '</div>';
+  document.getElementById('test-result').innerHTML = html;
+  document.getElementById('test-result').style.display = 'block';
+}
+
+function resetTest() {
+  let s = loadState();
+  s.testAnswers = {};
+  s.testFinished = false;
+  saveState(s);
+  document.getElementById('test-result').style.display = 'none';
+  renderTest();
+}
+
+const quizDataRaw = [
+  { q: '3/4 от 8 = ?', options: ['4', '6', '8', '12'], correct: 1 },
+  { q: '2/5 от 25 = ?', options: ['5', '10', '15', '20'], correct: 1 },
+  { q: '5/6 от 12 = ?', options: ['8', '10', '12', '15'], correct: 1 },
+  { q: 'Число, 3/4 которого = 9', options: ['6', '8', '12', '15'], correct: 2 },
+  { q: 'Число, 2/5 которого = 6', options: ['10', '12', '15', '20'], correct: 2 },
+  { q: '6 : 8 = ?', options: ['1/2', '2/3', '3/4', '4/5'], correct: 2 },
+  { q: '10 : 25 = ?', options: ['1/3', '2/5', '3/5', '1/2'], correct: 1 },
+  { q: '120 км — это 3/7 пути. Весь путь?', options: ['240', '260', '280', '300'], correct: 2 },
+  { q: '1/3 от 6 кг = ?', options: ['1', '2', '3', '4'], correct: 1 },
+  { q: '3/5 от 15 = ?', options: ['6', '9', '12', '15'], correct: 1 },
+  { q: '7/10 от числа = 14. Число?', options: ['18', '20', '22', '24'], correct: 1 },
+  { q: '3/8 от числа = 15. Число?', options: ['30', '35', '40', '45'], correct: 2 },
+  { q: '1/4 от 6 м = ?', options: ['1', '1.5', '2', '2.5'], correct: 1 },
+  { q: '5/7 от 63 = ?', options: ['35', '40', '45', '50'], correct: 2 },
+  { q: '3/4 от 120 = ?', options: ['80', '85', '90', '95'], correct: 2 },
+];
+
+let quizState = { current: 0, order: [], answers: {}, timer: null, timeLeft: 600, finished: false };
+
+function shuffleArray(arr) {
+  let a = arr.slice();
+  for (let i = a.length - 1; i > 0; i--) {
+    let j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function startQuiz() {
+  let s = loadState();
+  if (s.quizFinished) {
+    showQuizResult(s.quizResult);
+    return;
+  }
+  quizState.current = 0;
+  quizState.answers = {};
+  quizState.finished = false;
+  quizState.timeLeft = 600;
+  quizState.order = shuffleArray(quizDataRaw.map((_, i) => i));
+  renderQuizQuestion();
+  startQuizTimer();
+}
+
+function startQuizTimer() {
+  if (quizState.timer) clearInterval(quizState.timer);
+  quizState.timer = setInterval(() => {
+    quizState.timeLeft--;
+    updateQuizTimer();
+    if (quizState.timeLeft <= 0) finishQuiz();
+  }, 1000);
+}
+
+function updateQuizTimer() {
+  let m = Math.floor(quizState.timeLeft / 60);
+  let sec = quizState.timeLeft % 60;
+  document.getElementById('quiz-timer').textContent = 
+    (m < 10 ? '0' : '') + m + ':' + (sec < 10 ? '0' : '') + sec;
+  if (quizState.timeLeft < 60) {
+    document.getElementById('quiz-timer').style.borderColor = 'var(--danger)';
+    document.getElementById('quiz-timer').style.color = 'var(--danger)';
+  }
+}
+
+function renderQuizQuestion() {
+  let idx = quizState.order[quizState.current];
+  let item = quizDataRaw[idx];
+  let container = document.getElementById('quiz-container');
+  document.getElementById('quiz-progress').textContent = 'Вопрос ' + (quizState.current + 1) + ' из ' + quizDataRaw.length;
+  let html = '<div class="quiz-question">';
+  html += '<h3>' + item.q + '</h3>';
+  item.options.forEach((opt, j) => {
+    html += '<button class="quiz-option-big" onclick="answerQuiz(' + j + ')">' + opt + '</button>';
+  });
+  html += '</div>';
+  container.innerHTML = html;
+}
+
+function answerQuiz(j) {
+  let idx = quizState.order[quizState.current];
+  let item = quizDataRaw[idx];
+  let isCorrect = j === item.correct;
+  quizState.answers[idx] = j;
+  let buttons = document.querySelectorAll('.quiz-option-big');
+  buttons.forEach((btn, i) => {
+    btn.classList.add('disabled');
+    if (i === item.correct) btn.classList.add('correct');
+    else if (i === j && !isCorrect) btn.classList.add('wrong');
+  });
+  setTimeout(() => {
+    quizState.current++;
+    if (quizState.current >= quizDataRaw.length) finishQuiz();
+    else renderQuizQuestion();
+  }, 800);
+}
+
+function finishQuiz() {
+  if (quizState.finished) return;
+  quizState.finished = true;
+  if (quizState.timer) clearInterval(quizState.timer);
+  let correct = 0;
+  quizDataRaw.forEach((item, i) => {
+    if (quizState.answers[i] === item.correct) correct++;
+  });
+  let total = quizDataRaw.length;
+  let pct = Math.round(correct / total * 100);
+  let timeUsed = 600 - quizState.timeLeft;
+  let m = Math.floor(timeUsed / 60);
+  let sec = timeUsed % 60;
+  let timeStr = m + ' мин ' + sec + ' сек';
+  let result = { correct, total, pct, timeStr };
+  let s = loadState();
+  s.quizFinished = true;
+  s.quizResult = result;
+  saveState(s);
+  markVisited('quiz');
+  updateTopProgress();
+  showQuizResult(result);
+}
+
+function showQuizResult(result) {
+  document.getElementById('quiz-container').innerHTML = '';
+  document.getElementById('quiz-progress').style.display = 'none';
+  document.getElementById('quiz-timer').style.display = 'none';
+  let grade = result.pct >= 90 ? 5 : result.pct >= 70 ? 4 : result.pct >= 50 ? 3 : 2;
+  let color = grade >= 4 ? 'var(--secondary)' : (grade === 3 ? 'var(--warning)' : 'var(--danger)');
+  let html = '<div class="result-score" style="color:' + color + '">' + result.correct + '/' + result.total + '</div>';
+  html += '<div class="result-grade">Процент: ' + result.pct + '% | Оценка: <span style="color:' + color + '">' + grade + '</span></div>';
+  html += '<p>Время: ' + result.timeStr + '</p>';
+  html += '<button class="btn btn-primary" onclick="resetQuiz()" style="margin-top: 20px;">Пройти заново</button>';
+  document.getElementById('quiz-result').innerHTML = html;
+  document.getElementById('quiz-result').style.display = 'block';
+}
+
+function resetQuiz() {
+  let s = loadState();
+  s.quizFinished = false;
+  s.quizResult = null;
+  saveState(s);
+  document.getElementById('quiz-result').style.display = 'none';
+  document.getElementById('quiz-progress').style.display = 'block';
+  document.getElementById('quiz-timer').style.display = 'block';
+  document.getElementById('quiz-timer').style.borderColor = 'var(--warning)';
+  document.getElementById('quiz-timer').style.color = 'var(--warning)';
+  startQuiz();
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  updateNavProgress();
+  updateTopProgress();
+  showSection('mod1');
+});
+</script>
+</body>
+</html>

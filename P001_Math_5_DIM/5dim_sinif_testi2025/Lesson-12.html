@@ -1,0 +1,397 @@
+﻿<!DOCTYPE html>
+<html lang="az">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DİM 2025 – Tənliklər və Bərabərsizliklər</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body class="min-h-screen">
+
+<header class="sticky top-0 z-50 backdrop-blur-md bg-opacity-90 border-b" style="background: var(--surface); border-color: var(--border);">
+  <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
+    <div class="flex items-center gap-3">
+      <div class="w-10 h-10 rounded-xl flex items-center justify-center text-white font-bold text-lg bg-violet-600">DİM</div>
+      <div>
+        <h1 class="text-sm sm:text-base font-bold leading-tight" id="mainTitle">Yüklənir...</h1>
+        <p class="text-xs text-slate-500">Riyaziyyat | V sinif | 2025</p>
+      </div>
+    </div>
+    <div class="flex items-center gap-2">
+      <div class="lang-selector"><button onclick="setLang('az')" class="lang-btn active" id="lbAZ">AZ</button><button onclick="setLang('ru')" class="lang-btn" id="lbRU">RU</button><button onclick="setLang('en')" class="lang-btn" id="lbEN">EN</button></div>
+      <button onclick="toggleTheme()" class="tab"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg></button>
+    </div>
+  </div>
+</header>
+
+<main class="max-w-6xl mx-auto px-4 py-6 grid gap-6">
+  <div class="card p-4 flex flex-wrap items-center justify-between gap-4">
+    <div class="flex items-center gap-4">
+      <div class="text-center"><div class="text-2xl font-bold tabular-nums" id="timer">60:00</div><div class="text-xs text-slate-500" id="lblTimer">Qalan vaxt</div></div>
+      <div class="w-px h-10 bg-slate-200"></div>
+      <div class="text-center"><div class="text-2xl font-bold tabular-nums" id="answeredCount">0/40</div><div class="text-xs text-slate-500" id="lblAnswered">Cavablanıb</div></div>
+    </div>
+    <div class="flex-1 min-w-[200px]">
+      <div class="flex justify-between text-xs mb-1 text-slate-500"><span>Progress</span><span id="progressPercent">0%</span></div>
+      <div class="progress-bar"><div class="progress-fill" id="progressBar" style="width:0%"></div></div>
+    </div>
+  </div>
+
+  <div class="flex gap-2 overflow-x-auto pb-1" id="variantTabs"></div>
+
+  <div class="grid lg:grid-cols-[280px_1fr] gap-6">
+    <aside class="space-y-4">
+      <div class="card p-4">
+        <h3 class="text-sm font-semibold mb-3">Sual gridi</h3>
+        <div class="grid grid-cols-5 gap-2" id="questionGrid"></div>
+      </div>
+    </aside>
+
+    <section class="card p-6 flex flex-col gap-6">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <span class="px-3 py-1 rounded-lg text-sm font-bold text-white bg-violet-500" id="qBadge">A1</span>
+          <span class="text-sm font-medium text-slate-500" id="qCounter">1 / 10</span>
+        </div>
+      </div>
+
+      <div class="fade-in" id="qContent">
+        <h2 class="text-lg font-semibold leading-relaxed mb-4" id="qText"></h2>
+        <div id="qMatching" class="matching-area hidden mb-4"></div>
+        <div class="space-y-3" id="qOptions"></div>
+      </div>
+
+      <div class="flex items-center justify-between pt-4 border-t border-slate-100">
+        <button onclick="prevQuestion()" class="btn-secondary" id="btnPrev">Əvvəlki</button>
+        <div class="flex gap-2">
+          <button onclick="finishExam()" class="btn-secondary text-red-500 border-red-100" id="btnFinish">Bitir</button>
+          <button onclick="nextQuestion()" class="btn-primary" id="btnNext">Növbəti</button>
+        </div>
+      </div>
+    </section>
+  </div>
+</main>
+
+<div id="resultModal" class="fixed inset-0 z-[100] hidden items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm">
+  <div class="card w-full max-w-xl p-8 space-y-6">
+    <div class="text-center">
+      <div class="w-20 h-20 rounded-full mx-auto mb-4 flex items-center justify-center text-3xl font-bold text-white bg-violet-500" id="resultScoreIcon">0</div>
+      <h2 class="text-2xl font-bold" id="resModalTitle">Nəticə</h2>
+      <p class="text-sm text-slate-500" id="resultMessage"></p>
+    </div>
+    <div class="grid grid-cols-3 gap-4">
+      <div class="card p-4 text-center border-green-100 bg-green-50/30"><div class="text-xl font-bold text-green-600" id="correctCount">0</div><div class="text-xs" id="lblCorrect">Düz</div></div>
+      <div class="card p-4 text-center border-red-100 bg-red-50/30"><div class="text-xl font-bold text-red-600" id="wrongCount">0</div><div class="text-xs" id="lblWrong">Səhv</div></div>
+      <div class="card p-4 text-center border-amber-100 bg-amber-50/30"><div class="text-xl font-bold text-amber-600" id="emptyCount">0</div><div class="text-xs" id="lblEmpty">Boş</div></div>
+    </div>
+    <div class="flex gap-3 justify-center">
+      <button onclick="showReview()" class="btn-primary" id="btnRev">Bax</button>
+      <button onclick="location.reload()" class="btn-secondary" id="btnRest">Yenidən</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const STORAGE_KEY = "dim2025_lesson12_v1";
+const examData = {
+  variants: [
+    {
+      id: "A", name: { az: "A variantı", ru: "Вариант A", en: "Variant A" },
+      questions: [
+        { id: 1, text:{az:"63 m uzunluğunda olan ipi iki hissəyə ayırdılar. Birincinin 0,4 hissəsi, ikincinin 0,3 hissəsinə bərabər olarsa, hər hissənin uzunluğunu tapın.",ru:"Веревку длиной 63 м разделили на две части. 0,4 первой части равны 0,3 второй. Найдите длины частей.",en:"A rope 63 m long was divided into two parts. 0.4 of the first part equals 0.3 of the second. Find the lengths of the parts."}, options: {az:["24 m və 39 m", "20 m və 43 m", "21 m və 42 m", "27 m və 36 m", "25 m və 38 m"],ru:["24 м и 39 м", "20 м и 43 м", "21 м и 42 м", "27 м и 36 м", "25 м и 38 м"],en:["24 m and 39 m", "20 m and 43 m", "21 m and 42 m", "27 m and 36 m", "25 m and 38 m"]}, correct: "D" },
+        { id: 2, text:{az:"$(10+x)+23,5=87,4$ tənliyini həll edin.",ru:"Решите уравнение: $(10+x)+23,5=87,4$",en:"Solve the equation: $(10+x)+23{,}5=87{,}4$"}, options: {az:["43,9", "53,9", "53,09", "43,09", "43"],ru:["43,9", "53,9", "53,09", "43,09", "43"],en:["43,9", "53,9", "53,09", "43,09", "43"]}, correct: "B" },
+        { id: 3, text:{az:"$4m - 2,3m + 1,7m - 2m$ ifadəsini sadələşdirin.",ru:"Упростите выражение: $4m - 2,3m + 1,7m - 2m$",en:"Simplify the expression: $4m - 2{,}3m + 1{,}7m - 2m$"}, options: {az:["3,2 m", "6 m", "4,3 m", "1,4 m", "5,2 m"],ru:["3,2 m", "6 m", "4,3 m", "1,4 m", "5,2 m"],en:["3,2 m", "6 m", "4,3 m", "1,4 m", "5,2 m"]}, correct: "D" },
+        { id: 4, text:{az:"$161 < a < 215$ bərabərsizliyini ödəyən ən böyük və ən kiçik natural ədədlərin fərqini tapın.",ru:"Найдите разность наибольшего и наименьшего натуральных чисел, удовлетворяющих $161 < a < 215$.",en:"Find the difference between the largest and smallest natural numbers satisfying $161 < a < 215$."}, options: {az:["53", "52", "54", "51", "56"],ru:["53", "52", "54", "51", "56"],en:["53", "52", "54", "51", "56"]}, correct: "B" },
+        { id: 5, text:{az:"Eni 48 m, uzunluğu $k$ m olan düzbucaqlı şəklində yer sahəsinin perimetri nəyə bərabərdir?",ru:"Чему равен периметр прямоугольного участка шириной 48 м и длиной $k$ м?",en:"What is the perimeter of a rectangular plot 48 m wide and $k$ m long?"}, options: {az:["$48 \\cdot k$", "$(48+k) \\cdot 2$", "$48 \\cdot 2+k$", "$48+2k$", "$(48+k) \\cdot 4$"],ru:["$48 \\cdot k$", "$(48+k) \\cdot 2$", "$48 \\cdot 2+k$", "$48+2k$", "$(48+k) \\cdot 4$"],en:["$48 \\cdot k$", "$(48+k) \\cdot 2$", "$48 \\cdot 2+k$", "$48+2k$", "$(48+k) \\cdot 4$"]}, correct: "B" },
+        { id: 6, text:{az:"$8(a+2) > 32$ bərabərsizliyini ödəyən ən kiçik tam ədədi göstərin.",ru:"Укажите наименьшее целое число, удовлетворяющее $8(a+2) > 32$.",en:"Indicate the smallest integer satisfying $8(a+2) > 32$."}, options: {az:["3", "5", "2", "4", "6"],ru:["3", "5", "2", "4", "6"],en:["3", "5", "2", "4", "6"]}, correct: "A" },
+        { id: 7, text:{az:"Bir ədəd digərindən 3 dəfə böyükdür. Əgər böyük ədəddən 50 çıxıb, kiçik ədədin üzərinə 80 əlavə etsək, bərabər nəticə alınar. Bu ədədlərin cəmini tapın.",ru:"Одно число в 3 раза больше другого. Если из большего вычесть 50, а к меньшему прибавить 80, результаты будут равны. Найдите сумму этих чисел.",en:"One number is 3 times greater than another. If 50 is subtracted from the larger and 80 is added to the smaller, the results are equal. Find the sum of these numbers."}, options: {az:["260", "270", "265", "280", "275"],ru:["260", "270", "265", "280", "275"],en:["260", "270", "265", "280", "275"]}, correct: "A" },
+        { id: 8, text:{az:"Məftilin əvvəlcə 50%-ni, sonra isə qalanın 20%-ni kəsdilər və nəticədə 60 m məftil qaldı. Əvvəlcə neçə metr məftil var idi?",ru:"Сначала отрезали 50% проволоки, затем 20% остатка. Осталось 60 м. Сколько было изначально?",en:"First 50% of a wire was cut off, then 20% of the remainder. 60 m is left. How much was there originally?"}, options: {az:["120", "180", "100", "150", "200"],ru:["120", "180", "100", "150", "200"],en:["120", "180", "100", "150", "200"]}, correct: "D" },
+        { id: 9, text:{az:"90 və 100 ədədlərini eyni bir ədədə böldülər. Birinci halda qalıq 18, ikinci halda isə 4 alındı. Böləni tapın.",ru:"Числа 90 и 100 разделили на одно и то же число. В первом случае остаток 18, во втором 4. Найдите делитель.",en:"The numbers 90 and 100 were divided by the same number. In the first case the remainder is 18, in the second 4. Find the divisor."}, options: {az:["12", "24", "16", "18", "32"],ru:["12", "24", "16", "18", "32"],en:["12", "24", "16", "18", "32"]}, correct: "B" },
+        { id: 10, text:{az:"Uyğunluğu müəyyən edin:",ru:"Установите соответствие:",en:"Establish the correspondence:"}, matching: { 
+            left: ["1. $(5x-15) \\cdot (6,9+3,7)=0$", "2. $(6x-30) \\cdot (6,5-3,8)=0$", "3. $(4x-28) \\cdot (5,6+2,7)=0$"],
+            right: ["a. $x=5$", "b. $x=3$", "c. $x=4$", "d. $x=7$", "e. $x=2$"]
+          }, options: {az:["1-b, 2-a, 3-d", "1-a, 2-b, 3-c", "1-c, 2-d, 3-e", "1-d, 2-e, 3-a", "1-e, 2-a, 3-b"],ru:["1-b, 2-a, 3-d", "1-a, 2-b, 3-c", "1-c, 2-d, 3-e", "1-d, 2-e, 3-a", "1-e, 2-a, 3-b"],en:["1-b, 2-a, 3-d", "1-a, 2-b, 3-c", "1-c, 2-d, 3-e", "1-d, 2-e, 3-a", "1-e, 2-a, 3-b"]}, correct: "A" }
+      ]
+    },
+    {
+      id: "B", name: { az: "B variantı", ru: "Вариант B", en: "Variant B" },
+      questions: [
+        { id: 1, text:{az:"51 m uzunluğunda məftili iki hissəyə böldülər. Birincisinin uzunluğunun 0,25 hissəsi ikincisinin 0,5 hissəsinə bərabər olarsa, hər hissənin uzunluğunu tapın.",ru:"51 м проволоки разделили на две части. 0,25 первой части равны 0,5 второй. Найдите длины.",en:"A 51 m wire was divided into two parts. 0.25 of the first part equals 0.5 of the second. Find the lengths."}, options: {az:["30 m və 15 m", "36 m və 18 m", "34 m və 17 m", "32 m və 16 m", "38 m və 13 m"],ru:["30 и 15", "36 и 18", "34 и 17", "32 и 16", "38 и 13"],en:["30 and 15", "36 and 18", "34 and 17", "32 and 16", "38 and 13"]}, correct: "C" },
+        { id: 2, text:{az:"$(12+x)+22,4=105,2$ tənliyini həll edin.",ru:"Решите уравнение: $(12+x)+22,4=105,2$",en:"Solve the equation: $(12+x)+22{,}4=105{,}2$"}, options: {az:["70,08", "69,8", "71,8", "70,8", "72,8"],ru:["70,08", "69,8", "71,8", "70,8", "72,8"],en:["70,08", "69,8", "71,8", "70,8", "72,8"]}, correct: "D" },
+        { id: 3, text:{az:"$x + 0,4x + 0,5x - \\frac{1}{2}x$ ifadəsini sadələşdirin.",ru:"Упростите: $x + 0,4x + 0,5x - 0,5x$",en:"Simplify: $x + 0{,}4x + 0{,}5x - 0{,}5x$"}, options: {az:["2,9 x", "1,4 x", "2,4 x", "1,9 x", "2,6 x"],ru:["2,9 x", "1,4 x", "2,4 x", "1,9 x", "2,6 x"],en:["2,9 x", "1,4 x", "2,4 x", "1,9 x", "2,6 x"]}, correct: "B" },
+        { id: 4, text:{az:"$115 < x < 205$ şərtini ödəyən ən böyük və ən kiçik natural həllərinin cəmini tapın.",ru:"Сумма самого большого и маленького натурального решения $115 < x < 205$.",en:"The sum of the largest and smallest natural solutions of $115 < x < 205$."}, options: {az:["320", "300", "206", "200", "318"],ru:["320", "300", "206", "200", "318"],en:["320", "300", "206", "200", "318"]}, correct: "A" },
+        { id: 5, text:{az:"Eni 25 m, uzunluğu $z$ m olan düzbucaqlı şəklində torpaq sahəsinin perimetri nəyə bərabərdir?",ru:"Периметр прямоугольного участка шириной 25 м и длиной $z$ м.",en:"The perimeter of a rectangular plot 25 m wide and $z$ m long."}, options: {az:["$25z$", "$25+z$", "$25 \\cdot 2+z$", "$(25+z) \\cdot 2$", "$25 \\cdot (z+2)$"],ru:["$25z$", "$25+z$", "$25 \\cdot 2+z$", "$(25+z) \\cdot 2$", "$25 \\cdot (z+2)$"],en:["$25z$", "$25+z$", "$25 \\cdot 2+z$", "$(25+z) \\cdot 2$", "$25 \\cdot (z+2)$"]}, correct: "D" },
+        { id: 6, text:{az:"$5(a+1) < 35$ bərabərsizliyini ödəyən ən böyük tam ədədi göstərin.",ru:"Укажите наибольшее целое число $5(a+1) < 35$.",en:"Indicate the largest integer with $5(a+1) < 35$."}, options: {az:["3", "0", "5", "4", "6"],ru:["3", "0", "5", "4", "6"],en:["3", "0", "5", "4", "6"]}, correct: "C" },
+        { id: 7, text:{az:"Bir ədəd digərindən 6 dəfə böyükdür. Əgər böyük ədəddən 80 çıxıb, kiçik ədədin üzərinə 70 əlavə etsək, bərabər nəticə alınar. Bu ədədlərin cəmini tapın.",ru:"Одно число в 6 раз больше. Из большего -80, к меньшему +70 -> равны. Сумма?",en:"One number is 6 times greater. From the larger −80, to the smaller +70 → equal. The sum?"}, options: {az:["150", "200", "210", "180", "160"],ru:["150", "200", "210", "180", "160"],en:["150", "200", "210", "180", "160"]}, correct: "C" },
+        { id: 8, text:{az:"Məftilin əvvəlcə 40%-ni, sonra isə qalanın 25%-ni kəsdilər və nəticədə 45 m məftil qaldı. Əvvəlcə neçə metr məftil var idi?",ru:"Отрезали 40%, потом 25% остатка. Осталось 45 м. Сколько было?",en:"40% was cut off, then 25% of the remainder. 45 m is left. How much was there?"}, options: {az:["120", "100", "150", "80", "110"],ru:["120", "100", "150", "80", "110"],en:["120", "100", "150", "80", "110"]}, correct: "B" },
+        { id: 9, text:{az:"54 və 72 ədədlərini eyni bir ədədə böldükdə birinci halda qalıq 10, ikinci halda isə 6 alınar. Bu şərti ödəyən ədədlərin cəmini tapın.",ru:"Делим 54 и 72 на число: остатки 10 и 6. Сумма таких делителей?",en:"We divide 54 and 72 by a number: the remainders are 10 and 6. The sum of such divisors?"}, options: {az:["11", "22", "33", "44", "55"],ru:["11", "22", "33", "44", "55"],en:["11", "22", "33", "44", "55"]}, correct: "C" },
+        { id: 10, text:{az:"Uyğunluğu müəyyən edin:",ru:"Установите соответствие:",en:"Establish the correspondence:"}, matching: { 
+            left: ["1. $(2x-6) \\cdot (5,3+8,7)=0$", "2. $(6,8+13,9) \\cdot (3x-24)=0$", "3. $(6,3+7,8) \\cdot (4x-16)=0$"],
+            right: ["a. $x=8$", "b. $x=5$", "c. $x=3$", "d. $x=2$", "e. $x=4$"]
+          }, options: {az:["1-c, 2-a, 3-e", "1-a, 2-b, 3-c", "1-b, 2-c, 3-d", "1-d, 2-e, 3-a", "1-e, 2-a, 3-b"],ru:["1-c, 2-a, 3-e", "1-a, 2-b, 3-c", "1-b, 2-c, 3-d", "1-d, 2-e, 3-a", "1-e, 2-a, 3-b"],en:["1-c, 2-a, 3-e", "1-a, 2-b, 3-c", "1-b, 2-c, 3-d", "1-d, 2-e, 3-a", "1-e, 2-a, 3-b"]}, correct: "A" }
+      ]
+    },
+    {
+      id: "C", name: { az: "C variantı", ru: "Вариант C", en: "Variant C" },
+      questions: [
+        { id: 1, text:{az:"$\\left( 6\\frac{15}{64} - 5\\frac{17}{32} \\right) + \\left( 3\\frac{17}{32} - 2\\frac{15}{16} \\right)$ ifadəsinin qiymətini hesablayın.",ru:"Вычислите значение выражения.",en:"Calculate the value of the expression."}, options: {az:["$\\frac{49}{64}$", "$\\frac{51}{64}$", "$\\frac{19}{64}$", "$\\frac{53}{64}$", "$\\frac{29}{64}$"],ru:["$\\frac{49}{64}$", "$\\frac{51}{64}$", "$\\frac{19}{64}$", "$\\frac{53}{64}$", "$\\frac{29}{64}$"],en:["$\\frac{49}{64}$", "$\\frac{51}{64}$", "$\\frac{19}{64}$", "$\\frac{53}{64}$", "$\\frac{29}{64}$"]}, correct: "B" },
+        { id: 2, text:{az:"$(x-14)+22,8=77,8$ tənliyini həll edin.",ru:"Решите: $(x-14)+22,8=77,8$",en:"Solve: $(x-14)+22{,}8=77{,}8$"}, options: {az:["78", "69", "76", "74", "68"],ru:["78", "69", "76", "74", "68"],en:["78", "69", "76", "74", "68"]}, correct: "B" },
+        { id: 3, text:{az:"$0,6x + 1,2x - 1,2x + 4$ ifadəsini sadələşdirin.",ru:"Упростите: $0,6x + 1,2x - 1,2x + 4$",en:"Simplify: $0{,}6x + 1{,}2x - 1{,}2x + 4$"}, options: {az:["$0,6x+4$", "$3x+4$", "$4,6x$", "4,6", "$2x+6$"],ru:["$0,6x+4$", "$3x+4$", "$4,6x$", "4,6", "$2x+6$"],en:["$0,6x+4$", "$3x+4$", "$4,6x$", "4,6", "$2x+6$"]}, correct: "A" },
+        { id: 4, text:{az:"$2 < x < 8$ və $3 < y < 9$ olarsa, $x+y$ cəminin ən böyük natural qiymətini tapın.",ru:"Макс. натуральное $x+y$, если $2 < x < 8, 3 < y < 9$.",en:"The maximum natural $x+y$, if $2 < x < 8, 3 < y < 9$."}, options: {az:["14", "15", "13", "16", "12"],ru:["14", "15", "13", "16", "12"],en:["14", "15", "13", "16", "12"]}, correct: "B" },
+        { id: 5, text:{az:"80 m uzunluqda ipi iki hissəyə böldülər. Birincinin 0,5 hissəsi, ikincinin uzunluğunun 0,3 hissəsinə bərabər olarsa, hər hissənin uzunluğunu tapın.",ru:"80 м веревки: 0,5 одной = 0,3 другой. Длины?",en:"An 80 m rope: 0.5 of one = 0.3 of the other. The lengths?"}, options: {az:["20 m və 60 m", "25 m və 65 m", "30 m və 50 m", "35 m və 45 m", "28 m və 52 m"],ru:["20 и 60", "25 и 65", "30 и 50", "35 и 45", "28 и 52"],en:["20 and 60", "25 and 65", "30 and 50", "35 and 45", "28 and 52"]}, correct: "C" },
+        { id: 6, text:{az:"$2(a-3) < 10$ bərabərsizliyini ödəyən ən böyük tam ədədi göstərin.",ru:"Макс. целое $2(a-3) < 10$.",en:"The maximum integer with $2(a-3) < 10$."}, options: {az:["7", "9", "8", "10", "11"],ru:["7", "9", "8", "10", "11"],en:["7", "9", "8", "10", "11"]}, correct: "A" },
+        { id: 7, text:{az:"Bir ədəd digərindən 4 dəfə böyükdür. Böyük ədədə 50 çıxıb, kiçik ədədin üzərinə 70 əlavə etsək, alınan nəticələr bərabər olar. Bu ədədlərin cəmini tapın.",ru:"Число в 4 раза больше. Бол-50 = Мал+70. Сумма?",en:"A number is 4 times greater. Larger−50 = Smaller+70. The sum?"}, options: {az:["210", "200", "250", "300", "280"],ru:["210", "200", "250", "300", "280"],en:["210", "200", "250", "300", "280"]}, correct: "B" },
+        { id: 8, text:{az:"56 və 82 ədədlərini eyni bir ədədə böldülər. Birinci halda qalıqda 2, ikinci halda isə 1 alındı. Bu şərti ödəyən ədədlərdən ən böyüyünü tapın.",ru:"56 и 82 делим на $x$: остатки 2 и 1. Найти макс. $x$.",en:"We divide 56 and 82 by $x$: the remainders are 2 and 1. Find the maximum $x$."}, options: {az:["15", "18", "9", "27", "21"],ru:["15", "18", "9", "27", "21"],en:["15", "18", "9", "27", "21"]}, correct: "D" },
+        { id: 9, text:{az:"Avtobusun sürəti nəyə bərabərdir?",ru:"Скорость автобуса?",en:"The speed of the bus?"}, options: {az:["30", "40", "50", "60", "45"],ru:["30", "40", "50", "60", "45"],en:["30", "40", "50", "60", "45"]}, correct: "B" },
+        { id: 10, text:{az:"Uyğunluğu müəyyən edin:",ru:"Установите соответствие:",en:"Establish the correspondence:"}, matching: { 
+            left: ["1. $m=3$ olarsa,", "2. $m=5$ olarsa,", "3. $m=4$ olarsa,"],
+            right: ["a. $A=15$", "b. $A=10$", "c. $A=13$", "d. $A=18$", "e. $A=17$"]
+          }, options: {az:["1-c, 2-a, 3-e", "1-a, 2-b, 3-c", "1-b, 2-c, 3-d", "1-d, 2-e, 3-a", "1-e, 2-a, 3-b"],ru:["1-c, 2-a, 3-e", "1-a, 2-b, 3-c", "1-b, 2-c, 3-d", "1-d, 2-e, 3-a", "1-e, 2-a, 3-b"],en:["1-c, 2-a, 3-e", "1-a, 2-b, 3-c", "1-b, 2-c, 3-d", "1-d, 2-e, 3-a", "1-e, 2-a, 3-b"]}, correct: "A" }
+      ]
+    },
+    {
+      id: "D", name: { az: "D variantı", ru: "Вариант D", en: "Variant D" },
+      questions: [
+        { id: 1, text:{az:"$\\left( 5\\frac{17}{32} - 4\\frac{7}{16} \\right) + \\left( 2\\frac{19}{64} + 3\\frac{1}{32} \\right)$ ifadəsinin qiymətini hesablayın.",ru:"Вычислите значение выражения.",en:"Calculate the value of the expression."}, options: {az:["$6\\frac{29}{64}$", "$6\\frac{21}{64}$", "$6\\frac{25}{64}$", "$6\\frac{27}{64}$", "$6\\frac{31}{64}$"],ru:["$6\\frac{29}{64}$", "$6\\frac{21}{64}$", "$6\\frac{25}{64}$", "$6\\frac{27}{64}$", "$6\\frac{31}{64}$"],en:["$6\\frac{29}{64}$", "$6\\frac{21}{64}$", "$6\\frac{25}{64}$", "$6\\frac{27}{64}$", "$6\\frac{31}{64}$"]}, correct: "E" },
+        { id: 2, text:{az:"$(x-12)+21,6=91,8$ tənliyini həll edin.",ru:"Решите: $(x-12)+21,6=91,8$",en:"Solve: $(x-12)+21{,}6=91{,}8$"}, options: {az:["81,2", "82,2", "83,2", "80,2", "79,2"],ru:["81,2", "82,2", "83,2", "80,2", "79,2"],en:["81,2", "82,2", "83,2", "80,2", "79,2"]}, correct: "B" },
+        { id: 3, text:{az:"$3,7y - 2,3y - \\frac{1}{5}y$ ifadəsini sadələşdirin.",ru:"Упростите: $3,7y - 2,3y - 0,2y$",en:"Simplify: $3{,}7y - 2{,}3y - 0{,}2y$"}, options: {az:["5,8 y", "3,6 y", "6,2 y", "1,2 y", "2,6 y"],ru:["5,8 y", "3,6 y", "6,2 y", "1,2 y", "2,6 y"],en:["5,8 y", "3,6 y", "6,2 y", "1,2 y", "2,6 y"]}, correct: "D" },
+        { id: 4, text:{az:"Eni 95 m, uzunluğu isə $x$ m olan düzbucaqlı sahənin perimetri nəyə bərabərdir?",ru:"Периметр прямоугольника со сторонами 95 м и $x$ м.",en:"The perimeter of a rectangle with sides 95 m and $x$ m."}, options: {az:["$95+x$", "$95 \\cdot 2+x$", "$(95+x) \\cdot 2$", "$2 \\cdot x+95$", "$95 \\cdot (x+2)$"],ru:["$95+x$", "$95 \\cdot 2+x$", "$(95+x) \\cdot 2$", "$2 \\cdot x+95$", "$95 \\cdot (x+2)$"],en:["$95+x$", "$95 \\cdot 2+x$", "$(95+x) \\cdot 2$", "$2 \\cdot x+95$", "$95 \\cdot (x+2)$"]}, correct: "C" },
+        { id: 5, text:{az:"90 m uzunluğunda məftili iki hissəyə böldülər. Birincinin uzunluğunun 1,6 hissəsi ikincinin uzunluğunun 0,8 hissəsinə bərabər olarsa, hər hissənin uzunluğunu tapın.",ru:"90 м проволоки: 1,6 одной = 0,8 другой. Длины?",en:"A 90 m wire: 1.6 of one = 0.8 of the other. The lengths?"}, options: {az:["25 m və 65 m", "40 m və 50 m", "30 m və 60 m", "35 m və 55 m", "32 m və 58 m"],ru:["25 и 65", "40 и 50", "30 и 60", "35 и 55", "32 и 58"],en:["25 and 65", "40 and 50", "30 and 60", "35 and 55", "32 and 58"]}, correct: "C" },
+        { id: 6, text:{az:"$4(a-5) > 20$ bərabərsizliyini ödəyən ən kiçik tam ədədi göstərin.",ru:"Мин. целое $4(a-5) > 20$.",en:"The minimum integer with $4(a-5) > 20$."}, options: {az:["10", "9", "11", "12", "8"],ru:["10", "9", "11", "12", "8"],en:["10", "9", "11", "12", "8"]}, correct: "C" },
+        { id: 7, text:{az:"Bir ədəd digərindən 5 dəfə böyükdür. Əgər böyük ədəddən 40 çıxıb, kiçik ədədin üzərinə 120 əlavə etsək, alınan nəticələr bərabər olar. Bu ədədlərin cəmini tapın.",ru:"Число в 5 раз больше. Бол-40 = Мал+120. Сумма?",en:"A number is 5 times greater. Larger−40 = Smaller+120. The sum?"}, options: {az:["250", "220", "240", "200", "260"],ru:["250", "220", "240", "200", "260"],en:["250", "220", "240", "200", "260"]}, correct: "C" },
+        { id: 8, text:{az:"57 və 86 ədədlərini eyni bir ədədə böldülər. Birinci ədədi böldükdə qalıq 1, ikinci ədəd üçün qalıq 2 alındı. Bu şərti ödəyən ədədlərdən ən böyüyünü tapın.",ru:"57 и 86 делим на $x$: остатки 1 и 2. Макс. $x$?",en:"We divide 57 and 86 by $x$: the remainders are 1 and 2. The maximum $x$?"}, options: {az:["14", "13", "12", "28", "21"],ru:["14", "13", "12", "28", "21"],en:["14", "13", "12", "28", "21"]}, correct: "D" },
+        { id: 9, text:{az:"Minik avtomobilinin sürəti nəyə bərabərdir?",ru:"Скорость машины?",en:"The speed of the car?"}, options: {az:["60", "70", "80", "90", "75"],ru:["60", "70", "80", "90", "75"],en:["60", "70", "80", "90", "75"]}, correct: "C" },
+        { id: 10, text:{az:"Uyğunluğu müəyyən edin:",ru:"Установите соответствие:",en:"Establish the correspondence:"}, matching: { 
+            left: ["1. $x=3$", "2. $x=4$", "3. $x=5$"],
+            right: ["a. $A=B=0$", "b. $A=B$", "c. $A+B=0$", "d. $A < B$", "e. $A > B$"]
+          }, options: {az:["1-e, 2-d, 3-d", "1-a, 2-b, 3-c", "1-b, 2-c, 3-d", "1-d, 2-a, 3-b", "1-e, 2-a, 3-d"],ru:["1-e, 2-d, 3-d", "1-a, 2-b, 3-c", "1-b, 2-c, 3-d", "1-d, 2-a, 3-b", "1-e, 2-a, 3-d"],en:["1-e, 2-d, 3-d", "1-a, 2-b, 3-c", "1-b, 2-c, 3-d", "1-d, 2-a, 3-b", "1-e, 2-a, 3-d"]}, correct: "A" }
+      ]
+    }
+  ]
+};
+
+
+/* ===== АВТОПАТЧ: английский язык ===== */
+(function(){
+  function addEn(o,d){
+    if(d>25||o==null||typeof o!=='object')return;
+    if(Array.isArray(o)){for(var i=0;i<o.length;i++)addEn(o[i],d+1);return;}
+    if(o.ru!==undefined&&o.en===undefined){o.en=o.ru;}
+    else if(o.az!==undefined&&o.en===undefined&&o.ru===undefined){o.en=o.az;}
+    for(var k in o){if(Object.prototype.hasOwnProperty.call(o,k)){
+      if(k.length>3&&k.slice(-3)==='_ru'){
+        var ek=k.slice(0,-3)+'_en';
+        if(o[ek]===undefined)o[ek]=o[k];
+      }
+      if(k.length>3&&k.slice(-3)==='_az'){
+        var ek2=k.slice(0,-3)+'_en';
+        if(o[ek2]===undefined&&o[k.slice(0,-3)+'_ru']===undefined)o[ek2]=o[k];
+      }
+    }}
+    for(var k2 in o){if(k2!=='en'&&Object.prototype.hasOwnProperty.call(o,k2)){
+      try{addEn(o[k2],d+1);}catch(e){}
+    }}
+  }
+  try{if(typeof examData!=='undefined')addEn(examData,0);}catch(e){}
+  try{if(typeof QS!=='undefined')addEn(QS,0);}catch(e){}
+  try{if(typeof variants!=='undefined')addEn(variants,0);}catch(e){}
+  try{if(typeof ui!=='undefined')addEn(ui,0);}catch(e){}
+  try{if(typeof UI!=='undefined')addEn(UI,0);}catch(e){}
+  try{if(typeof L!=='undefined'&&typeof L==='object')addEn(L,0);}catch(e){}
+  try{if(typeof TXT!=='undefined')addEn(TXT,0);}catch(e){}
+  try{if(typeof i18n!=='undefined')addEn(i18n,0);}catch(e){}
+  try{if(typeof T!=='undefined'&&typeof T==='object')addEn(T,0);}catch(e){}
+})();
+/* Безопасный ре-рендер после патча данных */
+(function(){
+  function _rr(){
+    try{if(typeof renderAll==='function'){renderAll();return;}}catch(e){}
+    try{if(typeof render==='function'){render();return;}}catch(e){}
+    try{if(typeof renderQuestion==='function'){renderQuestion();}}catch(e){}
+    try{if(typeof updateTexts==='function'){updateTexts();}}catch(e){}
+  }
+  if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',function(){setTimeout(_rr,0);});}
+  else{setTimeout(_rr,0);}
+})();
+
+</script>
+<script src="script.js"></script>
+<script>
+(function() {
+    // Функция отправки прогресса родительскому окну
+    function sendProgress() {
+        if (!window.parent) return;
+        
+        // Получаем данные о прогрессе из глобальных переменных урока
+        let answersCount = 0;
+        let totalQuestions = 0;
+        let correctCount = 0;
+        let completed = false;
+        let answers = {};
+        
+        // Определяем тип урока по наличию переменных
+        if (typeof state !== 'undefined' && state.answers) {
+            // Для уроков с state.answers (Lesson-1...12, 15, 16, 17)
+            const variant = state.variantIndex !== undefined ? state.variantIndex : 0;
+            const qs = typeof QS !== 'undefined' ? QS : (typeof examData !== 'undefined' && examData.variants ? examData.variants : []);
+            const currentVariant = qs[variant] || qs[0];
+            
+            if (currentVariant && currentVariant.questions) {
+                totalQuestions = currentVariant.questions.length;
+                answers = state.answers || {};
+                answersCount = Object.keys(answers).length;
+                
+                // Подсчёт правильных ответов
+                for (let i = 0; i < currentVariant.questions.length; i++) {
+                    const q = currentVariant.questions[i];
+                    const key = `${currentVariant.id || 'A'}-${q.id}`;
+                    if (answers[key] === q.correct) {
+                        correctCount++;
+                    }
+                }
+                completed = state.finished === true;
+            }
+        } else if (typeof state !== 'undefined' && state.ans) {
+            // Для Lesson-13 (Müstəvi fiqurlar) и Lesson-14 (Fəza fiqurları)
+            const qs = typeof QS !== 'undefined' ? QS : [];
+            const variantQs = qs.filter(q => q.v === state.v);
+            totalQuestions = variantQs.length;
+            answers = state.ans || {};
+            answersCount = Object.keys(answers).length;
+            
+            for (let i = 0; i < variantQs.length; i++) {
+                const q = variantQs[i];
+                const userAns = answers[q.id];
+                if (userAns !== undefined) {
+                    if (q.t === 'choice') {
+                        if (userAns === q.ans) correctCount++;
+                    } else if (q.t === 'open' || q.t === 'match') {
+                        if (String(userAns).trim().toLowerCase() === String(q.ans_text || '').trim().toLowerCase()) correctCount++;
+                    }
+                }
+            }
+            completed = state.finished === true;
+        } else if (typeof S !== 'undefined' && S.ans) {
+            // Альтернативная структура (Lesson-13, 14)
+            const qs = typeof QS !== 'undefined' ? QS : [];
+            const variantQs = qs.filter(q => q.v === S.v);
+            totalQuestions = variantQs.length;
+            answers = S.ans || {};
+            answersCount = Object.keys(answers).length;
+            completed = S.finished === true;
+        }
+        
+        if (totalQuestions === 0) return;
+        
+        window.parent.postMessage({
+            type: 'lessonProgress',
+            lessonId: parseInt(window.location.pathname.match(/Lesson-(\d+)/)?.[1] || '0'),
+            answersCount: answersCount,
+            totalQuestions: totalQuestions,
+            correctCount: correctCount,
+            completed: completed,
+            answers: answers
+        }, '*');
+    }
+    
+    // Перехватываем вызовы finishExam/resetExam/showReview для отправки прогресса
+    const originalFinish = window.finishExam;
+    if (originalFinish) {
+        window.finishExam = function(...args) {
+            const result = originalFinish.apply(this, args);
+            setTimeout(sendProgress, 100);
+            return result;
+        };
+    }
+    
+    const originalReset = window.resetExam;
+    if (originalReset) {
+        window.resetExam = function(...args) {
+            const result = originalReset.apply(this, args);
+            setTimeout(sendProgress, 100);
+            return result;
+        };
+    }
+    
+    const originalShowReview = window.showReview;
+    if (originalShowReview) {
+        window.showReview = function(...args) {
+            const result = originalShowReview.apply(this, args);
+            setTimeout(sendProgress, 100);
+            return result;
+        };
+    }
+    
+    // Отправляем прогресс при каждом ответе (перехватываем выбор варианта)
+    const originalPick = window.pick;
+    if (originalPick) {
+        window.pick = function(...args) {
+            const result = originalPick.apply(this, args);
+            setTimeout(sendProgress, 50);
+            return result;
+        };
+    }
+    
+    const originalSaveT = window.saveT;
+    if (originalSaveT) {
+        window.saveT = function(...args) {
+            const result = originalSaveT.apply(this, args);
+            setTimeout(sendProgress, 50);
+            return result;
+        };
+    }
+    
+    // Для уроков с toggleVariant и т.д.
+    const originalRenderAll = window.renderAll;
+    if (originalRenderAll) {
+        window.renderAll = function(...args) {
+            const result = originalRenderAll.apply(this, args);
+            setTimeout(sendProgress, 50);
+            return result;
+        };
+    }
+    
+    // Периодическая отправка прогресса (каждые 3 секунды)
+    setInterval(sendProgress, 3000);
+    
+    // Запрос времени у родителя
+    if (window.parent) {
+        window.parent.postMessage({ type: 'requestTimer' }, '*');
+    }
+    
+    // Приём сообщений от родителя
+    window.addEventListener('message', function(event) {
+        if (event.data && event.data.type === 'syncTimer') {
+            if (typeof state !== 'undefined' && state.timeLeft !== undefined) {
+                state.timeLeft = event.data.timeLeft;
+                if (typeof updateTimerDisplay === 'function') updateTimerDisplay();
+            } else if (typeof S !== 'undefined' && S.timer !== undefined) {
+                S.timer = event.data.timeLeft;
+            }
+        }
+        if (event.data && event.data.type === 'forceFinish') {
+            if (typeof finishExam === 'function') finishExam();
+        }
+        if (event.data && event.data.type === 'restoreProgress') {
+            // Восстановление сохранённых ответов
+            const saved = event.data.progress;
+            if (saved && saved.answers) {
+                if (typeof state !== 'undefined' && state.answers) {
+                    state.answers = saved.answers;
+                    if (typeof renderAll === 'function') renderAll();
+                }
+            }
+        }
+    });
+    
+    // Отправляем прогресс при загрузке
+    setTimeout(sendProgress, 500);
+})();
+</script>
+</body>
+</html>

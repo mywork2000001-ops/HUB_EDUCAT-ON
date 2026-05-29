@@ -1,0 +1,1164 @@
+<!doctype html>
+<html lang="az">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>DİM 2025 – Natural ədədlərin yazılması və oxunması</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css"
+    />
+    <script
+      defer
+      src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"
+    ></script>
+    <script
+      defer
+      src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
+      onload="
+        renderMathInElement(document.body, {
+          delimiters: [
+            { left: '$$', right: '$$', display: true },
+            { left: '$', right: '$', display: false },
+          ],
+        })
+      "
+    ></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body class="min-h-screen">
+    <header
+      class="sticky top-0 z-50 backdrop-blur-md bg-opacity-90"
+      style="background: var(--surface); border-bottom: 1px solid var(--border)"
+    >
+      <div
+        class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between"
+      >
+        <div class="flex items-center gap-3">
+          <div
+            class="w-10 h-10 rounded-xl flex items-center justify-center text-white font-bold text-lg"
+            style="background: var(--primary)"
+          >
+            DİM
+          </div>
+          <div>
+            <h1
+              class="text-sm sm:text-base font-bold leading-tight"
+              id="examTitle"
+            ></h1>
+            <p
+              class="text-xs"
+              style="color: var(--muted)"
+              id="examSubtitle"
+            ></p>
+          </div>
+        </div>
+        <div class="flex items-center gap-3">
+          <div class="lang-selector">
+            <button onclick="setLang('az')" class="lang-btn active" id="lbAZ">
+              AZ
+            </button>
+            <button onclick="setLang('ru')" class="lang-btn" id="lbRU">
+              RU
+            </button>
+            <button onclick="setLang('en')" class="lang-btn" id="lbEN">
+              EN
+            </button>
+          </div>
+          <button onclick="toggleTheme()" class="tab" aria-label="Dark mode">
+            <svg
+              width="20"
+              height="20"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+            >
+              <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+            </svg>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <main class="max-w-6xl mx-auto px-4 py-6 grid gap-6">
+      <div class="card p-4 flex flex-wrap items-center justify-between gap-4">
+        <div class="flex items-center gap-4">
+          <div class="text-center">
+            <div class="text-2xl font-bold tabular-nums" id="timer">60:00</div>
+            <div
+              class="text-xs"
+              style="color: var(--muted)"
+              id="lblTimer"
+            ></div>
+          </div>
+          <div class="w-px h-10" style="background: var(--border)"></div>
+          <div class="text-center">
+            <div class="text-2xl font-bold tabular-nums" id="answeredCount">
+              0/40
+            </div>
+            <div
+              class="text-xs"
+              style="color: var(--muted)"
+              id="lblAnswered"
+            ></div>
+          </div>
+        </div>
+        <div class="flex-1 min-w-[200px]">
+          <div
+            class="flex justify-between text-xs mb-1"
+            style="color: var(--muted)"
+          >
+            <span id="lblProgress"></span><span id="progressPercent">0%</span>
+          </div>
+          <div class="progress-bar">
+            <div class="progress-fill" id="progressBar" style="width: 0%"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="flex gap-2 overflow-x-auto pb-1" id="variantTabs"></div>
+
+      <div class="grid lg:grid-cols-[280px_1fr] gap-6">
+        <aside class="space-y-4">
+          <div class="card p-4">
+            <h3 class="text-sm font-semibold mb-3" id="lblGrid"></h3>
+            <div class="grid grid-cols-5 gap-2" id="questionGrid"></div>
+          </div>
+          <div class="card p-4">
+            <h3 class="text-sm font-semibold mb-2" id="lblLegend"></h3>
+            <div
+              class="flex items-center gap-2 text-xs mb-1"
+              style="color: var(--muted)"
+            >
+              <span
+                class="w-3 h-3 rounded-sm border"
+                style="border-color: var(--border); background: var(--surface)"
+              ></span>
+              <span id="legEmpty"></span>
+            </div>
+            <div
+              class="flex items-center gap-2 text-xs mb-1"
+              style="color: var(--muted)"
+            >
+              <span
+                class="w-3 h-3 rounded-sm"
+                style="background: var(--primary)"
+              ></span>
+              <span id="legAnswered"></span>
+            </div>
+            <div
+              class="flex items-center gap-2 text-xs"
+              style="color: var(--muted)"
+            >
+              <span
+                class="w-3 h-3 rounded-sm"
+                style="
+                  background: var(--primary-light);
+                  border: 2px solid var(--primary);
+                "
+              ></span>
+              <span id="legCurrent"></span>
+            </div>
+          </div>
+        </aside>
+
+        <section class="card p-6 flex flex-col gap-6" id="questionCard">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-3">
+              <span
+                class="px-3 py-1 rounded-lg text-sm font-bold text-white"
+                style="background: var(--primary)"
+                id="qBadge"
+                >A1</span
+              >
+              <span
+                class="text-sm font-medium"
+                style="color: var(--muted)"
+                id="qCounter"
+                >1 / 10</span
+              >
+            </div>
+            <span
+              class="text-xs px-2 py-1 rounded-md"
+              style="background: var(--primary-light); color: var(--primary)"
+              id="qType"
+            ></span>
+          </div>
+
+          <div class="fade-in" id="qContent">
+            <h2
+              class="text-lg font-semibold leading-relaxed mb-4"
+              id="qText"
+            ></h2>
+            <div id="qImage" class="mb-4 flex justify-center"></div>
+            <div class="space-y-3" id="qOptions"></div>
+          </div>
+
+          <div
+            class="flex items-center justify-between pt-4 border-t"
+            style="border-color: var(--border)"
+          >
+            <button
+              onclick="prevQuestion()"
+              class="btn-secondary"
+              id="btnPrev"
+            ></button>
+            <div class="flex gap-2">
+              <button
+                onclick="finishExam()"
+                class="btn-secondary text-red-500 border-red-200 hover:bg-red-50"
+                id="btnFinish"
+              ></button>
+              <button
+                onclick="nextQuestion()"
+                class="btn-primary"
+                id="btnNext"
+              ></button>
+            </div>
+          </div>
+        </section>
+      </div>
+    </main>
+
+    <div
+      id="resultModal"
+      class="fixed inset-0 z-[100] hidden items-center justify-center p-4"
+      style="background: rgba(0, 0, 0, 0.5); backdrop-filter: blur(4px)"
+    >
+      <div
+        class="card w-full max-w-2xl max-h-[90vh] overflow-y-auto p-6 space-y-6"
+      >
+        <div class="text-center">
+          <div
+            class="w-20 h-20 rounded-full mx-auto mb-4 flex items-center justify-center text-3xl font-bold text-white"
+            style="background: var(--primary)"
+            id="resultScoreIcon"
+          >
+            0
+          </div>
+          <h2 class="text-2xl font-bold mb-1" id="resTitle"></h2>
+          <p class="text-sm" style="color: var(--muted)" id="resultMessage"></p>
+        </div>
+        <div class="grid grid-cols-3 gap-4">
+          <div class="card p-3 text-center" style="background: var(--bg)">
+            <div class="text-xl font-bold text-emerald-500" id="correctCount">
+              0
+            </div>
+            <div
+              class="text-xs"
+              style="color: var(--muted)"
+              id="lblCorrect"
+            ></div>
+          </div>
+          <div class="card p-3 text-center" style="background: var(--bg)">
+            <div class="text-xl font-bold text-red-500" id="wrongCount">0</div>
+            <div
+              class="text-xs"
+              style="color: var(--muted)"
+              id="lblWrong"
+            ></div>
+          </div>
+          <div class="card p-3 text-center" style="background: var(--bg)">
+            <div class="text-xl font-bold text-amber-500" id="emptyCount">
+              0
+            </div>
+            <div
+              class="text-xs"
+              style="color: var(--muted)"
+              id="lblEmpty"
+            ></div>
+          </div>
+        </div>
+        <div class="flex gap-3 justify-center flex-wrap">
+          <button
+            onclick="showReview()"
+            class="btn-primary"
+            id="btnReview"
+          ></button>
+          <button
+            onclick="resetExam()"
+            class="btn-secondary"
+            id="btnRestart"
+          ></button>
+          <button
+            onclick="closeResults()"
+            class="btn-secondary"
+            id="btnClose"
+          ></button>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      /* numberLine is needed at examData build time */
+      function numberLine(min, max, step, points, labels) {
+        const w = 400,
+          h = 80,
+          pad = 30;
+        const scale = (w - 2 * pad) / (max - min);
+        const NS = "http://www.w3.org/2000/svg";
+        let s = `<svg viewBox="0 0 ${w} ${h}" class="number-line" xmlns="${NS}">`;
+        s += `<line x1="${pad}" y1="${h / 2}" x2="${w - pad}" y2="${h / 2}" stroke="currentColor" stroke-width="2"/>`;
+        s += `<polygon points="${w - pad},${h / 2} ${w - pad - 8},${h / 2 - 5} ${w - pad - 8},${h / 2 + 5}" fill="currentColor"/>`;
+        for (let v = min; v <= max; v += step) {
+          const x = pad + (v - min) * scale;
+          s += `<line x1="${x}" y1="${h / 2 - 6}" x2="${x}" y2="${h / 2 + 6}" stroke="currentColor" stroke-width="2"/>`;
+          s += `<text x="${x}" y="${h / 2 + 22}" text-anchor="middle" font-size="12" fill="currentColor">${v}</text>`;
+        }
+        points.forEach((p, i) => {
+          const x = pad + (p - min) * scale;
+          s += `<circle cx="${x}" cy="${h / 2}" r="5" fill="var(--primary)" stroke="white" stroke-width="2"/>`;
+          s += `<text x="${x}" y="${h / 2 - 12}" text-anchor="middle" font-size="13" font-weight="bold" fill="var(--primary)">${labels[i]}</text>`;
+        });
+        return s + `</svg>`;
+      }
+
+      const STORAGE_KEY = "dim2025_natural_ededler_v6";
+
+      const examData = {
+        title: {
+          az: "Natural ədədlərin yazılması və oxunması",
+          ru: "Запись и чтение натуральных чисел",
+          en: "Writing and reading natural numbers",
+        },
+        subtitle: {
+          az: "Riyaziyyat | V sinif | Dövlət İmtahan Mərkəzi 2025",
+          ru: "Математика | 5 класс | Государственный Экзаменационный Центр 2025",
+          en: "Mathematics | Grade 5 | State Examination Center 2025",
+        },
+        timeLimit: 60,
+        variants: [
+          {
+            id: "A",
+            name: { az: "A variantı", ru: "Вариант A", en: "Variant A" },
+            questions: [
+              {
+                id: 1,
+                text: {
+                  az: "2637456 ədədində neçə minlik var?",
+                  ru: "Сколько тысяч в числе 2637456?",
+                  en: "How many thousands are there in the number 2637456?",
+                },
+                options: {
+                  az: ["7", "2637", "456", "26374", "263"],
+                  ru: ["7", "2637", "456", "26374", "263"],
+                  en: ["7", "2637", "456", "26374", "263"],
+                },
+                correct: "B",
+              },
+              {
+                id: 2,
+                text: {
+                  az: "Dörd milyard yeddi yüz on iki milyon üç yüz altmış səkkiz min beş yüz ədədini rəqəmlərlə göstərin.",
+                  ru: "Запишите число четыре миллиарда семьсот двенадцать миллионов триста шестьдесят восемь тысяч пятьсот цифрами.",
+                  en: "Write the number four billion seven hundred twelve million three hundred sixty-eight thousand five hundred in digits.",
+                },
+                options: {
+                  az: [
+                    "471200068",
+                    "4712368500",
+                    "46871200",
+                    "400071236850",
+                    "40071236850",
+                  ],
+                  ru: [
+                    "471200068",
+                    "4712368500",
+                    "46871200",
+                    "400071236850",
+                    "40071236850",
+                  ],
+                  en: [
+                    "471200068",
+                    "4712368500",
+                    "46871200",
+                    "400071236850",
+                    "40071236850",
+                  ],
+                },
+                correct: "B",
+              },
+              {
+                id: 3,
+                text: {
+                  az: "75 və 25 ədədlərinin hər birini ayrılıqda üç dəfə ardıcıl yazmaqla alınan altıraqəmli ədədlərin cəmini tapın.",
+                  ru: "Найдите сумму шестизначных чисел, полученных записью чисел 75 и 25 три раза подряд каждое.",
+                  en: "Find the sum of the six-digit numbers obtained by writing the numbers 75 and 25 three times in a row each.",
+                },
+                options: {
+                  az: [
+                    "bir milyon on min yüz",
+                    "yüz bir min yüz",
+                    "on milyon yüz bir min",
+                    "yüz on bir min yüz",
+                    "yüz on üç min yüz",
+                  ],
+                  ru: [
+                    "один миллион десять тысяч сто",
+                    "сто одна тысяча сто",
+                    "десять миллионов сто одна тысяча",
+                    "сто одиннадцать тысяч сто",
+                    "сто тринадцать тысяч сто",
+                  ],
+                  en: [
+                    "one million ten thousand one hundred",
+                    "one hundred one thousand one hundred",
+                    "ten million one hundred one thousand",
+                    "one hundred eleven thousand one hundred",
+                    "one hundred thirteen thousand one hundred",
+                  ],
+                },
+                correct: "A",
+              },
+              {
+                id: 4,
+                text: {
+                  az: "Ədədlərdən ən böyüyünü göstərin.",
+                  ru: "Укажите наибольшее из чисел.",
+                  en: "Indicate the greatest of the numbers.",
+                },
+                options: {
+                  az: [
+                    "807659070021",
+                    "7400067",
+                    "999999",
+                    "555566000999",
+                    "998879969",
+                  ],
+                  ru: [
+                    "807659070021",
+                    "7400067",
+                    "999999",
+                    "555566000999",
+                    "998879969",
+                  ],
+                  en: [
+                    "807659070021",
+                    "7400067",
+                    "999999",
+                    "555566000999",
+                    "998879969",
+                  ],
+                },
+                correct: "A",
+              },
+              {
+                id: 5,
+                text: {
+                  az: "Fəhlələrdən biri saatda 18 detal, digəri 21 detal hazırlayır. İki fəhlə birlikdə 8 saatda neçə detal hazırlayır?",
+                  ru: "Один рабочий изготавливает 18 деталей в час, другой — 21 деталь. Сколько деталей изготовят два рабочих вместе за 8 часов?",
+                  en: "One worker makes 18 parts per hour, another makes 21 parts. How many parts will the two workers make together in 8 hours?",
+                },
+                options: {
+                  az: ["139", "312", "304", "378", "348"],
+                  ru: ["139", "312", "304", "378", "348"],
+                  en: ["139", "312", "304", "378", "348"],
+                },
+                correct: "B",
+              },
+              {
+                id: 6,
+                text: {
+                  az: "60000+5000+300+40+7 cəmi 50000+4000+200+30+6 cəmindən nə qədər çoxdur?",
+                  ru: "На сколько сумма 60000+5000+300+40+7 больше суммы 50000+4000+200+30+6?",
+                  en: "By how much is the sum 60000+5000+300+40+7 greater than the sum 50000+4000+200+30+6?",
+                },
+                options: {
+                  az: ["11", "1111", "11111", "1", "111"],
+                  ru: ["11", "1111", "11111", "1", "111"],
+                  en: ["11", "1111", "11111", "1", "111"],
+                },
+                correct: "B",
+              },
+              {
+                id: 7,
+                text: {
+                  az: "Açıq şəkildə verilən ədədi rəqəmlərlə yazın: 300 000 + 40 000 + 600 + 20 + 3",
+                  ru: "Запишите число, данное в развёрнутом виде, цифрами: 300 000 + 40 000 + 600 + 20 + 3",
+                  en: "Write the number given in expanded form in digits: 300 000 + 40 000 + 600 + 20 + 3",
+                },
+                options: {
+                  az: ["300 463", "343 623", "340 643", "346 023", "430 623"],
+                  ru: ["300 463", "343 623", "340 643", "346 023", "430 623"],
+                  en: ["300 463", "343 623", "340 643", "346 023", "430 623"],
+                },
+                correct: "C",
+              },
+              {
+                id: 8,
+                text: {
+                  az: "Ədəd oxu üzərində qeyd olunmuş A və B nöqtələrinin koordinatlarının fərqini tapın.",
+                  ru: "Найдите разность координат точек A и B, отмеченных на числовой оси.",
+                  en: "Find the difference of the coordinates of points A and B marked on the number line.",
+                },
+                image: numberLine(0, 30, 5, [15, 25], ["B", "A"]),
+                options: {
+                  az: ["5", "10", "15", "20", "25"],
+                  ru: ["5", "10", "15", "20", "25"],
+                  en: ["5", "10", "15", "20", "25"],
+                },
+                correct: "B",
+              },
+              {
+                id: 9,
+                text: {
+                  az: "a-nın hansı ən böyük qiymətində $4a89 < 4701$ bərabərsizliyi doğrudur?",
+                  ru: "При каком наибольшем значении a верно неравенство $4a89 < 4701$?",
+                  en: "For what greatest value of a is the inequality $4a89 < 4701$ true?",
+                },
+                options: {
+                  az: ["5", "6", "7", "8", "9"],
+                  ru: ["5", "6", "7", "8", "9"],
+                  en: ["5", "6", "7", "8", "9"],
+                },
+                correct: "B",
+              },
+              {
+                id: 10,
+                text: {
+                  az: "Rum rəqəmləri ilə verilmiş ədədlər üçün uyğunluğu müəyyən edin.<br><br>1. CMLX &nbsp;&nbsp; 2. MCXLV &nbsp;&nbsp; 3. DXLV<br>a. 445 &nbsp;&nbsp; b. 960 &nbsp;&nbsp; c. 1160 &nbsp;&nbsp; d. 1145 &nbsp;&nbsp; e. 545",
+                  ru: "Определите соответствие для чисел, записанных римскими цифрами.<br><br>1. CMLX &nbsp;&nbsp; 2. MCXLV &nbsp;&nbsp; 3. DXLV<br>a. 445 &nbsp;&nbsp; b. 960 &nbsp;&nbsp; c. 1160 &nbsp;&nbsp; d. 1145 &nbsp;&nbsp; e. 545",
+                  en: "Determine the correspondence for the numbers written in Roman numerals.<br><br>1. CMLX &nbsp;&nbsp; 2. MCXLV &nbsp;&nbsp; 3. DXLV<br>a. 445 &nbsp;&nbsp; b. 960 &nbsp;&nbsp; c. 1160 &nbsp;&nbsp; d. 1145 &nbsp;&nbsp; e. 545",
+                },
+                options: {
+                  az: [
+                    "1-b, 2-d, 3-e",
+                    "1-b, 2-a, 3-c",
+                    "1-c, 2-d, 3-e",
+                    "1-a, 2-b, 3-c",
+                    "1-d, 2-e, 3-b",
+                  ],
+                  ru: [
+                    "1-b, 2-d, 3-e",
+                    "1-b, 2-a, 3-c",
+                    "1-c, 2-d, 3-e",
+                    "1-a, 2-b, 3-c",
+                    "1-d, 2-e, 3-b",
+                  ],
+                  en: [
+                    "1-b, 2-d, 3-e",
+                    "1-b, 2-a, 3-c",
+                    "1-c, 2-d, 3-e",
+                    "1-a, 2-b, 3-c",
+                    "1-d, 2-e, 3-b",
+                  ],
+                },
+                correct: "A",
+              },
+            ],
+          },
+          {
+            id: "B",
+            name: { az: "B variantı", ru: "Вариант B", en: "Variant B" },
+            questions: [
+              {
+                id: 1,
+                text: {
+                  az: "8465247 ədədində neçə minlik var?",
+                  ru: "Сколько тысяч в числе 8465247?",
+                  en: "How many thousands are there in the number 8465247?",
+                },
+                options: {
+                  az: ["84652", "846", "8465", "5", "8"],
+                  ru: ["84652", "846", "8465", "5", "8"],
+                  en: ["84652", "846", "8465", "5", "8"],
+                },
+                correct: "C",
+              },
+              {
+                id: 2,
+                text: {
+                  az: "Üç milyard altı yüz on beş milyon dörd yüz qırx yeddi min doqquz yüz ədədini rəqəmlərlə göstərin.",
+                  ru: "Запишите число три миллиарда шестьсот пятнадцать миллионов четыреста сорок семь тысяч девятьсот цифрами.",
+                  en: "Write the number three billion six hundred fifteen million four hundred forty-seven thousand nine hundred in digits.",
+                },
+                options: {
+                  az: [
+                    "3615447900",
+                    "3605470000",
+                    "3605900",
+                    "34479000",
+                    "30654900",
+                  ],
+                  ru: [
+                    "3615447900",
+                    "3605470000",
+                    "3605900",
+                    "34479000",
+                    "30654900",
+                  ],
+                  en: [
+                    "3615447900",
+                    "3605470000",
+                    "3605900",
+                    "34479000",
+                    "30654900",
+                  ],
+                },
+                correct: "A",
+              },
+              {
+                id: 3,
+                text: {
+                  az: "68 və 32 ədədlərinin hər birini ayrılıqda üç dəfə ardıcıl yazmaqla alınan altıraqəmli ədədlərin cəmini tapın.",
+                  ru: "Найдите сумму шестизначных чисел, полученных записью чисел 68 и 32 три раза подряд каждое.",
+                  en: "Find the sum of the six-digit numbers obtained by writing the numbers 68 and 32 three times in a row each.",
+                },
+                options: {
+                  az: [
+                    "yüz on bir min yüz",
+                    "yüz bir min yüz",
+                    "on milyon yüz bir min",
+                    "bir milyon on min yüz",
+                    "yüz iki min yüz",
+                  ],
+                  ru: [
+                    "сто одиннадцать тысяч сто",
+                    "сто одна тысяча сто",
+                    "десять миллионов сто одна тысяча",
+                    "один миллион десять тысяч сто",
+                    "сто две тысячи сто",
+                  ],
+                  en: [
+                    "one hundred eleven thousand one hundred",
+                    "one hundred one thousand one hundred",
+                    "ten million one hundred one thousand",
+                    "one million ten thousand one hundred",
+                    "one hundred two thousand one hundred",
+                  ],
+                },
+                correct: "D",
+              },
+              {
+                id: 4,
+                text: {
+                  az: "Ədədlərdən ən kiçiyini göstərin.",
+                  ru: "Укажите наименьшее из чисел.",
+                  en: "Indicate the smallest of the numbers.",
+                },
+                options: {
+                  az: [
+                    "1000000007",
+                    "55544444",
+                    "7000099",
+                    "888888",
+                    "9000101",
+                  ],
+                  ru: [
+                    "1000000007",
+                    "55544444",
+                    "7000099",
+                    "888888",
+                    "9000101",
+                  ],
+                  en: [
+                    "1000000007",
+                    "55544444",
+                    "7000099",
+                    "888888",
+                    "9000101",
+                  ],
+                },
+                correct: "D",
+              },
+              {
+                id: 5,
+                text: {
+                  az: "Tərəvəz mağazasına birinci gün 152 yeşik, ikinci gün 138 yeşik, üçüncü gün 148 yeşik pomidor gətirildi. Birinci və ikinci gün gətirilən pomidorlar üçüncü və dördüncü gün gətirilən pomidorlar qədərdir. Dördüncü gün neçə yeşik pomidor gətirildi?",
+                  ru: "В овощной магазин первый день привезли 152 ящика, второй день — 138 ящиков, третий день — 148 ящиков помидоров. Помидоры, привезённые в первый и второй день, равны помидорам третьего и четвёртого дней. Сколько ящиков привезли в четвёртый день?",
+                  en: "On the first day 152 boxes of tomatoes were brought to a vegetable shop, on the second day 138 boxes, on the third day 148 boxes. The tomatoes brought on the first and second days equal those brought on the third and fourth days. How many boxes were brought on the fourth day?",
+                },
+                options: {
+                  az: ["142", "438", "4", "95", "126"],
+                  ru: ["142", "438", "4", "95", "126"],
+                  en: ["142", "438", "4", "95", "126"],
+                },
+                correct: "A",
+              },
+              {
+                id: 6,
+                text: {
+                  az: "80000+6000+900+50+8 cəmi 70000+5000+800+40+7 cəmindən nə qədər çoxdur?",
+                  ru: "На сколько сумма 80000+6000+900+50+8 больше суммы 70000+5000+800+40+7?",
+                  en: "By how much is the sum 80000+6000+900+50+8 greater than the sum 70000+5000+800+40+7?",
+                },
+                options: {
+                  az: ["11", "11111", "1", "1111", "111"],
+                  ru: ["11", "11111", "1", "1111", "111"],
+                  en: ["11", "11111", "1", "1111", "111"],
+                },
+                correct: "B",
+              },
+              {
+                id: 7,
+                text: {
+                  az: "Açıq şəkildə verilən ədədi rəqəmlərlə yazın: 600 000 + 50 000 + 2 000 + 800 + 70 + 5",
+                  ru: "Запишите число, данное в развёрнутом виде, цифрами: 600 000 + 50 000 + 2 000 + 800 + 70 + 5",
+                  en: "Write the number given in expanded form in digits: 600 000 + 50 000 + 2 000 + 800 + 70 + 5",
+                },
+                options: {
+                  az: ["650 875", "650 870", "652 785", "750 865", "652 875"],
+                  ru: ["650 875", "650 870", "652 785", "750 865", "652 875"],
+                  en: ["650 875", "650 870", "652 785", "750 865", "652 875"],
+                },
+                correct: "E",
+              },
+              {
+                id: 8,
+                text: {
+                  az: "Ədəd oxu üzərində qeyd olunmuş A və B nöqtələrinin koordinatlarının cəmini tapın.",
+                  ru: "Найдите сумму координат точек A и B, отмеченных на числовой оси.",
+                  en: "Find the sum of the coordinates of points A and B marked on the number line.",
+                },
+                image: numberLine(0, 30, 5, [14, 26], ["B", "A"]),
+                options: {
+                  az: ["30", "35", "38", "40", "42"],
+                  ru: ["30", "35", "38", "40", "42"],
+                  en: ["30", "35", "38", "40", "42"],
+                },
+                correct: "D",
+              },
+              {
+                id: 9,
+                text: {
+                  az: "a-nın hansı ən böyük qiymətində $54a9 < 5461$ bərabərsizliyi doğrudur?",
+                  ru: "При каком наибольшем значении a верно неравенство $54a9 < 5461$?",
+                  en: "For what greatest value of a is the inequality $54a9 < 5461$ true?",
+                },
+                options: {
+                  az: ["4", "5", "6", "7", "8"],
+                  ru: ["4", "5", "6", "7", "8"],
+                  en: ["4", "5", "6", "7", "8"],
+                },
+                correct: "B",
+              },
+              {
+                id: 10,
+                text: {
+                  az: "Rum rəqəmləri ilə verilmiş ədədlər üçün uyğunluğu müəyyən edin.<br><br>1. CLX &nbsp;&nbsp; 2. XCV &nbsp;&nbsp; 3. DXLV<br>a. 145 &nbsp;&nbsp; b. 545 &nbsp;&nbsp; c. 160 &nbsp;&nbsp; d. 95 &nbsp;&nbsp; e. 115",
+                  ru: "Определите соответствие для чисел, записанных римскими цифрами.<br><br>1. CLX &nbsp;&nbsp; 2. XCV &nbsp;&nbsp; 3. DXLV<br>a. 145 &nbsp;&nbsp; b. 545 &nbsp;&nbsp; c. 160 &nbsp;&nbsp; d. 95 &nbsp;&nbsp; e. 115",
+                  en: "Determine the correspondence for the numbers written in Roman numerals.<br><br>1. CLX &nbsp;&nbsp; 2. XCV &nbsp;&nbsp; 3. DXLV<br>a. 145 &nbsp;&nbsp; b. 545 &nbsp;&nbsp; c. 160 &nbsp;&nbsp; d. 95 &nbsp;&nbsp; e. 115",
+                },
+                options: {
+                  az: [
+                    "1-c, 2-d, 3-b",
+                    "1-c, 2-a, 3-e",
+                    "1-a, 2-d, 3-b",
+                    "1-b, 2-c, 3-a",
+                    "1-d, 2-b, 3-c",
+                  ],
+                  ru: [
+                    "1-c, 2-d, 3-b",
+                    "1-c, 2-a, 3-e",
+                    "1-a, 2-d, 3-b",
+                    "1-b, 2-c, 3-a",
+                    "1-d, 2-b, 3-c",
+                  ],
+                  en: [
+                    "1-c, 2-d, 3-b",
+                    "1-c, 2-a, 3-e",
+                    "1-a, 2-d, 3-b",
+                    "1-b, 2-c, 3-a",
+                    "1-d, 2-b, 3-c",
+                  ],
+                },
+                correct: "A",
+              },
+            ],
+          },
+          {
+            id: "C",
+            name: { az: "C variantı", ru: "Вариант C", en: "Variant C" },
+            questions: [
+              {
+                id: 1,
+                text: {
+                  az: "52748968 ədədində neçə minlik var?",
+                  ru: "Сколько тысяч в числе 52748968?",
+                  en: "How many thousands are there in the number 52748968?",
+                },
+                options: {
+                  az: ["8", "5274", "527", "52748", "52"],
+                  ru: ["8", "5274", "527", "52748", "52"],
+                  en: ["8", "5274", "527", "52748", "52"],
+                },
+                correct: "B",
+              },
+              {
+                id: 2,
+                text: {
+                  az: "İki milyard yeddi yüz on iki milyon beş yüz otuz səkkiz min yeddi yüz ədədini rəqəmlərlə göstərin.",
+                  ru: "Запишите число два миллиарда семьсот двенадцать миллионов пятьсот тридцать восемь тысяч семьсот цифрами.",
+                  en: "Write the number two billion seven hundred twelve million five hundred thirty-eight thousand seven hundred in digits.",
+                },
+                options: {
+                  az: [
+                    "2000700",
+                    "2070250870",
+                    "2712500700",
+                    "2712538700",
+                    "200712538700",
+                  ],
+                  ru: [
+                    "2000700",
+                    "2070250870",
+                    "2712500700",
+                    "2712538700",
+                    "200712538700",
+                  ],
+                  en: [
+                    "2000700",
+                    "2070250870",
+                    "2712500700",
+                    "2712538700",
+                    "200712538700",
+                  ],
+                },
+                correct: "D",
+              },
+              {
+                id: 3,
+                text: {
+                  az: "Müəyyən qayda ilə düzülmüş ədədlər sırasını pozan ədəd hansıdır?<br><br>6; 8; 11; 15; 17; 20",
+                  ru: "Какое число нарушает закономерность в данном ряду чисел?<br><br>6; 8; 11; 15; 17; 20",
+                  en: "Which number breaks the pattern in the given number sequence?<br><br>6; 8; 11; 15; 17; 20",
+                },
+                options: {
+                  az: ["17", "11", "8", "15", "20"],
+                  ru: ["17", "11", "8", "15", "20"],
+                  en: ["17", "11", "8", "15", "20"],
+                },
+                correct: "A",
+              },
+              {
+                id: 4,
+                text: {
+                  az: "Ədədlərdən ən böyüyünü göstərin.",
+                  ru: "Укажите наибольшее из чисел.",
+                  en: "Indicate the greatest of the numbers.",
+                },
+                options: {
+                  az: ["22800913", "876499", "4000000", "987699", "9987674"],
+                  ru: ["22800913", "876499", "4000000", "987699", "9987674"],
+                  en: ["22800913", "876499", "4000000", "987699", "9987674"],
+                },
+                correct: "E",
+              },
+              {
+                id: 5,
+                text: {
+                  az: "Eni 20 m, uzunluğu 30 m olan düzbucaqlı şəklində sahədə kök əkilib. 10 m² sahəyə 12 qram toxum işləndiyindən cəmi neçə qram toxum lazımdır?",
+                  ru: "На прямоугольном участке шириной 20 м и длиной 30 м посеяли капусту. На 10 м² расходуется 12 г семян. Сколько граммов семян потребуется всего?",
+                  en: "Cabbage was sown on a rectangular plot 20 m wide and 30 m long. 12 g of seeds are used per 10 m². How many grams of seeds are needed in total?",
+                },
+                options: {
+                  az: ["120 q", "720 q", "7200 q", "72 q", "1200 q"],
+                  ru: ["120 г", "720 г", "7200 г", "72 г", "1200 г"],
+                  en: ["120 g", "720 g", "7200 g", "72 g", "1200 g"],
+                },
+                correct: "B",
+              },
+              {
+                id: 6,
+                text: {
+                  az: "50000+8000+700+20+3 ədədlərinin cəmi 40000+7000+600+10+2 ədədlərinin cəmindən nə qədər çoxdur?",
+                  ru: "На сколько сумма чисел 50000+8000+700+20+3 больше суммы чисел 40000+7000+600+10+2?",
+                  en: "By how much is the sum of the numbers 50000+8000+700+20+3 greater than the sum of the numbers 40000+7000+600+10+2?",
+                },
+                options: {
+                  az: ["1", "11111", "1111", "111", "11"],
+                  ru: ["1", "11111", "1111", "111", "11"],
+                  en: ["1", "11111", "1111", "111", "11"],
+                },
+                correct: "B",
+              },
+              {
+                id: 7,
+                text: {
+                  az: "Üçbucağın tərəfləri 15 sm, 17 sm və 13 sm-dir. Tərəfləri verilmiş üçbucağın tərəflərindən 2 dəfə böyük olan üçbucağın perimetrini tapın.",
+                  ru: "Стороны треугольника равны 15 см, 17 см и 13 см. Найдите периметр треугольника, стороны которого в 2 раза больше сторон данного.",
+                  en: "The sides of a triangle are 15 cm, 17 cm and 13 cm. Find the perimeter of a triangle whose sides are 2 times larger than those of the given triangle.",
+                },
+                options: {
+                  az: ["90 sm", "60 sm", "45 sm", "43 sm", "51 sm"],
+                  ru: ["90 см", "60 см", "45 см", "43 см", "51 см"],
+                  en: ["90 cm", "60 cm", "45 cm", "43 cm", "51 cm"],
+                },
+                correct: "A",
+              },
+              {
+                id: 8,
+                text: {
+                  az: "Ədəd oxu üzərində qeyd olunmuş C və D nöqtələrinin koordinatlarının fərqini tapın.",
+                  ru: "Найдите разность координат точек C и D, отмеченных на числовой оси.",
+                  en: "Find the difference of the coordinates of points C and D marked on the number line.",
+                },
+                image: numberLine(0, 45, 9, [24, 42], ["D", "C"]),
+                options: {
+                  az: ["15", "18", "21", "24", "27"],
+                  ru: ["15", "18", "21", "24", "27"],
+                  en: ["15", "18", "21", "24", "27"],
+                },
+                correct: "B",
+              },
+              {
+                id: 9,
+                text: {
+                  az: "b-nın hansı ən kiçik qiymətində $3b01 > 3689$ bərabərsizliyi doğrudur?",
+                  ru: "При каком наименьшем значении b верно неравенство $3b01 > 3689$?",
+                  en: "For what smallest value of b is the inequality $3b01 > 3689$ true?",
+                },
+                options: {
+                  az: ["5", "6", "7", "8", "9"],
+                  ru: ["5", "6", "7", "8", "9"],
+                  en: ["5", "6", "7", "8", "9"],
+                },
+                correct: "C",
+              },
+              {
+                id: 10,
+                text: {
+                  az: "Verilmiş ədədlər üçün uyğunluğu müəyyən edin.<br><br>1. 159 &nbsp;&nbsp; 2. 79 &nbsp;&nbsp; 3. 36<br>a. CLIX &nbsp;&nbsp; b. XXXVI &nbsp;&nbsp; c. CXII &nbsp;&nbsp; d. LXXIX &nbsp;&nbsp; e. CDIV",
+                  ru: "Определите соответствие для данных чисел.<br><br>1. 159 &nbsp;&nbsp; 2. 79 &nbsp;&nbsp; 3. 36<br>a. CLIX &nbsp;&nbsp; b. XXXVI &nbsp;&nbsp; c. CXII &nbsp;&nbsp; d. LXXIX &nbsp;&nbsp; e. CDIV",
+                  en: "Determine the correspondence for the given numbers.<br><br>1. 159 &nbsp;&nbsp; 2. 79 &nbsp;&nbsp; 3. 36<br>a. CLIX &nbsp;&nbsp; b. XXXVI &nbsp;&nbsp; c. CXII &nbsp;&nbsp; d. LXXIX &nbsp;&nbsp; e. CDIV",
+                },
+                options: {
+                  az: [
+                    "1-a, 2-d, 3-b",
+                    "1-b, 2-c, 3-a",
+                    "1-d, 2-a, 3-b",
+                    "1-a, 2-b, 3-c",
+                    "1-c, 2-d, 3-a",
+                  ],
+                  ru: [
+                    "1-a, 2-d, 3-b",
+                    "1-b, 2-c, 3-a",
+                    "1-d, 2-a, 3-b",
+                    "1-a, 2-b, 3-c",
+                    "1-c, 2-d, 3-a",
+                  ],
+                  en: [
+                    "1-a, 2-d, 3-b",
+                    "1-b, 2-c, 3-a",
+                    "1-d, 2-a, 3-b",
+                    "1-a, 2-b, 3-c",
+                    "1-c, 2-d, 3-a",
+                  ],
+                },
+                correct: "A",
+              },
+            ],
+          },
+          {
+            id: "D",
+            name: { az: "D variantı", ru: "Вариант D", en: "Variant D" },
+            questions: [
+              {
+                id: 1,
+                text: {
+                  az: "7298654 ədədində neçə yüz minlik var?",
+                  ru: "Сколько сотен тысяч в числе 7298654?",
+                  en: "How many hundred-thousands are there in the number 7298654?",
+                },
+                options: {
+                  az: ["72", "729", "798", "6", "86"],
+                  ru: ["72", "729", "798", "6", "86"],
+                  en: ["72", "729", "798", "6", "86"],
+                },
+                correct: "A",
+              },
+              {
+                id: 2,
+                text: {
+                  az: "Beş milyard altı yüz doqquz milyon iyirmi dörd min dörd yüz ədədini rəqəmlərlə göstərin.",
+                  ru: "Запишите число пять миллиардов шестьсот девять миллионов двадцать четыре тысячи четыреста цифрами.",
+                  en: "Write the number five billion six hundred nine million twenty-four thousand four hundred in digits.",
+                },
+                options: {
+                  az: [
+                    "5609024400",
+                    "500624400",
+                    "560924000400",
+                    "500060924400",
+                    "5006924400",
+                  ],
+                  ru: [
+                    "5609024400",
+                    "500624400",
+                    "560924000400",
+                    "500060924400",
+                    "5006924400",
+                  ],
+                  en: [
+                    "5609024400",
+                    "500624400",
+                    "560924000400",
+                    "500060924400",
+                    "5006924400",
+                  ],
+                },
+                correct: "A",
+              },
+              {
+                id: 3,
+                text: {
+                  az: "Müəyyən qayda ilə düzülmüş ədədlər sırasını pozan ədəd hansıdır?<br><br>35; 33; 30; 26; 21; 14",
+                  ru: "Какое число нарушает закономерность в данном ряду чисел?<br><br>35; 33; 30; 26; 21; 14",
+                  en: "Which number breaks the pattern in the given number sequence?<br><br>35; 33; 30; 26; 21; 14",
+                },
+                options: {
+                  az: ["14", "30", "21", "26", "33"],
+                  ru: ["14", "30", "21", "26", "33"],
+                  en: ["14", "30", "21", "26", "33"],
+                },
+                correct: "A",
+              },
+              {
+                id: 4,
+                text: {
+                  az: "Ədədlərdən ən böyüyünü göstərin.",
+                  ru: "Укажите наибольшее из чисел.",
+                  en: "Indicate the greatest of the numbers.",
+                },
+                options: {
+                  az: ["55009", "3799", "270654", "172964", "97989"],
+                  ru: ["55009", "3799", "270654", "172964", "97989"],
+                  en: ["55009", "3799", "270654", "172964", "97989"],
+                },
+                correct: "C",
+              },
+              {
+                id: 5,
+                text: {
+                  az: "Kütləsi 250 q olan kələm 22 qapıyadır. 1 kq kələm neçəyədir?",
+                  ru: "Капуста массой 250 г стоит 22 копейки. Сколько стоит 1 кг капусты?",
+                  en: "Cabbage weighing 250 g costs 22 kopecks. How much does 1 kg of cabbage cost?",
+                },
+                options: {
+                  az: [
+                    "2 man. 72 qap.",
+                    "2 man. 28 qap.",
+                    "4 qap.",
+                    "88 qap.",
+                    "96 qap.",
+                  ],
+                  ru: [
+                    "2 ман. 72 коп.",
+                    "2 ман. 28 коп.",
+                    "4 коп.",
+                    "88 коп.",
+                    "96 коп.",
+                  ],
+                  en: [
+                    "2 manat 72 kopecks",
+                    "2 manat 28 kopecks",
+                    "4 kopecks",
+                    "88 kopecks",
+                    "96 kopecks",
+                  ],
+                },
+                correct: "D",
+              },
+              {
+                id: 6,
+                text: {
+                  az: "80000+4000+700+50+8 cəmi 70000+3000+600+40+7 cəmindən nə qədər çoxdur?",
+                  ru: "На сколько сумма 80000+4000+700+50+8 больше суммы 70000+3000+600+40+7?",
+                  en: "By how much is the sum 80000+4000+700+50+8 greater than the sum 70000+3000+600+40+7?",
+                },
+                options: {
+                  az: ["1", "111", "11111", "1111", "11"],
+                  ru: ["1", "111", "11111", "1111", "11"],
+                  en: ["1", "111", "11111", "1111", "11"],
+                },
+                correct: "C",
+              },
+              {
+                id: 7,
+                text: {
+                  az: "Düzbucaqlının tərəfləri 6 sm və 8 sm-dir. Tərəfləri verilmiş düzbucaqlının tərəflərindən iki dəfə böyük olan düzbucaqlının perimetrini tapın.",
+                  ru: "Стороны прямоугольника равны 6 см и 8 см. Найдите периметр прямоугольника, стороны которого в 2 раза больше данных.",
+                  en: "The sides of a rectangle are 6 cm and 8 cm. Find the perimeter of a rectangle whose sides are 2 times larger than those given.",
+                },
+                options: {
+                  az: ["48 sm", "56 sm", "36 sm", "44 sm", "42 sm"],
+                  ru: ["48 см", "56 см", "36 см", "44 см", "42 см"],
+                  en: ["48 cm", "56 cm", "36 cm", "44 cm", "42 cm"],
+                },
+                correct: "B",
+              },
+              {
+                id: 8,
+                text: {
+                  az: "Ədəd oxu üzərində qeyd olunmuş C və D nöqtələrinin koordinatlarının fərqini tapın.",
+                  ru: "Найдите разность координат точек C и D, отмеченных на числовой оси.",
+                  en: "Find the difference of the coordinates of points C and D marked on the number line.",
+                },
+                image: numberLine(0, 45, 9, [21, 42], ["D", "C"]),
+                options: {
+                  az: ["18", "21", "24", "27", "30"],
+                  ru: ["18", "21", "24", "27", "30"],
+                  en: ["18", "21", "24", "27", "30"],
+                },
+                correct: "B",
+              },
+              {
+                id: 9,
+                text: {
+                  az: "b-nın hansı ən kiçik qiymətində $59b0 > 5949$ bərabərsizliyi doğrudur?",
+                  ru: "При каком наименьшем значении b верно неравенство $59b0 > 5949$?",
+                  en: "For what smallest value of b is the inequality $59b0 > 5949$ true?",
+                },
+                options: {
+                  az: ["3", "4", "5", "6", "7"],
+                  ru: ["3", "4", "5", "6", "7"],
+                  en: ["3", "4", "5", "6", "7"],
+                },
+                correct: "C",
+              },
+              {
+                id: 10,
+                text: {
+                  az: "Verilmiş ədədlər üçün uyğunluğu müəyyən edin.<br><br>1. 1140 &nbsp;&nbsp; 2. 415 &nbsp;&nbsp; 3. 94<br>a. MCXL &nbsp;&nbsp; b. CDXV &nbsp;&nbsp; c. DCVX &nbsp;&nbsp; d. XCIV &nbsp;&nbsp; e. CDIV",
+                  ru: "Определите соответствие для данных чисел.<br><br>1. 1140 &nbsp;&nbsp; 2. 415 &nbsp;&nbsp; 3. 94<br>a. MCXL &nbsp;&nbsp; b. CDXV &nbsp;&nbsp; c. DCVX &nbsp;&nbsp; d. XCIV &nbsp;&nbsp; e. CDIV",
+                  en: "Determine the correspondence for the given numbers.<br><br>1. 1140 &nbsp;&nbsp; 2. 415 &nbsp;&nbsp; 3. 94<br>a. MCXL &nbsp;&nbsp; b. CDXV &nbsp;&nbsp; c. DCVX &nbsp;&nbsp; d. XCIV &nbsp;&nbsp; e. CDIV",
+                },
+                options: {
+                  az: [
+                    "1-a, 2-b, 3-d",
+                    "1-b, 2-c, 3-a",
+                    "1-d, 2-a, 3-b",
+                    "1-a, 2-b, 3-c",
+                    "1-c, 2-d, 3-a",
+                  ],
+                  ru: [
+                    "1-a, 2-b, 3-d",
+                    "1-b, 2-c, 3-a",
+                    "1-d, 2-a, 3-b",
+                    "1-a, 2-b, 3-c",
+                    "1-c, 2-d, 3-a",
+                  ],
+                  en: [
+                    "1-a, 2-b, 3-d",
+                    "1-b, 2-c, 3-a",
+                    "1-d, 2-a, 3-b",
+                    "1-a, 2-b, 3-c",
+                    "1-c, 2-d, 3-a",
+                  ],
+                },
+                correct: "A",
+              },
+            ],
+          },
+        ],
+      };
+    </script>
+    <script src="script.js"></script>
+  </body>
+</html>

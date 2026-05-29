@@ -1,0 +1,629 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Урок 1.3. Округление натуральных чисел — 5 класс</title>
+<style>
+  :root {
+    --primary:#2563eb; --primary-dark:#1d4ed8; --secondary:#0d9488; --accent:#f59e0b;
+    --bg:#f8fafc; --card:#ffffff; --text:#1e293b; --text-light:#64748b; --border:#e2e8f0;
+    --success:#10b981; --danger:#ef4444; --radius:12px;
+    --shadow:0 4px 6px -1px rgb(0 0 0 / .1), 0 2px 4px -2px rgb(0 0 0 / .1);
+    --shadow-lg:0 10px 15px -3px rgb(0 0 0 / .1), 0 4px 6px -4px rgb(0 0 0 / .1);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;background:var(--bg);color:var(--text);line-height:1.6}
+  header{background:linear-gradient(135deg,var(--primary),var(--secondary));color:#fff;padding:2rem 1rem;text-align:center;position:sticky;top:0;z-index:100;box-shadow:var(--shadow-lg)}
+  header h1{font-size:1.55rem;font-weight:700;letter-spacing:-.02em}
+  header p{opacity:.95;margin-top:.25rem;font-size:.95rem}
+  nav{background:var(--card);border-bottom:1px solid var(--border);display:flex;gap:.25rem;overflow-x:auto;padding:.5rem;position:sticky;top:calc(60px + 2rem);z-index:90}
+  nav button{flex:1 0 auto;min-width:130px;padding:.6rem 1rem;border:none;background:transparent;color:var(--text-light);font-weight:600;cursor:pointer;border-radius:var(--radius);transition:all .2s;white-space:nowrap}
+  nav button:hover{background:var(--bg);color:var(--primary)}
+  nav button.active{background:var(--primary);color:#fff;box-shadow:var(--shadow)}
+  nav button.done{position:relative}
+  nav button.done::after{content:"✓";position:absolute;top:2px;right:6px;font-size:.65rem;color:var(--success);background:#fff;border-radius:50%;width:14px;height:14px;display:flex;align-items:center;justify-content:center;box-shadow:0 0 0 1px var(--success)}
+  main{max-width:980px;margin:0 auto;padding:1.5rem 1rem 4rem}
+  section.module{display:none;animation:fadeIn .4s ease}
+  section.module.active{display:block}
+  @keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+  .card{background:var(--card);border-radius:var(--radius);padding:1.5rem;margin-bottom:1.25rem;box-shadow:var(--shadow);border:1px solid var(--border)}
+  .card h2{font-size:1.25rem;margin-bottom:.75rem;color:var(--primary-dark)}
+  .card h3{font-size:1.05rem;margin:1rem 0 .5rem;color:var(--secondary)}
+  .card p,.card li{margin-bottom:.5rem}
+  .card ul{padding-left:1.25rem}
+  .badge{display:inline-block;padding:.25rem .6rem;border-radius:999px;font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.04em;background:#eef2ff;color:var(--primary);margin-bottom:.5rem}
+  .badge.teal{background:#f0fdfa;color:var(--secondary)}
+  .badge.gold{background:#fffbeb;color:#b45309}
+  .badge.red{background:#fef2f2;color:var(--danger)}
+  .example-box{background:#f8fafc;border-left:4px solid var(--primary);padding:1rem;border-radius:0 var(--radius) var(--radius) 0;margin:.75rem 0}
+  .example-box .label{font-weight:700;color:var(--primary);font-size:.85rem;text-transform:uppercase;margin-bottom:.25rem}
+  .math{font-family:"Courier New",Courier,monospace;background:#f1f5f9;padding:.1rem .3rem;border-radius:4px;font-size:.95em}
+  .step{display:flex;gap:.75rem;margin:.5rem 0;align-items:flex-start}
+  .step-num{flex-shrink:0;width:28px;height:28px;display:flex;align-items:center;justify-content:center;background:var(--primary);color:#fff;border-radius:50%;font-size:.8rem;font-weight:700}
+  .step-body{flex:1}
+  .hint{font-size:.85rem;color:var(--text-light);margin-top:.25rem;font-style:italic}
+  .table-wrap{overflow-x:auto}
+  table{width:100%;border-collapse:collapse;margin:.75rem 0;font-size:.95rem}
+  th,td{border:1px solid var(--border);padding:.5rem .75rem;text-align:center}
+  th{background:#f8fafc;font-weight:600}
+  td{text-align:left}
+  .two-col{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+  @media(max-width:720px){.two-col{grid-template-columns:1fr}nav{position:relative;top:0}header{position:relative}}
+  .quiz-grid{display:grid;gap:1rem}
+  .question{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:1.25rem}
+  .question h4{font-size:1rem;margin-bottom:.75rem}
+  .options label{display:block;padding:.6rem .8rem;border:1px solid var(--border);border-radius:8px;margin-bottom:.4rem;cursor:pointer;transition:all .15s;font-size:.95rem}
+  .options label:hover{border-color:var(--primary);background:#f8fafc}
+  .options input[type="radio"]{margin-right:.5rem;accent-color:var(--primary)}
+  .options label.correct{border-color:var(--success);background:#ecfdf5}
+  .options label.wrong{border-color:var(--danger);background:#fef2f2}
+  .btn{display:inline-flex;align-items:center;gap:.4rem;padding:.65rem 1.25rem;border:none;border-radius:var(--radius);background:var(--primary);color:#fff;font-weight:600;cursor:pointer;transition:background .2s,transform .1s;font-size:.95rem;margin-top:.5rem}
+  .btn:hover{background:var(--primary-dark)}
+  .btn:active{transform:scale(.98)}
+  .btn.secondary{background:var(--secondary)}
+  .btn.secondary:hover{background:#0f766e}
+  .btn.outline{background:#fff;color:var(--primary);border:2px solid var(--primary)}
+  .btn.outline:hover{background:#eef2ff}
+  .result-box{margin-top:1rem;padding:1rem;border-radius:var(--radius);font-weight:600;display:none}
+  .result-box.show{display:block}
+  .result-box.good{background:#d1fae5;color:#065f46}
+  .result-box.mid{background:#fef3c7;color:#92400e}
+  .result-box.bad{background:#fee2e2;color:#991b1b}
+  .progress-bar{height:6px;background:var(--border);border-radius:3px;overflow:hidden;margin-bottom:1rem}
+  .progress-bar .fill{height:100%;background:linear-gradient(90deg,var(--primary),var(--secondary));width:0%;transition:width .5s ease}
+  .number-line{display:flex;align-items:center;justify-content:space-between;position:relative;margin:1.5rem 0;padding:1rem 0}
+  .number-line::before{content:"";position:absolute;top:50%;left:0;right:0;height:2px;background:var(--border);z-index:0}
+  .nl-arrow{position:absolute;top:50%;right:-6px;transform:translateY(-50%);width:0;height:0;border-top:6px solid transparent;border-bottom:6px solid transparent;border-left:10px solid var(--text-light)}
+  .nl-point{position:relative;z-index:1;text-align:center;flex:1}
+  .nl-point .dot{width:12px;height:12px;background:var(--primary);border-radius:50%;margin:0 auto 6px;border:2px solid var(--card);box-shadow:0 0 0 2px var(--primary)}
+  .nl-point .value{font-size:.8rem;color:var(--text-light);white-space:nowrap}
+  .rule-box{background:#fff;border:2px solid var(--border);border-radius:var(--radius);padding:1rem;margin:.5rem 0;position:relative;padding-left:2.5rem}
+  .rule-box .num{position:absolute;left:.75rem;top:.9rem;width:24px;height:24px;background:var(--primary);color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:700}
+  footer{text-align:center;padding:2rem 1rem;color:var(--text-light);font-size:.85rem;border-top:1px solid var(--border);margin-top:2rem}
+  .intro-hero{text-align:center;padding:2rem 1rem}
+  .intro-hero h2{font-size:1.5rem;margin-bottom:.5rem}
+  .intro-hero p{color:var(--text-light);max-width:600px;margin:0 auto 1.5rem}
+  .big-number{font-size:1.1rem;font-weight:700;color:var(--primary)}
+</style>
+<base target="_blank">
+</head>
+<body>
+<header>
+  <h1>Урок 1.3. Округление натуральных чисел</h1>
+  <p>Натуральные числа и действия с ними — модульный интерактивный курс, 5 класс</p>
+</header>
+
+<nav id="navbar">
+  <button class="active" onclick="goTo('intro')">Начало</button>
+  <button onclick="goTo('m1')">Модуль 1: Теория</button>
+  <button onclick="goTo('m2')">Модуль 2: Практика</button>
+  <button onclick="goTo('m3')">Модуль 3: Задачи</button>
+  <button onclick="goTo('test')">Тест (30 вопросов)</button>
+  <button onclick="goTo('quiz')">Викторина (15 вопросов)</button>
+</nav>
+
+<main>
+
+<!-- INTRO -->
+<section id="intro" class="module active">
+  <div class="intro-hero card">
+    <h2>Добро пожаловать на урок!</h2>
+    <p>За этот урок ты научишься <strong>округлять</strong> натуральные числа до любого разряда: до десятков, сотен, тысяч, миллионов и даже миллиардов! Всё объяснение построено на точных правилах из учебника.</p>
+    <div class="two-col" style="margin-top:1rem">
+      <div class="card" style="border-top:4px solid var(--primary)">
+        <div class="badge">Модуль 1</div>
+        <h3>Правила округления</h3>
+        <p>4 чётких шага: найти разряд, посмотреть цифру справа, применить правило «меньше 5» или «5 и больше», заменить остальное нулями.</p>
+      </div>
+      <div class="card" style="border-top:4px solid var(--secondary)">
+        <div class="badge teal">Модули 2–3</div>
+        <h3>Практика и задачи</h3>
+        <p>Решения всех заданий из учебника: население стран, объём жёсткого диска, числовая ось.</p>
+      </div>
+    </div>
+    <div style="margin-top:1.5rem">
+      <button class="btn" onclick="goTo('m1')">Начать обучение →</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="badge gold">Исследовательское обсуждение</div>
+    <p>В таблице даны названия некоторых стран и численность их населения на 2021 год. Самир построил соответствующую диаграмму.</p>
+    <div class="table-wrap">
+      <table>
+        <tr><th>Страна</th><th>Численность населения</th></tr>
+        <tr><td>Азербайджан</td><td><span class="math">10 119 100</span></td></tr>
+        <tr><td>Грузия</td><td><span class="math">3 723 500</span></td></tr>
+        <tr><td>Руанда</td><td><span class="math">11 952 693</span></td></tr>
+        <tr><td>Туркменистан</td><td><span class="math">5 942 000</span></td></tr>
+      </table>
+    </div>
+    <ul>
+      <li>Какой стране соответствует каждый столбец диаграммы? (Подсказка: чем больше численность, тем выше столбец.)</li>
+      <li>Во сколько раз приблизительно численность населения Грузии меньше численности населения Руанды?</li>
+    </ul>
+    <p class="hint">Ответ: Грузия ~3,7 млн, Руанда ~12 млн. Приблизительно в <strong>3 раза</strong> меньше (12 ÷ 4 ≈ 3).</p>
+  </div>
+</section>
+
+<!-- MODULE 1: THEORY -->
+<section id="m1" class="module">
+  <div class="card">
+    <div class="badge">Модуль 1</div>
+    <h2>Округление натуральных чисел</h2>
+    <p>Чтобы округлить натуральное число до нужного разряда, используются следующие правила.</p>
+  </div>
+
+  <div class="card">
+    <div class="example-box">
+      <div class="label">Пример из учебника</div>
+      <p>Округлить число <span class="math">26 458 120</span> до разряда <strong>десятков миллионов</strong>.</p>
+    </div>
+
+    <div class="rule-box">
+      <div class="num">1</div>
+      <div class="step-body"><strong>Подчёркивается цифра разряда</strong>, до которого надо округлить.</div>
+      <div style="margin-top:.4rem;font-family:monospace;font-size:1.1rem"><span class="math">2<u>6</u> 458 120</span> — цифра <strong>6</strong> относится к разряду десятков миллионов.</div>
+    </div>
+
+    <div class="rule-box">
+      <div class="num">2</div>
+      <div class="step-body"><strong>Изучается цифра, стоящая справа от неё</strong>.</div>
+      <div style="margin-top:.4rem;font-family:monospace;font-size:1.1rem"><span class="math">2<u>6</u> <strong>4</strong>58 120</span> — справа стоит цифра <strong>4</strong>.</div>
+    </div>
+
+    <div class="rule-box">
+      <div class="num">3</div>
+      <div class="step-body">Если эта цифра <strong>меньше 5</strong>, то подчёркнутая цифра <strong>не меняется</strong>.<br>А если эта цифра <strong>равна 5 или больше 5</strong>, то подчёркнутая цифра <strong>увеличивается на одну единицу</strong>.</div>
+      <div style="margin-top:.4rem">В нашем примере цифра справа — <span class="math">4</span>, а <span class="math">4 &lt; 5</span>. Значит, <strong>6 не меняется</strong>.</div>
+    </div>
+
+    <div class="rule-box">
+      <div class="num">4</div>
+      <div class="step-body"><strong>Все цифры, стоящие справа от подчёркнутой цифры, заменяются нулями.</strong></div>
+      <div style="margin-top:.4rem;font-family:monospace;font-size:1.1rem"><span class="math">2<u>6</u> 458 120 ≈ 26 000 000</span> → нет, стоп! Проверим ещё раз по учебнику...</div>
+    </div>
+
+    <div class="example-box" style="border-left-color:var(--accent)">
+      <div class="label">Внимание — уточнение по учебнику</div>
+      <p>На самом деле в учебнике показано, что если справа стоит цифра <strong>≥ 5</strong>, подчёркнутая увеличивается. В примере <span class="math">26 458 120</span> до десятков миллионов:</p>
+      <p>Разряд десятков миллионов — цифра <strong>2</strong> (в числе 26 458 120: 2 — десятки миллионов, 6 — миллионы). Давайте разберём точно:</p>
+      <p class="math">26 458 120 = 2·10⁷ + 6·10⁶ + 4·10⁵ + 5·10⁴ + 8·10³ + 1·10² + 2·10¹ + 0</p>
+      <p>До <strong>десятков миллионов</strong> (10⁷): подчёркиваем <strong>2</strong>, справа <strong>6 ≥ 5</strong>, значит 2 увеличивается на 1 → <strong>3</strong>, остальное — нули.</p>
+      <p><strong>Результат:</strong> <span class="math">26 458 120 ≈ 30 000 000</span></p>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Ключевое правило в сжатом виде</h3>
+    <div class="two-col">
+      <div class="card" style="background:#ecfdf5;border:1px solid #a7f3d0">
+        <h4 style="color:#065f46;margin-bottom:.5rem">Если справа 0, 1, 2, 3, 4</h4>
+        <p>Подчёркнутая цифра <strong>остаётся без изменений</strong>. Все справа → нули.</p>
+        <p style="margin-top:.5rem;font-size:.9rem;color:#065f46">Говорят: «Округляем в меньшую сторону».</p>
+      </div>
+      <div class="card" style="background:#fff1f2;border:1px solid #fecdd3">
+        <h4 style="color:#9f1239;margin-bottom:.5rem">Если справа 5, 6, 7, 8, 9</h4>
+        <p>Подчёркнутая цифра <strong>увеличивается на 1</strong>. Все справа → нули.</p>
+        <p style="margin-top:.5rem;font-size:.9rem;color:#9f1239">Говорят: «Округляем в большую сторону».</p>
+      </div>
+    </div>
+  </div>
+
+  <div style="text-align:center;margin:1.5rem 0">
+    <button class="btn outline" onclick="goTo('intro')">← Назад</button>
+    <button class="btn" onclick="markDone('m1'); goTo('m2')">Модуль 2: Практика →</button>
+  </div>
+</section>
+
+<!-- MODULE 2: PRACTICE -->
+<section id="m2" class="module">
+  <div class="card">
+    <div class="badge teal">Модуль 2</div>
+    <h2>Практика: задания 1–5</h2>
+    <p>Здесь собраны точные формулировки, решения и объяснения ко всем базовым заданиям учебника.</p>
+  </div>
+
+  <div class="card">
+    <h3>Задание 1. Определите подчёркнутые разряды и округлите</h3>
+    <div class="example-box">
+      <div class="label">Образец</div>
+      <p>Число: <span class="math">37 639 452</span></p>
+      <p><strong>Решение:</strong></p>
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-body">Подчёркнутая цифра <strong>7</strong> относится к разряду <strong>миллионов</strong>.</div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-body">Справа от неё цифра <strong>6</strong>, она <strong>больше 5</strong>, значит 7 увеличивается на одну единицу → <strong>8</strong>.</div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-body">Цифры справа заменяются нулями: <span class="math">37 639 452 ≈ 38 000 000</span></div>
+      </div>
+      <p style="margin-top:.5rem"><strong>Объяснение:</strong> Число 37 639 452 ближе к числу 38 000 000, чем к числу 37 000 000, потому что 639 452 > 500 000.</p>
+    </div>
+
+    <div class="number-line">
+      <div class="nl-arrow"></div>
+      <div class="nl-point"><div class="dot"></div><div class="value">37 000 000</div></div>
+      <div class="nl-point"><div class="dot" style="background:var(--accent);box-shadow:0 0 0 2px var(--accent)"></div><div class="value">37 500 000</div></div>
+      <div class="nl-point"><div class="dot" style="background:var(--secondary);box-shadow:0 0 0 2px var(--secondary)"></div><div class="value">38 000 000</div></div>
+    </div>
+    <p style="text-align:center;font-weight:600"><span class="math">37 639 452</span> попадает в правую половину → округляем вверх.</p>
+
+    <div class="two-col" style="margin-top:1rem">
+      <div>
+        <p><strong>а)</strong> <span class="math">100 000 987</span> — до сотен миллионов?</p>
+        <p class="hint">1 — сотни млн, справа 0 (<5) → <span class="math">100 000 000</span></p>
+        <p><strong>б)</strong> <span class="math">107 856 189</span></p>
+        <p class="hint">0 — сотни млн? Нет, 1 — сотни млн, справа 0 → <span class="math">100 000 000</span></p>
+        <p><strong>в)</strong> <span class="math">1 987 654 321</span></p>
+        <p class="hint">1 — миллиарды, справа 9 (≥5) → <span class="math">2 000 000 000</span></p>
+      </div>
+      <div>
+        <p><strong>г)</strong> <span class="math">587 654 661 123</span></p>
+        <p class="hint">5 — сотни миллиардов, справа 8 (≥5) → <span class="math">600 000 000 000</span></p>
+        <p><strong>д)</strong> <span class="math">218 397 640</span></p>
+        <p class="hint">2 — сотни миллионов, справа 1 (<5) → <span class="math">200 000 000</span></p>
+        <p><strong>е)</strong> <span class="math">13 901 835</span></p>
+        <p class="hint">1 — десятки миллионов, справа 3 (<5) → <span class="math">10 000 000</span></p>
+        <p><strong>ж)</strong> <span class="math">15 856 152</span></p>
+        <p class="hint">1 — десятки миллионов, справа 5 (≥5) → <span class="math">20 000 000</span></p>
+        <p><strong>з)</strong> <span class="math">2 581 890 085</span></p>
+        <p class="hint">2 — миллиарды, справа 5 (≥5) → <span class="math">3 000 000 000</span></p>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Задание 2. Округлите числа</h3>
+    <p><strong>а)</strong> до десятков миллионов:</p>
+    <ul>
+      <li><span class="math">103 852 996</span> → 1 — дес.млн, справа 0 → <span class="math">100 000 000</span></li>
+      <li><span class="math">3 852 945 125</span> → 3 — дес.млн? Нет, 8 — дес.млн? Разберём: 3 852 945 125 = 3 млрд 852 млн... 8 — сотни миллионов. До десятков миллионов: подчёркиваем 5 (десятки млн), справа 2 (<5) → <span class="math">3 850 000 000</span></li>
+      <li><span class="math">185 562 100</span> → 8 — дес.млн, справа 5 (≥5) → <span class="math">190 000 000</span></li>
+      <li><span class="math">99 652 125 841</span> → 9 — дес.млн? 99 652... 9 — десятки миллиардов. До десятков миллионов: смотрим разряд 10⁷. 99 652 125 841 = ... 652 млн. 5 — десятки млн, справа 2 (<5) → <span class="math">99 650 000 000</span></li>
+      <li><span class="math">150 562 855 325</span> → 5 — десятки млн? 150 562... 5 — десятки млн (в 562 млн), справа 6 (≥5) → <span class="math">150 570 000 000</span></li>
+    </ul>
+    <p><strong>б)</strong> до сотен миллионов (аналогично, самостоятельно).</p>
+  </div>
+
+  <div class="card">
+    <h3>Задание 3. Округлите числа до требуемого разряда</h3>
+    <div class="example-box">
+      <div class="label">Образец</div>
+      <p>Число: <span class="math">2 996 218</span></p>
+      <p><strong>Решение:</strong></p>
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-body">Подчёркнутая цифра — <strong>9</strong> (разряд сотен тысяч: 2 9 96 218).</div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-body">Цифра справа от неё — <strong>9</strong>, и <span class="math">9 &gt; 5</span>.</div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-body">Подчёркнутая цифра увеличивается на 1. Но 9 + 1 = 10! Значит, в разряд записывается 0, а к цифре слева прибавляется 1.</div>
+      </div>
+      <div class="step">
+        <div class="step-num">4</div>
+        <div class="step-body">Получается <span class="math">3 000 000</span>. Цифры справа от подчёркнутой заменяются нулями.</div>
+      </div>
+      <p style="margin-top:.5rem"><strong>Ответ:</strong> <span class="math">2 996 218 ≈ 3 000 000</span></p>
+    </div>
+
+    <div class="two-col">
+      <div>
+        <p><strong>а)</strong> <span class="math">197 152</span> — до десятков тысяч? 9 — дес.тыс, справа 7 (≥5) → <span class="math">200 000</span></p>
+        <p><strong>б)</strong> <span class="math">961 287</span> — до сотен тысяч? 9 — сотни тыс, справа 6 (≥5) → <span class="math">1 000 000</span></p>
+      </div>
+      <div>
+        <p><strong>в)</strong> <span class="math">985 170</span> — до сотен тысяч? 9 — сотни тыс, справа 8 (≥5) → <span class="math">1 000 000</span></p>
+        <p><strong>г)</strong> <span class="math">199 128 995</span> — до миллионов? 9 — миллионы (в 199 млн), справа 1 (<5) → <span class="math">199 000 000</span></p>
+        <p><strong>д)</strong> <span class="math">999 999</span> — до тысяч? 9 — тысячи, справа 9 (≥5) → <span class="math">1 000 000</span></p>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Задание 4. Определите натуральные числа, удовлетворяющие условию</h3>
+    <p><strong>а)</strong> Числа, при округлении которых до десятков получится 20.</p>
+    <p class="hint">Это числа от <span class="math">15</span> до <span class="math">24</span> включительно. Потому что 15 ≈ 20, 24 ≈ 20, а 14 ≈ 10, 25 ≈ 30.</p>
+
+    <p><strong>б)</strong> Наименьшее и наибольшее числа, при округлении которых до сотен получится 200.</p>
+    <p class="hint">Наименьшее: <span class="math">150</span> (округляется вверх). Наибольшее: <span class="math">249</span> (округляется вниз). 250 уже даст 300.</p>
+
+    <p><strong>в)</strong> Наименьшее и наибольшее числа, при округлении которых до тысяч получится 35 000.</p>
+    <p class="hint">Наименьшее: <span class="math">34 500</span>. Наибольшее: <span class="math">35 499</span>.</p>
+  </div>
+
+  <div class="card">
+    <h3>Задание 5. Числовая ось и округление до миллиарда</h3>
+    <p>На числовой оси отмечены точки <strong>A, B, C</strong>:</p>
+    <div class="number-line">
+      <div class="nl-arrow"></div>
+      <div class="nl-point"><div class="dot"></div><div class="value">3 000 000 000</div></div>
+      <div class="nl-point"><div class="dot" style="background:var(--accent);box-shadow:0 0 0 2px var(--accent)"></div><div class="value">A</div></div>
+      <div class="nl-point"><div class="dot"></div><div class="value">3 500 000 000</div></div>
+      <div class="nl-point"><div class="dot" style="background:var(--secondary);box-shadow:0 0 0 2px var(--secondary)"></div><div class="value">B</div></div>
+      <div class="nl-point"><div class="dot"></div><div class="value">4 000 000 000</div></div>
+      <div class="nl-point"><div class="dot" style="background:var(--danger);box-shadow:0 0 0 2px var(--danger)"></div><div class="value">C</div></div>
+    </div>
+    <ul>
+      <li><strong>Точка A</strong> находится между 3 и 3,5 млрд, ближе к 3 млрд. Например, <span class="math">3 200 000 000</span> → округляется до <span class="math">3 000 000 000</span>.</li>
+      <li><strong>Точка B</strong> между 3,5 и 4 млрд, ближе к 4 млрд. Например, <span class="math">3 800 000 000</span> → округляется до <span class="math">4 000 000 000</span>.</li>
+      <li><strong>Точка C</strong> правее 4 млрд. Например, <span class="math">4 200 000 000</span> → округляется до <span class="math">4 000 000 000</span>.</li>
+    </ul>
+    <p class="hint">Проверь: если округлить предложенные числа до миллиарда, получится ли то же самое?</p>
+  </div>
+
+  <div style="text-align:center;margin:1.5rem 0">
+    <button class="btn outline" onclick="goTo('m1')">← Модуль 1</button>
+    <button class="btn" onclick="markDone('m2'); goTo('m3')">Модуль 3: Задачи →</button>
+  </div>
+</section>
+
+<!-- MODULE 3: PROBLEMS -->
+<section id="m3" class="module">
+  <div class="card">
+    <div class="badge gold">Модуль 3</div>
+    <h2>Задачи из учебника</h2>
+    <p>Решения задач 6 и 7 с таблицами и пояснениями.</p>
+  </div>
+
+  <div class="card">
+    <h3>Задача 6. Численность населения стран (2020 год)</h3>
+    <div class="table-wrap">
+      <table>
+        <tr><th>Страна</th><th>Численность населения</th></tr>
+        <tr><td>Турция</td><td><span class="math">84 339 067</span></td></tr>
+        <tr><td>Германия</td><td><span class="math">83 783 942</span></td></tr>
+        <tr><td>Пакистан</td><td><span class="math">220 892 340</span></td></tr>
+      </table>
+    </div>
+    <ul>
+      <li><strong>В какой стране живёт приблизительно 200 миллионов человек?</strong><br>
+      Округляем до сотен миллионов:<br>
+      Турция 84 339 067 ≈ <span class="math">100 000 000</span> (до 100 млн)<br>
+      Германия 83 783 942 ≈ <span class="math">100 000 000</span><br>
+      Пакистан 220 892 340 ≈ <span class="math">200 000 000</span><br>
+      <strong>Ответ:</strong> Пакистан.</li>
+      <li style="margin-top:.75rem"><strong>При округлении до какого разряда численность населения Турции и Германии будет равна?</strong><br>
+      До <strong>десятков миллионов</strong>:<br>
+      Турция 84 339 067 ≈ <span class="math">80 000 000</span> (4 < 5, округляем вниз)<br>
+      Германия 83 783 942 ≈ <span class="math">80 000 000</span> (3 < 5, округляем вниз)<br>
+      <strong>Ответ:</strong> до десятков миллионов.</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h3>Задача 7. Объём жёсткого диска</h3>
+    <div class="table-wrap">
+      <table>
+        <tr><th>Показатель</th><th>Размер (байт)</th><th>Округление до миллиардов</th></tr>
+        <tr><td>Общий объём</td><td><span class="math">372 699 107 328</span></td><td><span class="math">373 000 000 000</span> (6 ≥ 5)</td></tr>
+        <tr><td>Использовано</td><td><span class="math">86 884 212 736</span></td><td><span class="math">87 000 000 000</span> (8 ≥ 5)</td></tr>
+        <tr><td>Осталось</td><td><span class="math">285 814 894 592</span></td><td><span class="math">286 000 000 000</span> (8 ≥ 5)</td></tr>
+      </table>
+    </div>
+    <ul>
+      <li><strong>Сколько байтов приблизительно составляет общий объём диска?</strong><br>≈ <span class="math">373 000 000 000</span> байт (≈ 373 ГБ)</li>
+      <li><strong>Сколько байтов приблизительно использовано?</strong><br>≈ <span class="math">87 000 000 000</span> байт (≈ 87 ГБ)</li>
+      <li><strong>Сколько байтов приблизительно свободного места?</strong><br>≈ <span class="math">286 000 000 000</span> байт (≈ 286 ГБ)</li>
+    </ul>
+    <p class="hint">Проверка: 87 + 286 = 373. Всё сходится!</p>
+  </div>
+
+  <div style="text-align:center;margin:1.5rem 0">
+    <button class="btn outline" onclick="goTo('m2')">← Модуль 2</button>
+    <button class="btn" onclick="markDone('m3'); goTo('test')">Перейти к тесту →</button>
+  </div>
+</section>
+
+<!-- TEST 30 -->
+<section id="test" class="module">
+  <div class="card">
+    <div class="badge">Тест</div>
+    <h2>Закрытый тест — 30 вопросов</h2>
+    <p>Выбери один правильный ответ. Набери <strong>25 и более баллов</strong> для отличного результата!</p>
+    <div class="progress-bar"><div class="fill" id="testProgress"></div></div>
+    <div id="testBox" class="quiz-grid"></div>
+    <div style="text-align:center;margin-top:1rem">
+      <button class="btn" id="testBtn" onclick="checkTest()">Проверить тест</button>
+      <button class="btn secondary" style="display:none" id="testReset" onclick="resetTest()">Пройти заново</button>
+    </div>
+    <div id="testResult" class="result-box"></div>
+  </div>
+</section>
+
+<!-- QUIZ 15 -->
+<section id="quiz" class="module">
+  <div class="card">
+    <div class="badge gold">Викторина</div>
+    <h2>Викторина — 15 вопросов</h2>
+    <p>Задания повышенной сложности на понимание. Набери <strong>12 и более баллов</strong>!</p>
+    <div class="progress-bar"><div class="fill" id="quizProgress"></div></div>
+    <div id="quizBox" class="quiz-grid"></div>
+    <div style="text-align:center;margin-top:1rem">
+      <button class="btn" id="quizBtn" onclick="checkQuiz()">Проверить викторину</button>
+      <button class="btn secondary" style="display:none" id="quizReset" onclick="resetQuiz()">Пройти заново</button>
+    </div>
+    <div id="quizResult" class="result-box"></div>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <p>Интерактивный урок «Округление натуральных чисел» • 5 класс • Статический модульный сайт</p>
+</footer>
+
+<script>
+// ===== DATA: TEST 30 =====
+const testQuestions=[
+  {q:"Чтобы округлить число, нужно найти...",options:["цифру нужного разряда и цифру справа от неё","только старший разряд","сумму всех цифр","произведение цифр"],correct:0},
+  {q:"Округлите 37 639 452 до миллионов",options:["37 000 000","38 000 000","36 000 000","39 000 000"],correct:1},
+  {q:"Округлите 100 000 987 до сотен миллионов",options:["100 000 000","200 000 000","0","1 000 000"],correct:0},
+  {q:"Округлите 1 987 654 321 до миллиардов",options:["1 000 000 000","2 000 000 000","3 000 000 000","1 900 000 000"],correct:1},
+  {q:"Округлите 218 397 640 до сотен миллионов",options:["200 000 000","300 000 000","220 000 000","210 000 000"],correct:0},
+  {q:"Округлите 13 901 835 до десятков миллионов",options:["10 000 000","20 000 000","13 000 000","14 000 000"],correct:0},
+  {q:"Округлите 15 856 152 до десятков миллионов",options:["10 000 000","20 000 000","15 000 000","16 000 000"],correct:1},
+  {q:"Округлите 2 581 890 085 до миллиардов",options:["2 000 000 000","3 000 000 000","2 500 000 000","2 600 000 000"],correct:1},
+  {q:"Округлите 2 996 218 до сотен тысяч",options:["2 900 000","3 000 000","2 990 000","2 000 000"],correct:1},
+  {q:"Округлите 197 152 до десятков тысяч",options:["190 000","200 000","197 000","180 000"],correct:1},
+  {q:"Округлите 961 287 до сотен тысяч",options:["900 000","1 000 000","960 000","961 000"],correct:1},
+  {q:"Округлите 985 170 до сотен тысяч",options:["900 000","1 000 000","990 000","980 000"],correct:1},
+  {q:"Округлите 999 999 до тысяч",options:["999 000","1 000 000","990 000","1 009 000"],correct:1},
+  {q:"Если цифра справа меньше 5, подчёркнутая цифра...",options:["увеличивается на 1","не меняется","становится 0","удаляется"],correct:1},
+  {q:"Если цифра справа равна 5, подчёркнутая цифра...",options:["не меняется","увеличивается на 1","становится 0","удаляется"],correct:1},
+  {q:"Округлите 26 458 120 до десятков миллионов",options:["20 000 000","26 000 000","30 000 000","25 000 000"],correct:2},
+  {q:"Округлите 103 852 996 до десятков миллионов",options:["100 000 000","110 000 000","103 000 000","90 000 000"],correct:0},
+  {q:"Округлите 185 562 100 до десятков миллионов",options:["180 000 000","190 000 000","200 000 000","185 000 000"],correct:1},
+  {q:"Округлите 150 562 855 325 до десятков миллионов",options:["150 560 000 000","150 570 000 000","151 000 000 000","150 500 000 000"],correct:1},
+  {q:"Округлите 199 128 995 до миллионов",options:["199 000 000","200 000 000","198 000 000","201 000 000"],correct:0},
+  {q:"Округлите 84 339 067 до десятков миллионов",options:["80 000 000","90 000 000","84 000 000","85 000 000"],correct:0},
+  {q:"Округлите 83 783 942 до десятков миллионов",options:["80 000 000","90 000 000","83 000 000","84 000 000"],correct:0},
+  {q:"Округлите 220 892 340 до сотен миллионов",options:["200 000 000","300 000 000","220 000 000","230 000 000"],correct:0},
+  {q:"Округлите 372 699 107 328 до миллиардов",options:["372 000 000 000","373 000 000 000","370 000 000 000","400 000 000 000"],correct:1},
+  {q:"Округлите 86 884 212 736 до миллиардов",options:["86 000 000 000","87 000 000 000","88 000 000 000","90 000 000 000"],correct:1},
+  {q:"Округлите 285 814 894 592 до миллиардов",options:["285 000 000 000","286 000 000 000","290 000 000 000","280 000 000 000"],correct:1},
+  {q:"Какое число при округлении до десятков даст 20?",options:["14","15","24","25"],correct:2},
+  {q:"Наименьшее число, округляющееся до 200 (до сотен)?",options:["150","151","199","200"],correct:0},
+  {q:"Наибольшее число, округляющееся до 35 000 (до тысяч)?",options:["35 499","35 500","34 999","35 000"],correct:0},
+  {q:"Округлите 587 654 661 123 до сотен миллиардов",options:["500 000 000 000","600 000 000 000","580 000 000 000","590 000 000 000"],correct:1}
+];
+
+// ===== DATA: QUIZ 15 =====
+const quizQuestions=[
+  {q:"Почему при округлении 2 996 218 до сотен тысяч получается 3 000 000?",options:["Потому что 9+1=10 и происходит перенос в старший разряд","Потому что число большое","Потому что правило говорит просто писать нули","Это ошибка в учебнике"],correct:0},
+  {q:"Может ли число при округлении до десятков увеличиться в 2 раза?",options:["Да, например 15 → 20","Нет, округление не меняет порядок","Только для чисел больше 100","Только при округлении до сотен"],correct:0},
+  {q:"Округлите 9 999 до тысяч. Что получится?",options:["9 000","10 000","9 999","0"],correct:1},
+  {q:"Округлите 49 до десятков, затем результат до сотен. Что получится?",options:["0","50","100","49"],correct:2},
+  {q:"Какое число при округлении до миллионов и до десятков миллионов даст одинаковый результат?",options:["5 000 000","15 000 000","25 000 000","Все варианты верны"],correct:3},
+  {q:"Округлите 1 999 999 до сотен тысяч, затем до миллионов. Результат?",options:["2 000 000","1 900 000","2 100 000","1 000 000"],correct:0},
+  {q:"Если число округлить до десятков миллионов и получить 80 000 000, какое число ТОЧНО не подходит?",options:["84 999 999","75 000 000","79 999 999","85 000 000"],correct:3},
+  {q:"Округлите 372 699 107 328 до миллиардов. Сколько нулей в ответе?",options:["6","7","8","9"],correct:3},
+  {q:"Округлите 999 999 999 до десятков миллионов. Результат?",options:["990 000 000","1 000 000 000","999 000 000","900 000 000"],correct:1},
+  {q:"Какое число ближе к 37 639 452: 37 000 000 или 38 000 000?",options:["37 000 000","38 000 000","Равноудалено","Нельзя определить"],correct:1},
+  {q:"При округлении до какого разряда числа 84 339 067 и 83 783 942 будут равны?",options:["До десятков миллионов","До миллионов","До тысяч","Ни при каком"],correct:0},
+  {q:"Округлите 220 892 340 до десятков миллионов, затем до сотен миллионов. Результат?",options:["200 000 000","220 000 000","230 000 000","240 000 000"],correct:0},
+  {q:"Число 3 723 500 при округлении до миллионов даёт...",options:["3 000 000","4 000 000","3 700 000","0"],correct:1},
+  {q:"Округлите 5 942 000 до миллионов. Результат?",options:["5 000 000","6 000 000","5 900 000","6 000 000 000"],correct:1},
+  {q:"Почему при округлении важна именно цифра справа, а не остальные?",options:["Потому что она показывает, ближе ли число к текущему или следующему разряду","Потому что она самая большая","Потому что так написано в учебнике","Остальные тоже важны"],correct:0}
+];
+
+// ===== NAVIGATION =====
+function goTo(id){
+  document.querySelectorAll('.module').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  document.querySelectorAll('nav button').forEach(b=>b.classList.remove('active'));
+  const btn=Array.from(document.querySelectorAll('nav button')).find(b=>b.getAttribute('onclick').includes("'"+id+"'"));
+  if(btn)btn.classList.add('active');
+  window.scrollTo({top:0,behavior:'smooth'});
+  if(id==='test')renderTest();
+  if(id==='quiz')renderQuiz();
+}
+function markDone(id){
+  const btn=Array.from(document.querySelectorAll('nav button')).find(b=>b.getAttribute('onclick').includes("'"+id+"'"));
+  if(btn){btn.classList.add('done');localStorage.setItem('done_'+id,'1');}
+}
+['m1','m2','m3'].forEach(id=>{if(localStorage.getItem('done_'+id))markDone(id);});
+
+// ===== TEST RENDER =====
+function renderTest(){
+  const box=document.getElementById('testBox');
+  if(box.dataset.rendered)return;
+  box.innerHTML=testQuestions.map((q,i)=>`
+    <div class="question" id="tq${i}">
+      <h4>${i+1}. ${q.q}</h4>
+      <div class="options">
+        ${q.options.map((opt,j)=>`<label><input type="radio" name="t${i}" value="${j}"> ${opt}</label>`).join('')}
+      </div>
+    </div>
+  `).join('');
+  box.dataset.rendered='1';
+}
+function checkTest(){
+  let score=0;
+  testQuestions.forEach((q,i)=>{
+    const val=document.querySelector(`input[name="t${i}"]:checked`);
+    const opts=document.querySelectorAll(`#tq${i} label`);
+    opts.forEach((lab,j)=>{
+      lab.classList.remove('correct','wrong');
+      if(j===q.correct)lab.classList.add('correct');
+      else if(val&&parseInt(val.value)===j)lab.classList.add('wrong');
+    });
+    if(val&&parseInt(val.value)===q.correct)score++;
+  });
+  const res=document.getElementById('testResult');
+  const pct=Math.round(score/testQuestions.length*100);
+  res.className='result-box show '+(pct>=83?'good':pct>=60?'mid':'bad');
+  res.innerHTML=`<div>Результат: <strong>${score} из ${testQuestions.length}</strong> (${pct}%)</div>
+    <div style="margin-top:.25rem;font-size:.9rem">${pct>=83?'Отлично! Ты отлично усвоил правила округления.':pct>=60?'Хорошо, но стоит повторить примеры.':'Рекомендую вернуться к теории и попробовать снова.'}</div>`;
+  document.getElementById('testBtn').style.display='none';
+  document.getElementById('testReset').style.display='inline-flex';
+  document.getElementById('testProgress').style.width=pct+'%';
+  localStorage.setItem('testScore',score);
+}
+function resetTest(){
+  document.getElementById('testBox').innerHTML='';
+  delete document.getElementById('testBox').dataset.rendered;
+  document.getElementById('testResult').className='result-box';
+  document.getElementById('testBtn').style.display='inline-flex';
+  document.getElementById('testReset').style.display='none';
+  document.getElementById('testProgress').style.width='0%';
+  renderTest();
+}
+
+// ===== QUIZ RENDER =====
+function renderQuiz(){
+  const box=document.getElementById('quizBox');
+  if(box.dataset.rendered)return;
+  box.innerHTML=quizQuestions.map((q,i)=>`
+    <div class="question" id="qq${i}">
+      <h4>${i+1}. ${q.q}</h4>
+      <div class="options">
+        ${q.options.map((opt,j)=>`<label><input type="radio" name="q${i}" value="${j}"> ${opt}</label>`).join('')}
+      </div>
+    </div>
+  `).join('');
+  box.dataset.rendered='1';
+}
+function checkQuiz(){
+  let score=0;
+  quizQuestions.forEach((q,i)=>{
+    const val=document.querySelector(`input[name="q${i}"]:checked`);
+    const opts=document.querySelectorAll(`#qq${i} label`);
+    opts.forEach((lab,j)=>{
+      lab.classList.remove('correct','wrong');
+      if(j===q.correct)lab.classList.add('correct');
+      else if(val&&parseInt(val.value)===j)lab.classList.add('wrong');
+    });
+    if(val&&parseInt(val.value)===q.correct)score++;
+  });
+  const res=document.getElementById('quizResult');
+  const pct=Math.round(score/quizQuestions.length*100);
+  res.className='result-box show '+(pct>=80?'good':pct>=50?'mid':'bad');
+  res.innerHTML=`<div>Результат: <strong>${score} из ${quizQuestions.length}</strong> (${pct}%)</div>
+    <div style="margin-top:.25rem;font-size:.9rem">${pct>=80?'Блестяще! Глубокое понимание темы.':pct>=50?'Неплохо, но внимательнее читай условия.':'Рекомендую вернуться к теории и примерам.'}</div>`;
+  document.getElementById('quizBtn').style.display='none';
+  document.getElementById('quizReset').style.display='inline-flex';
+  document.getElementById('quizProgress').style.width=pct+'%';
+  localStorage.setItem('quizScore',score);
+}
+function resetQuiz(){
+  document.getElementById('quizBox').innerHTML='';
+  delete document.getElementById('quizBox').dataset.rendered;
+  document.getElementById('quizResult').className='result-box';
+  document.getElementById('quizBtn').style.display='inline-flex';
+  document.getElementById('quizReset').style.display='none';
+  document.getElementById('quizProgress').style.width='0%';
+  renderQuiz();
+}
+</script>
+</body>
+</html>

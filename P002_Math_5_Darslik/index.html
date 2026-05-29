@@ -1,451 +1,730 @@
 <!doctype html>
-<html lang="az">
+<html lang="ru">
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-  <title>P002 · V Sinif Riyaziyyat Dərsliyi — İnteraktiv Platforma</title>
-  <link rel="stylesheet" href="../_Shared_Core/style.css"/>
-  <script src="https://cdn.tailwindcss.com"></script>
+  <title>Математика 5 класс — Учебный портал</title>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet"/>
   <style>
-    body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); }
-    .movzu-card {
-      background: var(--surface); border: 1px solid var(--border); border-radius: 0.75rem;
-      padding: 1rem 1.25rem; text-decoration: none; color: var(--text);
-      display: flex; align-items: center; gap: 1rem; transition: all 0.2s; box-shadow: var(--shadow);
+    :root {
+      --bg: #0a0f1e;
+      --surface: #111827;
+      --surface2: #1a2235;
+      --surface3: #1e293b;
+      --border: #1e2d45;
+      --border2: #2d3f55;
+      --text: #f1f5f9;
+      --muted: #64748b;
+      --muted2: #94a3b8;
+      --xp: #facc15;
+      --streak: #fb923c;
+      --heart: #f43f5e;
+      --success: #22c55e;
+      --c1: #f97316;
+      --c2: #6366f1;
+      --c3: #14b8a6;
     }
-    .movzu-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-lg); border-color: #6366f1; }
-    .movzu-num {
-      width: 2.5rem; height: 2.5rem; border-radius: 0.625rem;
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: "Nunito", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ── ANIMATED BG ── */
+    body::before {
+      content: "";
+      position: fixed; inset: 0; z-index: 0; pointer-events: none;
+      background:
+        radial-gradient(ellipse 80% 60% at 10% 10%, rgba(99,102,241,0.07) 0%, transparent 60%),
+        radial-gradient(ellipse 70% 50% at 90% 90%, rgba(20,184,166,0.07) 0%, transparent 60%),
+        radial-gradient(ellipse 60% 40% at 50% 50%, rgba(249,115,22,0.04) 0%, transparent 50%);
+    }
+
+    /* ── TOP BAR ── */
+    .top-bar {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(10,15,30,0.96);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+      padding: 0 1.25rem;
+    }
+    .top-inner {
+      max-width: 900px; margin: 0 auto;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0.85rem 0; gap: 1rem;
+    }
+    .brand {
+      font-size: 1rem; font-weight: 900;
+      background: linear-gradient(135deg, #818cf8 0%, #2dd4bf 50%, #fb923c 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    }
+    .hub-back {
+      display: flex; align-items: center; gap: 0.4rem;
+      padding: 0.4rem 0.9rem; border-radius: 999px;
+      border: 1px solid var(--border2);
+      background: var(--surface2);
+      color: var(--muted2); font-size: 0.8rem; font-weight: 700;
+      text-decoration: none; transition: all 0.2s;
+    }
+    .hub-back:hover { border-color: #818cf8; color: #818cf8; }
+    .top-stats { display: flex; gap: 0.6rem; align-items: center; }
+    .ts-pill {
+      display: flex; align-items: center; gap: 0.3rem;
+      padding: 0.3rem 0.65rem;
+      background: var(--surface2); border-radius: 999px;
+      border: 1px solid var(--border2);
+      font-weight: 800; font-size: 0.85rem; cursor: default;
+      transition: transform 0.15s;
+    }
+    .ts-pill:hover { transform: scale(1.06); }
+    .ts-pill.xp { color: var(--xp); }
+    .ts-pill.streak { color: var(--streak); }
+
+    /* ── HERO ── */
+    .hero {
+      max-width: 900px; margin: 2rem auto 0; padding: 0 1.25rem;
+      display: grid; grid-template-columns: auto 1fr; gap: 2rem; align-items: center;
+    }
+    @media (max-width: 640px) { .hero { grid-template-columns: 1fr; } }
+
+    /* SVG ring */
+    .ring-wrap { position: relative; width: 160px; height: 160px; flex-shrink: 0; }
+    .ring-wrap svg { width: 160px; height: 160px; transform: rotate(-90deg); }
+    .ring-bg { fill: none; stroke: var(--border2); stroke-width: 10; }
+    .ring-fill {
+      fill: none; stroke-width: 10; stroke-linecap: round;
+      stroke-dasharray: 440; stroke-dashoffset: 440;
+      transition: stroke-dashoffset 1.2s cubic-bezier(0.4,0,0.2,1);
+    }
+    .ring-center {
+      position: absolute; inset: 0;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+    }
+    .ring-pct { font-size: 2rem; font-weight: 900; line-height: 1; }
+    .ring-label { font-size: 0.7rem; color: var(--muted2); font-weight: 700; margin-top: 2px; }
+
+    .hero-text h1 { font-size: 1.6rem; font-weight: 900; line-height: 1.2; margin-bottom: 0.4rem; }
+    .hero-text h1 span {
+      background: linear-gradient(135deg, #818cf8, #2dd4bf);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    }
+    .hero-text p { font-size: 0.9rem; color: var(--muted2); margin-bottom: 1rem; }
+
+    .hero-stats { display: flex; gap: 1.5rem; flex-wrap: wrap; }
+    .h-stat { text-align: center; }
+    .h-stat-val { font-size: 1.4rem; font-weight: 900; }
+    .h-stat-lbl { font-size: 0.7rem; color: var(--muted2); font-weight: 700; margin-top: 1px; }
+
+    /* ── GLOBAL PROGRESS BAR ── */
+    .global-bar-wrap { max-width: 900px; margin: 1.5rem auto 0; padding: 0 1.25rem; }
+    .gb-row { display: flex; justify-content: space-between; font-size: 0.8rem; color: var(--muted2); margin-bottom: 0.4rem; }
+    .gb-track {
+      height: 12px; background: var(--surface2); border-radius: 6px;
+      overflow: hidden; border: 1px solid var(--border2);
+      position: relative;
+    }
+    .gb-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--c1), var(--c2), var(--c3));
+      border-radius: 6px; transition: width 1s ease;
+    }
+    .gb-markers {
+      position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+      pointer-events: none;
+    }
+    .gb-marker {
+      position: absolute; top: 0; bottom: 0;
+      width: 1px; background: rgba(255,255,255,0.15);
+    }
+
+    /* ── CHAPTERS GRID ── */
+    .section-label {
+      max-width: 900px; margin: 2.5rem auto 1rem; padding: 0 1.25rem;
+      font-size: 0.7rem; font-weight: 800; letter-spacing: 0.1em;
+      text-transform: uppercase; color: var(--muted2);
+    }
+    .chapters { max-width: 900px; margin: 0 auto; padding: 0 1.25rem; display: flex; flex-direction: column; gap: 1rem; }
+
+    .chapter-card {
+      background: var(--surface);
+      border: 1px solid var(--border2);
+      border-radius: 20px;
+      padding: 1.5rem;
+      cursor: pointer;
+      transition: all 0.25s cubic-bezier(0.4,0,0.2,1);
+      position: relative; overflow: hidden;
+      text-decoration: none; color: var(--text);
+      display: block;
+    }
+    .chapter-card::before {
+      content: ""; position: absolute; inset: 0;
+      background: linear-gradient(135deg, rgba(255,255,255,0.025), transparent);
+      pointer-events: none;
+    }
+    .chapter-card:hover { transform: translateY(-3px); box-shadow: 0 12px 40px rgba(0,0,0,0.45); }
+    .chapter-card:hover { border-color: var(--accent); }
+
+    .cc-top { display: flex; align-items: center; gap: 1.25rem; margin-bottom: 1.1rem; }
+    .cc-icon {
+      width: 56px; height: 56px; border-radius: 16px; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center; font-size: 1.8rem;
+      background: color-mix(in srgb, var(--accent) 18%, var(--surface));
+      border: 2px solid color-mix(in srgb, var(--accent) 35%, transparent);
+      transition: transform 0.3s;
+    }
+    .chapter-card:hover .cc-icon { transform: scale(1.1) rotate(-4deg); }
+
+    .cc-meta { flex: 1; min-width: 0; }
+    .cc-num { font-size: 0.65rem; font-weight: 800; color: var(--muted2); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 0.2rem; }
+    .cc-title { font-size: 1.1rem; font-weight: 900; }
+    .cc-sub { font-size: 0.8rem; color: var(--muted2); margin-top: 0.15rem; }
+
+    .cc-status {
+      flex-shrink: 0; display: flex; flex-direction: column; align-items: flex-end; gap: 0.3rem;
+    }
+    .status-badge {
+      padding: 0.25rem 0.75rem; border-radius: 999px;
+      font-size: 0.72rem; font-weight: 800; white-space: nowrap;
+    }
+    .status-done { background: rgba(34,197,94,0.15); color: #4ade80; border: 1px solid rgba(34,197,94,0.25); }
+    .status-active { background: rgba(250,204,21,0.12); color: #fbbf24; border: 1px solid rgba(250,204,21,0.25); }
+    .status-locked { background: rgba(100,116,139,0.15); color: var(--muted2); border: 1px solid var(--border2); }
+    .cc-xp { font-size: 0.75rem; color: var(--xp); font-weight: 800; }
+
+    .cc-bar-wrap { margin-bottom: 1rem; }
+    .cc-bar-row { display: flex; justify-content: space-between; font-size: 0.75rem; color: var(--muted2); margin-bottom: 0.35rem; }
+    .cc-bar-track { height: 8px; background: var(--surface2); border-radius: 4px; overflow: hidden; border: 1px solid var(--border); }
+    .cc-bar-fill { height: 100%; border-radius: 4px; transition: width 0.9s cubic-bezier(0.4,0,0.2,1); }
+
+    .cc-stats { display: flex; gap: 1.5rem; flex-wrap: wrap; }
+    .cc-stat { }
+    .cc-stat-val { font-size: 1rem; font-weight: 900; }
+    .cc-stat-lbl { font-size: 0.68rem; color: var(--muted2); font-weight: 700; }
+
+    .cc-btn {
+      margin-top: 1.1rem; width: 100%; padding: 0.7rem;
+      border: none; border-radius: 12px;
+      font-family: "Nunito", sans-serif; font-weight: 800; font-size: 0.95rem;
+      color: #fff; cursor: pointer; transition: all 0.2s;
+      background: var(--accent);
+    }
+    .cc-btn:hover { filter: brightness(1.12); transform: translateY(-1px); }
+
+    /* ── ANALYTICS ── */
+    .analytics { max-width: 900px; margin: 2rem auto; padding: 0 1.25rem; }
+    .analytics-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    @media (max-width: 640px) { .analytics-grid { grid-template-columns: 1fr; } }
+
+    .analytics-card {
+      background: var(--surface); border: 1px solid var(--border2);
+      border-radius: 16px; padding: 1.25rem;
+    }
+    .ac-title { font-size: 0.8rem; font-weight: 800; color: var(--muted2); text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 1rem; }
+
+    /* XP Distribution bars */
+    .xp-bars { display: flex; flex-direction: column; gap: 0.7rem; }
+    .xp-bar-row { display: flex; align-items: center; gap: 0.75rem; }
+    .xp-bar-label { font-size: 0.78rem; font-weight: 700; width: 90px; flex-shrink: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .xp-bar-track { flex: 1; height: 10px; background: var(--surface2); border-radius: 5px; overflow: hidden; border: 1px solid var(--border); }
+    .xp-bar-fill { height: 100%; border-radius: 5px; transition: width 0.9s ease; }
+    .xp-bar-val { font-size: 0.75rem; font-weight: 800; color: var(--xp); width: 50px; text-align: right; flex-shrink: 0; }
+
+    /* Stars heatmap */
+    .stars-map { display: flex; flex-direction: column; gap: 0.5rem; }
+    .stars-row-header { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.2rem; }
+    .stars-row-label { font-size: 0.72rem; color: var(--muted2); font-weight: 700; width: 80px; flex-shrink: 0; }
+    .stars-dots { display: flex; gap: 3px; flex-wrap: wrap; }
+    .star-dot {
+      width: 12px; height: 12px; border-radius: 3px;
+      border: 1px solid var(--border2);
+      transition: all 0.3s;
+    }
+    .star-dot[data-v="0"] { background: var(--surface2); }
+    .star-dot[data-v="1"] { background: #f97316; border-color: rgba(249,115,22,0.4); }
+    .star-dot[data-v="2"] { background: #6366f1; border-color: rgba(99,102,241,0.4); }
+    .star-dot[data-v="3"] { background: #facc15; border-color: rgba(250,204,21,0.4); box-shadow: 0 0 4px rgba(250,204,21,0.3); }
+
+    /* Completion ring mini */
+    .mini-rings { display: flex; justify-content: space-around; align-items: flex-end; padding-top: 0.5rem; }
+    .mini-ring-wrap { display: flex; flex-direction: column; align-items: center; gap: 0.4rem; }
+    .mini-ring-svg { width: 64px; height: 64px; transform: rotate(-90deg); }
+    .mini-ring-bg { fill: none; stroke: var(--border2); stroke-width: 6; }
+    .mini-ring-fill { fill: none; stroke-width: 6; stroke-linecap: round; stroke-dasharray: 176; stroke-dashoffset: 176; transition: stroke-dashoffset 1s ease; }
+    .mini-ring-lbl { font-size: 0.72rem; font-weight: 800; color: var(--muted2); text-align: center; }
+
+    /* Achievement mini list */
+    .ach-list { display: flex; flex-direction: column; gap: 0.5rem; }
+    .ach-item {
+      display: flex; align-items: center; gap: 0.6rem;
+      padding: 0.5rem 0.75rem; border-radius: 10px;
+      background: var(--surface2); border: 1px solid var(--border);
+      transition: all 0.2s;
+    }
+    .ach-item.earned { border-color: rgba(250,204,21,0.3); background: rgba(250,204,21,0.06); }
+    .ach-item-icon { font-size: 1.2rem; width: 24px; text-align: center; flex-shrink: 0; }
+    .ach-item-name { font-size: 0.8rem; font-weight: 700; flex: 1; }
+    .ach-item-name.earned-text { color: var(--xp); }
+    .ach-check { font-size: 0.75rem; color: var(--success); }
+
+    /* ── LEVEL PROGRESS ── */
+    .level-section { max-width: 900px; margin: 0 auto 2rem; padding: 0 1.25rem; }
+    .level-card {
+      background: var(--surface); border: 1px solid var(--border2);
+      border-radius: 16px; padding: 1.25rem;
+      display: flex; align-items: center; gap: 1.25rem; flex-wrap: wrap;
+    }
+    .level-orb {
+      width: 52px; height: 52px; border-radius: 50%; flex-shrink: 0;
+      background: linear-gradient(135deg, #6366f1, #8b5cf6);
       display: flex; align-items: center; justify-content: center;
-      font-weight: 900; font-size: 0.85rem; flex-shrink: 0;
+      font-size: 1.2rem; font-weight: 900; color: #fff;
+      box-shadow: 0 0 16px rgba(99,102,241,0.4);
     }
-    .chapter-heading {
-      grid-column: 1 / -1; padding: 0.5rem 0 0.25rem;
-      font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em;
-      color: var(--muted); border-bottom: 1px solid var(--border);
+    .level-info { flex: 1; min-width: 150px; }
+    .level-name { font-size: 0.85rem; font-weight: 800; }
+    .level-next { font-size: 0.72rem; color: var(--muted2); margin-top: 0.15rem; margin-bottom: 0.5rem; }
+    .level-bar { height: 8px; background: var(--surface2); border-radius: 4px; overflow: hidden; border: 1px solid var(--border); }
+    .level-bar-fill { height: 100%; background: linear-gradient(90deg, #6366f1, #a78bfa); border-radius: 4px; transition: width 1s ease; }
+    .level-xp-count { font-size: 0.78rem; color: var(--muted2); white-space: nowrap; font-weight: 700; }
+
+    /* ── SCROLLBAR ── */
+    ::-webkit-scrollbar { width: 5px; }
+    ::-webkit-scrollbar-track { background: var(--surface); }
+    ::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 3px; }
+
+    /* ── FOOTER ── */
+    .footer {
+      max-width: 900px; margin: 0 auto; padding: 1.5rem 1.25rem 3rem;
+      text-align: center; font-size: 0.75rem; color: var(--muted);
     }
-    .tag { display: inline-flex; align-items: center; padding: 0.15rem 0.5rem; border-radius: 9999px;
-           font-size: 0.65rem; font-weight: 600; }
-    .tag-theory  { background: #ede9fe; color: #6d28d9; }
-    .tag-practice{ background: #d1fae5; color: #065f46; }
-    .tag-eval    { background: #fef9c3; color: #92400e; }
-    .tag-game    { background: #fee2e2; color: #991b1b; }
-    .pillar-pills { display:flex; gap:4px; flex-wrap:wrap; margin-top:4px; }
+
+    @media (max-width: 480px) {
+      .hero-text h1 { font-size: 1.3rem; }
+      .cc-title { font-size: 1rem; }
+      .cc-stats { gap: 1rem; }
+    }
   </style>
 </head>
-<body class="min-h-screen">
+<body>
 
-<header class="border-b sticky top-0 z-50" style="background:var(--surface);border-color:var(--border);">
-  <div class="max-w-5xl mx-auto px-4 h-14 flex items-center justify-between">
-    <div class="flex items-center gap-3">
-      <a href="../index.html" class="text-sm font-semibold" style="color:var(--muted)">&larr; Hub</a>
-      <span style="color:var(--border)">|</span>
-      <span class="font-black" style="background:linear-gradient(135deg,#6366f1,#8b5cf6);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">P002 &middot; İnteraktiv Dərslik</span>
+<!-- TOP BAR -->
+<div class="top-bar">
+  <div class="top-inner">
+    <div style="display:flex;align-items:center;gap:0.75rem">
+      <a href="../index.html" class="hub-back">← Hub</a>
+      <div class="brand">📐 Математика 5 класс</div>
     </div>
-    <button onclick="document.documentElement.classList.toggle('dark')"
-            class="w-8 h-8 rounded-lg border flex items-center justify-center text-sm"
-            style="border-color:var(--border);background:var(--surface-2)">&#127769;</button>
-  </div>
-</header>
-
-<div class="max-w-5xl mx-auto px-4 py-8">
-
-  <!-- Hero Banner -->
-  <div class="rounded-2xl p-6 mb-8 text-white" style="background:linear-gradient(135deg,#4f46e5,#7c3aed)">
-    <div class="flex items-center gap-4">
-      <div class="w-16 h-16 rounded-2xl bg-white/20 flex items-center justify-center text-3xl">📖</div>
-      <div>
-        <p class="text-xs font-semibold uppercase tracking-widest opacity-80 mb-1">V Sinif &middot; Riyaziyyat Dərsliyi</p>
-        <h1 class="text-2xl font-black">İnteraktiv Tədris Platforması</h1>
-        <p class="text-sm opacity-85 mt-1">Nəzəriyyə · Tapşırıqlar · Testlər · Viktorina</p>
-      </div>
-    </div>
-    <div class="flex gap-3 mt-4 flex-wrap">
-      <span class="px-3 py-1 rounded-full text-xs font-bold bg-white/20">📘 Nəzəriyyə</span>
-      <span class="px-3 py-1 rounded-full text-xs font-bold bg-white/20">✍️ Tapşırıqlar</span>
-      <span class="px-3 py-1 rounded-full text-xs font-bold bg-white/20">📝 Testlər</span>
-      <span class="px-3 py-1 rounded-full text-xs font-bold bg-white/20">🏆 Viktorina</span>
-      <span class="px-3 py-1 rounded-full text-xs font-bold bg-white/20">AZ · RU · EN</span>
-    </div>
-    <div class="mt-4 flex gap-4 text-white/90">
-      <div class="text-center"><div class="text-xl font-black">31</div><div class="text-xs opacity-70">Mövzu</div></div>
-      <div class="text-center"><div class="text-xl font-black">930+</div><div class="text-xs opacity-70">Sual</div></div>
-      <div class="text-center"><div class="text-xl font-black">AZ·RU·EN</div><div class="text-xs opacity-70">Dil</div></div>
+    <div class="top-stats">
+      <div class="ts-pill xp"><span>⚡</span><span id="totalXP">0</span>&thinsp;XP</div>
+      <div class="ts-pill streak"><span>🔥</span><span id="maxStreak">0</span>&thinsp;дн</div>
     </div>
   </div>
-
-  <!-- Mövzular Grid -->
-  <div class="grid gap-3" style="grid-template-columns:repeat(auto-fill,minmax(300px,1fr))">
-
-    <div class="chapter-heading">Fəsil 1 &middot; Natural Ədədlər</div>
-
-    <a href="Movzu-01.html" class="movzu-card">
-      <div class="movzu-num" style="background:#ede9fe;color:#6d28d9">01</div>
-      <div class="flex-1 min-w-0">
-        <div class="font-bold text-sm">Natural Ədədlər — Yazılışı və Mərtəbəsi</div>
-        <div class="text-xs mt-0.5" style="color:var(--muted)">Bölmə 1.1 &middot; Place Value &amp; Notation</div>
-        <div class="pillar-pills">
-          <span class="tag tag-theory">📘 Nəzəriyyə</span><span class="tag tag-practice">✍️ Tapşırıq</span><span class="tag" style="background:#e0f2fe;color:#0369a1">🧪 Trenajer</span><span class="tag tag-eval">📝 30 Sual</span><span class="tag tag-game">🏆 Viktorina</span>
-        </div>
-      </div>
-    </a>
-
-    <a href="Movzu-02.html" class="movzu-card">
-      <div class="movzu-num" style="background:#e0f2fe;color:#0369a1">02</div>
-      <div class="flex-1 min-w-0">
-        <div class="font-bold text-sm">Müqayisə və Sıralama</div>
-        <div class="text-xs mt-0.5" style="color:var(--muted)">Bölmə 1.2 &middot; Comparison &amp; Ordering</div>
-        <div class="pillar-pills">
-          <span class="tag tag-theory">📘 Nəzəriyyə</span><span class="tag tag-practice">✍️ Tapşırıq</span><span class="tag" style="background:#e0f2fe;color:#0369a1">🧪 Trenajer</span><span class="tag tag-eval">📝 30 Sual</span><span class="tag tag-game">🏆 Viktorina</span>
-        </div>
-      </div>
-    </a>
-
-    <a href="Movzu-03.html" class="movzu-card">
-      <div class="movzu-num" style="background:#fef3c7;color:#92400e">03</div>
-      <div class="flex-1 min-w-0">
-        <div class="font-bold text-sm">Yuvarlaqlaşdırma</div>
-        <div class="text-xs mt-0.5" style="color:var(--muted)">Bölmə 1.3 &middot; Rounding Numbers</div>
-        <div class="pillar-pills">
-          <span class="tag tag-theory">📘 Nəzəriyyə</span><span class="tag tag-practice">✍️ Tapşırıq</span><span class="tag" style="background:#e0f2fe;color:#0369a1">🧪 Trenajer</span><span class="tag tag-eval">📝 30 Sual</span><span class="tag tag-game">🏆 Viktorina</span>
-        </div>
-      </div>
-    </a>
-
-    <a href="Movzu-04.html" class="movzu-card">
-      <div class="movzu-num" style="background:#d1fae5;color:#065f46">04</div>
-      <div class="flex-1 min-w-0">
-        <div class="font-bold text-sm">Toplama və Çıxma</div>
-        <div class="text-xs mt-0.5" style="color:var(--muted)">Bölmə 1.4 &middot; Addition &amp; Subtraction</div>
-        <div class="pillar-pills">
-          <span class="tag tag-theory">📘 Nəzəriyyə</span><span class="tag tag-practice">✍️ Tapşırıq</span><span class="tag" style="background:#e0f2fe;color:#0369a1">🧪 Trenajer</span><span class="tag tag-eval">📝 30 Sual</span><span class="tag tag-game">🏆 Viktorina</span>
-        </div>
-      </div>
-    </a>
-
-    <a href="Movzu-05.html" class="movzu-card">
-      <div class="movzu-num" style="background:#f5d0fe;color:#86198f">05</div>
-      <div class="flex-1 min-w-0">
-        <div class="font-bold text-sm">Kvadrat, Kub və Dərəcə</div>
-        <div class="text-xs mt-0.5" style="color:var(--muted)">Bölmə 1.5 &middot; Powers &amp; Exponents</div>
-        <div class="pillar-pills">
-          <span class="tag tag-theory">📘 Nəzəriyyə</span><span class="tag tag-practice">✍️ Tapşırıq</span><span class="tag" style="background:#e0f2fe;color:#0369a1">🧪 Trenajer</span><span class="tag tag-eval">📝 30 Sual</span><span class="tag tag-game">🏆 Viktorina</span>
-        </div>
-      </div>
-    </a>
-
-    <a href="Movzu-06.html" class="movzu-card">
-      <div class="movzu-num" style="background:#fce7f3;color:#be185d">06</div>
-      <div class="flex-1 min-w-0">
-        <div class="font-bold text-sm">Vurma və Bölmə</div>
-        <div class="text-xs mt-0.5" style="color:var(--muted)">Bölmə 1.6 &middot; Multiplication &amp; Division</div>
-        <div class="pillar-pills">
-          <span class="tag tag-theory">📘 Nəzəriyyə</span><span class="tag tag-practice">✍️ Tapşırıq</span><span class="tag" style="background:#e0f2fe;color:#0369a1">🧪 Trenajer</span><span class="tag tag-eval">📝 30 Sual</span><span class="tag tag-game">🏆 Viktorina</span>
-        </div>
-      </div>
-    </a>
-
-    <a href="Movzu-07.html" class="movzu-card">
-      <div class="movzu-num" style="background:#fee2e2;color:#991b1b">07</div>
-      <div class="flex-1 min-w-0">
-        <div class="font-bold text-sm">Ədədi İfadələr və Əməllərin Sırası</div>
-        <div class="text-xs mt-0.5" style="color:var(--muted)">Bölmə 1.7 &middot; Order of Operations</div>
-        <div class="pillar-pills">
-          <span class="tag tag-theory">📘 Nəzəriyyə</span><span class="tag tag-practice">✍️ Tapşırıq</span><span class="tag" style="background:#e0f2fe;color:#0369a1">🧪 Trenajer</span><span class="tag tag-eval">📝 30 Sual</span><span class="tag tag-game">🏆 Viktorina</span>
-        </div>
-      </div>
-    </a>
-
-    <a href="Movzu-08.html" class="movzu-card">
-      <div class="movzu-num" style="background:#d1fae5;color:#065f46">08</div>
-      <div class="flex-1 min-w-0">
-        <div class="font-bold text-sm">Bölənlər, ƏBOB və ƏKOB</div>
-        <div class="text-xs mt-0.5" style="color:var(--muted)">Bölmə 1.8 &middot; GCD &amp; LCM</div>
-        <div class="pillar-pills">
-          <span class="tag tag-theory">📘 Nəzəriyyə</span><span class="tag tag-practice">✍️ Tapşırıq</span><span class="tag" style="background:#e0f2fe;color:#0369a1">🧪 Trenajer</span><span class="tag tag-eval">📝 30 Sual</span><span class="tag tag-game">🏆 Viktorina</span>
-        </div>
-      </div>
-    </a>
-
-    <div class="chapter-heading">Fəsil 2 &middot; Adi Kəsrlər</div>
-
-    <a href="Movzu-09.html" class="movzu-card">
-      <div class="movzu-num" style="background:#fed7aa;color:#c2410c">09</div>
-      <div class="flex-1 min-w-0">
-        <div class="font-bold text-sm">Düzgün, Düzgün Olmayan Kəsrlər, Qarışıq Ədəd</div>
-        <div class="text-xs mt-0.5" style="color:var(--muted)">Bölmə 2.1 &middot; Proper &amp; Improper Fractions</div>
-        <div class="pillar-pills">
-          <span class="tag tag-theory">📘 Nəzəriyyə</span><span class="tag tag-practice">✍️ Tapşırıq</span><span class="tag" style="background:#e0f2fe;color:#0369a1">🧪 Trenajer</span><span class="tag tag-eval">📝 30 Sual</span><span class="tag tag-game">🏆 Viktorina</span>
-        </div>
-      </div>
-    </a>
-
-    <a href="Movzu-10.html" class="movzu-card">
-      <div class="movzu-num" style="background:#ede9fe;color:#5b21b6">10</div>
-      <div class="flex-1 min-w-0">
-        <div class="font-bold text-sm">Kəsrlərin Müqayisəsi və Sıralanması</div>
-        <div class="text-xs mt-0.5" style="color:var(--muted)">Bölmə 2.2 &middot; Comparing &amp; Ordering Fractions</div>
-        <div class="pillar-pills">
-          <span class="tag tag-theory">📘 Nəzəriyyə</span><span class="tag tag-practice">✍️ Tapşırıq</span><span class="tag" style="background:#e0f2fe;color:#0369a1">🧪 Trenajer</span><span class="tag tag-eval">📝 30 Sual</span><span class="tag tag-game">🏆 Viktorina</span>
-        </div>
-      </div>
-    </a>
-
-    <a href="Movzu-11.html" class="movzu-card">
-      <div class="movzu-num" style="background:#e0f2fe;color:#0369a1">11</div>
-      <div class="flex-1 min-w-0">
-        <div class="font-bold text-sm">Kəsrlərin Toplanması və Çıxılması</div>
-        <div class="text-xs mt-0.5" style="color:var(--muted)">Bölmə 2.3 &middot; Addition &amp; Subtraction of Fractions</div>
-        <div class="pillar-pills">
-          <span class="tag tag-theory">📘 Nəzəriyyə</span><span class="tag tag-practice">✍️ Tapşırıq</span><span class="tag" style="background:#e0f2fe;color:#0369a1">🧪 Trenajer</span><span class="tag tag-eval">📝 30 Sual</span><span class="tag tag-game">🏆 Viktorina</span>
-        </div>
-      </div>
-    </a>
-
-    <a href="Movzu-12.html" class="movzu-card">
-      <div class="movzu-num" style="background:#fef3c7;color:#92400e">12</div>
-      <div class="flex-1 min-w-0">
-        <div class="font-bold text-sm">Qarışıq Ədədlərin Toplanması</div>
-        <div class="text-xs mt-0.5" style="color:var(--muted)">Bölmə 2.4 &middot; Addition of Mixed Numbers</div>
-        <div class="pillar-pills">
-          <span class="tag tag-theory">📘 Nəzəriyyə</span><span class="tag tag-practice">✍️ Tapşırıq</span><span class="tag" style="background:#e0f2fe;color:#0369a1">🧪 Trenajer</span><span class="tag tag-eval">📝 30 Sual</span><span class="tag tag-game">🏆 Viktorina</span>
-        </div>
-      </div>
-    </a>
-
-    <a href="Movzu-13.html" class="movzu-card">
-      <div class="movzu-num" style="background:#fee2e2;color:#991b1b">13</div>
-      <div class="flex-1 min-w-0">
-        <div class="font-bold text-sm">Qarışıq Ədədlərin Çıxılması</div>
-        <div class="text-xs mt-0.5" style="color:var(--muted)">Bölmə 2.5 &middot; Subtraction of Mixed Numbers</div>
-        <div class="pillar-pills">
-          <span class="tag tag-theory">📘 Nəzəriyyə</span><span class="tag tag-practice">✍️ Tapşırıq</span><span class="tag" style="background:#e0f2fe;color:#0369a1">🧪 Trenajer</span><span class="tag tag-eval">📝 30 Sual</span><span class="tag tag-game">🏆 Viktorina</span>
-        </div>
-      </div>
-    </a>
-
-    <a href="Movzu-14.html" class="movzu-card">
-      <div class="movzu-num" style="background:#d1fae5;color:#065f46">14</div>
-      <div class="flex-1 min-w-0">
-        <div class="font-bold text-sm">Kəsrlərin Vurulması</div>
-        <div class="text-xs mt-0.5" style="color:var(--muted)">Bölmə 2.6 &middot; Multiplication of Fractions</div>
-        <div class="pillar-pills">
-          <span class="tag tag-theory">📘 Nəzəriyyə</span><span class="tag tag-practice">✍️ Tapşırıq</span><span class="tag" style="background:#e0f2fe;color:#0369a1">🧪 Trenajer</span><span class="tag tag-eval">📝 30 Sual</span><span class="tag tag-game">🏆 Viktorina</span>
-        </div>
-      </div>
-    </a>
-
-    <a href="Movzu-15.html" class="movzu-card">
-      <div class="movzu-num" style="background:#f5d0fe;color:#86198f">15</div>
-      <div class="flex-1 min-w-0">
-        <div class="font-bold text-sm">Qarışıq Ədədlərin Vurulması</div>
-        <div class="text-xs mt-0.5" style="color:var(--muted)">Bölmə 2.7 &middot; Multiplication of Mixed Numbers</div>
-        <div class="pillar-pills">
-          <span class="tag tag-theory">📘 Nəzəriyyə</span><span class="tag tag-practice">✍️ Tapşırıq</span><span class="tag" style="background:#e0f2fe;color:#0369a1">🧪 Trenajer</span><span class="tag tag-eval">📝 30 Sual</span><span class="tag tag-game">🏆 Viktorina</span>
-        </div>
-      </div>
-    </a>
-
-    <a href="Movzu-16.html" class="movzu-card">
-      <div class="movzu-num" style="background:#fef3c7;color:#92400e">16</div>
-      <div class="flex-1 min-w-0">
-        <div class="font-bold text-sm">Kəsrlərin Bölünməsi</div>
-        <div class="text-xs mt-0.5" style="color:var(--muted)">Bölmə 2.8 &middot; Division of Fractions</div>
-        <div class="pillar-pills">
-          <span class="tag tag-theory">📘 Nəzəriyyə</span><span class="tag tag-practice">✍️ Tapşırıq</span><span class="tag" style="background:#e0f2fe;color:#0369a1">🧪 Trenajer</span><span class="tag tag-eval">📝 30 Sual</span><span class="tag tag-game">🏆 Viktorina</span>
-        </div>
-      </div>
-    </a>
-
-    <div class="chapter-heading">Fəsil 3 &middot; Onluq Kəsrlər</div>
-
-    <a href="Movzu-17.html" class="movzu-card">
-      <div class="movzu-num" style="background:#d1fae5;color:#065f46">17</div>
-      <div class="flex-1 min-w-0">
-        <div class="font-bold text-sm">Onluq Kəsrlər — Anlayış və Çevrilmə</div>
-        <div class="text-xs mt-0.5" style="color:var(--muted)">Bölmə 3.1 &middot; Decimal Fractions</div>
-        <div class="pillar-pills">
-          <span class="tag tag-theory">📘 Nəzəriyyə</span><span class="tag tag-practice">✍️ Tapşırıq</span><span class="tag" style="background:#e0f2fe;color:#0369a1">🧪 Trenajer</span><span class="tag tag-eval">📝 30 Sual</span><span class="tag tag-game">🏆 Viktorina</span>
-        </div>
-      </div>
-    </a>
-
-    <a href="Movzu-18.html" class="movzu-card">
-      <div class="movzu-num" style="background:#fce7f3;color:#be185d">18</div>
-      <div class="flex-1 min-w-0">
-        <div class="font-bold text-sm">Onluq Kəsrlərin Toplanması və Çıxılması</div>
-        <div class="text-xs mt-0.5" style="color:var(--muted)">Bölmə 3.2 &middot; Addition &amp; Subtraction of Decimals</div>
-        <div class="pillar-pills">
-          <span class="tag tag-theory">📘 Nəzəriyyə</span><span class="tag tag-practice">✍️ Tapşırıq</span><span class="tag" style="background:#e0f2fe;color:#0369a1">🧪 Trenajer</span><span class="tag tag-eval">📝 30 Sual</span><span class="tag tag-game">🏆 Viktorina</span>
-        </div>
-      </div>
-    </a>
-
-    <a href="Movzu-19.html" class="movzu-card">
-      <div class="movzu-num" style="background:#ede9fe;color:#6d28d9">19</div>
-      <div class="flex-1 min-w-0">
-        <div class="font-bold text-sm">Onluq Kəsrlərin Vurulması</div>
-        <div class="text-xs mt-0.5" style="color:var(--muted)">Bölmə 3.3 &middot; Multiplication of Decimals</div>
-        <div class="pillar-pills">
-          <span class="tag tag-theory">📘 Nəzəriyyə</span><span class="tag tag-practice">✍️ Tapşırıq</span><span class="tag" style="background:#e0f2fe;color:#0369a1">🧪 Trenajer</span><span class="tag tag-eval">📝 30 Sual</span><span class="tag tag-game">🏆 Viktorina</span>
-        </div>
-      </div>
-    </a>
-
-    <a href="Movzu-20.html" class="movzu-card">
-      <div class="movzu-num" style="background:#fee2e2;color:#991b1b">20</div>
-      <div class="flex-1 min-w-0">
-        <div class="font-bold text-sm">Onluq Kəsrlərin Bölünməsi</div>
-        <div class="text-xs mt-0.5" style="color:var(--muted)">Bölmə 3.4 &middot; Division of Decimals</div>
-        <div class="pillar-pills">
-          <span class="tag tag-theory">📘 Nəzəriyyə</span><span class="tag tag-practice">✍️ Tapşırıq</span><span class="tag" style="background:#e0f2fe;color:#0369a1">🧪 Trenajer</span><span class="tag tag-eval">📝 30 Sual</span><span class="tag tag-game">🏆 Viktorina</span>
-        </div>
-      </div>
-    </a>
-
-    <div class="chapter-heading">Fəsil 4 &middot; Faizlər</div>
-
-    <a href="Movzu-21.html" class="movzu-card">
-      <div class="movzu-num" style="background:#d1fae5;color:#065f46">21</div>
-      <div class="flex-1 min-w-0">
-        <div class="font-bold text-sm">Faiz Anlayışı</div>
-        <div class="text-xs mt-0.5" style="color:var(--muted)">Bölmə 4.1 &middot; Concept of Percentage</div>
-        <div class="pillar-pills">
-          <span class="tag tag-theory">📘 Nəzəriyyə</span><span class="tag tag-practice">✍️ Tapşırıq</span><span class="tag" style="background:#e0f2fe;color:#0369a1">🧪 Trenajer</span><span class="tag tag-eval">📝 30 Sual</span><span class="tag tag-game">🏆 Viktorina</span>
-        </div>
-      </div>
-    </a>
-
-    <a href="Movzu-22.html" class="movzu-card">
-      <div class="movzu-num" style="background:#fef3c7;color:#92400e">22</div>
-      <div class="flex-1 min-w-0">
-        <div class="font-bold text-sm">Faizin Tapılması</div>
-        <div class="text-xs mt-0.5" style="color:var(--muted)">Bölmə 4.2 &middot; Finding the Percentage</div>
-        <div class="pillar-pills">
-          <span class="tag tag-theory">📘 Nəzəriyyə</span><span class="tag tag-practice">✍️ Tapşırıq</span><span class="tag" style="background:#e0f2fe;color:#0369a1">🧪 Trenajer</span><span class="tag tag-eval">📝 30 Sual</span><span class="tag tag-game">🏆 Viktorina</span>
-        </div>
-      </div>
-    </a>
-
-    <a href="Movzu-23.html" class="movzu-card">
-      <div class="movzu-num" style="background:#ede9fe;color:#6d28d9">23</div>
-      <div class="flex-1 min-w-0">
-        <div class="font-bold text-sm">Nisbət və Tənasüb</div>
-        <div class="text-xs mt-0.5" style="color:var(--muted)">Bölmə 4.3 &middot; Ratio &amp; Proportion</div>
-        <div class="pillar-pills">
-          <span class="tag tag-theory">📘 Nəzəriyyə</span><span class="tag tag-practice">✍️ Tapşırıq</span><span class="tag" style="background:#e0f2fe;color:#0369a1">🧪 Trenajer</span><span class="tag tag-eval">📝 30 Sual</span><span class="tag tag-game">🏆 Viktorina</span>
-        </div>
-      </div>
-    </a>
-
-    <a href="Movzu-24.html" class="movzu-card">
-      <div class="movzu-num" style="background:#fce7f3;color:#be185d">24</div>
-      <div class="flex-1 min-w-0">
-        <div class="font-bold text-sm">Miqyas</div>
-        <div class="text-xs mt-0.5" style="color:var(--muted)">Bölmə 4.4 &middot; Scale &amp; Map Reading</div>
-        <div class="pillar-pills">
-          <span class="tag tag-theory">📘 Nəzəriyyə</span><span class="tag tag-practice">✍️ Tapşırıq</span><span class="tag" style="background:#e0f2fe;color:#0369a1">🧪 Trenajer</span><span class="tag tag-eval">📝 30 Sual</span><span class="tag tag-game">🏆 Viktorina</span>
-        </div>
-      </div>
-    </a>
-
-    <div class="chapter-heading">Fəsil 5 &middot; Həndəsə</div>
-
-    <a href="Movzu-25.html" class="movzu-card">
-      <div class="movzu-num" style="background:#d1fae5;color:#065f46">25</div>
-      <div class="flex-1 min-w-0">
-        <div class="font-bold text-sm">Perimetr</div>
-        <div class="text-xs mt-0.5" style="color:var(--muted)">Bölmə 5.1 &middot; Perimeter of Polygons</div>
-        <div class="pillar-pills">
-          <span class="tag tag-theory">📘 Nəzəriyyə</span><span class="tag tag-practice">✍️ Tapşırıq</span><span class="tag" style="background:#e0f2fe;color:#0369a1">🧪 Trenajer</span><span class="tag tag-eval">📝 30 Sual</span><span class="tag tag-game">🏆 Viktorina</span>
-        </div>
-      </div>
-    </a>
-
-    <a href="Movzu-26.html" class="movzu-card">
-      <div class="movzu-num" style="background:#fef3c7;color:#92400e">26</div>
-      <div class="flex-1 min-w-0">
-        <div class="font-bold text-sm">Sahə</div>
-        <div class="text-xs mt-0.5" style="color:var(--muted)">Bölmə 5.2 &middot; Area of Polygons</div>
-        <div class="pillar-pills">
-          <span class="tag tag-theory">📘 Nəzəriyyə</span><span class="tag tag-practice">✍️ Tapşırıq</span><span class="tag" style="background:#e0f2fe;color:#0369a1">🧪 Trenajer</span><span class="tag tag-eval">📝 30 Sual</span><span class="tag tag-game">🏆 Viktorina</span>
-        </div>
-      </div>
-    </a>
-
-    <a href="Movzu-27.html" class="movzu-card">
-      <div class="movzu-num" style="background:#fee2e2;color:#991b1b">27</div>
-      <div class="flex-1 min-w-0">
-        <div class="font-bold text-sm">Dairə. Radius və Diametr</div>
-        <div class="text-xs mt-0.5" style="color:var(--muted)">Bölmə 5.3 &middot; Circle, Radius &amp; Circumference</div>
-        <div class="pillar-pills">
-          <span class="tag tag-theory">📘 Nəzəriyyə</span><span class="tag tag-practice">✍️ Tapşırıq</span><span class="tag" style="background:#e0f2fe;color:#0369a1">🧪 Trenajer</span><span class="tag tag-eval">📝 30 Sual</span><span class="tag tag-game">🏆 Viktorina</span>
-        </div>
-      </div>
-    </a>
-
-    <a href="Movzu-28.html" class="movzu-card">
-      <div class="movzu-num" style="background:#ede9fe;color:#6d28d9">28</div>
-      <div class="flex-1 min-w-0">
-        <div class="font-bold text-sm">Koordinat Müstəvisi</div>
-        <div class="text-xs mt-0.5" style="color:var(--muted)">Bölmə 5.4 &middot; Coordinate Plane</div>
-        <div class="pillar-pills">
-          <span class="tag tag-theory">📘 Nəzəriyyə</span><span class="tag tag-practice">✍️ Tapşırıq</span><span class="tag" style="background:#e0f2fe;color:#0369a1">🧪 Trenajer</span><span class="tag tag-eval">📝 30 Sual</span><span class="tag tag-game">🏆 Viktorina</span>
-        </div>
-      </div>
-    </a>
-
-    <!-- Fəsil 6 -->
-    <div class="chapter-heading">Fəsil 6 &middot; Statistika</div>
-
-    <a href="Movzu-29.html" class="movzu-card">
-      <div class="movzu-num" style="background:#cffafe;color:#0e7490">29</div>
-      <div class="flex-1 min-w-0">
-        <div class="font-bold text-sm">Orta Arifmetik</div>
-        <div class="text-xs mt-0.5" style="color:var(--muted)">Bölmə 6.1 &middot; Arithmetic Mean</div>
-        <div class="pillar-pills">
-          <span class="tag tag-theory">📘 Nəzəriyyə</span><span class="tag tag-practice">✍️ Tapşırıq</span><span class="tag" style="background:#e0f2fe;color:#0369a1">🧪 Trenajer</span><span class="tag tag-eval">📝 30 Sual</span><span class="tag tag-game">🏆 Viktorina</span>
-        </div>
-      </div>
-    </a>
-
-    <a href="Movzu-30.html" class="movzu-card">
-      <div class="movzu-num" style="background:#e0e7ff;color:#3730a3">30</div>
-      <div class="flex-1 min-w-0">
-        <div class="font-bold text-sm">Məlumatların Qrafikləri</div>
-        <div class="text-xs mt-0.5" style="color:var(--muted)">Bölmə 6.2 &middot; Data Charts &amp; Graphs</div>
-        <div class="pillar-pills">
-          <span class="tag tag-theory">📘 Nəzəriyyə</span><span class="tag tag-practice">✍️ Tapşırıq</span><span class="tag" style="background:#e0f2fe;color:#0369a1">🧪 Trenajer</span><span class="tag tag-eval">📝 30 Sual</span><span class="tag tag-game">🏆 Viktorina</span>
-        </div>
-      </div>
-    </a>
-
-    <a href="Movzu-31.html" class="movzu-card">
-      <div class="movzu-num" style="background:#fce7f3;color:#be185d">31</div>
-      <div class="flex-1 min-w-0">
-        <div class="font-bold text-sm">Mediana və Moda</div>
-        <div class="text-xs mt-0.5" style="color:var(--muted)">Bölmə 6.3 &middot; Median &amp; Mode</div>
-        <div class="pillar-pills">
-          <span class="tag tag-theory">📘 Nəzəriyyə</span><span class="tag tag-practice">✍️ Tapşırıq</span><span class="tag" style="background:#e0f2fe;color:#0369a1">🧪 Trenajer</span><span class="tag tag-eval">📝 30 Sual</span><span class="tag tag-game">🏆 Viktorina</span>
-        </div>
-      </div>
-    </a>
-
-    <div class="movzu-card" style="opacity:0.45;cursor:default;pointer-events:none;">
-      <div class="movzu-num" style="background:var(--border);color:var(--muted)">32</div>
-      <div class="flex-1 min-w-0">
-        <div class="font-bold text-sm" style="color:var(--muted)">Ehtimal Anlayışı</div>
-        <div class="text-xs mt-0.5" style="color:var(--muted)">Bölmə 6.4 · Hazırlanır...</div>
-      </div>
-      <span class="tag" style="background:var(--border);color:var(--muted)">Tezliklə</span>
-    </div>
-
-  </div>
-
-  <p class="text-center text-xs mt-8" style="color:var(--muted)">P002 &middot; V Sinif Dərslik Platforması &middot; 31 Mövzu &middot; AZ · RU · EN</p>
 </div>
 
-<script src="../_Shared_Core/script.js"></script>
-<script>document.addEventListener('DOMContentLoaded', () => { ThemeManager.init(); });</script>
+<!-- HERO -->
+<div class="hero">
+  <div class="ring-wrap">
+    <svg viewBox="0 0 160 160">
+      <circle class="ring-bg" cx="80" cy="80" r="70"/>
+      <circle class="ring-fill" id="heroRing" cx="80" cy="80" r="70"
+              stroke="url(#heroGrad)"/>
+      <defs>
+        <linearGradient id="heroGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+          <stop offset="0%" stop-color="#f97316"/>
+          <stop offset="50%" stop-color="#6366f1"/>
+          <stop offset="100%" stop-color="#14b8a6"/>
+        </linearGradient>
+      </defs>
+    </svg>
+    <div class="ring-center">
+      <div class="ring-pct" id="heroPct">0%</div>
+      <div class="ring-label">ПРОЙДЕНО</div>
+    </div>
+  </div>
+  <div class="hero-text">
+    <h1>Твой путь к<br/><span>знаниям</span></h1>
+    <p>3 главы · 44 урока · Отслеживай прогресс в реальном времени</p>
+    <div class="hero-stats">
+      <div class="h-stat">
+        <div class="h-stat-val" id="heroCompleted">0</div>
+        <div class="h-stat-lbl">УРОКОВ</div>
+      </div>
+      <div class="h-stat">
+        <div class="h-stat-val" id="heroStars">0</div>
+        <div class="h-stat-lbl">ЗВЁЗД</div>
+      </div>
+      <div class="h-stat">
+        <div class="h-stat-val" id="heroChapters">0/3</div>
+        <div class="h-stat-lbl">ГЛАВ</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- GLOBAL PROGRESS BAR -->
+<div class="global-bar-wrap">
+  <div class="gb-row">
+    <span>Общий прогресс курса</span>
+    <span id="gbText">0 из 44 уроков</span>
+  </div>
+  <div class="gb-track">
+    <div class="gb-fill" id="gbFill" style="width:0%"></div>
+    <div class="gb-markers">
+      <div class="gb-marker" style="left:25%"></div>
+      <div class="gb-marker" style="left:50%"></div>
+      <div class="gb-marker" style="left:63.6%"></div>
+    </div>
+  </div>
+</div>
+
+<!-- LEVEL PROGRESS -->
+<div style="max-width:900px;margin:1.25rem auto 0;padding:0 1.25rem">
+  <div class="level-card">
+    <div class="level-orb" id="lvlOrb">1</div>
+    <div class="level-info">
+      <div class="level-name" id="lvlName">Новичок</div>
+      <div class="level-next" id="lvlNext">Следующий уровень: Ученик</div>
+      <div class="level-bar"><div class="level-bar-fill" id="lvlBar" style="width:0%"></div></div>
+    </div>
+    <div class="level-xp-count" id="lvlXPText">0 / 100 XP</div>
+  </div>
+</div>
+
+<!-- CHAPTERS -->
+<div class="section-label">📚 Главы курса</div>
+<div class="chapters" id="chaptersContainer"></div>
+
+<!-- ANALYTICS -->
+<div class="section-label">📊 Аналитика прогресса</div>
+<div class="analytics">
+  <div class="analytics-grid">
+
+    <!-- XP по главам -->
+    <div class="analytics-card">
+      <div class="ac-title">⚡ XP по главам</div>
+      <div class="xp-bars" id="xpBarsChart"></div>
+    </div>
+
+    <!-- Кольца прогресса -->
+    <div class="analytics-card">
+      <div class="ac-title">🎯 Завершённость глав</div>
+      <div class="mini-rings" id="miniRings"></div>
+    </div>
+
+    <!-- Тепловая карта звёзд -->
+    <div class="analytics-card" style="grid-column:1/-1">
+      <div class="ac-title">⭐ Карта звёзд (каждая точка = 1 урок)</div>
+      <div class="stars-map" id="starsMap"></div>
+      <div style="display:flex;gap:1rem;margin-top:0.75rem;flex-wrap:wrap">
+        <div style="display:flex;align-items:center;gap:0.4rem;font-size:0.72rem;color:var(--muted2)">
+          <div style="width:10px;height:10px;border-radius:2px;background:var(--surface2);border:1px solid var(--border2)"></div>Не пройдено
+        </div>
+        <div style="display:flex;align-items:center;gap:0.4rem;font-size:0.72rem;color:var(--muted2)">
+          <div style="width:10px;height:10px;border-radius:2px;background:#f97316"></div>1 звезда
+        </div>
+        <div style="display:flex;align-items:center;gap:0.4rem;font-size:0.72rem;color:var(--muted2)">
+          <div style="width:10px;height:10px;border-radius:2px;background:#6366f1"></div>2 звезды
+        </div>
+        <div style="display:flex;align-items:center;gap:0.4rem;font-size:0.72rem;color:var(--muted2)">
+          <div style="width:10px;height:10px;border-radius:2px;background:#facc15"></div>3 звезды
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div class="footer">
+  P002 · Математика 5 класс · 3 главы · 44 урока · Прогресс сохраняется в браузере
+</div>
+
+<script>
+  // ════════════════════════════════════════
+  //  CLASS DEFINITIONS
+  // ════════════════════════════════════════
+  const CLASSES = [
+    {
+      id: 1, num: "Глава 1",
+      title: "Натуральные числа",
+      sub: "Счёт, сравнение, арифметика, НОД, НОК",
+      icon: "🔢",
+      color: "#f97316",
+      total: 11,
+      storageKey: "math5_state",
+      href: "math-5-class-1/index.html",
+      topics: ["Счёт и запись", "Сравнение", "Округление", "Сложение/Вычитание", "Степени", "Умножение/Деление", "Выражения", "НОД и НОК"],
+    },
+    {
+      id: 2, num: "Глава 2",
+      title: "Обыкновенные дроби",
+      sub: "Понятие, операции, смешанные числа",
+      icon: "🍕",
+      color: "#6366f1",
+      total: 16,
+      storageKey: "fractions5_state",
+      href: "math-5-class-2/index.html",
+      topics: ["Понятие дроби", "Сравнение", "Сложение/Вычитание", "Смешанные числа", "Умножение", "Деление", "Часть числа"],
+    },
+    {
+      id: 3, num: "Глава 3",
+      title: "Десятичные дроби",
+      sub: "Запись, сравнение, все арифметические действия",
+      icon: "🔟",
+      color: "#14b8a6",
+      total: 17,
+      storageKey: "decimals5_state",
+      href: "math-5-class-3/index.html",
+      topics: ["Понятие", "Сравнение", "Разряды", "Сложение", "Вычитание", "Умножение", "Деление", "Итог"],
+    },
+  ];
+
+  // class-3 actually has 16 lessons
+  CLASSES[2].total = 16;
+
+  const TOTAL_LESSONS = CLASSES.reduce((s,c)=>s+c.total,0);
+
+  const LEVELS = [
+    { name:"Новичок",     req:0 },
+    { name:"Ученик",      req:250 },
+    { name:"Знаток",      req:600 },
+    { name:"Мастер",      req:1100 },
+    { name:"Эксперт",     req:1800 },
+    { name:"Чемпион",     req:2700 },
+    { name:"Мэтр",        req:4000 },
+  ];
+
+  // ════════════════════════════════════════
+  //  LOAD ALL STATES
+  // ════════════════════════════════════════
+  function loadClassState(cls) {
+    try {
+      const raw = localStorage.getItem(cls.storageKey);
+      if (raw) {
+        const s = JSON.parse(raw);
+        if (!Array.isArray(s.stars)) s.stars = new Array(cls.total).fill(0);
+        if (s.stars.length < cls.total) {
+          const ext = new Array(cls.total - s.stars.length).fill(0);
+          s.stars = [...s.stars, ...ext];
+        }
+        return s;
+      }
+    } catch(e) {}
+    return { xp:0, stars:new Array(cls.total).fill(0), streak:0, hearts:5, lastDate:null, earnedAch:[] };
+  }
+
+  let classData = CLASSES.map(cls => {
+    const state = loadClassState(cls);
+    const completed = state.stars.filter(s=>s>0).length;
+    const totalStars = state.stars.reduce((a,b)=>a+b,0);
+    return { ...cls, state, completed, totalStars, xp: state.xp || 0, streak: state.streak || 0 };
+  });
+
+  const totalCompleted = classData.reduce((s,c)=>s+c.completed, 0);
+  const totalXP = classData.reduce((s,c)=>s+c.xp, 0);
+  const totalStars = classData.reduce((s,c)=>s+c.totalStars, 0);
+  const maxStreak = Math.max(...classData.map(c=>c.streak));
+  const chaptersCompleted = classData.filter(c=>c.completed===c.total).length;
+  const pct = Math.round(totalCompleted / TOTAL_LESSONS * 100);
+
+  // ════════════════════════════════════════
+  //  LEVEL SYSTEM
+  // ════════════════════════════════════════
+  function getLevelData(xp) {
+    let idx = 0;
+    for (let i=0; i<LEVELS.length-1; i++) if (xp>=LEVELS[i].req) idx=i;
+    if (xp>=LEVELS[LEVELS.length-1].req) idx=LEVELS.length-1;
+    const cur = LEVELS[idx].req;
+    const next = LEVELS[idx+1] ? LEVELS[idx+1].req : cur+2000;
+    const pct = Math.min(100, Math.round((xp-cur)/(next-cur)*100));
+    return { level: idx+1, name: LEVELS[idx].name, nextName: LEVELS[idx+1]?.name||"Легенда", pct, cur, next };
+  }
+
+  // ════════════════════════════════════════
+  //  RENDER TOP STATS
+  // ════════════════════════════════════════
+  document.getElementById("totalXP").textContent = totalXP.toLocaleString();
+  document.getElementById("maxStreak").textContent = maxStreak;
+  document.getElementById("heroPct").textContent = pct + "%";
+  document.getElementById("heroCompleted").textContent = totalCompleted;
+  document.getElementById("heroStars").textContent = totalStars;
+  document.getElementById("heroChapters").textContent = chaptersCompleted + "/3";
+  document.getElementById("gbText").textContent = `${totalCompleted} из ${TOTAL_LESSONS} уроков`;
+  document.getElementById("gbFill").style.width = pct + "%";
+
+  // Hero ring: circumference = 2π×70 ≈ 439.8
+  const ringCirc = 2 * Math.PI * 70;
+  document.getElementById("heroRing").style.strokeDasharray = ringCirc;
+  setTimeout(() => {
+    document.getElementById("heroRing").style.strokeDashoffset = ringCirc * (1 - pct/100);
+  }, 200);
+
+  // Level
+  const ld = getLevelData(totalXP);
+  document.getElementById("lvlOrb").textContent = ld.level;
+  document.getElementById("lvlName").textContent = "Уровень " + ld.level + " — " + ld.name;
+  document.getElementById("lvlNext").textContent = "Следующий: " + ld.nextName + " (" + (ld.next - totalXP) + " XP)";
+  document.getElementById("lvlXPText").textContent = totalXP.toLocaleString() + " / " + ld.next.toLocaleString() + " XP";
+  setTimeout(() => { document.getElementById("lvlBar").style.width = ld.pct + "%"; }, 300);
+
+  // ════════════════════════════════════════
+  //  RENDER CHAPTERS
+  // ════════════════════════════════════════
+  const container = document.getElementById("chaptersContainer");
+
+  classData.forEach((cls, i) => {
+    const pct = cls.total > 0 ? Math.round(cls.completed / cls.total * 100) : 0;
+    const isLocked = i > 0 && classData[i-1].completed < Math.ceil(classData[i-1].total * 0.5);
+    const isDone = cls.completed === cls.total;
+    const isActive = !isDone && (!isLocked || cls.completed > 0);
+
+    let statusLabel, statusClass, btnText;
+    if (isDone) {
+      statusLabel = "✓ Пройдена"; statusClass = "status-done"; btnText = "🔄 Повторить";
+    } else if (cls.completed > 0) {
+      statusLabel = "▶ В процессе"; statusClass = "status-active"; btnText = "▶ Продолжить";
+    } else if (isLocked && cls.completed === 0) {
+      statusLabel = "🔒 Не начата"; statusClass = "status-locked"; btnText = "▶ Начать";
+    } else {
+      statusLabel = cls.completed === 0 ? "Начать" : "▶ В процессе";
+      statusClass = cls.completed === 0 ? "status-locked" : "status-active";
+      btnText = cls.completed === 0 ? "▶ Начать" : "▶ Продолжить";
+    }
+
+    const maxXPPossible = cls.total * 45;
+
+    const card = document.createElement("a");
+    card.href = cls.href;
+    card.className = "chapter-card";
+    card.style.setProperty("--accent", cls.color);
+    card.style.borderColor = cls.completed > 0 ? "color-mix(in srgb, " + cls.color + " 30%, var(--border2))" : "var(--border2)";
+    card.innerHTML = `
+      <div class="cc-top">
+        <div class="cc-icon">${cls.icon}</div>
+        <div class="cc-meta">
+          <div class="cc-num">${cls.num} · ${cls.total} уроков</div>
+          <div class="cc-title">${cls.title}</div>
+          <div class="cc-sub">${cls.sub}</div>
+        </div>
+        <div class="cc-status">
+          <span class="status-badge ${statusClass}">${statusLabel}</span>
+          <span class="cc-xp">⚡ ${cls.xp.toLocaleString()} XP</span>
+        </div>
+      </div>
+
+      <div class="cc-bar-wrap">
+        <div class="cc-bar-row">
+          <span>${cls.completed} из ${cls.total} уроков пройдено</span>
+          <span style="font-weight:800;color:${cls.color}">${pct}%</span>
+        </div>
+        <div class="cc-bar-track">
+          <div class="cc-bar-fill" style="width:0%;background:linear-gradient(90deg,${cls.color},color-mix(in srgb,${cls.color} 60%,#fff))" data-w="${pct}"></div>
+        </div>
+      </div>
+
+      <div class="cc-stats">
+        <div class="cc-stat">
+          <div class="cc-stat-val">${cls.completed}/${cls.total}</div>
+          <div class="cc-stat-lbl">УРОКОВ</div>
+        </div>
+        <div class="cc-stat">
+          <div class="cc-stat-val">${cls.totalStars}</div>
+          <div class="cc-stat-lbl">ЗВЁЗД</div>
+        </div>
+        <div class="cc-stat">
+          <div class="cc-stat-val">${pct}%</div>
+          <div class="cc-stat-lbl">ГОТОВО</div>
+        </div>
+        <div class="cc-stat">
+          <div class="cc-stat-val">${cls.xp.toLocaleString()}</div>
+          <div class="cc-stat-lbl">XP ЗАРАБОТАНО</div>
+        </div>
+      </div>
+
+      <button class="cc-btn" style="background:${cls.color}">${btnText}</button>
+    `;
+    container.appendChild(card);
+
+    // Animate bar after paint
+    setTimeout(() => {
+      card.querySelector(".cc-bar-fill").style.width = pct + "%";
+    }, 400 + i * 120);
+  });
+
+  // ════════════════════════════════════════
+  //  XP BARS CHART
+  // ════════════════════════════════════════
+  const xpChart = document.getElementById("xpBarsChart");
+  const maxXP = Math.max(...classData.map(c=>c.xp), 1);
+  classData.forEach((cls, i) => {
+    const w = Math.round(cls.xp / maxXP * 100);
+    const row = document.createElement("div");
+    row.className = "xp-bar-row";
+    row.innerHTML = `
+      <div class="xp-bar-label" title="${cls.title}">${cls.icon} Гл.${cls.id}</div>
+      <div class="xp-bar-track">
+        <div class="xp-bar-fill" style="width:0%;background:${cls.color}" data-w="${w}"></div>
+      </div>
+      <div class="xp-bar-val">${cls.xp.toLocaleString()}</div>
+    `;
+    xpChart.appendChild(row);
+    setTimeout(() => { row.querySelector(".xp-bar-fill").style.width = w + "%"; }, 500 + i * 100);
+  });
+
+  // ════════════════════════════════════════
+  //  MINI RINGS
+  // ════════════════════════════════════════
+  const miniRingsEl = document.getElementById("miniRings");
+  const miniCirc = 2 * Math.PI * 28;
+  classData.forEach((cls, i) => {
+    const p = cls.total > 0 ? Math.round(cls.completed/cls.total*100) : 0;
+    const wrap = document.createElement("div");
+    wrap.className = "mini-ring-wrap";
+    wrap.innerHTML = `
+      <div style="position:relative;width:64px;height:64px">
+        <svg class="mini-ring-svg" viewBox="0 0 64 64">
+          <circle class="mini-ring-bg" cx="32" cy="32" r="28"/>
+          <circle class="mini-ring-fill" id="mr${i}" cx="32" cy="32" r="28" stroke="${cls.color}"
+                  style="stroke-dasharray:${miniCirc};stroke-dashoffset:${miniCirc}"/>
+        </svg>
+        <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:0.85rem;font-weight:900">${p}%</div>
+      </div>
+      <div class="mini-ring-lbl">${cls.icon} Гл.${cls.id}</div>
+    `;
+    miniRingsEl.appendChild(wrap);
+    setTimeout(() => {
+      document.getElementById("mr" + i).style.strokeDashoffset = miniCirc * (1 - p/100);
+    }, 600 + i * 150);
+  });
+
+  // ════════════════════════════════════════
+  //  STARS HEATMAP
+  // ════════════════════════════════════════
+  const starsMapEl = document.getElementById("starsMap");
+  classData.forEach(cls => {
+    const row = document.createElement("div");
+    row.className = "stars-row-header";
+    const dotsHtml = cls.state.stars.map(v =>
+      `<div class="star-dot" data-v="${v}" title="${v===0?'Не пройдено':v+' звезды'}"></div>`
+    ).join("");
+    row.innerHTML = `
+      <div class="stars-row-label">${cls.icon} ${cls.num.replace("Глава ","Гл.")}</div>
+      <div class="stars-dots">${dotsHtml}</div>
+      <div style="margin-left:0.5rem;font-size:0.75rem;color:var(--muted2);font-weight:700;white-space:nowrap">${cls.completed}/${cls.total}</div>
+    `;
+    starsMapEl.appendChild(row);
+  });
+
+  // ════════════════════════════════════════
+  //  LISTEN FOR STORAGE CHANGES (live sync)
+  // ════════════════════════════════════════
+  window.addEventListener("storage", () => {
+    // Reload page to reflect any changes from class sub-pages
+    window.location.reload();
+  });
+</script>
 </body>
 </html>

@@ -1,0 +1,1530 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Обыкновенные дроби — Интерактивный курс</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --bg-dark: #0f0f1a;
+            --bg-card: rgba(255, 255, 255, 0.05);
+            --bg-glass: rgba(255, 255, 255, 0.08);
+            --border-glass: rgba(255, 255, 255, 0.15);
+            --text-primary: #e8e8f0;
+            --text-secondary: #a0a0b8;
+            --accent: #00d4aa;
+            --accent-dim: rgba(0, 212, 170, 0.2);
+            --accent-warm: #ff6b6b;
+            --accent-warm-dim: rgba(255, 107, 107, 0.2);
+            --accent-blue: #4dabf7;
+            --accent-blue-dim: rgba(77, 171, 247, 0.2);
+            --success: #51cf66;
+            --error: #ff6b6b;
+            --warning: #fcc419;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        /* Animated background */
+        .bg-animation {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1;
+            background: 
+                radial-gradient(ellipse at 20% 20%, rgba(0, 212, 170, 0.08) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 80%, rgba(77, 171, 247, 0.08) 0%, transparent 50%),
+                radial-gradient(ellipse at 50% 50%, rgba(255, 107, 107, 0.05) 0%, transparent 60%);
+        }
+
+        .bg-animation::before {
+            content: '';
+            position: absolute;
+            width: 200%;
+            height: 200%;
+            top: -50%;
+            left: -50%;
+            background: repeating-linear-gradient(
+                0deg,
+                transparent,
+                transparent 40px,
+                rgba(255,255,255,0.02) 40px,
+                rgba(255,255,255,0.02) 41px
+            );
+            animation: bgMove 20s linear infinite;
+        }
+
+        @keyframes bgMove {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(40px); }
+        }
+
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            background: rgba(15, 15, 26, 0.85);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border-glass);
+            z-index: 1000;
+            padding: 0 20px;
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 60px;
+        }
+
+        .logo {
+            font-size: 1.3rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--accent), var(--accent-blue));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 8px;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            padding: 8px 16px;
+            border-radius: 8px;
+            transition: all 0.3s;
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            border: none;
+            background: transparent;
+        }
+
+        .nav-links a:hover, .nav-links a.active {
+            color: var(--text-primary);
+            background: var(--bg-glass);
+        }
+
+        .nav-links a.active {
+            background: var(--accent-dim);
+            color: var(--accent);
+        }
+
+        /* Sections */
+        section {
+            display: none;
+            padding: 100px 20px 60px;
+            max-width: 1000px;
+            margin: 0 auto;
+            animation: fadeIn 0.5s ease;
+        }
+
+        section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Cards */
+        .card {
+            background: var(--bg-card);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border-glass);
+            border-radius: 20px;
+            padding: 32px;
+            margin-bottom: 24px;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        }
+
+        .card-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .card-title .icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+        }
+
+        /* Hero */
+        .hero {
+            text-align: center;
+            padding: 140px 20px 80px;
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            font-weight: 800;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, var(--accent), var(--accent-blue), var(--accent-warm));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            line-height: 1.2;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            color: var(--text-secondary);
+            max-width: 600px;
+            margin: 0 auto 40px;
+        }
+
+        .hero-stats {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            margin-top: 40px;
+            flex-wrap: wrap;
+        }
+
+        .stat {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--accent);
+        }
+
+        .stat-label {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 14px 32px;
+            border-radius: 12px;
+            border: none;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--accent), var(--accent-blue));
+            color: #000;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px var(--accent-dim);
+        }
+
+        .btn-secondary {
+            background: var(--bg-glass);
+            color: var(--text-primary);
+            border: 1px solid var(--border-glass);
+        }
+
+        .btn-secondary:hover {
+            background: var(--bg-card);
+        }
+
+        /* Theory */
+        .theory-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .theory-card {
+            background: var(--bg-card);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border-glass);
+            border-radius: 16px;
+            padding: 24px;
+            transition: all 0.3s;
+        }
+
+        .theory-card:hover {
+            border-color: var(--accent);
+            transform: translateY(-4px);
+        }
+
+        .theory-card h3 {
+            color: var(--accent);
+            margin-bottom: 12px;
+            font-size: 1.1rem;
+        }
+
+        .fraction-demo {
+            display: inline-flex;
+            flex-direction: column;
+            align-items: center;
+            vertical-align: middle;
+            margin: 0 4px;
+        }
+
+        .fraction-demo .num {
+            border-bottom: 2px solid var(--text-primary);
+            padding: 0 8px;
+            font-weight: 600;
+        }
+
+        .fraction-demo .den {
+            padding: 0 8px;
+        }
+
+        .fraction-demo .whole {
+            margin-right: 4px;
+            font-weight: 600;
+        }
+
+        /* Visual fraction bar */
+        .fraction-bar {
+            width: 100%;
+            height: 40px;
+            background: var(--bg-glass);
+            border-radius: 8px;
+            overflow: hidden;
+            display: flex;
+            margin: 16px 0;
+            border: 1px solid var(--border-glass);
+        }
+
+        .fraction-segment {
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 0.85rem;
+            transition: all 0.5s;
+        }
+
+        /* Practice */
+        .problem-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-glass);
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 20px;
+        }
+
+        .problem-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .problem-number {
+            background: var(--accent-dim);
+            color: var(--accent);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .problem-type {
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+        }
+
+        .problem-text {
+            font-size: 1.1rem;
+            margin-bottom: 16px;
+            line-height: 1.8;
+        }
+
+        .solution-btn {
+            background: var(--accent-dim);
+            color: var(--accent);
+            border: 1px solid var(--accent);
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .solution-btn:hover {
+            background: var(--accent);
+            color: #000;
+        }
+
+        .solution {
+            display: none;
+            margin-top: 20px;
+            padding: 20px;
+            background: rgba(0, 212, 170, 0.05);
+            border-left: 3px solid var(--accent);
+            border-radius: 0 12px 12px 0;
+        }
+
+        .solution.active {
+            display: block;
+            animation: slideDown 0.3s ease;
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; max-height: 0; }
+            to { opacity: 1; max-height: 1000px; }
+        }
+
+        .solution-step {
+            margin-bottom: 12px;
+            padding: 8px 0;
+            border-bottom: 1px solid var(--border-glass);
+        }
+
+        .solution-step:last-child {
+            border-bottom: none;
+        }
+
+        .step-num {
+            display: inline-block;
+            width: 24px;
+            height: 24px;
+            background: var(--accent);
+            color: #000;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 24px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            margin-right: 8px;
+        }
+
+        /* Quiz */
+        .quiz-container {
+            background: var(--bg-card);
+            border: 1px solid var(--border-glass);
+            border-radius: 20px;
+            padding: 32px;
+        }
+
+        .quiz-progress {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .progress-bar {
+            flex: 1;
+            height: 8px;
+            background: var(--bg-glass);
+            border-radius: 4px;
+            margin: 0 16px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent), var(--accent-blue));
+            border-radius: 4px;
+            transition: width 0.5s ease;
+            width: 0%;
+        }
+
+        .quiz-question {
+            font-size: 1.2rem;
+            margin-bottom: 24px;
+            padding: 20px;
+            background: var(--bg-glass);
+            border-radius: 12px;
+            border-left: 4px solid var(--accent);
+        }
+
+        .quiz-options {
+            display: grid;
+            gap: 12px;
+        }
+
+        .quiz-option {
+            background: var(--bg-glass);
+            border: 2px solid var(--border-glass);
+            border-radius: 12px;
+            padding: 16px 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .quiz-option:hover {
+            border-color: var(--accent);
+            background: var(--accent-dim);
+        }
+
+        .quiz-option.correct {
+            border-color: var(--success);
+            background: rgba(81, 207, 102, 0.15);
+        }
+
+        .quiz-option.wrong {
+            border-color: var(--error);
+            background: rgba(255, 107, 107, 0.15);
+        }
+
+        .quiz-option.disabled {
+            pointer-events: none;
+            opacity: 0.7;
+        }
+
+        .option-letter {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            background: var(--bg-card);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        .quiz-nav {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 24px;
+        }
+
+        /* Final Quiz */
+        .timer {
+            position: fixed;
+            top: 80px;
+            right: 20px;
+            background: var(--bg-card);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border-glass);
+            border-radius: 16px;
+            padding: 16px 24px;
+            font-size: 1.3rem;
+            font-weight: 700;
+            font-variant-numeric: tabular-nums;
+            z-index: 999;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        .timer.warning {
+            border-color: var(--warning);
+            color: var(--warning);
+            animation: pulse 1s infinite;
+        }
+
+        .timer.danger {
+            border-color: var(--error);
+            color: var(--error);
+            animation: pulse 0.5s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        /* Results */
+        .results-container {
+            text-align: center;
+            padding: 40px;
+        }
+
+        .score-circle {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            background: conic-gradient(var(--accent) calc(var(--score) * 3.6deg), var(--bg-glass) 0);
+            margin: 0 auto 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .score-circle::before {
+            content: '';
+            position: absolute;
+            width: 170px;
+            height: 170px;
+            background: var(--bg-dark);
+            border-radius: 50%;
+        }
+
+        .score-value {
+            position: relative;
+            font-size: 3rem;
+            font-weight: 800;
+            color: var(--accent);
+        }
+
+        .score-label {
+            font-size: 1.2rem;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+        }
+
+        .score-message {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 32px;
+        }
+
+        .results-breakdown {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 16px;
+            max-width: 600px;
+            margin: 0 auto 32px;
+        }
+
+        .breakdown-item {
+            background: var(--bg-glass);
+            padding: 16px;
+            border-radius: 12px;
+        }
+
+        .breakdown-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--accent);
+        }
+
+        .breakdown-label {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 2rem; }
+            .nav-links { display: none; }
+            .timer { top: 70px; right: 10px; font-size: 1rem; padding: 10px 16px; }
+            .card { padding: 20px; }
+            section { padding: 80px 16px 40px; }
+        }
+
+        /* Utility */
+        .hidden { display: none !important; }
+
+        .highlight {
+            background: var(--accent-dim);
+            padding: 2px 6px;
+            border-radius: 4px;
+            color: var(--accent);
+            font-weight: 600;
+        }
+
+        .formula-box {
+            background: var(--bg-glass);
+            border: 1px solid var(--border-glass);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 16px 0;
+            text-align: center;
+            font-size: 1.2rem;
+        }
+
+        .tip-box {
+            background: var(--accent-blue-dim);
+            border-left: 4px solid var(--accent-blue);
+            padding: 16px 20px;
+            border-radius: 0 12px 12px 0;
+            margin: 16px 0;
+        }
+
+        .tip-box::before {
+            content: '💡 ';
+        }
+
+        .warning-box {
+            background: var(--accent-warm-dim);
+            border-left: 4px solid var(--accent-warm);
+            padding: 16px 20px;
+            border-radius: 0 12px 12px 0;
+            margin: 16px 0;
+        }
+
+        .warning-box::before {
+            content: '⚠️ ';
+        }
+    </style>
+<base target="_blank">
+</head>
+<body>
+    <div class="bg-animation"></div>
+
+    <nav>
+        <div class="nav-container">
+            <div class="logo">📐 Дроби</div>
+            <ul class="nav-links">
+                <li><a href="#" class="active" data-section="home">Главная</a></li>
+                <li><a href="#" data-section="theory">Теория</a></li>
+                <li><a href="#" data-section="practice">Практика</a></li>
+                <li><a href="#" data-section="trainer">Тренажёр</a></li>
+                <li><a href="#" data-section="test">Тест</a></li>
+                <li><a href="#" data-section="final">Викторина</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- HOME -->
+    <section id="home" class="active">
+        <div class="hero">
+            <h1>Обыкновенные дроби</h1>
+            <p>Интерактивный курс по разделу 2.13. Обобщающие задания. Полная теория, визуализация, практика с решениями и проверка знаний.</p>
+            <div style="display: flex; gap: 16px; justify-content: center; flex-wrap: wrap;">
+                <button class="btn btn-primary" onclick="showSection('theory')">Начать обучение</button>
+                <button class="btn btn-secondary" onclick="showSection('test')">Проверить знания</button>
+            </div>
+            <div class="hero-stats">
+                <div class="stat">
+                    <div class="stat-value">30+</div>
+                    <div class="stat-label">Тестовых вопросов</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-value">12</div>
+                    <div class="stat-label">Решённых задач</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-value">5</div>
+                    <div class="stat-label">Разделов теории</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-value">∞</div>
+                    <div class="stat-label">Попыток тренажёра</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-title">
+                <span class="icon" style="background: var(--accent-dim);">🎯</span>
+                Что вы изучите
+            </div>
+            <div class="theory-grid">
+                <div class="theory-card">
+                    <h3>Действия с дробями</h3>
+                    <p>Сложение, вычитание, умножение и деление обыкновенных дробей и смешанных чисел.</p>
+                </div>
+                <div class="theory-card">
+                    <h3>Уравнения</h3>
+                    <p>Решение уравнений с дробями, нахождение неизвестного множителя, делителя, делимого.</p>
+                </div>
+                <div class="theory-card">
+                    <h3>Текстовые задачи</h3>
+                    <p>Задачи на части, нахождение числа по его части, задачи на дорогу и работу.</p>
+                </div>
+                <div class="theory-card">
+                    <h3>Числовые последовательности</h3>
+                    <p>Поиск закономерностей в последовательностях дробей, продолжение ряда.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- THEORY -->
+    <section id="theory">
+        <div class="card">
+            <div class="card-title">
+                <span class="icon" style="background: var(--accent-dim);">📚</span>
+                Основные понятия
+            </div>
+            <p><strong>Обыкновенная дробь</strong> — это число вида <span class="fraction-demo"><span class="num">a</span><span class="den">b</span></span>, где <em>a</em> — числитель, <em>b</em> — знаменатель (b ≠ 0).</p>
+
+            <div class="formula-box">
+                <span class="fraction-demo"><span class="num">3</span><span class="den">4</span></span> — три четвёртых. Знаменатель 4 показывает, на сколько частей разделено целое. Числитель 3 показывает, сколько частей взято.
+            </div>
+
+            <div class="fraction-bar" id="demo-bar-1">
+                <div class="fraction-segment" style="width: 25%; background: var(--accent);">1</div>
+                <div class="fraction-segment" style="width: 25%; background: var(--accent-blue);">2</div>
+                <div class="fraction-segment" style="width: 25%; background: var(--accent-warm);">3</div>
+                <div class="fraction-segment" style="width: 25%; background: var(--bg-glass);"></div>
+            </div>
+            <p style="text-align: center; color: var(--text-secondary);">Визуализация: <span class="fraction-demo"><span class="num">3</span><span class="den">4</span></span> — 3 части из 4</p>
+        </div>
+
+        <div class="card">
+            <div class="card-title">
+                <span class="icon" style="background: var(--accent-blue-dim);">➕</span>
+                Сложение и вычитание
+            </div>
+            <p>Для сложения/вычитания дробей с <strong>разными</strong> знаменателями:</p>
+            <ol style="margin: 16px 0 16px 24px; line-height: 2;">
+                <li>Приведите дроби к <strong>общему знаменателю</strong> (НОК знаменателей).</li>
+                <li>Сложите/вычтите числители, знаменатель оставьте прежним.</li>
+                <li>Сократите результат, если возможно.</li>
+            </ol>
+
+            <div class="formula-box">
+                <span class="fraction-demo"><span class="num">1</span><span class="den">4</span></span> + <span class="fraction-demo"><span class="num">1</span><span class="den">6</span></span> = <span class="fraction-demo"><span class="num">3</span><span class="den">12</span></span> + <span class="fraction-demo"><span class="num">2</span><span class="den">12</span></span> = <span class="fraction-demo"><span class="num">5</span><span class="den">12</span></span>
+            </div>
+
+            <div class="tip-box">
+                Общий знаменатель 4 и 6 — это 12 (наименьшее общее кратное). Первую дробь умножаем на 3, вторую на 2.
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-title">
+                <span class="icon" style="background: var(--accent-warm-dim);">✖️</span>
+                Умножение и деление
+            </div>
+            <p><strong>Умножение:</strong> числитель × числитель, знаменатель × знаменатель.</p>
+            <div class="formula-box">
+                <span class="fraction-demo"><span class="num">2</span><span class="den">3</span></span> × <span class="fraction-demo"><span class="num">5</span><span class="den">7</span></span> = <span class="fraction-demo"><span class="num">2 × 5</span><span class="den">3 × 7</span></span> = <span class="fraction-demo"><span class="num">10</span><span class="den">21</span></span>
+            </div>
+
+            <p><strong>Деление:</strong> умножьте первую дробь на перевернутую вторую.</p>
+            <div class="formula-box">
+                <span class="fraction-demo"><span class="num">2</span><span class="den">3</span></span> ÷ <span class="fraction-demo"><span class="num">5</span><span class="den">7</span></span> = <span class="fraction-demo"><span class="num">2</span><span class="den">3</span></span> × <span class="fraction-demo"><span class="num">7</span><span class="den">5</span></span> = <span class="fraction-demo"><span class="num">14</span><span class="den">15</span></span>
+            </div>
+
+            <div class="warning-box">
+                Перед умножением и делением удобно сократить «крест-накрест», если числитель одной дроби и знаменатель другой делятся на одно число.
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-title">
+                <span class="icon" style="background: rgba(252, 196, 25, 0.2);">🔢</span>
+                Смешанные числа
+            </div>
+            <p><strong>Смешанное число</strong> = целое число + правильная дробь.</p>
+            <div class="formula-box">
+                2<span class="fraction-demo"><span class="num">3</span><span class="den">4</span></span> = 2 + <span class="fraction-demo"><span class="num">3</span><span class="den">4</span></span> = <span class="fraction-demo"><span class="num">11</span><span class="den">4</span></span>
+            </div>
+            <p><strong>Перевод в неправильную дробь:</strong> целое × знаменатель + числитель, знаменатель тот же.</p>
+            <p><strong>Перевод из неправильной:</strong> числитель ÷ знаменатель = целое и остаток.</p>
+        </div>
+
+        <div class="card">
+            <div class="card-title">
+                <span class="icon" style="background: rgba(129, 201, 149, 0.2);">📏</span>
+                Порядок действий
+            </div>
+            <ol style="margin: 16px 0 16px 24px; line-height: 2;">
+                <li>Действия в <strong>скобках</strong></li>
+                <li><strong>Умножение</strong> и <strong>деление</strong> (слева направо)</li>
+                <li><strong>Сложение</strong> и <strong>вычитание</strong> (слева направо)</li>
+            </ol>
+            <div class="tip-box">
+                При работе со смешанными числами иногда удобнее перевести их в неправильные дроби, выполнить действия, а потом перевести обратно.
+            </div>
+        </div>
+    </section>
+
+    <!-- PRACTICE -->
+    <section id="practice">
+        <div class="card">
+            <div class="card-title">
+                <span class="icon" style="background: var(--accent-dim);">📝</span>
+                Разбор задач из учебника
+            </div>
+            <p style="color: var(--text-secondary); margin-bottom: 24px;">Задачи из раздела «Обобщающие задания» с пошаговыми решениями. Нажмите «Показать решение», чтобы увидеть разбор.</p>
+        </div>
+
+        <!-- Problem 1a -->
+        <div class="problem-card">
+            <div class="problem-header">
+                <span class="problem-number">№ 1 (а)</span>
+                <span class="problem-type">Вычисление</span>
+            </div>
+            <div class="problem-text">
+                Вычислите: <span class="fraction-demo"><span class="num">3</span><span class="den">4</span></span> · <span class="fraction-demo"><span class="num">2</span><span class="den">3</span></span> + <span class="fraction-demo"><span class="num">1</span><span class="den">6</span></span> : 1<span class="fraction-demo"><span class="num">3</span><span class="den">8</span></span>
+            </div>
+            <button class="solution-btn" onclick="toggleSolution('sol-1a')">Показать решение</button>
+            <div class="solution" id="sol-1a">
+                <div class="solution-step"><span class="step-num">1</span>Переведём смешанное число: 1<span class="fraction-demo"><span class="num">3</span><span class="den">8</span></span> = <span class="fraction-demo"><span class="num">11</span><span class="den">8</span></span></div>
+                <div class="solution-step"><span class="step-num">2</span>Первое действие — умножение: <span class="fraction-demo"><span class="num">3</span><span class="den">4</span></span> · <span class="fraction-demo"><span class="num">2</span><span class="den">3</span></span> = <span class="fraction-demo"><span class="num">6</span><span class="den">12</span></span> = <span class="fraction-demo"><span class="num">1</span><span class="den">2</span></span></div>
+                <div class="solution-step"><span class="step-num">3</span>Второе действие — деление: <span class="fraction-demo"><span class="num">1</span><span class="den">6</span></span> : <span class="fraction-demo"><span class="num">11</span><span class="den">8</span></span> = <span class="fraction-demo"><span class="num">1</span><span class="den">6</span></span> · <span class="fraction-demo"><span class="num">8</span><span class="den">11</span></span> = <span class="fraction-demo"><span class="num">8</span><span class="den">66</span></span> = <span class="fraction-demo"><span class="num">4</span><span class="den">33</span></span></div>
+                <div class="solution-step"><span class="step-num">4</span>Сложение: <span class="fraction-demo"><span class="num">1</span><span class="den">2</span></span> + <span class="fraction-demo"><span class="num">4</span><span class="den">33</span></span> = <span class="fraction-demo"><span class="num">33</span><span class="den">66</span></span> + <span class="fraction-demo"><span class="num">8</span><span class="den">66</span></span> = <span class="fraction-demo"><span class="num">41</span><span class="den">66</span></span></div>
+                <div class="solution-step" style="color: var(--accent); font-weight: 700;"><span class="step-num">✓</span>Ответ: <span class="fraction-demo"><span class="num">41</span><span class="den">66</span></span></div>
+            </div>
+        </div>
+
+        <!-- Problem 5 -->
+        <div class="problem-card">
+            <div class="problem-header">
+                <span class="problem-number">№ 5</span>
+                <span class="problem-type">Уравнения</span>
+            </div>
+            <div class="problem-text">
+                Решите уравнения:<br>
+                а) <span class="fraction-demo"><span class="num">1</span><span class="den">3</span></span> · x = <span class="fraction-demo"><span class="num">5</span><span class="den">6</span></span><br>
+                б) 1<span class="fraction-demo"><span class="num">2</span><span class="den">7</span></span> · a = 1<br>
+                в) <span class="fraction-demo"><span class="num">5</span><span class="den">6</span></span> : b = 2<span class="fraction-demo"><span class="num">1</span><span class="den">2</span></span>
+            </div>
+            <button class="solution-btn" onclick="toggleSolution('sol-5')">Показать решение</button>
+            <div class="solution" id="sol-5">
+                <div class="solution-step"><span class="step-num">а</span>x = <span class="fraction-demo"><span class="num">5</span><span class="den">6</span></span> : <span class="fraction-demo"><span class="num">1</span><span class="den">3</span></span> = <span class="fraction-demo"><span class="num">5</span><span class="den">6</span></span> · <span class="fraction-demo"><span class="num">3</span><span class="den">1</span></span> = <span class="fraction-demo"><span class="num">15</span><span class="den">6</span></span> = 2<span class="fraction-demo"><span class="num">1</span><span class="den">2</span></span></div>
+                <div class="solution-step"><span class="step-num">б</span>1<span class="fraction-demo"><span class="num">2</span><span class="den">7</span></span> = <span class="fraction-demo"><span class="num">9</span><span class="den">7</span></span>; a = 1 : <span class="fraction-demo"><span class="num">9</span><span class="den">7</span></span> = <span class="fraction-demo"><span class="num">7</span><span class="den">9</span></span></div>
+                <div class="solution-step"><span class="step-num">в</span>2<span class="fraction-demo"><span class="num">1</span><span class="den">2</span></span> = <span class="fraction-demo"><span class="num">5</span><span class="den">2</span></span>; b = <span class="fraction-demo"><span class="num">5</span><span class="den">6</span></span> : <span class="fraction-demo"><span class="num">5</span><span class="den">2</span></span> = <span class="fraction-demo"><span class="num">5</span><span class="den">6</span></span> · <span class="fraction-demo"><span class="num">2</span><span class="den">5</span></span> = <span class="fraction-demo"><span class="num">10</span><span class="den">30</span></span> = <span class="fraction-demo"><span class="num">1</span><span class="den">3</span></span></div>
+                <div class="solution-step" style="color: var(--accent); font-weight: 700;"><span class="step-num">✓</span>Ответы: x = 2<span class="fraction-demo"><span class="num">1</span><span class="den">2</span></span>; a = <span class="fraction-demo"><span class="num">7</span><span class="den">9</span></span>; b = <span class="fraction-demo"><span class="num">1</span><span class="den">3</span></span></div>
+            </div>
+        </div>
+
+        <!-- Problem 9 -->
+        <div class="problem-card">
+            <div class="problem-header">
+                <span class="problem-number">№ 9</span>
+                <span class="problem-type">Текстовая задача</span>
+            </div>
+            <div class="problem-text">
+                Доярка отделила <span class="fraction-demo"><span class="num">3</span><span class="den">5</span></span> части молока в бидоне, чтобы приготовить гатыр. Затем оставшуюся часть молока она разлила поровну в 4 банки. Какую часть молока из бидона доярка перелила в каждую банку?
+            </div>
+            <button class="solution-btn" onclick="toggleSolution('sol-9')">Показать решение</button>
+            <div class="solution" id="sol-9">
+                <div class="solution-step"><span class="step-num">1</span>Всего молока — 1 (целое бидон). Отделили <span class="fraction-demo"><span class="num">3</span><span class="den">5</span></span>.</div>
+                <div class="solution-step"><span class="step-num">2</span>Осталось: 1 − <span class="fraction-demo"><span class="num">3</span><span class="den">5</span></span> = <span class="fraction-demo"><span class="num">5</span><span class="den">5</span></span> − <span class="fraction-demo"><span class="num">3</span><span class="den">5</span></span> = <span class="fraction-demo"><span class="num">2</span><span class="den">5</span></span></div>
+                <div class="solution-step"><span class="step-num">3</span>Разлили <span class="fraction-demo"><span class="num">2</span><span class="den">5</span></span> поровну в 4 банки: <span class="fraction-demo"><span class="num">2</span><span class="den">5</span></span> : 4 = <span class="fraction-demo"><span class="num">2</span><span class="den">5</span></span> · <span class="fraction-demo"><span class="num">1</span><span class="den">4</span></span> = <span class="fraction-demo"><span class="num">2</span><span class="den">20</span></span> = <span class="fraction-demo"><span class="num">1</span><span class="den">10</span></span></div>
+                <div class="solution-step" style="color: var(--accent); font-weight: 700;"><span class="step-num">✓</span>Ответ: <span class="fraction-demo"><span class="num">1</span><span class="den">10</span></span> части (одна десятая бидона в каждую банку).</div>
+            </div>
+        </div>
+
+        <!-- Problem 11 -->
+        <div class="problem-card">
+            <div class="problem-header">
+                <span class="problem-number">№ 11</span>
+                <span class="problem-type">Текстовая задача</span>
+            </div>
+            <div class="problem-text">
+                После того как семья Самира проехала <span class="fraction-demo"><span class="num">3</span><span class="den">8</span></span> дороги до вокзала, им осталось проехать 15 км.<br>
+                • Найдите длину всей дороги от дома Самира до вокзала.<br>
+                • Эта дорога равна <span class="fraction-demo"><span class="num">1</span><span class="den">3</span></span> дороги от дома Самира до дома его дяди. Найдите длину дороги до дома дяди.
+            </div>
+            <button class="solution-btn" onclick="toggleSolution('sol-11')">Показать решение</button>
+            <div class="solution" id="sol-11">
+                <div class="solution-step"><span class="step-num">1</span>Проехали <span class="fraction-demo"><span class="num">3</span><span class="den">8</span></span>, значит осталось: 1 − <span class="fraction-demo"><span class="num">3</span><span class="den">8</span></span> = <span class="fraction-demo"><span class="num">5</span><span class="den">8</span></span></div>
+                <div class="solution-step"><span class="step-num">2</span><span class="fraction-demo"><span class="num">5</span><span class="den">8</span></span> дороги = 15 км. Вся дорога = 15 : <span class="fraction-demo"><span class="num">5</span><span class="den">8</span></span> = 15 · <span class="fraction-demo"><span class="num">8</span><span class="den">5</span></span> = <span class="fraction-demo"><span class="num">120</span><span class="den">5</span></span> = 24 км</div>
+                <div class="solution-step"><span class="step-num">3</span>Дорога до вокзала (24 км) = <span class="fraction-demo"><span class="num">1</span><span class="den">3</span></span> дороги до дяди. Дорога до дяди = 24 : <span class="fraction-demo"><span class="num">1</span><span class="den">3</span></span> = 24 · 3 = 72 км</div>
+                <div class="solution-step" style="color: var(--accent); font-weight: 700;"><span class="step-num">✓</span>Ответ: до вокзала — 24 км; до дяди — 72 км.</div>
+            </div>
+        </div>
+
+        <!-- Problem 12 -->
+        <div class="problem-card">
+            <div class="problem-header">
+                <span class="problem-number">№ 12</span>
+                <span class="problem-type">Задача на пропорцию</span>
+            </div>
+            <div class="problem-text">
+                В рецепте дано необходимое количество муки для приготовления 1 торта, 1 пиццы и 1 пирога. 5 стаканов муки составляют 1 кг. Сколько килограммов муки всего понадобится для приготовления 20 тортов, 5 пицц и 12 пирогов?<br><br>
+                <strong>Расход муки:</strong><br>
+                Торт — 2<span class="fraction-demo"><span class="num">1</span><span class="den">2</span></span> стакана<br>
+                Пицца — 2 стакана<br>
+                Пирог — 1<span class="fraction-demo"><span class="num">3</span><span class="den">4</span></span> стакана
+            </div>
+            <button class="solution-btn" onclick="toggleSolution('sol-12')">Показать решение</button>
+            <div class="solution" id="sol-12">
+                <div class="solution-step"><span class="step-num">1</span>Торты: 20 · 2<span class="fraction-demo"><span class="num">1</span><span class="den">2</span></span> = 20 · <span class="fraction-demo"><span class="num">5</span><span class="den">2</span></span> = <span class="fraction-demo"><span class="num">100</span><span class="den">2</span></span> = 50 стаканов</div>
+                <div class="solution-step"><span class="step-num">2</span>Пиццы: 5 · 2 = 10 стаканов</div>
+                <div class="solution-step"><span class="step-num">3</span>Пироги: 12 · 1<span class="fraction-demo"><span class="num">3</span><span class="den">4</span></span> = 12 · <span class="fraction-demo"><span class="num">7</span><span class="den">4</span></span> = <span class="fraction-demo"><span class="num">84</span><span class="den">4</span></span> = 21 стакан</div>
+                <div class="solution-step"><span class="step-num">4</span>Всего: 50 + 10 + 21 = 81 стакан</div>
+                <div class="solution-step"><span class="step-num">5</span>В кг: 81 : 5 = <span class="fraction-demo"><span class="num">81</span><span class="den">5</span></span> = 16<span class="fraction-demo"><span class="num">1</span><span class="den">5</span></span> = 16,2 кг</div>
+                <div class="solution-step" style="color: var(--accent); font-weight: 700;"><span class="step-num">✓</span>Ответ: 16<span class="fraction-demo"><span class="num">1</span><span class="den">5</span></span> кг (или 16,2 кг)</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- TRAINER -->
+    <section id="trainer">
+        <div class="card">
+            <div class="card-title">
+                <span class="icon" style="background: var(--accent-dim);">🏋️</span>
+                Тренажёр: генератор задач
+            </div>
+            <p style="color: var(--text-secondary); margin-bottom: 24px;">Бесконечная практика. Нажмите «Новая задача», решите и проверьте ответ. Уровень сложности регулируется автоматически.</p>
+
+            <div class="quiz-container" style="margin-bottom: 20px;">
+                <div id="trainer-question" style="font-size: 1.4rem; text-align: center; margin-bottom: 24px; padding: 24px; background: var(--bg-glass); border-radius: 12px;">
+                    Нажмите «Новая задача» для начала
+                </div>
+
+                <div style="display: flex; gap: 12px; margin-bottom: 20px;">
+                    <input type="text" id="trainer-answer" placeholder="Ваш ответ (например: 3/4 или 1 1/2)" 
+                        style="flex: 1; padding: 14px 16px; background: var(--bg-glass); border: 2px solid var(--border-glass); border-radius: 12px; color: var(--text-primary); font-size: 1rem; outline: none;">
+                    <button class="btn btn-primary" onclick="checkTrainer()" id="trainer-check-btn" disabled>Проверить</button>
+                </div>
+
+                <div id="trainer-feedback" style="min-height: 60px; margin-bottom: 16px;"></div>
+
+                <div style="display: flex; gap: 12px; justify-content: center;">
+                    <button class="btn btn-secondary" onclick="newTrainerProblem()">Новая задача</button>
+                    <button class="btn btn-secondary" onclick="showTrainerHint()">Подсказка</button>
+                </div>
+
+                <div id="trainer-hint" style="display: none; margin-top: 20px; padding: 16px; background: var(--accent-blue-dim); border-radius: 12px; border-left: 4px solid var(--accent-blue);"></div>
+            </div>
+
+            <div style="display: flex; justify-content: center; gap: 24px; flex-wrap: wrap;">
+                <div class="stat">
+                    <div class="stat-value" id="trainer-correct">0</div>
+                    <div class="stat-label">Верно</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-value" id="trainer-total">0</div>
+                    <div class="stat-label">Всего</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-value" id="trainer-streak">0</div>
+                    <div class="stat-label">Серия</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- TEST -->
+    <section id="test">
+        <div class="card">
+            <div class="card-title">
+                <span class="icon" style="background: var(--accent-blue-dim);">🧪</span>
+                Тест: 30 вопросов
+            </div>
+            <p style="color: var(--text-secondary); margin-bottom: 24px;">Проверьте знания по всем темам раздела. После каждого ответа вы получите мгновенную обратную связь.</p>
+        </div>
+
+        <div class="quiz-container">
+            <div class="quiz-progress">
+                <span>Вопрос <span id="test-current">1</span> / <span id="test-total">30</span></span>
+                <div class="progress-bar"><div class="progress-fill" id="test-progress"></div></div>
+                <span id="test-score">0 правильных</span>
+            </div>
+
+            <div class="quiz-question" id="test-question"></div>
+            <div class="quiz-options" id="test-options"></div>
+
+            <div class="quiz-nav">
+                <button class="btn btn-secondary" onclick="prevTest()" id="test-prev" disabled>← Назад</button>
+                <button class="btn btn-primary" onclick="nextTest()" id="test-next" disabled>Далее →</button>
+            </div>
+
+            <div id="test-explanation" style="display: none; margin-top: 20px; padding: 16px; background: var(--accent-dim); border-radius: 12px; border-left: 4px solid var(--accent);"></div>
+        </div>
+    </section>
+
+    <!-- FINAL QUIZ -->
+    <section id="final">
+        <div class="card">
+            <div class="card-title">
+                <span class="icon" style="background: var(--accent-warm-dim);">🏆</span>
+                Финальная викторина
+            </div>
+            <p style="color: var(--text-secondary); margin-bottom: 24px;">15 вопросов на время. Решайте быстро и точно! У вас есть 10 минут.</p>
+        </div>
+
+        <div id="final-start" style="text-align: center; padding: 60px 20px;">
+            <div style="font-size: 4rem; margin-bottom: 24px;">⏱️</div>
+            <h2 style="margin-bottom: 16px;">Готовы?</h2>
+            <p style="color: var(--text-secondary); margin-bottom: 32px;">15 вопросов • 10 минут • Мгновенный результат</p>
+            <button class="btn btn-primary" onclick="startFinal()" style="font-size: 1.2rem; padding: 16px 48px;">Начать викторину</button>
+        </div>
+
+        <div id="final-quiz" style="display: none;">
+            <div class="timer" id="final-timer">10:00</div>
+            <div class="quiz-container">
+                <div class="quiz-progress">
+                    <span>Вопрос <span id="final-current">1</span> / 15</span>
+                    <div class="progress-bar"><div class="progress-fill" id="final-progress"></div></div>
+                </div>
+                <div class="quiz-question" id="final-question"></div>
+                <div class="quiz-options" id="final-options"></div>
+                <div style="display: flex; justify-content: flex-end; margin-top: 24px;">
+                    <button class="btn btn-primary" onclick="nextFinal()" id="final-next">Ответить →</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="final-results" style="display: none;">
+            <div class="card">
+                <div class="results-container">
+                    <div class="score-label">Ваш результат</div>
+                    <div class="score-circle" id="score-circle">
+                        <div class="score-value" id="final-score">0</div>
+                    </div>
+                    <div class="score-message" id="final-message"></div>
+                    <div class="results-breakdown">
+                        <div class="breakdown-item">
+                            <div class="breakdown-value" id="final-correct">0</div>
+                            <div class="breakdown-label">Верно</div>
+                        </div>
+                        <div class="breakdown-item">
+                            <div class="breakdown-value" id="final-wrong">0</div>
+                            <div class="breakdown-label">Ошибок</div>
+                        </div>
+                        <div class="breakdown-item">
+                            <div class="breakdown-value" id="final-time">0:00</div>
+                            <div class="breakdown-label">Время</div>
+                        </div>
+                        <div class="breakdown-item">
+                            <div class="breakdown-value" id="final-percent">0%</div>
+                            <div class="breakdown-label">Процент</div>
+                        </div>
+                    </div>
+                    <div style="display: flex; gap: 16px; justify-content: center; flex-wrap: wrap;">
+                        <button class="btn btn-primary" onclick="startFinal()">Пройти ещё раз</button>
+                        <button class="btn btn-secondary" onclick="showSection('theory')">Вернуться к теории</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+<script>
+// ================= NAVIGATION =================
+function showSection(id) {
+    document.querySelectorAll('section').forEach(s => s.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    document.querySelectorAll('.nav-links a').forEach(a => a.classList.remove('active'));
+    document.querySelector(`.nav-links a[data-section="${id}"]`)?.classList.add('active');
+    window.scrollTo(0, 0);
+}
+
+document.querySelectorAll('.nav-links a').forEach(link => {
+    link.addEventListener('click', (e) => {
+        e.preventDefault();
+        showSection(link.dataset.section);
+    });
+});
+
+// ================= PRACTICE =================
+function toggleSolution(id) {
+    const el = document.getElementById(id);
+    el.classList.toggle('active');
+    const btn = el.previousElementSibling;
+    btn.textContent = el.classList.contains('active') ? 'Скрыть решение' : 'Показать решение';
+}
+
+// ================= TRAINER =================
+let trainerState = { correct: 0, total: 0, streak: 0, current: null };
+
+function gcd(a, b) { return b ? gcd(b, a % b) : a; }
+function lcm(a, b) { return (a * b) / gcd(a, b); }
+
+function formatFraction(n, d, mixed = true) {
+    if (d === 1) return n.toString();
+    if (n === 0) return '0';
+    const common = gcd(Math.abs(n), Math.abs(d));
+    n /= common; d /= common;
+    if (d < 0) { n = -n; d = -d; }
+    if (mixed && Math.abs(n) > d) {
+        const whole = Math.floor(Math.abs(n) / d);
+        const rem = Math.abs(n) % d;
+        const sign = n < 0 ? '-' : '';
+        return rem === 0 ? `${sign}${whole}` : `${sign}${whole} ${rem}/${d}`;
+    }
+    return `${n}/${d}`;
+}
+
+function parseFraction(str) {
+    str = str.trim().replace(/,/g, '.');
+    if (str.includes(' ')) {
+        const [w, f] = str.split(' ');
+        const [n, d] = f.split('/').map(Number);
+        const sign = w.startsWith('-') ? -1 : 1;
+        return { n: sign * (Math.abs(parseInt(w)) * d + n), d };
+    }
+    if (str.includes('/')) {
+        const [n, d] = str.split('/').map(Number);
+        return { n, d };
+    }
+    return { n: parseFloat(str), d: 1 };
+}
+
+function generateTrainerProblem() {
+    const types = ['add', 'sub', 'mul', 'div', 'mixed'];
+    const type = types[Math.floor(Math.random() * types.length)];
+    let a, b, c, d, ans;
+
+    switch(type) {
+        case 'add':
+            a = Math.floor(Math.random() * 8) + 2;
+            b = Math.floor(Math.random() * 8) + 2;
+            c = Math.floor(Math.random() * 8) + 2;
+            d = Math.floor(Math.random() * 8) + 2;
+            const den = lcm(b, d);
+            ans = { n: (a * (den/b)) + (c * (den/d)), d: den };
+            return {
+                text: `Сложите: ${formatFraction(a,b,false)} + ${formatFraction(c,d,false)}`,
+                answer: formatFraction(ans.n, ans.d),
+                hint: `Приведите к общему знаменателю ${den}, затем сложите числители.`
+            };
+        case 'sub':
+            a = Math.floor(Math.random() * 8) + 3;
+            b = Math.floor(Math.random() * 6) + 2;
+            c = Math.floor(Math.random() * (a-1)) + 1;
+            d = b;
+            ans = { n: a - c, d: b };
+            return {
+                text: `Вычтите: ${formatFraction(a,b,false)} − ${formatFraction(c,d,false)}`,
+                answer: formatFraction(ans.n, ans.d),
+                hint: `Знаменатели одинаковые, просто вычтите числители.`
+            };
+        case 'mul':
+            a = Math.floor(Math.random() * 9) + 1;
+            b = Math.floor(Math.random() * 9) + 2;
+            c = Math.floor(Math.random() * 9) + 1;
+            d = Math.floor(Math.random() * 9) + 2;
+            ans = { n: a * c, d: b * d };
+            return {
+                text: `Умножьте: ${formatFraction(a,b,false)} × ${formatFraction(c,d,false)}`,
+                answer: formatFraction(ans.n, ans.d),
+                hint: `Числитель × числитель, знаменатель × знаменатель. Сократите, если возможно.`
+            };
+        case 'div':
+            a = Math.floor(Math.random() * 8) + 1;
+            b = Math.floor(Math.random() * 8) + 2;
+            c = Math.floor(Math.random() * 8) + 1;
+            d = Math.floor(Math.random() * 8) + 2;
+            ans = { n: a * d, d: b * c };
+            return {
+                text: `Разделите: ${formatFraction(a,b,false)} ÷ ${formatFraction(c,d,false)}`,
+                answer: formatFraction(ans.n, ans.d),
+                hint: `Первую дробь умножьте на перевернутую вторую: ${formatFraction(a,b,false)} × ${formatFraction(d,c,false)}.`
+            };
+        case 'mixed':
+            const w1 = Math.floor(Math.random() * 3) + 1;
+            const w2 = Math.floor(Math.random() * 3) + 1;
+            a = Math.floor(Math.random() * 5) + 1;
+            b = Math.floor(Math.random() * 5) + 2;
+            c = Math.floor(Math.random() * 5) + 1;
+            d = Math.floor(Math.random() * 5) + 2;
+            const n1 = w1 * b + a;
+            const n2 = w2 * d + c;
+            const den2 = lcm(b, d);
+            ans = { n: (n1 * (den2/b)) - (n2 * (den2/d)), d: den2 };
+            return {
+                text: `Вычислите: ${w1} ${formatFraction(a,b,false)} − ${w2} ${formatFraction(c,d,false)}`,
+                answer: formatFraction(ans.n, ans.d),
+                hint: `Переведите в неправильные дроби: ${formatFraction(n1,b,false)} − ${formatFraction(n2,d,false)}. Общий знаменатель ${den2}.`
+            };
+    }
+}
+
+function newTrainerProblem() {
+    trainerState.current = generateTrainerProblem();
+    document.getElementById('trainer-question').innerHTML = trainerState.current.text;
+    document.getElementById('trainer-answer').value = '';
+    document.getElementById('trainer-feedback').innerHTML = '';
+    document.getElementById('trainer-hint').style.display = 'none';
+    document.getElementById('trainer-check-btn').disabled = false;
+}
+
+function showTrainerHint() {
+    if (!trainerState.current) return;
+    document.getElementById('trainer-hint').style.display = 'block';
+    document.getElementById('trainer-hint').textContent = '💡 ' + trainerState.current.hint;
+}
+
+function checkTrainer() {
+    if (!trainerState.current) return;
+    const userStr = document.getElementById('trainer-answer').value.trim();
+    if (!userStr) return;
+
+    const user = parseFraction(userStr);
+    const correct = parseFraction(trainerState.current.answer);
+    const userVal = user.n / user.d;
+    const correctVal = correct.n / correct.d;
+    const isCorrect = Math.abs(userVal - correctVal) < 0.001;
+
+    trainerState.total++;
+    if (isCorrect) {
+        trainerState.correct++;
+        trainerState.streak++;
+        document.getElementById('trainer-feedback').innerHTML = 
+            `<div style="color: var(--success); font-weight: 700; font-size: 1.1rem;">✓ Верно! Ответ: ${trainerState.current.answer}</div>`;
+    } else {
+        trainerState.streak = 0;
+        document.getElementById('trainer-feedback').innerHTML = 
+            `<div style="color: var(--error); font-weight: 700; font-size: 1.1rem;">✗ Неверно. Правильный ответ: ${trainerState.current.answer}</div>`;
+    }
+
+    document.getElementById('trainer-correct').textContent = trainerState.correct;
+    document.getElementById('trainer-total').textContent = trainerState.total;
+    document.getElementById('trainer-streak').textContent = trainerState.streak;
+    document.getElementById('trainer-check-btn').disabled = true;
+}
+
+// ================= TEST (30 questions) =================
+const testQuestions = [
+    { q: "Сократите дробь: 8/12", options: ["1/2", "2/3", "3/4", "4/6"], correct: 1, expl: "8/12 = (8÷4)/(12÷4) = 2/3" },
+    { q: "Сложите: 1/4 + 1/4", options: ["1/8", "2/8", "1/2", "1/4"], correct: 2, expl: "1/4 + 1/4 = 2/4 = 1/2" },
+    { q: "Вычтите: 5/6 − 1/6", options: ["4/0", "4/6", "2/3", "1/3"], correct: 2, expl: "5/6 − 1/6 = 4/6 = 2/3" },
+    { q: "Умножьте: 2/3 × 3/4", options: ["6/12", "1/2", "5/7", "2/4"], correct: 1, expl: "2/3 × 3/4 = 6/12 = 1/2" },
+    { q: "Разделите: 3/4 ÷ 1/2", options: ["3/8", "3/2", "1 1/2", "2/3"], correct: 1, expl: "3/4 ÷ 1/2 = 3/4 × 2/1 = 6/4 = 3/2 = 1 1/2" },
+    { q: "Переведите в неправильную дробь: 2 3/5", options: ["13/5", "10/5", "6/5", "23/5"], correct: 0, expl: "2 3/5 = (2×5+3)/5 = 13/5" },
+    { q: "Переведите в смешанное число: 17/4", options: ["4 1/4", "3 5/4", "4 3/4", "5 1/4"], correct: 0, expl: "17 ÷ 4 = 4 остаток 1, значит 4 1/4" },
+    { q: "Найдите: 1/2 + 1/3", options: ["2/5", "5/6", "1/6", "3/5"], correct: 1, expl: "Общий знаменатель 6: 3/6 + 2/6 = 5/6" },
+    { q: "Найдите: 3/4 − 1/2", options: ["2/2", "1/4", "1/2", "2/4"], correct: 1, expl: "3/4 − 2/4 = 1/4" },
+    { q: "Найдите: 2/5 × 5/8", options: ["10/40", "1/4", "7/13", "2/8"], correct: 1, expl: "2/5 × 5/8 = 10/40 = 1/4" },
+    { q: "Найдите: 7/8 ÷ 7/16", options: ["2", "1/2", "49/128", "16/8"], correct: 0, expl: "7/8 ÷ 7/16 = 7/8 × 16/7 = 112/56 = 2" },
+    { q: "Сколько будет 3/4 от 20?", options: ["15", "12", "10", "8"], correct: 0, expl: "20 × 3/4 = 60/4 = 15" },
+    { q: "Решите: x × 2/3 = 4/9", options: ["2/3", "8/27", "6/9", "1/3"], correct: 0, expl: "x = 4/9 ÷ 2/3 = 4/9 × 3/2 = 12/18 = 2/3" },
+    { q: "Решите: 5/6 : x = 1/3", options: ["5/18", "2 1/2", "1/2", "5/2"], correct: 1, expl: "x = 5/6 ÷ 1/3 = 5/6 × 3/1 = 15/6 = 5/2 = 2 1/2" },
+    { q: "Какая дробь больше: 3/4 или 5/6?", options: ["3/4", "5/6", "Равны", "Нельзя сравнить"], correct: 1, expl: "Приведём к знаменателю 12: 3/4=9/12, 5/6=10/12. 10/12 > 9/12" },
+    { q: "Сложите: 1 1/2 + 2 1/3", options: ["3 5/6", "3 2/5", "4 1/6", "3 1/6"], correct: 0, expl: "1 1/2 = 3/2, 2 1/3 = 7/3. Общий знаменатель 6: 9/6 + 14/6 = 23/6 = 3 5/6" },
+    { q: "Вычислите: (1/2 + 1/3) × 6", options: ["5", "6", "3 1/2", "2 1/2"], correct: 0, expl: "1/2 + 1/3 = 5/6. 5/6 × 6 = 5" },
+    { q: "Вычислите: 2/3 × (3/4 − 1/2)", options: ["1/6", "1/3", "1/2", "2/12"], correct: 0, expl: "3/4 − 1/2 = 1/4. 2/3 × 1/4 = 2/12 = 1/6" },
+    { q: "Найдите 3/5 от числа, если 1/5 этого числа равна 7", options: ["21", "35", "15", "12"], correct: 0, expl: "Если 1/5 = 7, то число = 35, а 3/5 от 35 = 21" },
+    { q: "Число 24 составляет 3/4 какого числа?", options: ["18", "32", "30", "28"], correct: 1, expl: "24 ÷ 3/4 = 24 × 4/3 = 96/3 = 32" },
+    { q: "Сократите: 45/60", options: ["3/4", "9/12", "15/20", "Все варианты верны"], correct: 3, expl: "45/60 = 3/4 = 9/12 = 15/20 — все сокращения верны" },
+    { q: "Решите: x − 1/4 = 3/8", options: ["1/8", "5/8", "1/2", "7/8"], correct: 1, expl: "x = 3/8 + 1/4 = 3/8 + 2/8 = 5/8" },
+    { q: "Вычислите: 5/6 + 1/2 − 1/3", options: ["1", "5/6", "7/6", "2/3"], correct: 0, expl: "Общий знаменатель 6: 5/6 + 3/6 − 2/6 = 6/6 = 1" },
+    { q: "Найдите произведение: 1 1/2 × 2 2/3", options: ["4", "3 1/3", "2 2/3", "5"], correct: 0, expl: "3/2 × 8/3 = 24/6 = 4" },
+    { q: "Разделите: 3 3/4 ÷ 1 1/4", options: ["3", "2 1/2", "4", "3 1/4"], correct: 0, expl: "15/4 ÷ 5/4 = 15/4 × 4/5 = 60/20 = 3" },
+    { q: "Какой знаменатель у суммы 1/6 + 1/9?", options: ["15", "54", "18", "36"], correct: 2, expl: "НОК(6,9) = 18" },
+    { q: "Вычислите: (2/3)²", options: ["4/9", "2/9", "4/3", "2/6"], correct: 0, expl: "(2/3)² = 2/3 × 2/3 = 4/9" },
+    { q: "Решите: 2x = 3/4", options: ["3/8", "1 1/2", "6/4", "3/2"], correct: 0, expl: "x = 3/4 ÷ 2 = 3/4 × 1/2 = 3/8" },
+    { q: "Найдите: 1/10 от 1/10", options: ["1/100", "1/20", "2/10", "1/5"], correct: 0, expl: "1/10 × 1/10 = 1/100" },
+    { q: "Сколько минут в 3/4 часа?", options: ["45", "30", "40", "50"], correct: 0, expl: "60 × 3/4 = 45 минут" }
+];
+
+let testState = { current: 0, score: 0, answers: [] };
+
+function initTest() {
+    testState = { current: 0, score: 0, answers: [] };
+    document.getElementById('test-total').textContent = testQuestions.length;
+    renderTestQuestion();
+}
+
+function renderTestQuestion() {
+    const q = testQuestions[testState.current];
+    document.getElementById('test-current').textContent = testState.current + 1;
+    document.getElementById('test-score').textContent = `${testState.score} правильных`;
+    document.getElementById('test-progress').style.width = `${((testState.current + 1) / testQuestions.length) * 100}%`;
+    document.getElementById('test-question').textContent = q.q;
+
+    const optsDiv = document.getElementById('test-options');
+    optsDiv.innerHTML = '';
+    q.options.forEach((opt, i) => {
+        const div = document.createElement('div');
+        div.className = 'quiz-option';
+        div.innerHTML = `<div class="option-letter">${String.fromCharCode(65+i)}</div><div>${opt}</div>`;
+        div.onclick = () => selectTestOption(i, div);
+        optsDiv.appendChild(div);
+    });
+
+    document.getElementById('test-explanation').style.display = 'none';
+    document.getElementById('test-prev').disabled = testState.current === 0;
+    document.getElementById('test-next').disabled = true;
+}
+
+function selectTestOption(idx, el) {
+    if (document.getElementById('test-next').disabled === false) return;
+    const q = testQuestions[testState.current];
+    const isCorrect = idx === q.correct;
+
+    if (isCorrect) testState.score++;
+    testState.answers[testState.current] = idx;
+
+    document.querySelectorAll('.quiz-option').forEach((opt, i) => {
+        opt.classList.add('disabled');
+        if (i === q.correct) opt.classList.add('correct');
+        else if (i === idx && !isCorrect) opt.classList.add('wrong');
+    });
+
+    document.getElementById('test-explanation').innerHTML = `<strong>${isCorrect ? '✓ Верно!' : '✗ Неверно.'}</strong> ${q.expl}`;
+    document.getElementById('test-explanation').style.display = 'block';
+    document.getElementById('test-next').disabled = false;
+}
+
+function nextTest() {
+    if (testState.current < testQuestions.length - 1) {
+        testState.current++;
+        renderTestQuestion();
+    } else {
+        showTestResults();
+    }
+}
+
+function prevTest() {
+    if (testState.current > 0) {
+        testState.current--;
+        renderTestQuestion();
+    }
+}
+
+function showTestResults() {
+    const percent = Math.round((testState.score / testQuestions.length) * 100);
+    let message = '';
+    if (percent >= 90) message = 'Отлично! Вы отлично знаете дроби!';
+    else if (percent >= 70) message = 'Хорошо! Но есть куда стремиться.';
+    else if (percent >= 50) message = 'Удовлетворительно. Повторите теорию.';
+    else message = 'Нужно больше практики. Вернитесь к теории и тренажёру.';
+
+    document.getElementById('test').innerHTML = `
+        <div class="card">
+            <div class="results-container">
+                <div class="score-label">Результат теста</div>
+                <div class="score-circle" style="--score: ${percent};">
+                    <div class="score-value">${percent}%</div>
+                </div>
+                <div class="score-message">${message}</div>
+                <div class="results-breakdown">
+                    <div class="breakdown-item"><div class="breakdown-value">${testState.score}</div><div class="breakdown-label">Верно</div></div>
+                    <div class="breakdown-item"><div class="breakdown-value">${testQuestions.length - testState.score}</div><div class="breakdown-label">Ошибок</div></div>
+                    <div class="breakdown-item"><div class="breakdown-value">${testQuestions.length}</div><div class="breakdown-label">Всего</div></div>
+                </div>
+                <div style="display: flex; gap: 16px; justify-content: center; flex-wrap: wrap;">
+                    <button class="btn btn-primary" onclick="initTest()">Пройти ещё раз</button>
+                    <button class="btn btn-secondary" onclick="showSection('theory')">В теорию</button>
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+// ================= FINAL QUIZ =================
+const finalQuestions = [
+    { q: "Вычислите: 3/4 × 2/3 + 1/6", options: ["7/12", "2/3", "1/2", "5/6"], correct: 1 },
+    { q: "Решите: 2/3 · x = 4/9", options: ["2/3", "8/27", "1/3", "6/9"], correct: 0 },
+    { q: "Найдите: 5/6 − 1/4", options: ["4/2", "7/12", "1/2", "3/4"], correct: 1 },
+    { q: "Переведите в неправильную: 3 2/5", options: ["17/5", "15/5", "6/5", "32/5"], correct: 0 },
+    { q: "Вычислите: 1 1/2 ÷ 3/4", options: ["1 1/8", "2", "9/8", "1 1/3"], correct: 1 },
+    { q: "Найдите 2/3 от 27", options: ["18", "9", "12", "15"], correct: 0 },
+    { q: "Решите: x : 1/2 = 3/4", options: ["3/8", "1 1/2", "2/3", "3/2"], correct: 1 },
+    { q: "Сложите: 2 1/4 + 1 2/3", options: ["3 11/12", "4 1/12", "3 3/7", "4"], correct: 0 },
+    { q: "Сократите: 36/48", options: ["3/4", "6/8", "9/12", "Все верны"], correct: 3 },
+    { q: "Вычислите: (1/2 + 1/3) ÷ 5/6", options: ["1", "5/6", "6/5", "2/5"], correct: 0 },
+    { q: "Найдите число, 3/8 которого равны 15", options: ["40", "30", "24", "45"], correct: 0 },
+    { q: "Вычислите: 5/6 × 3/10", options: ["15/60", "1/4", "8/16", "1/2"], correct: 1 },
+    { q: "Решите: 3/4 − x = 1/8", options: ["5/8", "1/2", "2/8", "7/8"], correct: 0 },
+    { q: "Разделите: 4/5 ÷ 2/15", options: ["6", "8/75", "2/3", "10"], correct: 0 },
+    { q: "Вычислите: 2 1/2 × 1 1/5", options: ["3", "2 7/10", "3 1/2", "2 1/10"], correct: 0 }
+];
+
+let finalState = { current: 0, score: 0, timer: null, timeLeft: 600, startTime: 0, answers: [] };
+
+function startFinal() {
+    finalState = { current: 0, score: 0, timer: null, timeLeft: 600, startTime: Date.now(), answers: [] };
+    document.getElementById('final-start').style.display = 'none';
+    document.getElementById('final-results').style.display = 'none';
+    document.getElementById('final-quiz').style.display = 'block';
+    document.getElementById('final-timer').className = 'timer';
+    renderFinalQuestion();
+
+    finalState.timer = setInterval(() => {
+        finalState.timeLeft--;
+        const m = Math.floor(finalState.timeLeft / 60);
+        const s = finalState.timeLeft % 60;
+        const timerEl = document.getElementById('final-timer');
+        timerEl.textContent = `${m}:${s.toString().padStart(2, '0')}`;
+
+        if (finalState.timeLeft <= 60) timerEl.className = 'timer danger';
+        else if (finalState.timeLeft <= 180) timerEl.className = 'timer warning';
+
+        if (finalState.timeLeft <= 0) finishFinal();
+    }, 1000);
+}
+
+function renderFinalQuestion() {
+    const q = finalQuestions[finalState.current];
+    document.getElementById('final-current').textContent = finalState.current + 1;
+    document.getElementById('final-progress').style.width = `${((finalState.current + 1) / finalQuestions.length) * 100}%`;
+    document.getElementById('final-question').textContent = q.q;
+
+    const optsDiv = document.getElementById('final-options');
+    optsDiv.innerHTML = '';
+    q.options.forEach((opt, i) => {
+        const div = document.createElement('div');
+        div.className = 'quiz-option';
+        div.innerHTML = `<div class="option-letter">${String.fromCharCode(65+i)}</div><div>${opt}</div>`;
+        div.onclick = () => selectFinalOption(i, div);
+        optsDiv.appendChild(div);
+    });
+
+    document.getElementById('final-next').disabled = true;
+}
+
+function selectFinalOption(idx, el) {
+    if (document.getElementById('final-next').disabled === false) return;
+    const q = finalQuestions[finalState.current];
+    const isCorrect = idx === q.correct;
+
+    if (isCorrect) finalState.score++;
+    finalState.answers[finalState.current] = idx;
+
+    document.querySelectorAll('#final-options .quiz-option').forEach((opt, i) => {
+        opt.classList.add('disabled');
+        if (i === q.correct) opt.classList.add('correct');
+        else if (i === idx && !isCorrect) opt.classList.add('wrong');
+    });
+
+    document.getElementById('final-next').disabled = false;
+}
+
+function nextFinal() {
+    if (finalState.current < finalQuestions.length - 1) {
+        finalState.current++;
+        renderFinalQuestion();
+    } else {
+        finishFinal();
+    }
+}
+
+function finishFinal() {
+    clearInterval(finalState.timer);
+    document.getElementById('final-quiz').style.display = 'none';
+    document.getElementById('final-results').style.display = 'block';
+
+    const percent = Math.round((finalState.score / finalQuestions.length) * 100);
+    const timeSpent = Math.floor((Date.now() - finalState.startTime) / 1000);
+    const m = Math.floor(timeSpent / 60);
+    const s = timeSpent % 60;
+
+    document.getElementById('score-circle').style.setProperty('--score', percent);
+    document.getElementById('final-score').textContent = `${percent}%`;
+    document.getElementById('final-correct').textContent = finalState.score;
+    document.getElementById('final-wrong').textContent = finalQuestions.length - finalState.score;
+    document.getElementById('final-time').textContent = `${m}:${s.toString().padStart(2, '0')}`;
+    document.getElementById('final-percent').textContent = `${percent}%`;
+
+    let message = '';
+    if (percent >= 90) message = '🏆 Превосходно! Вы мастер дробей!';
+    else if (percent >= 70) message: '🥈 Отличный результат!';
+    else if (percent >= 50) message = '🥉 Хорошо, но нужно подучить.';
+    else message = '💪 Попробуйте ещё раз после повторения теории.';
+    document.getElementById('final-message').textContent = message;
+}
+
+// Initialize
+document.addEventListener('DOMContentLoaded', () => {
+    initTest();
+    newTrainerProblem();
+});
+</script>
+</body>
+</html>

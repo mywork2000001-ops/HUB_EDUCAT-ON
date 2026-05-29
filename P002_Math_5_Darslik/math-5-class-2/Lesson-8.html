@@ -1,0 +1,939 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>2.6 Умножение обыкновенных дробей</title>
+<style>
+:root{
+  --primary:#4f46e5;--secondary:#10b981;--danger:#ef4444;
+  --warning:#f59e0b;--bg:#f1f5f9;--card:#ffffff;
+  --text:#1e293b;--muted:#64748b;--border:#e2e8f0;
+  --sidebar:260px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Georgia',serif;background:var(--bg);color:var(--text);min-height:100vh}
+
+/* PROGRESS BAR */
+#progress-bar{position:fixed;top:0;left:0;height:4px;background:var(--primary);transition:width .4s;z-index:1000;border-radius:0 2px 2px 0}
+
+/* SIDEBAR */
+#sidebar{position:fixed;top:0;left:0;width:var(--sidebar);height:100vh;background:#1e1b4b;color:#fff;overflow-y:auto;z-index:100;transition:transform .3s;padding:0}
+#sidebar-header{padding:20px 16px 12px;border-bottom:1px solid rgba(255,255,255,.1)}
+#sidebar-header h2{font-size:13px;font-weight:700;color:#a5b4fc;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px}
+#sidebar-header p{font-size:11px;color:#94a3b8}
+.nav-item{display:flex;align-items:center;gap:10px;padding:11px 16px;cursor:pointer;transition:background .2s;border-left:3px solid transparent;font-size:13px}
+.nav-item:hover{background:rgba(255,255,255,.08)}
+.nav-item.active{background:rgba(79,70,229,.35);border-color:#818cf8}
+.nav-item .nav-icon{width:22px;height:22px;border-radius:50%;background:rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;font-size:10px;flex-shrink:0}
+.nav-item.done .nav-icon{background:var(--secondary)}
+.nav-progress{font-size:10px;color:#94a3b8;margin-left:auto}
+
+/* BURGER */
+#burger{display:none;position:fixed;top:12px;left:12px;z-index:200;background:var(--primary);color:#fff;border:none;border-radius:8px;width:40px;height:40px;cursor:pointer;font-size:18px}
+#overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:99}
+
+/* MAIN */
+#main{margin-left:var(--sidebar);padding:32px 40px;max-width:calc(100vw - var(--sidebar));min-height:100vh}
+.section{display:none}
+.section.active{display:block;animation:fadeIn .4s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+
+/* CARDS */
+.card{background:var(--card);border-radius:16px;padding:28px;box-shadow:0 2px 12px rgba(0,0,0,.06);margin-bottom:20px}
+.card-title{font-size:22px;font-weight:700;color:var(--primary);margin-bottom:16px;display:flex;align-items:center;gap:10px}
+.card-title span{font-size:28px}
+
+.def-box{background:#eef2ff;border-left:4px solid var(--primary);border-radius:8px;padding:16px 20px;margin:14px 0}
+.def-box h4{color:var(--primary);font-size:13px;text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px}
+.human-box{background:#f0fdf4;border-left:4px solid var(--secondary);border-radius:8px;padding:14px 18px;margin:12px 0;font-size:15px}
+.warn-box{background:#fffbeb;border-left:4px solid var(--warning);border-radius:8px;padding:14px 18px;margin:12px 0}
+.err-box{background:#fef2f2;border-left:4px solid var(--danger);border-radius:8px;padding:14px 18px;margin:12px 0}
+
+/* FORMULA */
+.formula-block{text-align:center;padding:18px;margin:16px 0;background:#f8faff;border-radius:12px;border:1px solid #dde5ff;font-size:20px}
+.frac{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;margin:0 4px;line-height:1.1}
+.frac .num{border-bottom:1.5px solid currentColor;padding-bottom:1px;font-size:.95em}
+.frac .den{padding-top:1px;font-size:.95em}
+.mixed-num{display:inline-flex;align-items:baseline;gap:3px}
+.big-op{font-size:22px;vertical-align:middle;margin:0 6px}
+
+/* STEPS */
+.step{display:flex;gap:12px;margin:12px 0;align-items:flex-start}
+.step-num{min-width:28px;height:28px;border-radius:50%;background:var(--primary);color:#fff;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;flex-shrink:0;margin-top:2px}
+.step-body{flex:1;font-size:15px;line-height:1.6}
+
+/* EXAMPLE */
+.example-box{border:1px solid var(--border);border-radius:12px;overflow:hidden;margin:16px 0}
+.example-header{background:#f8faff;padding:12px 18px;font-weight:700;display:flex;justify-content:space-between;align-items:center;font-size:15px}
+.example-body{padding:18px}
+.solution-hidden{display:none}
+.solution-hidden.open{display:block;animation:fadeIn .3s}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:9px 18px;border:none;border-radius:8px;cursor:pointer;font-size:14px;font-weight:600;transition:all .2s}
+.btn-primary{background:var(--primary);color:#fff}
+.btn-primary:hover{background:#4338ca}
+.btn-secondary{background:var(--secondary);color:#fff}
+.btn-warning{background:var(--warning);color:#fff}
+.btn-outline{background:transparent;border:2px solid var(--primary);color:var(--primary)}
+.btn-sm{padding:6px 12px;font-size:13px}
+
+/* QUIZ */
+.quiz-question{background:var(--card);border-radius:12px;padding:20px;margin:14px 0;box-shadow:0 1px 6px rgba(0,0,0,.05)}
+.quiz-q-text{font-size:16px;font-weight:600;margin-bottom:14px;line-height:1.5}
+.quiz-options{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.quiz-opt{padding:12px 16px;border:2px solid var(--border);border-radius:8px;cursor:pointer;transition:all .2s;font-size:14px;background:var(--card);text-align:left}
+.quiz-opt:hover:not(.disabled){border-color:var(--primary);background:#eef2ff}
+.quiz-opt.correct{border-color:var(--secondary);background:#f0fdf4;color:#065f46}
+.quiz-opt.wrong{border-color:var(--danger);background:#fef2f2;color:#991b1b}
+.quiz-opt.disabled{cursor:default;pointer-events:none}
+.quiz-explanation{margin-top:12px;padding:12px;background:#f8faff;border-radius:8px;font-size:14px;display:none}
+.quiz-explanation.show{display:block}
+
+/* PRACTICE */
+.practice-item{background:var(--card);border-radius:10px;padding:16px 20px;margin:10px 0;display:flex;align-items:center;gap:14px;box-shadow:0 1px 4px rgba(0,0,0,.05)}
+.practice-status{width:24px;height:24px;border-radius:50%;border:2px solid var(--border);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:14px}
+.practice-status.ok{border-color:var(--secondary);background:#f0fdf4;color:var(--secondary)}
+.practice-status.bad{border-color:var(--danger);background:#fef2f2;color:var(--danger)}
+.practice-input{border:2px solid var(--border);border-radius:8px;padding:8px 12px;font-size:15px;width:100px;text-align:center;font-family:inherit;outline:none;transition:border .2s}
+.practice-input:focus{border-color:var(--primary)}
+.practice-feedback{font-size:13px;font-weight:600}
+
+/* GRID */
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
+.info-card{background:var(--card);border-radius:12px;padding:18px;text-align:center;box-shadow:0 1px 6px rgba(0,0,0,.04)}
+.info-card h4{color:var(--primary);font-size:15px;margin-bottom:8px}
+.info-card p{font-size:14px;color:var(--muted);line-height:1.5}
+
+/* SCORE */
+.score-display{text-align:center;padding:30px;background:linear-gradient(135deg,#4f46e5,#7c3aed);color:#fff;border-radius:16px;margin:20px 0}
+.score-display .score-num{font-size:56px;font-weight:900;margin:10px 0}
+.score-display .score-label{font-size:16px;opacity:.85}
+
+/* PROGRESS */
+.module-progress{height:6px;background:#e2e8f0;border-radius:3px;overflow:hidden;margin:8px 0}
+.module-progress-fill{height:100%;background:var(--primary);transition:width .3s}
+
+/* TIMER */
+#quiz-timer{background:var(--danger);color:#fff;border-radius:8px;padding:8px 16px;font-size:18px;font-weight:700;display:inline-block;margin-bottom:16px}
+
+/* VISUALIZER */
+svg.chart{width:100%;height:auto;max-height:220px}
+
+/* RESPONSIVE */
+@media(max-width:900px){
+  #sidebar{transform:translateX(-100%)}
+  #sidebar.open{transform:translateX(0)}
+  #burger{display:flex;align-items:center;justify-content:center}
+  #overlay.show{display:block}
+  #main{margin-left:0;padding:60px 16px 24px}
+  .quiz-options{grid-template-columns:1fr}
+  .grid-2,.grid-3{grid-template-columns:1fr}
+}
+.hint-block{display:none;background:#fffbeb;border-radius:8px;padding:12px;margin-top:8px;font-size:14px;border:1px solid #fcd34d}
+.hint-block.open{display:block}
+.badge{display:inline-flex;align-items:center;gap:4px;padding:4px 10px;border-radius:20px;font-size:12px;font-weight:700}
+.badge-primary{background:#eef2ff;color:var(--primary)}
+.badge-success{background:#f0fdf4;color:var(--secondary)}
+.badge-warning{background:#fffbeb;color:#92400e}
+</style>
+</head>
+<body>
+<div id="progress-bar" style="width:0%"></div>
+
+<!-- SIDEBAR -->
+<nav id="sidebar">
+  <div id="sidebar-header">
+    <h2>§ 2.6</h2>
+    <p>Умножение обыкновенных дробей</p>
+  </div>
+  <div class="nav-item active" data-sec="theory1" onclick="goTo('theory1')">
+    <div class="nav-icon">1</div>
+    Натуральное × дробь
+    <span class="nav-progress" id="np-theory1">0%</span>
+  </div>
+  <div class="nav-item" data-sec="theory2" onclick="goTo('theory2')">
+    <div class="nav-icon">2</div>
+    Дробь × дробь
+    <span class="nav-progress" id="np-theory2">0%</span>
+  </div>
+  <div class="nav-item" data-sec="theory3" onclick="goTo('theory3')">
+    <div class="nav-icon">3</div>
+    Умножение с сокращением
+    <span class="nav-progress" id="np-theory3">0%</span>
+  </div>
+  <div class="nav-item" data-sec="practice" onclick="goTo('practice')">
+    <div class="nav-icon">✏</div>
+    Тренажёр (24 задачи)
+    <span class="nav-progress" id="np-practice">0%</span>
+  </div>
+  <div class="nav-item" data-sec="quiz" onclick="goTo('quiz')">
+    <div class="nav-icon">⚡</div>
+    Викторина (15 вопр.)
+    <span class="nav-progress" id="np-quiz">0%</span>
+  </div>
+  <div class="nav-item" data-sec="test" onclick="goTo('test')">
+    <div class="nav-icon">📝</div>
+    Итоговый тест (30 вопр.)
+    <span class="nav-progress" id="np-test">0%</span>
+  </div>
+</nav>
+
+<button id="burger" onclick="toggleSidebar()">☰</button>
+<div id="overlay" onclick="toggleSidebar()"></div>
+
+<!-- MAIN -->
+<main id="main">
+
+<!-- ═══ MODULE 1 ═══ -->
+<section id="theory1" class="section active">
+<div class="card">
+  <div class="card-title"><span>✖️</span> Умножение натурального числа на дробь</div>
+  
+  <div class="def-box">
+    <h4>Определение</h4>
+    Умножение натурального числа на дробь означает <strong>многократное (заданное число раз) сложение дроби</strong>.
+  </div>
+
+  <div class="human-box">
+    💡 <strong>Проще говоря:</strong> 3 · <span class="frac"><span class="num">2</span><span class="den">7</span></span> означает «сложить дробь <span class="frac"><span class="num">2</span><span class="den">7</span></span> три раза». Знаменатель остаётся без изменений, а числитель умножается на это число.
+  </div>
+
+  <div class="formula-block">
+    <span class="frac"><span class="num">2</span><span class="den">7</span></span>
+    <span class="big-op">+</span>
+    <span class="frac"><span class="num">2</span><span class="den">7</span></span>
+    <span class="big-op">+</span>
+    <span class="frac"><span class="num">2</span><span class="den">7</span></span>
+    <span class="big-op">=</span>
+    <span class="frac"><span class="num">2+2+2</span><span class="den">7</span></span>
+    <span class="big-op">=</span>
+    <span class="frac"><span class="num">3·2</span><span class="den">7</span></span>
+    <span class="big-op">=</span>
+    <span class="frac"><span class="num">6</span><span class="den">7</span></span>
+  </div>
+
+  <div class="formula-block">
+    <strong>Правило:</strong> &nbsp;
+    n · <span class="frac"><span class="num">a</span><span class="den">b</span></span>
+    <span class="big-op">=</span>
+    <span class="frac"><span class="num">n · a</span><span class="den">b</span></span>
+  </div>
+
+  <!-- SVG визуализация -->
+  <div class="card" style="background:#f8faff;margin-top:16px">
+    <p style="font-size:13px;color:var(--muted);margin-bottom:10px">Визуализация: 3 · 2/7 на числовой прямой</p>
+    <svg viewBox="0 0 500 90" xmlns="http://www.w3.org/2000/svg" class="chart">
+      <line x1="20" y1="50" x2="480" y2="50" stroke="#94a3b8" stroke-width="2"/>
+      <line x1="20" y1="42" x2="20" y2="58" stroke="#1e293b" stroke-width="2"/>
+      <text x="20" y="72" text-anchor="middle" font-size="12" fill="#1e293b">0</text>
+      <line x1="480" y1="42" x2="480" y2="58" stroke="#1e293b" stroke-width="2"/>
+      <text x="480" y="72" text-anchor="middle" font-size="12" fill="#1e293b">1</text>
+      <!-- 7ths marks -->
+      <line x1="86" y1="45" x2="86" y2="55" stroke="#94a3b8" stroke-width="1"/>
+      <line x1="152" y1="45" x2="152" y2="55" stroke="#94a3b8" stroke-width="1"/>
+      <line x1="218" y1="45" x2="218" y2="55" stroke="#94a3b8" stroke-width="1"/>
+      <line x1="284" y1="45" x2="284" y2="55" stroke="#94a3b8" stroke-width="1"/>
+      <line x1="350" y1="45" x2="350" y2="55" stroke="#94a3b8" stroke-width="1"/>
+      <line x1="416" y1="45" x2="416" y2="55" stroke="#94a3b8" stroke-width="1"/>
+      <!-- Arcs: 2/7 steps, each 2×(460/7)≈131.4px wide -->
+      <path d="M20 48 Q85 18 152 48" stroke="#4f46e5" stroke-width="2.5" fill="none"/>
+      <text x="86" y="16" text-anchor="middle" font-size="11" fill="#4f46e5">2/7</text>
+      <path d="M152 48 Q217 18 284 48" stroke="#7c3aed" stroke-width="2.5" fill="none"/>
+      <text x="218" y="16" text-anchor="middle" font-size="11" fill="#7c3aed">2/7</text>
+      <path d="M284 48 Q349 18 416 48" stroke="#c026d3" stroke-width="2.5" fill="none"/>
+      <text x="350" y="16" text-anchor="middle" font-size="11" fill="#c026d3">2/7</text>
+      <circle cx="416" cy="50" r="5" fill="#ef4444"/>
+      <text x="416" y="72" text-anchor="middle" font-size="12" fill="#ef4444" font-weight="bold">6/7</text>
+    </svg>
+  </div>
+
+  <!-- Примеры -->
+  <h3 style="margin:20px 0 12px;color:var(--text)">Примеры решения</h3>
+
+  <div class="example-box">
+    <div class="example-header">
+      Пример 1: Найдите 3 · <span class="frac"><span class="num">4</span><span class="den">7</span></span>
+      <button class="btn btn-primary btn-sm" onclick="toggleSol('sol1')">Показать решение</button>
+    </div>
+    <div class="example-body">
+      <div class="solution-hidden" id="sol1">
+        <div class="step"><div class="step-num">1</div><div class="step-body">Умножаем числитель на натуральное число: 3 · 4 = 12</div></div>
+        <div class="step"><div class="step-num">2</div><div class="step-body">Знаменатель остаётся без изменений: 7</div></div>
+        <div class="step"><div class="step-num">3</div><div class="step-body">Записываем результат: <span class="frac"><span class="num">12</span><span class="den">7</span></span> = 1<span class="frac"><span class="num">5</span><span class="den">7</span></span></div></div>
+        <div class="def-box" style="margin-top:10px"><strong>Ответ:</strong> 1<span class="frac"><span class="num">5</span><span class="den">7</span></span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="example-box">
+    <div class="example-header">
+      Пример 2: Найдите 6 · <span class="frac"><span class="num">3</span><span class="den">4</span></span>
+      <button class="btn btn-primary btn-sm" onclick="toggleSol('sol2')">Показать решение</button>
+    </div>
+    <div class="example-body">
+      <div class="solution-hidden" id="sol2">
+        <div class="step"><div class="step-num">1</div><div class="step-body">6 · <span class="frac"><span class="num">3</span><span class="den">4</span></span> = <span class="frac"><span class="num">6 · 3</span><span class="den">4</span></span> = <span class="frac"><span class="num">18</span><span class="den">4</span></span></div></div>
+        <div class="step"><div class="step-num">2</div><div class="step-body">Сокращаем дробь: <span class="frac"><span class="num">18</span><span class="den">4</span></span> = <span class="frac"><span class="num">9</span><span class="den">2</span></span> = 4<span class="frac"><span class="num">1</span><span class="den">2</span></span></div></div>
+        <div class="def-box"><strong>Ответ:</strong> 4<span class="frac"><span class="num">1</span><span class="den">2</span></span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="example-box">
+    <div class="example-header">
+      Пример 3: Замените сложение умножением: <span class="frac"><span class="num">3</span><span class="den">8</span></span> + <span class="frac"><span class="num">3</span><span class="den">8</span></span> + <span class="frac"><span class="num">3</span><span class="den">8</span></span> + <span class="frac"><span class="num">3</span><span class="den">8</span></span> + <span class="frac"><span class="num">3</span><span class="den">8</span></span>
+      <button class="btn btn-primary btn-sm" onclick="toggleSol('sol3')">Показать решение</button>
+    </div>
+    <div class="example-body">
+      <div class="solution-hidden" id="sol3">
+        <div class="step"><div class="step-num">1</div><div class="step-body">Считаем слагаемых: 5 штук одинаковых дробей</div></div>
+        <div class="step"><div class="step-num">2</div><div class="step-body">Записываем умножением: 5 · <span class="frac"><span class="num">3</span><span class="den">8</span></span> = <span class="frac"><span class="num">15</span><span class="den">8</span></span> = 1<span class="frac"><span class="num">7</span><span class="den">8</span></span></div></div>
+        <div class="def-box"><strong>Ответ:</strong> 1<span class="frac"><span class="num">7</span><span class="den">8</span></span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="err-box">
+    ⚠️ <strong>Типичная ошибка:</strong> Умножать знаменатель тоже!<br>
+    <del>3 · <span class="frac"><span class="num">2</span><span class="den">7</span></span> = <span class="frac"><span class="num">6</span><span class="den">21</span></span></del> — НЕВЕРНО!&nbsp;&nbsp; Правильно: <span class="frac"><span class="num">6</span><span class="den">7</span></span>
+  </div>
+
+  <!-- МИНИ-ПРОВЕРКА -->
+  <h3 style="margin:20px 0 12px">Мини-проверка</h3>
+  <div class="quiz-question">
+    <div class="quiz-q-text">Чему равно 4 · <span class="frac"><span class="num">3</span><span class="den">8</span></span>?</div>
+    <div class="quiz-options">
+      <button class="quiz-opt" onclick="checkMini(this,'wrong','theory1')"><span class="frac"><span class="num">12</span><span class="den">32</span></span></button>
+      <button class="quiz-opt" onclick="checkMini(this,'correct','theory1')"><span class="frac"><span class="num">3</span><span class="den">2</span></span> = 1<span class="frac"><span class="num">1</span><span class="den">2</span></span></button>
+      <button class="quiz-opt" onclick="checkMini(this,'wrong','theory1')"><span class="frac"><span class="num">7</span><span class="den">8</span></span></button>
+      <button class="quiz-opt" onclick="checkMini(this,'wrong','theory1')"><span class="frac"><span class="num">4</span><span class="den">3</span></span></button>
+    </div>
+  </div>
+
+  <div style="text-align:right;margin-top:20px">
+    <button class="btn btn-secondary" onclick="goTo('theory2')">Следующий модуль →</button>
+  </div>
+</div>
+</section>
+
+<!-- ═══ MODULE 2 ═══ -->
+<section id="theory2" class="section">
+<div class="card">
+  <div class="card-title"><span>✖️</span> Умножение дроби на дробь</div>
+
+  <div class="def-box">
+    <h4>Правило умножения дробей</h4>
+    Чтобы умножить дробь на дробь, надо <strong>произведение числителей записать в числитель</strong>, а <strong>произведение знаменателей — в знаменатель</strong>.
+  </div>
+
+  <div class="formula-block">
+    <span class="frac"><span class="num">a</span><span class="den">c</span></span>
+    <span class="big-op">·</span>
+    <span class="frac"><span class="num">b</span><span class="den">d</span></span>
+    <span class="big-op">=</span>
+    <span class="frac"><span class="num">a · b</span><span class="den">c · d</span></span>
+  </div>
+
+  <div class="human-box">
+    💡 <strong>Проще говоря:</strong> Числители умножаются между собой, знаменатели — между собой. Произведение двух дробей можно представить как площадь прямоугольника.
+  </div>
+
+  <!-- SVG площадная модель -->
+  <div class="card" style="background:#f8faff">
+    <p style="font-size:13px;color:var(--muted);margin-bottom:10px">Модель площади: <span class="frac"><span class="num">2</span><span class="den">3</span></span> · <span class="frac"><span class="num">4</span><span class="den">5</span></span> = <span class="frac"><span class="num">8</span><span class="den">15</span></span></p>
+    <svg viewBox="0 0 380 200" xmlns="http://www.w3.org/2000/svg">
+      <!-- Full rectangle -->
+      <rect x="60" y="20" width="200" height="150" fill="#e0e7ff" stroke="#4f46e5" stroke-width="1.5"/>
+      <!-- 5 columns -->
+      <line x1="100" y1="20" x2="100" y2="170" stroke="#4f46e5" stroke-width="1" stroke-dasharray="4"/>
+      <line x1="140" y1="20" x2="140" y2="170" stroke="#4f46e5" stroke-width="1" stroke-dasharray="4"/>
+      <line x1="180" y1="20" x2="180" y2="170" stroke="#4f46e5" stroke-width="1" stroke-dasharray="4"/>
+      <line x1="220" y1="20" x2="220" y2="170" stroke="#4f46e5" stroke-width="1" stroke-dasharray="4"/>
+      <!-- 3 rows -->
+      <line x1="60" y1="70" x2="260" y2="70" stroke="#7c3aed" stroke-width="1" stroke-dasharray="4"/>
+      <line x1="60" y1="120" x2="260" y2="120" stroke="#7c3aed" stroke-width="1" stroke-dasharray="4"/>
+      <!-- Shaded 2/3 × 4/5 = 8/15 -->
+      <rect x="60" y="20" width="160" height="100" fill="#6366f1" opacity=".55"/>
+      <!-- Labels -->
+      <text x="140" y="12" text-anchor="middle" font-size="12" fill="#4f46e5">4/5 части</text>
+      <text x="45" y="75" text-anchor="middle" font-size="11" fill="#7c3aed">2/3</text>
+      <text x="140" y="70" text-anchor="middle" font-size="13" fill="#fff" font-weight="bold">8/15</text>
+      <text x="300" y="100" font-size="13" fill="#1e293b"><tspan x="300">2/3 · 4/5</tspan><tspan x="300" dy="18">= 8/15</tspan></text>
+    </svg>
+  </div>
+
+  <div class="example-box">
+    <div class="example-header">
+      Пример 1: <span class="frac"><span class="num">1</span><span class="den">2</span></span> · <span class="frac"><span class="num">4</span><span class="den">5</span></span>
+      <button class="btn btn-primary btn-sm" onclick="toggleSol('sol4')">Показать решение</button>
+    </div>
+    <div class="example-body">
+      <div class="solution-hidden" id="sol4">
+        <div class="step"><div class="step-num">1</div><div class="step-body">Перемножаем числители: 1 · 4 = 4</div></div>
+        <div class="step"><div class="step-num">2</div><div class="step-body">Перемножаем знаменатели: 2 · 5 = 10</div></div>
+        <div class="step"><div class="step-num">3</div><div class="step-body">Получаем дробь: <span class="frac"><span class="num">4</span><span class="den">10</span></span></div></div>
+        <div class="step"><div class="step-num">4</div><div class="step-body">Сокращаем: <span class="frac"><span class="num">4</span><span class="den">10</span></span> = <span class="frac"><span class="num">2</span><span class="den">5</span></span></div></div>
+        <div class="def-box"><strong>Ответ:</strong> <span class="frac"><span class="num">2</span><span class="den">5</span></span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="example-box">
+    <div class="example-header">
+      Пример 2: <span class="frac"><span class="num">3</span><span class="den">5</span></span> · <span class="frac"><span class="num">5</span><span class="den">9</span></span>
+      <button class="btn btn-primary btn-sm" onclick="toggleSol('sol5')">Показать решение</button>
+    </div>
+    <div class="example-body">
+      <div class="solution-hidden" id="sol5">
+        <div class="step"><div class="step-num">1</div><div class="step-body">Числители: 3 · 5 = 15; Знаменатели: 5 · 9 = 45</div></div>
+        <div class="step"><div class="step-num">2</div><div class="step-body"><span class="frac"><span class="num">15</span><span class="den">45</span></span> = <span class="frac"><span class="num">1</span><span class="den">3</span></span></div></div>
+        <div class="def-box"><strong>Ответ:</strong> <span class="frac"><span class="num">1</span><span class="den">3</span></span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="example-box">
+    <div class="example-header">
+      Пример 3: Как найти произведение дроби и натурального числа по правилу умножения дробей? <span class="frac"><span class="num">2</span><span class="den">7</span></span> · 3
+      <button class="btn btn-primary btn-sm" onclick="toggleSol('sol6')">Показать решение</button>
+    </div>
+    <div class="example-body">
+      <div class="solution-hidden" id="sol6">
+        <div class="step"><div class="step-num">1</div><div class="step-body">Записываем 3 в виде дроби: <span class="frac"><span class="num">3</span><span class="den">1</span></span></div></div>
+        <div class="step"><div class="step-num">2</div><div class="step-body"><span class="frac"><span class="num">2</span><span class="den">7</span></span> · <span class="frac"><span class="num">3</span><span class="den">1</span></span> = <span class="frac"><span class="num">2 · 3</span><span class="den">7 · 1</span></span> = <span class="frac"><span class="num">6</span><span class="den">7</span></span></div></div>
+        <div class="def-box"><strong>Ответ:</strong> <span class="frac"><span class="num">6</span><span class="den">7</span></span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="err-box">
+    ⚠️ <strong>Типичная ошибка:</strong> Складывать числители и знаменатели вместо умножения!<br>
+    <del><span class="frac"><span class="num">2</span><span class="den">3</span></span> · <span class="frac"><span class="num">3</span><span class="den">4</span></span> = <span class="frac"><span class="num">5</span><span class="den">7</span></span></del> — НЕВЕРНО!&nbsp;&nbsp; Правильно: <span class="frac"><span class="num">6</span><span class="den">12</span></span> = <span class="frac"><span class="num">1</span><span class="den">2</span></span>
+  </div>
+
+  <h3 style="margin:20px 0 12px">Мини-проверка</h3>
+  <div class="quiz-question">
+    <div class="quiz-q-text"><span class="frac"><span class="num">3</span><span class="den">4</span></span> · <span class="frac"><span class="num">2</span><span class="den">7</span></span> = ?</div>
+    <div class="quiz-options">
+      <button class="quiz-opt" onclick="checkMini(this,'wrong','theory2')"><span class="frac"><span class="num">5</span><span class="den">11</span></span></button>
+      <button class="quiz-opt" onclick="checkMini(this,'correct','theory2')"><span class="frac"><span class="num">6</span><span class="den">28</span></span> = <span class="frac"><span class="num">3</span><span class="den">14</span></span></button>
+      <button class="quiz-opt" onclick="checkMini(this,'wrong','theory2')"><span class="frac"><span class="num">6</span><span class="den">7</span></span></button>
+      <button class="quiz-opt" onclick="checkMini(this,'wrong','theory2')"><span class="frac"><span class="num">3</span><span class="den">7</span></span></button>
+    </div>
+  </div>
+
+  <div style="display:flex;gap:12px;justify-content:flex-end;margin-top:20px">
+    <button class="btn btn-outline" onclick="goTo('theory1')">← Назад</button>
+    <button class="btn btn-secondary" onclick="goTo('theory3')">Следующий →</button>
+  </div>
+</div>
+</section>
+
+<!-- ═══ MODULE 3 ═══ -->
+<section id="theory3" class="section">
+<div class="card">
+  <div class="card-title"><span>✂️</span> Умножение с сокращением дробей</div>
+
+  <div class="def-box">
+    <h4>Метод</h4>
+    Иногда удобнее сначала сократить множители в числителе и знаменателе, а затем перемножить.
+  </div>
+
+  <div class="human-box">
+    💡 <strong>Проще говоря:</strong> Перед умножением можно «перечеркнуть» числитель одной дроби и знаменатель другой на их НОД — это значительно упрощает вычисления.
+  </div>
+
+  <div class="formula-block">
+    <span class="frac"><span class="num">6</span><span class="den">7</span></span>
+    <span class="big-op">·</span>
+    <span class="frac"><span class="num">5</span><span class="den">12</span></span>
+    <span class="big-op">=</span>
+    <span class="frac"><span class="num"><s>6</s>¹ · 5</span><span class="den">7 · <s>12</s>₂</span></span>
+    <span class="big-op">=</span>
+    <span class="frac"><span class="num">1 · 5</span><span class="den">7 · 2</span></span>
+    <span class="big-op">=</span>
+    <span class="frac"><span class="num">5</span><span class="den">14</span></span>
+  </div>
+  <p style="text-align:center;font-size:13px;color:var(--muted)">6 и 12 делятся на 6, которое является их НОД</p>
+
+  <div class="grid-2" style="margin:16px 0">
+    <div class="info-card">
+      <h4>Без сокращения</h4>
+      <p><span class="frac"><span class="num">6</span><span class="den">7</span></span> · <span class="frac"><span class="num">5</span><span class="den">12</span></span> = <span class="frac"><span class="num">30</span><span class="den">84</span></span> → сокращаем на 6 → <span class="frac"><span class="num">5</span><span class="den">14</span></span></p>
+    </div>
+    <div class="info-card">
+      <h4>С предварительным сокращением</h4>
+      <p>Сокращаем 6 и 12 на 6 сразу → <span class="frac"><span class="num">1 · 5</span><span class="den">7 · 2</span></span> = <span class="frac"><span class="num">5</span><span class="den">14</span></span> — проще!</p>
+    </div>
+  </div>
+
+  <div class="example-box">
+    <div class="example-header">
+      Пример 1: <span class="frac"><span class="num">4</span><span class="den">5</span></span> · <span class="frac"><span class="num">3</span><span class="den">8</span></span>
+      <button class="btn btn-primary btn-sm" onclick="toggleSol('sol7')">Показать решение</button>
+    </div>
+    <div class="example-body">
+      <div class="solution-hidden" id="sol7">
+        <div class="step"><div class="step-num">1</div><div class="step-body">Ищем общие множители: НОД(4, 8) = 4</div></div>
+        <div class="step"><div class="step-num">2</div><div class="step-body">Сокращаем: 4÷4=1, 8÷4=2</div></div>
+        <div class="step"><div class="step-num">3</div><div class="step-body"><span class="frac"><span class="num">¹4·3</span><span class="den">5·8₂</span></span> = <span class="frac"><span class="num">1·3</span><span class="den">5·2</span></span> = <span class="frac"><span class="num">3</span><span class="den">10</span></span></div></div>
+        <div class="def-box"><strong>Ответ:</strong> <span class="frac"><span class="num">3</span><span class="den">10</span></span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="example-box">
+    <div class="example-header">
+      Пример 2: <span class="frac"><span class="num">3</span><span class="den">8</span></span> · 4
+      <button class="btn btn-primary btn-sm" onclick="toggleSol('sol8')">Показать решение</button>
+    </div>
+    <div class="example-body">
+      <div class="solution-hidden" id="sol8">
+        <div class="step"><div class="step-num">1</div><div class="step-body">Записываем 4 как дробь: <span class="frac"><span class="num">4</span><span class="den">1</span></span></div></div>
+        <div class="step"><div class="step-num">2</div><div class="step-body">НОД(4,8)=4. Сокращаем: <span class="frac"><span class="num">3 · <s>4</s>¹</span><span class="den"><s>8</s>₂ · 1</span></span> = <span class="frac"><span class="num">3</span><span class="den">2</span></span> = 1<span class="frac"><span class="num">1</span><span class="den">2</span></span></div></div>
+        <div class="def-box"><strong>Ответ:</strong> 1<span class="frac"><span class="num">1</span><span class="den">2</span></span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="example-box">
+    <div class="example-header">
+      Пример 3: <span class="frac"><span class="num">7</span><span class="den">12</span></span> · <span class="frac"><span class="num">3</span><span class="den">14</span></span>
+      <button class="btn btn-primary btn-sm" onclick="toggleSol('sol9')">Показать решение</button>
+    </div>
+    <div class="example-body">
+      <div class="solution-hidden" id="sol9">
+        <div class="step"><div class="step-num">1</div><div class="step-body">НОД(7,14)=7: делим 7÷7=1, 14÷7=2</div></div>
+        <div class="step"><div class="step-num">2</div><div class="step-body">НОД(3,12)=3: делим 3÷3=1, 12÷3=4</div></div>
+        <div class="step"><div class="step-num">3</div><div class="step-body"><span class="frac"><span class="num">1 · 1</span><span class="den">4 · 2</span></span> = <span class="frac"><span class="num">1</span><span class="den">8</span></span></div></div>
+        <div class="def-box"><strong>Ответ:</strong> <span class="frac"><span class="num">1</span><span class="den">8</span></span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="warn-box">
+    💡 <strong>Запомни!</strong> Сокращать можно только числитель одной дроби с знаменателем другой дроби — но не числитель с числителем!
+  </div>
+
+  <h3 style="margin:20px 0 12px">Мини-проверка</h3>
+  <div class="quiz-question">
+    <div class="quiz-q-text"><span class="frac"><span class="num">5</span><span class="den">6</span></span> · <span class="frac"><span class="num">3</span><span class="den">10</span></span> = ?</div>
+    <div class="quiz-options">
+      <button class="quiz-opt" onclick="checkMini(this,'wrong','theory3')"><span class="frac"><span class="num">15</span><span class="den">16</span></span></button>
+      <button class="quiz-opt" onclick="checkMini(this,'wrong','theory3')"><span class="frac"><span class="num">8</span><span class="den">16</span></span></button>
+      <button class="quiz-opt" onclick="checkMini(this,'correct','theory3')"><span class="frac"><span class="num">1</span><span class="den">4</span></span></button>
+      <button class="quiz-opt" onclick="checkMini(this,'wrong','theory3')"><span class="frac"><span class="num">2</span><span class="den">5</span></span></button>
+    </div>
+  </div>
+
+  <div style="text-align:right;margin-top:20px">
+    <button class="btn btn-secondary" onclick="goTo('practice')">К тренажёру →</button>
+  </div>
+</div>
+</section>
+
+<!-- ═══ ПРАКТИКА ═══ -->
+<section id="practice" class="section">
+<div class="card">
+  <div class="card-title"><span>✏️</span> Тренажёр — 24 задачи</div>
+  <div id="practice-list"></div>
+  <div style="margin-top:20px;padding:16px;background:#f8faff;border-radius:10px">
+    <strong>Выполнено: <span id="done-count">0</span> / 24</strong>
+    <div class="module-progress"><div class="module-progress-fill" id="practice-progress-bar" style="width:0%"></div></div>
+  </div>
+  <div style="text-align:right;margin-top:16px">
+    <button class="btn btn-secondary" onclick="goTo('quiz')">К викторине →</button>
+  </div>
+</div>
+</section>
+
+<!-- ═══ ВИКТОРИНА ═══ -->
+<section id="quiz" class="section">
+<div class="card">
+  <div class="card-title"><span>⚡</span> Викторина — 15 вопросов</div>
+  <div id="quiz-start-screen">
+    <p style="margin-bottom:16px">Перемешанные вопросы по всем темам раздела. Таймер: 10 минут.</p>
+    <button class="btn btn-primary" onclick="startQuiz()">Начать викторину</button>
+  </div>
+  <div id="quiz-game" style="display:none">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+      <span id="quiz-timer">10:00</span>
+      <span>Вопрос <span id="qnum">1</span>/15</span>
+    </div>
+    <div class="module-progress"><div class="module-progress-fill" id="quiz-progress-bar" style="width:0%"></div></div>
+    <div id="quiz-question-area" style="margin-top:16px"></div>
+  </div>
+  <div id="quiz-end" style="display:none"></div>
+</div>
+</section>
+
+<!-- ═══ ТЕСТ ═══ -->
+<section id="test" class="section">
+<div class="card">
+  <div class="card-title"><span>📝</span> Итоговый тест — 30 вопросов</div>
+  <div id="test-start">
+    <p style="margin-bottom:16px">Тест охватывает все темы раздела §2.6. Нет ограничения по времени.</p>
+    <button class="btn btn-primary" onclick="startTest()">Начать тест</button>
+  </div>
+  <div id="test-body" style="display:none"></div>
+  <div id="test-result" style="display:none"></div>
+</div>
+</section>
+
+</main>
+
+<script>
+// ═══════════════════════════
+// УТИЛИТЫ
+// ═══════════════════════════
+function gcd(a,b){return b===0?a:gcd(b,a%b)}
+function f(n,d){var g=gcd(Math.abs(n),Math.abs(d));return[n/g,d/g]}
+function fracStr(n,d){
+  return '<span class="frac"><span class="num">'+n+'</span><span class="den">'+d+'</span></span>';
+}
+
+function toggleSol(id){
+  var el=document.getElementById(id);
+  el.classList.toggle('open');
+}
+
+function toggleSidebar(){
+  document.getElementById('sidebar').classList.toggle('open');
+  document.getElementById('overlay').classList.toggle('show');
+}
+
+// ═══════════════════════════
+// НАВИГАЦИЯ
+// ═══════════════════════════
+var visited={};
+function goTo(sec){
+  document.querySelectorAll('.section').forEach(function(s){s.classList.remove('active')});
+  document.querySelectorAll('.nav-item').forEach(function(n){n.classList.remove('active')});
+  document.getElementById(sec).classList.add('active');
+  var ni=document.querySelector('[data-sec="'+sec+'"]');
+  if(ni){ni.classList.add('active');ni.classList.add('done')}
+  visited[sec]=true;
+  updateProgressBar();
+  if(document.getElementById('sidebar').classList.contains('open')) toggleSidebar();
+  window.scrollTo(0,0);
+  saveState();
+}
+
+function updateProgressBar(){
+  var secs=['theory1','theory2','theory3','practice','quiz','test'];
+  var done=Object.keys(visited).length;
+  var pct=Math.round(done/secs.length*100);
+  document.getElementById('progress-bar').style.width=pct+'%';
+}
+
+// ═══════════════════════════
+// МИНИ-ПРОВЕРКИ
+// ═══════════════════════════
+var miniDone={};
+function checkMini(btn, result, module){
+  var parent=btn.closest('.quiz-question');
+  parent.querySelectorAll('.quiz-opt').forEach(function(b){b.classList.add('disabled')});
+  if(result==='correct'){
+    btn.classList.add('correct');
+    miniDone[module]=true;
+    updateNavProgress(module, 100);
+  } else {
+    btn.classList.add('wrong');
+    parent.querySelectorAll('.quiz-opt').forEach(function(b){
+      if(b.onclick.toString().includes("'correct'")){b.classList.add('correct')}
+    });
+  }
+}
+function updateNavProgress(sec, pct){
+  var el=document.getElementById('np-'+sec);
+  if(el) el.textContent=pct+'%';
+}
+
+// ═══════════════════════════
+// ПРАКТИКА
+// ═══════════════════════════
+var practiceData=[
+  {q:'3 · '+fracStr(2,7),a:'6/7',check:function(v){return v==='6/7'}},
+  {q:'5 · '+fracStr(1,9),a:'5/9',check:function(v){return v==='5/9'}},
+  {q:'4 · '+fracStr(3,8),a:'3/2 или 1 1/2',check:function(v){return v.replace(/\s/g,'')=='3/2'||v=='1 1/2'||v=='1.5'}},
+  {q:'6 · '+fracStr(5,12),a:'5/2 или 2 1/2',check:function(v){var s=v.replace(/\s/g,'');return s=='5/2'||s=='21/2'||s=='2.5'}},
+  {q:fracStr(2,5)+' · '+fracStr(3,8),a:'6/40 = 3/20',check:function(v){var s=v.replace(/\s/g,'');return s=='3/20'||s=='6/40'}},
+  {q:fracStr(1,2)+' · '+fracStr(4,5),a:'4/10 = 2/5',check:function(v){var s=v.replace(/\s/g,'');return s=='2/5'||s=='4/10'}},
+  {q:fracStr(3,4)+' · '+fracStr(2,7),a:'6/28 = 3/14',check:function(v){var s=v.replace(/\s/g,'');return s=='3/14'||s=='6/28'}},
+  {q:fracStr(3,5)+' · '+fracStr(5,9),a:'15/45 = 1/3',check:function(v){var s=v.replace(/\s/g,'');return s=='1/3'||s=='15/45'}},
+  {q:fracStr(6,7)+' · '+fracStr(5,12),a:'5/14',check:function(v){return v.replace(/\s/g,'')=='5/14'}},
+  {q:fracStr(4,5)+' · '+fracStr(3,8),a:'12/40 = 3/10',check:function(v){var s=v.replace(/\s/g,'');return s=='3/10'||s=='12/40'}},
+  {q:fracStr(7,12)+' · '+fracStr(3,14),a:'1/8',check:function(v){return v.replace(/\s/g,'')=='1/8'}},
+  {q:'9 · '+fracStr(1,6),a:'3/2 или 1 1/2',check:function(v){var s=v.replace(/\s/g,'');return s=='3/2'||s=='11/2'||s=='1.5'}},
+  {q:'15 · '+fracStr(2,10),a:'3',check:function(v){return v.trim()==='3'}},
+  {q:fracStr(1,3)+' · '+fracStr(2,5),a:'2/15',check:function(v){return v.replace(/\s/g,'')=='2/15'}},
+  {q:fracStr(3,4)+' · '+fracStr(2,3),a:'1/2',check:function(v){return v.replace(/\s/g,'')=='1/2'}},
+  {q:fracStr(5,6)+' · '+fracStr(3,10),a:'1/4',check:function(v){return v.replace(/\s/g,'')=='1/4'}},
+  {q:fracStr(7,3)+' · '+fracStr(3,7),a:'1',check:function(v){return v.trim()==='1'}},
+  {q:'7 · '+fracStr(3,7),a:'3',check:function(v){return v.trim()==='3'}},
+  {q:fracStr(5,8)+' · 8',a:'5',check:function(v){return v.trim()==='5'}},
+  {q:fracStr(4,9)+' · '+fracStr(3,8),a:'1/6',check:function(v){return v.replace(/\s/g,'')=='1/6'}},
+  {q:fracStr(2,3)+' · '+fracStr(9,4),a:'3/2 или 1 1/2',check:function(v){var s=v.replace(/\s/g,'');return s=='3/2'||s=='11/2'||s=='1.5'}},
+  {q:fracStr(5,7)+' · '+fracStr(7,5),a:'1',check:function(v){return v.trim()==='1'}},
+  {q:'12 · '+fracStr(5,18),a:'10/3 или 3 1/3',check:function(v){var s=v.replace(/\s/g,'');return s=='10/3'||s=='31/3'}},
+  {q:fracStr(3,8)+' · '+fracStr(4,9),a:'1/6',check:function(v){return v.replace(/\s/g,'')=='1/6'}}
+];
+
+var practiceState={};
+
+function renderPractice(){
+  var list=document.getElementById('practice-list');
+  list.innerHTML='';
+  practiceData.forEach(function(item,i){
+    var state=practiceState[i]||'';
+    var statusIcon=state==='ok'?'✓':state==='bad'?'✗':'';
+    var statusClass=state==='ok'?'ok':state==='bad'?'bad':'';
+    list.innerHTML+=
+      '<div class="practice-item" id="pi-'+i+'">'+
+        '<div class="practice-status '+statusClass+'" id="ps-'+i+'">'+statusIcon+'</div>'+
+        '<div style="flex:1;font-size:15px">'+item.q+'</div>'+
+        '<input class="practice-input" id="pinput-'+i+'" type="text" placeholder="Ответ" '+(state?'disabled':'')+'>'+
+        '<button class="btn btn-primary btn-sm" onclick="checkPractice('+i+')" '+(state?'disabled':'')+'>✓</button>'+
+        '<button class="btn btn-warning btn-sm" onclick="showHint('+i+')">?</button>'+
+        '<span class="practice-feedback" id="pfb-'+i+'"></span>'+
+      '</div>'+
+      '<div class="hint-block" id="hint-'+i+'">Ответ: '+item.a+'</div>';
+  });
+}
+
+function checkPractice(i){
+  var inp=document.getElementById('pinput-'+i);
+  var v=inp.value.trim();
+  var ok=practiceData[i].check(v);
+  practiceState[i]=ok?'ok':'bad';
+  var ps=document.getElementById('ps-'+i);
+  ps.textContent=ok?'✓':'✗';
+  ps.className='practice-status '+(ok?'ok':'bad');
+  var fb=document.getElementById('pfb-'+i);
+  fb.textContent=ok?'Верно!':'Неверно';
+  fb.style.color=ok?'var(--secondary)':'var(--danger)';
+  inp.disabled=true;
+  document.querySelector('#pi-'+i+' .btn-primary').disabled=true;
+  updatePracticeProgress();
+  saveState();
+}
+
+function showHint(i){
+  document.getElementById('hint-'+i).classList.toggle('open');
+}
+
+function updatePracticeProgress(){
+  var done=Object.values(practiceState).filter(function(v){return v==='ok'}).length;
+  document.getElementById('done-count').textContent=done;
+  var pct=Math.round(done/practiceData.length*100);
+  document.getElementById('practice-progress-bar').style.width=pct+'%';
+  updateNavProgress('practice', pct);
+}
+
+// ═══════════════════════════
+// ДАННЫЕ ВИКТОРИНЫ
+// ═══════════════════════════
+var quizAllQ=[
+  {q:'Чему равно 3 · '+fracStr(2,7)+'?',opts:[fracStr(6,21),fracStr(6,7),'6',''+fracStr(2,21)],correct:1,exp:'Знаменатель не изменяется: 3·2=6, знаменатель 7. Ответ 6/7.'},
+  {q:'Найдите '+fracStr(1,2)+' · '+fracStr(4,5),opts:[fracStr(5,7),fracStr(4,10)+'='+fracStr(2,5),fracStr(5,10),fracStr(4,7)],correct:1,exp:'1·4=4, 2·5=10. 4/10 = 2/5.'},
+  {q:'Найдите '+fracStr(3,4)+' · '+fracStr(2,3),opts:[fracStr(5,7),fracStr(6,12)+'='+fracStr(1,2),fracStr(6,7),fracStr(1,6)],correct:1,exp:'3·2=6, 4·3=12. 6/12=1/2.'},
+  {q:'Сколько будет 5·'+fracStr(3,8)+'?',opts:[fracStr(15,40),fracStr(15,8)+'=1'+fracStr(7,8),fracStr(8,3),fracStr(3,40)],correct:1,exp:'5·3=15, знаменатель 8. 15/8 = 1 7/8.'},
+  {q:fracStr(2,3)+' · '+fracStr(9,4)+' = ?',opts:['2',''+fracStr(3,2)+'=1'+fracStr(1,2),'3',fracStr(18,12)],correct:1,exp:'Сокращаем: 2 и 4 на 2 (→1,2), 9 и 3 на 3 (→3,1). 1·3/1·2 = 3/2 = 1½.'},
+  {q:'Найдите '+fracStr(5,6)+' · '+fracStr(3,10),opts:[fracStr(8,16),fracStr(15,60),fracStr(1,4),fracStr(1,3)],correct:2,exp:'5 и 10 → делим на 5 (1,2); 3 и 6 → делим на 3 (1,2). 1·1/(2·2) = 1/4.'},
+  {q:fracStr(7,5)+' · '+fracStr(5,7)+' = ?',opts:['2','0','1',fracStr(49,35)],correct:2,exp:'Это взаимно обратные числа! Их произведение всегда = 1.'},
+  {q:'Чему равно 4 · '+fracStr(3,8)+'?',opts:[fracStr(3,32),fracStr(3,2)+'=1'+fracStr(1,2),fracStr(12,32),fracStr(7,8)],correct:1,exp:'4·3=12, знаменатель 8. 12/8 = 3/2 = 1½.'},
+  {q:'Найдите '+fracStr(4,5)+' · '+fracStr(3,8),opts:[fracStr(7,13),fracStr(3,10),fracStr(12,40),fracStr(3,4)],correct:1,exp:'4 и 8 делятся на 4: получаем 1/5 · 3/2 = 3/10.'},
+  {q:fracStr(1,4)+' · '+fracStr(1,4)+' = ?',opts:[fracStr(1,2),fracStr(1,8),fracStr(1,16),fracStr(2,8)],correct:2,exp:'1·1=1, 4·4=16. Ответ 1/16.'},
+  {q:'Какое из выражений равно '+fracStr(6,7)+'?',opts:['7·'+fracStr(1,6),'6·'+fracStr(1,7),''+fracStr(1,7)+'·'+fracStr(1,6),'6+'+fracStr(1,7)],correct:1,exp:'6 · 1/7 = 6/7. Знаменатель не меняется.'},
+  {q:fracStr(3,4)+' · '+fracStr(8,9)+' = ?',opts:[fracStr(24,36),fracStr(11,13),fracStr(2,3),fracStr(1,3)],correct:2,exp:'3 и 9 → /3 (1,3); 8 и 4 → /4 (2,1). 1·2/3·1 = 2/3.'},
+  {q:'Замените сложение умножением: '+fracStr(2,5)+'+'+fracStr(2,5)+'+'+fracStr(2,5),opts:['3+'+fracStr(2,5),'3·'+fracStr(2,5)+'='+fracStr(6,5)+'=1'+fracStr(1,5),fracStr(6,15),fracStr(2,15)],correct:1,exp:'Три одинаковых слагаемых: 3 · 2/5 = 6/5 = 1 1/5.'},
+  {q:'Найдите '+fracStr(7,12)+' · '+fracStr(3,14),opts:[fracStr(21,168),fracStr(1,7),fracStr(1,8),fracStr(10,26)],correct:2,exp:'7 и 14 → /7 (1,2); 3 и 12 → /3 (1,4). 1·1/(4·2)=1/8.'},
+  {q:'Площадь прямоугольника со сторонами '+fracStr(2,3)+' м и '+fracStr(3,4)+' м равна:',opts:[fracStr(5,7)+' м²',fracStr(6,12)+' м² = '+fracStr(1,2)+' м²',fracStr(6,7)+' м²',fracStr(5,12)+' м²'],correct:1,exp:'Площадь = длина · ширина = 2/3 · 3/4 = 6/12 = 1/2 м².'}
+];
+
+var quizState={started:false,current:0,answers:[],timer:null,timeLeft:600,shuffled:[]};
+
+function shuffle(arr){
+  var a=arr.slice();
+  for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var tmp=a[i];a[i]=a[j];a[j]=tmp;}
+  return a;
+}
+
+function startQuiz(){
+  quizState.shuffled=shuffle(quizAllQ).slice(0,15);
+  quizState.current=0;
+  quizState.answers=[];
+  quizState.timeLeft=600;
+  document.getElementById('quiz-start-screen').style.display='none';
+  document.getElementById('quiz-game').style.display='block';
+  document.getElementById('quiz-end').style.display='none';
+  renderQuizQ();
+  quizState.timer=setInterval(tickTimer,1000);
+}
+
+function tickTimer(){
+  quizState.timeLeft--;
+  var m=Math.floor(quizState.timeLeft/60);
+  var s=quizState.timeLeft%60;
+  document.getElementById('quiz-timer').textContent=(m<10?'0':'')+m+':'+(s<10?'0':'')+s;
+  if(quizState.timeLeft<=0){clearInterval(quizState.timer);showQuizEnd();}
+}
+
+function renderQuizQ(){
+  var idx=quizState.current;
+  if(idx>=quizState.shuffled.length){showQuizEnd();return;}
+  var qData=quizState.shuffled[idx];
+  document.getElementById('qnum').textContent=idx+1;
+  document.getElementById('quiz-progress-bar').style.width=((idx/15)*100)+'%';
+  var html='<div class="quiz-question"><div class="quiz-q-text">'+qData.q+'</div><div class="quiz-options">';
+  qData.opts.forEach(function(opt,oi){
+    html+='<button class="quiz-opt" onclick="answerQuiz('+oi+')">'+opt+'</button>';
+  });
+  html+='</div><div class="quiz-explanation" id="qexp"></div></div>';
+  document.getElementById('quiz-question-area').innerHTML=html;
+}
+
+function answerQuiz(chosen){
+  var idx=quizState.current;
+  var qData=quizState.shuffled[idx];
+  var correct=qData.correct;
+  quizState.answers.push({chosen:chosen,correct:correct,q:qData.q});
+  var opts=document.querySelectorAll('#quiz-question-area .quiz-opt');
+  opts.forEach(function(b){b.classList.add('disabled')});
+  opts[correct].classList.add('correct');
+  if(chosen!==correct) opts[chosen].classList.add('wrong');
+  var exp=document.getElementById('qexp');
+  exp.textContent=qData.exp;
+  exp.classList.add('show');
+  setTimeout(function(){quizState.current++;renderQuizQ();},1800);
+}
+
+function showQuizEnd(){
+  clearInterval(quizState.timer);
+  document.getElementById('quiz-game').style.display='none';
+  var endDiv=document.getElementById('quiz-end');
+  endDiv.style.display='block';
+  var correct=quizState.answers.filter(function(a){return a.chosen===a.correct}).length;
+  var total=quizState.answers.length;
+  var pct=Math.round(correct/15*100);
+  var grade=pct>=90?'5':pct>=70?'4':pct>=50?'3':'2';
+  endDiv.innerHTML='<div class="score-display"><div style="font-size:18px">Результат викторины</div><div class="score-num">'+correct+'/15</div><div class="score-label">'+pct+'% — Оценка: '+grade+'</div></div><button class="btn btn-primary" onclick="startQuiz()" style="margin-top:16px">Пройти снова</button>';
+  updateNavProgress('quiz',pct);
+  saveState();
+}
+
+// ═══════════════════════════
+// ИТОГОВЫЙ ТЕСТ
+// ═══════════════════════════
+var testData=[
+  {q:'3 · '+fracStr(2,7)+' = ?',opts:[fracStr(6,21),fracStr(6,7),'6',fracStr(2,7)],c:1,exp:'Числитель умножается, знаменатель остаётся: 3·2/7 = 6/7.'},
+  {q:'5 · '+fracStr(1,9)+' = ?',opts:[fracStr(5,45),fracStr(5,9),'5·9',fracStr(1,45)],c:1,exp:'5·1=5, знаменатель 9. Ответ: 5/9.'},
+  {q:'4 · '+fracStr(3,8)+' = ?',opts:[fracStr(12,32),fracStr(7,8),fracStr(3,2)+'=1'+fracStr(1,2),fracStr(4,3)],c:2,exp:'4·3=12, 12/8=3/2=1½.'},
+  {q:fracStr(2,5)+' · '+fracStr(3,8)+' = ?',opts:[fracStr(5,13),fracStr(6,40)+'='+fracStr(3,20),fracStr(6,13),fracStr(5,40)],c:1,exp:'2·3=6, 5·8=40. 6/40=3/20.'},
+  {q:fracStr(1,2)+' · '+fracStr(1,3)+' = ?',opts:[fracStr(1,6),fracStr(2,6),fracStr(1,5),fracStr(2,5)],c:0,exp:'1·1=1, 2·3=6. Ответ 1/6.'},
+  {q:fracStr(3,4)+' · '+fracStr(4,3)+' = ?',opts:['2','1',fracStr(9,12),fracStr(12,7)],c:1,exp:'Взаимно обратные числа! 3·4/(4·3)=12/12=1.'},
+  {q:'6 · '+fracStr(3,4)+' = ?',opts:[fracStr(18,24),fracStr(9,4)+'=2'+fracStr(1,4),'18',''+fracStr(9,2)+'=4'+fracStr(1,2)],c:3,exp:'6·3=18, 18/4=9/2=4½.'},
+  {q:fracStr(5,6)+' · '+fracStr(3,10)+' = ?',opts:[fracStr(1,4),fracStr(15,60),fracStr(8,16),fracStr(1,3)],c:0,exp:'Сокращаем: 5↔10 на 5 (→1,2), 3↔6 на 3 (→1,2). 1·1/(2·2)=1/4.'},
+  {q:''+fracStr(2,7)+' · 3 = ?',opts:[fracStr(6,21),fracStr(6,7),'3',fracStr(2,21)],c:1,exp:'2·3=6, знаменатель 7. 6/7.'},
+  {q:fracStr(4,9)+' · '+fracStr(3,8)+' = ?',opts:[fracStr(1,6),fracStr(12,72),fracStr(7,17),fracStr(7,72)],c:0,exp:'4↔8 на 4 (→1,2); 3↔9 на 3 (→1,3). 1·1/(3·2)=1/6.'},
+  {q:'Чему равно '+fracStr(1,5)+' · 5?',opts:['5','25','1',fracStr(1,25)],c:2,exp:'1·5=5, 5/5=1.'},
+  {q:fracStr(7,12)+' · '+fracStr(3,14)+' = ?',opts:[fracStr(1,8),fracStr(21,168),fracStr(1,6),fracStr(1,9)],c:0,exp:'7↔14 на 7 (→1,2); 3↔12 на 3 (→1,4). 1·1/(4·2)=1/8.'},
+  {q:'Сколько слагаемых в выражении 4·'+fracStr(2,5)+'?',opts:['2','4','5','8'],c:1,exp:'4·(2/5) означает сложить 2/5 четыре раза.'},
+  {q:fracStr(3,4)+' · '+fracStr(2,9)+' = ?',opts:[fracStr(1,6),fracStr(5,13),fracStr(6,36),fracStr(1,3)],c:0,exp:'3↔9 на 3 (→1,3); 2↔4 на 2 (→1,2). 1·1/(2·3)=1/6.'},
+  {q:'10 · '+fracStr(11,20)+' = ?',opts:[fracStr(110,200),fracStr(11,2)+'=5'+fracStr(1,2),'11',fracStr(11,10)],c:1,exp:'10·11=110, 110/20=11/2=5½.'},
+  {q:fracStr(2,3)+' · '+fracStr(3,4)+' = ?',opts:[fracStr(6,12)+'='+fracStr(1,2),fracStr(5,7),fracStr(6,7),fracStr(1,6)],c:0,exp:'2·3=6, 3·4=12. 6/12=1/2.'},
+  {q:'Периметр квадрата со стороной '+fracStr(3,5)+' м:',opts:[fracStr(9,25)+' м',fracStr(12,20)+' м',fracStr(12,5)+'=2'+fracStr(2,5)+' м',fracStr(9,5)+' м'],c:2,exp:'P=4·(3/5)=12/5=2 2/5 м.'},
+  {q:fracStr(5,7)+' · '+fracStr(7,5)+' = ?',opts:['0','2','1',fracStr(35,35)],c:2,exp:'Взаимно обратные числа: произведение = 1.'},
+  {q:'Площадь прямоугольника '+fracStr(3,4)+' · '+fracStr(1,4)+' =',opts:[fracStr(3,16)+' м²',fracStr(4,8)+' м²',fracStr(3,8)+' м²',fracStr(1,4)+' м²'],c:0,exp:'3·1=3, 4·4=16. S=3/16.'},
+  {q:fracStr(9,20)+' · 10 = ?',opts:[fracStr(9,200),fracStr(9,2)+'=4'+fracStr(1,2),'10',fracStr(19,20)],c:1,exp:'9·10=90, 90/20=9/2=4½.'},
+  {q:fracStr(5,8)+' · '+fracStr(4,15)+' = ?',opts:[fracStr(9,23),fracStr(1,6),fracStr(20,120),fracStr(1,8)],c:1,exp:'5↔15 на 5 (→1,3); 4↔8 на 4 (→1,2). 1·1/(2·3)=1/6.'},
+  {q:'12 · '+fracStr(5,18)+' = ?',opts:[fracStr(60,216),fracStr(10,3)+'=3'+fracStr(1,3),'10',fracStr(5,6)],c:1,exp:'12 и 18 делятся на 6: 2 и 3. 2·5/3=10/3=3⅓.'},
+  {q:fracStr(3,5)+' · '+fracStr(5,3)+' = ?',opts:['2','0','1',fracStr(15,15)],c:2,exp:'Взаимно обратные числа: 3/5 и 5/3. Произведение = 1.'},
+  {q:'Замените умножением: '+fracStr(1,4)+'+'+fracStr(1,4)+'+'+fracStr(1,4),opts:['3+'+fracStr(1,4),'3·'+fracStr(1,4)+'='+fracStr(3,4),fracStr(3,12),fracStr(1,12)],c:1,exp:'3 одинаковых слагаемых: 3·(1/4)=3/4.'},
+  {q:fracStr(2,5)+' · 15 = ?',opts:['6','3',fracStr(30,5),fracStr(2,75)],c:0,exp:'2·15=30, 30/5=6.'},
+  {q:fracStr(4,7)+' · '+fracStr(7,8)+' = ?',opts:[fracStr(1,2),fracStr(28,56),fracStr(11,15),fracStr(3,7)],c:0,exp:'4↔8 на 4 (→1,2); 7↔7 на 7 (→1,1). 1·1/(1·2)=1/2.'},
+  {q:'Чему равно '+fracStr(6,7)+' · 7?',opts:['7','6','42','1'],c:1,exp:'6·7=42, 42/7=6.'},
+  {q:fracStr(3,8)+' · '+fracStr(4,9)+' = ?',opts:[fracStr(1,6),fracStr(7,17),fracStr(12,72),fracStr(1,4)],c:0,exp:'3↔9 на 3, 4↔8 на 4: 1·1/(2·3)=1/6.'},
+  {q:'Найдите '+fracStr(5,12)+' · 24',opts:['24','10','5',''+fracStr(120,12)+'=10'],c:3,exp:'5·24=120, 120/12=10.'},
+  {q:fracStr(3,7)+' · '+fracStr(7,6)+' = ?',opts:[fracStr(21,42),fracStr(1,2),fracStr(10,13),fracStr(1,7)],c:1,exp:'3↔6 на 3 (→1,2); 7↔7 на 7 (→1,1). 1·1/(2·1)=1/2.'}
+];
+
+var testState={started:false,answers:{},submitted:false};
+
+function startTest(){
+  document.getElementById('test-start').style.display='none';
+  var body=document.getElementById('test-body');
+  body.style.display='block';
+  var html='';
+  testData.forEach(function(item,i){
+    html+='<div class="quiz-question" id="tq-'+i+'" style="margin-bottom:14px"><div style="font-size:12px;color:var(--muted);margin-bottom:4px">Вопрос '+(i+1)+'/30</div><div class="quiz-q-text">'+item.q+'</div><div class="quiz-options">';
+    item.opts.forEach(function(opt,oi){
+      html+='<button class="quiz-opt" id="to-'+i+'-'+oi+'" onclick="markTest('+i+','+oi+')">'+opt+'</button>';
+    });
+    html+='</div><div class="quiz-explanation" id="texp-'+i+'"></div></div>';
+  });
+  html+='<button class="btn btn-primary" style="margin-top:20px" onclick="submitTest()">Завершить тест</button>';
+  body.innerHTML=html;
+}
+
+function markTest(qi,oi){
+  if(testState.answers[qi]!==undefined) return;
+  testState.answers[qi]=oi;
+  var item=testData[qi];
+  var opts=document.querySelectorAll('#tq-'+qi+' .quiz-opt');
+  opts.forEach(function(b){b.classList.add('disabled')});
+  opts[item.c].classList.add('correct');
+  if(oi!==item.c) opts[oi].classList.add('wrong');
+  var exp=document.getElementById('texp-'+qi);
+  exp.textContent=item.exp;
+  exp.classList.add('show');
+  saveState();
+}
+
+function submitTest(){
+  var correct=0;
+  testData.forEach(function(item,i){
+    if(testState.answers[i]===item.c) correct++;
+  });
+  var total=testData.length;
+  var pct=Math.round(correct/total*100);
+  var grade=pct>=90?'5':pct>=70?'4':pct>=50?'3':'2';
+  var rec=pct>=90?'Отлично! Материал освоен.':pct>=70?'Хорошо! Повторите темы с ошибками.':pct>=50?'Удовлетворительно. Изучите теорию заново.':'Нужно повторить весь материал.';
+  var res=document.getElementById('test-result');
+  res.style.display='block';
+  res.innerHTML='<div class="score-display"><div>Результат теста</div><div class="score-num">'+correct+'/'+total+'</div><div class="score-label">'+pct+'% — Оценка: '+grade+'</div></div><div class="human-box" style="margin:16px 0">'+rec+'</div><button class="btn btn-primary" onclick="location.reload()">Начать заново</button>';
+  document.getElementById('test-body').querySelector('.btn-primary').style.display='none';
+  updateNavProgress('test',pct);
+  saveState();
+}
+
+// ═══════════════════════════
+// LOCALSTORAGE
+// ═══════════════════════════
+function saveState(){
+  try{localStorage.setItem('lesson26_visited',JSON.stringify(visited));
+    localStorage.setItem('lesson26_practice',JSON.stringify(practiceState));
+    localStorage.setItem('lesson26_mini',JSON.stringify(miniDone));}catch(e){}
+}
+function loadState(){
+  try{
+    var v=localStorage.getItem('lesson26_visited');if(v)visited=JSON.parse(v);
+    var p=localStorage.getItem('lesson26_practice');if(p)practiceState=JSON.parse(p);
+    var m=localStorage.getItem('lesson26_mini');if(m)miniDone=JSON.parse(m);
+  }catch(e){}
+}
+
+// ═══════════════════════════
+// ИНИЦИАЛИЗАЦИЯ
+// ═══════════════════════════
+loadState();
+renderPractice();
+updatePracticeProgress();
+Object.keys(visited).forEach(function(k){
+  var ni=document.querySelector('[data-sec="'+k+'"]');
+  if(ni) ni.classList.add('done');
+});
+</script>
+</body>
+</html>

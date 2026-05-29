@@ -1,0 +1,1502 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Деление десятичных дробей — Урок 12</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --bg-dark: #0f0f1a;
+            --bg-card: rgba(255, 255, 255, 0.05);
+            --bg-glass: rgba(255, 255, 255, 0.08);
+            --border-glass: rgba(255, 255, 255, 0.15);
+            --text-primary: #e8e8f0;
+            --text-secondary: #a0a0b8;
+            --accent: #00d4aa;
+            --accent-dim: rgba(0, 212, 170, 0.2);
+            --accent-warm: #ff6b6b;
+            --accent-warm-dim: rgba(255, 107, 107, 0.2);
+            --accent-blue: #4dabf7;
+            --accent-blue-dim: rgba(77, 171, 247, 0.2);
+            --success: #51cf66;
+            --error: #ff6b6b;
+            --warning: #fcc419;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        .bg-animation {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1;
+            background: 
+                radial-gradient(ellipse at 20% 20%, rgba(0, 212, 170, 0.08) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 80%, rgba(77, 171, 247, 0.08) 0%, transparent 50%),
+                radial-gradient(ellipse at 50% 50%, rgba(255, 107, 107, 0.05) 0%, transparent 60%);
+        }
+
+        .bg-animation::before {
+            content: '';
+            position: absolute;
+            width: 200%;
+            height: 200%;
+            top: -50%;
+            left: -50%;
+            background: repeating-linear-gradient(
+                0deg,
+                transparent,
+                transparent 40px,
+                rgba(255,255,255,0.02) 40px,
+                rgba(255,255,255,0.02) 41px
+            );
+            animation: bgMove 20s linear infinite;
+        }
+
+        @keyframes bgMove {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(40px); }
+        }
+
+        nav {
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            background: rgba(15, 15, 26, 0.85);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border-glass);
+            z-index: 1000;
+            padding: 0 20px;
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 60px;
+        }
+
+        .logo {
+            font-size: 1.3rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--accent), var(--accent-blue));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 8px;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            padding: 8px 16px;
+            border-radius: 8px;
+            transition: all 0.3s;
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            border: none;
+            background: transparent;
+        }
+
+        .nav-links a:hover, .nav-links a.active {
+            color: var(--text-primary);
+            background: var(--bg-glass);
+        }
+
+        .nav-links a.active {
+            background: var(--accent-dim);
+            color: var(--accent);
+        }
+
+        section {
+            display: none;
+            padding: 100px 20px 60px;
+            max-width: 1000px;
+            margin: 0 auto;
+            animation: fadeIn 0.5s ease;
+        }
+
+        section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .card {
+            background: var(--bg-card);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border-glass);
+            border-radius: 20px;
+            padding: 32px;
+            margin-bottom: 24px;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        }
+
+        .card-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .card-title .icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+        }
+
+        .hero {
+            text-align: center;
+            padding: 140px 20px 80px;
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            font-weight: 800;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, var(--accent), var(--accent-blue), var(--accent-warm));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            line-height: 1.2;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            color: var(--text-secondary);
+            max-width: 600px;
+            margin: 0 auto 40px;
+        }
+
+        .hero-stats {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            margin-top: 40px;
+            flex-wrap: wrap;
+        }
+
+        .stat {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--accent);
+        }
+
+        .stat-label {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 14px 32px;
+            border-radius: 12px;
+            border: none;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--accent), var(--accent-blue));
+            color: #000;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px var(--accent-dim);
+        }
+
+        .btn-secondary {
+            background: var(--bg-glass);
+            color: var(--text-primary);
+            border: 1px solid var(--border-glass);
+        }
+
+        .btn-secondary:hover {
+            background: var(--bg-card);
+        }
+
+        .theory-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .theory-card {
+            background: var(--bg-card);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border-glass);
+            border-radius: 16px;
+            padding: 24px;
+            transition: all 0.3s;
+        }
+
+        .theory-card:hover {
+            border-color: var(--accent);
+            transform: translateY(-4px);
+        }
+
+        .theory-card h3 {
+            color: var(--accent);
+            margin-bottom: 12px;
+            font-size: 1.1rem;
+        }
+
+        .formula-box {
+            background: var(--bg-glass);
+            border: 1px solid var(--border-glass);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 16px 0;
+            text-align: center;
+            font-size: 1.2rem;
+            font-family: 'Courier New', monospace;
+        }
+
+        .tip-box {
+            background: var(--accent-blue-dim);
+            border-left: 4px solid var(--accent-blue);
+            padding: 16px 20px;
+            border-radius: 0 12px 12px 0;
+            margin: 16px 0;
+        }
+
+        .tip-box::before {
+            content: '💡 ';
+        }
+
+        .warning-box {
+            background: var(--accent-warm-dim);
+            border-left: 4px solid var(--accent-warm);
+            padding: 16px 20px;
+            border-radius: 0 12px 12px 0;
+            margin: 16px 0;
+        }
+
+        .warning-box::before {
+            content: '⚠️ ';
+        }
+
+        .problem-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-glass);
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 20px;
+        }
+
+        .problem-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .problem-number {
+            background: var(--accent-dim);
+            color: var(--accent);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .problem-type {
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+        }
+
+        .problem-text {
+            font-size: 1.1rem;
+            margin-bottom: 16px;
+            line-height: 1.8;
+        }
+
+        .solution-btn {
+            background: var(--accent-dim);
+            color: var(--accent);
+            border: 1px solid var(--accent);
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .solution-btn:hover {
+            background: var(--accent);
+            color: #000;
+        }
+
+        .solution {
+            display: none;
+            margin-top: 20px;
+            padding: 20px;
+            background: rgba(0, 212, 170, 0.05);
+            border-left: 3px solid var(--accent);
+            border-radius: 0 12px 12px 0;
+        }
+
+        .solution.active {
+            display: block;
+            animation: slideDown 0.3s ease;
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; max-height: 0; }
+            to { opacity: 1; max-height: 1000px; }
+        }
+
+        .solution-step {
+            margin-bottom: 12px;
+            padding: 8px 0;
+            border-bottom: 1px solid var(--border-glass);
+        }
+
+        .solution-step:last-child {
+            border-bottom: none;
+        }
+
+        .step-num {
+            display: inline-block;
+            width: 24px;
+            height: 24px;
+            background: var(--accent);
+            color: #000;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 24px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            margin-right: 8px;
+        }
+
+        .quiz-container {
+            background: var(--bg-card);
+            border: 1px solid var(--border-glass);
+            border-radius: 20px;
+            padding: 32px;
+        }
+
+        .quiz-progress {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .progress-bar {
+            flex: 1;
+            height: 8px;
+            background: var(--bg-glass);
+            border-radius: 4px;
+            margin: 0 16px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent), var(--accent-blue));
+            border-radius: 4px;
+            transition: width 0.5s ease;
+            width: 0%;
+        }
+
+        .quiz-question {
+            font-size: 1.2rem;
+            margin-bottom: 24px;
+            padding: 20px;
+            background: var(--bg-glass);
+            border-radius: 12px;
+            border-left: 4px solid var(--accent);
+        }
+
+        .quiz-options {
+            display: grid;
+            gap: 12px;
+        }
+
+        .quiz-option {
+            background: var(--bg-glass);
+            border: 2px solid var(--border-glass);
+            border-radius: 12px;
+            padding: 16px 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .quiz-option:hover {
+            border-color: var(--accent);
+            background: var(--accent-dim);
+        }
+
+        .quiz-option.correct {
+            border-color: var(--success);
+            background: rgba(81, 207, 102, 0.15);
+        }
+
+        .quiz-option.wrong {
+            border-color: var(--error);
+            background: rgba(255, 107, 107, 0.15);
+        }
+
+        .quiz-option.disabled {
+            pointer-events: none;
+            opacity: 0.7;
+        }
+
+        .option-letter {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            background: var(--bg-card);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        .quiz-nav {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 24px;
+        }
+
+        .timer {
+            position: fixed;
+            top: 80px;
+            right: 20px;
+            background: var(--bg-card);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border-glass);
+            border-radius: 16px;
+            padding: 16px 24px;
+            font-size: 1.3rem;
+            font-weight: 700;
+            font-variant-numeric: tabular-nums;
+            z-index: 999;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        .timer.warning {
+            border-color: var(--warning);
+            color: var(--warning);
+            animation: pulse 1s infinite;
+        }
+
+        .timer.danger {
+            border-color: var(--error);
+            color: var(--error);
+            animation: pulse 0.5s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .results-container {
+            text-align: center;
+            padding: 40px;
+        }
+
+        .score-circle {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            background: conic-gradient(var(--accent) calc(var(--score) * 3.6deg), var(--bg-glass) 0);
+            margin: 0 auto 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .score-circle::before {
+            content: '';
+            position: absolute;
+            width: 170px;
+            height: 170px;
+            background: var(--bg-dark);
+            border-radius: 50%;
+        }
+
+        .score-value {
+            position: relative;
+            font-size: 3rem;
+            font-weight: 800;
+            color: var(--accent);
+        }
+
+        .score-label {
+            font-size: 1.2rem;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+        }
+
+        .score-message {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 32px;
+        }
+
+        .results-breakdown {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 16px;
+            max-width: 600px;
+            margin: 0 auto 32px;
+        }
+
+        .breakdown-item {
+            background: var(--bg-glass);
+            padding: 16px;
+            border-radius: 12px;
+        }
+
+        .breakdown-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--accent);
+        }
+
+        .breakdown-label {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 2rem; }
+            .nav-links { display: none; }
+            .timer { top: 70px; right: 10px; font-size: 1rem; padding: 10px 16px; }
+            .card { padding: 20px; }
+            section { padding: 80px 16px 40px; }
+        }
+
+        .hidden { display: none !important; }
+
+        .highlight {
+            background: var(--accent-dim);
+            padding: 2px 6px;
+            border-radius: 4px;
+            color: var(--accent);
+            font-weight: 600;
+        }
+
+        input[type="text"] {
+            flex: 1;
+            padding: 14px 16px;
+            background: var(--bg-glass);
+            border: 2px solid var(--border-glass);
+            border-radius: 12px;
+            color: var(--text-primary);
+            font-size: 1rem;
+            outline: none;
+        }
+
+        input[type="text"]:focus {
+            border-color: var(--accent);
+        }
+
+        .fraction-inline {
+            display: inline-flex;
+            flex-direction: column;
+            align-items: center;
+            vertical-align: middle;
+            margin: 0 4px;
+            font-family: 'Courier New', monospace;
+        }
+
+        .fraction-inline .num {
+            border-bottom: 2px solid var(--text-primary);
+            padding: 0 6px;
+            font-weight: 600;
+        }
+
+        .fraction-inline .den {
+            padding: 0 6px;
+        }
+
+        .long-division {
+            display: inline-block;
+            font-family: 'Courier New', monospace;
+            background: var(--bg-glass);
+            padding: 16px 24px;
+            border-radius: 8px;
+            margin: 8px 0;
+            line-height: 1.4;
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-animation"></div>
+
+    <nav>
+        <div class="nav-container">
+            <div class="logo">📐 Урок 12</div>
+            <ul class="nav-links">
+                <li><a href="#" class="active" data-section="home">Главная</a></li>
+                <li><a href="#" data-section="theory">Теория</a></li>
+                <li><a href="#" data-section="practice">Практика</a></li>
+                <li><a href="#" data-section="trainer">Тренажёр</a></li>
+                <li><a href="#" data-section="test">Тест</a></li>
+                <li><a href="#" data-section="final">Викторина</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- HOME -->
+    <section id="home" class="active">
+        <div class="hero">
+            <h1>Деление десятичных дробей</h1>
+            <p>Урок 12. Деление десятичной дроби на натуральное число. Деление на десятичную дробь. Перевод обыкновенных дробей в десятичные. Практика с решениями.</p>
+            <div style="display: flex; gap: 16px; justify-content: center; flex-wrap: wrap;">
+                <button class="btn btn-primary" onclick="showSection('theory')">Начать обучение</button>
+                <button class="btn btn-secondary" onclick="showSection('test')">Проверить знания</button>
+            </div>
+            <div class="hero-stats">
+                <div class="stat">
+                    <div class="stat-value">30+</div>
+                    <div class="stat-label">Тестовых вопросов</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-value">10</div>
+                    <div class="stat-label">Решённых задач</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-value">3</div>
+                    <div class="stat-label">Правила</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-value">∞</div>
+                    <div class="stat-label">Попыток тренажёра</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-title">
+                <span class="icon" style="background: var(--accent-dim);">🎯</span>
+                Что вы изучите
+            </div>
+            <div class="theory-grid">
+                <div class="theory-card">
+                    <h3>Деление на натуральное число</h3>
+                    <p>Делим как целые числа, запятая в частном стоит тогда, когда заканчивается деление целой части.</p>
+                </div>
+                <div class="theory-card">
+                    <h3>Деление на десятичную дробь</h3>
+                    <p>Переносим запятую в делимом и делителе на столько знаков, сколько их после запятой в делителе.</p>
+                </div>
+                <div class="theory-card">
+                    <h3>Обыкновенные → десятичные</h3>
+                    <p>Делим числитель на знаменатель. Конечные и бесконечные десятичные дроби.</p>
+                </div>
+                <div class="theory-card">
+                    <h3>Уравнения и задачи</h3>
+                    <p>Решение уравнений с переменными. Логические задания «Подумай!».</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- THEORY -->
+    <section id="theory">
+        <div class="card">
+            <div class="card-title">
+                <span class="icon" style="background: var(--accent-dim);">📚</span>
+                Правило 1: деление на натуральное число
+            </div>
+            <p>Чтобы разделить десятичную дробь на <strong>натуральное число</strong>:</p>
+            <ol style="margin: 16px 0 16px 24px; line-height: 2;">
+                <li>Делим как целые числа, не обращая внимания на запятую.</li>
+                <li>Когда деление целой части закончится — ставим <strong>запятую</strong> в частном.</li>
+                <li>Если остаток не ноль — дописываем ноль и продолжаем деление.</li>
+            </ol>
+            <div class="formula-box">
+                18,12 : 4 = 4,53
+            </div>
+            <div class="long-division">
+                18,12 | 4<br>
+                &nbsp;16&nbsp;&nbsp;&nbsp;&nbsp;|—<br>
+                &nbsp;&nbsp;2,1&nbsp;&nbsp;| 4,53<br>
+                &nbsp;&nbsp;2,0<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;12<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;12<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0
+            </div>
+            <div class="tip-box">
+                18 : 4 = 4 и остаток 2. Запятая после 4. 21 : 4 = 5, остаток 1. 12 : 4 = 3.
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-title">
+                <span class="icon" style="background: var(--accent-blue-dim);">🔢</span>
+                Правило 2: деление на десятичную дробь
+            </div>
+            <p>Чтобы разделить на <strong>десятичную дробь</strong>:</p>
+            <ol style="margin: 16px 0 16px 24px; line-height: 2;">
+                <li>Перенесите запятую в <strong>делимом</strong> и <strong>делителе</strong> вправо на столько знаков, сколько их после запятой в <strong>делителе</strong>.</li>
+                <li>Затем делите как на натуральное число.</li>
+            </ol>
+            <div class="formula-box">
+                4,5 : 0,15 = 450 : 15 = 30
+            </div>
+            <div class="formula-box">
+                0,18 : 0,3 = 1,8 : 3 = 0,6
+            </div>
+            <div class="warning-box">
+                Если в делимом не хватает знаков — допишите нули: 5 : 0,25 = 500 : 25 = 20.
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-title">
+                <span class="icon" style="background: var(--accent-warm-dim);">🔄</span>
+                Правило 3: обыкновенная → десятичная
+            </div>
+            <p>Чтобы перевести обыкновенную дробь в десятичную — <strong>разделите числитель на знаменатель</strong>.</p>
+            <div class="formula-box">
+                <span class="fraction-inline"><span class="num">5</span><span class="den">4</span></span> = 5 : 4 = 1,25 &nbsp;&nbsp;&nbsp;
+                <span class="fraction-inline"><span class="num">4</span><span class="den">3</span></span> = 4 : 3 = 1,333... &nbsp;&nbsp;&nbsp;
+                <span class="fraction-inline"><span class="num">8</span><span class="den">25</span></span> = 8 : 25 = 0,32
+            </div>
+            <div class="tip-box">
+                Если знаменатель раскладывается только на 2 и 5 — дробь конечная. Если есть другие множители — периодическая.
+            </div>
+        </div>
+    </section>
+
+    <!-- PRACTICE -->
+    <section id="practice">
+        <div class="card">
+            <div class="card-title">
+                <span class="icon" style="background: var(--accent-dim);">📝</span>
+                Разбор задач из учебника
+            </div>
+            <p style="color: var(--text-secondary); margin-bottom: 24px;">Задачи из раздела «Деление десятичных дробей» с пошаговыми решениями.</p>
+        </div>
+
+        <!-- Problem 1 -->
+        <div class="problem-card">
+            <div class="problem-header">
+                <span class="problem-number">№ 1</span>
+                <span class="problem-type">Деление на натуральное</span>
+            </div>
+            <div class="problem-text">
+                Вычислите: 18,12 : 4
+            </div>
+            <button class="solution-btn" onclick="toggleSolution('sol-1')">Показать решение</button>
+            <div class="solution" id="sol-1">
+                <div class="solution-step"><span class="step-num">1</span>18 : 4 = 4, остаток 2. Ставим запятую в частном.</div>
+                <div class="solution-step"><span class="step-num">2</span>21 : 4 = 5, остаток 1.</div>
+                <div class="solution-step"><span class="step-num">3</span>Дописываем 2 → 12 : 4 = 3.</div>
+                <div class="solution-step" style="color: var(--accent); font-weight: 700;"><span class="step-num">✓</span>Ответ: <strong>4,53</strong></div>
+            </div>
+        </div>
+
+        <!-- Problem 2 -->
+        <div class="problem-card">
+            <div class="problem-header">
+                <span class="problem-number">№ 2</span>
+                <span class="problem-type">Деление на натуральное</span>
+            </div>
+            <div class="problem-text">
+                Вычислите: 6,2 : 5
+            </div>
+            <button class="solution-btn" onclick="toggleSolution('sol-2')">Показать решение</button>
+            <div class="solution" id="sol-2">
+                <div class="solution-step"><span class="step-num">1</span>6 : 5 = 1, остаток 1. Запятая после 1.</div>
+                <div class="solution-step"><span class="step-num">2</span>12 : 5 = 2, остаток 2.</div>
+                <div class="solution-step"><span class="step-num">3</span>Дописываем 0 → 20 : 5 = 4.</div>
+                <div class="solution-step" style="color: var(--accent); font-weight: 700;"><span class="step-num">✓</span>Ответ: <strong>1,24</strong></div>
+            </div>
+        </div>
+
+        <!-- Problem 3 -->
+        <div class="problem-card">
+            <div class="problem-header">
+                <span class="problem-number">№ 3</span>
+                <span class="problem-type">Перевод в десятичную</span>
+            </div>
+            <div class="problem-text">
+                Переведите в десятичную дробь: <span class="fraction-inline"><span class="num">5</span><span class="den">4</span></span>
+            </div>
+            <button class="solution-btn" onclick="toggleSolution('sol-3')">Показать решение</button>
+            <div class="solution" id="sol-3">
+                <div class="solution-step"><span class="step-num">1</span>5 : 4 = 1, остаток 1.</div>
+                <div class="solution-step"><span class="step-num">2</span>10 : 4 = 2, остаток 2.</div>
+                <div class="solution-step"><span class="step-num">3</span>20 : 4 = 5.</div>
+                <div class="solution-step" style="color: var(--accent); font-weight: 700;"><span class="step-num">✓</span>Ответ: <strong>1,25</strong></div>
+            </div>
+        </div>
+
+        <!-- Problem 4 -->
+        <div class="problem-card">
+            <div class="problem-header">
+                <span class="problem-number">№ 4</span>
+                <span class="problem-type">Перевод в десятичную</span>
+            </div>
+            <div class="problem-text">
+                Переведите в десятичную дробь: <span class="fraction-inline"><span class="num">4</span><span class="den">3</span></span>
+            </div>
+            <button class="solution-btn" onclick="toggleSolution('sol-4')">Показать решение</button>
+            <div class="solution" id="sol-4">
+                <div class="solution-step"><span class="step-num">1</span>4 : 3 = 1, остаток 1.</div>
+                <div class="solution-step"><span class="step-num">2</span>10 : 3 = 3, остаток 1. Повторяется бесконечно.</div>
+                <div class="solution-step" style="color: var(--accent); font-weight: 700;"><span class="step-num">✓</span>Ответ: <strong>1,(3)</strong> — периодическая дробь</div>
+            </div>
+        </div>
+
+        <!-- Problem 5 -->
+        <div class="problem-card">
+            <div class="problem-header">
+                <span class="problem-number">№ 5</span>
+                <span class="problem-type">Перевод в десятичную</span>
+            </div>
+            <div class="problem-text">
+                Переведите в десятичную дробь: <span class="fraction-inline"><span class="num">8</span><span class="den">25</span></span>
+            </div>
+            <button class="solution-btn" onclick="toggleSolution('sol-5')">Показать решение</button>
+            <div class="solution" id="sol-5">
+                <div class="solution-step"><span class="step-num">1</span>8 : 25 = 0, остаток 8. Запятая после 0.</div>
+                <div class="solution-step"><span class="step-num">2</span>80 : 25 = 3, остаток 5.</div>
+                <div class="solution-step"><span class="step-num">3</span>50 : 25 = 2.</div>
+                <div class="solution-step" style="color: var(--accent); font-weight: 700;"><span class="step-num">✓</span>Ответ: <strong>0,32</strong></div>
+            </div>
+        </div>
+
+        <!-- Problem 6 -->
+        <div class="problem-card">
+            <div class="problem-header">
+                <span class="problem-number">№ 6</span>
+                <span class="problem-type">Перевод в десятичную</span>
+            </div>
+            <div class="problem-text">
+                Переведите в десятичную дробь: <span class="fraction-inline"><span class="num">15</span><span class="den">6</span></span>
+            </div>
+            <button class="solution-btn" onclick="toggleSolution('sol-6')">Показать решение</button>
+            <div class="solution" id="sol-6">
+                <div class="solution-step"><span class="step-num">1</span>Сначала сократим: 15/6 = 5/2.</div>
+                <div class="solution-step"><span class="step-num">2</span>5 : 2 = 2, остаток 1.</div>
+                <div class="solution-step"><span class="step-num">3</span>10 : 2 = 5.</div>
+                <div class="solution-step" style="color: var(--accent); font-weight: 700;"><span class="step-num">✓</span>Ответ: <strong>2,5</strong></div>
+            </div>
+        </div>
+
+        <!-- Problem 7 -->
+        <div class="problem-card">
+            <div class="problem-header">
+                <span class="problem-number">№ 7</span>
+                <span class="problem-type">Деление на десятичную</span>
+            </div>
+            <div class="problem-text">
+                Вычислите: 1,44 : 0,12
+            </div>
+            <button class="solution-btn" onclick="toggleSolution('sol-7')">Показать решение</button>
+            <div class="solution" id="sol-7">
+                <div class="solution-step"><span class="step-num">1</span>Переносим запятую на 2 знака вправо: 144 : 12.</div>
+                <div class="solution-step"><span class="step-num">2</span>144 : 12 = 12.</div>
+                <div class="solution-step" style="color: var(--accent); font-weight: 700;"><span class="step-num">✓</span>Ответ: <strong>12</strong></div>
+            </div>
+        </div>
+
+        <!-- Problem 8 -->
+        <div class="problem-card">
+            <div class="problem-header">
+                <span class="problem-number">№ 8</span>
+                <span class="problem-type">Деление на десятичную</span>
+            </div>
+            <div class="problem-text">
+                Вычислите: 0,7 : 0,025
+            </div>
+            <button class="solution-btn" onclick="toggleSolution('sol-8')">Показать решение</button>
+            <div class="solution" id="sol-8">
+                <div class="solution-step"><span class="step-num">1</span>В делителе 3 знака после запятой. Переносим: 700 : 25.</div>
+                <div class="solution-step"><span class="step-num">2</span>700 : 25 = 28.</div>
+                <div class="solution-step" style="color: var(--accent); font-weight: 700;"><span class="step-num">✓</span>Ответ: <strong>28</strong></div>
+            </div>
+        </div>
+
+        <!-- Problem 9 -->
+        <div class="problem-card">
+            <div class="problem-header">
+                <span class="problem-number">№ 9</span>
+                <span class="problem-type">Уравнение</span>
+            </div>
+            <div class="problem-text">
+                Решите уравнение: 2,4 · x = 4,8
+            </div>
+            <button class="solution-btn" onclick="toggleSolution('sol-9')">Показать решение</button>
+            <div class="solution" id="sol-9">
+                <div class="solution-step"><span class="step-num">1</span>x = 4,8 : 2,4</div>
+                <div class="solution-step"><span class="step-num">2</span>Переносим запятую: 48 : 24 = 2.</div>
+                <div class="solution-step" style="color: var(--accent); font-weight: 700;"><span class="step-num">✓</span>Ответ: <strong>x = 2</strong></div>
+            </div>
+        </div>
+
+        <!-- Problem 10 -->
+        <div class="problem-card">
+            <div class="problem-header">
+                <span class="problem-number">№ 10</span>
+                <span class="problem-type">«Подумай!»</span>
+            </div>
+            <div class="problem-text">
+                Может ли частное быть больше делимого? Приведите пример.
+            </div>
+            <button class="solution-btn" onclick="toggleSolution('sol-10')">Показать решение</button>
+            <div class="solution" id="sol-10">
+                <div class="solution-step"><span class="step-num">1</span>Да, если делитель меньше 1 (но больше 0).</div>
+                <div class="solution-step"><span class="step-num">2</span>Пример: 5 : 0,5 = 10. Частное 10 > делимого 5.</div>
+                <div class="solution-step"><span class="step-num">3</span>Ещё пример: 0,8 : 0,2 = 4. Частное 4 > делимого 0,8.</div>
+                <div class="solution-step" style="color: var(--accent); font-weight: 700;"><span class="step-num">✓</span>Ответ: <strong>Да, например 5 : 0,5 = 10</strong></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- TRAINER -->
+    <section id="trainer">
+        <div class="card">
+            <div class="card-title">
+                <span class="icon" style="background: var(--accent-dim);">🏋️</span>
+                Тренажёр: генератор задач
+            </div>
+            <p style="color: var(--text-secondary); margin-bottom: 24px;">Бесконечная практика. Нажмите «Новая задача», решите и проверьте ответ.</p>
+
+            <div class="quiz-container" style="margin-bottom: 20px;">
+                <div id="trainer-question" style="font-size: 1.4rem; text-align: center; margin-bottom: 24px; padding: 24px; background: var(--bg-glass); border-radius: 12px;">
+                    Нажмите «Новая задача» для начала
+                </div>
+
+                <div style="display: flex; gap: 12px; margin-bottom: 20px;">
+                    <input type="text" id="trainer-answer" placeholder="Ваш ответ (например: 2,5)" disabled>
+                    <button class="btn btn-primary" onclick="checkTrainer()" id="trainer-check-btn" disabled>Проверить</button>
+                </div>
+
+                <div id="trainer-feedback" style="min-height: 60px; margin-bottom: 16px;"></div>
+
+                <div style="display: flex; gap: 12px; justify-content: center;">
+                    <button class="btn btn-secondary" onclick="newTrainerProblem()">Новая задача</button>
+                    <button class="btn btn-secondary" onclick="showTrainerHint()">Подсказка</button>
+                </div>
+
+                <div id="trainer-hint" style="display: none; margin-top: 20px; padding: 16px; background: var(--accent-blue-dim); border-radius: 12px; border-left: 4px solid var(--accent-blue);"></div>
+            </div>
+
+            <div style="display: flex; justify-content: center; gap: 24px; flex-wrap: wrap;">
+                <div class="stat">
+                    <div class="stat-value" id="trainer-correct">0</div>
+                    <div class="stat-label">Верно</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-value" id="trainer-total">0</div>
+                    <div class="stat-label">Всего</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-value" id="trainer-streak">0</div>
+                    <div class="stat-label">Серия</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- TEST -->
+    <section id="test">
+        <div class="card">
+            <div class="card-title">
+                <span class="icon" style="background: var(--accent-blue-dim);">🧪</span>
+                Тест: 30 вопросов
+            </div>
+            <p style="color: var(--text-secondary); margin-bottom: 24px;">Проверьте знания по всем темам урока. Мгновенная обратная связь после каждого ответа.</p>
+        </div>
+
+        <div class="quiz-container">
+            <div class="quiz-progress">
+                <span>Вопрос <span id="test-current">1</span> / <span id="test-total">30</span></span>
+                <div class="progress-bar"><div class="progress-fill" id="test-progress"></div></div>
+                <span id="test-score">0 правильных</span>
+            </div>
+
+            <div class="quiz-question" id="test-question"></div>
+            <div class="quiz-options" id="test-options"></div>
+
+            <div class="quiz-nav">
+                <button class="btn btn-secondary" onclick="prevTest()" id="test-prev" disabled>← Назад</button>
+                <button class="btn btn-primary" onclick="nextTest()" id="test-next" disabled>Далее →</button>
+            </div>
+
+            <div id="test-explanation" style="display: none; margin-top: 20px; padding: 16px; background: var(--accent-dim); border-radius: 12px; border-left: 4px solid var(--accent);"></div>
+        </div>
+    </section>
+
+    <!-- FINAL QUIZ -->
+    <section id="final">
+        <div class="card">
+            <div class="card-title">
+                <span class="icon" style="background: var(--accent-warm-dim);">🏆</span>
+                Финальная викторина
+            </div>
+            <p style="color: var(--text-secondary); margin-bottom: 24px;">15 вопросов на время. Решайте быстро и точно! У вас есть 10 минут.</p>
+        </div>
+
+        <div id="final-start" style="text-align: center; padding: 60px 20px;">
+            <div style="font-size: 4rem; margin-bottom: 24px;">⏱️</div>
+            <h2 style="margin-bottom: 16px;">Готовы?</h2>
+            <p style="color: var(--text-secondary); margin-bottom: 32px;">15 вопросов • 10 минут • Мгновенный результат</p>
+            <button class="btn btn-primary" onclick="startFinal()" style="font-size: 1.2rem; padding: 16px 48px;">Начать викторину</button>
+        </div>
+
+        <div id="final-quiz" style="display: none;">
+            <div class="timer" id="final-timer">10:00</div>
+            <div class="quiz-container">
+                <div class="quiz-progress">
+                    <span>Вопрос <span id="final-current">1</span> / 15</span>
+                    <div class="progress-bar"><div class="progress-fill" id="final-progress"></div></div>
+                </div>
+                <div class="quiz-question" id="final-question"></div>
+                <div class="quiz-options" id="final-options"></div>
+                <div style="display: flex; justify-content: flex-end; margin-top: 24px;">
+                    <button class="btn btn-primary" onclick="nextFinal()" id="final-next">Ответить →</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="final-results" style="display: none;">
+            <div class="card">
+                <div class="results-container">
+                    <div class="score-label">Ваш результат</div>
+                    <div class="score-circle" id="score-circle">
+                        <div class="score-value" id="final-score">0</div>
+                    </div>
+                    <div class="score-message" id="final-message"></div>
+                    <div class="results-breakdown">
+                        <div class="breakdown-item">
+                            <div class="breakdown-value" id="final-correct">0</div>
+                            <div class="breakdown-label">Верно</div>
+                        </div>
+                        <div class="breakdown-item">
+                            <div class="breakdown-value" id="final-wrong">0</div>
+                            <div class="breakdown-label">Ошибок</div>
+                        </div>
+                        <div class="breakdown-item">
+                            <div class="breakdown-value" id="final-time">0:00</div>
+                            <div class="breakdown-label">Время</div>
+                        </div>
+                        <div class="breakdown-item">
+                            <div class="breakdown-value" id="final-percent">0%</div>
+                            <div class="breakdown-label">Процент</div>
+                        </div>
+                    </div>
+                    <div style="display: flex; gap: 16px; justify-content: center; flex-wrap: wrap;">
+                        <button class="btn btn-primary" onclick="startFinal()">Пройти ещё раз</button>
+                        <button class="btn btn-secondary" onclick="showSection('theory')">Вернуться к теории</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+<script>
+// ================= NAVIGATION =================
+function showSection(id) {
+    document.querySelectorAll('section').forEach(s => s.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    document.querySelectorAll('.nav-links a').forEach(a => a.classList.remove('active'));
+    document.querySelector(`.nav-links a[data-section="${id}"]`)?.classList.add('active');
+    window.scrollTo(0, 0);
+}
+
+document.querySelectorAll('.nav-links a').forEach(link => {
+    link.addEventListener('click', (e) => {
+        e.preventDefault();
+        showSection(link.dataset.section);
+    });
+});
+
+// ================= PRACTICE =================
+function toggleSolution(id) {
+    const el = document.getElementById(id);
+    el.classList.toggle('active');
+    const btn = el.previousElementSibling;
+    btn.textContent = el.classList.contains('active') ? 'Скрыть решение' : 'Показать решение';
+}
+
+// ================= TRAINER =================
+let trainerState = { correct: 0, total: 0, streak: 0, current: null };
+
+function formatDecimal(num, digits) {
+    return num.toFixed(digits).replace('.', ',');
+}
+
+function generateTrainerProblem() {
+    const types = ['div_nat', 'div_dec', 'frac_to_dec'];
+    const type = types[Math.floor(Math.random() * types.length)];
+    let a, b, ans, text, hint, digits;
+
+    switch(type) {
+        case 'div_nat':
+            b = Math.floor(Math.random() * 8) + 2;
+            ans = (Math.floor(Math.random() * 900) + 10) / 100;
+            a = +(ans * b).toFixed(2);
+            digits = 2;
+            text = `Вычислите: ${formatDecimal(a, 2)} : ${b}`;
+            hint = `Делите как целые, запятая в частном после деления целой части.`;
+            break;
+        case 'div_dec':
+            b = (Math.floor(Math.random() * 9) + 1) / 10;
+            ans = Math.floor(Math.random() * 20) + 2;
+            a = +(ans * b).toFixed(2);
+            digits = 2;
+            text = `Вычислите: ${formatDecimal(a, 2)} : ${formatDecimal(b, 1)}`;
+            hint = `Перенесите запятую в обоих числах на 1 знак вправо, затем делите.`;
+            break;
+        case 'frac_to_dec':
+            const denoms = [2, 4, 5, 8, 10, 20, 25, 50];
+            b = denoms[Math.floor(Math.random() * denoms.length)];
+            a = Math.floor(Math.random() * 20) + 1;
+            ans = a / b;
+            digits = (ans % 1 === 0) ? 0 : 2;
+            text = `Переведите в десятичную: ${a}/${b}`;
+            hint = `Разделите ${a} на ${b} столбиком.`;
+            break;
+    }
+
+    return { text, answer: digits === 0 ? ans.toString() : formatDecimal(ans, digits), hint, raw: ans };
+}
+
+function newTrainerProblem() {
+    trainerState.current = generateTrainerProblem();
+    document.getElementById('trainer-question').innerHTML = trainerState.current.text;
+    document.getElementById('trainer-answer').value = '';
+    document.getElementById('trainer-answer').disabled = false;
+    document.getElementById('trainer-feedback').innerHTML = '';
+    document.getElementById('trainer-hint').style.display = 'none';
+    document.getElementById('trainer-check-btn').disabled = false;
+}
+
+function showTrainerHint() {
+    if (!trainerState.current) return;
+    document.getElementById('trainer-hint').style.display = 'block';
+    document.getElementById('trainer-hint').textContent = '💡 ' + trainerState.current.hint;
+}
+
+function checkTrainer() {
+    if (!trainerState.current) return;
+    const userStr = document.getElementById('trainer-answer').value.trim().replace('.', ',');
+    if (!userStr) return;
+
+    const correctStr = trainerState.current.answer;
+    const isCorrect = userStr === correctStr;
+
+    trainerState.total++;
+    if (isCorrect) {
+        trainerState.correct++;
+        trainerState.streak++;
+        document.getElementById('trainer-feedback').innerHTML = 
+            `<div style="color: var(--success); font-weight: 700; font-size: 1.1rem;">✓ Верно! Ответ: ${correctStr}</div>`;
+    } else {
+        trainerState.streak = 0;
+        document.getElementById('trainer-feedback').innerHTML = 
+            `<div style="color: var(--error); font-weight: 700; font-size: 1.1rem;">✗ Неверно. Правильный ответ: ${correctStr}</div>`;
+    }
+
+    document.getElementById('trainer-correct').textContent = trainerState.correct;
+    document.getElementById('trainer-total').textContent = trainerState.total;
+    document.getElementById('trainer-streak').textContent = trainerState.streak;
+    document.getElementById('trainer-check-btn').disabled = true;
+    document.getElementById('trainer-answer').disabled = true;
+}
+
+// ================= TEST (30 questions) =================
+const testQuestions = [
+    { q: "Вычислите: 8,4 : 4", options: ["2,1", "2,2", "1,6", "3,2"], correct: 0, expl: "8:4=2, 4:4=1 → 2,1" },
+    { q: "Вычислите: 6,2 : 5", options: ["1,24", "1,2", "2,4", "0,24"], correct: 0, expl: "6:5=1 ост1, 12:5=2 ост2, 20:5=4 → 1,24" },
+    { q: "Вычислите: 18,12 : 4", options: ["4,53", "4,52", "3,53", "5,43"], correct: 0, expl: "18:4=4 ост2, 21:4=5 ост1, 12:4=3 → 4,53" },
+    { q: "Вычислите: 0,8 : 0,2", options: ["4", "0,4", "16", "0,16"], correct: 0, expl: "Переносим: 8:2=4" },
+    { q: "Вычислите: 1,5 : 0,3", options: ["5", "0,5", "15", "1,5"], correct: 0, expl: "Переносим: 15:3=5" },
+    { q: "Вычислите: 0,24 : 0,6", options: ["0,4", "4", "0,04", "1,4"], correct: 0, expl: "Переносим: 2,4:6=0,4" },
+    { q: "Вычислите: 5 : 0,25", options: ["20", "2,5", "0,2", "1,25"], correct: 0, expl: "Переносим на 2 знака: 500:25=20" },
+    { q: "Переведите: 3/4", options: ["0,75", "0,8", "1,33", "0,25"], correct: 0, expl: "3:4=0,75" },
+    { q: "Переведите: 4/5", options: ["0,8", "0,4", "1,25", "0,2"], correct: 0, expl: "4:5=0,8" },
+    { q: "Переведите: 7/20", options: ["0,35", "0,7", "2,85", "0,28"], correct: 0, expl: "7:20=0,35" },
+    { q: "Переведите: 9/25", options: ["0,36", "0,9", "2,77", "0,18"], correct: 0, expl: "9:25=0,36" },
+    { q: "Переведите: 5/8", options: ["0,625", "0,58", "1,6", "0,85"], correct: 0, expl: "5:8=0,625" },
+    { q: "Вычислите: 4,8 : 1,2", options: ["4", "0,4", "48", "3,6"], correct: 0, expl: "48:12=4" },
+    { q: "Вычислите: 0,36 : 0,09", options: ["4", "0,4", "9", "0,9"], correct: 0, expl: "36:9=4" },
+    { q: "Вычислите: 7,2 : 0,8", options: ["9", "0,9", "72", "0,72"], correct: 0, expl: "72:8=9" },
+    { q: "Вычислите: 0,54 : 0,6", options: ["0,9", "9", "0,09", "1,2"], correct: 0, expl: "5,4:6=0,9" },
+    { q: "Вычислите: 3,6 : 0,04", options: ["90", "9", "0,9", "360"], correct: 0, expl: "360:4=90" },
+    { q: "Вычислите: 0,7 : 0,025", options: ["28", "2,8", "0,28", "70"], correct: 0, expl: "700:25=28" },
+    { q: "Решите: 3x = 4,5", options: ["1,5", "0,5", "15", "13,5"], correct: 0, expl: "x=4,5:3=1,5" },
+    { q: "Решите: 0,4x = 2", options: ["5", "0,8", "20", "2,4"], correct: 0, expl: "x=2:0,4=20:4=5" },
+    { q: "Решите: x : 0,5 = 6", options: ["3", "12", "0,3", "30"], correct: 0, expl: "x=6·0,5=3" },
+    { q: "Решите: x · 0,25 = 1", options: ["4", "0,25", "2,5", "25"], correct: 0, expl: "x=1:0,25=100:25=4" },
+    { q: "Переведите: 11/20", options: ["0,55", "0,11", "5,5", "2,2"], correct: 0, expl: "11:20=0,55" },
+    { q: "Переведите: 13/25", options: ["0,52", "0,26", "5,2", "2,6"], correct: 0, expl: "13:25=0,52" },
+    { q: "Переведите: 17/50", options: ["0,34", "0,17", "3,4", "8,5"], correct: 0, expl: "17:50=0,34" },
+    { q: "Вычислите: 9,6 : 1,6", options: ["6", "0,6", "96", "15,36"], correct: 0, expl: "96:16=6" },
+    { q: "Вычислите: 0,48 : 1,2", options: ["0,4", "4", "0,04", "5,76"], correct: 0, expl: "4,8:12=0,4" },
+    { q: "Вычислите: 5,6 : 0,07", options: ["80", "8", "0,8", "0,08"], correct: 0, expl: "560:7=80" },
+    { q: "Вычислите: 0,03 : 0,006", options: ["5", "0,5", "50", "0,05"], correct: 0, expl: "30:6=5" },
+    { q: "Вычислите: 1,44 : 0,12", options: ["12", "1,2", "0,12", "144"], correct: 0, expl: "144:12=12" }
+];
+
+let testState = { current: 0, score: 0, answers: [] };
+
+function initTest() {
+    testState = { current: 0, score: 0, answers: [] };
+    document.getElementById('test-total').textContent = testQuestions.length;
+    renderTestQuestion();
+}
+
+function renderTestQuestion() {
+    const q = testQuestions[testState.current];
+    document.getElementById('test-current').textContent = testState.current + 1;
+    document.getElementById('test-score').textContent = `${testState.score} правильных`;
+    document.getElementById('test-progress').style.width = `${((testState.current + 1) / testQuestions.length) * 100}%`;
+    document.getElementById('test-question').textContent = q.q;
+
+    const optsDiv = document.getElementById('test-options');
+    optsDiv.innerHTML = '';
+    q.options.forEach((opt, i) => {
+        const div = document.createElement('div');
+        div.className = 'quiz-option';
+        div.innerHTML = `<div class="option-letter">${String.fromCharCode(65+i)}</div><div>${opt}</div>`;
+        div.onclick = () => selectTestOption(i, div);
+        optsDiv.appendChild(div);
+    });
+
+    document.getElementById('test-explanation').style.display = 'none';
+    document.getElementById('test-prev').disabled = testState.current === 0;
+    document.getElementById('test-next').disabled = true;
+}
+
+function selectTestOption(idx, el) {
+    if (document.getElementById('test-next').disabled === false) return;
+    const q = testQuestions[testState.current];
+    const isCorrect = idx === q.correct;
+
+    if (isCorrect) testState.score++;
+    testState.answers[testState.current] = idx;
+
+    document.querySelectorAll('.quiz-option').forEach((opt, i) => {
+        opt.classList.add('disabled');
+        if (i === q.correct) opt.classList.add('correct');
+        else if (i === idx && !isCorrect) opt.classList.add('wrong');
+    });
+
+    document.getElementById('test-explanation').innerHTML = `<strong>${isCorrect ? '✓ Верно!' : '✗ Неверно.'}</strong> ${q.expl}`;
+    document.getElementById('test-explanation').style.display = 'block';
+    document.getElementById('test-next').disabled = false;
+}
+
+function nextTest() {
+    if (testState.current < testQuestions.length - 1) {
+        testState.current++;
+        renderTestQuestion();
+    } else {
+        showTestResults();
+    }
+}
+
+function prevTest() {
+    if (testState.current > 0) {
+        testState.current--;
+        renderTestQuestion();
+    }
+}
+
+function showTestResults() {
+    const percent = Math.round((testState.score / testQuestions.length) * 100);
+    let message = '';
+    if (percent >= 90) message = 'Отлично! Вы отлично знаете деление десятичных дробей!';
+    else if (percent >= 70) message = 'Хорошо! Но есть куда стремиться.';
+    else if (percent >= 50) message = 'Удовлетворительно. Повторите теорию.';
+    else message = 'Нужно больше практики. Вернитесь к теории и тренажёру.';
+
+    document.getElementById('test').innerHTML = `
+        <div class="card">
+            <div class="results-container">
+                <div class="score-label">Результат теста</div>
+                <div class="score-circle" style="--score: ${percent};">
+                    <div class="score-value">${percent}%</div>
+                </div>
+                <div class="score-message">${message}</div>
+                <div class="results-breakdown">
+                    <div class="breakdown-item"><div class="breakdown-value">${testState.score}</div><div class="breakdown-label">Верно</div></div>
+                    <div class="breakdown-item"><div class="breakdown-value">${testQuestions.length - testState.score}</div><div class="breakdown-label">Ошибок</div></div>
+                    <div class="breakdown-item"><div class="breakdown-value">${testQuestions.length}</div><div class="breakdown-label">Всего</div></div>
+                </div>
+                <div style="display: flex; gap: 16px; justify-content: center; flex-wrap: wrap;">
+                    <button class="btn btn-primary" onclick="initTest()">Пройти ещё раз</button>
+                    <button class="btn btn-secondary" onclick="showSection('theory')">В теорию</button>
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+// ================= FINAL QUIZ =================
+const finalQuestions = [
+    { q: "Вычислите: 9,6 : 3", options: ["3,2", "3,6", "2,3", "4,8"], correct: 0 },
+    { q: "Вычислите: 7,2 : 0,8", options: ["9", "0,9", "72", "0,72"], correct: 0 },
+    { q: "Вычислите: 0,45 : 0,09", options: ["5", "0,5", "50", "0,05"], correct: 0 },
+    { q: "Вычислите: 3,6 : 0,04", options: ["90", "9", "0,9", "360"], correct: 0 },
+    { q: "Вычислите: 5 : 0,25", options: ["20", "2,5", "0,2", "1,25"], correct: 0 },
+    { q: "Переведите: 3/8", options: ["0,375", "0,38", "2,66", "0,125"], correct: 0 },
+    { q: "Переведите: 19/20", options: ["0,95", "0,19", "9,5", "3,8"], correct: 0 },
+    { q: "Решите: 2,5x = 10", options: ["4", "0,4", "25", "40"], correct: 0 },
+    { q: "Решите: x : 0,2 = 15", options: ["3", "30", "0,3", "75"], correct: 0 },
+    { q: "Вычислите: 0,72 : 1,2", options: ["0,6", "6", "0,06", "8,64"], correct: 0 },
+    { q: "Вычислите: 4,8 : 0,16", options: ["30", "3", "0,3", "300"], correct: 0 },
+    { q: "Переведите: 21/25", options: ["0,84", "0,21", "4,2", "2,1"], correct: 0 },
+    { q: "Вычислите: 0,056 : 0,007", options: ["8", "0,8", "80", "0,08"], correct: 0 },
+    { q: "Решите: 0,8x = 2,4", options: ["3", "0,3", "30", "1,92"], correct: 0 },
+    { q: "Вычислите: 1,08 : 0,27", options: ["4", "0,4", "40", "0,04"], correct: 0 }
+];
+
+let finalState = { current: 0, score: 0, timer: null, timeLeft: 600, startTime: 0, answers: [] };
+
+function startFinal() {
+    finalState = { current: 0, score: 0, timer: null, timeLeft: 600, startTime: Date.now(), answers: [] };
+    document.getElementById('final-start').style.display = 'none';
+    document.getElementById('final-results').style.display = 'none';
+    document.getElementById('final-quiz').style.display = 'block';
+    document.getElementById('final-timer').className = 'timer';
+    renderFinalQuestion();
+
+    finalState.timer = setInterval(() => {
+        finalState.timeLeft--;
+        const m = Math.floor(finalState.timeLeft / 60);
+        const s = finalState.timeLeft % 60;
+        const timerEl = document.getElementById('final-timer');
+        timerEl.textContent = `${m}:${s.toString().padStart(2, '0')}`;
+
+        if (finalState.timeLeft <= 60) timerEl.className = 'timer danger';
+        else if (finalState.timeLeft <= 180) timerEl.className = 'timer warning';
+
+        if (finalState.timeLeft <= 0) finishFinal();
+    }, 1000);
+}
+
+function renderFinalQuestion() {
+    const q = finalQuestions[finalState.current];
+    document.getElementById('final-current').textContent = finalState.current + 1;
+    document.getElementById('final-progress').style.width = `${((finalState.current + 1) / finalQuestions.length) * 100}%`;
+    document.getElementById('final-question').textContent = q.q;
+
+    const optsDiv = document.getElementById('final-options');
+    optsDiv.innerHTML = '';
+    q.options.forEach((opt, i) => {
+        const div = document.createElement('div');
+        div.className = 'quiz-option';
+        div.innerHTML = `<div class="option-letter">${String.fromCharCode(65+i)}</div><div>${opt}</div>`;
+        div.onclick = () => selectFinalOption(i, div);
+        optsDiv.appendChild(div);
+    });
+
+    document.getElementById('final-next').disabled = true;
+}
+
+function selectFinalOption(idx, el) {
+    if (document.getElementById('final-next').disabled === false) return;
+    const q = finalQuestions[finalState.current];
+    const isCorrect = idx === q.correct;
+
+    if (isCorrect) finalState.score++;
+    finalState.answers[finalState.current] = idx;
+
+    document.querySelectorAll('#final-options .quiz-option').forEach((opt, i) => {
+        opt.classList.add('disabled');
+        if (i === q.correct) opt.classList.add('correct');
+        else if (i === idx && !isCorrect) opt.classList.add('wrong');
+    });
+
+    document.getElementById('final-next').disabled = false;
+}
+
+function nextFinal() {
+    if (finalState.current < finalQuestions.length - 1) {
+        finalState.current++;
+        renderFinalQuestion();
+    } else {
+        finishFinal();
+    }
+}
+
+function finishFinal() {
+    clearInterval(finalState.timer);
+    document.getElementById('final-quiz').style.display = 'none';
+    document.getElementById('final-results').style.display = 'block';
+
+    const percent = Math.round((finalState.score / finalQuestions.length) * 100);
+    const timeSpent = Math.floor((Date.now() - finalState.startTime) / 1000);
+    const m = Math.floor(timeSpent / 60);
+    const s = timeSpent % 60;
+
+    document.getElementById('score-circle').style.setProperty('--score', percent);
+    document.getElementById('final-score').textContent = `${percent}%`;
+    document.getElementById('final-correct').textContent = finalState.score;
+    document.getElementById('final-wrong').textContent = finalQuestions.length - finalState.score;
+    document.getElementById('final-time').textContent = `${m}:${s.toString().padStart(2, '0')}`;
+    document.getElementById('final-percent').textContent = `${percent}%`;
+
+    let message = '';
+    if (percent >= 90) message = '🏆 Превосходно! Вы мастер деления десятичных дробей!';
+    else if (percent >= 70) message = '🥈 Отличный результат!';
+    else if (percent >= 50) message = '🥉 Хорошо, но нужно подучить.';
+    else message = '💪 Попробуйте ещё раз после повторения теории.';
+    document.getElementById('final-message').textContent = message;
+}
+
+// Initialize
+document.addEventListener('DOMContentLoaded', () => {
+    initTest();
+    newTrainerProblem();
+});
+</script>
+</body>
+</html>

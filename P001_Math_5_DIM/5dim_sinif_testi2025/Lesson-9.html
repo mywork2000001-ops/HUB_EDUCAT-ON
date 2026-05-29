@@ -1,0 +1,1378 @@
+﻿<!doctype html>
+<html lang="az">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>DİM 2025 – Adi və Onluq Kəsrlər (Qarışıq Əməllər)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body class="min-h-screen">
+    <header
+      class="sticky top-0 z-50 backdrop-blur-md bg-opacity-90 border-b"
+      style="background: var(--surface); border-color: var(--border)"
+    >
+      <div
+        class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between"
+      >
+        <div class="flex items-center gap-3">
+          <div
+            class="w-10 h-10 rounded-xl flex items-center justify-center text-white font-bold text-lg bg-sky-600"
+          >
+            DİM
+          </div>
+          <div>
+            <h1 class="text-sm sm:text-base font-bold leading-tight">
+              Adi və Onluq Kəsrlər üzərində Qarışıq Əməllər
+            </h1>
+            <p class="text-xs text-slate-500">Riyaziyyat | V sinif | 2025</p>
+          </div>
+        </div>
+        <div class="flex items-center gap-2">
+          <div class="lang-selector">
+            <button onclick="setLang('az')" class="lang-btn active" id="lbAZ">
+              AZ</button
+            ><button onclick="setLang('ru')" class="lang-btn" id="lbRU">
+              RU</button
+            ><button onclick="setLang('en')" class="lang-btn" id="lbEN">
+              EN
+            </button>
+          </div>
+          <button onclick="toggleTheme()" class="tab">
+            <svg
+              width="20"
+              height="20"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+            >
+              <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+            </svg>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <main class="max-w-6xl mx-auto px-4 py-6 grid gap-6">
+      <div class="card p-4 flex flex-wrap items-center justify-between gap-4">
+        <div class="flex items-center gap-4">
+          <div class="text-center">
+            <div class="text-2xl font-bold tabular-nums" id="timer">60:00</div>
+            <div class="text-xs text-slate-500" id="lblTimer">Qalan vaxt</div>
+          </div>
+          <div class="w-px h-10 bg-slate-200"></div>
+          <div class="text-center">
+            <div class="text-2xl font-bold tabular-nums" id="answeredCount">
+              0/40
+            </div>
+            <div class="text-xs text-slate-500" id="lblAnswered">
+              Cavablanıb
+            </div>
+          </div>
+        </div>
+        <div class="flex-1 min-w-[200px]">
+          <div class="flex justify-between text-xs mb-1 text-slate-500">
+            <span>Progress</span><span id="progressPercent">0%</span>
+          </div>
+          <div class="progress-bar">
+            <div class="progress-fill" id="progressBar" style="width: 0%"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="flex gap-2 overflow-x-auto pb-1" id="variantTabs"></div>
+
+      <div class="grid lg:grid-cols-[280px_1fr] gap-6">
+        <aside class="space-y-4">
+          <div class="card p-4">
+            <h3 class="text-sm font-semibold mb-3">Sual gridi</h3>
+            <div class="grid grid-cols-5 gap-2" id="questionGrid"></div>
+          </div>
+        </aside>
+
+        <section class="card p-6 flex flex-col gap-6">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-3">
+              <span
+                class="px-3 py-1 rounded-lg text-sm font-bold text-white bg-sky-500"
+                id="qBadge"
+                >A1</span
+              >
+              <span class="text-sm font-medium text-slate-500" id="qCounter"
+                >1 / 10</span
+              >
+            </div>
+            <span class="text-xs px-2 py-1 rounded-md bg-sky-50 text-sky-600"
+              >Qarışıq Əməllər</span
+            >
+          </div>
+
+          <div class="fade-in" id="qContent">
+            <h2
+              class="text-lg font-semibold leading-relaxed mb-4"
+              id="qText"
+            ></h2>
+            <div id="qMatching" class="matching-area hidden mb-4"></div>
+            <div class="space-y-3" id="qOptions"></div>
+          </div>
+
+          <div
+            class="flex items-center justify-between pt-4 border-t border-slate-100"
+          >
+            <button onclick="prevQuestion()" class="btn-secondary" id="btnPrev">
+              Əvvəlki
+            </button>
+            <div class="flex gap-2">
+              <button
+                onclick="finishExam()"
+                class="btn-secondary text-red-500 border-red-100"
+                id="btnFinish"
+              >
+                Bitir
+              </button>
+              <button onclick="nextQuestion()" class="btn-primary" id="btnNext">
+                Növbəti
+              </button>
+            </div>
+          </div>
+        </section>
+      </div>
+    </main>
+
+    <div
+      id="resultModal"
+      class="fixed inset-0 z-[100] hidden items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm"
+    >
+      <div class="card w-full max-w-xl p-8 space-y-6">
+        <div class="text-center">
+          <div
+            class="w-20 h-20 rounded-full mx-auto mb-4 flex items-center justify-center text-3xl font-bold text-white bg-sky-500"
+            id="resultScoreIcon"
+          >
+            0
+          </div>
+          <h2 class="text-2xl font-bold">Nəticə</h2>
+          <p class="text-sm text-slate-500" id="resultMessage"></p>
+        </div>
+        <div class="grid grid-cols-3 gap-4">
+          <div class="card p-4 text-center border-green-100 bg-green-50/30">
+            <div class="text-xl font-bold text-green-600" id="correctCount">
+              0
+            </div>
+            <div class="text-xs">Düz</div>
+          </div>
+          <div class="card p-4 text-center border-red-100 bg-red-50/30">
+            <div class="text-xl font-bold text-red-600" id="wrongCount">0</div>
+            <div class="text-xs">Səhv</div>
+          </div>
+          <div class="card p-4 text-center border-amber-100 bg-amber-50/30">
+            <div class="text-xl font-bold text-amber-600" id="emptyCount">
+              0
+            </div>
+            <div class="text-xs">Boş</div>
+          </div>
+        </div>
+        <div class="flex gap-3 justify-center">
+          <button onclick="showReview()" class="btn-primary">Bax</button>
+          <button onclick="location.reload()" class="btn-secondary">
+            Yenidən
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const STORAGE_KEY = "dim2025_lesson9_v1";
+      const examData = {
+        variants: [
+          {
+            id: "A",
+            name: { az: "A variantı", ru: "Вариант A", en: "Variant A" },
+            questions: [
+              {
+                id: 1,
+                text: {
+                  az: "$\\left(7\\frac{3}{10} - 5\\frac{1}{2}\\right) \\cdot \\frac{5}{9}$ ifadəsinin qiymətini hesablayın.",
+                  ru: "Вычислите: $\\left(7\\frac{3}{10} - 5\\frac{1}{2}\\right) \\cdot \\frac{5}{9}$",
+                  en: "Calculate: $\\left(7\\frac{3}{10} - 5\\frac{1}{2}\\right) \\cdot \\frac{5}{9}$",
+                },
+                options: {
+                  az: ["1", "2", "3", "4", "5"],
+                  ru: ["1", "2", "3", "4", "5"],
+                  en: ["1", "2", "3", "4", "5"],
+                },
+                correct: "A",
+              },
+              {
+                id: 2,
+                text: {
+                  az: "$2\\frac{5}{8} : \\frac{2}{3} : 2\\frac{5}{14}$ ifadəsinin qiymətini hesablayın.",
+                  ru: "Вычислите: $2\\frac{5}{8} : \\frac{2}{3} : 2\\frac{5}{14}$",
+                  en: "Calculate: $2\\frac{5}{8} : \\frac{2}{3} : 2\\frac{5}{14}$",
+                },
+                options: {
+                  az: [
+                    "$2\\frac{3}{56}$",
+                    "$1\\frac{3}{56}$",
+                    "$\\frac{3}{56}$",
+                    "2",
+                    "$3\\frac{5}{14}$",
+                  ],
+                  ru: [
+                    "$2\\frac{3}{56}$",
+                    "$1\\frac{3}{56}$",
+                    "$\\frac{3}{56}$",
+                    "2",
+                    "$3\\frac{5}{14}$",
+                  ],
+                  en: [
+                    "$2\\frac{3}{56}$",
+                    "$1\\frac{3}{56}$",
+                    "$\\frac{3}{56}$",
+                    "2",
+                    "$3\\frac{5}{14}$",
+                  ],
+                },
+                correct: "B",
+              },
+              {
+                id: 3,
+                text: {
+                  az: "$a=5\\frac{3}{4}, b=\\frac{5}{8}$ olduqda, $(2a-b)$-ni hesablayın.",
+                  ru: "Найдите $(2a-b)$, если $a=5\\frac{3}{4}, b=\\frac{5}{8}$.",
+                  en: "Find $(2a-b)$, if $a=5\\frac{3}{4}, b=\\frac{5}{8}$.",
+                },
+                options: {
+                  az: [
+                    "$11\\frac{7}{8}$",
+                    "$9\\frac{7}{8}$",
+                    "$10\\frac{1}{8}$",
+                    "$10\\frac{7}{8}$",
+                    "$8\\frac{3}{8}$",
+                  ],
+                  ru: [
+                    "$11\\frac{7}{8}$",
+                    "$9\\frac{7}{8}$",
+                    "$10\\frac{1}{8}$",
+                    "$10\\frac{7}{8}$",
+                    "$8\\frac{3}{8}$",
+                  ],
+                  en: [
+                    "$11\\frac{7}{8}$",
+                    "$9\\frac{7}{8}$",
+                    "$10\\frac{1}{8}$",
+                    "$10\\frac{7}{8}$",
+                    "$8\\frac{3}{8}$",
+                  ],
+                },
+                correct: "D",
+              },
+              {
+                id: 4,
+                text: {
+                  az: "$3\\frac{3}{50}$ adi kəsrini onluq kəsr şəklində göstərin.",
+                  ru: "Запишите $3\\frac{3}{50}$ в виде десятичной дроби.",
+                  en: "Write $3\\frac{3}{50}$ as a decimal fraction.",
+                },
+                options: {
+                  az: ["3,6", "3,06", "3,03", "3,3", "3,006"],
+                  ru: ["3,6", "3,06", "3,03", "3,3", "3,006"],
+                  en: ["3,6", "3,06", "3,03", "3,3", "3,006"],
+                },
+                correct: "B",
+              },
+              {
+                id: 5,
+                text: {
+                  az: "$5\\frac{5}{16}$ adi kəsrini onluq kəsr şəklində göstərin.",
+                  ru: "Запишите $5\\frac{5}{16}$ в виде десятичной дроби.",
+                  en: "Write $5\\frac{5}{16}$ as a decimal fraction.",
+                },
+                options: {
+                  az: ["5,125", "5,312", "5,05", "5,3125", "5,325"],
+                  ru: ["5,125", "5,312", "5,05", "5,3125", "5,325"],
+                  en: ["5,125", "5,312", "5,05", "5,3125", "5,325"],
+                },
+                correct: "D",
+              },
+              {
+                id: 6,
+                text: {
+                  az: "$16,625 - 5 \\frac{5}{14} : \\frac{5}{7}$ ifadəsinin qiymətini hesablayın.",
+                  ru: "Вычислите: $16,625 - 5 \\frac{5}{14} : \\frac{5}{7}$",
+                  en: "Calculate: $16{,}625 - 5\\frac{5}{14} : \\frac{5}{7}$",
+                },
+                options: {
+                  az: ["10,125", "9,125", "19,0125", "91,25", "10,25"],
+                  ru: ["10,125", "9,125", "19,0125", "91,25", "10,25"],
+                  en: ["10,125", "9,125", "19,0125", "91,25", "10,25"],
+                },
+                correct: "B",
+              },
+              {
+                id: 7,
+                text: {
+                  az: "$y=\\frac{5}{9}, x=0,375$ olduqda, $\\left(3y + 3\\frac{1}{8} : x\\right)$-i hesablayın.",
+                  ru: "Найдите $\\left(3y + 3\\frac{1}{8} : x\\right)$, если $y=\\frac{5}{9}, x=0,375$.",
+                  en: "Find $\\left(3y + 3\\frac{1}{8} : x\\right)$, if $y=\\frac{5}{9}, x=0{,}375$.",
+                },
+                options: {
+                  az: ["10,5", "10", "$9\\frac{1}{2}$", "1", "9"],
+                  ru: ["10,5", "10", "$9\\frac{1}{2}$", "1", "9"],
+                  en: ["10,5", "10", "$9\\frac{1}{2}$", "1", "9"],
+                },
+                correct: "B",
+              },
+              {
+                id: 8,
+                text: {
+                  az: "$a=\\frac{6}{7}, b=\\frac{3}{4}$ olduqda, $\\left(8\\frac{1}{6} a + 12:b\\right)$-ni hesablayın.",
+                  ru: "Найдите $\\left(8\\frac{1}{6} a + 12:b\\right)$, если $a=\\frac{6}{7}, b=\\frac{3}{4}$.",
+                  en: "Find $\\left(8\\frac{1}{6}a + 12:b\\right)$, if $a=\\frac{6}{7}, b=\\frac{3}{4}$.",
+                },
+                options: {
+                  az: ["20", "18", "21", "23", "19"],
+                  ru: ["20", "18", "21", "23", "19"],
+                  en: ["20", "18", "21", "23", "19"],
+                },
+                correct: "D",
+              },
+              {
+                id: 9,
+                text: {
+                  az: "Fərq $\\frac{3}{10}$, azalan isə $\\frac{4}{5}$ və $\\frac{1}{4}$ ədədlərinin fərqinə bərabər olarsa, çıxılanın iki mislini tapın.",
+                  ru: "Разность равна 3/10, а уменьшаемое — разности 4/5 и 1/4. Найдите удвоенное вычитаемое.",
+                  en: "The difference equals 3/10, and the minuend equals the difference of 4/5 and 1/4. Find twice the subtrahend.",
+                },
+                options: {
+                  az: ["0,25", "0,5", "1", "0,75", "0,4"],
+                  ru: ["0,25", "0,5", "1", "0,75", "0,4"],
+                  en: ["0,25", "0,5", "1", "0,75", "0,4"],
+                },
+                correct: "B",
+              },
+              {
+                id: 10,
+                text: {
+                  az: "$A$ ədədi üçün uyğunluğu müəyyən edin.",
+                  ru: "Установите соответствие для числа $A$.",
+                  en: "Establish the correspondence for the number $A$.",
+                },
+                matching: {
+                  left: [
+                    "1. $A = \\frac{16 \\cdot 9 - 9 \\cdot 6}{11 \\cdot 3 + 4 \\cdot 3}$",
+                    "2. $A = \\frac{27 \\cdot 12 - 12 \\cdot 7}{17 \\cdot 4 + 3 \\cdot 4}$",
+                    "3. $A = \\frac{72 \\cdot 11 - 12 \\cdot 11}{36 \\cdot 3 + 8 \\cdot 3}$",
+                  ],
+                  right: [
+                    "a. $A=7$",
+                    "b. $A=3$",
+                    "c. $A=5$",
+                    "d. $A=2$",
+                    "e. $A=8$",
+                  ],
+                },
+                options: {
+                  az: [
+                    "1-d, 2-b, 3-c",
+                    "1-a, 2-b, 3-c",
+                    "1-d, 2-b, 3-a",
+                    "1-c, 2-d, 3-e",
+                    "1-b, 2-c, 3-d",
+                  ],
+                  ru: [
+                    "1-d, 2-b, 3-c",
+                    "1-a, 2-b, 3-c",
+                    "1-d, 2-b, 3-a",
+                    "1-c, 2-d, 3-e",
+                    "1-b, 2-c, 3-d",
+                  ],
+                  en: [
+                    "1-d, 2-b, 3-c",
+                    "1-a, 2-b, 3-c",
+                    "1-d, 2-b, 3-a",
+                    "1-c, 2-d, 3-e",
+                    "1-b, 2-c, 3-d",
+                  ],
+                },
+                correct: "A",
+              },
+            ],
+          },
+          {
+            id: "B",
+            name: { az: "B variantı", ru: "Вариант B", en: "Variant B" },
+            questions: [
+              {
+                id: 1,
+                text: {
+                  az: "$\\left(1\\frac{11}{14} - \\frac{2}{7}\\right) : \\frac{6}{15}$ ifadəsinin qiymətini hesablayın.",
+                  ru: "Вычислите: $\\left(1\\frac{11}{14} - \\frac{2}{7}\\right) : \\frac{6}{15}$",
+                  en: "Calculate: $\\left(1\\frac{11}{14} - \\frac{2}{7}\\right) : \\frac{6}{15}$",
+                },
+                options: {
+                  az: [
+                    "$17\\frac{15}{21}$",
+                    "$16\\frac{15}{21}$",
+                    "16",
+                    "18",
+                    "17",
+                  ],
+                  ru: [
+                    "$17\\frac{15}{21}$",
+                    "$16\\frac{15}{21}$",
+                    "16",
+                    "18",
+                    "17",
+                  ],
+                  en: [
+                    "$17\\frac{15}{21}$",
+                    "$16\\frac{15}{21}$",
+                    "16",
+                    "18",
+                    "17",
+                  ],
+                },
+                correct: "A",
+              },
+              {
+                id: 2,
+                text: {
+                  az: "$\\left(1\\frac{7}{30} - 1\\frac{13}{12}\\right) : \\frac{5}{18} - 18\\frac{1}{6}$ ifadəsinin qiymətini hesablayın.",
+                  ru: "Вычислите: $\\left(1\\frac{7}{30} - 1\\frac{13}{12}\\right) : \\frac{5}{18} - 18\\frac{1}{6}$",
+                  en: "Calculate: $\\left(1\\frac{7}{30} - 1\\frac{13}{12}\\right) : \\frac{5}{18} - 18\\frac{1}{6}$",
+                },
+                options: {
+                  az: [
+                    "$1\\frac{1}{10}$",
+                    "$\\frac{9}{10}$",
+                    "$\\frac{1}{10}$",
+                    "$\\frac{9}{10}$",
+                    "$1\\frac{3}{10}$",
+                  ],
+                  ru: [
+                    "$1\\frac{1}{10}$",
+                    "$\\frac{9}{10}$",
+                    "$\\frac{1}{10}$",
+                    "$\\frac{9}{10}$",
+                    "$1\\frac{3}{10}$",
+                  ],
+                  en: [
+                    "$1\\frac{1}{10}$",
+                    "$\\frac{9}{10}$",
+                    "$\\frac{1}{10}$",
+                    "$\\frac{9}{10}$",
+                    "$1\\frac{3}{10}$",
+                  ],
+                },
+                correct: "C",
+              },
+              {
+                id: 3,
+                text: {
+                  az: "$a=3\\frac{1}{4}, b=8\\frac{2}{3}$ olduqda, $\\left(\\frac{1}{4} a + 3b\\right)$-ni hesablayın.",
+                  ru: "Найдите $\\left(\\frac{1}{4} a + 3b\\right)$, если $a=3\\frac{1}{4}, b=8\\frac{2}{3}$.",
+                  en: "Find $\\left(\\frac{1}{4}a + 3b\\right)$, if $a=3\\frac{1}{4}, b=8\\frac{2}{3}$.",
+                },
+                options: {
+                  az: [
+                    "$26\\frac{12}{13}$",
+                    "27",
+                    "26",
+                    "$26\\frac{1}{13}$",
+                    "$27\\frac{2}{13}$",
+                  ],
+                  ru: [
+                    "$26\\frac{12}{13}$",
+                    "27",
+                    "26",
+                    "$26\\frac{1}{13}$",
+                    "$27\\frac{2}{13}$",
+                  ],
+                  en: [
+                    "$26\\frac{12}{13}$",
+                    "27",
+                    "26",
+                    "$26\\frac{1}{13}$",
+                    "$27\\frac{2}{13}$",
+                  ],
+                },
+                correct: "A",
+              },
+              {
+                id: 4,
+                text: {
+                  az: "$10\\frac{7}{8}$ adi kəsrini onluq kəsr şəklində göstərin.",
+                  ru: "Запишите $10\\frac{7}{8}$ в виде десятичной дроби.",
+                  en: "Write $10\\frac{7}{8}$ as a decimal fraction.",
+                },
+                options: {
+                  az: ["10,75", "10,875", "108,75", "1,875", "10,87"],
+                  ru: ["10,75", "10,875", "108,75", "1,875", "10,87"],
+                  en: ["10,75", "10,875", "108,75", "1,875", "10,87"],
+                },
+                correct: "B",
+              },
+              {
+                id: 5,
+                text: {
+                  az: "$2\\frac{15}{16}$ adi kəsrini onluq kəsr şəklində göstərin.",
+                  ru: "Запишите $2\\frac{15}{16}$ в виде десятичной дроби.",
+                  en: "Write $2\\frac{15}{16}$ as a decimal fraction.",
+                },
+                options: {
+                  az: ["2,903", "2,375", "2,9", "2,9375", "2,09"],
+                  ru: ["2,903", "2,375", "2,9", "2,9375", "2,09"],
+                  en: ["2,903", "2,375", "2,9", "2,9375", "2,09"],
+                },
+                correct: "D",
+              },
+              {
+                id: 6,
+                text: {
+                  az: "$\\frac{0,6 + 0,425}{\\frac{5}{20} + \\frac{4}{9} + \\frac{4}{9}}$ ifadəsinin qiymətini hesablayın.",
+                  ru: "Вычислите: $\\frac{0,6 + 0,425}{\\frac{5}{20} + \\frac{4}{9} + \\frac{4}{9}}$",
+                  en: "Calculate: $\\frac{0{,}6 + 0{,}425}{\\frac{5}{20} + \\frac{4}{9} + \\frac{4}{9}}$",
+                },
+                options: {
+                  az: ["0,041", "0,41", "4,1", "41", "0,401"],
+                  ru: ["0,041", "0,41", "4,1", "41", "0,401"],
+                  en: ["0,041", "0,41", "4,1", "41", "0,401"],
+                },
+                correct: "B",
+              },
+              {
+                id: 7,
+                text: {
+                  az: "10%-i $\\frac{4,8 \\cdot 3,6 \\cdot 0,81}{0,06 \\cdot 1,2 \\cdot 0,3}$ olan ədədi tapın.",
+                  ru: "Найдите число, 10% которого равны $\\frac{4,8 \\cdot 3,6 \\cdot 0,81}{0,06 \\cdot 1,2 \\cdot 0,3}$.",
+                  en: "Find the number whose 10% equals $\\frac{4{,}8 \\cdot 3{,}6 \\cdot 0{,}81}{0{,}06 \\cdot 1{,}2 \\cdot 0{,}3}$.",
+                },
+                options: {
+                  az: ["6480", "648", "600", "64800", "6048"],
+                  ru: ["6480", "648", "600", "64800", "6048"],
+                  en: ["6480", "648", "600", "64800", "6048"],
+                },
+                correct: "A",
+              },
+              {
+                id: 8,
+                text: {
+                  az: "$a=\\frac{2}{3}, b=1\\frac{5}{8}$ olduqda, $8 \\cdot \\left(\\frac{3}{8} a + b\\right)$-ni hesablayın.",
+                  ru: "Найдите $8 \\cdot \\left(\\frac{3}{8} a + b\\right)$, если $a=\\frac{2}{3}, b=1\\frac{5}{8}$.",
+                  en: "Find $8 \\cdot \\left(\\frac{3}{8}a + b\\right)$, if $a=\\frac{2}{3}, b=1\\frac{5}{8}$.",
+                },
+                options: {
+                  az: ["15", "14", "16", "13", "12"],
+                  ru: ["15", "14", "16", "13", "12"],
+                  en: ["15", "14", "16", "13", "12"],
+                },
+                correct: "A",
+              },
+              {
+                id: 9,
+                text: {
+                  az: "Fərq $\\frac{13}{14}$, azalan isə $\\frac{5}{6}$ və $\\frac{3}{7}$ ədədlərinin cəminə bərabər olarsa, çıxılanın üç mislini tapın.",
+                  ru: "Разность равна 13/14, а уменьшаемое — сумме 5/6 и 3/7. Найдите утроенное вычитаемое.",
+                  en: "The difference equals 13/14, and the minuend equals the sum of 5/6 and 3/7. Find three times the subtrahend.",
+                },
+                options: {
+                  az: ["1", "0,5", "1,5", "0,75", "1,2"],
+                  ru: ["1", "0,5", "1,5", "0,75", "1,2"],
+                  en: ["1", "0,5", "1,5", "0,75", "1,2"],
+                },
+                correct: "B",
+              },
+              {
+                id: 10,
+                text: {
+                  az: "$A$ ədədi üçün uyğunluğu müəyyən edin.",
+                  ru: "Установите соответствие для числа $A$.",
+                  en: "Establish the correspondence for the number $A$.",
+                },
+                matching: {
+                  left: [
+                    "1. $A = \\frac{62 \\cdot 13 + 18 \\cdot 13}{14 \\cdot 5 + 12 \\cdot 5}$",
+                    "2. $A = \\frac{78 \\cdot 17 + 12 \\cdot 17}{22 \\cdot 5 + 12 \\cdot 5}$",
+                    "3. $A = \\frac{83 \\cdot 19 + 17 \\cdot 19}{44 \\cdot 5 - 6 \\cdot 5}$",
+                  ],
+                  right: [
+                    "a. $A=10$",
+                    "b. $A=8$",
+                    "c. $A=11$",
+                    "d. $A=9$",
+                    "e. $A=12$",
+                  ],
+                },
+                options: {
+                  az: [
+                    "1-b, 2-c, 3-a",
+                    "1-a, 2-b, 3-c",
+                    "1-d, 2-a, 3-b",
+                    "1-c, 2-e, 3-a",
+                    "1-e, 2-a, 3-d",
+                  ],
+                  ru: [
+                    "1-b, 2-c, 3-a",
+                    "1-a, 2-b, 3-c",
+                    "1-d, 2-a, 3-b",
+                    "1-c, 2-e, 3-a",
+                    "1-e, 2-a, 3-d",
+                  ],
+                  en: [
+                    "1-b, 2-c, 3-a",
+                    "1-a, 2-b, 3-c",
+                    "1-d, 2-a, 3-b",
+                    "1-c, 2-e, 3-a",
+                    "1-e, 2-a, 3-d",
+                  ],
+                },
+                correct: "A",
+              },
+            ],
+          },
+          {
+            id: "C",
+            name: { az: "C variantı", ru: "Вариант C", en: "Variant C" },
+            questions: [
+              {
+                id: 1,
+                text: {
+                  az: "$\\left(\\frac{7}{40} + \\frac{3}{32}\\right) : \\frac{9}{2} \\cdot \\frac{40}{43}$ ifadəsinin qiymətini hesablayın.",
+                  ru: "Вычислите: $\\left(\\frac{7}{40} + \\frac{3}{32}\\right) : \\frac{9}{2} \\cdot \\frac{40}{43}$",
+                  en: "Calculate: $\\left(\\frac{7}{40} + \\frac{3}{32}\\right) : \\frac{9}{2} \\cdot \\frac{40}{43}$",
+                },
+                options: {
+                  az: [
+                    "$\\frac{8}{9}$",
+                    "$1\\frac{1}{8}$",
+                    "$2\\frac{1}{8}$",
+                    "1",
+                    "2",
+                  ],
+                  ru: [
+                    "$\\frac{8}{9}$",
+                    "$1\\frac{1}{8}$",
+                    "$2\\frac{1}{8}$",
+                    "1",
+                    "2",
+                  ],
+                  en: [
+                    "$\\frac{8}{9}$",
+                    "$1\\frac{1}{8}$",
+                    "$2\\frac{1}{8}$",
+                    "1",
+                    "2",
+                  ],
+                },
+                correct: "C",
+              },
+              {
+                id: 2,
+                text: {
+                  az: "$4 - 3\\frac{1}{2} \\cdot \\left(2\\frac{1}{7} - 1\\frac{1}{5}\\right)$ ifadəsinin qiymətini hesablayın.",
+                  ru: "Вычислите: $4 - 3\\frac{1}{2} \\cdot \\left(2\\frac{1}{7} - 1\\frac{1}{5}\\right)$",
+                  en: "Calculate: $4 - 3\\frac{1}{2} \\cdot \\left(2\\frac{1}{7} - 1\\frac{1}{5}\\right)$",
+                },
+                options: {
+                  az: [
+                    "$\\frac{10}{7}$",
+                    "$\\frac{7}{10}$",
+                    "$\\frac{7}{10}$",
+                    "$\\frac{2}{10}$",
+                    "1",
+                  ],
+                  ru: [
+                    "$\\frac{10}{7}$",
+                    "$\\frac{7}{10}$",
+                    "$\\frac{7}{10}$",
+                    "$\\frac{2}{10}$",
+                    "1",
+                  ],
+                  en: [
+                    "$\\frac{10}{7}$",
+                    "$\\frac{7}{10}$",
+                    "$\\frac{7}{10}$",
+                    "$\\frac{2}{10}$",
+                    "1",
+                  ],
+                },
+                correct: "B",
+              },
+              {
+                id: 3,
+                text: {
+                  az: "$4\\frac{1}{5} : 1\\frac{3}{4}$ ifadəsinin qiymətini onluq kəsr şəklində göstərin.",
+                  ru: "Запишите результат $4\\frac{1}{5} : 1\\frac{3}{4}$ в виде десятичной дроби.",
+                  en: "Write the result of $4\\frac{1}{5} : 1\\frac{3}{4}$ as a decimal fraction.",
+                },
+                options: {
+                  az: ["3", "2,4", "2,04", "24", "$\\frac{7}{10}$"],
+                  ru: ["3", "2,4", "2,04", "24", "$\\frac{7}{10}$"],
+                  en: ["3", "2,4", "2,04", "24", "$\\frac{7}{10}$"],
+                },
+                correct: "B",
+              },
+              {
+                id: 4,
+                text: {
+                  az: "$4\\frac{3}{8}$ adi kəsrini onluq kəsr şəklində göstərin.",
+                  ru: "Запишите $4\\frac{3}{8}$ в виде десятичной дроби.",
+                  en: "Write $4\\frac{3}{8}$ as a decimal fraction.",
+                },
+                options: {
+                  az: ["43,75", "14,037", "4,375", "4,37", "4,0375"],
+                  ru: ["43,75", "14,037", "4,375", "4,37", "4,0375"],
+                  en: ["43,75", "14,037", "4,375", "4,37", "4,0375"],
+                },
+                correct: "C",
+              },
+              {
+                id: 5,
+                text: {
+                  az: "$0,8 : \\left(\\frac{4}{5} - 1,25\\right)$ ifadəsinin qiymətini hesablayın.",
+                  ru: "Вычислите: $0,8 : \\left(\\frac{4}{5} - 1,25\\right)$",
+                  en: "Calculate: $0{,}8 : \\left(\\frac{4}{5} - 1{,}25\\right)$",
+                },
+                options: {
+                  az: ["0,8", "$\\frac{4}{7}$", "$1\\frac{1}{4}$", "1", "0,5"],
+                  ru: ["0,8", "$\\frac{4}{7}$", "$1\\frac{1}{4}$", "1", "0,5"],
+                  en: [
+                    "0,8",
+                    "$\\frac{4}{7}$",
+                    "$1\\frac{1}{4}$",
+                    "1",
+                    "0,5",
+                  ],
+                },
+                correct: "D",
+              },
+              {
+                id: 6,
+                text: {
+                  az: "$(2,5 : 1,25) : 0,05$ ifadəsinin qiymətini hesablayın.",
+                  ru: "Вычислите: $(2,5 : 1,25) : 0,05$",
+                  en: "Calculate: $(2{,}5 : 1{,}25) : 0{,}05$",
+                },
+                options: {
+                  az: ["4", "40", "2", "400", "8"],
+                  ru: ["4", "40", "2", "400", "8"],
+                  en: ["4", "40", "2", "400", "8"],
+                },
+                correct: "B",
+              },
+              {
+                id: 7,
+                text: {
+                  az: "25%-i $\\frac{7,2 \\cdot 4,5 \\cdot 2,7}{9 \\cdot 0,5 \\cdot 0,8 \\cdot 0,03}$ olan ədədi tapın.",
+                  ru: "Найдите число, 25% которого равны $\\frac{7,2 \\cdot 4,5 \\cdot 2,7}{9 \\cdot 0,5 \\cdot 0,8 \\cdot 0,03}$.",
+                  en: "Find the number whose 25% equals $\\frac{7{,}2 \\cdot 4{,}5 \\cdot 2{,}7}{9 \\cdot 0{,}5 \\cdot 0{,}8 \\cdot 0{,}03}$.",
+                },
+                options: {
+                  az: ["324", "3240", "0,324", "32,4", "3,24"],
+                  ru: ["324", "3240", "0,324", "32,4", "3,24"],
+                  en: ["324", "3240", "0,324", "32,4", "3,24"],
+                },
+                correct: "B",
+              },
+              {
+                id: 8,
+                text: {
+                  az: "$a=3\\frac{1}{8}, b=2\\frac{1}{2}$ olduqda, $(4a - \\frac{4}{5} b)$-ni hesablayın.",
+                  ru: "Найдите $(4a - \\frac{4}{5} b)$, если $a=3\\frac{1}{8}, b=2\\frac{1}{2}$.",
+                  en: "Find $\\left(4a - \\frac{4}{5}b\\right)$, if $a=3\\frac{1}{8}, b=2\\frac{1}{2}$.",
+                },
+                options: {
+                  az: ["10,5", "12", "11", "10", "13"],
+                  ru: ["10,5", "12", "11", "10", "13"],
+                  en: ["10,5", "12", "11", "10", "13"],
+                },
+                correct: "A",
+              },
+              {
+                id: 9,
+                text: {
+                  az: "Fərq $\\frac{3}{20}$, azalan isə $\\frac{1}{2}$ və $\\frac{1}{5}$ ədədlərinin cəminə bərabər olarsa, çıxılanın iki mislini tapın.",
+                  ru: "Разность равна 3/20, а уменьшаемое — сумме 1/2 и 1/5. Найдите удвоенное вычитаемое.",
+                  en: "The difference equals 3/20, and the minuend equals the sum of 1/2 and 1/5. Find twice the subtrahend.",
+                },
+                options: {
+                  az: ["1", "1,5", "1,1", "0,5", "0,75"],
+                  ru: ["1", "1,5", "1,1", "0,5", "0,75"],
+                  en: ["1", "1,5", "1,1", "0,5", "0,75"],
+                },
+                correct: "C",
+              },
+              {
+                id: 10,
+                text: {
+                  az: "$A$ ədədi üçün uyğunluğu müəyyən edin.",
+                  ru: "Установите соответствие для числа $A$.",
+                  en: "Establish the correspondence for the number $A$.",
+                },
+                matching: {
+                  left: [
+                    "1. $A = \\frac{24 \\cdot 8 - 8 \\cdot 2}{10 \\cdot 2 + 12 \\cdot 2}$",
+                    "2. $A = \\frac{12 \\cdot 25 - 25 \\cdot 5}{20 \\cdot 7 + 5 \\cdot 7}$",
+                    "3. $A = \\frac{44 \\cdot 15 - 23 \\cdot 15}{19 \\cdot 3 + 2 \\cdot 3}$",
+                  ],
+                  right: [
+                    "a. $A=1$",
+                    "b. $A=8$",
+                    "c. $A=5$",
+                    "d. $A=6$",
+                    "e. $A=4$",
+                  ],
+                },
+                options: {
+                  az: [
+                    "1-e, 2-a, 3-c",
+                    "1-a, 2-b, 3-c",
+                    "1-d, 2-c, 3-b",
+                    "1-c, 2-e, 3-a",
+                    "1-b, 2-a, 3-d",
+                  ],
+                  ru: [
+                    "1-e, 2-a, 3-c",
+                    "1-a, 2-b, 3-c",
+                    "1-d, 2-c, 3-b",
+                    "1-c, 2-e, 3-a",
+                    "1-b, 2-a, 3-d",
+                  ],
+                  en: [
+                    "1-e, 2-a, 3-c",
+                    "1-a, 2-b, 3-c",
+                    "1-d, 2-c, 3-b",
+                    "1-c, 2-e, 3-a",
+                    "1-b, 2-a, 3-d",
+                  ],
+                },
+                correct: "A",
+              },
+            ],
+          },
+          {
+            id: "D",
+            name: { az: "D variantı", ru: "Вариант D", en: "Variant D" },
+            questions: [
+              {
+                id: 1,
+                text: {
+                  az: "$\\left(8\\frac{1}{2} - \\frac{3}{8}\\right) \\cdot 2 - 8\\frac{1}{4}$ ifadəsinin qiymətini hesablayın.",
+                  ru: "Вычислите: $\\left(8\\frac{1}{2} - \\frac{3}{8}\\right) \\cdot 2 - 8\\frac{1}{4}$",
+                  en: "Calculate: $\\left(8\\frac{1}{2} - \\frac{3}{8}\\right) \\cdot 2 - 8\\frac{1}{4}$",
+                },
+                options: {
+                  az: ["8", "12", "24", "$1\\frac{3}{4}$", "3"],
+                  ru: ["8", "12", "24", "$1\\frac{3}{4}$", "3"],
+                  en: ["8", "12", "24", "$1\\frac{3}{4}$", "3"],
+                },
+                correct: "A",
+              },
+              {
+                id: 2,
+                text: {
+                  az: "$0,32 \\cdot 6 + 0,03 \\cdot (5,3 - 3,88) + 0,47$ ifadəsinin qiymətini hesablayın.",
+                  ru: "Вычислите: $0,32 \\cdot 6 + 0,03 \\cdot (5,3 - 3,88) + 0,47$",
+                  en: "Calculate: $0{,}32 \\cdot 6 + 0{,}03 \\cdot (5{,}3 - 3{,}88) + 0{,}47$",
+                },
+                options: {
+                  az: ["0,1", "10", "1", "2", "5"],
+                  ru: ["0,1", "10", "1", "2", "5"],
+                  en: ["0,1", "10", "1", "2", "5"],
+                },
+                correct: "C",
+              },
+              {
+                id: 3,
+                text: {
+                  az: "$\\left(2\\frac{1}{3} - 1\\frac{1}{9}\\right) : 7\\frac{1}{3} + \\frac{3}{4}$ ifadəsinin qiymətini hesablayın.",
+                  ru: "Вычислите: $\\left(2\\frac{1}{3} - 1\\frac{1}{9}\\right) : 7\\frac{1}{3} + \\frac{3}{4}$",
+                  en: "Calculate: $\\left(2\\frac{1}{3} - 1\\frac{1}{9}\\right) : 7\\frac{1}{3} + \\frac{3}{4}$",
+                },
+                options: {
+                  az: [
+                    "$\\frac{11}{12}$",
+                    "1",
+                    "$\\frac{12}{11}$",
+                    "$1\\frac{11}{12}$",
+                    "$\\frac{7}{12}$",
+                  ],
+                  ru: [
+                    "$\\frac{11}{12}$",
+                    "1",
+                    "$\\frac{12}{11}$",
+                    "$1\\frac{11}{12}$",
+                    "$\\frac{7}{12}$",
+                  ],
+                  en: [
+                    "$\\frac{11}{12}$",
+                    "1",
+                    "$\\frac{12}{11}$",
+                    "$1\\frac{11}{12}$",
+                    "$\\frac{7}{12}$",
+                  ],
+                },
+                correct: "A",
+              },
+              {
+                id: 4,
+                text: {
+                  az: "$\\left(8\\frac{3}{4} - 2\\frac{2}{7} - 1\\frac{1}{6}\\right) \\cdot 6$ ifadəsinin qiymətini hesablayın.",
+                  ru: "Вычислите: $\\left(8\\frac{3}{4} - 2\\frac{2}{7} - 1\\frac{1}{6}\\right) \\cdot 6$",
+                  en: "Calculate: $\\left(8\\frac{3}{4} - 2\\frac{2}{7} - 1\\frac{1}{6}\\right) \\cdot 6$",
+                },
+                options: {
+                  az: [
+                    "$\\frac{1}{6}$",
+                    "$\\frac{3}{4}$",
+                    "$\\frac{1}{8}$",
+                    "8",
+                    "$2\\frac{1}{3}$",
+                  ],
+                  ru: [
+                    "$\\frac{1}{6}$",
+                    "$\\frac{3}{4}$",
+                    "$\\frac{1}{8}$",
+                    "8",
+                    "$2\\frac{1}{3}$",
+                  ],
+                  en: [
+                    "$\\frac{1}{6}$",
+                    "$\\frac{3}{4}$",
+                    "$\\frac{1}{8}$",
+                    "8",
+                    "$2\\frac{1}{3}$",
+                  ],
+                },
+                correct: "D",
+              },
+              {
+                id: 5,
+                text: {
+                  az: "$46\\frac{2}{25}$ adi kəsrini onluq kəsr şəklində göstərin.",
+                  ru: "Запишите $46\\frac{2}{25}$ в виде десятичной дроби.",
+                  en: "Write $46\\frac{2}{25}$ as a decimal fraction.",
+                },
+                options: {
+                  az: ["46,8", "46,08", "46,4", "46,04", "46,48"],
+                  ru: ["46,8", "46,08", "46,4", "46,04", "46,48"],
+                  en: ["46,8", "46,08", "46,4", "46,04", "46,48"],
+                },
+                correct: "B",
+              },
+              {
+                id: 6,
+                text: {
+                  az: "$24 : 3\\frac{1}{5}$ ifadəsinin qiymətini onluq kəsr şəklində göstərin.",
+                  ru: "Запишите результат $24 : 3\\frac{1}{5}$ в виде десятичной дроби.",
+                  en: "Write the result of $24 : 3\\frac{1}{5}$ as a decimal fraction.",
+                },
+                options: {
+                  az: ["7,5", "75", "7,5", "5,7", "4,7"],
+                  ru: ["7,5", "75", "7,5", "5,7", "4,7"],
+                  en: ["7,5", "75", "7,5", "5,7", "4,7"],
+                },
+                correct: "A",
+              },
+              {
+                id: 7,
+                text: {
+                  az: "25%-i $\\frac{\\frac{1,5}{3} - \\frac{0,4}{2} : \\frac{50}{1}}{\\frac{1,1}{2}}$ olan ədədi tapın.",
+                  ru: "Найдите число, 25% которого равны $\\frac{\\frac{1,5}{3} - \\frac{0,4}{2} : \\frac{50}{1}}{\\frac{1,1}{2}}$.",
+                  en: "Find the number whose 25% equals $\\frac{\\frac{1{,}5}{3} - \\frac{0{,}4}{2} : \\frac{50}{1}}{\\frac{1{,}1}{2}}$.",
+                },
+                options: {
+                  az: ["0,8", "0,4", "$\\frac{1}{8}$", "1,5", "0,6"],
+                  ru: ["0,8", "0,4", "$\\frac{1}{8}$", "1,5", "0,6"],
+                  en: ["0,8", "0,4", "$\\frac{1}{8}$", "1,5", "0,6"],
+                },
+                correct: "A",
+              },
+              {
+                id: 8,
+                text: {
+                  az: "$y - \\left(2\\frac{2}{5} - 1\\frac{3}{10}\\right) : 2\\frac{1}{5} = 5$ tənliyindən $y$-i tapın.",
+                  ru: "Найдите $y$ из уравнения: $y - \\left(2\\frac{2}{5} - 1\\frac{3}{10}\\right) : 2\\frac{1}{5} = 5$.",
+                  en: "Find $y$ from the equation: $y - \\left(2\\frac{2}{5} - 1\\frac{3}{10}\\right) : 2\\frac{1}{5} = 5$.",
+                },
+                options: {
+                  az: ["5,5", "5,8", "6", "4,5", "5"],
+                  ru: ["5,5", "5,8", "6", "4,5", "5"],
+                  en: ["5,5", "5,8", "6", "4,5", "5"],
+                },
+                correct: "A",
+              },
+              {
+                id: 9,
+                text: {
+                  az: "Fərq $\\frac{1}{30}$, azalan isə $\\frac{1}{5}$ və $\\frac{1}{3}$ ədədlərinin cəminə bərabər olarsa, çıxılanın üç mislini tapın.",
+                  ru: "Разность равна 1/30, а уменьшаемое — сумме 1/5 и 1/3. Найдите утроенное вычитаемое.",
+                  en: "The difference equals 1/30, and the minuend equals the sum of 1/5 and 1/3. Find three times the subtrahend.",
+                },
+                options: {
+                  az: ["1,5", "1", "2", "0,5", "1,2"],
+                  ru: ["1,5", "1", "2", "0,5", "1,2"],
+                  en: ["1,5", "1", "2", "0,5", "1,2"],
+                },
+                correct: "B",
+              },
+              {
+                id: 10,
+                text: {
+                  az: "$A$ ədədi üçün uyğunluğu müəyyən edin.",
+                  ru: "Установите соответствие для числа $A$.",
+                  en: "Establish the correspondence for the number $A$.",
+                },
+                matching: {
+                  left: [
+                    "1. $A = \\frac{28 \\cdot 8 - 8 \\cdot 3}{15 \\cdot 4 + 10 \\cdot 4}$",
+                    "2. $A = \\frac{47 \\cdot 16 - 16 \\cdot 7}{33 \\cdot 2 + 7 \\cdot 2}$",
+                    "3. $A = \\frac{92 \\cdot 18 - 42 \\cdot 18}{41 \\cdot 2 + 9 \\cdot 2}$",
+                  ],
+                  right: [
+                    "a. $A=2$",
+                    "b. $A=9$",
+                    "c. $A=5$",
+                    "d. $A=8$",
+                    "e. $A=4$",
+                  ],
+                },
+                options: {
+                  az: [
+                    "1-a, 2-d, 3-b",
+                    "1-a, 2-b, 3-c",
+                    "1-c, 2-d, 3-b",
+                    "1-b, 2-e, 3-a",
+                    "1-e, 2-a, 3-d",
+                  ],
+                  ru: [
+                    "1-a, 2-d, 3-b",
+                    "1-a, 2-b, 3-c",
+                    "1-c, 2-d, 3-b",
+                    "1-b, 2-e, 3-a",
+                    "1-e, 2-a, 3-d",
+                  ],
+                  en: [
+                    "1-a, 2-d, 3-b",
+                    "1-a, 2-b, 3-c",
+                    "1-c, 2-d, 3-b",
+                    "1-b, 2-e, 3-a",
+                    "1-e, 2-a, 3-d",
+                  ],
+                },
+                correct: "A",
+              },
+            ],
+          },
+        ],
+      };
+
+      /* ===== АВТОПАТЧ: английский язык ===== */
+      (function () {
+        function addEn(o, d) {
+          if (d > 25 || o == null || typeof o !== "object") return;
+          if (Array.isArray(o)) {
+            for (var i = 0; i < o.length; i++) addEn(o[i], d + 1);
+            return;
+          }
+          if (o.ru !== undefined && o.en === undefined) {
+            o.en = o.ru;
+          } else if (
+            o.az !== undefined &&
+            o.en === undefined &&
+            o.ru === undefined
+          ) {
+            o.en = o.az;
+          }
+          for (var k in o) {
+            if (Object.prototype.hasOwnProperty.call(o, k)) {
+              if (k.length > 3 && k.slice(-3) === "_ru") {
+                var ek = k.slice(0, -3) + "_en";
+                if (o[ek] === undefined) o[ek] = o[k];
+              }
+              if (k.length > 3 && k.slice(-3) === "_az") {
+                var ek2 = k.slice(0, -3) + "_en";
+                if (
+                  o[ek2] === undefined &&
+                  o[k.slice(0, -3) + "_ru"] === undefined
+                )
+                  o[ek2] = o[k];
+              }
+            }
+          }
+          for (var k2 in o) {
+            if (k2 !== "en" && Object.prototype.hasOwnProperty.call(o, k2)) {
+              try {
+                addEn(o[k2], d + 1);
+              } catch (e) {}
+            }
+          }
+        }
+        try {
+          if (typeof examData !== "undefined") addEn(examData, 0);
+        } catch (e) {}
+        try {
+          if (typeof QS !== "undefined") addEn(QS, 0);
+        } catch (e) {}
+        try {
+          if (typeof variants !== "undefined") addEn(variants, 0);
+        } catch (e) {}
+        try {
+          if (typeof ui !== "undefined") addEn(ui, 0);
+        } catch (e) {}
+        try {
+          if (typeof UI !== "undefined") addEn(UI, 0);
+        } catch (e) {}
+        try {
+          if (typeof L !== "undefined" && typeof L === "object") addEn(L, 0);
+        } catch (e) {}
+        try {
+          if (typeof TXT !== "undefined") addEn(TXT, 0);
+        } catch (e) {}
+        try {
+          if (typeof i18n !== "undefined") addEn(i18n, 0);
+        } catch (e) {}
+        try {
+          if (typeof T !== "undefined" && typeof T === "object") addEn(T, 0);
+        } catch (e) {}
+      })();
+      /* Безопасный ре-рендер после патча данных */
+      (function () {
+        function _rr() {
+          try {
+            if (typeof renderAll === "function") {
+              renderAll();
+              return;
+            }
+          } catch (e) {}
+          try {
+            if (typeof render === "function") {
+              render();
+              return;
+            }
+          } catch (e) {}
+          try {
+            if (typeof renderQuestion === "function") {
+              renderQuestion();
+            }
+          } catch (e) {}
+          try {
+            if (typeof updateTexts === "function") {
+              updateTexts();
+            }
+          } catch (e) {}
+        }
+        if (document.readyState === "loading") {
+          document.addEventListener("DOMContentLoaded", function () {
+            setTimeout(_rr, 0);
+          });
+        } else {
+          setTimeout(_rr, 0);
+        }
+      })();
+    </script>
+    <script src="script.js"></script>
+    <script>
+      (function () {
+        // Функция отправки прогресса родительскому окну
+        function sendProgress() {
+          if (!window.parent) return;
+
+          // Получаем данные о прогрессе из глобальных переменных урока
+          let answersCount = 0;
+          let totalQuestions = 0;
+          let correctCount = 0;
+          let completed = false;
+          let answers = {};
+
+          // Определяем тип урока по наличию переменных
+          if (typeof state !== "undefined" && state.answers) {
+            // Для уроков с state.answers (Lesson-1...12, 15, 16, 17)
+            const variant =
+              state.variantIndex !== undefined ? state.variantIndex : 0;
+            const qs =
+              typeof QS !== "undefined"
+                ? QS
+                : typeof examData !== "undefined" && examData.variants
+                  ? examData.variants
+                  : [];
+            const currentVariant = qs[variant] || qs[0];
+
+            if (currentVariant && currentVariant.questions) {
+              totalQuestions = currentVariant.questions.length;
+              answers = state.answers || {};
+              answersCount = Object.keys(answers).length;
+
+              // Подсчёт правильных ответов
+              for (let i = 0; i < currentVariant.questions.length; i++) {
+                const q = currentVariant.questions[i];
+                const key = `${currentVariant.id || "A"}-${q.id}`;
+                if (answers[key] === q.correct) {
+                  correctCount++;
+                }
+              }
+              completed = state.finished === true;
+            }
+          } else if (typeof state !== "undefined" && state.ans) {
+            // Для Lesson-13 (Müstəvi fiqurlar) и Lesson-14 (Fəza fiqurları)
+            const qs = typeof QS !== "undefined" ? QS : [];
+            const variantQs = qs.filter((q) => q.v === state.v);
+            totalQuestions = variantQs.length;
+            answers = state.ans || {};
+            answersCount = Object.keys(answers).length;
+
+            for (let i = 0; i < variantQs.length; i++) {
+              const q = variantQs[i];
+              const userAns = answers[q.id];
+              if (userAns !== undefined) {
+                if (q.t === "choice") {
+                  if (userAns === q.ans) correctCount++;
+                } else if (q.t === "open" || q.t === "match") {
+                  if (
+                    String(userAns).trim().toLowerCase() ===
+                    String(q.ans_text || "")
+                      .trim()
+                      .toLowerCase()
+                  )
+                    correctCount++;
+                }
+              }
+            }
+            completed = state.finished === true;
+          } else if (typeof S !== "undefined" && S.ans) {
+            // Альтернативная структура (Lesson-13, 14)
+            const qs = typeof QS !== "undefined" ? QS : [];
+            const variantQs = qs.filter((q) => q.v === S.v);
+            totalQuestions = variantQs.length;
+            answers = S.ans || {};
+            answersCount = Object.keys(answers).length;
+            completed = S.finished === true;
+          }
+
+          if (totalQuestions === 0) return;
+
+          window.parent.postMessage(
+            {
+              type: "lessonProgress",
+              lessonId: parseInt(
+                window.location.pathname.match(/Lesson-(\d+)/)?.[1] || "0",
+              ),
+              answersCount: answersCount,
+              totalQuestions: totalQuestions,
+              correctCount: correctCount,
+              completed: completed,
+              answers: answers,
+            },
+            "*",
+          );
+        }
+
+        // Перехватываем вызовы finishExam/resetExam/showReview для отправки прогресса
+        const originalFinish = window.finishExam;
+        if (originalFinish) {
+          window.finishExam = function (...args) {
+            const result = originalFinish.apply(this, args);
+            setTimeout(sendProgress, 100);
+            return result;
+          };
+        }
+
+        const originalReset = window.resetExam;
+        if (originalReset) {
+          window.resetExam = function (...args) {
+            const result = originalReset.apply(this, args);
+            setTimeout(sendProgress, 100);
+            return result;
+          };
+        }
+
+        const originalShowReview = window.showReview;
+        if (originalShowReview) {
+          window.showReview = function (...args) {
+            const result = originalShowReview.apply(this, args);
+            setTimeout(sendProgress, 100);
+            return result;
+          };
+        }
+
+        // Отправляем прогресс при каждом ответе (перехватываем выбор варианта)
+        const originalPick = window.pick;
+        if (originalPick) {
+          window.pick = function (...args) {
+            const result = originalPick.apply(this, args);
+            setTimeout(sendProgress, 50);
+            return result;
+          };
+        }
+
+        const originalSaveT = window.saveT;
+        if (originalSaveT) {
+          window.saveT = function (...args) {
+            const result = originalSaveT.apply(this, args);
+            setTimeout(sendProgress, 50);
+            return result;
+          };
+        }
+
+        // Для уроков с toggleVariant и т.д.
+        const originalRenderAll = window.renderAll;
+        if (originalRenderAll) {
+          window.renderAll = function (...args) {
+            const result = originalRenderAll.apply(this, args);
+            setTimeout(sendProgress, 50);
+            return result;
+          };
+        }
+
+        // Периодическая отправка прогресса (каждые 3 секунды)
+        setInterval(sendProgress, 3000);
+
+        // Запрос времени у родителя
+        if (window.parent) {
+          window.parent.postMessage({ type: "requestTimer" }, "*");
+        }
+
+        // Приём сообщений от родителя
+        window.addEventListener("message", function (event) {
+          if (event.data && event.data.type === "syncTimer") {
+            if (typeof state !== "undefined" && state.timeLeft !== undefined) {
+              state.timeLeft = event.data.timeLeft;
+              if (typeof updateTimerDisplay === "function")
+                updateTimerDisplay();
+            } else if (typeof S !== "undefined" && S.timer !== undefined) {
+              S.timer = event.data.timeLeft;
+            }
+          }
+          if (event.data && event.data.type === "forceFinish") {
+            if (typeof finishExam === "function") finishExam();
+          }
+          if (event.data && event.data.type === "restoreProgress") {
+            // Восстановление сохранённых ответов
+            const saved = event.data.progress;
+            if (saved && saved.answers) {
+              if (typeof state !== "undefined" && state.answers) {
+                state.answers = saved.answers;
+                if (typeof renderAll === "function") renderAll();
+              }
+            }
+          }
+        });
+
+        // Отправляем прогресс при загрузке
+        setTimeout(sendProgress, 500);
+      })();
+    </script>
+  </body>
+</html>
