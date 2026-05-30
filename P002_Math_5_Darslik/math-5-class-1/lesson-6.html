@@ -1,648 +1,343 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ru">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Урок 1.5. Квадрат и куб натурального числа — 5 класс</title>
-<style>
-  :root {
-    --primary:#2563eb; --primary-dark:#1d4ed8; --secondary:#0d9488; --accent:#f59e0b;
-    --bg:#f8fafc; --card:#ffffff; --text:#1e293b; --text-light:#64748b; --border:#e2e8f0;
-    --success:#10b981; --danger:#ef4444; --radius:12px;
-    --shadow:0 4px 6px -1px rgb(0 0 0 / .1), 0 2px 4px -2px rgb(0 0 0 / .1);
-    --shadow-lg:0 10px 15px -3px rgb(0 0 0 / .1), 0 4px 6px -4px rgb(0 0 0 / .1);
-  }
-  *{box-sizing:border-box;margin:0;padding:0}
-  body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;background:var(--bg);color:var(--text);line-height:1.6}
-  header{background:linear-gradient(135deg,var(--primary),var(--secondary));color:#fff;padding:2rem 1rem;text-align:center;position:sticky;top:0;z-index:100;box-shadow:var(--shadow-lg)}
-  header h1{font-size:1.55rem;font-weight:700;letter-spacing:-.02em}
-  header p{opacity:.95;margin-top:.25rem;font-size:.95rem}
-  nav{background:var(--card);border-bottom:1px solid var(--border);display:flex;gap:.25rem;overflow-x:auto;padding:.5rem;position:sticky;top:calc(60px + 2rem);z-index:90}
-  nav button{flex:1 0 auto;min-width:130px;padding:.6rem 1rem;border:none;background:transparent;color:var(--text-light);font-weight:600;cursor:pointer;border-radius:var(--radius);transition:all .2s;white-space:nowrap}
-  nav button:hover{background:var(--bg);color:var(--primary)}
-  nav button.active{background:var(--primary);color:#fff;box-shadow:var(--shadow)}
-  nav button.done{position:relative}
-  nav button.done::after{content:"✓";position:absolute;top:2px;right:6px;font-size:.65rem;color:var(--success);background:#fff;border-radius:50%;width:14px;height:14px;display:flex;align-items:center;justify-content:center;box-shadow:0 0 0 1px var(--success)}
-  main{max-width:980px;margin:0 auto;padding:1.5rem 1rem 4rem}
-  section.module{display:none;animation:fadeIn .4s ease}
-  section.module.active{display:block}
-  @keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
-  .card{background:var(--card);border-radius:var(--radius);padding:1.5rem;margin-bottom:1.25rem;box-shadow:var(--shadow);border:1px solid var(--border)}
-  .card h2{font-size:1.25rem;margin-bottom:.75rem;color:var(--primary-dark)}
-  .card h3{font-size:1.05rem;margin:1rem 0 .5rem;color:var(--secondary)}
-  .card p,.card li{margin-bottom:.5rem}
-  .card ul{padding-left:1.25rem}
-  .badge{display:inline-block;padding:.25rem .6rem;border-radius:999px;font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.04em;background:#eef2ff;color:var(--primary);margin-bottom:.5rem}
-  .badge.teal{background:#f0fdfa;color:var(--secondary)}
-  .badge.gold{background:#fffbeb;color:#b45309}
-  .badge.red{background:#fef2f2;color:var(--danger)}
-  .example-box{background:#f8fafc;border-left:4px solid var(--primary);padding:1rem;border-radius:0 var(--radius) var(--radius) 0;margin:.75rem 0}
-  .example-box .label{font-weight:700;color:var(--primary);font-size:.85rem;text-transform:uppercase;margin-bottom:.25rem}
-  .math{font-family:"Courier New",Courier,monospace;background:#f1f5f9;padding:.1rem .3rem;border-radius:4px;font-size:.95em}
-  .step{display:flex;gap:.75rem;margin:.5rem 0;align-items:flex-start}
-  .step-num{flex-shrink:0;width:28px;height:28px;display:flex;align-items:center;justify-content:center;background:var(--primary);color:#fff;border-radius:50%;font-size:.8rem;font-weight:700}
-  .step-body{flex:1}
-  .hint{font-size:.85rem;color:var(--text-light);margin-top:.25rem;font-style:italic}
-  .table-wrap{overflow-x:auto}
-  table{width:100%;border-collapse:collapse;margin:.75rem 0;font-size:.95rem}
-  th,td{border:1px solid var(--border);padding:.5rem .75rem;text-align:center}
-  th{background:#f8fafc;font-weight:600}
-  td{text-align:left}
-  .two-col{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
-  @media(max-width:720px){.two-col{grid-template-columns:1fr}nav{position:relative;top:0}header{position:relative}}
-  .quiz-grid{display:grid;gap:1rem}
-  .question{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:1.25rem;cursor:pointer}
-  .question h4{font-size:1rem;margin-bottom:.75rem}
-  .options label{display:block;padding:.6rem .8rem;border:1px solid var(--border);border-radius:8px;margin-bottom:.4rem;cursor:pointer;transition:all .15s;font-size:.95rem}
-  .options label:hover{border-color:var(--primary);background:#f8fafc}
-  .options input[type="radio"]{margin-right:.5rem;accent-color:var(--primary)}
-  .options label.correct{border-color:var(--success);background:#ecfdf5}
-  .options label.wrong{border-color:var(--danger);background:#fef2f2}
-  .btn{display:inline-flex;align-items:center;gap:.4rem;padding:.65rem 1.25rem;border:none;border-radius:var(--radius);background:var(--primary);color:#fff;font-weight:600;cursor:pointer;transition:background .2s,transform .1s;font-size:.95rem;margin-top:.5rem}
-  .btn:hover{background:var(--primary-dark)}
-  .btn:active{transform:scale(.98)}
-  .btn.secondary{background:var(--secondary)}
-  .btn.secondary:hover{background:#0f766e}
-  .btn.outline{background:#fff;color:var(--primary);border:2px solid var(--primary)}
-  .btn.outline:hover{background:#eef2ff}
-  .result-box{margin-top:1rem;padding:1rem;border-radius:var(--radius);font-weight:600;display:none}
-  .result-box.show{display:block}
-  .result-box.good{background:#d1fae5;color:#065f46}
-  .result-box.mid{background:#fef3c7;color:#92400e}
-  .result-box.bad{background:#fee2e2;color:#991b1b}
-  .progress-bar{height:6px;background:var(--border);border-radius:3px;overflow:hidden;margin-bottom:1rem}
-  .progress-bar .fill{height:100%;background:linear-gradient(90deg,var(--primary),var(--secondary));width:0%;transition:width .5s ease}
-  .explain-box{background:#f0f9ff;border:1px solid #bae6fd;border-radius:8px;padding:.75rem;margin-top:.5rem;font-size:.9rem;color:#0c4a6e;display:none}
-  .explain-box.show{display:block}
-  footer{text-align:center;padding:2rem 1rem;color:var(--text-light);font-size:.85rem;border-top:1px solid var(--border);margin-top:2rem}
-  .intro-hero{text-align:center;padding:2rem 1rem}
-  .intro-hero h2{font-size:1.5rem;margin-bottom:.5rem}
-  .intro-hero p{color:var(--text-light);max-width:600px;margin:0 auto 1.5rem}
-  .formula{background:#f1f5f9;padding:.75rem;border-radius:var(--radius);font-family:monospace;text-align:center;margin:.5rem 0;font-size:1.05rem}
-</style>
-<base target="_blank">
-</head>
-<body>
-<header>
-  <h1>Урок 1.5. Квадрат и куб натурального числа</h1>
-  <p>Натуральные числа и действия с ними — модульный интерактивный курс, 5 класс</p>
-</header>
-
-<nav id="navbar">
-  <button class="active" onclick="goTo('intro')">Начало</button>
-  <button onclick="goTo('m1')">Модуль 1: Теория</button>
-  <button onclick="goTo('m2')">Модуль 2: Задания 1–5</button>
-  <button onclick="goTo('m3')">Модуль 3: Задания 6–9</button>
-  <button onclick="goTo('m4')">Модуль 4: Задания 10–11</button>
-  <button onclick="goTo('test')">Тест (30)</button>
-  <button onclick="goTo('quiz')">Викторина (15)</button>
-</nav>
-
-<main>
-
-<!-- INTRO -->
-<section id="intro" class="module active">
-  <div class="intro-hero card">
-    <h2>Добро пожаловать на урок!</h2>
-    <p>За этот урок ты узнаешь, что такое <strong>квадрат</strong> и <strong>куб</strong> числа, научишься вычислять их, находить <strong>полные квадраты и кубы</strong>, определять сторону квадрата по площади и ребро куба по объёму.</p>
-    <div class="two-col" style="margin-top:1rem">
-      <div class="card" style="border-top:4px solid var(--primary)">
-        <div class="badge">Модуль 1–2</div>
-        <h3>Квадрат и куб числа</h3>
-        <p>Определения, вычисления, закономерности, геометрический смысл.</p>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Урок 6 — Квадрат и куб числа</title>
+    <style>
+      :root {
+        --bg-dark: #0f0f1a;
+        --bg-card: rgba(255, 255, 255, 0.05);
+        --bg-glass: rgba(255, 255, 255, 0.08);
+        --border-glass: rgba(255, 255, 255, 0.15);
+        --text-primary: #e8e8f0;
+        --text-secondary: #a0a0b8;
+        --accent: #00d4aa;
+        --accent-dim: rgba(0, 212, 170, 0.2);
+        --accent-warm: #ff6b6b;
+        --accent-warm-dim: rgba(255, 107, 107, 0.2);
+        --accent-blue: #4dabf7;
+        --accent-blue-dim: rgba(77, 171, 247, 0.2);
+        --success: #51cf66;
+        --error: #ff6b6b;
+        --warning: #fcc419;
+      }
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      body { font-family: "Segoe UI", system-ui, -apple-system, sans-serif; background: var(--bg-dark); color: var(--text-primary); min-height: 100vh; overflow-x: hidden; line-height: 1.6; }
+      .bg-animation { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; background: radial-gradient(ellipse at 20% 20%, rgba(0, 212, 170, 0.08) 0%, transparent 50%), radial-gradient(ellipse at 80% 80%, rgba(77, 171, 247, 0.08) 0%, transparent 50%), radial-gradient(ellipse at 50% 50%, rgba(255, 107, 107, 0.05) 0%, transparent 60%); }
+      .bg-animation::before { content: ""; position: absolute; width: 200%; height: 200%; top: -50%; left: -50%; background: repeating-linear-gradient(0deg, transparent, transparent 40px, rgba(255, 255, 255, 0.02) 40px, rgba(255, 255, 255, 0.02) 41px); animation: bgMove 20s linear infinite; }
+      @keyframes bgMove { 0% { transform: translateY(0); } 100% { transform: translateY(40px); } }
+      nav { position: fixed; top: 0; left: 0; right: 0; background: rgba(15, 15, 26, 0.85); backdrop-filter: blur(20px); border-bottom: 1px solid var(--border-glass); z-index: 1000; padding: 0 20px; }
+      .nav-container { max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; height: 60px; }
+      .logo { font-size: 1.3rem; font-weight: 700; background: linear-gradient(135deg, var(--accent), var(--accent-blue)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+      .nav-links { display: flex; gap: 8px; list-style: none; }
+      .nav-links a { color: var(--text-secondary); text-decoration: none; padding: 8px 16px; border-radius: 8px; transition: all 0.3s; font-size: 0.9rem; font-weight: 500; cursor: pointer; border: none; background: transparent; }
+      .nav-links a:hover, .nav-links a.active { color: var(--text-primary); background: var(--bg-glass); }
+      .nav-links a.active { background: var(--accent-dim); color: var(--accent); }
+      section { display: none; opacity: 0; padding: 78px 20px 32px; max-width: 1000px; margin: 0 auto; transition: opacity 0.3s ease; }
+      section.active { display: block; opacity: 1; animation: fadeIn 0.5s ease; }
+      @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+      .card { background: var(--bg-card); backdrop-filter: blur(20px); border: 1px solid var(--border-glass); border-radius: 20px; padding: 20px; margin-bottom: 16px; transition: transform 0.3s, box-shadow 0.3s; }
+      .card:hover { transform: translateY(-2px); box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3); }
+      .card-title { font-size: 1.5rem; font-weight: 700; margin-bottom: 16px; display: flex; align-items: center; gap: 12px; }
+      .card-title .icon { width: 40px; height: 40px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.3rem; }
+      .hero { text-align: center; padding: 140px 20px 80px; }
+      .hero h1 { font-size: 3rem; font-weight: 800; margin-bottom: 20px; background: linear-gradient(135deg, var(--accent), var(--accent-blue), var(--accent-warm)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; line-height: 1.2; }
+      .hero p { font-size: 1.2rem; color: var(--text-secondary); max-width: 600px; margin: 0 auto 40px; }
+      .btn { display: inline-flex; align-items: center; gap: 8px; padding: 14px 32px; border-radius: 12px; border: none; font-size: 1rem; font-weight: 600; cursor: pointer; transition: all 0.3s; text-decoration: none; }
+      .btn-primary { background: linear-gradient(135deg, var(--accent), var(--accent-blue)); color: #000; }
+      .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 10px 30px var(--accent-dim); }
+      .btn-secondary { background: var(--bg-glass); color: var(--text-primary); border: 1px solid var(--border-glass); }
+      .btn-secondary:hover { background: var(--bg-card); }
+      .btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none !important; }
+      .generate-widget { background: var(--bg-card); border: 1px solid var(--border-glass); border-radius: 20px; padding: 14px; width: 100%; }
+      .widget-slide { display: none; padding: 12px 16px; box-sizing: border-box; animation: slideFade 0.3s ease; }
+      .widget-slide.active { display: block; }
+      @keyframes slideFade { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+      .widget-slide h3 { font-size: 1.3rem; color: var(--accent); margin-bottom: 16px; }
+      .widget-slide p, .widget-slide li { color: var(--text-secondary); line-height: 1.8; margin-bottom: 12px; }
+      .widget-slide .big-math { font-size: 1.6rem; text-align: center; margin: 20px 0; background: var(--bg-glass); padding: 20px; border-radius: 12px; font-weight: 600; color: var(--text-primary); }
+      .widget-nav { display: flex; justify-content: space-between; align-items: center; margin-top: 16px; }
+      .widget-progress { text-align: center; font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 12px; }
+      .overflow-x-auto { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+      .compare-table { width: 100%; border-collapse: collapse; margin: 16px 0; }
+      .compare-table th, .compare-table td { border: 1px solid var(--border-glass); padding: 12px; text-align: center; color: var(--text-secondary); }
+      .compare-table th { background: var(--bg-glass); color: var(--text-primary); font-weight: 600; }
+      .compare-table tr:hover td { background: rgba(255, 255, 255, 0.03); color: var(--text-primary); }
+      .compare-table td.accent { color: var(--accent); font-weight: 700; }
+      .sequence-component { display: flex; flex-direction: column; gap: 20px; position: relative; }
+      .sequence-step { background: var(--bg-card); border: 1px solid var(--border-glass); border-radius: 16px; padding: 24px 24px 24px 72px; position: relative; transition: all 0.3s; }
+      .sequence-step:hover { border-color: var(--accent); transform: translateX(4px); }
+      .sequence-number { position: absolute; left: 20px; top: 20px; width: 40px; height: 40px; background: var(--accent); color: #000; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 1.1rem; }
+      .sequence-step h4 { color: var(--text-primary); margin-bottom: 8px; font-size: 1.1rem; }
+      .sequence-step p { color: var(--text-secondary); line-height: 1.7; }
+      .sequence-connector { position: absolute; left: 39px; top: 60px; bottom: -30px; width: 2px; background: var(--accent-dim); z-index: 0; }
+      .sequence-step:last-child .sequence-connector { display: none; }
+      .formula-box { background: var(--bg-glass); border: 1px solid var(--border-glass); border-radius: 12px; padding: 20px; margin: 16px 0; text-align: center; font-size: 1.2rem; }
+      .tip-box { background: var(--accent-blue-dim); border-left: 4px solid var(--accent-blue); padding: 16px 20px; border-radius: 0 12px 12px 0; margin: 16px 0; }
+      .tip-box::before { content: "💡 "; }
+      .warning-box { background: var(--accent-warm-dim); border-left: 4px solid var(--accent-warm); padding: 16px 20px; border-radius: 0 12px 12px 0; margin: 16px 0; }
+      .warning-box::before { content: "⚠️ "; }
+      .highlight { background: var(--accent-dim); padding: 2px 6px; border-radius: 4px; color: var(--accent); font-weight: 600; }
+      .problem-card { background: var(--bg-card); border: 1px solid var(--border-glass); border-radius: 16px; padding: 24px; margin-bottom: 20px; }
+      .problem-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 8px; }
+      .problem-number { background: var(--accent-dim); color: var(--accent); padding: 4px 12px; border-radius: 20px; font-size: 0.85rem; font-weight: 600; }
+      .problem-type { color: var(--text-secondary); font-size: 0.85rem; }
+      .problem-text { font-size: 1.1rem; margin-bottom: 16px; line-height: 1.8; }
+      .solution-btn { background: var(--accent-dim); color: var(--accent); border: 1px solid var(--accent); padding: 10px 20px; border-radius: 8px; cursor: pointer; font-weight: 600; transition: all 0.3s; }
+      .solution-btn:hover { background: var(--accent); color: #000; }
+      .solution { display: none; margin-top: 20px; padding: 20px; background: rgba(0, 212, 170, 0.05); border-left: 3px solid var(--accent); border-radius: 0 12px 12px 0; }
+      .solution.active { display: block; animation: slideDown 0.3s ease; }
+      @keyframes slideDown { from { opacity: 0; max-height: 0; } to { opacity: 1; max-height: 1000px; } }
+      .solution-step { margin-bottom: 12px; padding: 8px 0; border-bottom: 1px solid var(--border-glass); }
+      .solution-step:last-child { border-bottom: none; }
+      .step-num { display: inline-block; width: 24px; height: 24px; background: var(--accent); color: #000; border-radius: 50%; text-align: center; line-height: 24px; font-size: 0.8rem; font-weight: 700; margin-right: 8px; }
+      .quiz-container { background: var(--bg-card); border: 1px solid var(--border-glass); border-radius: 20px; padding: 32px; }
+      .quiz-progress { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; flex-wrap: wrap; gap: 8px; }
+      .progress-bar { flex: 1; height: 8px; background: var(--bg-glass); border-radius: 4px; margin: 0 16px; overflow: hidden; min-width: 100px; }
+      .progress-fill { height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent-blue)); border-radius: 4px; transition: width 0.5s ease; width: 0%; }
+      .quiz-question { font-size: 1.2rem; margin-bottom: 24px; padding: 20px; background: var(--bg-glass); border-radius: 12px; border-left: 4px solid var(--accent); }
+      .quiz-options { display: grid; gap: 12px; }
+      .quiz-option { background: var(--bg-glass); border: 2px solid var(--border-glass); border-radius: 12px; padding: 16px 20px; cursor: pointer; transition: all 0.3s; display: flex; align-items: center; gap: 12px; }
+      .quiz-option:hover { border-color: var(--accent); background: var(--accent-dim); }
+      .quiz-option.correct { border-color: var(--success); background: rgba(81, 207, 102, 0.15); }
+      .quiz-option.wrong { border-color: var(--error); background: rgba(255, 107, 107, 0.15); }
+      .quiz-option.disabled { pointer-events: none; opacity: 0.7; }
+      .option-letter { width: 32px; height: 32px; border-radius: 8px; background: var(--bg-card); display: flex; align-items: center; justify-content: center; font-weight: 700; flex-shrink: 0; }
+      .quiz-nav { display: flex; justify-content: space-between; margin-top: 24px; }
+      .stat { background: var(--bg-glass); padding: 12px 24px; border-radius: 12px; text-align: center; min-width: 100px; border: 1px solid var(--border-glass); }
+      .stat-value { font-size: 1.5rem; font-weight: 700; color: var(--accent); }
+      .stat-label { font-size: 0.85rem; color: var(--text-secondary); }
+      .timer { position: fixed; top: 80px; right: 20px; background: var(--bg-card); backdrop-filter: blur(20px); border: 1px solid var(--border-glass); border-radius: 16px; padding: 16px 24px; font-size: 1.3rem; font-weight: 700; font-variant-numeric: tabular-nums; z-index: 999; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3); }
+      .timer.warning { border-color: var(--warning); color: var(--warning); animation: pulse 1s infinite; }
+      .timer.danger { border-color: var(--error); color: var(--error); animation: pulse 0.5s infinite; }
+      @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
+      .results-container { text-align: center; padding: 40px; }
+      .score-circle { width: 200px; height: 200px; border-radius: 50%; background: conic-gradient(var(--accent) calc(var(--score) * 3.6deg), var(--bg-glass) 0); margin: 0 auto 32px; display: flex; align-items: center; justify-content: center; position: relative; }
+      .score-circle::before { content: ""; position: absolute; width: 170px; height: 170px; background: var(--bg-dark); border-radius: 50%; }
+      .score-value { position: relative; font-size: 3rem; font-weight: 800; color: var(--accent); }
+      .score-label { font-size: 1.2rem; color: var(--text-secondary); margin-bottom: 8px; }
+      .score-message { font-size: 1.5rem; font-weight: 700; margin-bottom: 32px; }
+      .results-breakdown { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 16px; max-width: 600px; margin: 0 auto 32px; }
+      .breakdown-item { background: var(--bg-glass); padding: 16px; border-radius: 12px; }
+      .breakdown-value { font-size: 1.5rem; font-weight: 700; color: var(--accent); }
+      .breakdown-label { font-size: 0.85rem; color: var(--text-secondary); }
+      .hidden { display: none !important; }
+      @media (max-width: 768px) { .hero h1 { font-size: 2rem; } .nav-links { display: none; } .timer { top: 70px; right: 10px; font-size: 1rem; padding: 10px 16px; } .card { padding: 14px; } section { padding: 70px 12px 24px; } }
+      .svg-diagram { max-width: 100%; height: auto; margin: 16px auto; display: block; }
+      sup { font-size: 0.7em; vertical-align: super; }
+    </style>
+  </head>
+  <body>
+    <div class="bg-animation"></div>
+    <nav>
+      <div class="nav-container">
+        <div class="logo">📐 Урок 6</div>
+        <ul class="nav-links">
+          <li><a href="#" class="active" data-section="home">Главная</a></li>
+          <li><a href="#" data-section="theory">Теория</a></li>
+        </ul>
       </div>
-      <div class="card" style="border-top:4px solid var(--secondary)">
-        <div class="badge teal">Модули 3–4</div>
-        <h3>Полные квадраты и кубы</h3>
-        <p>Нахождение полных квадратов и кубов в диапазоне, сумма нечётных чисел, цифры квадратов.</p>
+    </nav>
+
+    <!-- HOME -->
+    <section id="home" class="active">
+      <div class="hero">
+        <h1>Квадрат и куб натурального числа</h1>
+        <p>Урок 6. Степень числа, квадрат a², куб a³, таблицы значений. 30 вопросов для полного контроля.</p>
+        <div style="display: flex; gap: 16px; justify-content: center; flex-wrap: wrap;">
+          <button class="btn btn-primary" onclick="showSection('theory')">Начать обучение</button>
+          <button class="btn btn-secondary" onclick="showSection('theory')">Проверить знания</button>
+        </div>
       </div>
-    </div>
-    <div style="margin-top:1.5rem">
-      <button class="btn" onclick="goTo('m1')">Начать обучение →</button>
-    </div>
-  </div>
-
-  <div class="card">
-    <div class="badge gold">Исследование-обсуждение</div>
-    <p><strong>Принадлежности:</strong> 18 маленьких квадратов одинакового размера, вырезанных из бумаги.</p>
-    <p><strong>Ход работы:</strong> Соберите несколько различных больших квадратов из маленьких квадратов.</p>
-    <ul>
-      <li><strong>Сколько различных больших квадратов можно собрать?</strong><br>
-      <span class="hint">Ответ: квадраты 1x1 (1 шт), 2x2 (4 шт), 3x3 (9 шт), 4x4 (16 шт). Из 18 квадратов подходят 1, 4, 9, 16. Значит, можно собрать <strong>4 различных</strong> больших квадрата (или <strong>3 больших</strong>, не считая одного квадратика).</span></li>
-      <li><strong>Сколько маленьких квадратов использовано на самый большой?</strong><br>
-      <span class="hint">Ответ: самый большой — 4x4 = <strong>16 квадратов</strong>.</span></li>
-    </ul>
-  </div>
-</section>
-
-<!-- MODULE 1: THEORY -->
-<section id="m1" class="module">
-  <div class="card">
-    <div class="badge">Модуль 1</div>
-    <h2>Квадрат и куб числа</h2>
-  </div>
-
-  <div class="card">
-    <h3>Квадрат числа</h3>
-    <p><strong>Квадратом числа</strong> называется произведение двух одинаковых множителей.</p>
-    <div class="formula">3 x 3 = 3^2    a x a = a^2</div>
-    <p>Геометрически: квадрат со стороной 3 содержит 9 маленьких квадратов.</p>
-    <div class="example-box">
-      <div class="label">Пример</div>
-      <p><span class="math">3^2 = 3 x 3 = 9</span></p>
-    </div>
-  </div>
-
-  <div class="card">
-    <h3>Куб числа</h3>
-    <p><strong>Кубом числа</strong> называется произведение трех одинаковых множителей.</p>
-    <div class="formula">3 x 3 x 3 = 3^3    a x a x a = a^3</div>
-    <p>Геометрически: куб со стороной 3 содержит 27 маленьких кубиков.</p>
-    <div class="example-box">
-      <div class="label">Пример</div>
-      <p><span class="math">3^3 = 3 x 3 x 3 = 27</span></p>
-    </div>
-  </div>
-
-  <div class="card">
-    <div class="badge gold">Подумай</div>
-    <p><strong>Квадрат и куб какого натурального числа равны самому числу?</strong></p>
-    <div class="two-col">
-      <div class="example-box">
-        <p>Для квадрата: <span class="math">a^2 = a</span></p>
-        <p><span class="math">1^2 = 1</span>, <span class="math">0^2 = 0</span> (но 0 не натуральное)</p>
-        <p><strong>Ответ:</strong> <span class="math">1</span></p>
+      <div class="card">
+        <div class="card-title"><span class="icon" style="background: var(--accent-dim)">🎯</span>Что вы изучите</div>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 20px;">
+          <div class="card" style="padding: 20px;"><h3 style="color: var(--accent); margin-bottom: 8px;">Степень числа</h3><p style="color: var(--text-secondary);">Понятие a<sup>n</sup>: основание, показатель, способ записи и чтения.</p></div>
+          <div class="card" style="padding: 20px;"><h3 style="color: var(--accent-blue); margin-bottom: 8px;">Квадрат числа</h3><p style="color: var(--text-secondary);">a² = a × a. Визуальная модель — площадь квадрата со стороной a.</p></div>
+          <div class="card" style="padding: 20px;"><h3 style="color: var(--accent-warm); margin-bottom: 8px;">Куб числа</h3><p style="color: var(--text-secondary);">a³ = a × a × a. Визуальная модель — объём куба с ребром a.</p></div>
+          <div class="card" style="padding: 20px;"><h3 style="color: var(--warning); margin-bottom: 8px;">Таблицы</h3><p style="color: var(--text-secondary);">Квадраты 1²–12² и кубы 1³–5³ — для быстрого применения.</p></div>
+        </div>
       </div>
-      <div class="example-box" style="border-left-color:var(--secondary)">
-        <p>Для куба: <span class="math">a^3 = a</span></p>
-        <p><span class="math">1^3 = 1</span></p>
-        <p><strong>Ответ:</strong> <span class="math">1</span></p>
+    </section>
+
+    <!-- THEORY -->
+    <section id="theory">
+      <div class="card">
+        <div class="card-title"><span class="icon" style="background: var(--accent-dim)">📖</span>Глава 1. Визуальная теория</div>
+        <p style="color: var(--text-secondary); margin-bottom: 20px;">6 слайдов — от определения степени до применения в задачах.</p>
+        <div class="generate-widget">
+          <div class="widget-progress">Слайд <span id="slide-num">1</span> из <span id="slide-total">6</span></div>
+          <div class="widget-viewport">
+            <div class="widget-track" id="widget-track">
+              <!-- Slide 1 -->
+              <div class="widget-slide active">
+                <h3>🔢 Степень числа: определение</h3>
+                <p><strong>Степень</strong> числа a с натуральным показателем n — это произведение n множителей, каждый из которых равен a.</p>
+                <div class="big-math">a<sup>n</sup> = a × a × a × ... × a (n раз)</div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 16px 0;">
+                  <div style="background: var(--bg-glass); border-radius: 12px; padding: 14px; text-align: center;">
+                    <div style="color: var(--accent-warm); font-size: 1.8rem; font-weight: 700;">a<sup>n</sup></div>
+                    <div style="color: var(--text-secondary); font-size: 0.9rem; margin-top: 8px;"><span style="color: var(--accent);">a</span> — основание степени<br><span style="color: var(--accent-blue);">n</span> — показатель степени</div>
+                  </div>
+                  <div style="background: var(--bg-glass); border-radius: 12px; padding: 14px; text-align: center;">
+                    <div style="color: var(--text-secondary); font-size: 0.95rem; line-height: 2;">5<sup>1</sup> = 5<br>5<sup>2</sup> = 25<br>5<sup>3</sup> = 125<br>5<sup>4</sup> = 625</div>
+                  </div>
+                </div>
+                <div class="tip-box">Читают: «a в степени n», «a в n-й степени». Например: 3⁴ = «три в четвёртой степени».</div>
+              </div>
+              <!-- Slide 2 -->
+              <div class="widget-slide">
+                <h3>⬛ Квадрат числа: a² = a × a</h3>
+                <p>Квадрат числа a — это <strong>произведение числа на само себя</strong>. Показатель степени = 2.</p>
+                <div class="big-math">a² = a × a</div>
+                <div style="display: flex; justify-content: center; margin: 16px 0;">
+                  <svg viewBox="0 0 180 160" class="svg-diagram" style="max-width: 200px;" aria-label="Квадрат со стороной 4 единицы, площадь 16">
+                    <rect x="20" y="20" width="140" height="140" fill="rgba(0,212,170,0.15)" stroke="var(--accent)" stroke-width="2"/>
+                    <line x1="55" y1="20" x2="55" y2="160" stroke="var(--accent-dim)" stroke-width="1"/>
+                    <line x1="90" y1="20" x2="90" y2="160" stroke="var(--accent-dim)" stroke-width="1"/>
+                    <line x1="125" y1="20" x2="125" y2="160" stroke="var(--accent-dim)" stroke-width="1"/>
+                    <line x1="20" y1="55" x2="160" y2="55" stroke="var(--accent-dim)" stroke-width="1"/>
+                    <line x1="20" y1="90" x2="160" y2="90" stroke="var(--accent-dim)" stroke-width="1"/>
+                    <line x1="20" y1="125" x2="160" y2="125" stroke="var(--accent-dim)" stroke-width="1"/>
+                    <text x="90" y="95" fill="var(--accent)" font-size="14" text-anchor="middle" font-family="Segoe UI, sans-serif" font-weight="700">4² = 16</text>
+                    <text x="90" y="112" fill="var(--text-secondary)" font-size="11" text-anchor="middle" font-family="Segoe UI, sans-serif">клеток</text>
+                    <text x="90" y="175" fill="var(--text-secondary)" font-size="11" text-anchor="middle" font-family="Segoe UI, sans-serif">сторона = 4</text>
+                  </svg>
+                </div>
+                <p><strong>Геометрический смысл:</strong> площадь квадрата со стороной a равна a².</p>
+                <div class="tip-box">4² = 4 × 4 = 16. На рисунке: квадрат 4×4 = 16 маленьких квадратиков.</div>
+              </div>
+              <!-- Slide 3 -->
+              <div class="widget-slide">
+                <h3>🎲 Куб числа: a³ = a × a × a</h3>
+                <p>Куб числа a — это <strong>произведение трёх одинаковых множителей</strong>, каждый из которых равен a.</p>
+                <div class="big-math">a³ = a × a × a</div>
+                <div style="display: flex; justify-content: center; margin: 16px 0;">
+                  <svg viewBox="0 0 200 160" class="svg-diagram" style="max-width: 220px;" aria-label="Визуальная модель куба 3×3×3=27">
+                    <polygon points="40,120 130,120 130,50 40,50" fill="rgba(77,171,247,0.15)" stroke="var(--accent-blue)" stroke-width="2"/>
+                    <polygon points="130,50 165,20 165,90 130,120" fill="rgba(77,171,247,0.1)" stroke="var(--accent-blue)" stroke-width="2"/>
+                    <polygon points="40,50 75,20 165,20 130,50" fill="rgba(77,171,247,0.2)" stroke="var(--accent-blue)" stroke-width="2"/>
+                    <text x="80" y="92" fill="var(--accent-blue)" font-size="13" text-anchor="middle" font-family="Segoe UI, sans-serif" font-weight="700">3³ = 27</text>
+                    <text x="80" y="108" fill="var(--text-secondary)" font-size="10" text-anchor="middle" font-family="Segoe UI, sans-serif">ребро = 3</text>
+                  </svg>
+                </div>
+                <p><strong>Геометрический смысл:</strong> объём куба с ребром a равен a³.</p>
+                <div class="tip-box">3³ = 3 × 3 × 3 = 27. Куб 3×3×3 содержит 27 единичных кубиков.</div>
+              </div>
+              <!-- Slide 4 -->
+              <div class="widget-slide">
+                <h3>📊 Таблица квадратов 1²–12²</h3>
+                <p>Выучите эту таблицу — она значительно ускорит вычисления.</p>
+                <div class="overflow-x-auto">
+                  <table class="compare-table">
+                    <tr><th>a</th><th>a²</th><th>a</th><th>a²</th></tr>
+                    <tr><td>1</td><td class="accent">1</td><td>7</td><td class="accent">49</td></tr>
+                    <tr><td>2</td><td class="accent">4</td><td>8</td><td class="accent">64</td></tr>
+                    <tr><td>3</td><td class="accent">9</td><td>9</td><td class="accent">81</td></tr>
+                    <tr><td>4</td><td class="accent">16</td><td>10</td><td class="accent">100</td></tr>
+                    <tr><td>5</td><td class="accent">25</td><td>11</td><td class="accent">121</td></tr>
+                    <tr><td>6</td><td class="accent">36</td><td>12</td><td class="accent">144</td></tr>
+                  </table>
+                </div>
+                <div class="tip-box">Замечание: квадраты нечётных чисел нечётны (1, 9, 25, 49...), а чётных — чётны (4, 16, 36, 64...).</div>
+              </div>
+              <!-- Slide 5 -->
+              <div class="widget-slide">
+                <h3>📊 Таблица кубов 1³–5³</h3>
+                <p>Кубы чаще встречаются в задачах на объём и в алгебраических тождествах.</p>
+                <div class="overflow-x-auto">
+                  <table class="compare-table">
+                    <tr><th>a</th><th>a³</th><th>Запись</th></tr>
+                    <tr><td>1</td><td class="accent">1</td><td>1 × 1 × 1</td></tr>
+                    <tr><td>2</td><td class="accent">8</td><td>2 × 2 × 2</td></tr>
+                    <tr><td>3</td><td class="accent">27</td><td>3 × 3 × 3</td></tr>
+                    <tr><td>4</td><td class="accent">64</td><td>4 × 4 × 4</td></tr>
+                    <tr><td>5</td><td class="accent">125</td><td>5 × 5 × 5</td></tr>
+                  </table>
+                </div>
+                <div class="tip-box">Запомните: 2³ = 8, 3³ = 27, 4³ = 64, 5³ = 125 — эти значения часто используются.</div>
+              </div>
+              <!-- Slide 6 -->
+              <div class="widget-slide">
+                <h3>📝 Применение в задачах</h3>
+                <p>Степени числа встречаются при нахождении площадей, объёмов и в выражениях.</p>
+                <div style="display: grid; gap: 12px; margin: 16px 0;">
+                  <div style="background: var(--bg-glass); border-radius: 12px; padding: 14px;"><strong style="color: var(--accent);">Площадь квадрата</strong><p style="margin: 8px 0 0; color: var(--text-secondary);">S = a² (a — сторона квадрата)</p></div>
+                  <div style="background: var(--bg-glass); border-radius: 12px; padding: 14px;"><strong style="color: var(--accent-blue);">Объём куба</strong><p style="margin: 8px 0 0; color: var(--text-secondary);">V = a³ (a — ребро куба)</p></div>
+                  <div style="background: var(--bg-glass); border-radius: 12px; padding: 14px;"><strong style="color: var(--accent-warm);">Сравнение степеней</strong><p style="margin: 8px 0 0; color: var(--text-secondary);">2⁵ = 32 и 5² = 25. Значит 2⁵ > 5².</p></div>
+                  <div style="background: var(--bg-glass); border-radius: 12px; padding: 14px;"><strong style="color: var(--warning);">Вычисление выражений</strong><p style="margin: 8px 0 0; color: var(--text-secondary);">3² + 4² = 9 + 16 = 25 (теорема Пифагора для 3-4-5!)</p></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="widget-nav">
+            <button class="btn btn-secondary" onclick="prevSlide()">← Назад</button>
+            <button class="btn btn-primary" onclick="nextSlide()">Вперёд →</button>
+          </div>
+        </div>
       </div>
-    </div>
-    <p class="hint">Проверка: 1x1=1 и 1x1x1=1. Для числа 1 квадрат и куб равны самому числу!</p>
-  </div>
-
-  <div style="text-align:center;margin:1.5rem 0">
-    <button class="btn outline" onclick="goTo('intro')">← Назад</button>
-    <button class="btn" onclick="markDone('m1'); goTo('m2')">Модуль 2 →</button>
-  </div>
-</section>
-
-<!-- MODULE 2: TASKS 1-5 -->
-<section id="m2" class="module">
-  <div class="card">
-    <div class="badge teal">Модуль 2</div>
-    <h2>Задания 1–5</h2>
-  </div>
-
-  <div class="card">
-    <h3>Задание 1. Вычислите</h3>
-    <div class="two-col">
-      <div>
-        <p><span class="math">1^2 = 1 x 1 = 1</span></p>
-        <p><span class="math">2^2 = 2 x 2 = 4</span></p>
-        <p><span class="math">3^2 = 3 x 3 = 9</span></p>
-        <p><span class="math">6^2 = 6 x 6 = 36</span></p>
-        <p><span class="math">4^2 = 4 x 4 = 16</span></p>
-        <p><span class="math">7^2 = 7 x 7 = 49</span></p>
+      <div class="card">
+        <div class="card-title"><span class="icon" style="background: var(--accent-blue-dim)">📖</span>Из учебника</div>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; margin-top: 16px;">
+          <img src="../assets/img/pages/page_021.webp" alt="Страница учебника 21" style="width:100%; border-radius:12px; border: 1px solid var(--border-glass);">
+          <img src="../assets/img/pages/page_022.webp" alt="Страница учебника 22" style="width:100%; border-radius:12px; border: 1px solid var(--border-glass);">
+        </div>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; margin-top: 16px;">
+          <img src="../assets/img/pages/sec_s1_5_squares_a.webp" alt="Таблица квадратов" style="width:100%; border-radius:12px; border: 1px solid var(--border-glass);">
+          <img src="../assets/img/pages/sec_s1_5_squares_b.webp" alt="Таблица кубов" style="width:100%; border-radius:12px; border: 1px solid var(--border-glass);">
+        </div>
       </div>
-      <div>
-        <p><span class="math">8^2 = 8 x 8 = 64</span></p>
-        <p><span class="math">9^2 = 9 x 9 = 81</span></p>
-        <p><span class="math">3^3 = 3 x 3 x 3 = 27</span></p>
-        <p><span class="math">4^3 = 4 x 4 x 4 = 64</span></p>
-        <p><span class="math">5^3 = 5 x 5 x 5 = 125</span></p>
-        <p><span class="math">8^3 = 8 x 8 x 8 = 512</span></p>
-        <p><span class="math">10^3 = 10 x 10 x 10 = 1000</span></p>
-      </div>
-    </div>
-  </div>
+    </section>
 
-  <div class="card">
-    <h3>Задание 2. Определите, квадратом или кубом каких чисел являются данные числа</h3>
-    <div class="two-col">
-      <div>
-        <p><strong>а)</strong> <span class="math">4 = 2^2</span>; <span class="math">9 = 3^2</span>; <span class="math">16 = 4^2</span>; <span class="math">25 = 5^2</span>; <span class="math">36 = 6^2</span>; <span class="math">49 = 7^2</span>; <span class="math">64 = 8^2</span>; <span class="math">100 = 10^2</span></p>
-      </div>
-      <div>
-        <p><strong>б)</strong> <span class="math">1 = 1^3</span>; <span class="math">8 = 2^3</span>; <span class="math">27 = 3^3</span>; <span class="math">64 = 4^3</span>; <span class="math">125 = 5^3</span>; <span class="math">216 = 6^3</span>; <span class="math">343 = 7^3</span></p>
-      </div>
-    </div>
-  </div>
+    <script>
+      // ===== NAVIGATION =====
+      function showSection(id) {
+        document.querySelectorAll('section').forEach(function(s) {
+          s.classList.remove('active');
+        });
+        var el = document.getElementById(id);
+        if (el) el.classList.add('active');
+        document.querySelectorAll('.nav-links a').forEach(function(a) {
+          a.classList.remove('active');
+        });
+        var link = document.querySelector('.nav-links a[data-section="' + id + '"]');
+        if (link) link.classList.add('active');
+        window.scrollTo(0, 0);
+      }
+      document.querySelectorAll('.nav-links a').forEach(function(link) {
+        link.addEventListener('click', function(e) {
+          e.preventDefault();
+          showSection(link.dataset.section);
+        });
+      });
 
-  <div class="card">
-    <h3>Задание 3. Определите закономерность и запишите следующие два числа</h3>
-    <div class="two-col">
-      <div>
-        <p><strong>а)</strong> <span class="math">1, 4, 9, 16, ...</span> — квадраты: <span class="math">1^2, 2^2, 3^2, 4^2</span></p>
-        <p class="hint">Следующие: <span class="math">25, 36</span> (то есть <span class="math">5^2, 6^2</span>)</p>
-        <p><strong>б)</strong> <span class="math">4, 16, 36, 64, ...</span> — квадраты четных: <span class="math">2^2, 4^2, 6^2, 8^2</span></p>
-        <p class="hint">Следующие: <span class="math">100, 144</span> (то есть <span class="math">10^2, 12^2</span>)</p>
-        <p><strong>в)</strong> <span class="math">1, 9, 25, 49, ...</span> — квадраты нечетных: <span class="math">1^2, 3^2, 5^2, 7^2</span></p>
-        <p class="hint">Следующие: <span class="math">81, 121</span> (то есть <span class="math">9^2, 11^2</span>)</p>
-      </div>
-      <div>
-        <p><strong>г)</strong> <span class="math">1, 8, 27, 64, ...</span> — кубы: <span class="math">1^3, 2^3, 3^3, 4^3</span></p>
-        <p class="hint">Следующие: <span class="math">125, 216</span> (то есть <span class="math">5^3, 6^3</span>)</p>
-        <p><strong>д)</strong> <span class="math">64, 81, 100, 121, ...</span> — квадраты: <span class="math">8^2, 9^2, 10^2, 11^2</span></p>
-        <p class="hint">Следующие: <span class="math">144, 169</span> (то есть <span class="math">12^2, 13^2</span>)</p>
-        <p><strong>е)</strong> <span class="math">8, 64, 216, 512, ...</span> — кубы четных: <span class="math">2^3, 4^3, 6^3, 8^3</span></p>
-        <p class="hint">Следующие: <span class="math">1000, 1728</span> (то есть <span class="math">10^3, 12^3</span>)</p>
-      </div>
-    </div>
-  </div>
+      // ===== SLIDER =====
+      var totalSlides = 5;
+      var currentSlide = 0;
+      var track = document.getElementById('widget-track');
+      var slideNumEl = document.getElementById('slide-num');
+      var slideTotalEl = document.getElementById('slide-total');
+      if (slideTotalEl) slideTotalEl.textContent = totalSlides;
+      function renderSlide() {
+        if (track) track.style.transform = 'translateX(-' + (currentSlide * 100) + '%)';
+        if (slideNumEl) slideNumEl.textContent = currentSlide + 1;
+      }
+      function nextSlide() {
+        if (currentSlide < totalSlides - 1) { currentSlide++; renderSlide(); }
+      }
+      function prevSlide() {
+        if (currentSlide > 0) { currentSlide--; renderSlide(); }
+      }
 
-  <div class="card">
-    <h3>Задание 4. Найдите длину стороны квадрата с заданной площадью</h3>
-    <p>Если площадь квадрата равна <span class="math">S</span>, то сторона <span class="math">a = sqrt(S)</span> (какое число в квадрате дает S).</p>
-    <div class="two-col">
-      <div>
-        <p><span class="math">S = 100 см^2</span> → <span class="math">a = 10 см</span>, так как <span class="math">10^2 = 100</span></p>
-        <p><span class="math">S = 121 см^2</span> → <span class="math">a = 11 см</span>, так как <span class="math">11^2 = 121</span></p>
-      </div>
-      <div>
-        <p><span class="math">S = 144 см^2</span> → <span class="math">a = 12 см</span>, так как <span class="math">12^2 = 144</span></p>
-      </div>
-    </div>
-  </div>
-
-  <div class="card">
-    <h3>Задание 5. Найдите длину ребра куба с заданным объемом</h3>
-    <p>Если объем куба равен <span class="math">V</span>, то ребро <span class="math">a = cbrt(V)</span> (какое число в кубе дает V).</p>
-    <div class="two-col">
-      <div>
-        <p><span class="math">V = 64 см^3</span> → <span class="math">a = 4 см</span>, так как <span class="math">4^3 = 64</span></p>
-        <p><span class="math">V = 125 см^3</span> → <span class="math">a = 5 см</span>, так как <span class="math">5^3 = 125</span></p>
-      </div>
-      <div>
-        <p><span class="math">V = 1000 см^3</span> → <span class="math">a = 10 см</span>, так как <span class="math">10^3 = 1000</span></p>
-      </div>
-    </div>
-  </div>
-
-  <div style="text-align:center;margin:1.5rem 0">
-    <button class="btn outline" onclick="goTo('m1')">← Модуль 1</button>
-    <button class="btn" onclick="markDone('m2'); goTo('m3')">Модуль 3 →</button>
-  </div>
-</section>
-
-<!-- MODULE 3: TASKS 6-9 -->
-<section id="m3" class="module">
-  <div class="card">
-    <div class="badge red">Модуль 3</div>
-    <h2>Задания 6–9</h2>
-  </div>
-
-  <div class="card">
-    <h3>Задание 6. Полные квадраты</h3>
-    <p><strong>Полным квадратом</strong> называется число, равное квадрату натурального числа. Например, 25 — полный квадрат, так как <span class="math">25 = 5^2</span>.</p>
-    <div class="two-col">
-      <div>
-        <p><strong>а)</strong> Найдите полные квадраты между числами 20 и 90.</p>
-        <p class="hint"><span class="math">25 (5^2), 36 (6^2), 49 (7^2), 64 (8^2), 81 (9^2)</span></p>
-      </div>
-      <div>
-        <p><strong>б)</strong> Найдите полные квадраты между числами 100 и 200.</p>
-        <p class="hint"><span class="math">121 (11^2), 144 (12^2), 169 (13^2), 196 (14^2)</span></p>
-      </div>
-    </div>
-  </div>
-
-  <div class="card">
-    <h3>Задание 7. Полные кубы</h3>
-    <p><strong>Полным кубом</strong> называется число, равное кубу натурального числа. Например, 125 — полный куб, так как <span class="math">125 = 5^3</span>.</p>
-    <div class="two-col">
-      <div>
-        <p><strong>а)</strong> Найдите полные кубы между числами 10 и 100.</p>
-        <p class="hint"><span class="math">27 (3^3), 64 (4^3)</span></p>
-      </div>
-      <div>
-        <p><strong>б)</strong> Найдите полные кубы между числами 200 и 400.</p>
-        <p class="hint"><span class="math">216 (6^3), 343 (7^3)</span></p>
-      </div>
-    </div>
-  </div>
-
-  <div class="card">
-    <h3>Задание 8. Ответьте на вопросы</h3>
-    <p><strong>а)</strong> Какова площадь квадрата, длина стороны которого равна <span class="math">a</span>?</p>
-    <p class="hint">Ответ: <span class="math">S = a^2</span></p>
-    <p><strong>б)</strong> Каковы площадь одной грани и объем куба, длина ребра которого равна <span class="math">b</span>?</p>
-    <p class="hint">Ответ: площадь грани <span class="math">S = b^2</span>, объем <span class="math">V = b^3</span></p>
-    <p><strong>в)</strong> К какому числу нужно прибавить 4, чтобы получить квадрат числа 7?</p>
-    <p class="hint"><span class="math">7^2 = 49</span>. Значит, <span class="math">49 - 4 = 45</span>. Ответ: <strong>45</strong>.</p>
-    <p><strong>г)</strong> Сумма квадратов каких двух натуральных чисел равна 100?</p>
-    <p class="hint"><span class="math">6^2 + 8^2 = 36 + 64 = 100</span>. Ответ: <strong>6 и 8</strong>.</p>
-  </div>
-
-  <div class="card">
-    <h3>Задание 9. Найдите квадрат числа, пользуясь приведенным равенством</h3>
-    <div class="example-box">
-      <div class="label">Образец</div>
-      <p><span class="math">11^2 = 121 → 110^2 = ?</span></p>
-      <p><strong>Решение:</strong></p>
-      <p><span class="math">110^2 = 11 x 10 x 11 x 10 = 11 x 11 x 10 x 10 = 121 x 100 = 12 100</span></p>
-      <p><strong>Объяснение:</strong> Помимо того, что <span class="math">110^2 = 110 x 110</span>, записывается в виде <span class="math">110 = 11 x 10</span>, а затем по переместительному и сочетательному свойствам произведение находится более удобным способом.</p>
-    </div>
-    <div class="two-col">
-      <div>
-        <p><strong>а)</strong> <span class="math">23^2 = 529 → 230^2 = ?</span></p>
-        <p class="hint"><span class="math">230^2 = 23^2 x 100 = 529 x 100 = 52 900</span></p>
-        <p><strong>б)</strong> <span class="math">17^2 = 289 → 170^2 = ?</span></p>
-        <p class="hint"><span class="math">170^2 = 17^2 x 100 = 289 x 100 = 28 900</span></p>
-      </div>
-      <div>
-        <p><strong>в)</strong> <span class="math">870^2 = 756 900 → 87^2 = ?</span></p>
-        <p class="hint"><span class="math">87^2 = 756 900 / 100 = 7 569</span> (или <span class="math">870^2 = 87^2 x 100</span>)</p>
-      </div>
-    </div>
-  </div>
-
-  <div style="text-align:center;margin:1.5rem 0">
-    <button class="btn outline" onclick="goTo('m2')">← Модуль 2</button>
-    <button class="btn" onclick="markDone('m3'); goTo('m4')">Модуль 4 →</button>
-  </div>
-</section>
-
-<!-- MODULE 4: TASKS 10-11 -->
-<section id="m4" class="module">
-  <div class="card">
-    <div class="badge gold">Модуль 4</div>
-    <h2>Задания 10–11</h2>
-  </div>
-
-  <div class="card">
-    <h3>Задание 10. Сумма первых нечетных чисел</h3>
-    <p>Определите закономерность и найдите сумму первых 10 нечетных чисел.</p>
-    <div class="formula">
-      1 = 1^2    1 + 3 = 2^2    1 + 3 + 5 = 3^2    1 + 3 + 5 + 7 = 4^2    1 + 3 + 5 + 7 + 9 = 5^2
-    </div>
-    <p><strong>Закономерность:</strong> Сумма первых <span class="math">n</span> нечетных чисел равна <span class="math">n^2</span>.</p>
-    <div class="example-box">
-      <div class="label">Проверка</div>
-      <p>1 = 1^2 ✓</p>
-      <p>1+3 = 4 = 2^2 ✓</p>
-      <p>1+3+5 = 9 = 3^2 ✓</p>
-      <p>1+3+5+7 = 16 = 4^2 ✓</p>
-      <p>1+3+5+7+9 = 25 = 5^2 ✓</p>
-    </div>
-    <p><strong>Сумма первых 10 нечетных чисел:</strong></p>
-    <p><span class="math">1 + 3 + 5 + 7 + 9 + 11 + 13 + 15 + 17 + 19 = 10^2 = 100</span></p>
-    <p class="hint">Проверка: (1+19) + (3+17) + (5+15) + (7+13) + (9+11) = 20 + 20 + 20 + 20 + 20 = 100 ✓</p>
-  </div>
-
-  <div class="card">
-    <h3>Задание 11. Ответьте на вопросы о цифрах полных квадратов</h3>
-    <p><strong>а)</strong> На какие цифры могут оканчиваться полные квадраты?</p>
-    <p class="hint">Посмотрим на квадраты чисел 0–9:</p>
-    <div class="two-col">
-      <div>
-        <p><span class="math">0^2 = 0</span> → 0</p>
-        <p><span class="math">1^2 = 1</span> → 1</p>
-        <p><span class="math">2^2 = 4</span> → 4</p>
-        <p><span class="math">3^2 = 9</span> → 9</p>
-        <p><span class="math">4^2 = 16</span> → 6</p>
-      </div>
-      <div>
-        <p><span class="math">5^2 = 25</span> → 5</p>
-        <p><span class="math">6^2 = 36</span> → 6</p>
-        <p><span class="math">7^2 = 49</span> → 9</p>
-        <p><span class="math">8^2 = 64</span> → 4</p>
-        <p><span class="math">9^2 = 81</span> → 1</p>
-      </div>
-    </div>
-    <p><strong>Ответ:</strong> Полные квадраты могут оканчиваться на цифры: <span class="math">0, 1, 4, 5, 6, 9</span>.</p>
-
-    <p style="margin-top:1rem"><strong>б)</strong> Какие цифры не могут быть последними цифрами полных квадратов?</p>
-    <p><strong>Ответ:</strong> Цифры <span class="math">2, 3, 7, 8</span> не могут быть последними цифрами полных квадратов.</p>
-
-    <p style="margin-top:1rem"><strong>в)</strong> Является ли число 13 1415 161 712 полным квадратом?</p>
-    <p>Последняя цифра числа — <strong>2</strong>.</p>
-    <p>Как мы выяснили, полные квадраты не могут оканчиваться на 2.</p>
-    <p><strong>Ответ:</strong> <span class="math">Нет, не является</span>.</p>
-  </div>
-
-  <div style="text-align:center;margin:1.5rem 0">
-    <button class="btn outline" onclick="goTo('m3')">← Модуль 3</button>
-    <button class="btn" onclick="markDone('m4'); goTo('test')">Перейти к тесту →</button>
-  </div>
-</section>
-
-<!-- TEST 30 -->
-<section id="test" class="module">
-  <div class="card">
-    <div class="badge">Тест</div>
-    <h2>Закрытый тест — 30 вопросов</h2>
-    <p>Выбери один правильный ответ. После проверки нажми на вопрос, чтобы увидеть объяснение!</p>
-    <div class="progress-bar"><div class="fill" id="testProgress"></div></div>
-    <div id="testBox" class="quiz-grid"></div>
-    <div style="text-align:center;margin-top:1rem">
-      <button class="btn" id="testBtn" onclick="checkTest()">Проверить тест</button>
-      <button class="btn secondary" style="display:none" id="testReset" onclick="resetTest()">Пройти заново</button>
-    </div>
-    <div id="testResult" class="result-box"></div>
-  </div>
-</section>
-
-<!-- QUIZ 15 -->
-<section id="quiz" class="module">
-  <div class="card">
-    <div class="badge gold">Викторина</div>
-    <h2>Викторина — 15 вопросов</h2>
-    <p>Задания повышенной сложности. В конце — объяснения ко всем вопросам!</p>
-    <div class="progress-bar"><div class="fill" id="quizProgress"></div></div>
-    <div id="quizBox" class="quiz-grid"></div>
-    <div style="text-align:center;margin-top:1rem">
-      <button class="btn" id="quizBtn" onclick="checkQuiz()">Проверить викторину</button>
-      <button class="btn secondary" style="display:none" id="quizReset" onclick="resetQuiz()">Пройти заново</button>
-    </div>
-    <div id="quizResult" class="result-box"></div>
-    <div id="quizExplanations" style="margin-top:1.5rem"></div>
-  </div>
-</section>
-
-</main>
-
-<footer>
-  <p>Интерактивный урок «Квадрат и куб натурального числа» • 5 класс • Статический модульный сайт</p>
-</footer>
-
-<script>
-// ===== TEST 30 (with explanations on click) =====
-const testQuestions=[
-  {q:"Квадратом числа называется...",options:["сумма двух одинаковых чисел","произведение двух одинаковых множителей","произведение трех одинаковых множителей","число, умноженное на 2"],correct:1,explain:"Квадрат числа a — это a·a = a². Это произведение ДВУХ одинаковых множителей."},
-  {q:"Кубом числа называется...",options:["сумма трех одинаковых чисел","произведение двух одинаковых множителей","произведение трех одинаковых множителей","число в степени 2"],correct:2,explain:"Куб числа a — это a·a·a = a³. Это произведение ТРЕХ одинаковых множителей."},
-  {q:"Сколько будет 5²?",options:["10","25","125","52"],correct:1,explain:"5² = 5·5 = 25. Не путай с 5·2 = 10!"},
-  {q:"Сколько будет 4³?",options:["12","16","64","81"],correct:2,explain:"4³ = 4·4·4 = 16·4 = 64."},
-  {q:"Сколько будет 10³?",options:["30","100","1000","10000"],correct:2,explain:"10³ = 10·10·10 = 1000."},
-  {q:"Квадрат какого числа равен 49?",options:["6","7","8","9"],correct:1,explain:"7² = 7·7 = 49."},
-  {q:"Куб какого числа равен 125?",options:["4","5","6","3"],correct:1,explain:"5³ = 5·5·5 = 125."},
-  {q:"Какое число является полным квадратом?",options:["20","25","30","35"],correct:1,explain:"25 = 5². Полный квадрат — число, равное квадрату натурального числа."},
-  {q:"Какое число является полным кубом?",options:["50","64","100","81"],correct:1,explain:"64 = 4³ = 4·4·4. Также 64 = 8², то есть это и полный квадрат, и полный куб!"},
-  {q:"Сторона квадрата с площадью 144 см² равна...",options:["10 см","11 см","12 см","13 см"],correct:2,explain:"S = a², значит a = √144 = 12, так как 12² = 144."},
-  {q:"Ребро куба с объемом 216 см³ равно...",options:["4 см","5 см","6 см","7 см"],correct:2,explain:"V = a³, значит a = ∛216 = 6, так как 6³ = 216."},
-  {q:"Следующее число в ряду 1, 4, 9, 16...",options:["20","24","25","36"],correct:2,explain:"Это квадраты: 1², 2², 3², 4². Следующее: 5² = 25."},
-  {q:"Следующее число в ряду 1, 8, 27, 64...",options:["100","125","216","81"],correct:1,explain:"Это кубы: 1³, 2³, 3³, 4³. Следующее: 5³ = 125."},
-  {q:"Полные квадраты между 20 и 90 — это...",options:["25, 36, 49, 64, 81","20, 30, 40, 50, 60, 70, 80","36, 49, 64","25, 49, 81"],correct:0,explain:"5²=25, 6²=36, 7²=49, 8²=64, 9²=81. Все эти числа между 20 и 90."},
-  {q:"Полные кубы между 10 и 100 — это...",options:["8, 27, 64","27, 64","10, 20, 30...","1, 8, 27"],correct:1,explain:"3³=27, 4³=64. 2³=8 меньше 10, 5³=125 больше 100."},
-  {q:"230² = ?",options:["529","5290","52900","529000"],correct:2,explain:"230² = (23·10)² = 23²·100 = 529·100 = 52 900."},
-  {q:"170² = ?",options:["289","2890","28900","289000"],correct:2,explain:"170² = (17·10)² = 17²·100 = 289·100 = 28 900."},
-  {q:"87² = ? (если 870² = 756 900)",options:["7569","75690","756900","7,569"],correct:0,explain:"870² = 87²·100, значит 87² = 756 900 ÷ 100 = 7 569."},
-  {q:"Сумма первых 5 нечетных чисел равна...",options:["15","25","35","50"],correct:1,explain:"1+3+5+7+9 = 25 = 5². Закономерность: сумма первых n нечетных = n²."},
-  {q:"Сумма первых 10 нечетных чисел равна...",options:["50","100","200","1000"],correct:1,explain:"По закономерности: 10² = 100. Проверка: 1+3+5+7+9+11+13+15+17+19 = 100."},
-  {q:"На какую цифру может оканчиваться полный квадрат?",options:["2","3","7","6"],correct:3,explain:"Полные квадраты оканчиваются на 0, 1, 4, 5, 6, 9. На 6 может (например, 4²=16, 6²=36)."},
-  {q:"На какую цифру НЕ может оканчиваться полный квадрат?",options:["0","1","4","7"],correct:3,explain:"Полные квадраты не оканчиваются на 2, 3, 7, 8."},
-  {q:"Является ли число 131415161712 полным квадратом?",options:["Да","Нет","Нельзя определить","Только если четное"],correct:1,explain:"Последняя цифра — 2. Полные квадраты не оканчиваются на 2. Значит, нет."},
-  {q:"Площадь квадрата со стороной a равна...",options:["a","2a","a²","a³"],correct:2,explain:"S = a·a = a²."},
-  {q:"Объем куба с ребром b равен...",options:["b","3b","b²","b³"],correct:3,explain:"V = b·b·b = b³."},
-  {q:"К какому числу прибавить 4, чтобы получить 7²?",options:["42","45","48","49"],correct:1,explain:"7² = 49. 49 − 4 = 45."},
-  {q:"Сумма квадратов 6 и 8 равна...",options:["100","98","96","90"],correct:0,explain:"6² + 8² = 36 + 64 = 100. Это тройка Пифагора!"},
-  {q:"Квадрат и куб какого натурального числа равны самому числу?",options:["0","1","2","10"],correct:1,explain:"1² = 1 и 1³ = 1. Для натуральных чисел ответ — только 1."},
-  {q:"Следующее число в ряду 4, 16, 36, 64...",options:["80","100","120","144"],correct:1,explain:"Это квадраты четных: 2², 4², 6², 8². Следующее: 10² = 100."},
-  {q:"Следующее число в ряду 8, 64, 216, 512...",options:["1000","800","640","729"],correct:0,explain:"Это кубы четных: 2³, 4³, 6³, 8³. Следующее: 10³ = 1000."}
-];
-
-// ===== QUIZ 15 (with end explanations) =====
-const quizQuestions=[
-  {q:"Почему 64 одновременно полный квадрат и полный куб?",options:["Потому что 64 четное","Потому что 64 = 8² = 4³","Потому что 64 делится на 8","Это ошибка в учебнике"],correct:1,explain:"64 = 8·8 = 8² и 64 = 4·4·4 = 4³. Такие числа называются совершенными степенями."},
-  {q:"Почему сумма первых n нечетных чисел равна n²?",options:["Потому что так написано","Каждое нечетное число — это разность соседних квадратов","Это совпадение","Неверно"],correct:1,explain:"n² − (n−1)² = 2n−1 (нечетное число). Складывая все такие разности, получаем n²."},
-  {q:"Может ли полный квадрат оканчиваться на 0?",options:["Нет","Да, если число кратно 10","Только 0²","Никогда"],correct:1,explain:"Да! Например, 10² = 100, 20² = 400. Если число кратно 10, квадрат оканчивается на 00."},
-  {q:"Почему полные квадраты не оканчиваются на 2?",options:["Потому что 2 — простое число","Квадраты 0–9 дают только 0,1,4,5,6,9","Учебник так сказал","Это случайность"],correct:1,explain:"Последняя цифра квадрата зависит только от последней цифры основания. Проверив 0–9, видим, что 2,3,7,8 не встречаются."},
-  {q:"110² = 12 100. Сколько нулей в этом вычислении?",options:["1","2","3","4"],correct:1,explain:"12 100 — два нуля в конце. Потому что (11·10)² = 11²·10² = 121·100 = 12 100."},
-  {q:"Если a² = b², то обязательно ли a = b?",options:["Да, всегда","Нет, может a = −b","Только для натуральных чисел","Только если a > b"],correct:2,explain:"В натуральных числах — да. Но вообще (−5)² = 5² = 25. Для натуральных a и b: если a²=b², то a=b."},
-  {q:"Какое наибольшее полное квадрат меньше 200?",options:["169","196","144","181"],correct:1,explain:"14² = 196, 15² = 225. 196 < 200 < 225. Значит, 196."},
-  {q:"Какое наименьшее полное куб больше 200?",options:["216","343","125","512"],correct:0,explain:"5³ = 125 < 200, 6³ = 216 > 200. Значит, 216."},
-  {q:"Почему в задании 9 230² вычисляют через 23²?",options:["Потому что 230 = 23·10","Потому что 23 — простое","Случайно","Чтобы получить больше нулей"],correct:0,explain:"230 = 23·10, поэтому 230² = (23·10)² = 23²·100 = 529·100 = 52 900. Удобный способ!"},
-  {q:"Площадь квадрата увеличили в 4 раза. Во сколько раз увеличилась сторона?",options:["В 2 раза","В 4 раза","В 16 раз","В 8 раз"],correct:0,explain:"S = a². Если S новая = 4S, то (a новая)² = 4a² = (2a)². Значит, сторона увеличилась в 2 раза."},
-  {q:"Объем куба увеличили в 8 раз. Во сколько раз увеличилось ребро?",options:["В 2 раза","В 4 раза","В 8 раз","В 3 раза"],correct:0,explain:"V = a³. Если V новое = 8V, то (a новое)³ = 8a³ = (2a)³. Значит, ребро увеличилось в 2 раза."},
-  {q:"Сумма квадратов каких двух чисел дает 100 (кроме 6 и 8)?",options:["1 и 99","5 и 5","10 и 0","1 и 9"],correct:2,explain:"10² + 0² = 100 + 0 = 100. Но 0 не натуральное! Среди натуральных — только 6 и 8."},
-  {q:"Почему 1 одновременно и квадрат, и куб?",options:["Потому что 1·1=1 и 1·1·1=1","Это исключение","Ошибка в определении","Только в 5 классе"],correct:0,explain:"1² = 1·1 = 1 и 1³ = 1·1·1 = 1. Для единицы любая степень равна 1."},
-  {q:"Какое число НЕ является ни полным квадратом, ни полным кубом?",options:["64","125","216","200"],correct:3,explain:"64=8²=4³, 125=5³, 216=6³. А 200 — ни полный квадрат (14²=196, 15²=225), ни полный куб (5³=125, 6³=216)."},
-  {q:"Сколько полных квадратов между 1 и 50?",options:["5","6","7","8"],correct:2,explain:"1²=1, 2²=4, 3²=9, 4²=16, 5²=25, 6²=36, 7²=49. Всего 7 полных квадратов (включая 1)."}
-];
-
-// ===== NAVIGATION =====
-function goTo(id){
-  document.querySelectorAll('.module').forEach(s=>s.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
-  document.querySelectorAll('nav button').forEach(b=>b.classList.remove('active'));
-  const btn=Array.from(document.querySelectorAll('nav button')).find(b=>b.getAttribute('onclick').includes("'"+id+"'"));
-  if(btn)btn.classList.add('active');
-  window.scrollTo({top:0,behavior:'smooth'});
-  if(id==='test')renderTest();
-  if(id==='quiz')renderQuiz();
-}
-function markDone(id){
-  const btn=Array.from(document.querySelectorAll('nav button')).find(b=>b.getAttribute('onclick').includes("'"+id+"'"));
-  if(btn){btn.classList.add('done');localStorage.setItem('done_'+id,'1');}
-}
-['m1','m2','m3','m4'].forEach(id=>{if(localStorage.getItem('done_'+id))markDone(id);});
-
-// ===== RENDER TEST =====
-function renderTest(){
-  const box=document.getElementById('testBox');
-  if(box.dataset.rendered)return;
-  box.innerHTML=testQuestions.map((q,i)=>`
-    <div class="question" id="tq${i}" onclick="toggleExplain(${i})">
-      <h4>${i+1}. ${q.q}</h4>
-      <div class="options">
-        ${q.options.map((opt,j)=>`<label id="topt${i}_${j}"><input type="radio" name="t${i}" value="${j}"> ${opt}</label>`).join('')}
-      </div>
-      <div class="explain-box" id="tex${i}">${q.explain}</div>
-    </div>
-  `).join('');
-  box.dataset.rendered='1';
-}
-function toggleExplain(i){
-  const el=document.getElementById('tex'+i);
-  if(el)el.classList.toggle('show');
-}
-function checkTest(){
-  let score=0;
-  testQuestions.forEach((q,i)=>{
-    const val=document.querySelector(`input[name="t${i}"]:checked`);
-    const opts=document.querySelectorAll(`#tq${i} label`);
-    opts.forEach((lab,j)=>{
-      lab.classList.remove('correct','wrong');
-      if(j===q.correct)lab.classList.add('correct');
-      else if(val&&parseInt(val.value)===j)lab.classList.add('wrong');
-    });
-    if(val&&parseInt(val.value)===q.correct)score++;
-  });
-  const res=document.getElementById('testResult');
-  const pct=Math.round(score/testQuestions.length*100);
-  res.className='result-box show '+(pct>=83?'good':pct>=60?'mid':'bad');
-  res.innerHTML=`<div>Результат: <strong>${score} из ${testQuestions.length}</strong> (${pct}%)</div>
-    <div style="margin-top:.25rem;font-size:.9rem">${pct>=83?'Отлично! Ты отлично усвоил материал.':pct>=60?'Хорошо, но есть над чем поработать.':'Рекомендую повторить теорию и попробовать снова.'}</div>
-    <div style="margin-top:.5rem;font-size:.85rem;color:var(--text-light)">Нажми на любой вопрос, чтобы увидеть объяснение!</div>`;
-  document.getElementById('testBtn').style.display='none';
-  document.getElementById('testReset').style.display='inline-flex';
-  document.getElementById('testProgress').style.width=pct+'%';
-  localStorage.setItem('testScore',score);
-}
-function resetTest(){
-  document.getElementById('testBox').innerHTML='';
-  delete document.getElementById('testBox').dataset.rendered;
-  document.getElementById('testResult').className='result-box';
-  document.getElementById('testBtn').style.display='inline-flex';
-  document.getElementById('testReset').style.display='none';
-  document.getElementById('testProgress').style.width='0%';
-  renderTest();
-}
-
-// ===== RENDER QUIZ =====
-function renderQuiz(){
-  const box=document.getElementById('quizBox');
-  if(box.dataset.rendered)return;
-  box.innerHTML=quizQuestions.map((q,i)=>`
-    <div class="question" id="qq${i}">
-      <h4>${i+1}. ${q.q}</h4>
-      <div class="options">
-        ${q.options.map((opt,j)=>`<label id="qopt${i}_${j}"><input type="radio" name="q${i}" value="${j}"> ${opt}</label>`).join('')}
-      </div>
-    </div>
-  `).join('');
-  box.dataset.rendered='1';
-}
-function checkQuiz(){
-  let score=0;
-  const explanations=[];
-  quizQuestions.forEach((q,i)=>{
-    const val=document.querySelector(`input[name="q${i}"]:checked`);
-    const opts=document.querySelectorAll(`#qq${i} label`);
-    opts.forEach((lab,j)=>{
-      lab.classList.remove('correct','wrong');
-      if(j===q.correct)lab.classList.add('correct');
-      else if(val&&parseInt(val.value)===j)lab.classList.add('wrong');
-    });
-    const isCorrect=val&&parseInt(val.value)===q.correct;
-    if(isCorrect)score++;
-    explanations.push(`<div style="margin-bottom:.75rem;padding:.75rem;background:${isCorrect?'#ecfdf5':'#fef2f2'};border-radius:8px;border-left:3px solid ${isCorrect?'var(--success)':'var(--danger)'}">
-      <strong>Вопрос ${i+1}:</strong> ${isCorrect?'✓ Верно':'✗ Неверно'}<br>
-      <span style="font-size:.9rem">${q.explain}</span>
-    </div>`);
-  });
-  const res=document.getElementById('quizResult');
-  const pct=Math.round(score/quizQuestions.length*100);
-  res.className='result-box show '+(pct>=80?'good':pct>=50?'mid':'bad');
-  res.innerHTML=`<div>Результат: <strong>${score} из ${quizQuestions.length}</strong> (${pct}%)</div>
-    <div style="margin-top:.25rem;font-size:.9rem">${pct>=80?'Блестяще! Глубокое понимание темы.':pct>=50?'Неплохо, но внимательнее читай условия.':'Рекомендую вернуться к теории и примерам.'}</div>`;
-  document.getElementById('quizBtn').style.display='none';
-  document.getElementById('quizReset').style.display='inline-flex';
-  document.getElementById('quizProgress').style.width=pct+'%';
-  document.getElementById('quizExplanations').innerHTML='<div class="card"><h3>Объяснения ко всем вопросам</h3>'+explanations.join('')+'</div>';
-  localStorage.setItem('quizScore',score);
-}
-function resetQuiz(){
-  document.getElementById('quizBox').innerHTML='';
-  delete document.getElementById('quizBox').dataset.rendered;
-  document.getElementById('quizResult').className='result-box';
-  document.getElementById('quizBtn').style.display='inline-flex';
-  document.getElementById('quizReset').style.display='none';
-  document.getElementById('quizProgress').style.width='0%';
-  document.getElementById('quizExplanations').innerHTML='';
-  renderQuiz();
-}
-</script>
-</body>
+      // ===== SOLUTION TOGGLES =====
+      function toggleSolution(id) {
+        var el = document.getElementById(id);
+        if (!el) return;
+        el.classList.toggle('active');
+        var btn = el.previousElementSibling;
+        if (btn) btn.textContent = el.classList.contains('active') ? 'Скрыть решение' : 'Показать решение';
+      }
+    </script>
+  </body>
 </html>
