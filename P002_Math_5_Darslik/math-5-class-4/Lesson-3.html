@@ -1,0 +1,1493 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, user-scalable=yes"
+    />
+    <title>Урок 3 — Проценты: вычисления, приближения, задачи</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      :root {
+        --bg-dark: #0f0f1a;
+        --bg-card: rgba(255, 255, 255, 0.05);
+        --bg-glass: rgba(255, 255, 255, 0.08);
+        --border-glass: rgba(255, 255, 255, 0.15);
+        --text-primary: #e8e8f0;
+        --text-secondary: #a0a0b8;
+        --accent: #00d4aa;
+        --accent-dim: rgba(0, 212, 170, 0.2);
+        --accent-warm: #ff6b6b;
+        --accent-warm-dim: rgba(255, 107, 107, 0.2);
+        --accent-blue: #4dabf7;
+        --accent-blue-dim: rgba(77, 171, 247, 0.2);
+        --success: #51cf66;
+        --error: #ff6b6b;
+        --warning: #fcc419;
+      }
+
+      body {
+        font-family:
+          system-ui,
+          "Segoe UI",
+          -apple-system,
+          sans-serif;
+        background: var(--bg-dark);
+        color: var(--text-primary);
+        min-height: 100vh;
+        line-height: 1.6;
+        overflow-x: hidden;
+      }
+
+      .bg-animation {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: -1;
+        background:
+          radial-gradient(
+            ellipse at 20% 20%,
+            rgba(0, 212, 170, 0.08) 0%,
+            transparent 50%
+          ),
+          radial-gradient(
+            ellipse at 80% 80%,
+            rgba(77, 171, 247, 0.08) 0%,
+            transparent 50%
+          );
+      }
+      .bg-animation::before {
+        content: "";
+        position: absolute;
+        width: 200%;
+        height: 200%;
+        top: -50%;
+        left: -50%;
+        background: repeating-linear-gradient(
+          0deg,
+          transparent,
+          transparent 40px,
+          rgba(255, 255, 255, 0.02) 40px,
+          rgba(255, 255, 255, 0.02) 41px
+        );
+        animation: bgMove 20s linear infinite;
+      }
+      @keyframes bgMove {
+        100% {
+          transform: translateY(40px);
+        }
+      }
+
+      nav {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        background: rgba(15, 15, 26, 0.85);
+        backdrop-filter: blur(20px);
+        border-bottom: 1px solid var(--border-glass);
+        z-index: 1000;
+        padding: 0 20px;
+      }
+      .nav-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        height: 60px;
+      }
+      .logo {
+        font-size: 1.3rem;
+        font-weight: 700;
+        background: linear-gradient(135deg, var(--accent), var(--accent-blue));
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+      }
+      .nav-links {
+        display: flex;
+        gap: 8px;
+        list-style: none;
+      }
+      .nav-links a {
+        color: var(--text-secondary);
+        text-decoration: none;
+        padding: 8px 16px;
+        border-radius: 8px;
+        transition: 0.3s;
+        font-size: 0.9rem;
+        font-weight: 500;
+        cursor: pointer;
+      }
+      .nav-links a:hover,
+      .nav-links a.active {
+        color: var(--text-primary);
+        background: var(--bg-glass);
+      }
+      .nav-links a.active {
+        background: var(--accent-dim);
+        color: var(--accent);
+      }
+
+      section {
+        display: none;
+        opacity: 0;
+        padding: 78px 20px 32px;
+        max-width: 1000px;
+        margin: 0 auto;
+        transition: opacity 0.3s;
+      }
+      section.active {
+        display: block;
+        opacity: 1;
+        animation: fadeIn 0.5s ease;
+      }
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .card {
+        background: var(--bg-card);
+        backdrop-filter: blur(20px);
+        border: 1px solid var(--border-glass);
+        border-radius: 20px;
+        padding: 20px;
+        margin-bottom: 20px;
+        transition: 0.2s;
+      }
+      .card-title {
+        font-size: 1.5rem;
+        font-weight: 700;
+        margin-bottom: 16px;
+        display: flex;
+        gap: 12px;
+        align-items: center;
+      }
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 12px 28px;
+        border-radius: 12px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: 0.3s;
+        border: none;
+      }
+      .btn-primary {
+        background: linear-gradient(135deg, var(--accent), var(--accent-blue));
+        color: #000;
+      }
+      .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px var(--accent-dim);
+      }
+      .btn-secondary {
+        background: var(--bg-glass);
+        color: var(--text-primary);
+        border: 1px solid var(--border-glass);
+      }
+      .widget-viewport {
+        width: 100%;
+      }
+      .widget-slide {
+        display: none;
+        padding: 12px 16px;
+        animation: slideFade 0.3s ease;
+      }
+      .widget-slide.active {
+        display: block;
+      }
+      @keyframes slideFade {
+        from {
+          opacity: 0;
+        }
+        to {
+          opacity: 1;
+        }
+      }
+      .widget-nav {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 20px;
+      }
+      .widget-progress {
+        text-align: center;
+        font-size: 0.9rem;
+        color: var(--text-secondary);
+        margin-bottom: 12px;
+      }
+      .big-math {
+        font-size: 1.5rem;
+        text-align: center;
+        background: var(--bg-glass);
+        padding: 20px;
+        border-radius: 16px;
+        margin: 16px 0;
+      }
+      .formula-box {
+        background: var(--bg-glass);
+        border: 1px solid var(--border-glass);
+        border-radius: 12px;
+        padding: 16px;
+        text-align: center;
+        margin: 16px 0;
+      }
+      .tip-box {
+        background: var(--accent-blue-dim);
+        border-left: 4px solid var(--accent-blue);
+        padding: 12px 16px;
+        border-radius: 0 12px 12px 0;
+        margin: 16px 0;
+      }
+      .compare-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 16px 0;
+      }
+      .compare-table th,
+      .compare-table td {
+        border: 1px solid var(--border-glass);
+        padding: 12px;
+        text-align: center;
+      }
+      .sequence-component {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        position: relative;
+      }
+      .sequence-step {
+        background: var(--bg-card);
+        border: 1px solid var(--border-glass);
+        border-radius: 16px;
+        padding: 20px 20px 20px 72px;
+        position: relative;
+      }
+      .sequence-number {
+        position: absolute;
+        left: 20px;
+        top: 20px;
+        width: 40px;
+        height: 40px;
+        background: var(--accent);
+        color: #000;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 800;
+      }
+      .problem-card {
+        background: var(--bg-card);
+        border: 1px solid var(--border-glass);
+        border-radius: 16px;
+        padding: 24px;
+        margin-bottom: 20px;
+      }
+      .solution {
+        display: none;
+        margin-top: 20px;
+        padding: 16px;
+        background: rgba(0, 212, 170, 0.05);
+        border-left: 3px solid var(--accent);
+      }
+      .solution.active {
+        display: block;
+      }
+      .quiz-container {
+        background: var(--bg-card);
+        border-radius: 20px;
+        padding: 24px;
+      }
+      .quiz-option {
+        background: var(--bg-glass);
+        border: 2px solid var(--border-glass);
+        border-radius: 12px;
+        padding: 14px 20px;
+        margin-bottom: 12px;
+        cursor: pointer;
+        display: flex;
+        gap: 12px;
+        align-items: center;
+      }
+      .quiz-option.correct {
+        border-color: var(--success);
+        background: rgba(81, 207, 102, 0.15);
+      }
+      .quiz-option.wrong {
+        border-color: var(--error);
+        background: rgba(255, 107, 107, 0.15);
+      }
+      .timer {
+        position: fixed;
+        top: 80px;
+        right: 20px;
+        background: var(--bg-card);
+        backdrop-filter: blur(20px);
+        border: 1px solid var(--border-glass);
+        border-radius: 16px;
+        padding: 12px 20px;
+        font-size: 1.3rem;
+        font-weight: 700;
+        z-index: 999;
+      }
+      .timer.warning {
+        border-color: var(--warning);
+        color: var(--warning);
+      }
+      .timer.danger {
+        border-color: var(--error);
+        color: var(--error);
+        animation: pulse 1s infinite;
+      }
+      @keyframes pulse {
+        0% {
+          transform: scale(1);
+        }
+        50% {
+          transform: scale(1.05);
+        }
+      }
+      .results-container {
+        text-align: center;
+        padding: 24px;
+      }
+      .score-circle {
+        width: 180px;
+        height: 180px;
+        border-radius: 50%;
+        background: conic-gradient(
+          var(--accent) calc(var(--score) * 3.6deg),
+          var(--bg-glass) 0
+        );
+        margin: 0 auto 24px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+      }
+      .score-circle::before {
+        content: "";
+        position: absolute;
+        width: 150px;
+        height: 150px;
+        background: var(--bg-dark);
+        border-radius: 50%;
+      }
+      .score-value {
+        position: relative;
+        font-size: 2.4rem;
+        font-weight: 800;
+        color: var(--accent);
+      }
+      @media (max-width: 768px) {
+        .nav-links {
+          display: none;
+        }
+        .timer {
+          top: 70px;
+          right: 12px;
+          font-size: 1rem;
+          padding: 8px 12px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="bg-animation"></div>
+    <nav>
+      <div class="nav-container">
+        <div class="logo">📊 Урок 3 · Проценты</div>
+        <ul class="nav-links">
+          <li><a href="#" data-section="home" class="active">Главная</a></li>
+          <li><a href="#" data-section="theory">Теория</a></li>
+          <li><a href="#" data-section="algorithm">Алгоритм</a></li>
+          <li><a href="#" data-section="examples">Примеры</a></li>
+          <li><a href="#" data-section="trainer">Тренажёр</a></li>
+          <li><a href="#" data-section="assessment">Аттестация</a></li>
+        </ul>
+      </div>
+    </nav>
+
+    <!-- HOME -->
+    <section id="home" class="active">
+      <div class="hero" style="text-align: center; padding: 60px 20px">
+        <h1
+          style="
+            font-size: 2.6rem;
+            background: linear-gradient(
+              135deg,
+              var(--accent),
+              var(--accent-blue)
+            );
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+          "
+        >
+          Проценты: вычисления, приближения и задачи
+        </h1>
+        <p style="font-size: 1.2rem; margin: 20px 0">
+          Нахождение процента от числа, процент от процента, приближённые
+          вычисления, реальные задачи (магазин, экзамен, ферма, спорт).
+        </p>
+        <div style="display: flex; gap: 16px; justify-content: center">
+          <button class="btn btn-primary" onclick="showSection('theory')">
+            Начать обучение
+          </button>
+          <button class="btn btn-secondary" onclick="showSection('assessment')">
+            Проверить знания
+          </button>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">🧠 Что вы научитесь делать</div>
+        <div
+          style="
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+          "
+        >
+          <div
+            style="
+              background: var(--bg-glass);
+              padding: 16px;
+              border-radius: 16px;
+            "
+          >
+            ✅ Находить % от числа (двумя способами)
+          </div>
+          <div
+            style="
+              background: var(--bg-glass);
+              padding: 16px;
+              border-radius: 16px;
+            "
+          >
+            ✅ Вычислять % от % (цепочки)
+          </div>
+          <div
+            style="
+              background: var(--bg-glass);
+              padding: 16px;
+              border-radius: 16px;
+            "
+          >
+            ✅ Приближённо оценивать проценты (округление)
+          </div>
+          <div
+            style="
+              background: var(--bg-glass);
+              padding: 16px;
+              border-radius: 16px;
+            "
+          >
+            ✅ Решать текстовые задачи (скидки, экзамены, хозяйства)
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- THEORY (8 слайдов) -->
+    <section id="theory">
+      <div class="card">
+        <div class="card-title">📖 Теория с визуальными слайдами</div>
+        <div class="generate-widget">
+          <div class="widget-progress">
+            Слайд <span id="slide-num">1</span> /
+            <span id="slide-total">8</span>
+          </div>
+          <div class="widget-viewport">
+            <div class="widget-track" id="track-slides">
+              <div class="widget-slide active">
+                <h3>🔢 Как найти процент от числа?</h3>
+                <p>
+                  <strong>Правило:</strong> чтобы найти p% от числа A, нужно A
+                  умножить на p/100 (или A:100·p).
+                </p>
+                <div class="big-math">5% от 90 = 90·0,05 = 4,5</div>
+                <div class="formula-box">
+                  1-й способ: 90/100·5 = 4,5 &nbsp;&nbsp; 2-й способ: 90·5/100 =
+                  4,5
+                </div>
+                <div class="tip-box">
+                  Удобно: раздели на 100 (находим 1%), затем умножь на p.
+                </div>
+              </div>
+              <div class="widget-slide">
+                <h3>📐 Процент от процента (сложные проценты)</h3>
+                <p>
+                  Чтобы найти, например, 50% от 40% от числа — перемножаем
+                  десятичные дроби.
+                </p>
+                <div class="big-math">50% от 40% от 400 = 400·0,4·0,5 = 80</div>
+                <div class="formula-box">
+                  a% от b% от X = X · (a/100) · (b/100)
+                </div>
+              </div>
+              <div class="widget-slide">
+                <h3>🧮 Приближённое вычисление процентов</h3>
+                <p>
+                  Округлив само число и количество процентов, можно быстро
+                  оценить результат.
+                </p>
+                <div class="big-math">38% от 152 ≈ 150·0,4 = 60</div>
+                <div class="tip-box">
+                  152≈150, 38%≈40% → 150·0,4=60. Точное значение 57,76 — близко.
+                </div>
+              </div>
+              <div class="widget-slide">
+                <h3>📊 Сумма, разность, произведение процентов</h3>
+                <p>
+                  Задачи: 20% от 250 + 40% от 125 = 50+50=100. Важно отдельно
+                  вычислить каждый процент.
+                </p>
+                <div class="formula-box">
+                  20% от 250 = 50, 40% от 125 = 50 → сумма 100
+                </div>
+              </div>
+              <div class="widget-slide">
+                <h3>🏪 Реальная задача: магазин</h3>
+                <p>
+                  В магазин привезли 240 пачек сока. 15% – гранатовый. Сколько
+                  пачек гранатового? → 240·0,15=36.
+                </p>
+                <div class="formula-box">240·15/100 = 36</div>
+              </div>
+              <div class="widget-slide">
+                <h3>🎓 Экзамен и чтение книг</h3>
+                <p>
+                  Самир ответил верно на 80% из 25 вопросов → 25·0,8 = 20. Лала
+                  прочитала 70% из 240 стр → осталось 30% → 72 стр.
+                </p>
+              </div>
+              <div class="widget-slide">
+                <h3>🐓 Задача про птиц</h3>
+                <p>
+                  Ферма: 1600 птиц (утки, куры, гуси). 45% куры, 25% утки → гуси
+                  = 100% - 70% = 30% → 1600·0,3 = 480.
+                </p>
+              </div>
+              <div class="widget-slide">
+                <h3>⚽ Футбол и сад</h3>
+                <p>
+                  Команда: 30 игр, выиграла 40%, проиграла 30% → ничьи 30% → 9
+                  игр. Сад: 60 деревьев, яблони 50% (30), груши 25% (15), сливы
+                  15% (9), персики 10% (6).
+                </p>
+              </div>
+            </div>
+          </div>
+          <div class="widget-nav">
+            <button class="btn btn-secondary" onclick="prevSlide()">
+              ← Назад</button
+            ><button class="btn btn-primary" onclick="nextSlide()">
+              Вперёд →
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ALGORITHM -->
+    <section id="algorithm">
+      <div class="card">
+        <div class="card-title">🪜 Пошаговые алгоритмы</div>
+        <div class="sequence-component">
+          <div class="sequence-step">
+            <div class="sequence-number">1</div>
+            <h4>Найти % от числа</h4>
+            <p>
+              Переведи проценты в десятичную дробь (раздели на 100) или
+              используй пропорцию: A·p/100.
+            </p>
+          </div>
+          <div class="sequence-step">
+            <div class="sequence-number">2</div>
+            <h4>Найти % от % (цепочка)</h4>
+            <p>
+              Последовательно умножаем исходное число на десятичные дроби
+              процентов: X·(p₁/100)·(p₂/100).
+            </p>
+          </div>
+          <div class="sequence-step">
+            <div class="sequence-number">3</div>
+            <h4>Приближённая оценка</h4>
+            <p>
+              Округли число и проценты (до удобных значений), затем вычисли.
+            </p>
+          </div>
+          <div class="sequence-step">
+            <div class="sequence-number">4</div>
+            <h4>Текстовые задачи</h4>
+            <p>
+              Определи, что принимаем за 100%, найди долю в процентах, вычисли
+              искомую величину.
+            </p>
+          </div>
+          <div class="sequence-step">
+            <div class="sequence-number">5</div>
+            <h4>Проверка</h4>
+            <p>
+              Убедись, что часть не больше целого, проценты в сумме дают 100%
+              (если это уместно).
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- EXAMPLES (6 задач из PDF) -->
+    <section id="examples">
+      <div class="card">
+        <div class="card-title">📝 Разбор задач из учебника</div>
+      </div>
+      <div class="problem-card">
+        <div class="problem-header">
+          <span class="problem-number">№1</span> Процент от числа
+        </div>
+        <div class="problem-text">Найдите: а) 20% от 250 б) 40% от 125</div>
+        <button class="solution-btn" onclick="toggleSolution('ex1')">
+          Решение
+        </button>
+        <div id="ex1" class="solution">
+          <div class="solution-step">✔ 20% от 250 = 250·0,20 = 50</div>
+          <div class="solution-step">✔ 40% от 125 = 125·0,40 = 50</div>
+          <div class="solution-step">✅ Сумма = 100, разность = 0 и т.д.</div>
+        </div>
+      </div>
+      <div class="problem-card">
+        <div class="problem-header">
+          <span class="problem-number">№2</span> Процент от процента
+        </div>
+        <div class="problem-text">Вычислите: 80% от 10% числа 240.</div>
+        <button class="solution-btn" onclick="toggleSolution('ex2')">
+          Решение
+        </button>
+        <div id="ex2" class="solution">
+          <div class="solution-step">✔ 10% от 240 = 24</div>
+          <div class="solution-step">✔ 80% от 24 = 24·0,8 = 19,2</div>
+          <div class="solution-step">✅ Ответ: 19,2</div>
+        </div>
+      </div>
+      <div class="problem-card">
+        <div class="problem-header">
+          <span class="problem-number">№3</span> Приближённое значение
+        </div>
+        <div class="problem-text">
+          Оцените 53% от 998 (приближённо, затем точно).
+        </div>
+        <button class="solution-btn" onclick="toggleSolution('ex3')">
+          Решение
+        </button>
+        <div id="ex3" class="solution">
+          <div class="solution-step">
+            ✔ 998 ≈ 1000, 53% ≈ 50% → 1000·0,5 = 500 (приближённо)
+          </div>
+          <div class="solution-step">✔ Точно: 998·0,53 = 528,94</div>
+          <div class="solution-step">✅ Оценка 500, точное ≈ 528,94</div>
+        </div>
+      </div>
+      <div class="problem-card">
+        <div class="problem-header">
+          <span class="problem-number">№4</span> Магазин сока
+        </div>
+        <div class="problem-text">
+          240 пачек, 15% гранатовый сок. Сколько пачек гранатового?
+        </div>
+        <button class="solution-btn" onclick="toggleSolution('ex4')">
+          Решение
+        </button>
+        <div id="ex4" class="solution">
+          <div class="solution-step">✔ 15% = 0,15 → 240·0,15 = 36 пачек</div>
+          <div class="solution-step">✅ Ответ: 36</div>
+        </div>
+      </div>
+      <div class="problem-card">
+        <div class="problem-header">
+          <span class="problem-number">№5</span> Футбольная команда
+        </div>
+        <div class="problem-text">
+          30 встреч, выиграли 40%, проиграли 30%. Сколько ничьих?
+        </div>
+        <button class="solution-btn" onclick="toggleSolution('ex5')">
+          Решение
+        </button>
+        <div id="ex5" class="solution">
+          <div class="solution-step">✔ 100% – (40%+30%) = 30% ничьих</div>
+          <div class="solution-step">✔ 30% от 30 = 30·0,3 = 9 игр</div>
+          <div class="solution-step">✅ Ответ: 9 ничьих</div>
+        </div>
+      </div>
+      <div class="problem-card">
+        <div class="problem-header">
+          <span class="problem-number">№6</span> Сравнение прочитанных страниц
+        </div>
+        <div class="problem-text">
+          Анар: 45% от 80, Лала: 30% от 140, Эльхан: 50% от 72. Кто больше?
+        </div>
+        <button class="solution-btn" onclick="toggleSolution('ex6')">
+          Решение
+        </button>
+        <div id="ex6" class="solution">
+          <div class="solution-step">✔ Анар: 80·0,45 = 36 стр</div>
+          <div class="solution-step">✔ Лала: 140·0,3 = 42 стр</div>
+          <div class="solution-step">✔ Эльхан: 72·0,5 = 36 стр</div>
+          <div class="solution-step">
+            ✅ Больше всех прочитала Лала (42 стр).
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TRAINER (генератор) -->
+    <section id="trainer">
+      <div class="card">
+        <div class="card-title">🏋️ Бесконечный тренажёр</div>
+        <p>
+          Генерация задач: % от числа, % от %, приближённая оценка, текстовые
+          задачи.
+        </p>
+        <div class="quiz-container">
+          <div
+            id="trainer-question"
+            style="
+              font-size: 1.3rem;
+              text-align: center;
+              padding: 24px;
+              background: var(--bg-glass);
+              border-radius: 16px;
+              margin-bottom: 20px;
+            "
+          >
+            Нажмите «Новая задача»
+          </div>
+          <div style="display: flex; gap: 12px; margin-bottom: 20px">
+            <input
+              type="text"
+              id="trainer-answer"
+              placeholder="Введите число (десятичная дробь или целое)"
+              style="
+                flex: 1;
+                padding: 14px;
+                background: var(--bg-glass);
+                border: 1px solid var(--border-glass);
+                border-radius: 12px;
+                color: white;
+              "
+            /><button
+              class="btn btn-primary"
+              id="trainer-check-btn"
+              onclick="checkTrainer()"
+              disabled
+            >
+              Проверить
+            </button>
+          </div>
+          <div id="trainer-feedback" style="min-height: 60px"></div>
+          <div style="display: flex; gap: 12px; justify-content: center">
+            <button class="btn btn-secondary" onclick="newTrainerProblem()">
+              Новая задача</button
+            ><button class="btn btn-secondary" onclick="showTrainerHint()">
+              Подсказка
+            </button>
+          </div>
+          <div
+            id="trainer-hint"
+            style="
+              display: none;
+              margin-top: 16px;
+              background: var(--accent-dim);
+              border-radius: 12px;
+              padding: 12px;
+            "
+          ></div>
+          <div
+            style="
+              display: flex;
+              justify-content: center;
+              gap: 24px;
+              margin-top: 24px;
+            "
+          >
+            <div class="stat">
+              <div class="stat-value" id="trainer-correct">0</div>
+              <div>Верно</div>
+            </div>
+            <div class="stat">
+              <div class="stat-value" id="trainer-total">0</div>
+              <div>Всего</div>
+            </div>
+            <div class="stat">
+              <div class="stat-value" id="trainer-streak">0</div>
+              <div>Серия</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ASSESSMENT (30 вопросов) -->
+    <section id="assessment">
+      <div class="card">
+        <div class="card-title">🧪 Аттестация — 30 вопросов</div>
+        <div
+          style="
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 20px;
+          "
+        >
+          <div class="card" style="text-align: center">
+            <div style="font-size: 3rem">🔍</div>
+            <h3>Диагностический тест</h3>
+            <button class="btn btn-primary" onclick="startDiagnostic()">
+              Начать
+            </button>
+          </div>
+          <div class="card" style="text-align: center">
+            <div style="font-size: 3rem">⏱️</div>
+            <h3>Скоростная викторина (10 мин)</h3>
+            <button class="btn btn-primary" onclick="startTimeAttack()">
+              Старт
+            </button>
+          </div>
+        </div>
+      </div>
+      <div id="diagnostic-ui" style="display: none">
+        <div class="card"><div class="card-title">📋 Диагностика</div></div>
+        <div class="quiz-container">
+          <div class="quiz-progress">
+            <span>Вопрос <span id="diag-current">1</span>/30</span>
+            <div
+              class="progress-bar"
+              style="flex: 1; background: var(--bg-glass); border-radius: 8px"
+            >
+              <div
+                class="progress-fill"
+                id="diag-progress"
+                style="width: 0%; height: 8px; background: var(--accent)"
+              ></div>
+            </div>
+            <span id="diag-score">0</span>
+          </div>
+          <div id="diag-question"></div>
+          <div id="diag-options"></div>
+          <div class="quiz-nav">
+            <button class="btn btn-secondary" onclick="prevDiagnostic()">
+              ← Назад</button
+            ><button
+              class="btn btn-primary"
+              onclick="nextDiagnostic()"
+              disabled
+            >
+              Далее →
+            </button>
+          </div>
+          <div
+            id="diag-explanation"
+            style="
+              margin-top: 20px;
+              display: none;
+              background: var(--accent-dim);
+              border-radius: 12px;
+              padding: 12px;
+            "
+          ></div>
+        </div>
+      </div>
+      <div id="timeattack-ui" style="display: none">
+        <div class="timer" id="ta-timer">10:00</div>
+        <div class="card">
+          <div class="card-title">⚡ Викторина на время</div>
+        </div>
+        <div class="quiz-container">
+          <div class="quiz-progress">
+            <span>Вопрос <span id="ta-current">1</span>/30</span>
+            <div class="progress-bar">
+              <div
+                class="progress-fill"
+                id="ta-progress"
+                style="width: 0%"
+              ></div>
+            </div>
+          </div>
+          <div id="ta-question"></div>
+          <div id="ta-options"></div>
+          <div style="text-align: right; margin-top: 20px">
+            <button class="btn btn-primary" onclick="nextTimeAttack()">
+              Ответить →
+            </button>
+          </div>
+        </div>
+      </div>
+      <div id="results-ui" style="display: none">
+        <div class="card results-container">
+          <div class="score-label">Результат</div>
+          <div class="score-circle" id="result-circle" style="--score: 0">
+            <div class="score-value" id="result-percent">0%</div>
+          </div>
+          <div id="result-message" style="margin-bottom: 20px"></div>
+          <div
+            class="results-breakdown"
+            style="display: flex; gap: 20px; justify-content: center"
+          >
+            <div>
+              <div id="result-correct" style="font-size: 1.8rem">0</div>
+              <div>Верно</div>
+            </div>
+            <div>
+              <div id="result-wrong" style="font-size: 1.8rem">0</div>
+              <div>Ошибок</div>
+            </div>
+            <div>
+              <div id="result-time">—</div>
+              <div>Время</div>
+            </div>
+          </div>
+          <button class="btn btn-primary" onclick="resetAssessment()">
+            Пройти ещё раз
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <script>
+      // ---------- SLIDER ----------
+      let currentSlide = 0;
+      const slides = document.querySelectorAll("#track-slides .widget-slide");
+      const totalSlides = slides.length;
+      document.getElementById("slide-total").innerText = totalSlides;
+      function renderSlide() {
+        slides.forEach((s, i) =>
+          s.classList.toggle("active", i === currentSlide),
+        );
+        document.getElementById("slide-num").innerText = currentSlide + 1;
+      }
+      function nextSlide() {
+        if (currentSlide < totalSlides - 1) {
+          currentSlide++;
+          renderSlide();
+        }
+      }
+      function prevSlide() {
+        if (currentSlide > 0) {
+          currentSlide--;
+          renderSlide();
+        }
+      }
+      renderSlide();
+
+      function showSection(id) {
+        document
+          .querySelectorAll("section")
+          .forEach((s) => s.classList.remove("active"));
+        document.getElementById(id).classList.add("active");
+        document
+          .querySelectorAll(".nav-links a")
+          .forEach((a) => a.classList.remove("active"));
+        document
+          .querySelector(`.nav-links a[data-section="${id}"]`)
+          ?.classList.add("active");
+      }
+      document.querySelectorAll(".nav-links a").forEach((a) =>
+        a.addEventListener("click", (e) => {
+          e.preventDefault();
+          showSection(a.dataset.section);
+        }),
+      );
+
+      function toggleSolution(id) {
+        let el = document.getElementById(id);
+        el.classList.toggle("active");
+        let btn = el.previousElementSibling;
+        btn.innerText = el.classList.contains("active")
+          ? "Скрыть"
+          : "Показать решение";
+      }
+
+      // ---------- TRAINER ----------
+      let trainerState = {
+        correct: 0,
+        total: 0,
+        streak: 0,
+        currentProblem: null,
+      };
+      function generateTrainerProblem() {
+        let type = Math.floor(Math.random() * 5);
+        let text, answer, hint;
+        if (type === 0) {
+          let base = Math.floor(Math.random() * 200) + 20,
+            p = [5, 10, 15, 20, 25, 30, 40, 50, 60, 75][
+              Math.floor(Math.random() * 10)
+            ];
+          text = `Найдите ${p}% от ${base}`;
+          answer = (base * p) / 100;
+          hint = `${p}% = ${p / 100}, умножь на ${base}.`;
+        } else if (type === 1) {
+          let base = Math.floor(Math.random() * 300) + 50,
+            p1 = [10, 20, 30, 40, 50][Math.floor(Math.random() * 5)],
+            p2 = [10, 20, 30, 40, 50][Math.floor(Math.random() * 5)];
+          text = `Найдите ${p1}% от ${p2}% от ${base}`;
+          answer = base * (p1 / 100) * (p2 / 100);
+          hint = `Сначала ${p1}% от ${base} = ${(base * p1) / 100}, затем ${p2}% от результата.`;
+        } else if (type === 2) {
+          let num = Math.floor(Math.random() * 900) + 100,
+            perc = Math.floor(Math.random() * 30) + 10;
+          let roundNum = Math.round(num / 100) * 100;
+          let roundPerc = Math.round(perc / 10) * 10;
+          text =
+            `Приближённо оцените ${perc}% от ${num} (округлите число и проценты)`.answer =
+              (roundNum / 100) * roundPerc;
+          hint = `Округли ${num} до ${roundNum}, а ${perc}% до ${roundPerc}%, затем умножь.`;
+        } else if (type === 3) {
+          let total = Math.floor(Math.random() * 400) + 100,
+            percent = Math.floor(Math.random() * 30) + 5;
+          text = `В магазине ${total} пачек сока, ${percent}% из них апельсиновый. Сколько пачек апельсинового?`;
+          answer = (total * percent) / 100;
+          hint = `${percent}% от ${total} = ${total}·${percent / 100}`;
+        } else {
+          let games = Math.floor(Math.random() * 40) + 10,
+            win = Math.floor(Math.random() * 40) + 10,
+            loss = Math.floor(Math.random() * 40) + 10;
+          let draw = 100 - win - loss;
+          if (draw < 0) {
+            win = 40;
+            loss = 30;
+            draw = 30;
+          }
+          text = `Команда сыграла ${games} матчей. Выиграла ${win}%, проиграла ${loss}%. Сколько ничьих?`;
+          answer = Math.round((games * draw) / 100);
+          hint = `Ничьи = 100% - (${win}%+${loss}%) = ${draw}% от ${games}.`;
+        }
+        return { text, answer, hint };
+      }
+      function newTrainerProblem() {
+        trainerState.currentProblem = generateTrainerProblem();
+        document.getElementById("trainer-question").innerText =
+          trainerState.currentProblem.text;
+        document.getElementById("trainer-answer").value = "";
+        document.getElementById("trainer-feedback").innerHTML = "";
+        document.getElementById("trainer-hint").style.display = "none";
+        document.getElementById("trainer-check-btn").disabled = false;
+      }
+      function showTrainerHint() {
+        if (trainerState.currentProblem) {
+          document.getElementById("trainer-hint").style.display = "block";
+          document.getElementById("trainer-hint").innerHTML =
+            "💡 " + trainerState.currentProblem.hint;
+        }
+      }
+      function checkTrainer() {
+        if (!trainerState.currentProblem) return;
+        let userVal = parseFloat(
+          document.getElementById("trainer-answer").value.replace(",", "."),
+        );
+        let correct = parseFloat(trainerState.currentProblem.answer);
+        let isOk = Math.abs(userVal - correct) < 0.01;
+        trainerState.total++;
+        if (isOk) {
+          trainerState.correct++;
+          trainerState.streak++;
+          document.getElementById("trainer-feedback").innerHTML =
+            `<div style="color:var(--success);">✓ Верно! Ответ: ${correct}</div>`;
+        } else {
+          trainerState.streak = 0;
+          document.getElementById("trainer-feedback").innerHTML =
+            `<div style="color:var(--error);">✗ Неверно. Правильный ответ: ${correct}</div>`;
+        }
+        document.getElementById("trainer-correct").innerText =
+          trainerState.correct;
+        document.getElementById("trainer-total").innerText = trainerState.total;
+        document.getElementById("trainer-streak").innerText =
+          trainerState.streak;
+        document.getElementById("trainer-check-btn").disabled = true;
+      }
+      newTrainerProblem();
+
+      // ---------- 30 ВОПРОСОВ (аттестация) ----------
+      const questions = [
+        {
+          q: "5% от 90",
+          options: ["4,5", "5", "9", "4"],
+          correct: 0,
+          expl: "90·0,05=4,5",
+        },
+        {
+          q: "20% от 250 + 40% от 125",
+          options: ["100", "50", "150", "200"],
+          correct: 0,
+          expl: "50+50=100",
+        },
+        {
+          q: "50% от 40% от 400",
+          options: ["80", "100", "160", "40"],
+          correct: 0,
+          expl: "400·0,4·0,5=80",
+        },
+        {
+          q: "Приближённо 38% от 152 ≈ ?",
+          options: ["60", "57", "76", "50"],
+          correct: 0,
+          expl: "150·0,4=60",
+        },
+        {
+          q: "В магазине 240 пачек, 15% гранатовый сок. Сколько?",
+          options: ["36", "24", "30", "48"],
+          correct: 0,
+          expl: "240·0,15=36",
+        },
+        {
+          q: "Самир ответил верно на 80% из 25 вопросов. Сколько?",
+          options: ["20", "18", "22", "25"],
+          correct: 0,
+          expl: "25·0,8=20",
+        },
+        {
+          q: "В кинотеатре 360 мест, продано 60%. Сколько билетов не продано?",
+          options: ["144", "216", "120", "240"],
+          correct: 0,
+          expl: "360·0,4=144",
+        },
+        {
+          q: "Лала прочитала 70% из 240 стр. Сколько осталось?",
+          options: ["72", "168", "70", "100"],
+          correct: 0,
+          expl: "240·0,3=72",
+        },
+        {
+          q: "На ферме 1600 птиц, куры 45%, утки 25%. Сколько гусей?",
+          options: ["480", "720", "400", "800"],
+          correct: 0,
+          expl: "100%-70%=30% → 1600·0,3=480",
+        },
+        {
+          q: "Футбольная команда: 30 игр, выиграла 40%, проиграла 30%. Ничьих?",
+          options: ["9", "12", "6", "15"],
+          correct: 0,
+          expl: "30% от 30 = 9",
+        },
+        {
+          q: "В саду 60 деревьев: яблони 50%, груши 25%, сливы 15%, остальные персики. Сколько персиков?",
+          options: ["6", "9", "15", "30"],
+          correct: 0,
+          expl: "100-90=10% → 6",
+        },
+        {
+          q: "Анар прочитал 45% от 80 стр, Лала 30% от 140, Эльхан 50% от 72. Кто больше?",
+          options: ["Лала", "Анар", "Эльхан", "Одинаково"],
+          correct: 0,
+          expl: "Лала 42, другие 36",
+        },
+        {
+          q: "15% от 80",
+          options: ["12", "10", "15", "20"],
+          correct: 0,
+          expl: "80·0,15=12",
+        },
+        {
+          q: "25% от 48",
+          options: ["12", "10", "14", "16"],
+          correct: 0,
+          expl: "48·0,25=12",
+        },
+        {
+          q: "80% от 10% числа 240",
+          options: ["19,2", "24", "192", "18"],
+          correct: 0,
+          expl: "240·0,1=24, 24·0,8=19,2",
+        },
+        {
+          q: "Приближённо 24% от 405 ≈ ?",
+          options: ["80", "100", "96", "120"],
+          correct: 0,
+          expl: "400·0,25=100 (или 400·0,24=96) примерно 100",
+        },
+        {
+          q: "73% от 816 (приближённо)",
+          options: ["560", "600", "640", "580"],
+          correct: 2,
+          expl: "800·0,7=560, 800·0,75=600, среднее 640? точнее 800·0,73=584. Ближе 560-600, вариант 640? правильный ответ 560-600, выберем 640 как вариант. По заданию: 800·0,75=600, 800·0,7=560; ближе 600. Но в тесте варианты: 560,600,640,580. Лучший 600. Однако большинство приближений дают 600. Пусть 600.",
+          correct: 1,
+        },
+        {
+          q: "12% от 105 и 9% от 148, что больше?",
+          options: ["12% от 105", "9% от 148", "равны", "не сравнить"],
+          correct: 1,
+          expl: "12,6 и 13,32 → второе больше",
+        },
+        {
+          q: "Цена 500 руб, скидка 20%. Новая цена?",
+          options: ["400", "450", "480", "500"],
+          correct: 0,
+          expl: "500·0,8=400",
+        },
+        {
+          q: "Цена 800 руб, скидка 25%. Сумма скидки?",
+          options: ["200", "400", "600", "100"],
+          correct: 0,
+          expl: "800·0,25=200",
+        },
+        {
+          q: "40% от 140 − 6% от 300",
+          options: ["56", "38", "44", "20"],
+          correct: 0,
+          expl: "56 - 18 = 38",
+        },
+        {
+          q: "60% от 150 : 50% от 18",
+          options: ["10", "12", "15", "9"],
+          correct: 0,
+          expl: "90 : 9 = 10",
+        },
+        {
+          q: "15% от 80 · 25% от 48",
+          options: ["144", "120", "160", "100"],
+          correct: 0,
+          expl: "12·12=144",
+        },
+        {
+          q: "В книге 200 стр, прочитано 35%. Сколько осталось?",
+          options: ["130", "70", "65", "140"],
+          correct: 0,
+          expl: "200·0,65=130",
+        },
+        {
+          q: "Из 25 учеников 40% – девочки. Сколько мальчиков?",
+          options: ["15", "10", "12", "13"],
+          correct: 0,
+          expl: "25·0,6=15",
+        },
+        {
+          q: "Банк начисляет 8% годовых. Сколько будет через год на вкладе 5000 руб?",
+          options: ["5400", "5000", "400", "540"],
+          correct: 0,
+          expl: "5000·1,08=5400",
+        },
+        {
+          q: "Товар стоил 200 руб, подорожал на 10%. Новая цена?",
+          options: ["220", "200", "210", "180"],
+          correct: 0,
+          expl: "200·1,1=220",
+        },
+        {
+          q: "Число увеличили на 20%, получили 120. Исходное число?",
+          options: ["100", "96", "110", "80"],
+          correct: 0,
+          expl: "120/1,2=100",
+        },
+        {
+          q: "Сколько процентов составляет 18 от 90?",
+          options: ["20%", "25%", "30%", "15%"],
+          correct: 0,
+          expl: "18/90=0,2=20%",
+        },
+        {
+          q: "Сколько процентов составляет 25 от 200?",
+          options: ["12,5%", "15%", "20%", "10%"],
+          correct: 0,
+          expl: "25/200=0,125=12,5%",
+        },
+      ];
+      // корректировка для 73% от 816 -> приближённо: варианты 560,600,640,580. Ближе 600 (округлим до 800*0,75=600)
+      questions[16].correct = 1; // 600
+
+      let diagState = { current: 0, score: 0, answers: [] };
+      let timeAttackState = {
+        current: 0,
+        score: 0,
+        timer: null,
+        timeLeft: 600,
+        startTime: 0,
+        answers: [],
+      };
+
+      function renderDiagnostic() {
+        let q = questions[diagState.current];
+        document.getElementById("diag-current").innerText =
+          diagState.current + 1;
+        document.getElementById("diag-progress").style.width =
+          ((diagState.current + 1) / 30) * 100 + "%";
+        document.getElementById("diag-score").innerText = diagState.score;
+        document.getElementById("diag-question").innerHTML = q.q;
+        let optsDiv = document.getElementById("diag-options");
+        optsDiv.innerHTML = "";
+        q.options.forEach((opt, i) => {
+          let div = document.createElement("div");
+          div.className = "quiz-option";
+          div.innerHTML = `<span>${String.fromCharCode(65 + i)}</span> ${opt}`;
+          div.onclick = () => selectDiagnostic(i);
+          optsDiv.appendChild(div);
+        });
+        document.getElementById("diag-explanation").style.display = "none";
+        document.getElementById("diag-next").disabled = true;
+      }
+      function selectDiagnostic(idx) {
+        if (!document.getElementById("diag-next").disabled) return;
+        let q = questions[diagState.current];
+        let isCor = idx === q.correct;
+        if (isCor) diagState.score++;
+        diagState.answers[diagState.current] = idx;
+        let opts = document.querySelectorAll("#diag-options .quiz-option");
+        opts.forEach((opt, i) => {
+          opt.style.pointerEvents = "none";
+          if (i === q.correct) opt.classList.add("correct");
+          else if (i === idx && !isCor) opt.classList.add("wrong");
+        });
+        document.getElementById("diag-explanation").innerHTML =
+          `<strong>${isCor ? "✓ Верно" : "✗ Неверно"}</strong> ${q.expl}`;
+        document.getElementById("diag-explanation").style.display = "block";
+        document.getElementById("diag-next").disabled = false;
+      }
+      function nextDiagnostic() {
+        if (diagState.current < 29) {
+          diagState.current++;
+          renderDiagnostic();
+        } else showResults(diagState.score, 30, 0, "diagnostic");
+      }
+      function prevDiagnostic() {
+        if (diagState.current > 0) {
+          diagState.current--;
+          renderDiagnostic();
+        }
+      }
+      function startDiagnostic() {
+        document.getElementById("diagnostic-ui").style.display = "block";
+        document.getElementById("timeattack-ui").style.display = "none";
+        document.getElementById("results-ui").style.display = "none";
+        diagState = { current: 0, score: 0, answers: [] };
+        renderDiagnostic();
+      }
+      function startTimeAttack() {
+        document.getElementById("diagnostic-ui").style.display = "none";
+        document.getElementById("timeattack-ui").style.display = "block";
+        document.getElementById("results-ui").style.display = "none";
+        timeAttackState = {
+          current: 0,
+          score: 0,
+          timer: null,
+          timeLeft: 600,
+          startTime: Date.now(),
+          answers: [],
+        };
+        renderTimeAttack();
+        if (timeAttackState.timer) clearInterval(timeAttackState.timer);
+        timeAttackState.timer = setInterval(() => {
+          timeAttackState.timeLeft--;
+          let m = Math.floor(timeAttackState.timeLeft / 60),
+            s = timeAttackState.timeLeft % 60;
+          let timerDiv = document.getElementById("ta-timer");
+          timerDiv.innerText = `${m}:${s.toString().padStart(2, "0")}`;
+          if (timeAttackState.timeLeft <= 60)
+            timerDiv.className = "timer danger";
+          else if (timeAttackState.timeLeft <= 180)
+            timerDiv.className = "timer warning";
+          if (timeAttackState.timeLeft <= 0) finishTimeAttack();
+        }, 1000);
+      }
+      function renderTimeAttack() {
+        let q = questions[timeAttackState.current];
+        document.getElementById("ta-current").innerText =
+          timeAttackState.current + 1;
+        document.getElementById("ta-progress").style.width =
+          ((timeAttackState.current + 1) / 30) * 100 + "%";
+        document.getElementById("ta-question").innerHTML = q.q;
+        let optsDiv = document.getElementById("ta-options");
+        optsDiv.innerHTML = "";
+        q.options.forEach((opt, i) => {
+          let div = document.createElement("div");
+          div.className = "quiz-option";
+          div.innerHTML = `<span>${String.fromCharCode(65 + i)}</span> ${opt}`;
+          div.onclick = () => selectTimeAttack(i);
+          optsDiv.appendChild(div);
+        });
+        document.getElementById("ta-next").disabled = true;
+      }
+      function selectTimeAttack(idx) {
+        let q = questions[timeAttackState.current];
+        let isCor = idx === q.correct;
+        if (isCor) timeAttackState.score++;
+        timeAttackState.answers[timeAttackState.current] = idx;
+        let opts = document.querySelectorAll("#ta-options .quiz-option");
+        opts.forEach((opt, i) => {
+          opt.style.pointerEvents = "none";
+          if (i === q.correct) opt.classList.add("correct");
+          else if (i === idx && !isCor) opt.classList.add("wrong");
+        });
+        document.getElementById("ta-next").disabled = false;
+      }
+      function nextTimeAttack() {
+        if (timeAttackState.current < 29) {
+          timeAttackState.current++;
+          renderTimeAttack();
+        } else finishTimeAttack();
+      }
+      function finishTimeAttack() {
+        clearInterval(timeAttackState.timer);
+        let spent = Math.floor((Date.now() - timeAttackState.startTime) / 1000);
+        showResults(timeAttackState.score, 30, spent, "timeattack");
+      }
+      function showResults(score, total, timeSec, mode) {
+        document.getElementById("diagnostic-ui").style.display = "none";
+        document.getElementById("timeattack-ui").style.display = "none";
+        document.getElementById("results-ui").style.display = "block";
+        let percent = Math.round((score / total) * 100);
+        document
+          .getElementById("result-circle")
+          .style.setProperty("--score", percent);
+        document.getElementById("result-percent").innerText = percent + "%";
+        document.getElementById("result-correct").innerText = score;
+        document.getElementById("result-wrong").innerText = total - score;
+        let timeStr =
+          mode === "diagnostic"
+            ? "—"
+            : `${Math.floor(timeSec / 60)}:${(timeSec % 60).toString().padStart(2, "0")}`;
+        document.getElementById("result-time").innerHTML = timeStr;
+        let msg =
+          percent >= 90
+            ? "🎉 Превосходно!"
+            : percent >= 70
+              ? "👍 Хорошо!"
+              : percent >= 50
+                ? "📘 Средне, повторите"
+                : "💪 Попробуйте ещё раз.";
+        document.getElementById("result-message").innerText = msg;
+      }
+      function resetAssessment() {
+        document.getElementById("results-ui").style.display = "none";
+        if (confirm("Пройти аттестацию заново?")) startDiagnostic();
+      }
+      window.showSection = showSection;
+      window.toggleSolution = toggleSolution;
+      window.prevSlide = prevSlide;
+      window.nextSlide = nextSlide;
+      window.newTrainerProblem = newTrainerProblem;
+      window.showTrainerHint = showTrainerHint;
+      window.checkTrainer = checkTrainer;
+      window.startDiagnostic = startDiagnostic;
+      window.startTimeAttack = startTimeAttack;
+      window.nextDiagnostic = nextDiagnostic;
+      window.prevDiagnostic = prevDiagnostic;
+      window.nextTimeAttack = nextTimeAttack;
+      window.resetAssessment = resetAssessment;
+    </script>
+  </body>
+</html>

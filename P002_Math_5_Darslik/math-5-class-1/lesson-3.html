@@ -1,342 +1,799 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="ru">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Урок 3 — Сравнение чисел</title>
-    <style>
-      :root {
-        --bg-dark: #0f0f1a; --bg-card: rgba(255,255,255,0.05); --bg-glass: rgba(255,255,255,0.08);
-        --border-glass: rgba(255,255,255,0.15); --text-primary: #e8e8f0; --text-secondary: #a0a0b8;
-        --accent: #00d4aa; --accent-dim: rgba(0,212,170,0.2); --accent-warm: #ff6b6b;
-        --accent-warm-dim: rgba(255,107,107,0.2); --accent-blue: #4dabf7;
-        --accent-blue-dim: rgba(77,171,247,0.2); --success: #51cf66; --error: #ff6b6b; --warning: #fcc419;
-      }
-      * { margin: 0; padding: 0; box-sizing: border-box; }
-      body { font-family: "Segoe UI", system-ui, -apple-system, sans-serif; background: var(--bg-dark); color: var(--text-primary); min-height: 100vh; overflow-x: hidden; line-height: 1.6; }
-      .bg-animation { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; background: radial-gradient(ellipse at 20% 20%, rgba(0,212,170,0.08) 0%, transparent 50%), radial-gradient(ellipse at 80% 80%, rgba(77,171,247,0.08) 0%, transparent 50%), radial-gradient(ellipse at 50% 50%, rgba(255,107,107,0.05) 0%, transparent 60%); }
-      .bg-animation::before { content: ""; position: absolute; width: 200%; height: 200%; top: -50%; left: -50%; background: repeating-linear-gradient(0deg,transparent,transparent 40px,rgba(255,255,255,0.02) 40px,rgba(255,255,255,0.02) 41px); animation: bgMove 20s linear infinite; }
-      @keyframes bgMove { 0% { transform: translateY(0); } 100% { transform: translateY(40px); } }
-      nav { position: fixed; top: 0; left: 0; right: 0; background: rgba(15,15,26,0.85); backdrop-filter: blur(20px); border-bottom: 1px solid var(--border-glass); z-index: 1000; padding: 0 20px; }
-      .nav-container { max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; height: 60px; }
-      .logo { font-size: 1.3rem; font-weight: 700; background: linear-gradient(135deg, var(--accent), var(--accent-blue)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
-      .nav-links { display: flex; gap: 8px; list-style: none; }
-      .nav-links a { color: var(--text-secondary); text-decoration: none; padding: 8px 16px; border-radius: 8px; transition: all 0.3s; font-size: 0.9rem; font-weight: 500; cursor: pointer; border: none; background: transparent; }
-      .nav-links a:hover, .nav-links a.active { color: var(--text-primary); background: var(--bg-glass); }
-      .nav-links a.active { background: var(--accent-dim); color: var(--accent); }
-      section { display: none; opacity: 0; padding: 78px 20px 32px; max-width: 1000px; margin: 0 auto; transition: opacity 0.3s ease; }
-      section.active { display: block; opacity: 1; animation: fadeIn 0.5s ease; }
-      @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-      .card { background: var(--bg-card); backdrop-filter: blur(20px); border: 1px solid var(--border-glass); border-radius: 20px; padding: 20px; margin-bottom: 16px; transition: transform 0.3s, box-shadow 0.3s; }
-      .card:hover { transform: translateY(-2px); box-shadow: 0 20px 40px rgba(0,0,0,0.3); }
-      .card-title { font-size: 1.5rem; font-weight: 700; margin-bottom: 16px; display: flex; align-items: center; gap: 12px; }
-      .card-title .icon { width: 40px; height: 40px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.3rem; }
-      .hero { text-align: center; padding: 140px 20px 80px; }
-      .hero h1 { font-size: 3rem; font-weight: 800; margin-bottom: 20px; background: linear-gradient(135deg, var(--accent), var(--accent-blue), var(--accent-warm)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; line-height: 1.2; }
-      .hero p { font-size: 1.2rem; color: var(--text-secondary); max-width: 600px; margin: 0 auto 40px; }
-      .btn { display: inline-flex; align-items: center; gap: 8px; padding: 14px 32px; border-radius: 12px; border: none; font-size: 1rem; font-weight: 600; cursor: pointer; transition: all 0.3s; text-decoration: none; }
-      .btn-primary { background: linear-gradient(135deg, var(--accent), var(--accent-blue)); color: #000; }
-      .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 10px 30px var(--accent-dim); }
-      .btn-secondary { background: var(--bg-glass); color: var(--text-primary); border: 1px solid var(--border-glass); }
-      .btn-secondary:hover { background: var(--bg-card); }
-      .btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none !important; }
-      .generate-widget { background: var(--bg-card); border: 1px solid var(--border-glass); border-radius: 20px; padding: 14px; width: 100%; }
-      .widget-slide { display: none; padding: 12px 16px; box-sizing: border-box; animation: slideFade 0.3s ease; }
-      .widget-slide.active { display: block; }
-      @keyframes slideFade { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
-      .widget-slide h3 { font-size: 1.3rem; color: var(--accent); margin-bottom: 16px; }
-      .widget-slide p, .widget-slide li { color: var(--text-secondary); line-height: 1.8; margin-bottom: 12px; }
-      .widget-slide .big-math { font-size: 1.6rem; text-align: center; margin: 20px 0; background: var(--bg-glass); padding: 20px; border-radius: 12px; font-weight: 600; color: var(--text-primary); }
-      .widget-nav { display: flex; justify-content: space-between; align-items: center; margin-top: 16px; }
-      .widget-progress { text-align: center; font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 12px; }
-      .overflow-x-auto { overflow-x: auto; -webkit-overflow-scrolling: touch; }
-      .compare-table { width: 100%; border-collapse: collapse; margin: 16px 0; }
-      .compare-table th, .compare-table td { border: 1px solid var(--border-glass); padding: 12px; text-align: center; color: var(--text-secondary); }
-      .compare-table th { background: var(--bg-glass); color: var(--text-primary); font-weight: 600; }
-      .compare-table tr:hover td { background: rgba(255,255,255,0.03); color: var(--text-primary); }
-      .compare-table td.accent { color: var(--accent); font-weight: 700; }
-      .sequence-component { display: flex; flex-direction: column; gap: 20px; position: relative; }
-      .sequence-step { background: var(--bg-card); border: 1px solid var(--border-glass); border-radius: 16px; padding: 24px 24px 24px 72px; position: relative; transition: all 0.3s; }
-      .sequence-step:hover { border-color: var(--accent); transform: translateX(4px); }
-      .sequence-number { position: absolute; left: 20px; top: 20px; width: 40px; height: 40px; background: var(--accent); color: #000; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 1.1rem; }
-      .sequence-step h4 { color: var(--text-primary); margin-bottom: 8px; font-size: 1.1rem; }
-      .sequence-step p { color: var(--text-secondary); line-height: 1.7; }
-      .sequence-connector { position: absolute; left: 39px; top: 60px; bottom: -30px; width: 2px; background: var(--accent-dim); z-index: 0; }
-      .sequence-step:last-child .sequence-connector { display: none; }
-      .formula-box { background: var(--bg-glass); border: 1px solid var(--border-glass); border-radius: 12px; padding: 20px; margin: 16px 0; text-align: center; font-size: 1.2rem; }
-      .tip-box { background: var(--accent-blue-dim); border-left: 4px solid var(--accent-blue); padding: 16px 20px; border-radius: 0 12px 12px 0; margin: 16px 0; }
-      .tip-box::before { content: "💡 "; }
-      .warning-box { background: var(--accent-warm-dim); border-left: 4px solid var(--accent-warm); padding: 16px 20px; border-radius: 0 12px 12px 0; margin: 16px 0; }
-      .warning-box::before { content: "⚠️ "; }
-      .highlight { background: var(--accent-dim); padding: 2px 6px; border-radius: 4px; color: var(--accent); font-weight: 600; }
-      .problem-card { background: var(--bg-card); border: 1px solid var(--border-glass); border-radius: 16px; padding: 24px; margin-bottom: 20px; }
-      .problem-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 8px; }
-      .problem-number { background: var(--accent-dim); color: var(--accent); padding: 4px 12px; border-radius: 20px; font-size: 0.85rem; font-weight: 600; }
-      .problem-type { color: var(--text-secondary); font-size: 0.85rem; }
-      .problem-text { font-size: 1.1rem; margin-bottom: 16px; line-height: 1.8; }
-      .solution-btn { background: var(--accent-dim); color: var(--accent); border: 1px solid var(--accent); padding: 10px 20px; border-radius: 8px; cursor: pointer; font-weight: 600; transition: all 0.3s; }
-      .solution-btn:hover { background: var(--accent); color: #000; }
-      .solution { display: none; margin-top: 20px; padding: 20px; background: rgba(0,212,170,0.05); border-left: 3px solid var(--accent); border-radius: 0 12px 12px 0; }
-      .solution.active { display: block; animation: slideDown 0.3s ease; }
-      @keyframes slideDown { from { opacity: 0; max-height: 0; } to { opacity: 1; max-height: 1000px; } }
-      .solution-step { margin-bottom: 12px; padding: 8px 0; border-bottom: 1px solid var(--border-glass); }
-      .solution-step:last-child { border-bottom: none; }
-      .step-num { display: inline-block; width: 24px; height: 24px; background: var(--accent); color: #000; border-radius: 50%; text-align: center; line-height: 24px; font-size: 0.8rem; font-weight: 700; margin-right: 8px; }
-      .quiz-container { background: var(--bg-card); border: 1px solid var(--border-glass); border-radius: 20px; padding: 32px; }
-      .quiz-progress { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; flex-wrap: wrap; gap: 8px; }
-      .progress-bar { flex: 1; height: 8px; background: var(--bg-glass); border-radius: 4px; margin: 0 16px; overflow: hidden; min-width: 100px; }
-      .progress-fill { height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent-blue)); border-radius: 4px; transition: width 0.5s ease; width: 0%; }
-      .quiz-question { font-size: 1.2rem; margin-bottom: 24px; padding: 20px; background: var(--bg-glass); border-radius: 12px; border-left: 4px solid var(--accent); }
-      .quiz-options { display: grid; gap: 12px; }
-      .quiz-option { background: var(--bg-glass); border: 2px solid var(--border-glass); border-radius: 12px; padding: 16px 20px; cursor: pointer; transition: all 0.3s; display: flex; align-items: center; gap: 12px; }
-      .quiz-option:hover { border-color: var(--accent); background: var(--accent-dim); }
-      .quiz-option.correct { border-color: var(--success); background: rgba(81,207,102,0.15); }
-      .quiz-option.wrong { border-color: var(--error); background: rgba(255,107,107,0.15); }
-      .quiz-option.disabled { pointer-events: none; opacity: 0.7; }
-      .option-letter { width: 32px; height: 32px; border-radius: 8px; background: var(--bg-card); display: flex; align-items: center; justify-content: center; font-weight: 700; flex-shrink: 0; }
-      .quiz-nav { display: flex; justify-content: space-between; margin-top: 24px; }
-      .stat { background: var(--bg-glass); padding: 12px 24px; border-radius: 12px; text-align: center; min-width: 100px; border: 1px solid var(--border-glass); }
-      .stat-value { font-size: 1.5rem; font-weight: 700; color: var(--accent); }
-      .stat-label { font-size: 0.85rem; color: var(--text-secondary); }
-      .timer { position: fixed; top: 80px; right: 20px; background: var(--bg-card); backdrop-filter: blur(20px); border: 1px solid var(--border-glass); border-radius: 16px; padding: 16px 24px; font-size: 1.3rem; font-weight: 700; font-variant-numeric: tabular-nums; z-index: 999; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
-      .timer.warning { border-color: var(--warning); color: var(--warning); animation: pulse 1s infinite; }
-      .timer.danger { border-color: var(--error); color: var(--error); animation: pulse 0.5s infinite; }
-      @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
-      .results-container { text-align: center; padding: 40px; }
-      .score-circle { width: 200px; height: 200px; border-radius: 50%; background: conic-gradient(var(--accent) calc(var(--score) * 3.6deg), var(--bg-glass) 0); margin: 0 auto 32px; display: flex; align-items: center; justify-content: center; position: relative; }
-      .score-circle::before { content: ""; position: absolute; width: 170px; height: 170px; background: var(--bg-dark); border-radius: 50%; }
-      .score-value { position: relative; font-size: 3rem; font-weight: 800; color: var(--accent); }
-      .score-label { font-size: 1.2rem; color: var(--text-secondary); margin-bottom: 8px; }
-      .score-message { font-size: 1.5rem; font-weight: 700; margin-bottom: 32px; }
-      .results-breakdown { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 16px; max-width: 600px; margin: 0 auto 32px; }
-      .breakdown-item { background: var(--bg-glass); padding: 16px; border-radius: 12px; }
-      .breakdown-value { font-size: 1.5rem; font-weight: 700; color: var(--accent); }
-      .breakdown-label { font-size: 0.85rem; color: var(--text-secondary); }
-      .hidden { display: none !important; }
-      @media (max-width: 768px) { .hero h1 { font-size: 2rem; } .nav-links { display: none; } .timer { top: 70px; right: 10px; font-size: 1rem; padding: 10px 16px; } .card { padding: 14px; } section { padding: 70px 12px 24px; } }
-      .svg-diagram { max-width: 100%; height: auto; margin: 16px auto; display: block; }
-    </style>
-  </head>
-  <body>
-    <div class="bg-animation"></div>
-    <nav>
-      <div class="nav-container">
-        <div class="logo">📐 Урок 3</div>
-        <ul class="nav-links">
-          <li><a href="#" class="active" data-section="home">Главная</a></li>
-          <li><a href="#" data-section="theory">Теория</a></li>
-        </ul>
-      </div>
-    </nav>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Урок 1.2. Сравнение и упорядочивание натуральных чисел</title>
+<style>
+  :root {
+    --primary: #2563eb;
+    --primary-dark: #1d4ed8;
+    --secondary: #0d9488;
+    --accent: #f59e0b;
+    --bg: #f8fafc;
+    --card: #ffffff;
+    --text: #1e293b;
+    --text-light: #64748b;
+    --border: #e2e8f0;
+    --success: #10b981;
+    --danger: #ef4444;
+    --radius: 12px;
+    --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+    --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+  }
+  header {
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    color: #fff;
+    padding: 2rem 1rem;
+    text-align: center;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: var(--shadow-lg);
+  }
+  header h1 { font-size: 1.6rem; font-weight: 700; letter-spacing: -0.02em; }
+  header p { opacity: 0.95; margin-top: 0.25rem; font-size: 0.95rem; }
+  nav {
+    background: var(--card);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    gap: 0.25rem;
+    overflow-x: auto;
+    padding: 0.5rem;
+    position: sticky;
+    top: calc(60px + 2rem); /* approx header height */
+    z-index: 90;
+  }
+  nav button {
+    flex: 1 0 auto;
+    min-width: 120px;
+    padding: 0.6rem 1rem;
+    border: none;
+    background: transparent;
+    color: var(--text-light);
+    font-weight: 600;
+    cursor: pointer;
+    border-radius: var(--radius);
+    transition: all .2s;
+    white-space: nowrap;
+  }
+  nav button:hover { background: var(--bg); color: var(--primary); }
+  nav button.active { background: var(--primary); color: #fff; box-shadow: var(--shadow); }
+  nav button.done { position: relative; }
+  nav button.done::after {
+    content: "✓";
+    position: absolute;
+    top: 2px; right: 6px;
+    font-size: 0.65rem;
+    color: var(--success);
+    background: #fff;
+    border-radius: 50%;
+    width: 14px; height: 14px;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 0 0 1px var(--success);
+  }
+  main { max-width: 960px; margin: 0 auto; padding: 1.5rem 1rem 4rem; }
+  section.module { display: none; animation: fadeIn .4s ease; }
+  section.module.active { display: block; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+  .card {
+    background: var(--card);
+    border-radius: var(--radius);
+    padding: 1.5rem;
+    margin-bottom: 1.25rem;
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border);
+  }
+  .card h2 { font-size: 1.25rem; margin-bottom: 0.75rem; color: var(--primary-dark); }
+  .card h3 { font-size: 1.05rem; margin: 1rem 0 0.5rem; color: var(--secondary); }
+  .card p, .card li { margin-bottom: 0.5rem; }
+  .card ul { padding-left: 1.25rem; }
+  .badge {
+    display: inline-block;
+    padding: 0.25rem 0.6rem;
+    border-radius: 999px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    background: #eef2ff;
+    color: var(--primary);
+    margin-bottom: 0.5rem;
+  }
+  .badge.teal { background: #f0fdfa; color: var(--secondary); }
+  .badge.gold { background: #fffbeb; color: #b45309; }
+  .example-box {
+    background: #f8fafc;
+    border-left: 4px solid var(--primary);
+    padding: 1rem;
+    border-radius: 0 var(--radius) var(--radius) 0;
+    margin: 0.75rem 0;
+  }
+  .example-box .label { font-weight: 700; color: var(--primary); font-size: 0.85rem; text-transform: uppercase; margin-bottom: 0.25rem; }
+  .math { font-family: "Courier New", Courier, monospace; background: #f1f5f9; padding: 0.1rem 0.3rem; border-radius: 4px; font-size: 0.95em; }
+  .number-line {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: relative;
+    margin: 1.5rem 0;
+    padding: 1rem 0;
+  }
+  .number-line::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 0; right: 0;
+    height: 2px;
+    background: var(--border);
+    z-index: 0;
+  }
+  .nl-arrow { position: absolute; top: 50%; right: -6px; transform: translateY(-50%); width: 0; height: 0; border-top: 6px solid transparent; border-bottom: 6px solid transparent; border-left: 10px solid var(--text-light); }
+  .nl-point {
+    position: relative;
+    z-index: 1;
+    text-align: center;
+    flex: 1;
+  }
+  .nl-point .dot {
+    width: 12px; height: 12px;
+    background: var(--primary);
+    border-radius: 50%;
+    margin: 0 auto 6px;
+    border: 2px solid var(--card);
+    box-shadow: 0 0 0 2px var(--primary);
+  }
+  .nl-point .value { font-size: 0.75rem; color: var(--text-light); white-space: nowrap; }
+  .nl-labels { display: flex; justify-content: space-between; font-size: 0.8rem; color: var(--text-light); margin-top: 0.25rem; }
+  .quiz-grid { display: grid; gap: 1rem; }
+  .question { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.25rem; }
+  .question h4 { font-size: 1rem; margin-bottom: 0.75rem; }
+  .options label {
+    display: block;
+    padding: 0.6rem 0.8rem;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    margin-bottom: 0.4rem;
+    cursor: pointer;
+    transition: all .15s;
+    font-size: 0.95rem;
+  }
+  .options label:hover { border-color: var(--primary); background: #f8fafc; }
+  .options input[type="radio"] { margin-right: 0.5rem; accent-color: var(--primary); }
+  .options label.correct { border-color: var(--success); background: #ecfdf5; }
+  .options label.wrong { border-color: var(--danger); background: #fef2f2; }
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.65rem 1.25rem;
+    border: none;
+    border-radius: var(--radius);
+    background: var(--primary);
+    color: #fff;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background .2s, transform .1s;
+    font-size: 0.95rem;
+    margin-top: 0.5rem;
+  }
+  .btn:hover { background: var(--primary-dark); }
+  .btn:active { transform: scale(0.98); }
+  .btn.secondary { background: var(--secondary); }
+  .btn.secondary:hover { background: #0f766e; }
+  .btn.outline { background: #fff; color: var(--primary); border: 2px solid var(--primary); }
+  .btn.outline:hover { background: #eef2ff; }
+  .result-box {
+    margin-top: 1rem;
+    padding: 1rem;
+    border-radius: var(--radius);
+    font-weight: 600;
+    display: none;
+  }
+  .result-box.show { display: block; }
+  .result-box.good { background: #d1fae5; color: #065f46; }
+  .result-box.mid { background: #fef3c7; color: #92400e; }
+  .result-box.bad { background: #fee2e2; color: #991b1b; }
+  .progress-bar {
+    height: 6px;
+    background: var(--border);
+    border-radius: 3px;
+    overflow: hidden;
+    margin-bottom: 1rem;
+  }
+  .progress-bar .fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--primary), var(--secondary));
+    width: 0%;
+    transition: width .5s ease;
+  }
+  .hint { font-size: 0.85rem; color: var(--text-light); margin-top: 0.25rem; font-style: italic; }
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+  @media (max-width: 640px) {
+    .two-col { grid-template-columns: 1fr; }
+    nav { top: 0; position: relative; }
+    header { position: relative; }
+    .nl-point .value { font-size: 0.6rem; transform: rotate(-20deg); transform-origin: top center; }
+  }
+  .table-wrap { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; margin: 0.75rem 0; }
+  th, td { border: 1px solid var(--border); padding: 0.5rem 0.75rem; text-align: center; font-size: 0.95rem; }
+  th { background: #f8fafc; font-weight: 600; }
+  .intro-hero { text-align: center; padding: 2rem 1rem; }
+  .intro-hero h2 { font-size: 1.5rem; margin-bottom: 0.5rem; }
+  .intro-hero p { color: var(--text-light); max-width: 600px; margin: 0 auto 1.5rem; }
+  .big-number { font-size: 1.1rem; font-weight: 700; color: var(--primary); }
+  .step { display: flex; gap: 0.75rem; margin: 0.5rem 0; }
+  .step-num { flex-shrink: 0; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; background: var(--primary); color: #fff; border-radius: 50%; font-size: 0.8rem; font-weight: 700; }
+  .step-body { flex: 1; }
+  footer { text-align: center; padding: 2rem 1rem; color: var(--text-light); font-size: 0.85rem; border-top: 1px solid var(--border); margin-top: 2rem; }
+</style>
+<base target="_blank">
+</head>
+<body>
+<header>
+  <h1>Урок 1.2. Сравнение и упорядочивание</h1>
+  <p>Натуральные числа и действия с ними — модульный интерактивный курс</p>
+</header>
 
-    <!-- HOME -->
-    <section id="home" class="active">
-      <div class="hero">
-        <h1>Сравнение натуральных чисел</h1>
-        <p>Урок 3. Знаки &lt; &gt; =. Правила сравнения. Координатная прямая. Упорядочивание чисел.</p>
-        <div style="display: flex; gap: 16px; justify-content: center; flex-wrap: wrap;">
-          <button class="btn btn-primary" onclick="showSection('theory')">Начать обучение</button>
-          <button class="btn btn-secondary" onclick="showSection('theory')">Проверить знания</button>
-        </div>
-      </div>
-      <div class="card">
-        <div class="card-title"><span class="icon" style="background: var(--accent-dim)">🎯</span>Что вы изучите</div>
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 20px;">
-          <div class="card" style="padding: 20px;"><h3 style="color: var(--accent); margin-bottom: 8px;">Знаки сравнения</h3><p style="color: var(--text-secondary);">«Меньше» (&lt;), «больше» (&gt;), «равно» (=) — значение и использование.</p></div>
-          <div class="card" style="padding: 20px;"><h3 style="color: var(--accent-blue); margin-bottom: 8px;">Правила сравнения</h3><p style="color: var(--text-secondary);">Больше разрядов → больше число. Если разрядов поровну — сравниваем слева.</p></div>
-          <div class="card" style="padding: 20px;"><h3 style="color: var(--accent-warm); margin-bottom: 8px;">Числовая прямая</h3><p style="color: var(--text-secondary);">Правее = больше. Визуальное сравнение на числовой прямой.</p></div>
-          <div class="card" style="padding: 20px;"><h3 style="color: var(--warning); margin-bottom: 8px;">Упорядочивание</h3><p style="color: var(--text-secondary);">Расставить числа в порядке возрастания или убывания.</p></div>
-        </div>
-      </div>
-    </section>
+<nav id="navbar">
+  <button class="active" onclick="goTo('intro')">Начало</button>
+  <button onclick="goTo('m1')">Модуль 1: Сравнение</button>
+  <button onclick="goTo('m2')">Модуль 2: Упорядочивание</button>
+  <button onclick="goTo('m3')">Модуль 3: Практика</button>
+  <button onclick="goTo('test')">Тест (30 вопросов)</button>
+  <button onclick="goTo('quiz')">Викторина (15 вопросов)</button>
+</nav>
 
-    <!-- THEORY -->
-    <section id="theory">
-      <div class="card">
-        <div class="card-title"><span class="icon" style="background: var(--accent-dim)">📖</span>Глава 1. Визуальная теория</div>
-        <p style="color: var(--text-secondary); margin-bottom: 20px;">6 слайдов о сравнении натуральных чисел.</p>
-        <div class="generate-widget">
-          <div class="widget-progress">Слайд <span id="slide-num">1</span> из <span id="slide-total">6</span></div>
-          <div class="widget-viewport">
-            <div class="widget-track" id="widget-track">
-              <!-- Slide 1 -->
-              <div class="widget-slide active">
-                <h3>⚖️ Знаки сравнения &lt; &gt; =</h3>
-                <p>В математике используются три знака для сравнения чисел:</p>
-                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin: 20px 0;">
-                  <div style="background: var(--bg-glass); border-radius: 12px; padding: 20px; text-align: center; border: 2px solid var(--accent);">
-                    <div style="font-size: 3rem; color: var(--accent); font-weight: 800;">&lt;</div>
-                    <div style="color: var(--text-primary); font-weight: 600; margin-top: 8px;">Меньше</div>
-                    <div style="color: var(--text-secondary); font-size: 0.9rem; margin-top: 4px;">3 &lt; 7</div>
-                  </div>
-                  <div style="background: var(--bg-glass); border-radius: 12px; padding: 20px; text-align: center; border: 2px solid var(--accent-blue);">
-                    <div style="font-size: 3rem; color: var(--accent-blue); font-weight: 800;">&gt;</div>
-                    <div style="color: var(--text-primary); font-weight: 600; margin-top: 8px;">Больше</div>
-                    <div style="color: var(--text-secondary); font-size: 0.9rem; margin-top: 4px;">9 &gt; 4</div>
-                  </div>
-                  <div style="background: var(--bg-glass); border-radius: 12px; padding: 20px; text-align: center; border: 2px solid var(--accent-warm);">
-                    <div style="font-size: 3rem; color: var(--accent-warm); font-weight: 800;">=</div>
-                    <div style="color: var(--text-primary); font-weight: 600; margin-top: 8px;">Равно</div>
-                    <div style="color: var(--text-secondary); font-size: 0.9rem; margin-top: 4px;">5 = 5</div>
-                  </div>
-                </div>
-                <div class="tip-box">Знак «открыт» в сторону большего числа: 3 &lt; 7 (открыт к 7, 7 — больше). Это помогает запомнить направление знака.</div>
-              </div>
-              <!-- Slide 2 -->
-              <div class="widget-slide">
-                <h3>📊 Правило 1: Больше разрядов → больше число</h3>
-                <p>Если у одного числа больше цифр (разрядов), то оно больше, независимо от значений цифр.</p>
-                <div class="overflow-x-auto">
-                  <table class="compare-table">
-                    <tr><th>Число A</th><th>Цифр в A</th><th>Число B</th><th>Цифр в B</th><th>Результат</th></tr>
-                    <tr><td>45</td><td>2</td><td>9</td><td>1</td><td class="accent">45 &gt; 9</td></tr>
-                    <tr><td>100</td><td>3</td><td>99</td><td>2</td><td class="accent">100 &gt; 99</td></tr>
-                    <tr><td>1 000</td><td>4</td><td>999</td><td>3</td><td class="accent">1 000 &gt; 999</td></tr>
-                    <tr><td>72 450</td><td>5</td><td>9 999</td><td>4</td><td class="accent">72 450 &gt; 9 999</td></tr>
-                  </table>
-                </div>
-                <div class="warning-box">Это правило работает только если количество цифр РАЗНОЕ. Если цифр одинаково — применяем другое правило!</div>
-              </div>
-              <!-- Slide 3 -->
-              <div class="widget-slide">
-                <h3>🔍 Правило 2: Если разрядов одинаково — сравниваем слева направо</h3>
-                <p>Если у двух чисел одинаковое количество цифр — сравниваем цифры <strong>слева направо</strong> (от старшего разряда).</p>
-                <div class="formula-box" style="text-align: left; font-family: monospace;">
-                  Сравним 34 572 и 34 819:<br>
-                  3 = 3 (тысячи — равны)<br>
-                  4 = 4 (тысячи — равны)<br>
-                  5 &lt; 8 (сотни — 5 &lt; 8 → первое число меньше!)<br>
-                  <span style="color: var(--accent); font-weight: 700;">34 572 &lt; 34 819</span>
-                </div>
-                <div class="tip-box">Как только нашли первые несовпадающие цифры — сравнение готово! Остальные цифры уже не важны.</div>
-              </div>
-              <!-- Slide 4 -->
-              <div class="widget-slide">
-                <h3>📏 Координатная прямая: правее → больше</h3>
-                <p>На числовой прямой числа расположены так: <strong>чем правее число, тем оно больше</strong>.</p>
-                <svg viewBox="0 0 500 90" class="svg-diagram" aria-label="Числовая прямая: сравнение чисел 3 и 7">
-                  <defs><marker id="arr3" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#00d4aa"/></marker></defs>
-                  <line x1="20" y1="45" x2="475" y2="45" stroke="#00d4aa" stroke-width="2" marker-end="url(#arr3)"/>
-                  <g fill="#a0a0b8" font-size="12" text-anchor="middle" font-family="Segoe UI, sans-serif">
-                    <line x1="60" y1="38" x2="60" y2="52" stroke="#a0a0b8" stroke-width="1.5"/><text x="60" y="68">0</text>
-                    <line x1="100" y1="38" x2="100" y2="52" stroke="#a0a0b8" stroke-width="1.5"/><text x="100" y="68">1</text>
-                    <line x1="140" y1="38" x2="140" y2="52" stroke="#a0a0b8" stroke-width="1.5"/><text x="140" y="68">2</text>
-                    <line x1="180" y1="38" x2="180" y2="52" stroke="#ff6b6b" stroke-width="3"/><text x="180" y="68" fill="#ff6b6b" font-weight="bold">3</text>
-                    <line x1="220" y1="38" x2="220" y2="52" stroke="#a0a0b8" stroke-width="1.5"/><text x="220" y="68">4</text>
-                    <line x1="260" y1="38" x2="260" y2="52" stroke="#a0a0b8" stroke-width="1.5"/><text x="260" y="68">5</text>
-                    <line x1="300" y1="38" x2="300" y2="52" stroke="#a0a0b8" stroke-width="1.5"/><text x="300" y="68">6</text>
-                    <line x1="340" y1="38" x2="340" y2="52" stroke="#00d4aa" stroke-width="3"/><text x="340" y="68" fill="#00d4aa" font-weight="bold">7</text>
-                    <line x1="380" y1="38" x2="380" y2="52" stroke="#a0a0b8" stroke-width="1.5"/><text x="380" y="68">8</text>
-                    <line x1="420" y1="38" x2="420" y2="52" stroke="#a0a0b8" stroke-width="1.5"/><text x="420" y="68">9</text>
-                  </g>
-                  <circle cx="180" cy="45" r="6" fill="#ff6b6b"/>
-                  <circle cx="340" cy="45" r="6" fill="#00d4aa"/>
-                  <text x="180" y="28" fill="#ff6b6b" font-size="11" text-anchor="middle" font-family="Segoe UI, sans-serif">A=3</text>
-                  <text x="340" y="28" fill="#00d4aa" font-size="11" text-anchor="middle" font-family="Segoe UI, sans-serif">B=7</text>
-                  <text x="260" y="20" fill="#fcc419" font-size="13" text-anchor="middle" font-family="Segoe UI, sans-serif">3 &lt; 7</text>
-                </svg>
-                <p>Точка A=3 стоит левее точки B=7, значит <span class="highlight">3 &lt; 7</span>.</p>
-                <div class="tip-box">Числовая прямая — отличный инструмент для наглядного сравнения. Левее = меньше, правее = больше.</div>
-              </div>
-              <!-- Slide 5 -->
-              <div class="widget-slide">
-                <h3>🗂️ Упорядочивание нескольких чисел</h3>
-                <p>Упорядочить числа — значит расставить их в порядке <strong>возрастания</strong> (от меньшего к большему) или <strong>убывания</strong> (от большего к меньшему).</p>
-                <div class="formula-box">
-                  Даны числа: 453, 54, 4 530, 45<br><br>
-                  <span style="color: var(--text-secondary); font-size: 0.95rem;">Шаг 1: Сортируем по количеству цифр: 45(2), 54(2), 453(3), 4530(4)</span><br><br>
-                  <span style="color: var(--text-secondary); font-size: 0.95rem;">Шаг 2: Двузначные сравниваем между собой: 45 &lt; 54</span><br><br>
-                  <span style="color: var(--accent); font-weight: 700;">Порядок возрастания: 45 &lt; 54 &lt; 453 &lt; 4 530</span>
-                </div>
-                <div class="tip-box">При сортировке сначала группируем числа по количеству цифр, потом сравниваем внутри группы.</div>
-              </div>
-              <!-- Slide 6 -->
-              <div class="widget-slide">
-                <h3>💡 Практические примеры</h3>
-                <p>Разберём несколько примеров:</p>
-                <div style="display: grid; gap: 12px; margin: 16px 0;">
-                  <div style="background: var(--bg-glass); border-radius: 12px; padding: 14px;">
-                    <strong>987 654 и 987 658:</strong><br>
-                    <span style="color: var(--text-secondary);">Одинаково цифр (6). Сравниваем слева: 9=9, 8=8, 7=7, 6=6, 5=5, последние: 4 &lt; 8</span><br>
-                    <strong style="color: var(--accent);">987 654 &lt; 987 658</strong>
-                  </div>
-                  <div style="background: var(--bg-glass); border-radius: 12px; padding: 14px;">
-                    <strong>1 000 000 и 999 999:</strong><br>
-                    <span style="color: var(--text-secondary);">7 цифр &gt; 6 цифр</span><br>
-                    <strong style="color: var(--accent);">1 000 000 &gt; 999 999</strong>
-                  </div>
-                  <div style="background: var(--bg-glass); border-radius: 12px; padding: 14px;">
-                    <strong>Расставить по убыванию: 500, 5 000, 50, 5 000 000</strong><br>
-                    <strong style="color: var(--accent);">5 000 000 &gt; 5 000 &gt; 500 &gt; 50</strong>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="widget-nav">
-            <button class="btn btn-secondary" onclick="prevSlide()">← Назад</button>
-            <button class="btn btn-primary" onclick="nextSlide()">Вперёд →</button>
-          </div>
-        </div>
+<main>
+
+<!-- INTRO -->
+<section id="intro" class="module active">
+  <div class="intro-hero card">
+    <h2>Добро пожаловать на урок!</h2>
+    <p>За этот урок ты освоишь два важных умения: <strong>сравнивать</strong> любые натуральные числа и <strong>упорядочивать</strong> их по возрастанию и убыванию. Всё объяснение построено на точных формулировках из учебника.</p>
+    <div class="two-col" style="margin-top:1rem">
+      <div class="card" style="border-top:4px solid var(--primary)">
+        <div class="badge">Модуль 1</div>
+        <h3>Сравнение натуральных чисел</h3>
+        <p>Правила сравнения по количеству цифр и по разрядам. Числовая ось.</p>
       </div>
-      <div class="card">
-        <div class="card-title"><span class="icon" style="background: var(--accent-blue-dim)">📖</span>Из учебника</div>
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; margin-top: 16px;">
-          <img src="../assets/img/pages/page_015.webp" alt="Страница учебника 15" style="width:100%; border-radius:12px; border: 1px solid var(--border-glass);">
-          <img src="../assets/img/pages/page_016.webp" alt="Страница учебника 16" style="width:100%; border-radius:12px; border: 1px solid var(--border-glass);">
-        </div>
-        <img src="../assets/img/pages/sec_s1_2_comparison.webp" alt="Раздел учебника: сравнение" style="width:100%; max-width:600px; display:block; margin: 16px auto 0; border-radius:12px; border: 1px solid var(--border-glass);">
+      <div class="card" style="border-top:4px solid var(--secondary)">
+        <div class="badge teal">Модуль 2</div>
+        <h3>Упорядочивание натуральных чисел</h3>
+        <p>Алгоритм выбора наименьшего (наибольшего) элемента. Сортировка чисел.</p>
       </div>
-    </section>
+    </div>
+    <div style="margin-top:1.5rem">
+      <button class="btn" onclick="goTo('m1')">Начать обучение →</button>
+    </div>
+  </div>
 
-    <script>
-      // ===== NAVIGATION =====
-      function showSection(id) {
-        document.querySelectorAll('section').forEach(function(s) {
-          s.classList.remove('active');
-        });
-        var el = document.getElementById(id);
-        if (el) el.classList.add('active');
-        document.querySelectorAll('.nav-links a').forEach(function(a) {
-          a.classList.remove('active');
-        });
-        var link = document.querySelector('.nav-links a[data-section="' + id + '"]');
-        if (link) link.classList.add('active');
-        window.scrollTo(0, 0);
-      }
-      document.querySelectorAll('.nav-links a').forEach(function(link) {
-        link.addEventListener('click', function(e) {
-          e.preventDefault();
-          showSection(link.dataset.section);
-        });
-      });
+  <div class="card">
+    <div class="badge gold">Исследовательское обсуждение</div>
+    <p>В мире приблизительно <span class="math">7 900 000 000</span> человек, <span class="math">3 500 000 000 000</span> рыб, <span class="math">3 000 000 000 000</span> деревьев и <span class="math">430 000 000 000</span> птиц.</p>
+    <ul>
+      <li>Кого в мире больше: рыб или птиц? Как это можно определить?</li>
+      <li>Как можно расположить от меньшего к большему количество живых существ?</li>
+    </ul>
+    <p class="hint">Подсказка: обрати внимание на количество цифр в каждом числе и на разряды.</p>
+  </div>
+</section>
 
-      // ===== SLIDER =====
-      var totalSlides = 5;
-      var currentSlide = 0;
-      var track = document.getElementById('widget-track');
-      var slideNumEl = document.getElementById('slide-num');
-      var slideTotalEl = document.getElementById('slide-total');
-      if (slideTotalEl) slideTotalEl.textContent = totalSlides;
-      function renderSlide() {
-        if (track) track.style.transform = 'translateX(-' + (currentSlide * 100) + '%)';
-        if (slideNumEl) slideNumEl.textContent = currentSlide + 1;
-      }
-      function nextSlide() {
-        if (currentSlide < totalSlides - 1) { currentSlide++; renderSlide(); }
-      }
-      function prevSlide() {
-        if (currentSlide > 0) { currentSlide--; renderSlide(); }
-      }
+<!-- MODULE 1 -->
+<section id="m1" class="module">
+  <div class="card">
+    <div class="badge">Модуль 1</div>
+    <h2>Сравнение натуральных чисел</h2>
+    <p>Из двух натуральных чисел с <strong>разным количеством цифр</strong> больше то, в котором цифр больше.</p>
+    <div class="example-box">
+      <div class="label">Пример 1</div>
+      <p>Сравним <span class="math">6 879 345 234</span> и <span class="math">98 787 699</span>.</p>
+      <p>В первом числе <strong>10 цифр</strong>, во втором — <strong>8 цифр</strong>.</p>
+      <p>Следовательно: <span class="math">6 879 345 234 &gt; 98 787 699</span>.</p>
+    </div>
+  </div>
 
-      // ===== SOLUTION TOGGLES =====
-      function toggleSolution(id) {
-        var el = document.getElementById(id);
-        if (!el) return;
-        el.classList.toggle('active');
-        var btn = el.previousElementSibling;
-        if (btn) btn.textContent = el.classList.contains('active') ? 'Скрыть решение' : 'Показать решение';
-      }
-    </script>
-  </body>
+  <div class="card">
+    <h3>Правило сравнения при одинаковом количестве цифр</h3>
+    <p>Если количество цифр <strong>одинаковое</strong>, то, начиная со <strong>старшего разряда</strong>, цифры соответствующих разрядов сравниваются <strong>слева направо</strong>. Больше то число, в первом отличающемся разряде которого цифра больше.</p>
+    <div class="example-box">
+      <div class="label">Пример 2 (пошаговое сравнение)</div>
+      <p>Сравним <span class="math">54 678 345</span> и <span class="math">54 795 876</span>.</p>
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-body">Сравниваем старший разряд (десятки миллионов): <span class="math">5 = 5</span>. Цифры одинаковые.</div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-body">Следующий разряд (миллионы): <span class="math">4 = 4</span>. Цифры одинаковые.</div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-body">Следующий разряд (сотни тысяч): <span class="math">6 &lt; 7</span>. Разряды различаются!</div>
+      </div>
+      <p style="margin-top:0.5rem">Вывод: <span class="math">54 678 345 &lt; 54 795 876</span>.</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Разрядная таблица для наглядности</h3>
+    <div class="table-wrap">
+      <table>
+        <tr>
+          <th>Сотни млн</th><th>Десятки млн</th><th>Единицы млн</th>
+          <th>Сотни тыс</th><th>Десятки тыс</th><th>Единицы тыс</th>
+          <th>Сотни</th><th>Десятки</th><th>Единицы</th>
+        </tr>
+        <tr>
+          <td>5</td><td>4</td><td>6</td><td>7</td><td>8</td><td>3</td><td>4</td><td>5</td><td>—</td>
+        </tr>
+        <tr>
+          <td>5</td><td>4</td><td>7</td><td>9</td><td>5</td><td>8</td><td>7</td><td>6</td><td>—</td>
+        </tr>
+      </table>
+    </div>
+    <p class="hint">Сравнение идёт слева направо до первого несовпадения (выделено жирным в таблице: 6 и 7 в разряде миллионов).</p>
+  </div>
+
+  <div class="card">
+    <h3>Числовая ось</h3>
+    <p>Натуральные числа отмечаются на числовой оси в порядке <strong>возрастания слева направо</strong>. Число, которое находится на числовой оси <strong>левее</strong>, <strong>меньше</strong>, а число <strong>правее</strong> — <strong>больше</strong>.</p>
+    <div class="number-line">
+      <div class="nl-arrow"></div>
+      <div class="nl-point"><div class="dot"></div><div class="value">54 600 000</div></div>
+      <div class="nl-point"><div class="dot" style="background:var(--secondary);box-shadow:0 0 0 2px var(--secondary)"></div><div class="value">54 678 345</div></div>
+      <div class="nl-point"><div class="dot"></div><div class="value">54 700 000</div></div>
+      <div class="nl-point"><div class="dot" style="background:var(--accent);box-shadow:0 0 0 2px var(--accent)"></div><div class="value">54 795 876</div></div>
+      <div class="nl-point"><div class="dot"></div><div class="value">54 800 000</div></div>
+    </div>
+    <div class="nl-labels">
+      <span>← Числа уменьшаются</span>
+      <span>Числа увеличиваются →</span>
+    </div>
+    <p style="text-align:center; margin-top:0.75rem; font-weight:600;"><span class="math">54 678 345 &lt; 54 795 876</span></p>
+  </div>
+
+  <div class="card">
+    <div class="badge gold">Подумай</div>
+    <p><strong>Как можно объяснить</strong>, что из двух натуральных чисел с разным количеством цифр больше то, у которого цифр больше?</p>
+    <p class="hint">Ответ: минимальное число, имеющее <em>n+1</em> цифру (например, 1 000…0), всегда больше максимального числа, имеющего <em>n</em> цифр (999…9). Поэтому любое число с большим количеством разрядов больше любого числа с меньшим количеством разрядов.</p>
+  </div>
+
+  <div style="text-align:center; margin:1.5rem 0">
+    <button class="btn outline" onclick="goTo('intro')">← Назад</button>
+    <button class="btn" onclick="markDone('m1'); goTo('m2')">Модуль 2 →</button>
+  </div>
+</section>
+
+<!-- MODULE 2 -->
+<section id="m2" class="module">
+  <div class="card">
+    <div class="badge teal">Модуль 2</div>
+    <h2>Упорядочивание натуральных чисел</h2>
+    <p>Чтобы расположить числа в порядке <strong>возрастания</strong>, можно использовать следующий алгоритм:</p>
+    <div class="step">
+      <div class="step-num">1</div>
+      <div class="step-body">Найти <strong>наименьшее</strong> число среди заданных и записать его как 1-е число в ряду.</div>
+    </div>
+    <div class="step">
+      <div class="step-num">2</div>
+      <div class="step-body">Найти <strong>наименьшее</strong> среди оставшихся чисел и записать <strong>справа</strong> от предыдущего числа.</div>
+    </div>
+    <div class="step">
+      <div class="step-num">3</div>
+      <div class="step-body">2-й шаг повторять до тех пор, пока не останется последнее число, и последнее число записать справа.</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="badge gold">Подумай</div>
+    <p><strong>Как нужно изменить этот алгоритм</strong>, чтобы расположить числа в порядке <strong>убывания</strong>?</p>
+    <p class="hint">Ответ: в шагах 1 и 2 вместо «наименьшее» нужно искать <strong>«наибольшее»</strong> число. Наибольшее записываем первым, следующее наибольшее — справа от него и так далее.</p>
+  </div>
+
+  <div class="card">
+    <div class="label" style="font-weight:700;color:var(--primary);text-transform:uppercase;font-size:0.85rem;margin-bottom:0.5rem">Образец</div>
+    <p>Упорядочить по возрастанию: <span class="math">5 896 285 409</span>; <span class="math">5 678 154 367</span>; <span class="math">4 300 154 367</span>; <span class="math">50 678 300 287</span>; <span class="math">3 456</span>.</p>
+    <div class="example-box">
+      <div class="label">Решение</div>
+      <p><span class="math">3 456</span> → <span class="math">4 300 154 367</span> → <span class="math">5 678 154 367</span> → <span class="math">5 896 285 409</span> → <span class="math">50 678 300 287</span></p>
+    </div>
+    <div class="example-box" style="border-left-color:var(--secondary)">
+      <div class="label">Объяснение</div>
+      <ul>
+        <li>Наименьшее из данных чисел: <span class="math">3 456</span> (меньше всех по количеству цифр).</li>
+        <li>Наименьшее из оставшихся: <span class="math">4 300 154 367</span> (начинается с 4, а остальные — с 5).</li>
+        <li>Далее сравниваем числа на 5 и 5 896… — в разряде миллионов <span class="math">678 &lt; 896</span>.</li>
+        <li>Последнее число наибольшее: <span class="math">50 678 300 287</span> (две цифры в старшем разряде — 50).</li>
+      </ul>
+    </div>
+  </div>
+
+  <div style="text-align:center; margin:1.5rem 0">
+    <button class="btn outline" onclick="goTo('m1')">← Модуль 1</button>
+    <button class="btn" onclick="markDone('m2'); goTo('m3')">Модуль 3: Практика →</button>
+  </div>
+</section>
+
+<!-- MODULE 3 -->
+<section id="m3" class="module">
+  <div class="card">
+    <div class="badge" style="background:#fef3c7;color:#92400e">Модуль 3</div>
+    <h2>Практика: разбор всех заданий</h2>
+    <p>Здесь собраны точные формулировки, решения и объяснения ко всем задачам учебника.</p>
+  </div>
+
+  <div class="card">
+    <h3>Задание 1. Сравните числа</h3>
+    <div class="example-box">
+      <div class="label">Образец</div>
+      <p>Сравнить <span class="math">3 987 546 732 123</span> и <span class="math">3 986 887 123 549</span>.</p>
+      <p><strong>Решение:</strong> <span class="math">3 987 546 732 123 &gt; 3 986 887 123 549</span></p>
+      <p><strong>Объяснение:</strong> Количество цифр одинаковое. Начиная со старшего разряда, первые три цифры совпадают (<span class="math">3=3, 9=9, 8=8</span>). В следующем разряде цифры различаются: <span class="math">7 &gt; 6</span>.</p>
+    </div>
+    <div class="two-col">
+      <div>
+        <p><strong>а)</strong> <span class="math">1 000 000 000</span> и <span class="math">999 999 999</span></p>
+        <p class="hint">Ответ: 1 000 000 000 &gt; 999 999 999 (10 цифр против 9).</p>
+        <p><strong>б)</strong> <span class="math">23 456 784 101</span> и <span class="math">23 456 789 199</span></p>
+        <p class="hint">Ответ: 23 456 784 101 &lt; 23 456 789 199 (разряд тысяч: 4 &lt; 9).</p>
+        <p><strong>в)</strong> <span class="math">4 126 215 312</span> и <span class="math">4 126 216 302</span></p>
+        <p class="hint">Ответ: 4 126 215 312 &lt; 4 126 216 302 (215 тыс &lt; 216 тыс).</p>
+      </div>
+      <div>
+        <p><strong>г)</strong> <span class="math">345 000 000 000</span> и <span class="math">345 100 000 000</span></p>
+        <p class="hint">Ответ: 345 000… &lt; 345 100… (разряд сотен миллионов: 0 &lt; 1).</p>
+        <p><strong>д)</strong> <span class="math">9 001 002 003 004</span> и <span class="math">7 501 002 003 004</span></p>
+        <p class="hint">Ответ: первое &gt; второе (старший разряд: 9 &gt; 7).</p>
+        <p><strong>е)</strong> <span class="math">5 273 326 938</span> и <span class="math">5 273 326 983</span></p>
+        <p class="hint">Ответ: первое &lt; второе (разряд единиц: 8 &lt; 3? Нет, 938 vs 983. 938 &lt; 983).</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Задание 2. Сравнение на числовой оси</h3>
+    <div class="example-box">
+      <div class="label">Образец</div>
+      <p>Сравнить <span class="math">4 345 729 100</span> и <span class="math">4 345 729 500</span>.</p>
+      <p><strong>Решение:</strong> <span class="math">4 345 729 100 &lt; 4 345 729 500</span></p>
+      <p><strong>Объяснение:</strong> Большее из двух чисел находится <strong>правее</strong> на числовой оси. 4 345 729 100 меньше, так как находится слева.</p>
+    </div>
+    <div class="two-col">
+      <div>
+        <p><strong>а)</strong> <span class="math">1 000 000 000</span> и <span class="math">1 000 000 006</span> → <span class="math">&lt;</span></p>
+        <p><strong>б)</strong> <span class="math">2 975 385 000</span> и <span class="math">2 975 485 000</span> → <span class="math">&lt;</span></p>
+      </div>
+      <div>
+        <p><strong>в)</strong> <span class="math">6 780 345 400</span> и <span class="math">6 780 345 500</span> → <span class="math">&lt;</span></p>
+        <p><strong>г)</strong> <span class="math">3 500 000 000 000</span> и <span class="math">3 500 000 000</span> → <span class="math">&gt;</span> (13 цифр против 10)</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Задание 3. Запишите числа и сравните</h3>
+    <div class="two-col">
+      <div>
+        <p><strong>а)</strong> 33 млн 285 тыс 188 = <span class="math">33 285 188</span>; 4 млн 875 тыс 9 = <span class="math">4 875 009</span></p>
+        <p class="hint">33 285 188 &gt; 4 875 009 (8 цифр против 7).</p>
+        <p><strong>б)</strong> 345·100 = <span class="math">34 500</span>; 41·1 000 = <span class="math">41 000</span></p>
+        <p class="hint">34 500 &lt; 41 000.</p>
+        <p><strong>в)</strong> 4 000:10 = <span class="math">400</span>; 40·10 = <span class="math">400</span></p>
+        <p class="hint">400 = 400.</p>
+      </div>
+      <div>
+        <p><strong>г)</strong> Наибольшее 9-значное = <span class="math">999 999 999</span>; Наименьшее 10-значное = <span class="math">1 000 000 000</span></p>
+        <p class="hint">999 999 999 &lt; 1 000 000 000.</p>
+        <p><strong>д)</strong> <span class="math">4·10³+3·10²+5·10¹+7 = 4 357</span>; <span class="math">4·10³+2·10²+9·10¹+6 = 4 296</span></p>
+        <p class="hint">4 357 &gt; 4 296 (разряд сотен: 3 &gt; 2).</p>
+        <p><strong>е)</strong> <span class="math">9·10³+9·10²+9·10¹+9 = 9 999</span>; <span class="math">10⁴ = 10 000</span></p>
+        <p class="hint">9 999 &lt; 10 000.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Задание 4. Соответствие точек и чисел</h3>
+    <p>На числовой оси отмечены точки <strong>A, B, C, D</strong> слева направо. Упорядочим данные числа:</p>
+    <p class="math">2 356 889 362 &lt; 3 456 789 987 &lt; 5 987 459 309 &lt; 8 218 645 326 &lt; 13 529 486 345 &lt; 15 658 975 326 &lt; 18 947 875 678</p>
+    <p><strong>Соответствие:</strong></p>
+    <ul>
+      <li><strong>A</strong> (самая левая) — <span class="math">2 356 889 362</span></li>
+      <li><strong>B</strong> — <span class="math">5 987 459 309</span></li>
+      <li><strong>C</strong> — <span class="math">13 529 486 345</span></li>
+      <li><strong>D</strong> (самая правая) — <span class="math">18 947 875 678</span></li>
+    </ul>
+    <p class="hint">Остальные числа являются промежуточными и не привязаны к буквенным точкам.</p>
+  </div>
+
+  <div class="card">
+    <h3>Задание 5. Упорядочивание по возрастанию</h3>
+    <div class="example-box">
+      <div class="label">а) Слова → цифры</div>
+      <p>один триллион два = <span class="math">1 000 000 000 002</span></p>
+      <p>два миллиарда четырнадцать = <span class="math">2 000 000 014</span></p>
+      <p>пятнадцать миллиардов девятьсот тысяч = <span class="math">15 000 900 000</span></p>
+      <p>десять триллионов = <span class="math">10 000 000 000 000</span></p>
+      <p><strong>Ответ:</strong> <span class="math">2 000 000 014 &lt; 15 000 900 000 &lt; 1 000 000 000 002 &lt; 10 000 000 000 000</span></p>
+    </div>
+    <div class="example-box">
+      <div class="label">б) Слова → цифры</div>
+      <p>12 млн 120 тыс = <span class="math">12 120 000</span>; 3 млрд 400 млн = <span class="math">3 400 000 000</span>; 1 трлн 100 = <span class="math">1 000 000 000 100</span>; 22 трлн = <span class="math">22 000 000 000 000</span>; 999 млн = <span class="math">999 000 000</span></p>
+      <p><strong>Ответ:</strong> <span class="math">12 120 000 &lt; 999 000 000 &lt; 3 400 000 000 &lt; 1 000 000 000 100 &lt; 22 000 000 000 000</span></p>
+    </div>
+    <div class="example-box">
+      <div class="label">в) Стандартный вид</div>
+      <p><span class="math">7·10⁴ = 70 000</span>; <span class="math">4·10⁹ = 4 000 000 000</span>; <span class="math">3·10⁵ = 300 000</span>; <span class="math">6·10¹² = 6 000 000 000 000</span>; <span class="math">1·10⁷ = 10 000 000</span>; <span class="math">2·10⁶ = 2 000 000</span></p>
+      <p><strong>Ответ:</strong> <span class="math">70 000 &lt; 300 000 &lt; 2 000 000 &lt; 10 000 000 &lt; 4 000 000 000 &lt; 6 000 000 000 000</span></p>
+    </div>
+    <div class="example-box">
+      <div class="label">г) Суммы</div>
+      <p><span class="math">10⁴+2·10² = 10 200</span>; <span class="math">2·10⁵+10² = 200 100</span>; <span class="math">5·10⁵ = 500 000</span>; <span class="math">9·10⁵ = 900 000</span>; <span class="math">10⁴ = 10 000</span></p>
+      <p><strong>Ответ:</strong> <span class="math">10 000 &lt; 10 200 &lt; 200 100 &lt; 500 000 &lt; 900 000</span></p>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Задача 6. Пользователи Интернета (январь 2022)</h3>
+    <p>Дано:</p>
+    <ul>
+      <li>Интернет: <span class="math">4 950 000 000</span></li>
+      <li>Мобильные телефоны: <span class="math">5 310 000 000</span></li>
+      <li>Социальные сети: <span class="math">4 620 000 000</span></li>
+    </ul>
+    <p><strong>Порядок возрастания:</strong> <span class="math">4 620 000 000 &lt; 4 950 000 000 &lt; 5 310 000 000</span></p>
+    <p class="hint">Сначала сравниваем количество цифр (везде 10). Затем старший разряд: 4 &lt; 5, поэтому 5 310… — последнее. Из двух чисел на 4: сравниваем следующий разряд — 620 &lt; 950.</p>
+  </div>
+
+  <div class="card">
+    <h3>Задача 7. Планеты Солнечной системы</h3>
+    <div class="table-wrap">
+      <table>
+        <tr><th>Планета</th><th>Расстояние от Солнца (км)</th><th>В стандартном виде</th></tr>
+        <tr><td>Меркурий</td><td><span class="math">57·10⁶</span></td><td>57 000 000</td></tr>
+        <tr><td>Венера</td><td><span class="math">108·10⁶</span></td><td>108 000 000</td></tr>
+        <tr><td>Земля</td><td><span class="math">149·10⁶</span></td><td>149 000 000</td></tr>
+        <tr><td>Марс</td><td><span class="math">228·10⁶</span></td><td>228 000 000</td></tr>
+        <tr><td>Юпитер</td><td><span class="math">78·10⁷</span></td><td>780 000 000</td></tr>
+        <tr><td>Сатурн</td><td><span class="math">1 437·10⁶</span></td><td>1 437 000 000</td></tr>
+        <tr><td>Уран</td><td><span class="math">2 871·10⁶</span></td><td>2 871 000 000</td></tr>
+        <tr><td>Нептун</td><td><span class="math">453·10⁷</span></td><td>4 530 000 000</td></tr>
+      </table>
+    </div>
+    <p><strong>Ответы:</strong></p>
+    <ul>
+      <li><strong>Ближе всех к Солнцу:</strong> Меркурий (<span class="math">57·10⁶</span> км).</li>
+      <li><strong>Дальше всех:</strong> Нептун (<span class="math">453·10⁷</span> км = 4 530 000 000 км).</li>
+      <li><strong>Земля по счёту:</strong> <strong>3-я</strong> (после Меркурия и Венеры).</li>
+    </ul>
+  </div>
+
+  <div style="text-align:center; margin:1.5rem 0">
+    <button class="btn outline" onclick="goTo('m2')">← Модуль 2</button>
+    <button class="btn" onclick="markDone('m3'); goTo('test')">Перейти к тесту →</button>
+  </div>
+</section>
+
+<!-- TEST 30 -->
+<section id="test" class="module">
+  <div class="card">
+    <div class="badge">Тест</div>
+    <h2>Закрытый тест — 30 вопросов</h2>
+    <p>Выбери один правильный ответ в каждом вопросе. Набери <strong>25 и более баллов</strong> для отличного результата!</p>
+    <div class="progress-bar"><div class="fill" id="testProgress"></div></div>
+    <div id="testBox" class="quiz-grid"></div>
+    <div style="text-align:center; margin-top:1rem;">
+      <button class="btn" id="testBtn" onclick="checkTest()">Проверить тест</button>
+      <button class="btn secondary" style="display:none" id="testReset" onclick="resetTest()">Пройти заново</button>
+    </div>
+    <div id="testResult" class="result-box"></div>
+  </div>
+</section>
+
+<!-- QUIZ 15 -->
+<section id="quiz" class="module">
+  <div class="card">
+    <div class="badge gold">Викторина</div>
+    <h2>Викторина — 15 вопросов</h2>
+    <p>Эти задания требуют не только знания правил, но и понимания «почему». Набери <strong>12 и более баллов</strong>!</p>
+    <div class="progress-bar"><div class="fill" id="quizProgress"></div></div>
+    <div id="quizBox" class="quiz-grid"></div>
+    <div style="text-align:center; margin-top:1rem;">
+      <button class="btn" id="quizBtn" onclick="checkQuiz()">Проверить викторину</button>
+      <button class="btn secondary" style="display:none" id="quizReset" onclick="resetQuiz()">Пройти заново</button>
+    </div>
+    <div id="quizResult" class="result-box"></div>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <p>Интерактивный урок «Сравнение и упорядочивание натуральных чисел» • Статический модульный сайт</p>
+</footer>
+
+<script>
+// ===== DATA =====
+const testQuestions = [
+  {q:"Из двух натуральных чисел с разным количеством цифр больше...", options:["то, в котором цифр больше","то, в котором цифр меньше","то, которое заканчивается на большую цифру","нельзя определить"], correct:0},
+  {q:"Сравните: 1 000 000 000 и 999 999 999", options:["Первое больше","Первое меньше","Равны","Нельзя сравнить"], correct:0},
+  {q:"Сравните: 23 456 784 101 и 23 456 789 199", options:["Первое больше","Первое меньше","Равны","Нельзя сравнить"], correct:1},
+  {q:"Сравните: 4 126 215 312 и 4 126 216 302", options:["Первое больше","Первое меньше","Равны","Нельзя сравнить"], correct:1},
+  {q:"Сравните: 345 000 000 000 и 345 100 000 000", options:["Первое больше","Первое меньше","Равны","Нельзя сравнить"], correct:1},
+  {q:"Сравните: 9 001 002 003 004 и 7 501 002 003 004", options:["Первое больше","Первое меньше","Равны","Нельзя сравнить"], correct:0},
+  {q:"Сравните: 5 273 326 938 и 5 273 326 983", options:["Первое больше","Первое меньше","Равны","Нельзя сравнить"], correct:1},
+  {q:"Сравните: 6 879 345 234 и 98 787 699", options:["Первое больше","Первое меньше","Равны","Нельзя сравнить"], correct:0},
+  {q:"Сравните: 54 678 345 и 54 795 876", options:["Первое больше","Первое меньше","Равны","Нельзя сравнить"], correct:1},
+  {q:"На числовой оси большее число находится...", options:["левее","правее","в центре","ниже"], correct:1},
+  {q:"Сравните: 1 000 000 000 и 1 000 000 006", options:["Первое больше","Первое меньше","Равны","Нельзя сравнить"], correct:1},
+  {q:"Сравните: 2 975 385 000 и 2 975 485 000", options:["Первое больше","Первое меньше","Равны","Нельзя сравнить"], correct:1},
+  {q:"Сравните: 6 780 345 400 и 6 780 345 500", options:["Первое больше","Первое меньше","Равны","Нельзя сравнить"], correct:1},
+  {q:"Сравните: 3 500 000 000 000 и 3 500 000 000", options:["Первое больше","Первое меньше","Равны","Нельзя сравнить"], correct:0},
+  {q:"Сравните: 33 285 188 и 4 875 009", options:["Первое больше","Первое меньше","Равны","Нельзя сравнить"], correct:0},
+  {q:"Число, большее 345 в 100 раз, равно...", options:["34 500","3 450","345 000","445"], correct:0},
+  {q:"Число, большее 41 в 1 000 раз, равно...", options:["41 000","410","410 000","1 041"], correct:0},
+  {q:"Число, меньшее 4 000 в 10 раз, равно...", options:["400","40 000","4 010","3 990"], correct:0},
+  {q:"Число, большее 40 в 10 раз, равно...", options:["400","4 000","400 000","50"], correct:0},
+  {q:"Наибольшее девятизначное число...", options:["999 999 999","1 000 000 000","900 000 000","99 999 999"], correct:0},
+  {q:"Наименьшее десятизначное число...", options:["1 000 000 000","999 999 999","10 000 000 000","100 000 000"], correct:0},
+  {q:"Сравните: 4×10³+3×10²+5×10¹+7 и 4×10³+2×10²+9×10¹+6", options:["Первое больше","Первое меньше","Равны","Нельзя сравнить"], correct:0},
+  {q:"Сравните: 9×10³+9×10²+9×10¹+9 и 10⁴", options:["Первое больше","Первое меньше","Равны","Нельзя сравнить"], correct:1},
+  {q:"Первый шаг алгоритма упорядочивания по возрастанию...", options:["Найти наименьшее число","Найти наибольшее число","Сравнить первые два числа","Записать числа в столбик"], correct:0},
+  {q:"Чтобы расположить числа по убыванию, нужно каждый раз находить...", options:["наибольшее из оставшихся","наименьшее из оставшихся","среднее арифметическое","последнее число"], correct:0},
+  {q:"Упорядочите по возрастанию: 4 млрд 950 млн; 5 млрд 310 млн; 4 млрд 620 млн", options:["4 620; 4 950; 5 310","4 950; 4 620; 5 310","5 310; 4 950; 4 620","4 620; 5 310; 4 950"], correct:0},
+  {q:"Какая планета ближе всех к Солнцу?", options:["Меркурий","Венера","Земля","Марс"], correct:0},
+  {q:"Какая планета дальше всех от Солнца (по таблице)?", options:["Нептун","Уран","Сатурн","Юпитер"], correct:0},
+  {q:"Если расположить планеты по расстоянию от Солнца, какой по счёту будет Земля?", options:["Третьей","Второй","Четвёртой","Пятой"], correct:0},
+  {q:"Какое число больше: 7×10⁸ или 69×10⁷?", options:["7×10⁸","69×10⁷","Равны","Нельзя сравнить"], correct:0}
+];
+
+const quizQuestions = [
+  {q:"Почему число с большим количеством цифр всегда больше числа с меньшим количеством цифр?", options:["Потому что минимальное число с n+1 цифрой больше максимального с n цифрами","Потому что цифры крупнее","Это не всегда так","Потому что оно длиннее"], correct:0},
+  {q:"Сколько цифр в наименьшем натуральном числе?", options:["1","0","2","10"], correct:0},
+  {q:"Наибольшее пятизначное число...", options:["99 999","100 000","90 000","9 999"], correct:0},
+  {q:"Наименьшее пятизначное число...", options:["10 000","11 111","99 999","1 000"], correct:0},
+  {q:"Сравните: 10⁶ и 999 999", options:["10⁶ > 999 999","10⁶ < 999 999","10⁶ = 999 999","Нельзя сравнить"], correct:0},
+  {q:"Сколько натуральных чисел находится между 100 и 200 (не включая границы)?", options:["99","100","101","98"], correct:0},
+  {q:"Запишите цифрами: пятнадцать миллиардов девятьсот тысяч", options:["15 000 900 000","15 900 000","15 000 000 900","15 900 000 000"], correct:0},
+  {q:"Упорядочите по возрастанию: 10⁴; 10⁴+2·10²; 2·10⁵+10²; 5·10⁵; 9·10⁵. Какое число второе?", options:["10⁴+2·10²","2·10⁵+10²","5·10⁵","10⁴"], correct:0},
+  {q:"Расстояние до Меркурия 57·10⁶ км, до Венеры 108·10⁶ км. Во сколько раз Меркурий ближе (приблизительно)?", options:["В ~1,9 раза","В ~2,5 раза","В ~108 раз","В ~57 раз"], correct:0},
+  {q:"Какое число больше: 999 999 999 или 10⁹?", options:["10⁹","999 999 999","Равны","Нельзя сравнить"], correct:0},
+  {q:"Сколько цифр в числе 2×10⁶?", options:["7","6","8","2"], correct:0},
+  {q:"В числе 54 678 345 цифра в разряде десятков тысяч равна...", options:["7","8","3","4"], correct:0},
+  {q:"Верно ли: если на числовой оси точка A левее точки B, то A > B?", options:["Нет, A < B","Да, верно","Верно только для чётных чисел","Зависит от масштаба"], correct:0},
+  {q:"Какой разряд отличается в числах 4 126 215 312 и 4 126 216 302?", options:["Разряд тысяч","Разряд сотен","Разряд десятков тысяч","Разряд миллионов"], correct:0},
+  {q:"Алгоритм сортировки выбором на каждом шаге ищет...", options:["наименьший (или наибольший) элемент","среднее арифметическое","первый элемент","случайный элемент"], correct:0}
+];
+
+// ===== NAVIGATION =====
+function goTo(id) {
+  document.querySelectorAll('.module').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
+  const btn = Array.from(document.querySelectorAll('nav button')).find(b => b.getAttribute('onclick').includes("'"+id+"'"));
+  if(btn) btn.classList.add('active');
+  window.scrollTo({top:0, behavior:'smooth'});
+  if(id==='test') renderTest();
+  if(id==='quiz') renderQuiz();
+}
+
+function markDone(id) {
+  const btn = Array.from(document.querySelectorAll('nav button')).find(b => b.getAttribute('onclick').includes("'"+id+"'"));
+  if(btn) { btn.classList.add('done'); localStorage.setItem('done_'+id, '1'); }
+}
+
+// restore done marks
+['m1','m2','m3'].forEach(id => { if(localStorage.getItem('done_'+id)) markDone(id); });
+
+// ===== RENDER TEST =====
+function renderTest() {
+  const box = document.getElementById('testBox');
+  if(box.dataset.rendered) return;
+  box.innerHTML = testQuestions.map((q,i)=>`
+    <div class="question" id="tq${i}">
+      <h4>${i+1}. ${q.q}</h4>
+      <div class="options">
+        ${q.options.map((opt,j)=>`<label><input type="radio" name="t${i}" value="${j}"> ${opt}</label>`).join('')}
+      </div>
+    </div>
+  `).join('');
+  box.dataset.rendered = '1';
+}
+
+function checkTest() {
+  let score = 0;
+  testQuestions.forEach((q,i)=>{
+    const val = document.querySelector(`input[name="t${i}"]:checked`);
+    const opts = document.querySelectorAll(`#tq${i} label`);
+    opts.forEach((lab,j)=>{
+      lab.classList.remove('correct','wrong');
+      if(j===q.correct) lab.classList.add('correct');
+      else if(val && parseInt(val.value)===j) lab.classList.add('wrong');
+    });
+    if(val && parseInt(val.value)===q.correct) score++;
+  });
+  const res = document.getElementById('testResult');
+  const pct = Math.round(score/testQuestions.length*100);
+  res.className = 'result-box show ' + (pct>=83?'good':pct>=60?'mid':'bad');
+  res.innerHTML = `<div>Результат: <strong>${score} из ${testQuestions.length}</strong> (${pct}%)</div>
+    <div style="margin-top:0.25rem;font-size:0.9rem">${pct>=83?'Отлично! Ты отлично усвоил материал.':pct>=60?'Хорошо, но есть над чем поработать.':'Стоит повторить теорию и попробовать снова.'}</div>`;
+  document.getElementById('testBtn').style.display='none';
+  document.getElementById('testReset').style.display='inline-flex';
+  document.getElementById('testProgress').style.width = pct+'%';
+  localStorage.setItem('testScore', score);
+}
+
+function resetTest() {
+  document.getElementById('testBox').innerHTML='';
+  delete document.getElementById('testBox').dataset.rendered;
+  document.getElementById('testResult').className='result-box';
+  document.getElementById('testBtn').style.display='inline-flex';
+  document.getElementById('testReset').style.display='none';
+  document.getElementById('testProgress').style.width='0%';
+  renderTest();
+}
+
+// ===== RENDER QUIZ =====
+function renderQuiz() {
+  const box = document.getElementById('quizBox');
+  if(box.dataset.rendered) return;
+  box.innerHTML = quizQuestions.map((q,i)=>`
+    <div class="question" id="qq${i}">
+      <h4>${i+1}. ${q.q}</h4>
+      <div class="options">
+        ${q.options.map((opt,j)=>`<label><input type="radio" name="q${i}" value="${j}"> ${opt}</label>`).join('')}
+      </div>
+    </div>
+  `).join('');
+  box.dataset.rendered = '1';
+}
+
+function checkQuiz() {
+  let score = 0;
+  quizQuestions.forEach((q,i)=>{
+    const val = document.querySelector(`input[name="q${i}"]:checked`);
+    const opts = document.querySelectorAll(`#qq${i} label`);
+    opts.forEach((lab,j)=>{
+      lab.classList.remove('correct','wrong');
+      if(j===q.correct) lab.classList.add('correct');
+      else if(val && parseInt(val.value)===j) lab.classList.add('wrong');
+    });
+    if(val && parseInt(val.value)===q.correct) score++;
+  });
+  const res = document.getElementById('quizResult');
+  const pct = Math.round(score/quizQuestions.length*100);
+  res.className = 'result-box show ' + (pct>=80?'good':pct>=50?'mid':'bad');
+  res.innerHTML = `<div>Результат: <strong>${score} из ${quizQuestions.length}</strong> (${pct}%)</div>
+    <div style="margin-top:0.25rem;font-size:0.9rem">${pct>=80?'Блестяще! Глубокое понимание темы.':pct>=50?'Неплохо, но викторина требует внимательности.':'Рекомендую вернуться к теории и примерам.'}</div>`;
+  document.getElementById('quizBtn').style.display='none';
+  document.getElementById('quizReset').style.display='inline-flex';
+  document.getElementById('quizProgress').style.width = pct+'%';
+  localStorage.setItem('quizScore', score);
+}
+
+function resetQuiz() {
+  document.getElementById('quizBox').innerHTML='';
+  delete document.getElementById('quizBox').dataset.rendered;
+  document.getElementById('quizResult').className='result-box';
+  document.getElementById('quizBtn').style.display='inline-flex';
+  document.getElementById('quizReset').style.display='none';
+  document.getElementById('quizProgress').style.width='0%';
+  renderQuiz();
+}
+
+// restore results if any
+const ts = localStorage.getItem('testScore');
+const qs = localStorage.getItem('quizScore');
+if(ts!==null) { setTimeout(()=>{goTo('test'); checkTest();}, 100); }
+</script>
+</body>
 </html>

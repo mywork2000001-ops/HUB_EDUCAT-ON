@@ -1,347 +1,658 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="ru">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Урок 9 — Делители и кратные</title>
-    <style>
-      :root {
-        --bg-dark: #0f0f1a;
-        --bg-card: rgba(255, 255, 255, 0.05);
-        --bg-glass: rgba(255, 255, 255, 0.08);
-        --border-glass: rgba(255, 255, 255, 0.15);
-        --text-primary: #e8e8f0;
-        --text-secondary: #a0a0b8;
-        --accent: #00d4aa;
-        --accent-dim: rgba(0, 212, 170, 0.2);
-        --accent-warm: #ff6b6b;
-        --accent-warm-dim: rgba(255, 107, 107, 0.2);
-        --accent-blue: #4dabf7;
-        --accent-blue-dim: rgba(77, 171, 247, 0.2);
-        --success: #51cf66;
-        --error: #ff6b6b;
-        --warning: #fcc419;
-      }
-      * { margin: 0; padding: 0; box-sizing: border-box; }
-      body { font-family: "Segoe UI", system-ui, -apple-system, sans-serif; background: var(--bg-dark); color: var(--text-primary); min-height: 100vh; overflow-x: hidden; line-height: 1.6; }
-      .bg-animation { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; background: radial-gradient(ellipse at 20% 20%, rgba(0, 212, 170, 0.08) 0%, transparent 50%), radial-gradient(ellipse at 80% 80%, rgba(77, 171, 247, 0.08) 0%, transparent 50%), radial-gradient(ellipse at 50% 50%, rgba(255, 107, 107, 0.05) 0%, transparent 60%); }
-      .bg-animation::before { content: ""; position: absolute; width: 200%; height: 200%; top: -50%; left: -50%; background: repeating-linear-gradient(0deg, transparent, transparent 40px, rgba(255, 255, 255, 0.02) 40px, rgba(255, 255, 255, 0.02) 41px); animation: bgMove 20s linear infinite; }
-      @keyframes bgMove { 0% { transform: translateY(0); } 100% { transform: translateY(40px); } }
-      nav { position: fixed; top: 0; left: 0; right: 0; background: rgba(15, 15, 26, 0.85); backdrop-filter: blur(20px); border-bottom: 1px solid var(--border-glass); z-index: 1000; padding: 0 20px; }
-      .nav-container { max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; height: 60px; }
-      .logo { font-size: 1.3rem; font-weight: 700; background: linear-gradient(135deg, var(--accent), var(--accent-blue)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
-      .nav-links { display: flex; gap: 8px; list-style: none; }
-      .nav-links a { color: var(--text-secondary); text-decoration: none; padding: 8px 16px; border-radius: 8px; transition: all 0.3s; font-size: 0.9rem; font-weight: 500; cursor: pointer; border: none; background: transparent; }
-      .nav-links a:hover, .nav-links a.active { color: var(--text-primary); background: var(--bg-glass); }
-      .nav-links a.active { background: var(--accent-dim); color: var(--accent); }
-      section { display: none; opacity: 0; padding: 78px 20px 32px; max-width: 1000px; margin: 0 auto; transition: opacity 0.3s ease; }
-      section.active { display: block; opacity: 1; animation: fadeIn 0.5s ease; }
-      @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-      .card { background: var(--bg-card); backdrop-filter: blur(20px); border: 1px solid var(--border-glass); border-radius: 20px; padding: 20px; margin-bottom: 16px; transition: transform 0.3s, box-shadow 0.3s; }
-      .card:hover { transform: translateY(-2px); box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3); }
-      .card-title { font-size: 1.5rem; font-weight: 700; margin-bottom: 16px; display: flex; align-items: center; gap: 12px; }
-      .card-title .icon { width: 40px; height: 40px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.3rem; }
-      .hero { text-align: center; padding: 140px 20px 80px; }
-      .hero h1 { font-size: 3rem; font-weight: 800; margin-bottom: 20px; background: linear-gradient(135deg, var(--accent), var(--accent-blue), var(--accent-warm)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; line-height: 1.2; }
-      .hero p { font-size: 1.2rem; color: var(--text-secondary); max-width: 600px; margin: 0 auto 40px; }
-      .btn { display: inline-flex; align-items: center; gap: 8px; padding: 14px 32px; border-radius: 12px; border: none; font-size: 1rem; font-weight: 600; cursor: pointer; transition: all 0.3s; text-decoration: none; }
-      .btn-primary { background: linear-gradient(135deg, var(--accent), var(--accent-blue)); color: #000; }
-      .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 10px 30px var(--accent-dim); }
-      .btn-secondary { background: var(--bg-glass); color: var(--text-primary); border: 1px solid var(--border-glass); }
-      .btn-secondary:hover { background: var(--bg-card); }
-      .btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none !important; }
-      .generate-widget { background: var(--bg-card); border: 1px solid var(--border-glass); border-radius: 20px; padding: 14px; width: 100%; }
-      .widget-slide { display: none; padding: 12px 16px; box-sizing: border-box; animation: slideFade 0.3s ease; }
-      .widget-slide.active { display: block; }
-      @keyframes slideFade { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
-      .widget-slide h3 { font-size: 1.3rem; color: var(--accent); margin-bottom: 16px; }
-      .widget-slide p, .widget-slide li { color: var(--text-secondary); line-height: 1.8; margin-bottom: 12px; }
-      .widget-slide .big-math { font-size: 1.6rem; text-align: center; margin: 20px 0; background: var(--bg-glass); padding: 20px; border-radius: 12px; font-weight: 600; color: var(--text-primary); }
-      .widget-nav { display: flex; justify-content: space-between; align-items: center; margin-top: 16px; }
-      .widget-progress { text-align: center; font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 12px; }
-      .overflow-x-auto { overflow-x: auto; -webkit-overflow-scrolling: touch; }
-      .compare-table { width: 100%; border-collapse: collapse; margin: 16px 0; }
-      .compare-table th, .compare-table td { border: 1px solid var(--border-glass); padding: 12px; text-align: center; color: var(--text-secondary); }
-      .compare-table th { background: var(--bg-glass); color: var(--text-primary); font-weight: 600; }
-      .compare-table tr:hover td { background: rgba(255, 255, 255, 0.03); color: var(--text-primary); }
-      .compare-table td.accent { color: var(--accent); font-weight: 700; }
-      .sequence-component { display: flex; flex-direction: column; gap: 20px; position: relative; }
-      .sequence-step { background: var(--bg-card); border: 1px solid var(--border-glass); border-radius: 16px; padding: 24px 24px 24px 72px; position: relative; transition: all 0.3s; }
-      .sequence-step:hover { border-color: var(--accent); transform: translateX(4px); }
-      .sequence-number { position: absolute; left: 20px; top: 20px; width: 40px; height: 40px; background: var(--accent); color: #000; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 1.1rem; }
-      .sequence-step h4 { color: var(--text-primary); margin-bottom: 8px; font-size: 1.1rem; }
-      .sequence-step p { color: var(--text-secondary); line-height: 1.7; }
-      .sequence-connector { position: absolute; left: 39px; top: 60px; bottom: -30px; width: 2px; background: var(--accent-dim); z-index: 0; }
-      .sequence-step:last-child .sequence-connector { display: none; }
-      .formula-box { background: var(--bg-glass); border: 1px solid var(--border-glass); border-radius: 12px; padding: 20px; margin: 16px 0; text-align: center; font-size: 1.2rem; }
-      .tip-box { background: var(--accent-blue-dim); border-left: 4px solid var(--accent-blue); padding: 16px 20px; border-radius: 0 12px 12px 0; margin: 16px 0; }
-      .tip-box::before { content: "💡 "; }
-      .warning-box { background: var(--accent-warm-dim); border-left: 4px solid var(--accent-warm); padding: 16px 20px; border-radius: 0 12px 12px 0; margin: 16px 0; }
-      .warning-box::before { content: "⚠️ "; }
-      .highlight { background: var(--accent-dim); padding: 2px 6px; border-radius: 4px; color: var(--accent); font-weight: 600; }
-      .problem-card { background: var(--bg-card); border: 1px solid var(--border-glass); border-radius: 16px; padding: 24px; margin-bottom: 20px; }
-      .problem-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 8px; }
-      .problem-number { background: var(--accent-dim); color: var(--accent); padding: 4px 12px; border-radius: 20px; font-size: 0.85rem; font-weight: 600; }
-      .problem-type { color: var(--text-secondary); font-size: 0.85rem; }
-      .problem-text { font-size: 1.1rem; margin-bottom: 16px; line-height: 1.8; }
-      .solution-btn { background: var(--accent-dim); color: var(--accent); border: 1px solid var(--accent); padding: 10px 20px; border-radius: 8px; cursor: pointer; font-weight: 600; transition: all 0.3s; }
-      .solution-btn:hover { background: var(--accent); color: #000; }
-      .solution { display: none; margin-top: 20px; padding: 20px; background: rgba(0, 212, 170, 0.05); border-left: 3px solid var(--accent); border-radius: 0 12px 12px 0; }
-      .solution.active { display: block; animation: slideDown 0.3s ease; }
-      @keyframes slideDown { from { opacity: 0; max-height: 0; } to { opacity: 1; max-height: 1000px; } }
-      .solution-step { margin-bottom: 12px; padding: 8px 0; border-bottom: 1px solid var(--border-glass); }
-      .solution-step:last-child { border-bottom: none; }
-      .step-num { display: inline-block; width: 24px; height: 24px; background: var(--accent); color: #000; border-radius: 50%; text-align: center; line-height: 24px; font-size: 0.8rem; font-weight: 700; margin-right: 8px; }
-      .quiz-container { background: var(--bg-card); border: 1px solid var(--border-glass); border-radius: 20px; padding: 32px; }
-      .quiz-progress { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; flex-wrap: wrap; gap: 8px; }
-      .progress-bar { flex: 1; height: 8px; background: var(--bg-glass); border-radius: 4px; margin: 0 16px; overflow: hidden; min-width: 100px; }
-      .progress-fill { height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent-blue)); border-radius: 4px; transition: width 0.5s ease; width: 0%; }
-      .quiz-question { font-size: 1.2rem; margin-bottom: 24px; padding: 20px; background: var(--bg-glass); border-radius: 12px; border-left: 4px solid var(--accent); }
-      .quiz-options { display: grid; gap: 12px; }
-      .quiz-option { background: var(--bg-glass); border: 2px solid var(--border-glass); border-radius: 12px; padding: 16px 20px; cursor: pointer; transition: all 0.3s; display: flex; align-items: center; gap: 12px; }
-      .quiz-option:hover { border-color: var(--accent); background: var(--accent-dim); }
-      .quiz-option.correct { border-color: var(--success); background: rgba(81, 207, 102, 0.15); }
-      .quiz-option.wrong { border-color: var(--error); background: rgba(255, 107, 107, 0.15); }
-      .quiz-option.disabled { pointer-events: none; opacity: 0.7; }
-      .option-letter { width: 32px; height: 32px; border-radius: 8px; background: var(--bg-card); display: flex; align-items: center; justify-content: center; font-weight: 700; flex-shrink: 0; }
-      .quiz-nav { display: flex; justify-content: space-between; margin-top: 24px; }
-      .stat { background: var(--bg-glass); padding: 12px 24px; border-radius: 12px; text-align: center; min-width: 100px; border: 1px solid var(--border-glass); }
-      .stat-value { font-size: 1.5rem; font-weight: 700; color: var(--accent); }
-      .stat-label { font-size: 0.85rem; color: var(--text-secondary); }
-      .timer { position: fixed; top: 80px; right: 20px; background: var(--bg-card); backdrop-filter: blur(20px); border: 1px solid var(--border-glass); border-radius: 16px; padding: 16px 24px; font-size: 1.3rem; font-weight: 700; font-variant-numeric: tabular-nums; z-index: 999; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3); }
-      .timer.warning { border-color: var(--warning); color: var(--warning); animation: pulse 1s infinite; }
-      .timer.danger { border-color: var(--error); color: var(--error); animation: pulse 0.5s infinite; }
-      @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
-      .results-container { text-align: center; padding: 40px; }
-      .score-circle { width: 200px; height: 200px; border-radius: 50%; background: conic-gradient(var(--accent) calc(var(--score) * 3.6deg), var(--bg-glass) 0); margin: 0 auto 32px; display: flex; align-items: center; justify-content: center; position: relative; }
-      .score-circle::before { content: ""; position: absolute; width: 170px; height: 170px; background: var(--bg-dark); border-radius: 50%; }
-      .score-value { position: relative; font-size: 3rem; font-weight: 800; color: var(--accent); }
-      .score-label { font-size: 1.2rem; color: var(--text-secondary); margin-bottom: 8px; }
-      .score-message { font-size: 1.5rem; font-weight: 700; margin-bottom: 32px; }
-      .results-breakdown { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 16px; max-width: 600px; margin: 0 auto 32px; }
-      .breakdown-item { background: var(--bg-glass); padding: 16px; border-radius: 12px; }
-      .breakdown-value { font-size: 1.5rem; font-weight: 700; color: var(--accent); }
-      .breakdown-label { font-size: 0.85rem; color: var(--text-secondary); }
-      .hidden { display: none !important; }
-      @media (max-width: 768px) { .hero h1 { font-size: 2rem; } .nav-links { display: none; } .timer { top: 70px; right: 10px; font-size: 1rem; padding: 10px 16px; } .card { padding: 14px; } section { padding: 70px 12px 24px; } }
-      .svg-diagram { max-width: 100%; height: auto; margin: 16px auto; display: block; }
-    </style>
-  </head>
-  <body>
-    <div class="bg-animation"></div>
-    <nav>
-      <div class="nav-container">
-        <div class="logo">📐 Урок 9</div>
-        <ul class="nav-links">
-          <li><a href="#" class="active" data-section="home">Главная</a></li>
-          <li><a href="#" data-section="theory">Теория</a></li>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Математика 5 класс — Делители и кратные числа</title>
+<style>
+:root {
+  --c1:#2563eb; --c2:#4f46e5; --c3:#7c3aed; --c4:#059669; --c5:#d97706; --c6:#dc2626; --c7:#0891b2; --c8:#db2777;
+  --bg:#f8fafc; --card:#ffffff; --text:#1e293b; --muted:#64748b;
+}
+* { box-sizing:border-box; margin:0; padding:0; }
+body { font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; background:var(--bg); color:var(--text); line-height:1.6; }
+header { background:linear-gradient(135deg,#1e293b 0%,#334155 100%); color:#fff; padding:2rem 1rem; text-align:center; box-shadow:0 4px 6px -1px rgb(0 0 0 / .1); }
+header h1 { font-size:1.8rem; margin-bottom:.5rem; }
+header p { opacity:.9; max-width:700px; margin:0 auto; }
+nav { position:sticky; top:0; background:rgba(255,255,255,.95); backdrop-filter:blur(8px); border-bottom:1px solid #e2e8f0; z-index:50; padding:.6rem; }
+.nav-container { max-width:1100px; margin:0 auto; display:flex; gap:.4rem; flex-wrap:wrap; justify-content:center; }
+.nav-btn { border:none; background:#f1f5f9; padding:.55rem .9rem; border-radius:999px; cursor:pointer; font-weight:600; color:var(--text); transition:.2s; font-size:.9rem; }
+.nav-btn:hover { transform:translateY(-1px); box-shadow:0 2px 4px rgba(0,0,0,.1); }
+.nav-btn.active { background:var(--c1); color:#fff; }
+main { max-width:920px; margin:2rem auto; padding:0 1rem; }
+.section { display:none; animation:fadeIn .35s ease; }
+.section.active { display:block; }
+@keyframes fadeIn { from{opacity:0;transform:translateY(8px);} to{opacity:1;transform:translateY(0);} }
+.module-card { background:var(--card); border-radius:1rem; padding:2rem; margin-bottom:1.5rem; box-shadow:0 1px 3px rgba(0,0,0,.08); border-left:5px solid var(--c1); }
+.module-card h2 { color:var(--c1); margin-bottom:1rem; display:flex; align-items:center; gap:.5rem; font-size:1.4rem; }
+.module-card h3 { margin:1.4rem 0 .5rem; color:var(--text); font-size:1.15rem; }
+.theory-box { background:#f0f9ff; border-left:4px solid #0ea5e9; padding:1rem; border-radius:.5rem; margin:1rem 0; }
+.theory-box h3 { margin-top:0; }
+.example-box { background:#f6f5ff; border:1px solid #ddd6fe; padding:1rem; border-radius:.5rem; margin:1rem 0; }
+.example-box h3 { margin-top:0; }
+.task-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(210px,1fr)); gap:1rem; margin:1rem 0; }
+.task-item { background:#f8fafc; padding:1rem; border-radius:.5rem; border:1px solid #e2e8f0; }
+.btn { display:inline-flex; align-items:center; gap:.5rem; padding:.6rem 1.2rem; border-radius:.5rem; border:none; cursor:pointer; font-weight:600; transition:.2s; font-size:.95rem; }
+.btn-primary { background:var(--c1); color:#fff; }
+.btn-primary:hover { filter:brightness(1.1); }
+.explanation { display:none; margin-top:.6rem; padding:.8rem; background:#fff7ed; border-left:3px solid var(--c5); border-radius:.4rem; font-size:.95rem; }
+.explanation.show { display:block; }
+.question-card { background:var(--card); padding:1.4rem; border-radius:1rem; margin-bottom:1rem; box-shadow:0 1px 3px rgba(0,0,0,.08); }
+.options { display:flex; flex-direction:column; gap:.5rem; margin:1rem 0; }
+.option { display:flex; align-items:center; gap:.75rem; padding:.75rem 1rem; background:#f8fafc; border:2px solid #e2e8f0; border-radius:.5rem; cursor:pointer; transition:.15s; }
+.option:hover { border-color:#94a3b8; background:#f1f5f9; }
+.option input { accent-color:var(--c1); width:1.1rem; height:1.1rem; flex-shrink:0; }
+.option.correct { border-color:#22c55e !important; background:#f0fdf4 !important; }
+.option.wrong { border-color:#ef4444 !important; background:#fef2f2 !important; }
+.result-bar { position:fixed; bottom:0; left:0; right:0; background:#fff; border-top:1px solid #e2e8f0; padding:.8rem 1rem; display:flex; justify-content:space-between; align-items:center; z-index:40; box-shadow:0 -4px 6px -1px rgba(0,0,0,.05); font-weight:600; }
+@media (max-width:640px) {
+  .nav-btn { padding:.5rem .7rem; font-size:.82rem; }
+  .module-card { padding:1.2rem; }
+  header h1 { font-size:1.4rem; }
+}
+</style>
+<base target="_blank">
+</head>
+<body>
+
+<header>
+  <h1>📐 Математика 5 класс</h1>
+  <p>Тема: <strong>Делители и кратные числа</strong> • Модульный интерактивный урок с теорией, тестом и викториной</p>
+</header>
+
+<nav>
+  <div class="nav-container">
+    <button class="nav-btn active" data-target="intro" onclick="showSection('intro')">🏠 Вводная</button>
+    <button class="nav-btn" data-target="module1" onclick="showSection('module1')">1. Делители</button>
+    <button class="nav-btn" data-target="module2" onclick="showSection('module2')">2. Простые числа</button>
+    <button class="nav-btn" data-target="module3" onclick="showSection('module3')">3. НОД</button>
+    <button class="nav-btn" data-target="module4" onclick="showSection('module4')">4. Кратные</button>
+    <button class="nav-btn" data-target="module5" onclick="showSection('module5')">5. НОК</button>
+    <button class="nav-btn" data-target="module6" onclick="showSection('module6')">6. Задачи</button>
+    <button class="nav-btn" data-target="test30" onclick="showSection('test30')">📝 Тест (30)</button>
+    <button class="nav-btn" data-target="quiz15" onclick="showSection('quiz15')">🏆 Викторина (15)</button>
+  </div>
+</nav>
+
+<main>
+
+<!-- ==================== INTRO ==================== -->
+<section id="intro" class="section active">
+  <div class="module-card" style="border-left-color:var(--c1);">
+    <h2>🚀 Начало урока</h2>
+    <div class="theory-box">
+      <p><strong>Ключевые слова урока:</strong> делитель числа, кратное числа, общий делитель, общее кратное, наибольший общий делитель (НОД), наименьшее общее кратное (НОК).</p>
+    </div>
+    <h3>Задача для размышления</h3>
+    <div class="example-box">
+      <p>В олимпиаде участвуют <strong>12 мальчиков</strong> и <strong>18 девочек</strong>. Их нужно разделить на команды с одинаковым количеством участников в каждой. Во всех командах должно быть одинаковое количество мальчиков и девочек.</p>
+      <ul style="margin:.5rem 0 .5rem 1.2rem;">
+        <li>Может ли количество команд быть 2? 3? 4? 5?</li>
+        <li>Какое наибольшее количество команд можно организовать?</li>
+      </ul>
+      <button class="btn btn-primary" onclick="toggleExp('intro-exp')">Показать решение</button>
+      <div id="intro-exp" class="explanation">
+        <p>Количество команд должно быть <strong>общим делителем</strong> чисел 12 и 18.</p>
+        <p>Делители 12: 1, 2, 3, 4, 6, 12. Делители 18: 1, 2, 3, 6, 9, 18.</p>
+        <p>Общие делители: <strong>1, 2, 3, 6</strong>.</p>
+        <p>Значит, возможны <strong>2, 3 или 6</strong> команд. <strong>4 и 5 не подходят</strong>, так как не являются общими делителями.</p>
+        <p>Наибольшее количество команд = <strong>НОД(12, 18) = 6</strong> (по 2 мальчика и 3 девочки в каждой).</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== MODULE 1 ==================== -->
+<section id="module1" class="section">
+  <div class="module-card" style="border-left-color:var(--c1);">
+    <h2>📘 Модуль 1. Делители натурального числа</h2>
+
+    <div class="theory-box">
+      <h3>Определение</h3>
+      <p><strong>Делителем</strong> натурального числа называется натуральное число, на которое данное число делится <strong>без остатка</strong>. В этом случае полученное частное также является делителем данного числа.</p>
+    </div>
+
+    <div class="example-box">
+      <h3>Пример с числом 48</h3>
+      <p>Число 48 делится без остатка на 12: <code>48 : 12 = 4</code>. Значит, <strong>12 — делитель</strong> 48.</p>
+      <p>Число 48 <strong>не делится</strong> без остатка на 5: <code>48 : 5 = 9 (ост. 3)</code>. Значит, 5 — <strong>не делитель</strong> 48.</p>
+      <p>Здесь число 4 (частное) тоже является делителем 48, ведь <code>48 : 4 = 12</code> (без остатка).</p>
+    </div>
+
+    <div class="theory-box" style="background:#f0fdf4; border-left-color:var(--c4);">
+      <h3>Важное свойство</h3>
+      <p>Каждое натуральное число нацело делится на <strong>само себя</strong> и на <strong>1</strong>. Поэтому для каждого натурального числа само число и 1 всегда являются его делителями.</p>
+      <p>Пример: делители числа 10 — это <strong>1, 2, 5, 10</strong>.</p>
+    </div>
+
+    <h3>Задание 1. Напишите все делители данных чисел</h3>
+    <div class="task-grid">
+      <div class="task-item"><strong>6</strong><br><button class="btn btn-primary" style="margin-top:.5rem;" onclick="toggleExp('d6')">Показать</button><div id="d6" class="explanation">1, 2, 3, 6</div></div>
+      <div class="task-item"><strong>8</strong><br><button class="btn btn-primary" style="margin-top:.5rem;" onclick="toggleExp('d8')">Показать</button><div id="d8" class="explanation">1, 2, 4, 8</div></div>
+      <div class="task-item"><strong>12</strong><br><button class="btn btn-primary" style="margin-top:.5rem;" onclick="toggleExp('d12')">Показать</button><div id="d12" class="explanation">1, 2, 3, 4, 6, 12</div></div>
+      <div class="task-item"><strong>14</strong><br><button class="btn btn-primary" style="margin-top:.5rem;" onclick="toggleExp('d14')">Показать</button><div id="d14" class="explanation">1, 2, 7, 14</div></div>
+      <div class="task-item"><strong>17</strong><br><button class="btn btn-primary" style="margin-top:.5rem;" onclick="toggleExp('d17')">Показать</button><div id="d17" class="explanation">1, 17 (простое число)</div></div>
+      <div class="task-item"><strong>21</strong><br><button class="btn btn-primary" style="margin-top:.5rem;" onclick="toggleExp('d21')">Показать</button><div id="d21" class="explanation">1, 3, 7, 21</div></div>
+      <div class="task-item"><strong>32</strong><br><button class="btn btn-primary" style="margin-top:.5rem;" onclick="toggleExp('d32')">Показать</button><div id="d32" class="explanation">1, 2, 4, 8, 16, 32</div></div>
+      <div class="task-item"><strong>45</strong><br><button class="btn btn-primary" style="margin-top:.5rem;" onclick="toggleExp('d45')">Показать</button><div id="d45" class="explanation">1, 3, 5, 9, 15, 45</div></div>
+    </div>
+
+    <div class="example-box" style="background:#fff7ed; border-color:#fed7aa;">
+      <h3>🤔 Подумай!</h3>
+      <p><em>Как можно определить по количеству делителей числа, является ли оно простым?</em></p>
+      <button class="btn btn-primary" onclick="toggleExp('think1')">Показать ответ</button>
+      <div id="think1" class="explanation">
+        Если у числа <strong>ровно два делителя</strong> (1 и само число), то оно <strong>простое</strong>. Если делителей больше двух — число составное.
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== MODULE 2 ==================== -->
+<section id="module2" class="section">
+  <div class="module-card" style="border-left-color:var(--c2);">
+    <h2>🔍 Модуль 2. Простые числа и количество делителей</h2>
+
+    <h3>Задание 2. Найдите количество делителей</h3>
+    <div class="task-grid">
+      <div class="task-item">9 → <strong>3</strong><br><span style="color:var(--muted);font-size:.9rem;">(1, 3, 9)</span></div>
+      <div class="task-item">15 → <strong>4</strong><br><span style="color:var(--muted);font-size:.9rem;">(1, 3, 5, 15)</span></div>
+      <div class="task-item">19 → <strong>2</strong><br><span style="color:var(--muted);font-size:.9rem;">(1, 19) — простое</span></div>
+      <div class="task-item">22 → <strong>4</strong><br><span style="color:var(--muted);font-size:.9rem;">(1, 2, 11, 22)</span></div>
+      <div class="task-item">24 → <strong>8</strong><br><span style="color:var(--muted);font-size:.9rem;">(1,2,3,4,6,8,12,24)</span></div>
+      <div class="task-item">48 → <strong>10</strong><br><span style="color:var(--muted);font-size:.9rem;">(1,2,3,4,6,8,12,16,24,48)</span></div>
+      <div class="task-item">49 → <strong>3</strong><br><span style="color:var(--muted);font-size:.9rem;">(1, 7, 49)</span></div>
+      <div class="task-item">75 → <strong>6</strong><br><span style="color:var(--muted);font-size:.9rem;">(1, 3, 5, 15, 25, 75)</span></div>
+    </div>
+
+    <h3>Задание 3. Найдите простые числа</h3>
+    <p>Среди чисел <strong>11, 16, 23, 25, 26, 37, 43, 51</strong> простыми являются:</p>
+    <div class="theory-box">
+      <p><strong>11, 23, 37, 43</strong> — простые числа (имеют только 2 делителя).</p>
+      <p>Остальные составные: 16=2×8, 25=5×5, 26=2×13, 51=3×17.</p>
+    </div>
+
+    <h3>Задание 4. Делители и простые делители</h3>
+    <div class="task-grid" style="grid-template-columns:1fr;">
+      <div class="task-item"><strong>2</strong>: делители 1, 2. Простые делители: <strong>2</strong>.</div>
+      <div class="task-item"><strong>4</strong>: делители 1, 2, 4. Простые делители: <strong>2</strong>.</div>
+      <div class="task-item"><strong>21</strong>: делители 1, 3, 7, 21. Простые делители: <strong>3, 7</strong>.</div>
+      <div class="task-item"><strong>28</strong>: делители 1, 2, 4, 7, 14, 28. Простые делители: <strong>2, 7</strong>.</div>
+      <div class="task-item"><strong>30</strong>: делители 1, 2, 3, 5, 6, 10, 15, 30. Простые делители: <strong>2, 3, 5</strong>.</div>
+      <div class="task-item"><strong>35</strong>: делители 1, 5, 7, 35. Простые делители: <strong>5, 7</strong>.</div>
+      <div class="task-item"><strong>36</strong>: делители 1, 2, 3, 4, 6, 9, 12, 18, 36. Простые делители: <strong>2, 3</strong>.</div>
+      <div class="task-item"><strong>52</strong>: делители 1, 2, 4, 13, 26, 52. Простые делители: <strong>2, 13</strong>.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== MODULE 3 ==================== -->
+<section id="module3" class="section">
+  <div class="module-card" style="border-left-color:var(--c3);">
+    <h2>🔗 Модуль 3. Наибольший общий делитель (НОД)</h2>
+
+    <div class="theory-box">
+      <h3>Определение</h3>
+      <p><strong>Общий делитель</strong> двух натуральных чисел — это число, которое является делителем обоих чисел.</p>
+      <p><strong>Наибольший общий делитель (НОД)</strong> — это наибольшее из общих делителей. Записывается: <code>НОД(20, 30) = 10</code>.</p>
+    </div>
+
+    <div class="example-box">
+      <h3>Пример: НОД(20, 30)</h3>
+      <p>Делители 20: 1, 2, 4, 5, 10, 20.</p>
+      <p>Делители 30: 1, 2, 3, 5, 6, 10, 15, 30.</p>
+      <p>Общие делители: <strong>1, 2, 5, 10</strong>.</p>
+      <p>Наибольший общий делитель: <strong>НОД(20, 30) = 10</strong>.</p>
+    </div>
+
+    <div class="example-box" style="background:#f5f3ff;">
+      <h3>Образец: НОД(8, 12)</h3>
+      <p>Делители 8: 1, 2, 4, 8.</p>
+      <p>Делители 12: 1, 2, 3, 4, 6, 12.</p>
+      <p>Общие делители: <strong>1, 2, 4</strong>.</p>
+      <p>НОД(8, 12) = <strong>4</strong>.</p>
+    </div>
+
+    <h3>Задание 5. Общие делители</h3>
+    <div class="task-grid">
+      <div class="task-item">42 и 66 → <strong>1, 2, 3, 6</strong></div>
+      <div class="task-item">7 и 56 → <strong>1, 7</strong></div>
+      <div class="task-item">40 и 50 → <strong>1, 2, 5, 10</strong></div>
+      <div class="task-item">54 и 63 → <strong>1, 3, 9</strong></div>
+      <div class="task-item">33 и 27 → <strong>1, 3</strong></div>
+      <div class="task-item">9 и 10 → <strong>1</strong></div>
+      <div class="task-item">13 и 17 → <strong>1</strong> <span style="color:var(--muted);font-size:.9rem;">(взаимно простые)</span></div>
+      <div class="task-item">12 и 14 → <strong>1, 2</strong></div>
+    </div>
+
+    <h3>Задание 6. Найдите НОД</h3>
+    <div class="task-grid">
+      <div class="task-item">НОД(18, 24) = <strong>6</strong></div>
+      <div class="task-item">НОД(15, 25) = <strong>5</strong></div>
+      <div class="task-item">НОД(12, 16) = <strong>4</strong></div>
+      <div class="task-item">НОД(52, 39) = <strong>13</strong></div>
+    </div>
+
+    <h3>Задание 7. Найдите два числа по заданному НОД</h3>
+    <p style="color:var(--muted);font-size:.95rem;margin-bottom:.5rem;">Возможные варианты (любые кратные НОД):</p>
+    <div class="task-grid" style="grid-template-columns:1fr;">
+      <div class="task-item">НОД = 6 → например, <strong>12 и 18</strong> (или 6 и 12, 18 и 24)</div>
+      <div class="task-item">НОД = 7 → например, <strong>14 и 21</strong></div>
+      <div class="task-item">НОД = 9 → например, <strong>18 и 27</strong></div>
+      <div class="task-item">НОД = 11 → например, <strong>22 и 33</strong></div>
+      <div class="task-item">НОД = 12 → например, <strong>24 и 36</strong></div>
+      <div class="task-item">НОД = 15 → например, <strong>30 и 45</strong></div>
+      <div class="task-item">НОД = 20 → например, <strong>40 и 60</strong></div>
+      <div class="task-item">НОД = 30 → например, <strong>60 и 90</strong></div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== MODULE 4 ==================== -->
+<section id="module4" class="section">
+  <div class="module-card" style="border-left-color:var(--c4);">
+    <h2>🔄 Модуль 4. Кратные натурального числа</h2>
+
+    <div class="theory-box">
+      <h3>Определение</h3>
+      <p><strong>Кратное числа</strong> — это натуральное число, которое делится на данное натуральное число <strong>без остатка</strong>.</p>
+    </div>
+
+    <div class="example-box">
+      <p>Число 60 делится на 15 без остатка: <code>60 : 15 = 4</code>. Значит, <strong>60 является кратным</strong> числа 15.</p>
+      <p>Число 70 <strong>не делится</strong> на 15 без остатка: <code>70 : 15 = 4 (ост. 10)</code>. Значит, 70 <strong>не является кратным</strong> числа 15.</p>
+    </div>
+
+    <div class="theory-box" style="background:#f0fdf4; border-left-color:var(--c4);">
+      <p>Натуральное число имеет <strong>бесконечно много</strong> кратных.</p>
+    </div>
+
+    <h3>Задание 8. Пять чисел, кратных данному</h3>
+    <div class="task-grid">
+      <div class="task-item"><strong>8</strong>: 8, 16, 24, 32, 40</div>
+      <div class="task-item"><strong>11</strong>: 11, 22, 33, 44, 55</div>
+      <div class="task-item"><strong>7</strong>: 7, 14, 21, 28, 35</div>
+      <div class="task-item"><strong>18</strong>: 18, 36, 54, 72, 90</div>
+      <div class="task-item"><strong>24</strong>: 24, 48, 72, 96, 120</div>
+      <div class="task-item"><strong>15</strong>: 15, 30, 45, 60, 75</div>
+      <div class="task-item"><strong>30</strong>: 30, 60, 90, 120, 150</div>
+      <div class="task-item"><strong>40</strong>: 40, 80, 120, 160, 200</div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== MODULE 5 ==================== -->
+<section id="module5" class="section">
+  <div class="module-card" style="border-left-color:var(--c5);">
+    <h2>⏱️ Модуль 5. Наименьшее общее кратное (НОК)</h2>
+
+    <div class="theory-box">
+      <h3>Определение</h3>
+      <p><strong>Общее кратное</strong> двух натуральных чисел — это число, которое является кратным для обоих чисел.</p>
+      <p><strong>Наименьшее общее кратное (НОК)</strong> — это наименьшее из общих кратных. Записывается: <code>НОК(6, 8) = 24</code>.</p>
+    </div>
+
+    <div class="example-box">
+      <h3>Пример: НОК(6, 8)</h3>
+      <p>Кратные 6: 6, 12, 18, <strong>24</strong>, 30, 36, 42, <strong>48</strong>, 54, 60, 66, <strong>72</strong>…</p>
+      <p>Кратные 8: 8, 16, <strong>24</strong>, 32, 40, <strong>48</strong>, 56, 64, <strong>72</strong>…</p>
+      <p>Общие кратные: <strong>24, 48, 72…</strong></p>
+      <p>Наименьшее общее кратное: <strong>НОК(6, 8) = 24</strong>.</p>
+    </div>
+
+    <div class="example-box" style="background:#fff7ed;">
+      <h3>Образец: НОК(4, 6)</h3>
+      <p>Кратные 4: 4, 8, 12, 16, 20, 24…</p>
+      <p>Кратные 6: 6, 12, 18, 24, 30…</p>
+      <p>Первое общее кратное — <strong>12</strong>. Значит, НОК(4, 6) = 12.</p>
+    </div>
+
+    <h3>Задание 9. Два общих кратных</h3>
+    <div class="task-grid">
+      <div class="task-item">3 и 4 → <strong>12, 24</strong></div>
+      <div class="task-item">4 и 6 → <strong>12, 24</strong></div>
+      <div class="task-item">5 и 10 → <strong>10, 20</strong></div>
+      <div class="task-item">3 и 5 → <strong>15, 30</strong></div>
+      <div class="task-item">6 и 9 → <strong>18, 36</strong></div>
+      <div class="task-item">8 и 12 → <strong>24, 48</strong></div>
+    </div>
+
+    <h3>Задание 10. Числа от 20 до 40, кратные и 2, и 3</h3>
+    <div class="theory-box">
+      <p>Числа, кратные и 2, и 3, должны быть кратны <strong>6</strong>.</p>
+      <p>Ответ: <strong>24, 30, 36</strong>.</p>
+    </div>
+
+    <h3>Задание 11. Найдите НОК</h3>
+    <div class="task-grid">
+      <div class="task-item">НОК(12, 18) = <strong>36</strong></div>
+      <div class="task-item">НОК(30, 45) = <strong>90</strong></div>
+      <div class="task-item">НОК(14, 28) = <strong>28</strong></div>
+      <div class="task-item">НОК(5, 7) = <strong>35</strong></div>
+      <div class="task-item">НОК(3, 5) = <strong>15</strong></div>
+      <div class="task-item">НОК(6, 10) = <strong>30</strong></div>
+      <div class="task-item">НОК(2, 7) = <strong>14</strong></div>
+      <div class="task-item">НОК(16, 20) = <strong>80</strong></div>
+    </div>
+
+    <h3>Задание 12. Два числа (≠1) с заданным НОК</h3>
+    <div class="task-grid" style="grid-template-columns:1fr;">
+      <div class="task-item">НОК = 26 → <strong>2 и 13</strong></div>
+      <div class="task-item">НОК = 30 → например, <strong>5 и 6</strong> (или 10 и 15, 2 и 15, 3 и 10)</div>
+      <div class="task-item">НОК = 35 → <strong>5 и 7</strong></div>
+      <div class="task-item">НОК = 42 → например, <strong>6 и 7</strong> (или 2 и 21, 3 и 14)</div>
+      <div class="task-item">НОК = 56 → например, <strong>7 и 8</strong> (или 2 и 28)</div>
+      <div class="task-item">НОК = 70 → например, <strong>7 и 10</strong> (или 2 и 35, 5 и 14)</div>
+      <div class="task-item">НОК = 55 → <strong>5 и 11</strong></div>
+      <div class="task-item">НОК = 65 → <strong>5 и 13</strong></div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== MODULE 6 ==================== -->
+<section id="module6" class="section">
+  <div class="module-card" style="border-left-color:var(--c6);">
+    <h2>🧩 Модуль 6. Решение задач</h2>
+
+    <div class="example-box">
+      <h3>Задача 13. Игрушки по коробкам</h3>
+      <p>Лала хочет разложить <strong>24 игрушки</strong> по коробкам в равном количестве. Сколько может быть коробок и сколько игрушек в каждой?</p>
+      <button class="btn btn-primary" onclick="toggleExp('z13')">Решение</button>
+      <div id="z13" class="explanation">
+        <p>Количество коробок должно быть <strong>делителем</strong> числа 24.</p>
+        <p>Делители 24: <strong>1, 2, 3, 4, 6, 8, 12, 24</strong>.</p>
+        <p>Возможные варианты:</p>
+        <ul style="margin-left:1.2rem;">
+          <li>1 коробка — 24 игрушки</li><li>2 коробки — по 12 игрушек</li><li>3 коробки — по 8 игрушек</li>
+          <li>4 коробки — по 6 игрушек</li><li>6 коробок — по 4 игрушки</li><li>8 коробок — по 3 игрушки</li>
+          <li>12 коробок — по 2 игрушки</li><li>24 коробки — по 1 игрушке</li>
         </ul>
       </div>
-    </nav>
+    </div>
 
-    <!-- HOME -->
-    <section id="home" class="active">
-      <div class="hero">
-        <h1>Делители и кратные. НОД и НОК</h1>
-        <p>Урок 9. Признаки делимости, простые числа, разложение на множители, наибольший общий делитель и наименьшее общее кратное.</p>
-        <div style="display: flex; gap: 16px; justify-content: center; flex-wrap: wrap;">
-          <button class="btn btn-primary" onclick="showSection('theory')">Начать обучение</button>
-          <button class="btn btn-secondary" onclick="showSection('theory')">Проверить знания</button>
-        </div>
+    <div class="example-box">
+      <h3>Задача 14. Мнение Сабины</h3>
+      <p><em>«У большего из двух натуральных чисел количество делителей больше».</em> Верно ли это?</p>
+      <button class="btn btn-primary" onclick="toggleExp('z14')">Решение</button>
+      <div id="z14" class="explanation">
+        <p><strong>Нет, не всегда.</strong></p>
+        <p>Контрпример: сравним числа <strong>30 и 31</strong>.</p>
+        <p>31 > 30, но у 31 только <strong>2 делителя</strong> (1 и 31), а у 30 — <strong>8 делителей</strong> (1, 2, 3, 5, 6, 10, 15, 30).</p>
+        <p>Ещё пример: 97 (простое, 2 делителя) и 96 (12 делителей). Большее число имеет меньше делителей.</p>
       </div>
-      <div class="card">
-        <div class="card-title"><span class="icon" style="background: var(--accent-dim)">🎯</span>Что вы изучите</div>
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 20px;">
-          <div class="card" style="padding: 20px;"><h3 style="color: var(--accent); margin-bottom: 8px;">Делители и кратные</h3><p style="color: var(--text-secondary);">Что значит «делится без остатка». Все делители числа и его кратные.</p></div>
-          <div class="card" style="padding: 20px;"><h3 style="color: var(--accent-blue); margin-bottom: 8px;">Признаки делимости</h3><p style="color: var(--text-secondary);">Быстрая проверка: делится ли число на 2, 3, 5, 9, 10 без деления.</p></div>
-          <div class="card" style="padding: 20px;"><h3 style="color: var(--accent-warm); margin-bottom: 8px;">Простые числа</h3><p style="color: var(--text-secondary);">Числа с ровно двумя делителями. Разложение составных чисел на простые множители.</p></div>
-          <div class="card" style="padding: 20px;"><h3 style="color: var(--warning); margin-bottom: 8px;">НОД и НОК</h3><p style="color: var(--text-secondary);">Алгоритм Евклида для НОД. Связь НОД и НОК: a·b = НОД·НОК.</p></div>
-        </div>
+    </div>
+
+    <div class="example-box">
+      <h3>Задача 15. Загадка Эльхана</h3>
+      <p>Эльхан задумал натуральное число, <strong>меньшее 40</strong>. У этого числа <strong>6 делителей</strong>, один из которых — <strong>10</strong>. Какое число задумал Эльхан?</p>
+      <button class="btn btn-primary" onclick="toggleExp('z15')">Решение</button>
+      <div id="z15" class="explanation">
+        <p>Если 10 — делитель, то число кратно 10 и меньше 40: это <strong>10, 20 или 30</strong>.</p>
+        <ul style="margin-left:1.2rem;">
+          <li>У числа 10 делители: 1, 2, 5, 10 → <strong>4 делителя</strong></li>
+          <li>У числа 20 делители: 1, 2, 4, 5, 10, 20 → <strong>6 делителей</strong> ✓</li>
+          <li>У числа 30 делители: 1, 2, 3, 5, 6, 10, 15, 30 → <strong>8 делителей</strong></li>
+        </ul>
+        <p>Ответ: число <strong>20</strong>.</p>
       </div>
-    </section>
+    </div>
 
-    <!-- THEORY -->
-    <section id="theory">
-      <div class="card">
-        <div class="card-title"><span class="icon" style="background: var(--accent-dim)">📖</span>Глава 1. Визуальная теория</div>
-        <p style="color: var(--text-secondary); margin-bottom: 20px;">7 слайдов — от делителей до алгоритма Евклида.</p>
-        <div class="generate-widget">
-          <div class="widget-progress">Слайд <span id="slide-num">1</span> из <span id="slide-total">7</span></div>
-          <div class="widget-viewport">
-            <div class="widget-track" id="widget-track">
-              <!-- Slide 1 -->
-              <div class="widget-slide active">
-                <h3>📌 Делитель числа</h3>
-                <p><strong>Делитель числа a</strong> — это натуральное число b, на которое a делится без остатка: a ÷ b = целое число.</p>
-                <div class="big-math">18 ÷ 3 = 6 → 3 является делителем 18</div>
-                <p>Все делители числа 18: <span class="highlight">1, 2, 3, 6, 9, 18</span></p>
-                <div class="overflow-x-auto">
-                  <table class="compare-table">
-                    <tr><th>Число</th><th>Все делители</th><th>Количество делителей</th></tr>
-                    <tr><td>12</td><td class="accent">1, 2, 3, 4, 6, 12</td><td>6</td></tr>
-                    <tr><td>15</td><td class="accent">1, 3, 5, 15</td><td>4</td></tr>
-                    <tr><td>7</td><td class="accent">1, 7</td><td>2 (простое!)</td></tr>
-                    <tr><td>16</td><td class="accent">1, 2, 4, 8, 16</td><td>5</td></tr>
-                  </table>
-                </div>
-                <div class="tip-box">У любого числа есть делители 1 и само себя. Если других делителей нет — число простое.</div>
-              </div>
-              <!-- Slide 2 -->
-              <div class="widget-slide">
-                <h3>🔢 Кратное числа</h3>
-                <p><strong>Кратное числа b</strong> — это число вида b·n, где n — натуральное число.</p>
-                <div class="big-math">Кратные числа 4: 4, 8, 12, 16, 20, 24, ...</div>
-                <p>Кратных у любого числа бесконечно много. Делителей — конечное количество.</p>
-                <div class="overflow-x-auto">
-                  <table class="compare-table">
-                    <tr><th>Число</th><th>Первые 6 кратных</th></tr>
-                    <tr><td>3</td><td class="accent">3, 6, 9, 12, 15, 18</td></tr>
-                    <tr><td>5</td><td class="accent">5, 10, 15, 20, 25, 30</td></tr>
-                    <tr><td>7</td><td class="accent">7, 14, 21, 28, 35, 42</td></tr>
-                  </table>
-                </div>
-                <div class="tip-box">Связь: если 3 — делитель 12, то 12 — кратное 3. «Делитель» и «кратное» — взаимно обратные понятия.</div>
-              </div>
-              <!-- Slide 3 -->
-              <div class="widget-slide">
-                <h3>✅ Признаки делимости</h3>
-                <p>Быстрые правила — проверка без деления:</p>
-                <div class="overflow-x-auto">
-                  <table class="compare-table">
-                    <tr><th>На что делится</th><th>Признак</th><th>Пример</th></tr>
-                    <tr><td class="accent">на 2</td><td>Последняя цифра чётная (0,2,4,6,8)</td><td>384 ✓</td></tr>
-                    <tr><td class="accent">на 5</td><td>Последняя цифра 0 или 5</td><td>375 ✓</td></tr>
-                    <tr><td class="accent">на 10</td><td>Последняя цифра 0</td><td>4070 ✓</td></tr>
-                    <tr><td class="accent">на 3</td><td>Сумма цифр делится на 3</td><td>123: 1+2+3=6 ✓</td></tr>
-                    <tr><td class="accent">на 9</td><td>Сумма цифр делится на 9</td><td>729: 7+2+9=18 ✓</td></tr>
-                    <tr><td class="accent">на 4</td><td>Последние 2 цифры делятся на 4</td><td>1236: 36÷4=9 ✓</td></tr>
-                  </table>
-                </div>
-                <div class="warning-box">Если число делится на 2 и на 3, оно делится и на 6. Если делится на 3 и на 3 — это ещё не значит, что делится на 9!</div>
-              </div>
-              <!-- Slide 4 -->
-              <div class="widget-slide">
-                <h3>⭐ Простые и составные числа</h3>
-                <p><strong>Простое число</strong> — имеет ровно 2 делителя: 1 и само себя.</p>
-                <p><strong>Составное число</strong> — имеет более 2 делителей.</p>
-                <div class="big-math">1 — особое (не простое и не составное!)</div>
-                <p>Простые числа до 30: <span class="highlight">2, 3, 5, 7, 11, 13, 17, 19, 23, 29</span></p>
-                <p>Составные числа до 30: <span class="highlight">4, 6, 8, 9, 10, 12, 14, 15, 16, 18, 20, 21, 22, 24, 25, 26, 27, 28</span></p>
-                <div class="tip-box">2 — единственное чётное простое число. Все остальные чётные числа составные (делятся на 2).</div>
-              </div>
-              <!-- Slide 5 -->
-              <div class="widget-slide">
-                <h3>🧩 Разложение на простые множители</h3>
-                <p>Любое составное число можно представить как произведение простых чисел — это <strong>каноническое разложение</strong>.</p>
-                <div style="display: grid; gap: 12px; margin: 16px 0;">
-                  <div style="background: var(--bg-glass); border-radius: 12px; padding: 14px;">
-                    <strong style="color: var(--accent);">60</strong> = 2 × 30 = 2 × 2 × 15 = 2 × 2 × 3 × 5 = <span class="highlight">2² × 3 × 5</span>
-                  </div>
-                  <div style="background: var(--bg-glass); border-radius: 12px; padding: 14px;">
-                    <strong style="color: var(--accent);">36</strong> = 2 × 18 = 2 × 2 × 9 = 2 × 2 × 3 × 3 = <span class="highlight">2² × 3²</span>
-                  </div>
-                  <div style="background: var(--bg-glass); border-radius: 12px; padding: 14px;">
-                    <strong style="color: var(--accent);">84</strong> = 2 × 42 = 2 × 2 × 21 = 2 × 2 × 3 × 7 = <span class="highlight">2² × 3 × 7</span>
-                  </div>
-                </div>
-                <div class="tip-box">Метод «столбиком»: делите на наименьший простой делитель, пока не получите 1. Множители в записи идут по возрастанию.</div>
-              </div>
-              <!-- Slide 6 -->
-              <div class="widget-slide">
-                <h3>🏆 НОД — наибольший общий делитель</h3>
-                <p><strong>НОД(a, b)</strong> — наибольшее число, на которое делятся и a, и b.</p>
-                <p><strong>Алгоритм Евклида:</strong></p>
-                <div style="display: grid; gap: 10px; margin: 16px 0;">
-                  <div style="background: var(--bg-glass); border-radius: 10px; padding: 12px 16px;"><span style="color: var(--accent); font-weight: 700;">Шаг 1.</span> Делим большее на меньшее, записываем остаток.</div>
-                  <div style="background: var(--bg-glass); border-radius: 10px; padding: 12px 16px;"><span style="color: var(--accent); font-weight: 700;">Шаг 2.</span> Меньшее делим на остаток, записываем новый остаток.</div>
-                  <div style="background: var(--bg-glass); border-radius: 10px; padding: 12px 16px;"><span style="color: var(--accent); font-weight: 700;">Шаг 3.</span> Повторяем, пока остаток не станет 0.</div>
-                  <div style="background: var(--bg-glass); border-radius: 10px; padding: 12px 16px;"><span style="color: var(--accent); font-weight: 700;">Шаг 4.</span> Последний ненулевой остаток — это НОД.</div>
-                </div>
-                <div class="formula-box">НОД(48, 18): 48 = 18·2 + 12 → 18 = 12·1 + 6 → 12 = 6·2 + 0<br><span style="color: var(--accent);">НОД = 6</span></div>
-                <div class="tip-box">Через разложение: общие простые множители в наименьших степенях. НОД(36, 48) = 2² × 3 = 12.</div>
-              </div>
-              <!-- Slide 7 -->
-              <div class="widget-slide">
-                <h3>🔗 НОК — наименьшее общее кратное</h3>
-                <p><strong>НОК(a, b)</strong> — наименьшее число, которое делится и на a, и на b.</p>
-                <div class="formula-box">НОК(a, b) = (a × b) ÷ НОД(a, b)</div>
-                <p>Пример: НОК(12, 18)</p>
-                <div style="display: grid; gap: 10px; margin: 16px 0;">
-                  <div style="background: var(--bg-glass); border-radius: 10px; padding: 12px 16px;">НОД(12, 18) = 6</div>
-                  <div style="background: var(--bg-glass); border-radius: 10px; padding: 12px 16px;">НОК(12, 18) = (12 × 18) ÷ 6 = 216 ÷ 6 = <span class="highlight">36</span></div>
-                </div>
-                <p>Через разложение: берут все простые множители в <strong>наибольших</strong> степенях.</p>
-                <div class="formula-box">12 = 2²×3, &nbsp; 18 = 2×3² &nbsp;→&nbsp; НОК = 2²×3² = <span style="color: var(--accent);">36</span></div>
-                <div class="warning-box">НОД всегда ≤ наименьшего из чисел. НОК всегда ≥ наибольшего из чисел.</div>
-              </div>
-            </div>
-          </div>
-          <div class="widget-nav">
-            <button class="btn btn-secondary" onclick="prevSlide()">← Назад</button>
-            <button class="btn btn-primary" onclick="nextSlide()">Вперёд →</button>
-          </div>
-        </div>
+    <div class="example-box">
+      <h3>Задача 16. Две ленты</h3>
+      <p>Каждую из двух лент длиной <strong>32 см</strong> и <strong>40 см</strong> нужно разрезать на равные части одинаковой длины.</p>
+      <ul style="margin-left:1.2rem;">
+        <li>Сколько сантиметров может составлять длина этих частей?</li>
+        <li>Какова самая длинная возможная часть?</li>
+      </ul>
+      <button class="btn btn-primary" onclick="toggleExp('z16')">Решение</button>
+      <div id="z16" class="explanation">
+        <p>Длина части должна быть <strong>общим делителем</strong> 32 и 40.</p>
+        <p>Делители 32: 1, 2, 4, 8, 16, 32.</p>
+        <p>Делители 40: 1, 2, 4, 5, 8, 10, 20, 40.</p>
+        <p>Общие делители: <strong>1, 2, 4, 8</strong>.</p>
+        <p>Длина части может быть <strong>1 см, 2 см, 4 см или 8 см</strong>.</p>
+        <p>Самая длинная часть = <strong>НОД(32, 40) = 8 см</strong>.</p>
       </div>
-      <div class="card">
-        <div class="card-title">
-          <span class="icon" style="background: var(--accent-blue-dim)">📖</span>Из учебника
-        </div>
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; margin-top: 16px;">
-          <img src="../assets/img/pages/page_027.webp" alt="Страница учебника" style="width:100%; border-radius:12px; border: 1px solid var(--border-glass);">
-          <img src="../assets/img/pages/page_028.webp" alt="Страница учебника" style="width:100%; border-radius:12px; border: 1px solid var(--border-glass);">
-        </div>
-        <img src="../assets/img/pages/sec_s1_8_divisors.webp" alt="Раздел учебника" style="width:100%; max-width:600px; display:block; margin: 16px auto 0; border-radius:12px; border: 1px solid var(--border-glass);">
+    </div>
+
+    <div class="example-box">
+      <h3>Задача 17. Розы и нарциссы</h3>
+      <p><strong>54 розы</strong> и <strong>45 нарциссов</strong> хотели собрать в букеты. В каждом букете должно быть одинаковое количество роз и одинаковое количество нарциссов.</p>
+      <ul style="margin-left:1.2rem;">
+        <li>Сколько цветов может быть в каждом букете?</li>
+        <li>Какое наибольшее количество букетов можно собрать?</li>
+      </ul>
+      <button class="btn btn-primary" onclick="toggleExp('z17')">Решение</button>
+      <div id="z17" class="explanation">
+        <p>Количество букетов должно быть общим делителем 54 и 45.</p>
+        <p>НОД(54, 45) = <strong>9</strong>.</p>
+        <p>Значит, можно собрать <strong>9 букетов</strong> (максимум).</p>
+        <p>В каждом букете: 54:9 = <strong>6 роз</strong> и 45:9 = <strong>5 нарциссов</strong>. Всего 11 цветов в букете.</p>
+        <p>Также возможны варианты с 1 или 3 букетами (общие делители), но 9 — максимум.</p>
       </div>
-    </section>
+    </div>
 
-    <script>
-      // ===== NAVIGATION =====
-      function showSection(id) {
-        document.querySelectorAll('section').forEach(function(s) {
-          s.classList.remove('active');
-        });
-        var el = document.getElementById(id);
-        if (el) el.classList.add('active');
-        document.querySelectorAll('.nav-links a').forEach(function(a) {
-          a.classList.remove('active');
-        });
-        var link = document.querySelector('.nav-links a[data-section="' + id + '"]');
-        if (link) link.classList.add('active');
-        window.scrollTo(0, 0);
-      }
-      document.querySelectorAll('.nav-links a').forEach(function(link) {
-        link.addEventListener('click', function(e) {
-          e.preventDefault();
-          showSection(link.dataset.section);
-        });
-      });
+    <div class="example-box">
+      <h3>Задача 18. Корабли в порту</h3>
+      <p>В порт каждые <strong>6 часов</strong> приплывает один грузовой корабль, а каждые <strong>4 часа</strong> — один пассажирский. Если в первый раз оба приплыли в одно время, то через сколько часов они снова одновременно приплывут?</p>
+      <button class="btn btn-primary" onclick="toggleExp('z18')">Решение</button>
+      <div id="z18" class="explanation">
+        <p>Нужно найти <strong>НОК(6, 4)</strong> — ближайшее время, когда оба события совпадут.</p>
+        <p>Кратные 6: 6, 12, 18, 24…</p>
+        <p>Кратные 4: 4, 8, 12, 16…</p>
+        <p>Наименьшее общее кратное — <strong>12</strong>.</p>
+        <p>Ответ: через <strong>12 часов</strong>.</p>
+      </div>
+    </div>
+  </div>
+</section>
 
-      // ===== SLIDER =====
-      var totalSlides = 6;
-      var currentSlide = 0;
-      var track = document.getElementById('widget-track');
-      var slideNumEl = document.getElementById('slide-num');
-      var slideTotalEl = document.getElementById('slide-total');
-      if (slideTotalEl) slideTotalEl.textContent = totalSlides;
-      function renderSlide() {
-        if (track) track.style.transform = 'translateX(-' + (currentSlide * 100) + '%)';
-        if (slideNumEl) slideNumEl.textContent = currentSlide + 1;
-      }
-      function nextSlide() {
-        if (currentSlide < totalSlides - 1) { currentSlide++; renderSlide(); }
-      }
-      function prevSlide() {
-        if (currentSlide > 0) { currentSlide--; renderSlide(); }
-      }
+<!-- ==================== TEST 30 ==================== -->
+<section id="test30" class="section">
+  <div class="module-card" style="border-left-color:var(--c7);">
+    <h2>📝 Тест на 30 вопросов</h2>
+    <p>Выберите один правильный ответ. Нажмите «Объяснение», чтобы узнать почему.</p>
+    <div id="test30-container"></div>
+    <div style="text-align:center; margin-top:2rem;">
+      <button class="btn btn-primary" style="font-size:1.1rem; padding:.8rem 1.6rem;" onclick="checkTest30()">Проверить тест</button>
+      <div id="test30-result" style="margin-top:1rem; font-size:1.25rem; font-weight:700;"></div>
+    </div>
+  </div>
+</section>
 
-      // ===== SOLUTION TOGGLES =====
-      function toggleSolution(id) {
-        var el = document.getElementById(id);
-        if (!el) return;
-        el.classList.toggle('active');
-        var btn = el.previousElementSibling;
-        if (btn) btn.textContent = el.classList.contains('active') ? 'Скрыть решение' : 'Показать решение';
-      }
-    </script>
-  </body>
+<!-- ==================== QUIZ 15 ==================== -->
+<section id="quiz15" class="section">
+  <div class="module-card" style="border-left-color:var(--c8);">
+    <h2>🏆 Викторина на 15 вопросов</h2>
+    <p>Выберите один правильный ответ. Результат и подробные объяснения будут показаны в конце.</p>
+    <div id="quiz15-container"></div>
+    <div style="text-align:center; margin-top:2rem;">
+      <button class="btn btn-primary" style="font-size:1.1rem; padding:.8rem 1.6rem;" onclick="checkQuiz15()">Завершить викторину</button>
+      <div id="quiz15-result" style="margin-top:1rem; font-size:1.25rem; font-weight:700;"></div>
+    </div>
+    <div id="quiz15-explanations" style="margin-top:2rem;"></div>
+  </div>
+</section>
+
+</main>
+
+<div class="result-bar" id="progressBar" style="display:none;">
+  <div>Прогресс: <span id="progressText">0/8</span></div>
+  <div style="font-size:.85rem; opacity:.8;">Пройдено модулей</div>
+</div>
+
+<script>
+/* ========== NAVIGATION ========== */
+function showSection(id) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  const btn = document.querySelector('.nav-btn[data-target="'+id+'"]');
+  if(btn) btn.classList.add('active');
+  window.scrollTo({top:0, behavior:'smooth'});
+  updateProgress();
+}
+
+/* ========== ACCORDION ========== */
+function toggleExp(id) {
+  const el = document.getElementById(id);
+  if(el) el.classList.toggle('show');
+}
+
+/* ========== PROGRESS ========== */
+const visited = new Set();
+function updateProgress() {
+  const active = document.querySelector('.section.active');
+  if(active) visited.add(active.id);
+  document.getElementById('progressText').textContent = visited.size + '/8';
+  document.getElementById('progressBar').style.display = 'flex';
+}
+
+/* ========== TEST 30 DATA ========== */
+const test30Data = [
+  {q:"Что называют делителем натурального числа?", options:["Число, которое делится на данное без остатка","Натуральное число, на которое данное число делится без остатка","Результат деления","Число, которое делится на данное с остатком"], correct:1, exp:"Согласно определению, делителем натурального числа называется натуральное число, на которое данное число делится без остатка."},
+  {q:"Число 48 делится на 12. Что можно сказать о числе 4 (частное)?", options:["4 — тоже делитель 48","4 — не делитель 48","4 — кратное 48","48 — делитель 4"], correct:0, exp:"48 : 12 = 4. Так как 48 делится на 4 без остатка (48:4=12), число 4 также является делителем 48."},
+  {q:"Сколько делителей у числа 10?", options:["2","3","4","5"], correct:2, exp:"Делители 10: 1, 2, 5, 10. Итого 4 делителя."},
+  {q:"Является ли число 5 делителем числа 48?", options:["Да","Нет","Только в некоторых случаях","Нельзя определить"], correct:1, exp:"48 : 5 = 9 (остаток 3). Так как деление происходит с остатком, 5 не является делителем 48."},
+  {q:"Какие числа являются делителями любого натурального числа?", options:["Только 1","1 и само число","Только само число","Все числа меньше него"], correct:1, exp:"Каждое натуральное число нацело делится на само себя и на 1. Поэтому 1 и само число всегда являются его делителями."},
+  {q:"Как определить по количеству делителей, является ли число простым?", options:["Если делителей больше 2","Если ровно 2 делителя (1 и само число)","Если делителей меньше 2","Если делителей ровно 3"], correct:1, exp:"Простое число имеет ровно два делителя: единицу и само себя. Например, у числа 19 делители только 1 и 19."},
+  {q:"Сколько делителей у числа 19?", options:["1","2","3","4"], correct:1, exp:"19 — простое число. Его делители: 1 и 19. Значит, 2 делителя."},
+  {q:"Какое из чисел является простым?", options:["16","25","26","23"], correct:3, exp:"23 имеет только два делителя: 1 и 23. Остальные числа составные (16=2×8, 25=5×5, 26=2×13)."},
+  {q:"Найдите НОД чисел 20 и 30.", options:["5","10","15","20"], correct:1, exp:"Делители 20: 1,2,4,5,10,20. Делители 30: 1,2,3,5,6,10,15,30. Общие делители: 1,2,5,10. Наибольший — 10."},
+  {q:"Найдите НОД (8, 12).", options:["2","4","6","8"], correct:1, exp:"Делители 8: 1,2,4,8. Делители 12: 1,2,3,4,6,12. Общие: 1,2,4. Наибольший — 4."},
+  {q:"Какие числа являются общими делителями 42 и 66?", options:["1, 2, 3, 6","1, 2, 3, 7","1, 6, 7, 11","2, 3, 6, 11"], correct:0, exp:"Делители 42: 1,2,3,6,7,14,21,42. Делители 66: 1,2,3,6,11,22,33,66. Общие: 1,2,3,6."},
+  {q:"Найдите НОД (52, 39).", options:["13","26","3","1"], correct:0, exp:"Делители 52: 1,2,4,13,26,52. Делители 39: 1,3,13,39. Наибольший общий делитель — 13."},
+  {q:"Что такое кратное натурального числа?", options:["Число, на которое данное делится без остатка","Натуральное число, делящееся на данное без остатка","Результат умножения данного числа на 2","Любое число, большее данного"], correct:1, exp:"Кратное числа — это натуральное число, которое делится на данное натуральное число без остатка. Например, 60 кратно 15, так как 60:15=4."},
+  {q:"Сколько кратных имеет натуральное число?", options:["Конечное количество","Бесконечно много","Столько же, сколько делителей","Ровно 10"], correct:1, exp:"Натуральное число имеет бесконечно много кратных, так как можно умножать его на 1, 2, 3 и так далее без ограничения."},
+  {q:"Является ли число 70 кратным числа 15?", options:["Да","Нет","Только при округлении","Нельзя определить"], correct:1, exp:"70 : 15 = 4 (остаток 10). Так как деление происходит с остатком, 70 не является кратным 15."},
+  {q:"Какое число является кратным 7 и больше 20, но меньше 25?", options:["14","21","28","35"], correct:1, exp:"Кратные 7: 7, 14, 21, 28, 35... Из них больше 20 и меньше 25 только число 21."},
+  {q:"Найдите НОК (4, 6).", options:["12","24","2","18"], correct:0, exp:"Кратные 4: 4,8,12,16,20,24... Кратные 6: 6,12,18,24... Общие кратные: 12,24... Наименьшее — 12."},
+  {q:"Найдите НОК (6, 8).", options:["24","48","12","16"], correct:0, exp:"Кратные 6: 6,12,18,24,30... Кратные 8: 8,16,24,32... Первое общее кратное — 24."},
+  {q:"Найдите НОК (5, 7).", options:["12","35","42","70"], correct:1, exp:"Числа 5 и 7 — взаимно простые (НОД=1). Поэтому НОК(5,7)=5×7=35."},
+  {q:"Какие числа от 20 до 40 кратны и 2, и 3?", options:["24, 30, 36","20, 25, 30","22, 28, 34","21, 27, 33"], correct:0, exp:"Числа, кратные и 2, и 3, должны быть кратны 6. В диапазоне от 20 до 40 такие числа: 24, 30, 36."},
+  {q:"Найдите НОК (12, 18).", options:["6","36","72","18"], correct:1, exp:"Кратные 12: 12,24,36,48... Кратные 18: 18,36,54... Наименьшее общее кратное — 36."},
+  {q:"Найдите два общих кратных чисел 3 и 4.", options:["12 и 24","6 и 8","9 и 12","4 и 6"], correct:0, exp:"Кратные 3: 3,6,9,12,15,18,21,24... Кратные 4: 4,8,12,16,20,24... Общие кратные: 12, 24 и т.д."},
+  {q:"В классе 12 мальчиков и 18 девочек. Сколько максимум команд одинакового состава можно организовать?", options:["3","6","9","12"], correct:1, exp:"Количество команд должно быть общим делителем 12 и 18. НОД(12,18)=6. Значит, максимум 6 команд (по 2 мальчика и 3 девочки в каждой)."},
+  {q:"Лала хочет разложить 24 игрушки по коробкам поровну. Сколько может быть коробок? (выберите возможный вариант)", options:["5","7","8","9"], correct:2, exp:"Количество коробок должно быть делителем 24. Делители 24: 1,2,3,4,6,8,12,24. Число 8 среди них, а 5, 7 и 9 — нет."},
+  {q:"Две ленты длиной 32 см и 40 см нужно разрезать на равные части одинаковой длины. Какой может быть длина каждой части?", options:["7 см","8 см","9 см","12 см"], correct:1, exp:"Длина части должна быть общим делителем 32 и 40. Общие делители: 1,2,4,8. Среди вариантов только 8 см подходит."},
+  {q:"Какова максимальная длина части для лент 32 см и 40 см?", options:["4 см","8 см","10 см","16 см"], correct:1, exp:"Максимальная длина — это НОД(32,40). НОД(32,40)=8 см."},
+  {q:"Эльхан задумал число меньше 40. У него 6 делителей, один из которых — 10. Какое это число?", options:["10","20","30","40"], correct:1, exp:"Если 10 — делитель, число кратно 10 и меньше 40: 10, 20, 30. У 10 — 4 делителя, у 20 — 6 делителей (1,2,4,5,10,20), у 30 — 8 делителей. Значит, число 20."},
+  {q:"54 розы и 45 нарциссов разложили в букеты поровну. Сколько всего букетов получилось, если в каждом букете максимальное количество цветов?", options:["3","6","9","15"], correct:2, exp:"Количество букетов = НОД(54,45)=9. В каждом букете: 54:9=6 роз и 45:9=5 нарциссов."},
+  {q:"В порт приплывает грузовой корабль каждые 6 часов, а пассажирский — каждые 4 часа. Они приплыли вместе. Через сколько часов встретятся снова?", options:["8","10","12","24"], correct:2, exp:"Нужно найти НОК(6,4). Кратные 6: 6,12,18... Кратные 4: 4,8,12,16... Наименьшее общее кратное — 12 часов."},
+  {q:"Верно ли мнение Сабины: «У большего из двух натуральных чисел всегда больше делителей»?", options:["Да, всегда","Нет, не всегда","Верно только для чётных чисел","Нельзя проверить"], correct:1, exp:"Например, число 31 > 30, но у 31 только 2 делителя (1 и 31), а у 30 — целых 8 делителей. Значит, мнение неверно."}
+];
+
+function renderTest30() {
+  const container = document.getElementById('test30-container');
+  container.innerHTML = test30Data.map((item, idx) => `
+    <div class="question-card">
+      <div style="font-weight:700; margin-bottom:.4rem; color:var(--c7);">Вопрос ${idx+1} из 30</div>
+      <p style="font-size:1.05rem; margin-bottom:1rem;">${item.q}</p>
+      <div class="options">
+        ${item.options.map((opt, i) => `
+          <label class="option" id="t30-${idx}-opt-${i}">
+            <input type="radio" name="t30-${idx}" value="${i}">
+            <span>${opt}</span>
+          </label>
+        `).join('')}
+      </div>
+      <button class="btn btn-primary" style="background:#f59e0b; margin-top:.5rem;" onclick="showTest30Exp(${idx})">💡 Объяснение</button>
+      <div id="t30-exp-${idx}" class="explanation">${item.exp}</div>
+    </div>
+  `).join('');
+}
+function showTest30Exp(idx) {
+  document.getElementById('t30-exp-'+idx).classList.add('show');
+}
+function checkTest30() {
+  let correct = 0;
+  test30Data.forEach((item, idx) => {
+    const selected = document.querySelector('input[name="t30-'+idx+'"]:checked');
+    const val = selected ? parseInt(selected.value) : -1;
+    item.options.forEach((_, i) => {
+      const opt = document.getElementById('t30-'+idx+'-opt-'+i);
+      if(i === item.correct) { opt.classList.add('correct'); opt.style.borderColor='#22c55e'; opt.style.background='#f0fdf4'; }
+      else if(i === val && val !== item.correct) { opt.classList.add('wrong'); opt.style.borderColor='#ef4444'; opt.style.background='#fef2f2'; }
+    });
+    if(val === item.correct) correct++;
+  });
+  const res = document.getElementById('test30-result');
+  res.textContent = `Результат: ${correct} из 30 (${Math.round(correct/30*100)}%)`;
+  res.style.color = correct >= 24 ? '#059669' : correct >= 18 ? '#d97706' : '#dc2626';
+  window.scrollTo({top:document.getElementById('test30-result').offsetTop-120, behavior:'smooth'});
+}
+
+/* ========== QUIZ 15 DATA ========== */
+const quiz15Data = [
+  {q:"Запишите все делители числа 18.", options:["1, 2, 3, 6, 9, 18","1, 2, 4, 9, 18","2, 3, 6, 9","1, 3, 6, 18"], correct:0, exp:"18:1=18, 18:2=9, 18:3=6. Пары делителей: (1,18), (2,9), (3,6)."},
+  {q:"Сколько делителей у числа 24?", options:["6","7","8","9"], correct:2, exp:"1,2,3,4,6,8,12,24 — всего 8 делителей."},
+  {q:"Какие из чисел простые: 11, 16, 23, 25, 26, 37, 43, 51?", options:["11, 23, 37, 43","11, 16, 23, 37","Все, кроме 51","16, 25, 26, 51"], correct:0, exp:"Простые имеют только 2 делителя. 11(1,11), 23(1,23), 37(1,37), 43(1,43). Остальные составные."},
+  {q:"Какие простые делители имеет число 36?", options:["2, 3","2, 4, 9","3, 6","2, 3, 6"], correct:0, exp:"Делители 36: 1,2,3,4,6,9,12,18,36. Простые среди них: 2 и 3."},
+  {q:"Найдите НОД (18, 24).", options:["3","6","12","2"], correct:1, exp:"Делители 18: 1,2,3,6,9,18. Делители 24: 1,2,3,4,6,8,12,24. Наибольший общий — 6."},
+  {q:"Найдите НОД (12, 14).", options:["1","2","6","7"], correct:1, exp:"Делители 12: 1,2,3,4,6,12. Делители 14: 1,2,7,14. Общие: 1,2. НОД=2."},
+  {q:"Запишите пять чисел, кратных 11.", options:["11, 22, 33, 44, 55","1, 11, 22, 33, 44","11, 21, 31, 41, 51","22, 33, 44, 55, 66"], correct:0, exp:"Кратные 11: 11×1=11, 11×2=22, 11×3=33, 11×4=44, 11×5=55."},
+  {q:"Найдите НОК (3, 5).", options:["8","15","20","1"], correct:1, exp:"3 и 5 — взаимно простые. НОК(3,5)=3×5=15."},
+  {q:"Найдите НОК (6, 10).", options:["20","30","60","2"], correct:1, exp:"Кратные 6: 6,12,18,24,30... Кратные 10: 10,20,30... НОК=30."},
+  {q:"Сколько чисел от 20 до 40 кратны и 2, и 3?", options:["2","3","4","5"], correct:1, exp:"Это числа, кратные 6: 24, 30, 36. Итого 3 числа."},
+  {q:"Найдите НОК (14, 28).", options:["14","28","42","7"], correct:1, exp:"28 кратно 14 (28:14=2). Значит, НОК(14,28)=28."},
+  {q:"Найдите два числа, не равных 1, НОК которых равен 26.", options:["2 и 13","4 и 13","2 и 14","13 и 1"], correct:0, exp:"26=2×13. Так как 2 и 13 — простые и взаимно простые, НОК(2,13)=2×13=26."},
+  {q:"Эльхан задумал число меньше 40. У него 6 делителей, один из которых — 10. Какое число?", options:["10","20","30","40"], correct:1, exp:"Число кратно 10 и <40: 10, 20, 30. У 10 — 4 делителя, у 20 — 6, у 30 — 8. Ответ: 20."},
+  {q:"Две ленты 32 см и 40 см разрезали на равные части наибольшей возможной длины. Какова эта длина?", options:["4 см","8 см","10 см","16 см"], correct:1, exp:"Нужен НОД(32,40). 32=2⁵, 40=2³×5. НОД=2³=8 см."},
+  {q:"В порт приплывают корабли каждые 6 ч и 4 ч. Встреча через?", options:["6","8","12","24"], correct:2, exp:"НОК(6,4)=12. Первое общее кратное чисел 6 и 4 — 12."}
+];
+
+function renderQuiz15() {
+  const container = document.getElementById('quiz15-container');
+  container.innerHTML = quiz15Data.map((item, idx) => `
+    <div class="question-card">
+      <div style="font-weight:700; margin-bottom:.4rem; color:var(--c8);">Вопрос ${idx+1} из 15</div>
+      <p style="font-size:1.05rem; margin-bottom:1rem;">${item.q}</p>
+      <div class="options">
+        ${item.options.map((opt, i) => `
+          <label class="option" id="q15-${idx}-opt-${i}">
+            <input type="radio" name="q15-${idx}" value="${i}">
+            <span>${opt}</span>
+          </label>
+        `).join('')}
+      </div>
+    </div>
+  `).join('');
+}
+
+function checkQuiz15() {
+  let correct = 0;
+  quiz15Data.forEach((item, idx) => {
+    const selected = document.querySelector('input[name="q15-'+idx+'"]:checked');
+    const val = selected ? parseInt(selected.value) : -1;
+    if(val === item.correct) correct++;
+  });
+  const res = document.getElementById('quiz15-result');
+  res.textContent = `Результат: ${correct} из 15 (${Math.round(correct/15*100)}%)`;
+  res.style.color = correct >= 12 ? '#059669' : correct >= 8 ? '#d97706' : '#dc2626';
+
+  let html = '<h3 style="margin-bottom:1rem; color:var(--c8);">📋 Подробные объяснения</h3>';
+  quiz15Data.forEach((item, idx) => {
+    const selected = document.querySelector('input[name="q15-'+idx+'"]:checked');
+    const val = selected ? parseInt(selected.value) : -1;
+    const isCorrect = val === item.correct;
+    html += `
+      <div style="margin-bottom:1rem; padding:1rem; border-radius:.5rem; background:${isCorrect?'#f0fdf4':'#fef2f2'}; border-left:4px solid ${isCorrect?'#22c55e':'#ef4444'};">
+        <div style="font-weight:700; margin-bottom:.3rem;">Вопрос ${idx+1}: ${isCorrect ? '✅ Верно' : (val===-1?'⚪ Пропущено':'❌ Неверно')}</div>
+        <p style="margin-bottom:.4rem;">${item.q}</p>
+        <p><strong>Правильный ответ:</strong> ${item.options[item.correct]}</p>
+        <p style="font-size:.95rem; color:var(--muted);">${item.exp}</p>
+      </div>
+    `;
+  });
+  document.getElementById('quiz15-explanations').innerHTML = html;
+  window.scrollTo({top:document.getElementById('quiz15-result').offsetTop-120, behavior:'smooth'});
+}
+
+/* ========== INIT ========== */
+renderTest30();
+renderQuiz15();
+updateProgress();
+</script>
+
+</body>
 </html>

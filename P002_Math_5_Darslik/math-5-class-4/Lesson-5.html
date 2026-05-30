@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Десятичные дроби — Итоговый урок (Lesson 15)</title>
+    <title>Урок 5 — Увеличение и уменьшение на процент</title>
     <style>
       :root {
         --bg-dark: #0f0f1a;
@@ -145,7 +145,7 @@
       section {
         display: none;
         opacity: 0;
-        padding: 100px 20px 60px;
+        padding: 78px 20px 32px;
         max-width: 1000px;
         margin: 0 auto;
         transition: opacity 0.3s ease;
@@ -171,8 +171,8 @@
         backdrop-filter: blur(20px);
         border: 1px solid var(--border-glass);
         border-radius: 20px;
-        padding: 32px;
-        margin-bottom: 24px;
+        padding: 20px;
+        margin-bottom: 16px;
         transition:
           transform 0.3s,
           box-shadow 0.3s;
@@ -259,35 +259,37 @@
         transform: none !important;
       }
 
-      /* ===== SLIDER (Anti-Bug Specs) ===== */
       .generate-widget {
         background: var(--bg-card);
         border: 1px solid var(--border-glass);
         border-radius: 20px;
-        padding: 24px;
+        padding: 14px;
         width: 100%;
       }
       .widget-viewport {
-        overflow: hidden;
-        position: relative;
-        min-height: 550px;
-        height: auto;
         width: 100%;
       }
       .widget-track {
-        display: flex;
-        transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
         width: 100%;
-        will-change: transform;
       }
       .widget-slide {
-        flex: 0 0 100%;
-        width: 100%;
-        min-width: 100%;
-        padding: 20px;
+        display: none;
+        padding: 12px 16px;
         box-sizing: border-box;
-        overflow-x: hidden;
-        overflow-y: visible;
+        animation: slideFade 0.3s ease;
+      }
+      .widget-slide.active {
+        display: block;
+      }
+      @keyframes slideFade {
+        from {
+          opacity: 0;
+          transform: translateY(6px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
       }
       .widget-slide h3 {
         font-size: 1.3rem;
@@ -323,37 +325,58 @@
         margin-bottom: 12px;
       }
 
-      .overflow-x-auto {
-        overflow-x: auto;
-        -webkit-overflow-scrolling: touch;
+      .formula-box {
+        background: var(--bg-glass);
+        border: 1px solid var(--border-glass);
+        border-radius: 12px;
+        padding: 20px;
+        margin: 16px 0;
+        text-align: center;
+        font-size: 1.2rem;
       }
-      .compare-table {
-        width: 100%;
-        border-collapse: collapse;
+      .tip-box {
+        background: var(--accent-blue-dim);
+        border-left: 4px solid var(--accent-blue);
+        padding: 16px 20px;
+        border-radius: 0 12px 12px 0;
         margin: 16px 0;
       }
-      .compare-table th,
-      .compare-table td {
-        border: 1px solid var(--border-glass);
-        padding: 14px;
-        text-align: center;
-        color: var(--text-secondary);
+      .tip-box::before {
+        content: "💡 ";
       }
-      .compare-table th {
-        background: var(--bg-glass);
-        color: var(--text-primary);
+      .warning-box {
+        background: var(--accent-warm-dim);
+        border-left: 4px solid var(--accent-warm);
+        padding: 16px 20px;
+        border-radius: 0 12px 12px 0;
+        margin: 16px 0;
+      }
+      .warning-box::before {
+        content: "⚠️ ";
+      }
+      .highlight {
+        background: var(--accent-dim);
+        padding: 2px 6px;
+        border-radius: 4px;
+        color: var(--accent);
         font-weight: 600;
       }
-      .compare-table tr:hover td {
-        background: rgba(255, 255, 255, 0.03);
-        color: var(--text-primary);
+      .fraction {
+        display: inline-block;
+        text-align: center;
+        vertical-align: middle;
+        margin: 0 4px;
       }
-      .compare-table td.accent {
-        color: var(--accent);
-        font-weight: 700;
+      .fraction .top {
+        display: block;
+        border-bottom: 2px solid var(--text-primary);
+        padding: 0 4px;
+      }
+      .fraction .bottom {
+        display: block;
+        padding: 0 4px;
       }
 
-      /* ===== SEQUENCE STEPPER ===== */
       .sequence-component {
         display: flex;
         flex-direction: column;
@@ -409,60 +432,6 @@
         display: none;
       }
 
-      /* ===== FORMULA & UTILITY BOXES ===== */
-      .formula-box {
-        background: var(--bg-glass);
-        border: 1px solid var(--border-glass);
-        border-radius: 12px;
-        padding: 20px;
-        margin: 16px 0;
-        text-align: center;
-        font-size: 1.2rem;
-      }
-      .tip-box {
-        background: var(--accent-blue-dim);
-        border-left: 4px solid var(--accent-blue);
-        padding: 16px 20px;
-        border-radius: 0 12px 12px 0;
-        margin: 16px 0;
-      }
-      .tip-box::before {
-        content: "💡 ";
-      }
-      .warning-box {
-        background: var(--accent-warm-dim);
-        border-left: 4px solid var(--accent-warm);
-        padding: 16px 20px;
-        border-radius: 0 12px 12px 0;
-        margin: 16px 0;
-      }
-      .warning-box::before {
-        content: "⚠️ ";
-      }
-      .highlight {
-        background: var(--accent-dim);
-        padding: 2px 6px;
-        border-radius: 4px;
-        color: var(--accent);
-        font-weight: 600;
-      }
-      .fraction {
-        display: inline-block;
-        text-align: center;
-        vertical-align: middle;
-        margin: 0 4px;
-      }
-      .fraction .top {
-        display: block;
-        border-bottom: 2px solid var(--text-primary);
-        padding: 0 4px;
-      }
-      .fraction .bottom {
-        display: block;
-        padding: 0 4px;
-      }
-
-      /* ===== PROBLEM CARDS ===== */
       .problem-card {
         background: var(--bg-card);
         border: 1px solid var(--border-glass);
@@ -475,6 +444,8 @@
         justify-content: space-between;
         align-items: center;
         margin-bottom: 16px;
+        flex-wrap: wrap;
+        gap: 8px;
       }
       .problem-number {
         background: var(--accent-dim);
@@ -551,7 +522,6 @@
         margin-right: 8px;
       }
 
-      /* ===== QUIZ COMPONENTS ===== */
       .quiz-container {
         background: var(--bg-card);
         border: 1px solid var(--border-glass);
@@ -656,7 +626,6 @@
         color: var(--text-secondary);
       }
 
-      /* ===== TIMER ===== */
       .timer {
         position: fixed;
         top: 80px;
@@ -692,7 +661,6 @@
         }
       }
 
-      /* ===== RESULTS DASHBOARD ===== */
       .results-container {
         text-align: center;
         padding: 40px;
@@ -775,23 +743,21 @@
           padding: 10px 16px;
         }
         .card {
-          padding: 20px;
+          padding: 14px;
         }
         section {
-          padding: 80px 16px 40px;
-        }
-        .widget-viewport {
-          min-height: 520px;
+          padding: 70px 12px 24px;
         }
       }
     </style>
+    <base target="_blank" />
   </head>
   <body>
     <div class="bg-animation"></div>
 
     <nav>
       <div class="nav-container">
-        <div class="logo">📊 Десятичные дроби</div>
+        <div class="logo">📐 Урок 5</div>
         <ul class="nav-links">
           <li><a href="#" class="active" data-section="home">Главная</a></li>
           <li><a href="#" data-section="theory">Теория</a></li>
@@ -806,11 +772,10 @@
     <!-- ================= HOME ================= -->
     <section id="home" class="active">
       <div class="hero">
-        <h1>Десятичные дроби — Итоговый урок</h1>
+        <h1>Увеличение и уменьшение на процент</h1>
         <p>
-          Lesson 15. Обобщение всей темы: разряды, сложение, вычитание,
-          умножение, деление, округление и преобразования. Интерактивная книга с
-          тренажёром и аттестацией.
+          Урок 5. НДС, скидки, наценки и повседневные расчёты. 30 вопросов для
+          полной проверки.
         </p>
         <div
           style="
@@ -830,8 +795,8 @@
       </div>
       <div class="card">
         <div class="card-title">
-          <span class="icon" style="background: var(--accent-dim)">🎯</span>
-          Что вы изучите
+          <span class="icon" style="background: var(--accent-dim)">🎯</span>Что
+          вы изучите
         </div>
         <div
           style="
@@ -842,50 +807,52 @@
         >
           <div class="card" style="padding: 20px">
             <h3 style="color: var(--accent); margin-bottom: 8px">
-              Разряды и запись
+              Увеличение на %
             </h3>
             <p style="color: var(--text-secondary)">
-              Десятые, сотые, тысячные. Как читать и записывать 0,374.
+              Метод прибавления и множитель 1 + p/100. Примеры с наценкой и НДС.
             </p>
           </div>
           <div class="card" style="padding: 20px">
             <h3 style="color: var(--accent-blue); margin-bottom: 8px">
-              Сложение и вычитание
+              Уменьшение на %
             </h3>
             <p style="color: var(--text-secondary)">
-              Запятая под запятой, дописывание нулей, проверка.
+              Метод вычитания и множитель 1 − p/100. Примеры со скидками и
+              уценкой.
             </p>
           </div>
           <div class="card" style="padding: 20px">
             <h3 style="color: var(--accent-warm); margin-bottom: 8px">
-              Умножение и деление
+              НДС и чеки
             </h3>
             <p style="color: var(--text-secondary)">
-              На 10, 100, 1000 и на десятичные дроби. Перенос запятой.
+              Как считать налог на добавленную стоимость и итоговую сумму в
+              чеке.
             </p>
           </div>
           <div class="card" style="padding: 20px">
             <h3 style="color: var(--warning); margin-bottom: 8px">
-              Округление и дроби
+              Скидки и акции
             </h3>
             <p style="color: var(--text-secondary)">
-              До сотых, десятых, единиц. Перевод обыкновенных в десятичные.
+              Расчёт новой цены и суммы скидки. Двойные изменения цены.
             </p>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- ================= CHAPTER 1: VISUAL THEORY ================= -->
+    <!-- ================= CHAPTER 1: THEORY ================= -->
     <section id="theory">
       <div class="card">
         <div class="card-title">
-          <span class="icon" style="background: var(--accent-dim)">📖</span>
-          Глава 1. Визуальная теория
+          <span class="icon" style="background: var(--accent-dim)">📖</span
+          >Глава 1. Визуальная теория
         </div>
         <p style="color: var(--text-secondary); margin-bottom: 20px">
-          Листайте слайды вперёд и назад. Каждый слайд — ключевой блок из
-          итоговой схемы.
+          Листайте слайды. Каждый слайд — ключевой блок для решения задач на
+          увеличение и уменьшение в процентах.
         </p>
         <div class="generate-widget">
           <div class="widget-progress">
@@ -895,304 +862,202 @@
           <div class="widget-viewport">
             <div class="widget-track" id="widget-track">
               <!-- Slide 1 -->
-              <div class="widget-slide">
-                <h3>🔢 Зачем нужны десятичные дроби?</h3>
+              <div class="widget-slide active">
+                <h3>📈 Увеличение числа на процент</h3>
                 <p>
-                  Десятичные дроби позволяют точно измерять длину, массу, время
-                  и деньги без громоздких обыкновенных дробей.
+                  <strong>Увеличить число на p%</strong> — значит найти p% от
+                  числа и <strong>прибавить</strong> к нему.
                 </p>
                 <div class="big-math">
-                  0,5 м =
-                  <span class="fraction"
-                    ><span class="top">1</span
-                    ><span class="bottom">2</span></span
-                  >
-                  м<br />
-                  0,25 кг =
-                  <span class="fraction"
-                    ><span class="top">1</span
-                    ><span class="bottom">4</span></span
-                  >
-                  кг
+                  40 + 40*20% = 40 + (40·0,20) =
+                  <span style="color: var(--accent)">48</span>
                 </div>
-                <p>
-                  Основное преимущество — единая десятичная система разрядов,
-                  как у целых чисел.
-                </p>
+                <p>Или сразу через множитель: 40 · 1,20 = 48.</p>
                 <div class="tip-box">
-                  Любую десятичную дробь можно представить как обыкновенную со
-                  знаменателем 10, 100, 1000…
+                  Множитель 1,20 = 100% + 20%. Умножаем исходное число на (1 +
+                  p/100).
                 </div>
               </div>
               <!-- Slide 2 -->
               <div class="widget-slide">
-                <h3>📌 Разрядные значения цифр</h3>
+                <h3>📉 Уменьшение числа на процент</h3>
                 <p>
-                  В числе <span class="highlight">0,374</span> каждая цифра
-                  имеет свой разряд:
+                  <strong>Уменьшить число на p%</strong> — значит найти p% от
+                  числа и <strong>вычесть</strong> из него.
                 </p>
-                <div class="overflow-x-auto">
-                  <table class="compare-table">
-                    <tr>
-                      <th>Цифра</th>
-                      <th>3</th>
-                      <th>7</th>
-                      <th>4</th>
-                    </tr>
-                    <tr>
-                      <td>Разряд</td>
-                      <td>десятые</td>
-                      <td>сотые</td>
-                      <td>тысячные</td>
-                    </tr>
-                    <tr>
-                      <td>Значение</td>
-                      <td>
-                        3·<<span class="fraction"
-                          ><span class="top">1</span
-                          ><span class="bottom">10</span></span
-                        >=0,3
-                      </td>
-                      <td>
-                        7·<<span class="fraction"
-                          ><span class="top">1</span
-                          ><span class="bottom">100</span></span
-                        >=0,07
-                      </td>
-                      <td>
-                        4·<<span class="fraction"
-                          ><span class="top">1</span
-                          ><span class="bottom">1000</span></span
-                        >=0,004
-                      </td>
-                    </tr>
-                  </table>
+                <div class="big-math">
+                  150 − 150*20% = 150 − (150·0,20) =
+                  <span style="color: var(--accent)">120</span>
                 </div>
-                <p>
-                  Запятая отделяет целую часть от дробной. После запятой всегда
-                  идут десятые, сотые, тысячные и т.д.
-                </p>
-                <div class="warning-box">
-                  Не путайте: после запятой первая цифра — десятые, вторая —
-                  сотые, третья — тысячные.
+                <p>Или сразу: 150 · 0,80 = 120, где 0,80 = 100% − 20%.</p>
+                <div class="tip-box">
+                  Множитель 0,80 = 1 − 0,20. Умножаем исходное число на (1 −
+                  p/100).
                 </div>
               </div>
               <!-- Slide 3 -->
               <div class="widget-slide">
-                <h3>➕➖ Сложение и вычитание</h3>
+                <h3>🧾 НДС в чеке</h3>
                 <p>
-                  Правило: запятая под запятой, недостающие разряды дополняем
-                  нулями.
+                  <strong>НДС</strong> (налог на добавленную стоимость) — это
+                  увеличение суммы на фиксированный процент.
                 </p>
-                <div
-                  class="formula-box"
-                  style="
-                    font-family: monospace;
-                    text-align: left;
-                    display: inline-block;
-                  "
-                >
-                  &nbsp;&nbsp;1,823<br />
-                  +&nbsp;2,387<br />
-                  --------<<br />
-                  &nbsp;&nbsp;4,210
+                <div class="big-math">
+                  35 + 18%*35 = 35 · 1,18 =41.3
+                  <span style="color: var(--accent)">41,3</span> (ман.)
                 </div>
-                <div
-                  class="formula-box"
-                  style="
-                    font-family: monospace;
-                    text-align: left;
-                    display: inline-block;
-                  "
-                >
-                  &nbsp;&nbsp;3,214<br />
-                  -&nbsp;1,537<br />
-                  --------<<br />
-                  &nbsp;&nbsp;1,677
-                </div>
-                <div class="tip-box">
-                  Проверка сложения: вычитанием. Проверка вычитания: сложением.
+                <p>Основная сумма 35 + НДС 6,3 = Сумма с учётом НДС 41,3.</p>
+                <div class="warning-box">
+                  НДС начисляется поверх цены товара. Покупатель платит цену +
+                  налог.
                 </div>
               </div>
               <!-- Slide 4 -->
               <div class="widget-slide">
-                <h3>🔟 Умножение и деление на 10, 100, 1000</h3>
+                <h3>🏷️ Скидки в магазине</h3>
                 <p>
-                  При умножении запятая сдвигается <strong>вправо</strong>, при
-                  делении — <strong>влево</strong>.
+                  <strong>Скидка</strong> — это уменьшение цены на заданный
+                  процент.
                 </p>
-                <div class="overflow-x-auto">
-                  <table class="compare-table">
-                    <tr>
-                      <th>Действие</th>
-                      <th>Пример</th>
-                      <th>Результат</th>
-                    </tr>
-                    <tr>
-                      <td>· 10</td>
-                      <td>3,217 · 10</td>
-                      <td class="accent">32,17</td>
-                    </tr>
-                    <tr>
-                      <td>· 100</td>
-                      <td>3,217 · 100</td>
-                      <td class="accent">321,7</td>
-                    </tr>
-                    <tr>
-                      <td>: 10</td>
-                      <td>32,6 : 10</td>
-                      <td class="accent">3,26</td>
-                    </tr>
-                    <tr>
-                      <td>: 100</td>
-                      <td>32,6 : 100</td>
-                      <td class="accent">0,326</td>
-                    </tr>
-                  </table>
+                <div class="big-math">
+                  Цена 800 руб. Скидка 25% = 800 · 0,25 = 200 руб.<br />Новая
+                  цена = 800 − 200 =
+                  <span style="color: var(--accent)">600</span> руб.
                 </div>
-                <p>
-                  Сдвиг на столько знаков, сколько нулей в множителе (делителе).
-                  Не хватает цифр — дописываем нули.
-                </p>
+                <p>Или сразу: 800 · 0,75 = 600.</p>
+                <div class="tip-box">
+                  Скидка 25% ≠ цена 25%. Скидка — это сумма, которую вы
+                  <strong>не</strong> платите.
+                </div>
               </div>
               <!-- Slide 5 -->
               <div class="widget-slide">
-                <h3>✖️ Умножение десятичных дробей</h3>
+                <h3>🔢 Формула множителя</h3>
                 <p>
-                  Считаем как целые числа, затем отделяем запятой столько
-                  знаков, сколько их было в обоих множителях в сумме.
+                  Универсальный способ: переведите процент в десятичную дробь и
+                  примените множитель.
                 </p>
-                <div
-                  class="formula-box"
-                  style="
-                    font-family: monospace;
-                    text-align: left;
-                    display: inline-block;
-                  "
-                >
-                  &nbsp;&nbsp;&nbsp;2,4 → 1 знак после запятой<br />
-                  ×&nbsp;&nbsp;1,3 → 1 знак после запятой<br />
-                  ------<<br />
-                  &nbsp;&nbsp;&nbsp;72<br />
-                  +&nbsp;24<br />
-                  ------<<br />
-                  &nbsp;&nbsp;3,12 → 1+1=2 знака
+                <div class="formula-box">
+                  Увеличение:
+                  <span class="highlight">Новое = Старое · (1 + p/100)</span
+                  ><br /><br />
+                  Уменьшение:
+                  <span class="highlight">Новое = Старое · (1 − p/100)</span>
                 </div>
-                <div class="warning-box">
-                  Если в произведении не хватает цифр для запятой, дописываем
-                  нули впереди: 0,25 · 0,4 = 0,100 = 0,1.
+                <p>
+                  Пример: увеличить на 12% → множитель 1,12. Уменьшить на 45% →
+                  множитель 0,55.
+                </p>
+                <div class="tip-box">
+                  Множитель всегда показывает, какую часть от 100% мы оставляем
+                  или получаем.
                 </div>
               </div>
               <!-- Slide 6 -->
               <div class="widget-slide">
-                <h3>➗ Деление десятичных дробей</h3>
+                <h3>📊 Процентная линейка</h3>
                 <p>
-                  Умножаем делимое и делитель на одно и то же число (10, 100…),
-                  чтобы делитель стал целым.
+                  Визуально увеличение на 20% означает, что 100% превращаются в
+                  120%.
                 </p>
                 <div
-                  class="formula-box"
                   style="
-                    font-family: monospace;
-                    text-align: left;
-                    display: inline-block;
+                    background: var(--bg-glass);
+                    border-radius: 12px;
+                    padding: 20px;
+                    margin: 16px 0;
                   "
                 >
-                  1,82 : 1,4 = 18,2 : 14<br /><br />
-                  &nbsp;&nbsp;18,2 | 14<br />
-                  -&nbsp;&nbsp;14 |----<<br />
-                  &nbsp;&nbsp;&nbsp;42 | 1,3<br />
-                  -&nbsp;&nbsp;&nbsp;42<br />
-                  &nbsp;&nbsp;&nbsp;&nbsp;0
+                  <div
+                    style="
+                      display: flex;
+                      justify-content: space-between;
+                      margin-bottom: 8px;
+                      font-size: 0.9rem;
+                      color: var(--text-secondary);
+                    "
+                  >
+                    <span>0%</span><span>20%</span><span>40%</span
+                    ><span>60%</span><span>80%</span><span>100%</span
+                    ><span style="color: var(--accent)">120%</span>
+                  </div>
+                  <div
+                    style="
+                      height: 24px;
+                      background: linear-gradient(
+                        90deg,
+                        var(--accent) 0%,
+                        var(--accent) 83.3%,
+                        var(--bg-glass) 83.3%
+                      );
+                      border-radius: 4px;
+                    "
+                  ></div>
+                  <div
+                    style="
+                      display: flex;
+                      justify-content: space-between;
+                      margin-top: 8px;
+                      font-size: 0.9rem;
+                      color: var(--text-secondary);
+                    "
+                  >
+                    <span>0</span><span>8</span><span>16</span><span>24</span
+                    ><span>32</span><span>40</span
+                    ><span style="color: var(--accent); font-weight: 700"
+                      >48</span
+                    >
+                  </div>
                 </div>
-                <p>
-                  Запятая в частном ставится сразу, как только заканчивается
-                  целая часть делимого.
-                </p>
-                <div class="tip-box">
-                  Проверка: частное · делитель = делимое.
-                </div>
+                <p>40 увеличили на 20% → получили 48. Каждые 20% = 8 единиц.</p>
               </div>
               <!-- Slide 7 -->
               <div class="widget-slide">
-                <h3>🎯 Округление</h3>
+                <h3>🔄 Двойное изменение цены</h3>
                 <p>
-                  Смотрим на цифру <strong>следующего</strong> разряда. Если она
-                  5 или больше — увеличиваем предыдущую на 1.
+                  Цена сначала выросла на 10%, потом упала на 10%. Вернулась ли
+                  к начальной?
                 </p>
-                <div class="overflow-x-auto">
-                  <table class="compare-table">
-                    <tr>
-                      <th>Число</th>
-                      <th>До сотых</th>
-                      <th>До десятых</th>
-                      <th>До единиц</th>
-                    </tr>
-                    <tr>
-                      <td>1,547</td>
-                      <td class="accent">1,55</td>
-                      <td class="accent">1,5</td>
-                      <td class="accent">2</td>
-                    </tr>
-                    <tr>
-                      <td>3,1415</td>
-                      <td>3,14</td>
-                      <td>3,1</td>
-                      <td>3</td>
-                    </tr>
-                    <tr>
-                      <td>2,718</td>
-                      <td>2,72</td>
-                      <td>2,7</td>
-                      <td>3</td>
-                    </tr>
-                  </table>
+                <div class="big-math">
+                  100 → 100·1,10 = 110<br />110 → 110·0,90 =
+                  <span style="color: var(--accent-warm)">99</span>
                 </div>
+                <p>
+                  Ответ: <strong>нет</strong>. Итоговая цена 99, а не 100.
+                  Проценты считаются от <strong>новой</strong> базы.
+                </p>
                 <div class="warning-box">
-                  Округляем до нужного разряда, а не просто отбрасываем «лишние»
-                  цифры.
+                  Увеличение на 10% и уменьшение на 10% — не взаимно обратные
+                  операции!
                 </div>
               </div>
               <!-- Slide 8 -->
               <div class="widget-slide">
-                <h3>🔄 Преобразования и порядок действий</h3>
-                <p>Обыкновенная ↔ десятичная:</p>
-                <div class="formula-box">
-                  <span class="fraction"
-                    ><span class="top">3</span
-                    ><span class="bottom">4</span></span
-                  >
-                  = 0,75 &nbsp;&nbsp;&nbsp; 0,8 =
-                  <span class="fraction"
-                    ><span class="top">8</span
-                    ><span class="bottom">10</span></span
-                  >
-                  =
-                  <span class="fraction"
-                    ><span class="top">4</span
-                    ><span class="bottom">5</span></span
-                  >
-                </div>
-                <p>Порядок действий:</p>
-                <ol
-                  style="
-                    margin-left: 20px;
-                    line-height: 2;
-                    color: var(--text-secondary);
-                  "
-                >
-                  <li>Скобки (внутри — по порядку).</li>
-                  <li>Умножение и деление слева направо.</li>
-                  <li>Сложение и вычитание слева направо.</li>
-                </ol>
-                <div class="formula-box" style="margin-top: 16px">
-                  1,75 + (5,4 − 3,9) ·
-                  <span class="fraction"
-                    ><span class="top">1</span
-                    ><span class="bottom">6</span></span
-                  >
-                  = 1,75 + 1,5 : 6 = 1,75 + 0,25 =
-                  <span style="color: var(--accent)">2</span>
+                <h3>✅ Проверка себя</h3>
+                <p>Контрольные вопросы перед практикой:</p>
+                <ul style="margin-left: 20px; color: var(--text-secondary)">
+                  <li>
+                    Увеличить на 30% = умножить на
+                    <span class="highlight">1,30</span>
+                  </li>
+                  <li>
+                    Уменьшить на 15% = умножить на
+                    <span class="highlight">0,85</span>
+                  </li>
+                  <li>
+                    НДС 18% = умножить на <span class="highlight">1,18</span>
+                  </li>
+                  <li>
+                    Скидка 40% = умножить на <span class="highlight">0,60</span>
+                  </li>
+                  <li>
+                    Уменьшить на 100% = результат
+                    <span class="highlight">0</span>
+                  </li>
+                </ul>
+                <div class="tip-box">
+                  Если уменьшить на 100%, остаётся 0. Если увеличить на 100%,
+                  получаем удвоение.
                 </div>
               </div>
             </div>
@@ -1209,63 +1074,60 @@
       </div>
     </section>
 
-    <!-- ================= CHAPTER 2: THE ALGORITHM ================= -->
+    <!-- ================= CHAPTER 2: ALGORITHM ================= -->
     <section id="algorithm">
       <div class="card">
         <div class="card-title">
-          <span class="icon" style="background: var(--accent-blue-dim)"
-            >🪜</span
-          >
-          Глава 2. Пошаговые алгоритмы
+          <span class="icon" style="background: var(--accent-blue-dim)">🪜</span
+          >Глава 2. Пошаговые алгоритмы
         </div>
         <p style="color: var(--text-secondary); margin-bottom: 20px">
-          Чёткая последовательность для каждой операции. Следуйте шагам — и не
-          ошибётесь.
+          Пятиступенчатый алгоритм для любой задачи на увеличение или уменьшение
+          в процентах.
         </p>
         <div class="sequence-component">
           <div class="sequence-step">
             <div class="sequence-number">1</div>
             <div class="sequence-connector"></div>
-            <h4>Сложение / Вычитание</h4>
+            <h4>Определи операцию</h4>
             <p>
-              Запятая под запятой → допишите нули справа при необходимости →
-              считайте по разрядам → поставьте запятую.
+              Нужно <strong>увеличить</strong> (наценка, НДС, рост) или
+              <strong>уменьшить</strong> (скидка, уценка, спад)?
             </p>
           </div>
           <div class="sequence-step">
             <div class="sequence-number">2</div>
             <div class="sequence-connector"></div>
-            <h4>Умножение на 10ⁿ</h4>
+            <h4>Найди множитель</h4>
             <p>
-              Сдвиньте запятую вправо на n знаков. Не хватает цифр — допишите
-              нули.
+              Увеличение: 1 + p/100. Уменьшение: 1 − p/100. Например, +12% →
+              1,12; −45% → 0,55.
             </p>
           </div>
           <div class="sequence-step">
             <div class="sequence-number">3</div>
             <div class="sequence-connector"></div>
-            <h4>Умножение десятичных</h4>
+            <h4>Умножь исходное число</h4>
             <p>
-              Считайте как целые → посчитайте общее количество знаков после
-              запятой в обоих множителях → отделите в произведении.
+              Новое значение = Старое · Множитель. Следуй порядку действий:
+              сначала множитель, потом умножение.
             </p>
           </div>
           <div class="sequence-step">
             <div class="sequence-number">4</div>
             <div class="sequence-connector"></div>
-            <h4>Деление десятичных</h4>
+            <h4>Проверь размерность</h4>
             <p>
-              Определите n — знаков после запятой в делителе → умножьте делимое
-              и делитель на 10ⁿ → делите столбиком.
+              Если было 420 манатов и увеличили на 10%, ответ должен быть около
+              462 манатов — не сотни и не тысячи.
             </p>
           </div>
           <div class="sequence-step">
             <div class="sequence-number">5</div>
-            <h4>Округление</h4>
+            <h4>Запиши ответ с единицами</h4>
             <p>
-              Найдите нужный разряд → посмотрите на следующую цифру → ≥5 —
-              увеличьте разряд на 1, &lt;5 — оставьте без изменений → отбросьте
-              остальные.
+              Не забудь указать единицы измерения: манаты, рубли, килограммы,
+              минуты. Проверь: логичен ли результат?
             </p>
           </div>
         </div>
@@ -1276,39 +1138,39 @@
     <section id="examples">
       <div class="card">
         <div class="card-title">
-          <span class="icon" style="background: var(--accent-dim)">📝</span>
-          Глава 3. Разбор задач из учебника
+          <span class="icon" style="background: var(--accent-dim)">📝</span
+          >Глава 3. Разбор задач
         </div>
         <p style="color: var(--text-secondary); margin-bottom: 24px">
-          Шесть типовых задач с пошаговыми решениями. Нажмите «Показать
-          решение», чтобы увидеть разбор.
+          Шесть типовых задач: от простого увеличения до сложных расчётов с НДС
+          и скидками.
         </p>
       </div>
 
       <div class="problem-card">
         <div class="problem-header">
           <span class="problem-number">№ 1</span
-          ><span class="problem-type">Сложение</span>
+          ><span class="problem-type">Увеличение на %</span>
         </div>
-        <div class="problem-text">Вычислите: 1,823 + 2,387</div>
+        <div class="problem-text">Увеличьте число 40 на 20%.</div>
         <button class="solution-btn" onclick="toggleSolution('sol-1')">
           Показать решение
         </button>
         <div class="solution" id="sol-1">
           <div class="solution-step">
-            <span class="step-num">1</span>Запятая под запятой: тысядные +
-            тысядные, сотые + сотые и т.д.
+            <span class="step-num">1</span>Способ 1: 20% от 40 = 40 · 0,20 = 8.
           </div>
           <div class="solution-step">
-            <span class="step-num">2</span>3 + 7 = 10 (пишем 0, 1 в уме); 2 + 8
-            + 1 = 11 (пишем 1, 1 в уме); 8 + 3 + 1 = 12 (пишем 2, 1 в уме); 1 +
-            2 + 1 = 4.
+            <span class="step-num">2</span>40 + 8 = 48.
+          </div>
+          <div class="solution-step">
+            <span class="step-num">3</span>Способ 2 (множитель): 40 · 1,20 = 48.
           </div>
           <div
             class="solution-step"
             style="color: var(--accent); font-weight: 700"
           >
-            <span class="step-num">✓</span>Ответ: 4,210 = 4,21
+            <span class="step-num">✓</span>Ответ: 48
           </div>
         </div>
       </div>
@@ -1316,26 +1178,29 @@
       <div class="problem-card">
         <div class="problem-header">
           <span class="problem-number">№ 2</span
-          ><span class="problem-type">Вычитание</span>
+          ><span class="problem-type">Уменьшение на %</span>
         </div>
-        <div class="problem-text">Вычислите: 3,214 − 1,537</div>
+        <div class="problem-text">Уменьшите число 70 на 15%.</div>
         <button class="solution-btn" onclick="toggleSolution('sol-2')">
           Показать решение
         </button>
         <div class="solution" id="sol-2">
           <div class="solution-step">
-            <span class="step-num">1</span>Запятая под запятой. 4 &lt; 7 —
-            занимаем: 14 − 7 = 7.
+            <span class="step-num">1</span>Способ 1: 15% от 70 = 70 · 0,15 =
+            10,5.
           </div>
           <div class="solution-step">
-            <span class="step-num">2</span>0 &lt; 3 — занимаем: 10 − 3 = 7. 1
-            &lt; 5 — занимаем: 11 − 5 = 6. 2 − 1 = 1.
+            <span class="step-num">2</span>70 − 10,5 = 59,5.
+          </div>
+          <div class="solution-step">
+            <span class="step-num">3</span>Способ 2 (множитель): 70 · 0,85 =
+            59,5.
           </div>
           <div
             class="solution-step"
             style="color: var(--accent); font-weight: 700"
           >
-            <span class="step-num">✓</span>Ответ: 1,677
+            <span class="step-num">✓</span>Ответ: 59,5
           </div>
         </div>
       </div>
@@ -1343,25 +1208,30 @@
       <div class="problem-card">
         <div class="problem-header">
           <span class="problem-number">№ 3</span
-          ><span class="problem-type">Умножение</span>
+          ><span class="problem-type">НДС в чеке</span>
         </div>
-        <div class="problem-text">Вычислите: 2,4 · 1,3</div>
+        <div class="problem-text">
+          Основная сумма покупки 35 манатов. НДС составляет 18%. Найдите сумму с
+          учётом НДС.
+        </div>
         <button class="solution-btn" onclick="toggleSolution('sol-3')">
           Показать решение
         </button>
         <div class="solution" id="sol-3">
           <div class="solution-step">
-            <span class="step-num">1</span>Считаем как целые: 24 · 13 = 312.
+            <span class="step-num">1</span>НДС = 35 · 0,18 = 6,3 маната.
           </div>
           <div class="solution-step">
-            <span class="step-num">2</span>В 2,4 — 1 знак, в 1,3 — 1 знак. Всего
-            2 знака после запятой.
+            <span class="step-num">2</span>Сумма с НДС = 35 + 6,3 = 41,3 маната.
+          </div>
+          <div class="solution-step">
+            <span class="step-num">3</span>Или сразу: 35 · 1,18 = 41,3.
           </div>
           <div
             class="solution-step"
             style="color: var(--accent); font-weight: 700"
           >
-            <span class="step-num">✓</span>Ответ: 3,12
+            <span class="step-num">✓</span>Ответ: 41,3 маната
           </div>
         </div>
       </div>
@@ -1369,25 +1239,29 @@
       <div class="problem-card">
         <div class="problem-header">
           <span class="problem-number">№ 4</span
-          ><span class="problem-type">Деление</span>
+          ><span class="problem-type">Скидка в магазине</span>
         </div>
-        <div class="problem-text">Вычислите: 1,82 : 1,4</div>
+        <div class="problem-text">
+          Цена пальто 150 манат. Скидка 20%. Найдите цену со скидкой.
+        </div>
         <button class="solution-btn" onclick="toggleSolution('sol-4')">
           Показать решение
         </button>
         <div class="solution" id="sol-4">
           <div class="solution-step">
-            <span class="step-num">1</span>Умножаем на 10: 18,2 : 14.
+            <span class="step-num">1</span>Скидка = 150 · 0,20 = 30 манат.
           </div>
           <div class="solution-step">
-            <span class="step-num">2</span>18 : 14 = 1 (остаток 4). 42 : 14 = 3.
-            Запятая после 1.
+            <span class="step-num">2</span>Новая цена = 150 − 30 = 120 манат.
+          </div>
+          <div class="solution-step">
+            <span class="step-num">3</span>Или сразу: 150 · 0,80 = 120.
           </div>
           <div
             class="solution-step"
             style="color: var(--accent); font-weight: 700"
           >
-            <span class="step-num">✓</span>Ответ: 1,3
+            <span class="step-num">✓</span>Ответ: 120 манат
           </div>
         </div>
       </div>
@@ -1395,32 +1269,24 @@
       <div class="problem-card">
         <div class="problem-header">
           <span class="problem-number">№ 5</span
-          ><span class="problem-type">Округление</span>
+          ><span class="problem-type">Увеличение с единицами</span>
         </div>
-        <div class="problem-text">
-          Округлите число 1,547: а) до сотых; б) до десятых; в) до единиц.
-        </div>
+        <div class="problem-text">Увеличьте 420 манатов на 12%.</div>
         <button class="solution-btn" onclick="toggleSolution('sol-5')">
           Показать решение
         </button>
         <div class="solution" id="sol-5">
           <div class="solution-step">
-            <span class="step-num">1</span>До сотых: смотрим на тысячные (7). 7
-            ≥ 5 → 4 → 5. <strong>1,55</strong>.
+            <span class="step-num">1</span>Множитель: 100% + 12% = 112% = 1,12.
           </div>
           <div class="solution-step">
-            <span class="step-num">2</span>До десятых: смотрим на сотые (4). 4
-            &lt; 5 → оставляем 5. <strong>1,5</strong>.
-          </div>
-          <div class="solution-step">
-            <span class="step-num">3</span>До единиц: смотрим на десятые (5). 5
-            ≥ 5 → 1 → 2. <strong>2</strong>.
+            <span class="step-num">2</span>420 · 1,12 = 470,4.
           </div>
           <div
             class="solution-step"
             style="color: var(--accent); font-weight: 700"
           >
-            <span class="step-num">✓</span>Ответы: 1,55; 1,5; 2.
+            <span class="step-num">✓</span>Ответ: 470,4 маната
           </div>
         </div>
       </div>
@@ -1428,36 +1294,24 @@
       <div class="problem-card">
         <div class="problem-header">
           <span class="problem-number">№ 6</span
-          ><span class="problem-type">Порядок действий</span>
+          ><span class="problem-type">Уменьшение с единицами</span>
         </div>
-        <div class="problem-text">
-          Вычислите: 1,75 + (5,4 − 3,9) ·
-          <span class="fraction"
-            ><span class="top">1</span><span class="bottom">6</span></span
-          >
-        </div>
+        <div class="problem-text">Уменьшите 180 кг на 45%.</div>
         <button class="solution-btn" onclick="toggleSolution('sol-6')">
           Показать решение
         </button>
         <div class="solution" id="sol-6">
           <div class="solution-step">
-            <span class="step-num">1</span>Скобки: 5,4 − 3,9 = 1,5.
+            <span class="step-num">1</span>Множитель: 100% − 45% = 55% = 0,55.
           </div>
           <div class="solution-step">
-            <span class="step-num">2</span>Умножение: 1,5 ·
-            <span class="fraction"
-              ><span class="top">1</span><span class="bottom">6</span></span
-            >
-            = 1,5 : 6 = 0,25.
-          </div>
-          <div class="solution-step">
-            <span class="step-num">3</span>Сложение: 1,75 + 0,25 = 2,00.
+            <span class="step-num">2</span>180 · 0,55 = 99.
           </div>
           <div
             class="solution-step"
             style="color: var(--accent); font-weight: 700"
           >
-            <span class="step-num">✓</span>Ответ: 2
+            <span class="step-num">✓</span>Ответ: 99 кг
           </div>
         </div>
       </div>
@@ -1467,12 +1321,12 @@
     <section id="trainer">
       <div class="card">
         <div class="card-title">
-          <span class="icon" style="background: var(--accent-dim)">🏋️</span>
-          Глава 4. Бесконечный тренажёр
+          <span class="icon" style="background: var(--accent-dim)">🏋️</span
+          >Глава 4. Бесконечный тренажёр
         </div>
         <p style="color: var(--text-secondary); margin-bottom: 24px">
-          Генератор случайных задач по всей теме. Нажмите «Новая задача», решите
-          и проверьте. Подсказки помогут вспомнить алгоритм.
+          Генератор случайных задач: увеличение, уменьшение, НДС, скидки.
+          Подсказки и серия верных ответов.
         </p>
         <div class="quiz-container" style="margin-bottom: 20px">
           <div
@@ -1492,7 +1346,7 @@
             <input
               type="text"
               id="trainer-answer"
-              placeholder="Ваш ответ (3,14 или 0,5)"
+              placeholder="Ваш ответ (число)"
               style="
                 flex: 1;
                 padding: 14px 16px;
@@ -1565,14 +1419,12 @@
     <section id="assessment">
       <div class="card">
         <div class="card-title">
-          <span class="icon" style="background: var(--accent-blue-dim)"
-            >🧪</span
-          >
-          Глава 5. Аттестация
+          <span class="icon" style="background: var(--accent-blue-dim)">🧪</span
+          >Глава 5. Аттестация — 30 вопросов
         </div>
         <p style="color: var(--text-secondary); margin-bottom: 24px">
           Два режима: диагностический тест с объяснениями и скоростная викторина
-          на 5 минут.
+          на 10 минут.
         </p>
         <div
           style="
@@ -1585,7 +1437,7 @@
             <div style="font-size: 3rem; margin-bottom: 12px">🔍</div>
             <h3 style="margin-bottom: 8px">Диагностический тест</h3>
             <p style="color: var(--text-secondary); margin-bottom: 20px">
-              10 вопросов с мгновенной обратной связью и педагогическими
+              30 вопросов с мгновенной обратной связью и педагогическими
               объяснениями.
             </p>
             <button class="btn btn-primary" onclick="startDiagnostic()">
@@ -1596,7 +1448,7 @@
             <div style="font-size: 3rem; margin-bottom: 12px">⏱️</div>
             <h3 style="margin-bottom: 8px">Скоростная викторина</h3>
             <p style="color: var(--text-secondary); margin-bottom: 20px">
-              10 вопросов • 5 минут • Итоговый дашборд.
+              30 вопросов • 10 минут • Итоговый дашборд.
             </p>
             <button class="btn btn-primary" onclick="startTimeAttack()">
               Начать викторину
@@ -1605,20 +1457,20 @@
         </div>
       </div>
 
-      <!-- Diagnostic Test UI -->
+      <!-- Diagnostic UI -->
       <div id="diagnostic-ui" style="display: none">
         <div class="card">
           <div class="card-title">
             <span class="icon" style="background: var(--accent-blue-dim)"
               >🔍</span
-            >Диагностический тест
+            >Диагностический тест (30 вопросов)
           </div>
         </div>
         <div class="quiz-container">
           <div class="quiz-progress">
             <span
               >Вопрос <span id="diag-current">1</span> /
-              <span id="diag-total">10</span></span
+              <span id="diag-total">30</span></span
             >
             <div class="progress-bar">
               <div class="progress-fill" id="diag-progress"></div>
@@ -1661,17 +1513,17 @@
 
       <!-- Time Attack UI -->
       <div id="timeattack-ui" style="display: none">
-        <div class="timer" id="ta-timer">05:00</div>
+        <div class="timer" id="ta-timer">10:00</div>
         <div class="card">
           <div class="card-title">
             <span class="icon" style="background: var(--accent-warm-dim)"
               >⏱️</span
-            >Скоростная викторина
+            >Скоростная викторина (30 вопросов)
           </div>
         </div>
         <div class="quiz-container">
           <div class="quiz-progress">
-            <span>Вопрос <span id="ta-current">1</span> / 10</span>
+            <span>Вопрос <span id="ta-current">1</span> / 30</span>
             <div class="progress-bar">
               <div class="progress-fill" id="ta-progress"></div>
             </div>
@@ -1750,11 +1602,11 @@
           current: 0,
           score: 0,
           timer: null,
-          timeLeft: 300,
+          timeLeft: 600,
           startTime: 0,
           answers: [],
         },
-        mode: null, // 'diagnostic' | 'timeattack'
+        mode: null,
       };
 
       // ================= NAVIGATION =================
@@ -1786,7 +1638,9 @@
       const slideTotal = document.getElementById("slide-total");
       slideTotal.textContent = totalSlides;
       function renderSlide() {
-        track.style.transform = "translateX(-" + AppState.slide * 100 + "%)";
+        track.querySelectorAll(".widget-slide").forEach((s, i) => {
+          s.classList.toggle("active", i === AppState.slide);
+        });
         slideNum.textContent = AppState.slide + 1;
       }
       function nextSlide() {
@@ -1820,12 +1674,7 @@
         return n.toString().replace(".", ",");
       }
       function parseNum(s) {
-        s = s.trim().replace(/,/g, ".");
-        if (s.includes("/")) {
-          const parts = s.split("/");
-          if (parts.length === 2)
-            return parseFloat(parts[0]) / parseFloat(parts[1]);
-        }
+        s = s.trim().replace(/,/g, ".").replace(/\s/g, "").replace(/%/g, "");
         return parseFloat(s);
       }
 
@@ -1834,55 +1683,86 @@
         const type = rand(0, 5);
         let text, answer, hint;
         if (type === 0) {
-          const a = parseFloat((rand(1, 50) + rand(0, 9) / 10).toFixed(1));
-          const b = parseFloat((rand(1, 50) + rand(0, 9) / 10).toFixed(1));
-          text = "Вычислите: " + formatNum(a) + " + " + formatNum(b);
-          answer = parseFloat((a + b).toFixed(2));
-          hint = "Сложите столбиком: запятая под запятой.";
+          const base = rand(10, 50) * 10;
+          const p = [10, 20, 25, 30, 40, 50][rand(0, 5)];
+          text = "Увеличьте " + base + " на " + p + "%.";
+          answer = Math.round(base * (1 + p / 100));
+          hint =
+            "Множитель: 1," +
+            (p < 10 ? "0" + p : p) +
+            ". " +
+            base +
+            " · " +
+            (1 + p / 100) +
+            " = ?";
         } else if (type === 1) {
-          const a = parseFloat((rand(10, 80) + rand(0, 9) / 10).toFixed(1));
-          const b = parseFloat((rand(1, 40) + rand(0, 9) / 10).toFixed(1));
-          text = "Вычислите: " + formatNum(a) + " − " + formatNum(b);
-          answer = parseFloat((a - b).toFixed(2));
-          hint = "Вычитайте столбиком: запятая под запятой.";
+          const base = rand(10, 50) * 10;
+          const p = [10, 20, 25, 30, 40, 50][rand(0, 5)];
+          text = "Уменьшите " + base + " на " + p + "%.";
+          answer = Math.round(base * (1 - p / 100));
+          hint =
+            "Множитель: 0," +
+            (100 - p) +
+            ". " +
+            base +
+            " · " +
+            (1 - p / 100) +
+            " = ?";
         } else if (type === 2) {
-          const a = parseFloat((rand(1, 99) + rand(0, 99) / 100).toFixed(2));
-          const pow = rand(1, 3);
-          const mult = Math.pow(10, pow);
-          const isMul = Math.random() > 0.5;
-          if (isMul) {
-            text = "Вычислите: " + formatNum(a) + " · " + mult;
-            answer = parseFloat((a * mult).toFixed(3));
-            hint = "Сдвиньте запятую вправо на " + pow + " знак(а).";
-          } else {
-            text = "Вычислите: " + formatNum(a) + " : " + mult;
-            answer = parseFloat((a / mult).toFixed(4));
-            hint = "Сдвиньте запятую влево на " + pow + " знак(а).";
-          }
+          const base = rand(20, 100) * 5;
+          const p = [10, 18, 20][rand(0, 2)];
+          text =
+            "Сумма покупки " +
+            base +
+            " манат. НДС " +
+            p +
+            "%. Найдите сумму с учётом НДС.";
+          answer = Math.round(base * (1 + p / 100) * 100) / 100;
+          hint = "Множитель 1," + p + ". Сумма = " + base + " · 1," + p + ".";
         } else if (type === 3) {
-          const a = parseFloat((rand(1, 15) + rand(0, 9) / 10).toFixed(1));
-          const b = parseFloat((rand(1, 15) + rand(0, 9) / 10).toFixed(1));
-          text = "Вычислите: " + formatNum(a) + " · " + formatNum(b);
-          answer = parseFloat((a * b).toFixed(2));
-          hint =
-            "Считайте как целые, затем отделите запятой (сумма знаков после запятой).";
+          const price = rand(10, 50) * 100;
+          const disc = [10, 20, 25, 30, 40, 50][rand(0, 5)];
+          const sub = rand(0, 1);
+          if (sub === 0) {
+            text =
+              "Цена " +
+              price +
+              " руб. Скидка " +
+              disc +
+              "%. Найдите новую цену.";
+            answer = Math.round(price * (1 - disc / 100));
+            hint =
+              "Множитель 0," +
+              (100 - disc) +
+              ". Новая цена = " +
+              price +
+              " · 0," +
+              (100 - disc) +
+              ".";
+          } else {
+            text =
+              "Цена " +
+              price +
+              " руб. Скидка " +
+              disc +
+              "%. Найдите сумму скидки.";
+            answer = Math.round(price * (disc / 100));
+            hint = "Скидка = " + price + " · 0," + disc + ".";
+          }
         } else if (type === 4) {
-          const b = parseFloat((rand(2, 12) + rand(0, 9) / 10).toFixed(1));
-          const ans = parseFloat((rand(2, 20) + rand(0, 9) / 10).toFixed(1));
-          const a = parseFloat((b * ans).toFixed(2));
-          text = "Вычислите: " + formatNum(a) + " : " + formatNum(b);
-          answer = ans;
+          const base = rand(2, 20) * 10;
+          const p = rand(1, 99);
+          text = "Увеличьте " + base + " на " + p + "%.";
+          answer = Math.round(base * (1 + p / 100) * 100) / 100;
           hint =
-            "Умножьте делимое и делитель на 10, чтобы делитель стал целым.";
+            "Множитель = 1 + " + p / 100 + ". Умножьте " + base + " на него.";
         } else {
-          const val = parseFloat((rand(100, 9999) / 100).toFixed(2));
-          const targets = ["десятых", "сотых", "единиц"];
-          const t = targets[rand(0, 2)];
-          text = "Округлите " + formatNum(val) + " до " + t;
-          if (t === "десятых") answer = parseFloat(val.toFixed(1));
-          else if (t === "сотых") answer = parseFloat(val.toFixed(2));
-          else answer = Math.round(val);
-          hint = "Смотрите на следующий разряд: ≥5 — округляем вверх.";
+          const base = rand(50, 200);
+          const p = rand(5, 95);
+          text = "Уменьшите " + base + " на " + p + "%.";
+          answer = Math.round(base * (1 - p / 100) * 100) / 100;
+          hint =
+            "Множитель = 1 − " + p / 100 + ". Умножьте " + base + " на него.";
         }
         return { text, answer, hint };
       }
@@ -1905,8 +1785,8 @@
         if (!AppState.trainer.current) return;
         const userStr = document.getElementById("trainer-answer").value.trim();
         if (!userStr) return;
-        const userVal = parseNum(userStr);
         const correctVal = AppState.trainer.current.answer;
+        const userVal = parseNum(userStr);
         const isCorrect = Math.abs(userVal - correctVal) < 0.01;
         AppState.trainer.total++;
         if (isCorrect) {
@@ -1914,13 +1794,13 @@
           AppState.trainer.streak++;
           document.getElementById("trainer-feedback").innerHTML =
             '<div style="color: var(--success); font-weight: 700; font-size: 1.1rem;">✓ Верно! Ответ: ' +
-            formatNum(correctVal) +
+            correctVal +
             "</div>";
         } else {
           AppState.trainer.streak = 0;
           document.getElementById("trainer-feedback").innerHTML =
             '<div style="color: var(--error); font-weight: 700; font-size: 1.1rem;">✗ Неверно. Правильный ответ: ' +
-            formatNum(correctVal) +
+            correctVal +
             "</div>";
         }
         document.getElementById("trainer-correct").textContent =
@@ -1932,67 +1812,187 @@
         document.getElementById("trainer-check-btn").disabled = true;
       }
 
-      // ================= DIAGNOSTIC TEST (10 questions) =================
+      // ================= DIAGNOSTIC TEST (30 questions) =================
       const diagnosticQuestions = [
         {
-          q: "Какая цифра в числе 0,374 стоит в разряде сотых?",
-          options: ["3", "7", "4", "0"],
-          correct: 1,
-          expl: "В 0,374: 3 — десятые, 7 — сотые, 4 — тысячные.",
-        },
-        {
-          q: "3,217 · 10 = ?",
-          options: ["32,17", "321,7", "0,3217", "3217"],
+          q: "Увеличьте 80 на 15%.",
+          options: ["92", "95", "90", "104"],
           correct: 0,
-          expl: "Запятая сдвигается на 1 знак вправо: 32,17.",
+          expl: "80 · 1,15 = 92.",
         },
         {
-          q: "32,6 : 100 = ?",
-          options: ["3,26", "0,326", "326", "0,0326"],
-          correct: 1,
-          expl: "Запятая сдвигается на 2 знака влево: 0,326.",
-        },
-        {
-          q: "2,4 · 1,3 = ?",
-          options: ["3,12", "31,2", "0,312", "3,24"],
-          correct: 0,
-          expl: "24·13=312. Знаков после запятой: 1+1=2 → 3,12.",
-        },
-        {
-          q: "1,82 : 1,4 = ?",
-          options: ["1,3", "13", "0,13", "1,4"],
-          correct: 0,
-          expl: "Умножаем на 10: 18,2:14 = 1,3.",
-        },
-        {
-          q: "Округлите 1,547 до сотых.",
-          options: ["1,55", "1,54", "1,5", "1,6"],
-          correct: 0,
-          expl: "Тысячные = 7 ≥ 5 → округляем вверх: 1,55.",
-        },
-        {
-          q: "3/4 = ? (десятичная дробь)",
-          options: ["0,25", "0,5", "0,75", "0,34"],
+          q: "Увеличьте 240 на 50%.",
+          options: ["280", "300", "360", "290"],
           correct: 2,
-          expl: "3 : 4 = 0,75.",
+          expl: "240 · 1,50 = 360.",
         },
         {
-          q: "0,8 = ? (сокращённая обыкновенная)",
-          options: ["8/10", "4/5", "2/5", "1/5"],
+          q: "Уменьшите 150 на 80%.",
+          options: ["70", "30", "120", "20"],
           correct: 1,
-          expl: "0,8 = 8/10 = 4/5.",
+          expl: "150 · 0,20 = 30.",
         },
         {
-          q: "1,823 + 2,387 = ?",
-          options: ["4,21", "4,210", "3,21", "4,11"],
+          q: "Уменьшите 25 на 25%.",
+          options: ["20", "18,75", "6,25", "12,5"],
+          correct: 1,
+          expl: "25 · 0,75 = 18,75.",
+        },
+        {
+          q: "Увеличьте 72 на 25%.",
+          options: ["90", "97", "88", "85"],
           correct: 0,
-          expl: "Складываем столбиком: 1,823 + 2,387 = 4,210 = 4,21.",
+          expl: "72 · 1,25 = 90.",
         },
         {
-          q: "1,75 + (5,4 − 3,9) · 1/6 = ?",
-          options: ["1,75", "2", "2,25", "1,5"],
+          q: "Увеличьте 40 на 30%.",
+          options: ["52", "70", "56", "50"],
+          correct: 0,
+          expl: "40 · 1,30 = 52.",
+        },
+        {
+          q: "Уменьшите 15 на 100%.",
+          options: ["15", "10", "5", "0"],
+          correct: 3,
+          expl: "15 · 0 = 0.",
+        },
+        {
+          q: "Уменьшите 65 на 20%.",
+          options: ["45", "52", "50", "55"],
           correct: 1,
-          expl: "Скобки: 1,5. Умножение: 1,5:6=0,25. Сложение: 1,75+0,25=2.",
+          expl: "65 · 0,80 = 52.",
+        },
+        {
+          q: "Увеличьте 47 на 100%.",
+          options: ["94", "100", "87", "147"],
+          correct: 0,
+          expl: "47 · 2,00 = 94.",
+        },
+        {
+          q: "Уменьшите 35 на 30%.",
+          options: ["25", "24,5", "28", "20"],
+          correct: 1,
+          expl: "35 · 0,70 = 24,5.",
+        },
+        {
+          q: "Увеличьте 420 манатов на 10%.",
+          options: ["440", "462", "450", "470"],
+          correct: 1,
+          expl: "420 · 1,10 = 462.",
+        },
+        {
+          q: "Уменьшите 144 км на 75%.",
+          options: ["36", "48", "72", "24"],
+          correct: 0,
+          expl: "144 · 0,25 = 36.",
+        },
+        {
+          q: "Уменьшите 80 галлонов на 35%.",
+          options: ["45", "52", "48", "55"],
+          correct: 1,
+          expl: "80 · 0,65 = 52.",
+        },
+        {
+          q: "Уменьшите 360 мл на 40%.",
+          options: ["220", "216", "200", "240"],
+          correct: 1,
+          expl: "360 · 0,60 = 216.",
+        },
+        {
+          q: "Увеличьте 240 м² на 70%.",
+          options: ["400", "380", "408", "420"],
+          correct: 2,
+          expl: "240 · 1,70 = 408.",
+        },
+        {
+          q: "Уменьшите 70 г на 20%.",
+          options: ["56", "50", "60", "54"],
+          correct: 0,
+          expl: "70 · 0,80 = 56.",
+        },
+        {
+          q: "Увеличьте 24 т на 30%.",
+          options: ["31,2", "30", "32", "28"],
+          correct: 0,
+          expl: "24 · 1,30 = 31,2.",
+        },
+        {
+          q: "Увеличьте 12 дюймов на 75%.",
+          options: ["20", "21", "18", "24"],
+          correct: 1,
+          expl: "12 · 1,75 = 21.",
+        },
+        {
+          q: "Увеличьте 650 г на 2%.",
+          options: ["670", "663", "680", "665"],
+          correct: 1,
+          expl: "650 · 1,02 = 663.",
+        },
+        {
+          q: "Уменьшите 960 см² на 25%.",
+          options: ["720", "740", "700", "730"],
+          correct: 0,
+          expl: "960 · 0,75 = 720.",
+        },
+        {
+          q: "Уменьшите 300 манатов на 23%.",
+          options: ["230", "231", "240", "220"],
+          correct: 1,
+          expl: "300 · 0,77 = 231.",
+        },
+        {
+          q: "Увеличьте 175 м на 36%.",
+          options: ["240", "238", "250", "230"],
+          correct: 1,
+          expl: "175 · 1,36 = 238.",
+        },
+        {
+          q: "Увеличьте 640 кг на 15%.",
+          options: ["736", "740", "720", "750"],
+          correct: 0,
+          expl: "640 · 1,15 = 736.",
+        },
+        {
+          q: "Увеличьте 35 см на 20%.",
+          options: ["42", "40", "45", "38"],
+          correct: 0,
+          expl: "35 · 1,20 = 42.",
+        },
+        {
+          q: "Увеличьте 40 минут на 50%.",
+          options: ["60", "50", "55", "70"],
+          correct: 0,
+          expl: "40 · 1,50 = 60.",
+        },
+        {
+          q: "Сумма 200 манат. НДС 18%. Итого?",
+          options: ["218", "236", "230", "216"],
+          correct: 1,
+          expl: "200 · 1,18 = 236.",
+        },
+        {
+          q: "Цена 800 руб. Скидка 25%. Новая цена?",
+          options: ["600", "650", "550", "700"],
+          correct: 0,
+          expl: "800 · 0,75 = 600.",
+        },
+        {
+          q: "Увеличьте 500 на 12%.",
+          options: ["560", "550", "570", "560"],
+          correct: 0,
+          expl: "500 · 1,12 = 560.",
+        },
+        {
+          q: "Уменьшите 1000 на 10%.",
+          options: ["900", "990", "950", "800"],
+          correct: 0,
+          expl: "1000 · 0,90 = 900.",
+        },
+        {
+          q: "Цена 250 руб. Скидка 20%. Сумма скидки?",
+          options: ["50", "40", "60", "20"],
+          correct: 0,
+          expl: "250 · 0,20 = 50.",
         },
       ];
 
@@ -2077,48 +2077,156 @@
         }
       }
 
-      // ================= TIME ATTACK (10 questions, 5 min) =================
+      // ================= TIME ATTACK (30 questions, 10 min) =================
       const timeAttackQuestions = [
         {
-          q: "Какая цифра в разряде тысячных в числе 2,345?",
-          options: ["3", "4", "5", "2"],
+          q: "Увеличьте 80 на 15%.",
+          options: ["92", "95", "90", "104"],
+          correct: 0,
+        },
+        {
+          q: "Увеличьте 240 на 50%.",
+          options: ["280", "300", "360", "290"],
           correct: 2,
         },
         {
-          q: "4,56 · 100 = ?",
-          options: ["456", "45,6", "0,456", "4560"],
+          q: "Уменьшите 150 на 80%.",
+          options: ["70", "30", "120", "20"],
+          correct: 1,
+        },
+        {
+          q: "Уменьшите 25 на 25%.",
+          options: ["20", "18,75", "6,25", "12,5"],
+          correct: 1,
+        },
+        {
+          q: "Увеличьте 72 на 25%.",
+          options: ["90", "97", "88", "85"],
           correct: 0,
         },
         {
-          q: "0,7 : 10 = ?",
-          options: ["0,07", "7", "0,007", "70"],
-          correct: 0,
-        },
-        { q: "1,25 · 0,8 = ?", options: ["1", "0,1", "10", "1,0"], correct: 0 },
-        { q: "0,4 · 2,5 = ?", options: ["1", "10", "0,1", "1,0"], correct: 0 },
-        {
-          q: "4,8 : 0,4 = ?",
-          options: ["12", "1,2", "0,12", "120"],
+          q: "Увеличьте 40 на 30%.",
+          options: ["52", "70", "56", "50"],
           correct: 0,
         },
         {
-          q: "0,63 : 0,9 = ?",
-          options: ["0,7", "7", "0,07", "70"],
+          q: "Уменьшите 15 на 100%.",
+          options: ["15", "10", "5", "0"],
+          correct: 3,
+        },
+        {
+          q: "Уменьшите 65 на 20%.",
+          options: ["45", "52", "50", "55"],
+          correct: 1,
+        },
+        {
+          q: "Увеличьте 47 на 100%.",
+          options: ["94", "100", "87", "147"],
           correct: 0,
         },
         {
-          q: "Округлите 3,1415 до сотых.",
-          options: ["3,14", "3,15", "3,1", "3"],
+          q: "Уменьшите 35 на 30%.",
+          options: ["25", "24,5", "28", "20"],
+          correct: 1,
+        },
+        {
+          q: "Увеличьте 420 на 10%.",
+          options: ["440", "462", "450", "470"],
+          correct: 1,
+        },
+        {
+          q: "Уменьшите 144 на 75%.",
+          options: ["36", "48", "72", "24"],
           correct: 0,
         },
         {
-          q: "1/8 = ? (десятичная дробь)",
-          options: ["0,125", "0,25", "0,5", "0,8"],
+          q: "Уменьшите 80 на 35%.",
+          options: ["45", "52", "48", "55"],
+          correct: 1,
+        },
+        {
+          q: "Уменьшите 360 на 40%.",
+          options: ["220", "216", "200", "240"],
+          correct: 1,
+        },
+        {
+          q: "Увеличьте 240 на 70%.",
+          options: ["400", "380", "408", "420"],
+          correct: 2,
+        },
+        {
+          q: "Уменьшите 70 на 20%.",
+          options: ["56", "50", "60", "54"],
           correct: 0,
         },
         {
-          q: "2,5 + (4,2 − 1,2) · 0,25 = ?",
-          options: ["3,25", "3,75", "2,5", "1,75"],
+          q: "Увеличьте 24 на 30%.",
+          options: ["31,2", "30", "32", "28"],
+          correct: 0,
+        },
+        {
+          q: "Увеличьте 12 на 75%.",
+          options: ["20", "21", "18", "24"],
+          correct: 1,
+        },
+        {
+          q: "Увеличьте 650 на 2%.",
+          options: ["670", "663", "680", "665"],
+          correct: 1,
+        },
+        {
+          q: "Уменьшите 960 на 25%.",
+          options: ["720", "740", "700", "730"],
+          correct: 0,
+        },
+        {
+          q: "Уменьшите 300 на 23%.",
+          options: ["230", "231", "240", "220"],
+          correct: 1,
+        },
+        {
+          q: "Увеличьте 175 на 36%.",
+          options: ["240", "238", "250", "230"],
+          correct: 1,
+        },
+        {
+          q: "Увеличьте 640 на 15%.",
+          options: ["736", "740", "720", "750"],
+          correct: 0,
+        },
+        {
+          q: "Увеличьте 35 на 20%.",
+          options: ["42", "40", "45", "38"],
+          correct: 0,
+        },
+        {
+          q: "Увеличьте 40 на 50%.",
+          options: ["60", "50", "55", "70"],
+          correct: 0,
+        },
+        {
+          q: "Сумма 200. НДС 18%. Итого?",
+          options: ["218", "236", "230", "216"],
+          correct: 1,
+        },
+        {
+          q: "Цена 800. Скидка 25%. Новая цена?",
+          options: ["600", "650", "550", "700"],
+          correct: 0,
+        },
+        {
+          q: "Увеличьте 500 на 12%.",
+          options: ["560", "550", "570", "560"],
+          correct: 0,
+        },
+        {
+          q: "Уменьшите 1000 на 10%.",
+          options: ["900", "990", "950", "800"],
+          correct: 0,
+        },
+        {
+          q: "Цена 250. Скидка 20%. Сумма скидки?",
+          options: ["50", "40", "60", "20"],
           correct: 0,
         },
       ];
@@ -2129,7 +2237,7 @@
           current: 0,
           score: 0,
           timer: null,
-          timeLeft: 300,
+          timeLeft: 600,
           startTime: Date.now(),
           answers: [],
         };
@@ -2213,7 +2321,7 @@
         );
       }
 
-      // ================= RESULTS DASHBOARD =================
+      // ================= RESULTS =================
       function showResults(score, total, timeSpent, mode) {
         document.getElementById("diagnostic-ui").style.display = "none";
         document.getElementById("timeattack-ui").style.display = "none";
@@ -2229,7 +2337,7 @@
         if (percent >= 90)
           message =
             mode === "timeattack"
-              ? "🏆 Превосходно! Вы мастер десятичных дробей!"
+              ? "🏆 Превосходно! Вы мастер!"
               : "Отлично! Вы отлично знаете тему!";
         else if (percent >= 70)
           message =
