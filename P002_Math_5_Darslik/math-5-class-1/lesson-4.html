@@ -6,108 +6,709 @@
     <title>Урок 4 — Округление натуральных чисел</title>
     <style>
       :root {
-        --bg-dark: #0f0f1a; --bg-card: rgba(255,255,255,0.05); --bg-glass: rgba(255,255,255,0.08);
-        --border-glass: rgba(255,255,255,0.15); --text-primary: #e8e8f0; --text-secondary: #a0a0b8;
-        --accent: #00d4aa; --accent-dim: rgba(0,212,170,0.2); --accent-warm: #ff6b6b;
-        --accent-warm-dim: rgba(255,107,107,0.2); --accent-blue: #4dabf7;
-        --accent-blue-dim: rgba(77,171,247,0.2); --success: #51cf66; --error: #ff6b6b; --warning: #fcc419;
+        --bg-dark: #0f0f1a;
+        --bg-card: rgba(255, 255, 255, 0.05);
+        --bg-glass: rgba(255, 255, 255, 0.08);
+        --border-glass: rgba(255, 255, 255, 0.15);
+        --text-primary: #e8e8f0;
+        --text-secondary: #a0a0b8;
+        --accent: #00d4aa;
+        --accent-dim: rgba(0, 212, 170, 0.2);
+        --accent-warm: #ff6b6b;
+        --accent-warm-dim: rgba(255, 107, 107, 0.2);
+        --accent-blue: #4dabf7;
+        --accent-blue-dim: rgba(77, 171, 247, 0.2);
+        --success: #51cf66;
+        --error: #ff6b6b;
+        --warning: #fcc419;
       }
-      * { margin:0; padding:0; box-sizing:border-box; }
-      body { font-family:"Segoe UI",system-ui,sans-serif; background:var(--bg-dark); color:var(--text-primary); min-height:100vh; overflow-x:hidden; line-height:1.6; }
-      .bg-animation { position:fixed; top:0; left:0; width:100%; height:100%; z-index:-1; background:radial-gradient(ellipse at 20% 20%,rgba(0,212,170,.08) 0%,transparent 50%),radial-gradient(ellipse at 80% 80%,rgba(77,171,247,.08) 0%,transparent 50%); }
-      .bg-animation::before { content:""; position:absolute; width:200%; height:200%; top:-50%; left:-50%; background:repeating-linear-gradient(0deg,transparent,transparent 40px,rgba(255,255,255,.02) 40px,rgba(255,255,255,.02) 41px); animation:bgMove 20s linear infinite; }
-      @keyframes bgMove { 0%{transform:translateY(0)} 100%{transform:translateY(40px)} }
-      nav { position:fixed; top:0; left:0; right:0; background:rgba(15,15,26,.85); backdrop-filter:blur(20px); border-bottom:1px solid var(--border-glass); z-index:1000; padding:0 20px; }
-      .nav-container { max-width:1200px; margin:0 auto; display:flex; justify-content:space-between; align-items:center; height:60px; }
-      .logo { font-size:1.3rem; font-weight:700; background:linear-gradient(135deg,var(--accent),var(--accent-blue)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
-      .nav-links { display:flex; gap:8px; list-style:none; }
-      .nav-links a { color:var(--text-secondary); text-decoration:none; padding:8px 16px; border-radius:8px; transition:all .3s; font-size:.9rem; font-weight:500; cursor:pointer; border:none; background:transparent; }
-      .nav-links a:hover,.nav-links a.active { color:var(--text-primary); background:var(--bg-glass); }
-      .nav-links a.active { background:var(--accent-dim); color:var(--accent); }
-      section { display:none; opacity:0; padding:100px 20px 60px; max-width:1000px; margin:0 auto; transition:opacity .3s ease; }
-      section.active { display:block; opacity:1; animation:fadeIn .5s ease; }
-      @keyframes fadeIn { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
-      .card { background:var(--bg-card); backdrop-filter:blur(20px); border:1px solid var(--border-glass); border-radius:20px; padding:32px; margin-bottom:24px; transition:transform .3s,box-shadow .3s; }
-      .card:hover { transform:translateY(-2px); box-shadow:0 20px 40px rgba(0,0,0,.3); }
-      .card-title { font-size:1.5rem; font-weight:700; margin-bottom:16px; display:flex; align-items:center; gap:12px; }
-      .card-title .icon { width:40px; height:40px; border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:1.3rem; }
-      .hero { text-align:center; padding:140px 20px 80px; }
-      .hero h1 { font-size:3rem; font-weight:800; margin-bottom:20px; background:linear-gradient(135deg,var(--accent),var(--accent-blue),var(--accent-warm)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; line-height:1.2; }
-      .hero p { font-size:1.2rem; color:var(--text-secondary); max-width:600px; margin:0 auto 40px; }
-      .btn { display:inline-flex; align-items:center; gap:8px; padding:14px 32px; border-radius:12px; border:none; font-size:1rem; font-weight:600; cursor:pointer; transition:all .3s; text-decoration:none; }
-      .btn-primary { background:linear-gradient(135deg,var(--accent),var(--accent-blue)); color:#000; }
-      .btn-primary:hover { transform:translateY(-2px); box-shadow:0 10px 30px var(--accent-dim); }
-      .btn-secondary { background:var(--bg-glass); color:var(--text-primary); border:1px solid var(--border-glass); }
-      .btn-secondary:hover { background:var(--bg-card); }
-      .btn:disabled { opacity:.5; cursor:not-allowed; transform:none !important; }
-      .generate-widget { background:var(--bg-card); border:1px solid var(--border-glass); border-radius:20px; padding:24px; width:100%; }
-      .widget-viewport { overflow:hidden; position:relative; min-height:520px; height:auto; width:100%; }
-      .widget-track { display:flex; transition:transform .5s cubic-bezier(.4,0,.2,1); width:100%; will-change:transform; }
-      .widget-slide { flex:0 0 100%; width:100%; min-width:100%; padding:20px; box-sizing:border-box; overflow-x:hidden; overflow-y:visible; }
-      .widget-slide h3 { font-size:1.3rem; color:var(--accent); margin-bottom:16px; }
-      .widget-slide p,.widget-slide li { color:var(--text-secondary); line-height:1.8; margin-bottom:12px; }
-      .widget-slide .big-math { font-size:1.6rem; text-align:center; margin:20px 0; background:var(--bg-glass); padding:20px; border-radius:12px; font-weight:600; color:var(--text-primary); }
-      .widget-nav { display:flex; justify-content:space-between; align-items:center; margin-top:16px; }
-      .widget-progress { text-align:center; font-size:.9rem; color:var(--text-secondary); margin-bottom:12px; }
-      .sequence-component { display:flex; flex-direction:column; gap:20px; position:relative; }
-      .sequence-step { background:var(--bg-card); border:1px solid var(--border-glass); border-radius:16px; padding:24px 24px 24px 72px; position:relative; transition:all .3s; }
-      .sequence-step:hover { border-color:var(--accent); transform:translateX(4px); }
-      .sequence-number { position:absolute; left:20px; top:20px; width:40px; height:40px; background:var(--accent); color:#000; border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:800; font-size:1.1rem; }
-      .sequence-step h4 { color:var(--text-primary); margin-bottom:8px; font-size:1.1rem; }
-      .sequence-step p { color:var(--text-secondary); line-height:1.7; }
-      .sequence-connector { position:absolute; left:39px; top:60px; bottom:-30px; width:2px; background:var(--accent-dim); z-index:0; }
-      .sequence-step:last-child .sequence-connector { display:none; }
-      .formula-box { background:var(--bg-glass); border:1px solid var(--border-glass); border-radius:12px; padding:20px; margin:16px 0; text-align:center; font-size:1.2rem; }
-      .tip-box { background:var(--accent-blue-dim); border-left:4px solid var(--accent-blue); padding:16px 20px; border-radius:0 12px 12px 0; margin:16px 0; }
-      .tip-box::before { content:"💡 "; }
-      .warning-box { background:var(--accent-warm-dim); border-left:4px solid var(--accent-warm); padding:16px 20px; border-radius:0 12px 12px 0; margin:16px 0; }
-      .warning-box::before { content:"⚠️ "; }
-      .highlight { background:var(--accent-dim); padding:2px 6px; border-radius:4px; color:var(--accent); font-weight:600; }
-      .problem-card { background:var(--bg-card); border:1px solid var(--border-glass); border-radius:16px; padding:24px; margin-bottom:20px; }
-      .problem-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; }
-      .problem-number { background:var(--accent-dim); color:var(--accent); padding:4px 12px; border-radius:20px; font-size:.85rem; font-weight:600; }
-      .problem-type { color:var(--text-secondary); font-size:.85rem; }
-      .problem-text { font-size:1.1rem; margin-bottom:16px; line-height:1.8; }
-      .solution-btn { background:var(--accent-dim); color:var(--accent); border:1px solid var(--accent); padding:10px 20px; border-radius:8px; cursor:pointer; font-weight:600; transition:all .3s; }
-      .solution-btn:hover { background:var(--accent); color:#000; }
-      .solution { display:none; margin-top:20px; padding:20px; background:rgba(0,212,170,.05); border-left:3px solid var(--accent); border-radius:0 12px 12px 0; }
-      .solution.active { display:block; animation:slideDown .3s ease; }
-      @keyframes slideDown { from{opacity:0;max-height:0} to{opacity:1;max-height:1000px} }
-      .solution-step { margin-bottom:12px; padding:8px 0; border-bottom:1px solid var(--border-glass); }
-      .solution-step:last-child { border-bottom:none; }
-      .step-num { display:inline-block; width:24px; height:24px; background:var(--accent); color:#000; border-radius:50%; text-align:center; line-height:24px; font-size:.8rem; font-weight:700; margin-right:8px; }
-      .quiz-container { background:var(--bg-card); border:1px solid var(--border-glass); border-radius:20px; padding:32px; }
-      .quiz-progress { display:flex; justify-content:space-between; align-items:center; margin-bottom:24px; flex-wrap:wrap; gap:8px; }
-      .progress-bar { flex:1; height:8px; background:var(--bg-glass); border-radius:4px; margin:0 16px; overflow:hidden; min-width:100px; }
-      .progress-fill { height:100%; background:linear-gradient(90deg,var(--accent),var(--accent-blue)); border-radius:4px; transition:width .5s ease; width:0%; }
-      .quiz-question { font-size:1.2rem; margin-bottom:24px; padding:20px; background:var(--bg-glass); border-radius:12px; border-left:4px solid var(--accent); }
-      .quiz-options { display:grid; gap:12px; }
-      .quiz-option { background:var(--bg-glass); border:2px solid var(--border-glass); border-radius:12px; padding:16px 20px; cursor:pointer; transition:all .3s; display:flex; align-items:center; gap:12px; }
-      .quiz-option:hover { border-color:var(--accent); background:var(--accent-dim); }
-      .quiz-option.correct { border-color:var(--success); background:rgba(81,207,102,.15); }
-      .quiz-option.wrong { border-color:var(--error); background:rgba(255,107,107,.15); }
-      .quiz-option.disabled { pointer-events:none; opacity:.7; }
-      .option-letter { width:32px; height:32px; border-radius:8px; background:var(--bg-card); display:flex; align-items:center; justify-content:center; font-weight:700; flex-shrink:0; }
-      .quiz-nav { display:flex; justify-content:space-between; margin-top:24px; }
-      .stat { background:var(--bg-glass); padding:12px 24px; border-radius:12px; text-align:center; min-width:100px; border:1px solid var(--border-glass); }
-      .stat-value { font-size:1.5rem; font-weight:700; color:var(--accent); }
-      .stat-label { font-size:.85rem; color:var(--text-secondary); }
-      .timer { position:fixed; top:80px; right:20px; background:var(--bg-card); backdrop-filter:blur(20px); border:1px solid var(--border-glass); border-radius:16px; padding:16px 24px; font-size:1.3rem; font-weight:700; font-variant-numeric:tabular-nums; z-index:999; box-shadow:0 10px 30px rgba(0,0,0,.3); }
-      .timer.warning { border-color:var(--warning); color:var(--warning); animation:pulse 1s infinite; }
-      .timer.danger { border-color:var(--error); color:var(--error); animation:pulse .5s infinite; }
-      @keyframes pulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.05)} }
-      .results-container { text-align:center; padding:40px; }
-      .score-circle { width:200px; height:200px; border-radius:50%; background:conic-gradient(var(--accent) calc(var(--score)*3.6deg),var(--bg-glass) 0); margin:0 auto 32px; display:flex; align-items:center; justify-content:center; position:relative; }
-      .score-circle::before { content:""; position:absolute; width:170px; height:170px; background:var(--bg-dark); border-radius:50%; }
-      .score-value { position:relative; font-size:3rem; font-weight:800; color:var(--accent); }
-      .score-label { font-size:1.2rem; color:var(--text-secondary); margin-bottom:8px; }
-      .score-message { font-size:1.5rem; font-weight:700; margin-bottom:32px; }
-      .results-breakdown { display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:16px; max-width:600px; margin:0 auto 32px; }
-      .breakdown-item { background:var(--bg-glass); padding:16px; border-radius:12px; }
-      .breakdown-value { font-size:1.5rem; font-weight:700; color:var(--accent); }
-      .breakdown-label { font-size:.85rem; color:var(--text-secondary); }
-      .hidden { display:none !important; }
-      @media(max-width:768px) { .hero h1{font-size:2rem} .nav-links{display:none} .timer{top:70px;right:10px;font-size:1rem;padding:10px 16px} .card{padding:20px} section{padding:80px 16px 40px} .widget-viewport{min-height:500px} }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      body {
+        font-family: "Segoe UI", system-ui, sans-serif;
+        background: var(--bg-dark);
+        color: var(--text-primary);
+        min-height: 100vh;
+        overflow-x: hidden;
+        line-height: 1.6;
+      }
+      .bg-animation {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: -1;
+        background:
+          radial-gradient(
+            ellipse at 20% 20%,
+            rgba(0, 212, 170, 0.08) 0%,
+            transparent 50%
+          ),
+          radial-gradient(
+            ellipse at 80% 80%,
+            rgba(77, 171, 247, 0.08) 0%,
+            transparent 50%
+          );
+      }
+      .bg-animation::before {
+        content: "";
+        position: absolute;
+        width: 200%;
+        height: 200%;
+        top: -50%;
+        left: -50%;
+        background: repeating-linear-gradient(
+          0deg,
+          transparent,
+          transparent 40px,
+          rgba(255, 255, 255, 0.02) 40px,
+          rgba(255, 255, 255, 0.02) 41px
+        );
+        animation: bgMove 20s linear infinite;
+      }
+      @keyframes bgMove {
+        0% {
+          transform: translateY(0);
+        }
+        100% {
+          transform: translateY(40px);
+        }
+      }
+      nav {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        background: rgba(15, 15, 26, 0.85);
+        backdrop-filter: blur(20px);
+        border-bottom: 1px solid var(--border-glass);
+        z-index: 1000;
+        padding: 0 20px;
+      }
+      .nav-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        height: 60px;
+      }
+      .logo {
+        font-size: 1.3rem;
+        font-weight: 700;
+        background: linear-gradient(135deg, var(--accent), var(--accent-blue));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+      .nav-links {
+        display: flex;
+        gap: 8px;
+        list-style: none;
+      }
+      .nav-links a {
+        color: var(--text-secondary);
+        text-decoration: none;
+        padding: 8px 16px;
+        border-radius: 8px;
+        transition: all 0.3s;
+        font-size: 0.9rem;
+        font-weight: 500;
+        cursor: pointer;
+        border: none;
+        background: transparent;
+      }
+      .nav-links a:hover,
+      .nav-links a.active {
+        color: var(--text-primary);
+        background: var(--bg-glass);
+      }
+      .nav-links a.active {
+        background: var(--accent-dim);
+        color: var(--accent);
+      }
+      section {
+        display: none;
+        opacity: 0;
+        padding: 100px 20px 60px;
+        max-width: 1000px;
+        margin: 0 auto;
+        transition: opacity 0.3s ease;
+      }
+      section.active {
+        display: block;
+        opacity: 1;
+        animation: fadeIn 0.5s ease;
+      }
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      .card {
+        background: var(--bg-card);
+        backdrop-filter: blur(20px);
+        border: 1px solid var(--border-glass);
+        border-radius: 20px;
+        padding: 32px;
+        margin-bottom: 24px;
+        transition:
+          transform 0.3s,
+          box-shadow 0.3s;
+      }
+      .card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+      }
+      .card-title {
+        font-size: 1.5rem;
+        font-weight: 700;
+        margin-bottom: 16px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+      .card-title .icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.3rem;
+      }
+      .hero {
+        text-align: center;
+        padding: 140px 20px 80px;
+      }
+      .hero h1 {
+        font-size: 3rem;
+        font-weight: 800;
+        margin-bottom: 20px;
+        background: linear-gradient(
+          135deg,
+          var(--accent),
+          var(--accent-blue),
+          var(--accent-warm)
+        );
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        line-height: 1.2;
+      }
+      .hero p {
+        font-size: 1.2rem;
+        color: var(--text-secondary);
+        max-width: 600px;
+        margin: 0 auto 40px;
+      }
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 14px 32px;
+        border-radius: 12px;
+        border: none;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s;
+        text-decoration: none;
+      }
+      .btn-primary {
+        background: linear-gradient(135deg, var(--accent), var(--accent-blue));
+        color: #000;
+      }
+      .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 30px var(--accent-dim);
+      }
+      .btn-secondary {
+        background: var(--bg-glass);
+        color: var(--text-primary);
+        border: 1px solid var(--border-glass);
+      }
+      .btn-secondary:hover {
+        background: var(--bg-card);
+      }
+      .btn:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+        transform: none !important;
+      }
+      .generate-widget {
+        background: var(--bg-card);
+        border: 1px solid var(--border-glass);
+        border-radius: 20px;
+        padding: 24px;
+        width: 100%;
+      }
+      .widget-viewport {
+        overflow: hidden;
+        position: relative;
+        min-height: 520px;
+        height: auto;
+        width: 100%;
+      }
+      .widget-track {
+        display: flex;
+        transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        width: 100%;
+        will-change: transform;
+      }
+      .widget-slide {
+        flex: 0 0 100%;
+        width: 100%;
+        min-width: 100%;
+        padding: 20px;
+        box-sizing: border-box;
+        overflow-x: hidden;
+        overflow-y: visible;
+      }
+      .widget-slide h3 {
+        font-size: 1.3rem;
+        color: var(--accent);
+        margin-bottom: 16px;
+      }
+      .widget-slide p,
+      .widget-slide li {
+        color: var(--text-secondary);
+        line-height: 1.8;
+        margin-bottom: 12px;
+      }
+      .widget-slide .big-math {
+        font-size: 1.6rem;
+        text-align: center;
+        margin: 20px 0;
+        background: var(--bg-glass);
+        padding: 20px;
+        border-radius: 12px;
+        font-weight: 600;
+        color: var(--text-primary);
+      }
+      .widget-nav {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 16px;
+      }
+      .widget-progress {
+        text-align: center;
+        font-size: 0.9rem;
+        color: var(--text-secondary);
+        margin-bottom: 12px;
+      }
+      .sequence-component {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        position: relative;
+      }
+      .sequence-step {
+        background: var(--bg-card);
+        border: 1px solid var(--border-glass);
+        border-radius: 16px;
+        padding: 24px 24px 24px 72px;
+        position: relative;
+        transition: all 0.3s;
+      }
+      .sequence-step:hover {
+        border-color: var(--accent);
+        transform: translateX(4px);
+      }
+      .sequence-number {
+        position: absolute;
+        left: 20px;
+        top: 20px;
+        width: 40px;
+        height: 40px;
+        background: var(--accent);
+        color: #000;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 800;
+        font-size: 1.1rem;
+      }
+      .sequence-step h4 {
+        color: var(--text-primary);
+        margin-bottom: 8px;
+        font-size: 1.1rem;
+      }
+      .sequence-step p {
+        color: var(--text-secondary);
+        line-height: 1.7;
+      }
+      .sequence-connector {
+        position: absolute;
+        left: 39px;
+        top: 60px;
+        bottom: -30px;
+        width: 2px;
+        background: var(--accent-dim);
+        z-index: 0;
+      }
+      .sequence-step:last-child .sequence-connector {
+        display: none;
+      }
+      .formula-box {
+        background: var(--bg-glass);
+        border: 1px solid var(--border-glass);
+        border-radius: 12px;
+        padding: 20px;
+        margin: 16px 0;
+        text-align: center;
+        font-size: 1.2rem;
+      }
+      .tip-box {
+        background: var(--accent-blue-dim);
+        border-left: 4px solid var(--accent-blue);
+        padding: 16px 20px;
+        border-radius: 0 12px 12px 0;
+        margin: 16px 0;
+      }
+      .tip-box::before {
+        content: "💡 ";
+      }
+      .warning-box {
+        background: var(--accent-warm-dim);
+        border-left: 4px solid var(--accent-warm);
+        padding: 16px 20px;
+        border-radius: 0 12px 12px 0;
+        margin: 16px 0;
+      }
+      .warning-box::before {
+        content: "⚠️ ";
+      }
+      .highlight {
+        background: var(--accent-dim);
+        padding: 2px 6px;
+        border-radius: 4px;
+        color: var(--accent);
+        font-weight: 600;
+      }
+      .problem-card {
+        background: var(--bg-card);
+        border: 1px solid var(--border-glass);
+        border-radius: 16px;
+        padding: 24px;
+        margin-bottom: 20px;
+      }
+      .problem-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 16px;
+      }
+      .problem-number {
+        background: var(--accent-dim);
+        color: var(--accent);
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        font-weight: 600;
+      }
+      .problem-type {
+        color: var(--text-secondary);
+        font-size: 0.85rem;
+      }
+      .problem-text {
+        font-size: 1.1rem;
+        margin-bottom: 16px;
+        line-height: 1.8;
+      }
+      .solution-btn {
+        background: var(--accent-dim);
+        color: var(--accent);
+        border: 1px solid var(--accent);
+        padding: 10px 20px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: 600;
+        transition: all 0.3s;
+      }
+      .solution-btn:hover {
+        background: var(--accent);
+        color: #000;
+      }
+      .solution {
+        display: none;
+        margin-top: 20px;
+        padding: 20px;
+        background: rgba(0, 212, 170, 0.05);
+        border-left: 3px solid var(--accent);
+        border-radius: 0 12px 12px 0;
+      }
+      .solution.active {
+        display: block;
+        animation: slideDown 0.3s ease;
+      }
+      @keyframes slideDown {
+        from {
+          opacity: 0;
+          max-height: 0;
+        }
+        to {
+          opacity: 1;
+          max-height: 1000px;
+        }
+      }
+      .solution-step {
+        margin-bottom: 12px;
+        padding: 8px 0;
+        border-bottom: 1px solid var(--border-glass);
+      }
+      .solution-step:last-child {
+        border-bottom: none;
+      }
+      .step-num {
+        display: inline-block;
+        width: 24px;
+        height: 24px;
+        background: var(--accent);
+        color: #000;
+        border-radius: 50%;
+        text-align: center;
+        line-height: 24px;
+        font-size: 0.8rem;
+        font-weight: 700;
+        margin-right: 8px;
+      }
+      .quiz-container {
+        background: var(--bg-card);
+        border: 1px solid var(--border-glass);
+        border-radius: 20px;
+        padding: 32px;
+      }
+      .quiz-progress {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 24px;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+      .progress-bar {
+        flex: 1;
+        height: 8px;
+        background: var(--bg-glass);
+        border-radius: 4px;
+        margin: 0 16px;
+        overflow: hidden;
+        min-width: 100px;
+      }
+      .progress-fill {
+        height: 100%;
+        background: linear-gradient(90deg, var(--accent), var(--accent-blue));
+        border-radius: 4px;
+        transition: width 0.5s ease;
+        width: 0%;
+      }
+      .quiz-question {
+        font-size: 1.2rem;
+        margin-bottom: 24px;
+        padding: 20px;
+        background: var(--bg-glass);
+        border-radius: 12px;
+        border-left: 4px solid var(--accent);
+      }
+      .quiz-options {
+        display: grid;
+        gap: 12px;
+      }
+      .quiz-option {
+        background: var(--bg-glass);
+        border: 2px solid var(--border-glass);
+        border-radius: 12px;
+        padding: 16px 20px;
+        cursor: pointer;
+        transition: all 0.3s;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+      .quiz-option:hover {
+        border-color: var(--accent);
+        background: var(--accent-dim);
+      }
+      .quiz-option.correct {
+        border-color: var(--success);
+        background: rgba(81, 207, 102, 0.15);
+      }
+      .quiz-option.wrong {
+        border-color: var(--error);
+        background: rgba(255, 107, 107, 0.15);
+      }
+      .quiz-option.disabled {
+        pointer-events: none;
+        opacity: 0.7;
+      }
+      .option-letter {
+        width: 32px;
+        height: 32px;
+        border-radius: 8px;
+        background: var(--bg-card);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        flex-shrink: 0;
+      }
+      .quiz-nav {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 24px;
+      }
+      .stat {
+        background: var(--bg-glass);
+        padding: 12px 24px;
+        border-radius: 12px;
+        text-align: center;
+        min-width: 100px;
+        border: 1px solid var(--border-glass);
+      }
+      .stat-value {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--accent);
+      }
+      .stat-label {
+        font-size: 0.85rem;
+        color: var(--text-secondary);
+      }
+      .timer {
+        position: fixed;
+        top: 80px;
+        right: 20px;
+        background: var(--bg-card);
+        backdrop-filter: blur(20px);
+        border: 1px solid var(--border-glass);
+        border-radius: 16px;
+        padding: 16px 24px;
+        font-size: 1.3rem;
+        font-weight: 700;
+        font-variant-numeric: tabular-nums;
+        z-index: 999;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+      }
+      .timer.warning {
+        border-color: var(--warning);
+        color: var(--warning);
+        animation: pulse 1s infinite;
+      }
+      .timer.danger {
+        border-color: var(--error);
+        color: var(--error);
+        animation: pulse 0.5s infinite;
+      }
+      @keyframes pulse {
+        0%,
+        100% {
+          transform: scale(1);
+        }
+        50% {
+          transform: scale(1.05);
+        }
+      }
+      .results-container {
+        text-align: center;
+        padding: 40px;
+      }
+      .score-circle {
+        width: 200px;
+        height: 200px;
+        border-radius: 50%;
+        background: conic-gradient(
+          var(--accent) calc(var(--score) * 3.6deg),
+          var(--bg-glass) 0
+        );
+        margin: 0 auto 32px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+      }
+      .score-circle::before {
+        content: "";
+        position: absolute;
+        width: 170px;
+        height: 170px;
+        background: var(--bg-dark);
+        border-radius: 50%;
+      }
+      .score-value {
+        position: relative;
+        font-size: 3rem;
+        font-weight: 800;
+        color: var(--accent);
+      }
+      .score-label {
+        font-size: 1.2rem;
+        color: var(--text-secondary);
+        margin-bottom: 8px;
+      }
+      .score-message {
+        font-size: 1.5rem;
+        font-weight: 700;
+        margin-bottom: 32px;
+      }
+      .results-breakdown {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 16px;
+        max-width: 600px;
+        margin: 0 auto 32px;
+      }
+      .breakdown-item {
+        background: var(--bg-glass);
+        padding: 16px;
+        border-radius: 12px;
+      }
+      .breakdown-value {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--accent);
+      }
+      .breakdown-label {
+        font-size: 0.85rem;
+        color: var(--text-secondary);
+      }
+      .hidden {
+        display: none !important;
+      }
+      @media (max-width: 768px) {
+        .hero h1 {
+          font-size: 2rem;
+        }
+        .nav-links {
+          display: none;
+        }
+        .timer {
+          top: 70px;
+          right: 10px;
+          font-size: 1rem;
+          padding: 10px 16px;
+        }
+        .card {
+          padding: 20px;
+        }
+        section {
+          padding: 80px 16px 40px;
+        }
+        .widget-viewport {
+          min-height: 500px;
+        }
+      }
     </style>
   </head>
   <body>
@@ -126,65 +727,222 @@
       </div>
     </nav>
 
-<section id="home" class="active">
+    <section id="home" class="active">
       <div class="hero">
         <h1>Округление натуральных чисел</h1>
-        <p>Урок 4. Округление до десятков, сотен, тысяч и больше. Правила и применение в жизни.</p>
-        <div style="display: flex; gap: 16px; justify-content: center; flex-wrap: wrap;">
-          <button class="btn btn-primary" onclick="showSection('theory')">Начать обучение</button>
-          <button class="btn btn-secondary" onclick="showSection('theory')">Проверить знания</button>
+        <p>
+          Урок 4. Округление до десятков, сотен, тысяч и больше. Правила и
+          применение в жизни.
+        </p>
+        <div
+          style="
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            flex-wrap: wrap;
+          "
+        >
+          <button class="btn btn-primary" onclick="showSection('theory')">
+            Начать обучение
+          </button>
+          <button class="btn btn-secondary" onclick="showSection('theory')">
+            Проверить знания
+          </button>
         </div>
       </div>
       <div class="card">
-        <div class="card-title"><span class="icon" style="background: var(--accent-dim)">🎯</span>Что вы изучите</div>
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 20px;">
-          <div class="card" style="padding: 20px;"><h3 style="color: var(--accent); margin-bottom: 8px;">Зачем округляют</h3><p style="color: var(--text-secondary);">Для удобства вычислений, оценок и в повседневной жизни.</p></div>
-          <div class="card" style="padding: 20px;"><h3 style="color: var(--accent-blue); margin-bottom: 8px;">Правило округления</h3><p style="color: var(--text-secondary);">Смотрим на следующую цифру: ≥5 → увеличиваем, &lt;5 → оставляем.</p></div>
-          <div class="card" style="padding: 20px;"><h3 style="color: var(--accent-warm); margin-bottom: 8px;">До десятков и сотен</h3><p style="color: var(--text-secondary);">Округление до ближайшего десятка, сотни, тысячи.</p></div>
-          <div class="card" style="padding: 20px;"><h3 style="color: var(--warning); margin-bottom: 8px;">Применение</h3><p style="color: var(--text-secondary);">Прикидка результата, оценка расстояний, стоимости и других величин.</p></div>
+        <div class="card-title">
+          <span class="icon" style="background: var(--accent-dim)">🎯</span>Что
+          вы изучите
+        </div>
+        <div
+          style="
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 20px;
+          "
+        >
+          <div class="card" style="padding: 20px">
+            <h3 style="color: var(--accent); margin-bottom: 8px">
+              Зачем округляют
+            </h3>
+            <p style="color: var(--text-secondary)">
+              Для удобства вычислений, оценок и в повседневной жизни.
+            </p>
+          </div>
+          <div class="card" style="padding: 20px">
+            <h3 style="color: var(--accent-blue); margin-bottom: 8px">
+              Правило округления
+            </h3>
+            <p style="color: var(--text-secondary)">
+              Смотрим на следующую цифру: ≥5 → увеличиваем, &lt;5 → оставляем.
+            </p>
+          </div>
+          <div class="card" style="padding: 20px">
+            <h3 style="color: var(--accent-warm); margin-bottom: 8px">
+              До десятков и сотен
+            </h3>
+            <p style="color: var(--text-secondary)">
+              Округление до ближайшего десятка, сотни, тысячи.
+            </p>
+          </div>
+          <div class="card" style="padding: 20px">
+            <h3 style="color: var(--warning); margin-bottom: 8px">
+              Применение
+            </h3>
+            <p style="color: var(--text-secondary)">
+              Прикидка результата, оценка расстояний, стоимости и других
+              величин.
+            </p>
+          </div>
         </div>
       </div>
     </section>
 
     <!-- THEORY -->
 
-<section id="theory">
+    <section id="theory">
       <div class="card">
-        <div class="card-title"><span class="icon" style="background: var(--accent-dim)">📖</span>Глава 1. Визуальная теория</div>
-        <p style="color: var(--text-secondary); margin-bottom: 20px;">6 слайдов — от смысла округления до практического применения.</p>
+        <div class="card-title">
+          <span class="icon" style="background: var(--accent-dim)">📖</span
+          >Глава 1. Визуальная теория
+        </div>
+        <p style="color: var(--text-secondary); margin-bottom: 20px">
+          6 слайдов — от смысла округления до практического применения.
+        </p>
         <div class="generate-widget">
-          <div class="widget-progress">Слайд <span id="slide-num">1</span> из <span id="slide-total">6</span></div>
+          <div class="widget-progress">
+            Слайд <span id="slide-num">1</span> из
+            <span id="slide-total">6</span>
+          </div>
           <div class="widget-viewport">
             <div class="widget-track" id="widget-track">
               <!-- Slide 1 -->
               <div class="widget-slide active">
                 <h3>🤔 Зачем округляют числа?</h3>
-                <p><strong>Округление</strong> — замена точного числа на приближённое, которое проще использовать.</p>
-                <div style="display: grid; gap: 12px; margin: 16px 0;">
-                  <div style="background: var(--bg-glass); border-radius: 12px; padding: 14px;"><span style="color: var(--accent-warm);">В магазине:</span> товар стоит 1 997 руб. Округляем до <span class="highlight">2 000 руб.</span></div>
-                  <div style="background: var(--bg-glass); border-radius: 12px; padding: 14px;"><span style="color: var(--accent-warm);">Расстояние:</span> 3 478 км → «примерно <span class="highlight">3 500 км</span>»</div>
-                  <div style="background: var(--bg-glass); border-radius: 12px; padding: 14px;"><span style="color: var(--accent-warm);">Население:</span> 12 345 678 → «около <span class="highlight">12 миллионов</span>»</div>
+                <p>
+                  <strong>Округление</strong> — замена точного числа на
+                  приближённое, которое проще использовать.
+                </p>
+                <div style="display: grid; gap: 12px; margin: 16px 0">
+                  <div
+                    style="
+                      background: var(--bg-glass);
+                      border-radius: 12px;
+                      padding: 14px;
+                    "
+                  >
+                    <span style="color: var(--accent-warm)">В магазине:</span>
+                    товар стоит 1 997 руб. Округляем до
+                    <span class="highlight">2 000 руб.</span>
+                  </div>
+                  <div
+                    style="
+                      background: var(--bg-glass);
+                      border-radius: 12px;
+                      padding: 14px;
+                    "
+                  >
+                    <span style="color: var(--accent-warm)">Расстояние:</span> 3
+                    478 км → «примерно <span class="highlight">3 500 км</span>»
+                  </div>
+                  <div
+                    style="
+                      background: var(--bg-glass);
+                      border-radius: 12px;
+                      padding: 14px;
+                    "
+                  >
+                    <span style="color: var(--accent-warm)">Население:</span> 12
+                    345 678 → «около
+                    <span class="highlight">12 миллионов</span>»
+                  </div>
                 </div>
-                <div class="tip-box">Округление делает числа проще для запоминания и устного счёта, хотя и теряет точность.</div>
+                <div class="tip-box">
+                  Округление делает числа проще для запоминания и устного счёта,
+                  хотя и теряет точность.
+                </div>
               </div>
               <!-- Slide 2 -->
               <div class="widget-slide">
                 <h3>🔟 Правило округления до десятков</h3>
-                <p>Округлять до десятков значит получить число, оканчивающееся на <strong>0</strong>.</p>
-                <p>Правило: смотрим на цифру <strong>единиц</strong> (последнюю цифру):</p>
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 16px 0;">
-                  <div style="background: rgba(81,207,102,0.1); border: 1px solid var(--success); border-radius: 12px; padding: 16px; text-align: center;">
-                    <div style="font-size: 1.5rem; color: var(--success); font-weight: 700;">0, 1, 2, 3, 4</div>
-                    <div style="margin-top: 8px;">→ Округляем <strong>вниз</strong><br>(единицы заменяем нулями)</div>
-                    <div style="margin-top: 8px; color: var(--text-secondary);">47 → 40</div>
+                <p>
+                  Округлять до десятков значит получить число, оканчивающееся на
+                  <strong>0</strong>.
+                </p>
+                <p>
+                  Правило: смотрим на цифру <strong>единиц</strong> (последнюю
+                  цифру):
+                </p>
+                <div
+                  style="
+                    display: grid;
+                    grid-template-columns: 1fr 1fr;
+                    gap: 16px;
+                    margin: 16px 0;
+                  "
+                >
+                  <div
+                    style="
+                      background: rgba(81, 207, 102, 0.1);
+                      border: 1px solid var(--success);
+                      border-radius: 12px;
+                      padding: 16px;
+                      text-align: center;
+                    "
+                  >
+                    <div
+                      style="
+                        font-size: 1.5rem;
+                        color: var(--success);
+                        font-weight: 700;
+                      "
+                    >
+                      0, 1, 2, 3, 4
+                    </div>
+                    <div style="margin-top: 8px">
+                      → Округляем <strong>вниз</strong><br />(единицы заменяем
+                      нулями)
+                    </div>
+                    <div style="margin-top: 8px; color: var(--text-secondary)">
+                      47 → 40
+                    </div>
                   </div>
-                  <div style="background: rgba(255,107,107,0.1); border: 1px solid var(--error); border-radius: 12px; padding: 16px; text-align: center;">
-                    <div style="font-size: 1.5rem; color: var(--error); font-weight: 700;">5, 6, 7, 8, 9</div>
-                    <div style="margin-top: 8px;">→ Округляем <strong>вверх</strong><br>(единицы в ноль, десятки +1)</div>
-                    <div style="margin-top: 8px; color: var(--text-secondary);">73 → 80</div>
+                  <div
+                    style="
+                      background: rgba(255, 107, 107, 0.1);
+                      border: 1px solid var(--error);
+                      border-radius: 12px;
+                      padding: 16px;
+                      text-align: center;
+                    "
+                  >
+                    <div
+                      style="
+                        font-size: 1.5rem;
+                        color: var(--error);
+                        font-weight: 700;
+                      "
+                    >
+                      5, 6, 7, 8, 9
+                    </div>
+                    <div style="margin-top: 8px">
+                      → Округляем <strong>вверх</strong><br />(единицы в ноль,
+                      десятки +1)
+                    </div>
+                    <div style="margin-top: 8px; color: var(--text-secondary)">
+                      73 → 80
+                    </div>
                   </div>
                 </div>
-                <div class="formula-box">47 → <span style="color: var(--success);">40</span> (цифра ед. = 7 ≥ 5, нет... 7, но 4 — цифра единиц 47 = 7, раунд вверх = 50)<br><span style="font-size: 0.85rem; color: var(--text-secondary);">Правильно: 47 → цифра единиц 7 ≥ 5 → 50</span></div>
+                <div class="formula-box">
+                  47 → <span style="color: var(--success)">40</span> (цифра ед.
+                  = 7 ≥ 5, нет... 7, но 4 — цифра единиц 47 = 7, раунд вверх =
+                  50)<br /><span
+                    style="font-size: 0.85rem; color: var(--text-secondary)"
+                    >Правильно: 47 → цифра единиц 7 ≥ 5 → 50</span
+                  >
+                </div>
               </div>
               <!-- Slide 3 -->
               <div class="widget-slide">
@@ -192,15 +950,48 @@
                 <p>Смотрим на цифру <strong>десятков</strong>:</p>
                 <div class="overflow-x-auto">
                   <table class="compare-table">
-                    <tr><th>Число</th><th>Цифра десятков</th><th>Правило</th><th>Результат</th></tr>
-                    <tr><td>348</td><td>4 (меньше 5)</td><td>Округляем вниз</td><td class="accent">300</td></tr>
-                    <tr><td>752</td><td>5 (≥ 5)</td><td>Округляем вверх</td><td class="accent">800</td></tr>
-                    <tr><td>1 250</td><td>5 (≥ 5)</td><td>Округляем вверх</td><td class="accent">1 300</td></tr>
-                    <tr><td>4 631</td><td>3 (меньше 5)</td><td>Округляем вниз</td><td class="accent">4 600</td></tr>
-                    <tr><td>7 890</td><td>9 (≥ 5)</td><td>Округляем вверх</td><td class="accent">7 900</td></tr>
+                    <tr>
+                      <th>Число</th>
+                      <th>Цифра десятков</th>
+                      <th>Правило</th>
+                      <th>Результат</th>
+                    </tr>
+                    <tr>
+                      <td>348</td>
+                      <td>4 (меньше 5)</td>
+                      <td>Округляем вниз</td>
+                      <td class="accent">300</td>
+                    </tr>
+                    <tr>
+                      <td>752</td>
+                      <td>5 (≥ 5)</td>
+                      <td>Округляем вверх</td>
+                      <td class="accent">800</td>
+                    </tr>
+                    <tr>
+                      <td>1 250</td>
+                      <td>5 (≥ 5)</td>
+                      <td>Округляем вверх</td>
+                      <td class="accent">1 300</td>
+                    </tr>
+                    <tr>
+                      <td>4 631</td>
+                      <td>3 (меньше 5)</td>
+                      <td>Округляем вниз</td>
+                      <td class="accent">4 600</td>
+                    </tr>
+                    <tr>
+                      <td>7 890</td>
+                      <td>9 (≥ 5)</td>
+                      <td>Округляем вверх</td>
+                      <td class="accent">7 900</td>
+                    </tr>
                   </table>
                 </div>
-                <div class="tip-box">При округлении до сотен: цифры единиц и десятков становятся нулями. Цифра сотен увеличивается на 1, если десятки ≥ 5.</div>
+                <div class="tip-box">
+                  При округлении до сотен: цифры единиц и десятков становятся
+                  нулями. Цифра сотен увеличивается на 1, если десятки ≥ 5.
+                </div>
               </div>
               <!-- Slide 4 -->
               <div class="widget-slide">
@@ -208,77 +999,178 @@
                 <p>Смотрим на цифру <strong>сотен</strong>:</p>
                 <div class="overflow-x-auto">
                   <table class="compare-table">
-                    <tr><th>Число</th><th>Цифра сотен</th><th>Правило</th><th>Результат</th></tr>
-                    <tr><td>3 478</td><td>4 (меньше 5)</td><td>Округляем вниз</td><td class="accent">3 000</td></tr>
-                    <tr><td>7 612</td><td>6 (≥ 5)</td><td>Округляем вверх</td><td class="accent">8 000</td></tr>
-                    <tr><td>25 500</td><td>5 (≥ 5)</td><td>Округляем вверх</td><td class="accent">26 000</td></tr>
-                    <tr><td>142 300</td><td>3 (меньше 5)</td><td>Округляем вниз</td><td class="accent">142 000</td></tr>
+                    <tr>
+                      <th>Число</th>
+                      <th>Цифра сотен</th>
+                      <th>Правило</th>
+                      <th>Результат</th>
+                    </tr>
+                    <tr>
+                      <td>3 478</td>
+                      <td>4 (меньше 5)</td>
+                      <td>Округляем вниз</td>
+                      <td class="accent">3 000</td>
+                    </tr>
+                    <tr>
+                      <td>7 612</td>
+                      <td>6 (≥ 5)</td>
+                      <td>Округляем вверх</td>
+                      <td class="accent">8 000</td>
+                    </tr>
+                    <tr>
+                      <td>25 500</td>
+                      <td>5 (≥ 5)</td>
+                      <td>Округляем вверх</td>
+                      <td class="accent">26 000</td>
+                    </tr>
+                    <tr>
+                      <td>142 300</td>
+                      <td>3 (меньше 5)</td>
+                      <td>Округляем вниз</td>
+                      <td class="accent">142 000</td>
+                    </tr>
                   </table>
                 </div>
-                <div class="warning-box">При округлении до тысяч три последних цифры (сотни, десятки, единицы) заменяются нулями!</div>
+                <div class="warning-box">
+                  При округлении до тысяч три последних цифры (сотни, десятки,
+                  единицы) заменяются нулями!
+                </div>
               </div>
               <!-- Slide 5 -->
               <div class="widget-slide">
                 <h3>📊 Сравнение всех уровней округления</h3>
-                <p>Одно и то же число 34 567 можно округлить до разных разрядов:</p>
+                <p>
+                  Одно и то же число 34 567 можно округлить до разных разрядов:
+                </p>
                 <div class="overflow-x-auto">
                   <table class="compare-table">
-                    <tr><th>До чего округляем</th><th>Смотрим на</th><th>Результат</th></tr>
-                    <tr><td>Десятков</td><td>Единицы: 7 ≥ 5</td><td class="accent">34 570</td></tr>
-                    <tr><td>Сотен</td><td>Десятки: 6 ≥ 5</td><td class="accent">34 600</td></tr>
-                    <tr><td>Тысяч</td><td>Сотни: 5 ≥ 5</td><td class="accent">35 000</td></tr>
-                    <tr><td>Десятков тысяч</td><td>Тысячи: 4 &lt; 5</td><td class="accent">30 000</td></tr>
+                    <tr>
+                      <th>До чего округляем</th>
+                      <th>Смотрим на</th>
+                      <th>Результат</th>
+                    </tr>
+                    <tr>
+                      <td>Десятков</td>
+                      <td>Единицы: 7 ≥ 5</td>
+                      <td class="accent">34 570</td>
+                    </tr>
+                    <tr>
+                      <td>Сотен</td>
+                      <td>Десятки: 6 ≥ 5</td>
+                      <td class="accent">34 600</td>
+                    </tr>
+                    <tr>
+                      <td>Тысяч</td>
+                      <td>Сотни: 5 ≥ 5</td>
+                      <td class="accent">35 000</td>
+                    </tr>
+                    <tr>
+                      <td>Десятков тысяч</td>
+                      <td>Тысячи: 4 &lt; 5</td>
+                      <td class="accent">30 000</td>
+                    </tr>
                   </table>
                 </div>
-                <div class="tip-box">Чем к большему разряду округляешь, тем больше нулей в конце и тем меньше точность.</div>
+                <div class="tip-box">
+                  Чем к большему разряду округляешь, тем больше нулей в конце и
+                  тем меньше точность.
+                </div>
               </div>
               <!-- Slide 6 -->
               <div class="widget-slide">
                 <h3>🌍 Применение в жизни</h3>
                 <p>Округление используется повсеместно:</p>
-                <div style="display: grid; gap: 12px; margin: 16px 0;">
-                  <div style="background: var(--bg-glass); border-radius: 12px; padding: 14px;">
-                    <strong style="color: var(--accent);">🛒 Покупки:</strong> «стоит около 500 рублей» вместо 487 руб.
+                <div style="display: grid; gap: 12px; margin: 16px 0">
+                  <div
+                    style="
+                      background: var(--bg-glass);
+                      border-radius: 12px;
+                      padding: 14px;
+                    "
+                  >
+                    <strong style="color: var(--accent)">🛒 Покупки:</strong>
+                    «стоит около 500 рублей» вместо 487 руб.
                   </div>
-                  <div style="background: var(--bg-glass); border-radius: 12px; padding: 14px;">
-                    <strong style="color: var(--accent-blue);">🗺️ Расстояния:</strong> «от Москвы до Санкт-Петербурга около 700 км» (точно 713 км)
+                  <div
+                    style="
+                      background: var(--bg-glass);
+                      border-radius: 12px;
+                      padding: 14px;
+                    "
+                  >
+                    <strong style="color: var(--accent-blue)"
+                      >🗺️ Расстояния:</strong
+                    >
+                    «от Москвы до Санкт-Петербурга около 700 км» (точно 713 км)
                   </div>
-                  <div style="background: var(--bg-glass); border-radius: 12px; padding: 14px;">
-                    <strong style="color: var(--accent-warm);">👥 Население:</strong> «в городе 2 миллиона жителей» вместо 1 987 432
+                  <div
+                    style="
+                      background: var(--bg-glass);
+                      border-radius: 12px;
+                      padding: 14px;
+                    "
+                  >
+                    <strong style="color: var(--accent-warm)"
+                      >👥 Население:</strong
+                    >
+                    «в городе 2 миллиона жителей» вместо 1 987 432
                   </div>
-                  <div style="background: var(--bg-glass); border-radius: 12px; padding: 14px;">
-                    <strong style="color: var(--warning);">📐 Прикидка:</strong> 48 × 52 ≈ 50 × 50 = 2 500 (быстрая оценка)
+                  <div
+                    style="
+                      background: var(--bg-glass);
+                      border-radius: 12px;
+                      padding: 14px;
+                    "
+                  >
+                    <strong style="color: var(--warning)">📐 Прикидка:</strong>
+                    48 × 52 ≈ 50 × 50 = 2 500 (быстрая оценка)
                   </div>
                 </div>
-                <div class="tip-box">Навык округления помогает быстро оценивать результаты и проверять вычисления «в уме».</div>
+                <div class="tip-box">
+                  Навык округления помогает быстро оценивать результаты и
+                  проверять вычисления «в уме».
+                </div>
               </div>
             </div>
           </div>
           <div class="widget-nav">
-            <button class="btn btn-secondary" onclick="prevSlide()">← Назад</button>
-            <button class="btn btn-primary" onclick="nextSlide()">Вперёд →</button>
+            <button class="btn btn-secondary" onclick="prevSlide()">
+              ← Назад
+            </button>
+            <button class="btn btn-primary" onclick="nextSlide()">
+              Вперёд →
+            </button>
           </div>
         </div>
       </div>
       <div class="card">
-        <div class="card-title"><span class="icon" style="background: var(--accent-blue-dim)">📖</span>Из учебника</div>
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; margin-top: 16px;">
-          <img src="../assets/img/pages/page_017.webp" alt="Страница учебника 17" style="width:100%; border-radius:12px; border: 1px solid var(--border-glass);">
-          <img src="../assets/img/pages/page_018.webp" alt="Страница учебника 18" style="width:100%; border-radius:12px; border: 1px solid var(--border-glass);">
+        <div class="card-title">
+          <span class="icon" style="background: var(--accent-blue-dim)">📖</span
+          >Из учебника
         </div>
-        <img src="../assets/img/pages/sec_s1_3_rounding.webp" alt="Раздел учебника: округление" style="width:100%; max-width:600px; display:block; margin: 16px auto 0; border-radius:12px; border: 1px solid var(--border-glass);">
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px;margin-top:16px;">
+          <img src="../assets/img/pages/page_017.webp" alt="Страница учебника 017" style="width:100%;border-radius:12px;border:1px solid var(--border-glass);">
+          <img src="../assets/img/pages/page_018.webp" alt="Страница учебника 018" style="width:100%;border-radius:12px;border:1px solid var(--border-glass);">
+        </div>
+        <img src="../assets/img/pages/sec_s1_3_rounding.webp" alt="Раздел учебника" style="width:100%;max-width:600px;display:block;margin:16px auto 0;border-radius:12px;border:1px solid var(--border-glass);">
       </div>
     </section>
 
     <section id="algorithm">
       <div class="card">
-        <div class="card-title"><span class="icon" style="background:var(--accent-blue-dim)">🪜</span>Пошаговый алгоритм</div>
+        <div class="card-title">
+          <span class="icon" style="background: var(--accent-blue-dim)">🪜</span
+          >Пошаговый алгоритм
+        </div>
         <div class="sequence-component">
           <div class="sequence-step">
             <div class="sequence-number">1</div>
             <div class="sequence-connector"></div>
             <h4>Определить разряд округления</h4>
-            <p>Определите, до какого разряда нужно округлить (десятки, сотни, тысячи...).</p>
+            <p>
+              Определите, до какого разряда нужно округлить (десятки, сотни,
+              тысячи...).
+            </p>
           </div>
           <div class="sequence-step">
             <div class="sequence-number">2</div>
@@ -290,18 +1182,27 @@
             <div class="sequence-number">3</div>
             <div class="sequence-connector"></div>
             <h4>Округление вниз</h4>
-            <p>Если эта цифра 0, 1, 2, 3 или 4 — цифру разряда оставьте, все правее заменяйте нулями.</p>
+            <p>
+              Если эта цифра 0, 1, 2, 3 или 4 — цифру разряда оставьте, все
+              правее заменяйте нулями.
+            </p>
           </div>
           <div class="sequence-step">
             <div class="sequence-number">4</div>
             <div class="sequence-connector"></div>
             <h4>Округление вверх</h4>
-            <p>Если эта цифра 5, 6, 7, 8 или 9 — цифру разряда увеличивайте на 1, все правее — нули.</p>
+            <p>
+              Если эта цифра 5, 6, 7, 8 или 9 — цифру разряда увеличивайте на 1,
+              все правее — нули.
+            </p>
           </div>
           <div class="sequence-step">
             <div class="sequence-number">5</div>
             <h4>Проверка</h4>
-            <p>Результат должен кратен соответствующей степени десяти: до десятков — кратен 10, до сотен — кратен 100 и т.д.</p>
+            <p>
+              Результат должен кратен соответствующей степени десяти: до
+              десятков — кратен 10, до сотен — кратен 100 и т.д.
+            </p>
           </div>
         </div>
       </div>
@@ -309,7 +1210,10 @@
 
     <section id="examples">
       <div class="card">
-        <div class="card-title"><span class="icon" style="background:var(--accent-dim)">📝</span>Разбор задач</div>
+        <div class="card-title">
+          <span class="icon" style="background: var(--accent-dim)">📝</span
+          >Разбор задач
+        </div>
       </div>
       <div class="problem-card">
         <div class="problem-header">
@@ -317,10 +1221,17 @@
           <span class="problem-type">До десятков</span>
         </div>
         <div class="problem-text">Округлите 347 до десятков.</div>
-        <button class="solution-btn" onclick="toggleSolution('sol-1')">Показать решение</button>
+        <button class="solution-btn" onclick="toggleSolution('sol-1')">
+          Показать решение
+        </button>
         <div class="solution" id="sol-1">
-          <div class="solution-step"><span class="step-num">1</span>Разряд десятков = 4. Следующая цифра: 7 ≥ 5: <strong>Округляем вверх: 4 → 5</strong></div>
-          <div class="solution-step"><span class="step-num">2</span>Итог: <strong>350</strong></div>
+          <div class="solution-step">
+            <span class="step-num">1</span>Разряд десятков = 4. Следующая цифра:
+            7 ≥ 5: <strong>Округляем вверх: 4 → 5</strong>
+          </div>
+          <div class="solution-step">
+            <span class="step-num">2</span>Итог: <strong>350</strong>
+          </div>
         </div>
       </div>
       <div class="problem-card">
@@ -329,10 +1240,17 @@
           <span class="problem-type">До сотен</span>
         </div>
         <div class="problem-text">Округлите 4 480 до сотен.</div>
-        <button class="solution-btn" onclick="toggleSolution('sol-2')">Показать решение</button>
+        <button class="solution-btn" onclick="toggleSolution('sol-2')">
+          Показать решение
+        </button>
         <div class="solution" id="sol-2">
-          <div class="solution-step"><span class="step-num">1</span>Разряд сотен = 4. Следующая цифра: 8 ≥ 5: <strong>Округляем вверх: 4 → 5</strong></div>
-          <div class="solution-step"><span class="step-num">2</span>Итог: <strong>4 500</strong></div>
+          <div class="solution-step">
+            <span class="step-num">1</span>Разряд сотен = 4. Следующая цифра: 8
+            ≥ 5: <strong>Округляем вверх: 4 → 5</strong>
+          </div>
+          <div class="solution-step">
+            <span class="step-num">2</span>Итог: <strong>4 500</strong>
+          </div>
         </div>
       </div>
       <div class="problem-card">
@@ -341,10 +1259,17 @@
           <span class="problem-type">До тысяч</span>
         </div>
         <div class="problem-text">Округлите 67 349 до тысяч.</div>
-        <button class="solution-btn" onclick="toggleSolution('sol-3')">Показать решение</button>
+        <button class="solution-btn" onclick="toggleSolution('sol-3')">
+          Показать решение
+        </button>
         <div class="solution" id="sol-3">
-          <div class="solution-step"><span class="step-num">1</span>Разряд тысяч = 7. Следующая цифра: 3 < 5: <strong>Оставляем 7, заменяем 349 → 000</strong></div>
-          <div class="solution-step"><span class="step-num">2</span>Итог: <strong>67 000</strong></div>
+          <div class="solution-step">
+            <span class="step-num">1</span>Разряд тысяч = 7. Следующая цифра: 3
+            < 5: <strong>Оставляем 7, заменяем 349 → 000</strong>
+          </div>
+          <div class="solution-step">
+            <span class="step-num">2</span>Итог: <strong>67 000</strong>
+          </div>
         </div>
       </div>
       <div class="problem-card">
@@ -353,10 +1278,17 @@
           <span class="problem-type">До миллионов</span>
         </div>
         <div class="problem-text">Округлите 4 735 000 до миллионов.</div>
-        <button class="solution-btn" onclick="toggleSolution('sol-4')">Показать решение</button>
+        <button class="solution-btn" onclick="toggleSolution('sol-4')">
+          Показать решение
+        </button>
         <div class="solution" id="sol-4">
-          <div class="solution-step"><span class="step-num">1</span>Миллионы = 4. Следующая: 7 ≥ 5: <strong>4 → 5, всё правее — нули</strong></div>
-          <div class="solution-step"><span class="step-num">2</span>Итог: <strong>5 000 000</strong></div>
+          <div class="solution-step">
+            <span class="step-num">1</span>Миллионы = 4. Следующая: 7 ≥ 5:
+            <strong>4 → 5, всё правее — нули</strong>
+          </div>
+          <div class="solution-step">
+            <span class="step-num">2</span>Итог: <strong>5 000 000</strong>
+          </div>
         </div>
       </div>
       <div class="problem-card">
@@ -365,104 +1297,275 @@
           <span class="problem-type">Оценка результата</span>
         </div>
         <div class="problem-text">Оцените: 498 × 6 ≈ ?</div>
-        <button class="solution-btn" onclick="toggleSolution('sol-5')">Показать решение</button>
+        <button class="solution-btn" onclick="toggleSolution('sol-5')">
+          Показать решение
+        </button>
         <div class="solution" id="sol-5">
-          <div class="solution-step"><span class="step-num">1</span>498 ≈ 500 (до сотен): <strong>500 × 6 = 3 000</strong></div>
-          <div class="solution-step"><span class="step-num">2</span>Итог: <strong>≈ 3 000</strong></div>
+          <div class="solution-step">
+            <span class="step-num">1</span>498 ≈ 500 (до сотен):
+            <strong>500 × 6 = 3 000</strong>
+          </div>
+          <div class="solution-step">
+            <span class="step-num">2</span>Итог: <strong>≈ 3 000</strong>
+          </div>
         </div>
       </div>
     </section>
 
     <section id="trainer">
       <div class="card">
-        <div class="card-title"><span class="icon" style="background:var(--accent-dim)">🏋️</span>Тренажёр</div>
-        <p style="color:var(--text-secondary);margin-bottom:24px">Случайные задачи. Подсказки и счётчик серий.</p>
-        <div class="quiz-container" style="margin-bottom:20px">
-          <div id="trainer-question" style="font-size:1.4rem;text-align:center;margin-bottom:24px;padding:24px;background:var(--bg-glass);border-radius:12px;">Нажмите «Новая задача» для начала</div>
-          <div style="display:flex;gap:12px;margin-bottom:20px">
-            <input type="text" id="trainer-answer" placeholder="Ваш ответ (буква A/B/C/D)" style="flex:1;padding:14px 16px;background:var(--bg-glass);border:2px solid var(--border-glass);border-radius:12px;color:var(--text-primary);font-size:1rem;outline:none;" />
-            <button class="btn btn-primary" onclick="checkTrainer()" id="trainer-check-btn" disabled>Проверить</button>
-          </div>
-          <div id="trainer-feedback" style="min-height:60px;margin-bottom:16px;"></div>
-          <div style="display:flex;gap:12px;justify-content:center">
-            <button class="btn btn-secondary" onclick="newTrainerProblem()">Новая задача</button>
-            <button class="btn btn-secondary" onclick="showTrainerHint()">Подсказка</button>
-          </div>
-          <div id="trainer-hint" style="display:none;margin-top:20px;padding:16px;background:var(--accent-blue-dim);border-radius:12px;border-left:4px solid var(--accent-blue);"></div>
+        <div class="card-title">
+          <span class="icon" style="background: var(--accent-dim)">🏋️</span
+          >Тренажёр
         </div>
-        <div style="display:flex;justify-content:center;gap:24px;flex-wrap:wrap;">
-          <div class="stat"><div class="stat-value" id="trainer-correct">0</div><div class="stat-label">Верно</div></div>
-          <div class="stat"><div class="stat-value" id="trainer-total">0</div><div class="stat-label">Всего</div></div>
-          <div class="stat"><div class="stat-value" id="trainer-streak">0</div><div class="stat-label">Серия</div></div>
+        <p style="color: var(--text-secondary); margin-bottom: 24px">
+          Случайные задачи. Подсказки и счётчик серий.
+        </p>
+        <div class="quiz-container" style="margin-bottom: 20px">
+          <div
+            id="trainer-question"
+            style="
+              font-size: 1.4rem;
+              text-align: center;
+              margin-bottom: 24px;
+              padding: 24px;
+              background: var(--bg-glass);
+              border-radius: 12px;
+            "
+          >
+            Нажмите «Новая задача» для начала
+          </div>
+          <div style="display: flex; gap: 12px; margin-bottom: 20px">
+            <input
+              type="text"
+              id="trainer-answer"
+              placeholder="Ваш ответ (буква A/B/C/D)"
+              style="
+                flex: 1;
+                padding: 14px 16px;
+                background: var(--bg-glass);
+                border: 2px solid var(--border-glass);
+                border-radius: 12px;
+                color: var(--text-primary);
+                font-size: 1rem;
+                outline: none;
+              "
+            />
+            <button
+              class="btn btn-primary"
+              onclick="checkTrainer()"
+              id="trainer-check-btn"
+              disabled
+            >
+              Проверить
+            </button>
+          </div>
+          <div
+            id="trainer-feedback"
+            style="min-height: 60px; margin-bottom: 16px"
+          ></div>
+          <div style="display: flex; gap: 12px; justify-content: center">
+            <button class="btn btn-secondary" onclick="newTrainerProblem()">
+              Новая задача
+            </button>
+            <button class="btn btn-secondary" onclick="showTrainerHint()">
+              Подсказка
+            </button>
+          </div>
+          <div
+            id="trainer-hint"
+            style="
+              display: none;
+              margin-top: 20px;
+              padding: 16px;
+              background: var(--accent-blue-dim);
+              border-radius: 12px;
+              border-left: 4px solid var(--accent-blue);
+            "
+          ></div>
+        </div>
+        <div
+          style="
+            display: flex;
+            justify-content: center;
+            gap: 24px;
+            flex-wrap: wrap;
+          "
+        >
+          <div class="stat">
+            <div class="stat-value" id="trainer-correct">0</div>
+            <div class="stat-label">Верно</div>
+          </div>
+          <div class="stat">
+            <div class="stat-value" id="trainer-total">0</div>
+            <div class="stat-label">Всего</div>
+          </div>
+          <div class="stat">
+            <div class="stat-value" id="trainer-streak">0</div>
+            <div class="stat-label">Серия</div>
+          </div>
         </div>
       </div>
     </section>
 
     <section id="assessment">
       <div class="card">
-        <div class="card-title"><span class="icon" style="background:var(--accent-blue-dim)">🧪</span>Аттестация — 20 вопросов</div>
-        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px;">
-          <div class="card" style="padding:24px;text-align:center">
-            <div style="font-size:3rem;margin-bottom:12px">🔍</div>
-            <h3 style="margin-bottom:8px">Диагностический тест</h3>
-            <p style="color:var(--text-secondary);margin-bottom:20px">20 вопросов с мгновенной обратной связью.</p>
-            <button class="btn btn-primary" onclick="startDiagnostic()">Начать тест</button>
+        <div class="card-title">
+          <span class="icon" style="background: var(--accent-blue-dim)">🧪</span
+          >Аттестация — 20 вопросов
+        </div>
+        <div
+          style="
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+          "
+        >
+          <div class="card" style="padding: 24px; text-align: center">
+            <div style="font-size: 3rem; margin-bottom: 12px">🔍</div>
+            <h3 style="margin-bottom: 8px">Диагностический тест</h3>
+            <p style="color: var(--text-secondary); margin-bottom: 20px">
+              20 вопросов с мгновенной обратной связью.
+            </p>
+            <button class="btn btn-primary" onclick="startDiagnostic()">
+              Начать тест
+            </button>
           </div>
-          <div class="card" style="padding:24px;text-align:center">
-            <div style="font-size:3rem;margin-bottom:12px">⏱️</div>
-            <h3 style="margin-bottom:8px">Скоростная викторина</h3>
-            <p style="color:var(--text-secondary);margin-bottom:20px">20 вопросов · 10 минут.</p>
-            <button class="btn btn-primary" onclick="startTimeAttack()">Начать викторину</button>
+          <div class="card" style="padding: 24px; text-align: center">
+            <div style="font-size: 3rem; margin-bottom: 12px">⏱️</div>
+            <h3 style="margin-bottom: 8px">Скоростная викторина</h3>
+            <p style="color: var(--text-secondary); margin-bottom: 20px">
+              20 вопросов · 10 минут.
+            </p>
+            <button class="btn btn-primary" onclick="startTimeAttack()">
+              Начать викторину
+            </button>
           </div>
         </div>
       </div>
-      <div id="diagnostic-ui" style="display:none">
-        <div class="card"><div class="card-title"><span class="icon" style="background:var(--accent-blue-dim)">🔍</span>Диагностический тест</div></div>
+      <div id="diagnostic-ui" style="display: none">
+        <div class="card">
+          <div class="card-title">
+            <span class="icon" style="background: var(--accent-blue-dim)"
+              >🔍</span
+            >Диагностический тест
+          </div>
+        </div>
         <div class="quiz-container">
           <div class="quiz-progress">
-            <span>Вопрос <span id="diag-current">1</span> / <span id="diag-total">20</span></span>
-            <div class="progress-bar"><div class="progress-fill" id="diag-progress"></div></div>
+            <span
+              >Вопрос <span id="diag-current">1</span> /
+              <span id="diag-total">20</span></span
+            >
+            <div class="progress-bar">
+              <div class="progress-fill" id="diag-progress"></div>
+            </div>
             <span id="diag-score">0 правильных</span>
           </div>
           <div class="quiz-question" id="diag-question"></div>
           <div class="quiz-options" id="diag-options"></div>
           <div class="quiz-nav">
-            <button class="btn btn-secondary" onclick="prevDiagnostic()" id="diag-prev" disabled>← Назад</button>
-            <button class="btn btn-primary" onclick="nextDiagnostic()" id="diag-next" disabled>Далее →</button>
+            <button
+              class="btn btn-secondary"
+              onclick="prevDiagnostic()"
+              id="diag-prev"
+              disabled
+            >
+              ← Назад
+            </button>
+            <button
+              class="btn btn-primary"
+              onclick="nextDiagnostic()"
+              id="diag-next"
+              disabled
+            >
+              Далее →
+            </button>
           </div>
-          <div id="diag-explanation" style="display:none;margin-top:20px;padding:16px;background:var(--accent-dim);border-radius:12px;border-left:4px solid var(--accent);"></div>
+          <div
+            id="diag-explanation"
+            style="
+              display: none;
+              margin-top: 20px;
+              padding: 16px;
+              background: var(--accent-dim);
+              border-radius: 12px;
+              border-left: 4px solid var(--accent);
+            "
+          ></div>
         </div>
       </div>
-      <div id="timeattack-ui" style="display:none">
+      <div id="timeattack-ui" style="display: none">
         <div class="timer hidden" id="ta-timer">10:00</div>
-        <div class="card"><div class="card-title"><span class="icon" style="background:var(--accent-warm-dim)">⏱️</span>Скоростная викторина</div></div>
+        <div class="card">
+          <div class="card-title">
+            <span class="icon" style="background: var(--accent-warm-dim)"
+              >⏱️</span
+            >Скоростная викторина
+          </div>
+        </div>
         <div class="quiz-container">
           <div class="quiz-progress">
             <span>Вопрос <span id="ta-current">1</span> / 20</span>
-            <div class="progress-bar"><div class="progress-fill" id="ta-progress"></div></div>
+            <div class="progress-bar">
+              <div class="progress-fill" id="ta-progress"></div>
+            </div>
           </div>
           <div class="quiz-question" id="ta-question"></div>
           <div class="quiz-options" id="ta-options"></div>
-          <div style="display:flex;justify-content:flex-end;margin-top:24px">
-            <button class="btn btn-primary" onclick="nextTimeAttack()" id="ta-next">Ответить →</button>
+          <div
+            style="display: flex; justify-content: flex-end; margin-top: 24px"
+          >
+            <button
+              class="btn btn-primary"
+              onclick="nextTimeAttack()"
+              id="ta-next"
+            >
+              Ответить →
+            </button>
           </div>
         </div>
       </div>
-      <div id="results-ui" style="display:none">
+      <div id="results-ui" style="display: none">
         <div class="card">
           <div class="results-container">
             <div class="score-label">Ваш результат</div>
-            <div class="score-circle" id="result-circle"><div class="score-value" id="result-percent">0%</div></div>
+            <div class="score-circle" id="result-circle">
+              <div class="score-value" id="result-percent">0%</div>
+            </div>
             <div class="score-message" id="result-message"></div>
             <div class="results-breakdown">
-              <div class="breakdown-item"><div class="breakdown-value" id="result-correct">0</div><div class="breakdown-label">Верно</div></div>
-              <div class="breakdown-item"><div class="breakdown-value" id="result-wrong">0</div><div class="breakdown-label">Ошибок</div></div>
-              <div class="breakdown-item"><div class="breakdown-value" id="result-time">0:00</div><div class="breakdown-label">Время</div></div>
-              <div class="breakdown-item"><div class="breakdown-value" id="result-mastery">—</div><div class="breakdown-label">Уровень</div></div>
+              <div class="breakdown-item">
+                <div class="breakdown-value" id="result-correct">0</div>
+                <div class="breakdown-label">Верно</div>
+              </div>
+              <div class="breakdown-item">
+                <div class="breakdown-value" id="result-wrong">0</div>
+                <div class="breakdown-label">Ошибок</div>
+              </div>
+              <div class="breakdown-item">
+                <div class="breakdown-value" id="result-time">0:00</div>
+                <div class="breakdown-label">Время</div>
+              </div>
+              <div class="breakdown-item">
+                <div class="breakdown-value" id="result-mastery">—</div>
+                <div class="breakdown-label">Уровень</div>
+              </div>
             </div>
-            <div style="display:flex;gap:16px;justify-content:center;flex-wrap:wrap;">
-              <button class="btn btn-primary" onclick="resetAssessment()">Пройти ещё раз</button>
-              <button class="btn btn-secondary" onclick="showSection('theory')">Вернуться к теории</button>
+            <div
+              style="
+                display: flex;
+                gap: 16px;
+                justify-content: center;
+                flex-wrap: wrap;
+              "
+            >
+              <button class="btn btn-primary" onclick="resetAssessment()">
+                Пройти ещё раз
+              </button>
+              <button class="btn btn-secondary" onclick="showSection('theory')">
+                Вернуться к теории
+              </button>
             </div>
           </div>
         </div>
@@ -471,382 +1574,386 @@
 
     <script>
       const AppState = {
-        currentSection: 'home', slide: 0,
-        trainer: { correct:0, total:0, streak:0, current:null },
-        diagnostic: { current:0, score:0, answers:[] },
-        timeAttack: { current:0, score:0, timer:null, timeLeft:600, startTime:0, answers:[] },
-        mode: null
+        currentSection: "home",
+        slide: 0,
+        trainer: { correct: 0, total: 0, streak: 0, current: null },
+        diagnostic: { current: 0, score: 0, answers: [] },
+        timeAttack: {
+          current: 0,
+          score: 0,
+          timer: null,
+          timeLeft: 600,
+          startTime: 0,
+          answers: [],
+        },
+        mode: null,
       };
       function showSection(id) {
-        document.querySelectorAll('section').forEach(s => s.classList.remove('active'));
-        document.getElementById(id).classList.add('active');
-        document.querySelectorAll('.nav-links a').forEach(a => a.classList.remove('active'));
-        document.querySelector('.nav-links a[data-section="' + id + '"]')?.classList.add('active');
+        document
+          .querySelectorAll("section")
+          .forEach((s) => s.classList.remove("active"));
+        document.getElementById(id).classList.add("active");
+        document
+          .querySelectorAll(".nav-links a")
+          .forEach((a) => a.classList.remove("active"));
+        document
+          .querySelector('.nav-links a[data-section="' + id + '"]')
+          ?.classList.add("active");
         window.scrollTo(0, 0);
         AppState.currentSection = id;
       }
-      document.querySelectorAll('.nav-links a').forEach(link => {
-        link.addEventListener('click', e => { e.preventDefault(); showSection(link.dataset.section); });
+      document.querySelectorAll(".nav-links a").forEach((link) => {
+        link.addEventListener("click", (e) => {
+          e.preventDefault();
+          showSection(link.dataset.section);
+        });
       });
       const totalSlides = 5;
-      const track = document.getElementById('widget-track');
-      const slideNumEl = document.getElementById('slide-num');
-      const slideTotalEl = document.getElementById('slide-total');
+      const track = document.getElementById("widget-track");
+      const slideNumEl = document.getElementById("slide-num");
+      const slideTotalEl = document.getElementById("slide-total");
       if (slideTotalEl) slideTotalEl.textContent = totalSlides;
       function renderSlide() {
-        if (track) track.style.transform = 'translateX(-' + AppState.slide * 100 + '%)';
+        if (track)
+          track.style.transform = "translateX(-" + AppState.slide * 100 + "%)";
         if (slideNumEl) slideNumEl.textContent = AppState.slide + 1;
       }
-      function nextSlide() { if (AppState.slide < totalSlides - 1) { AppState.slide++; renderSlide(); } }
-      function prevSlide() { if (AppState.slide > 0) { AppState.slide--; renderSlide(); } }
+      function nextSlide() {
+        if (AppState.slide < totalSlides - 1) {
+          AppState.slide++;
+          renderSlide();
+        }
+      }
+      function prevSlide() {
+        if (AppState.slide > 0) {
+          AppState.slide--;
+          renderSlide();
+        }
+      }
       function toggleSolution(id) {
         const el = document.getElementById(id);
-        el.classList.toggle('active');
-        el.previousElementSibling.textContent = el.classList.contains('active') ? 'Скрыть решение' : 'Показать решение';
+        el.classList.toggle("active");
+        el.previousElementSibling.textContent = el.classList.contains("active")
+          ? "Скрыть решение"
+          : "Показать решение";
       }
       const allQuestions = [
-  {
-    "text": "Округлите 763 до десятков.",
-    "opts": [
-      "760",
-      "770",
-      "800",
-      "750"
-    ],
-    "ans": 0,
-    "hint": "Цифра десятков = 6. Следующая = 3 < 5 → оставляем. 760."
-  },
-  {
-    "text": "Округлите 855 до сотен.",
-    "opts": [
-      "800",
-      "900",
-      "860",
-      "850"
-    ],
-    "ans": 1,
-    "hint": "Цифра сотен = 8. Следующая = 5 ≥ 5 → +1. 900."
-  },
-  {
-    "text": "Округлите 4 321 до тысяч.",
-    "opts": [
-      "4 000",
-      "5 000",
-      "4 300",
-      "4 320"
-    ],
-    "ans": 0,
-    "hint": "Тысячи = 4. Следующая = 3 < 5 → оставляем. 4 000."
-  },
-  {
-    "text": "Округлите 7 500 до тысяч.",
-    "opts": [
-      "7 000",
-      "8 000",
-      "7 500",
-      "7 050"
-    ],
-    "ans": 1,
-    "hint": "Тысячи = 7. Следующая = 5 ≥ 5 → +1. 8 000."
-  },
-  {
-    "text": "Округлите 349 до сотен.",
-    "opts": [
-      "300",
-      "400",
-      "350",
-      "340"
-    ],
-    "ans": 0,
-    "hint": "Сотни = 3. Следующая = 4 < 5 → оставляем. 300."
-  },
-  {
-    "text": "Округлите 95 до десятков.",
-    "opts": [
-      "90",
-      "100",
-      "95",
-      "80"
-    ],
-    "ans": 1,
-    "hint": "Десятки = 9. Следующая = 5 ≥ 5 → 9+1=10, перенос → 100."
-  },
-  {
-    "text": "До какого разряда округлено 12 000?",
-    "opts": [
-      "до десятков",
-      "до сотен",
-      "до тысяч",
-      "до миллионов"
-    ],
-    "ans": 2,
-    "hint": "Результат кратен 1000, но не обязательно 10 000. Скорее всего до тысяч."
-  },
-  {
-    "text": "Оцените: 203 × 5 ≈ ?",
-    "opts": [
-      "1 000",
-      "1 500",
-      "800",
-      "1 200"
-    ],
-    "ans": 0,
-    "hint": "203 ≈ 200. 200 × 5 = 1 000."
-  },
-  {
-    "text": "Округлите 9 999 до тысяч.",
-    "opts": [
-      "9 000",
-      "10 000",
-      "9 900",
-      "9 990"
-    ],
-    "ans": 1,
-    "hint": "Тысячи = 9. Следующая = 9 ≥ 5 → 9+1=10, перенос → 10 000."
-  },
-  {
-    "text": "Округлите 1 450 000 до миллионов.",
-    "opts": [
-      "1 000 000",
-      "2 000 000",
-      "1 500 000",
-      "1 400 000"
-    ],
-    "ans": 0,
-    "hint": "Миллионы = 1. Следующая = 4 < 5 → оставляем. 1 000 000."
-  },
-  {
-    "text": "Округлите 2 750 000 до миллионов.",
-    "opts": [
-      "2 000 000",
-      "3 000 000",
-      "2 800 000",
-      "2 700 000"
-    ],
-    "ans": 1,
-    "hint": "Миллионы = 2. Следующая = 7 ≥ 5 → +1. 3 000 000."
-  },
-  {
-    "text": "Оцените: 6 847 + 3 214 ≈ ?",
-    "opts": [
-      "10 000",
-      "9 000",
-      "11 000",
-      "8 000"
-    ],
-    "ans": 0,
-    "hint": "6 847 ≈ 7 000; 3 214 ≈ 3 000. 7 000 + 3 000 = 10 000."
-  },
-  {
-    "text": "Округлите 34 567 до сотен.",
-    "opts": [
-      "34 500",
-      "34 600",
-      "35 000",
-      "34 000"
-    ],
-    "ans": 1,
-    "hint": "Сотни = 5. Следующая = 6 ≥ 5 → +1. 34 600."
-  },
-  {
-    "text": "Округлите 50 049 до тысяч.",
-    "opts": [
-      "50 000",
-      "51 000",
-      "50 100",
-      "49 000"
-    ],
-    "ans": 0,
-    "hint": "Тысячи = 0. Следующая = 4 < 5 → оставляем. 50 000."
-  },
-  {
-    "text": "Правило: цифра 5 при округлении...",
-    "opts": [
-      "округляем вниз",
-      "округляем вверх",
-      "оставляем как есть",
-      "зависит от задачи"
-    ],
-    "ans": 1,
-    "hint": "Цифра 5 и выше → округляем вверх (увеличиваем разряд на 1)."
-  },
-  {
-    "text": "Оцените: 489 × 3 ≈ ?",
-    "opts": [
-      "1 200",
-      "1 500",
-      "1 800",
-      "900"
-    ],
-    "ans": 1,
-    "hint": "489 ≈ 500. 500 × 3 = 1 500."
-  },
-  {
-    "text": "Округлите 100 до десятков.",
-    "opts": [
-      "90",
-      "100",
-      "110",
-      "0"
-    ],
-    "ans": 1,
-    "hint": "100 уже кратно 10. Округление ничего не меняет → 100."
-  },
-  {
-    "text": "Округлите 678 234 до десятков тысяч.",
-    "opts": [
-      "670 000",
-      "680 000",
-      "678 000",
-      "700 000"
-    ],
-    "ans": 1,
-    "hint": "Десятки тысяч = 7. Следующая = 8 ≥ 5 → +1. 680 000."
-  },
-  {
-    "text": "Число 5 500 000, округлённое до миллионов, равно:",
-    "opts": [
-      "5 000 000",
-      "6 000 000",
-      "5 500 000",
-      "4 000 000"
-    ],
-    "ans": 1,
-    "hint": "Миллионы = 5. Следующая = 5 ≥ 5 → +1. 6 000 000."
-  },
-  {
-    "text": "Округлите 3 456 до сотен.",
-    "opts": [
-      "3 400",
-      "3 500",
-      "3 450",
-      "3 460"
-    ],
-    "ans": 1,
-    "hint": "Сотни = 4. Следующая = 5 ≥ 5 → +1. 3 500."
-  }
-];
+        {
+          text: "Округлите 763 до десятков.",
+          opts: ["760", "770", "800", "750"],
+          ans: 0,
+          hint: "Цифра десятков = 6. Следующая = 3 < 5 → оставляем. 760.",
+        },
+        {
+          text: "Округлите 855 до сотен.",
+          opts: ["800", "900", "860", "850"],
+          ans: 1,
+          hint: "Цифра сотен = 8. Следующая = 5 ≥ 5 → +1. 900.",
+        },
+        {
+          text: "Округлите 4 321 до тысяч.",
+          opts: ["4 000", "5 000", "4 300", "4 320"],
+          ans: 0,
+          hint: "Тысячи = 4. Следующая = 3 < 5 → оставляем. 4 000.",
+        },
+        {
+          text: "Округлите 7 500 до тысяч.",
+          opts: ["7 000", "8 000", "7 500", "7 050"],
+          ans: 1,
+          hint: "Тысячи = 7. Следующая = 5 ≥ 5 → +1. 8 000.",
+        },
+        {
+          text: "Округлите 349 до сотен.",
+          opts: ["300", "400", "350", "340"],
+          ans: 0,
+          hint: "Сотни = 3. Следующая = 4 < 5 → оставляем. 300.",
+        },
+        {
+          text: "Округлите 95 до десятков.",
+          opts: ["90", "100", "95", "80"],
+          ans: 1,
+          hint: "Десятки = 9. Следующая = 5 ≥ 5 → 9+1=10, перенос → 100.",
+        },
+        {
+          text: "До какого разряда округлено 12 000?",
+          opts: ["до десятков", "до сотен", "до тысяч", "до миллионов"],
+          ans: 2,
+          hint: "Результат кратен 1000, но не обязательно 10 000. Скорее всего до тысяч.",
+        },
+        {
+          text: "Оцените: 203 × 5 ≈ ?",
+          opts: ["1 000", "1 500", "800", "1 200"],
+          ans: 0,
+          hint: "203 ≈ 200. 200 × 5 = 1 000.",
+        },
+        {
+          text: "Округлите 9 999 до тысяч.",
+          opts: ["9 000", "10 000", "9 900", "9 990"],
+          ans: 1,
+          hint: "Тысячи = 9. Следующая = 9 ≥ 5 → 9+1=10, перенос → 10 000.",
+        },
+        {
+          text: "Округлите 1 450 000 до миллионов.",
+          opts: ["1 000 000", "2 000 000", "1 500 000", "1 400 000"],
+          ans: 0,
+          hint: "Миллионы = 1. Следующая = 4 < 5 → оставляем. 1 000 000.",
+        },
+        {
+          text: "Округлите 2 750 000 до миллионов.",
+          opts: ["2 000 000", "3 000 000", "2 800 000", "2 700 000"],
+          ans: 1,
+          hint: "Миллионы = 2. Следующая = 7 ≥ 5 → +1. 3 000 000.",
+        },
+        {
+          text: "Оцените: 6 847 + 3 214 ≈ ?",
+          opts: ["10 000", "9 000", "11 000", "8 000"],
+          ans: 0,
+          hint: "6 847 ≈ 7 000; 3 214 ≈ 3 000. 7 000 + 3 000 = 10 000.",
+        },
+        {
+          text: "Округлите 34 567 до сотен.",
+          opts: ["34 500", "34 600", "35 000", "34 000"],
+          ans: 1,
+          hint: "Сотни = 5. Следующая = 6 ≥ 5 → +1. 34 600.",
+        },
+        {
+          text: "Округлите 50 049 до тысяч.",
+          opts: ["50 000", "51 000", "50 100", "49 000"],
+          ans: 0,
+          hint: "Тысячи = 0. Следующая = 4 < 5 → оставляем. 50 000.",
+        },
+        {
+          text: "Правило: цифра 5 при округлении...",
+          opts: [
+            "округляем вниз",
+            "округляем вверх",
+            "оставляем как есть",
+            "зависит от задачи",
+          ],
+          ans: 1,
+          hint: "Цифра 5 и выше → округляем вверх (увеличиваем разряд на 1).",
+        },
+        {
+          text: "Оцените: 489 × 3 ≈ ?",
+          opts: ["1 200", "1 500", "1 800", "900"],
+          ans: 1,
+          hint: "489 ≈ 500. 500 × 3 = 1 500.",
+        },
+        {
+          text: "Округлите 100 до десятков.",
+          opts: ["90", "100", "110", "0"],
+          ans: 1,
+          hint: "100 уже кратно 10. Округление ничего не меняет → 100.",
+        },
+        {
+          text: "Округлите 678 234 до десятков тысяч.",
+          opts: ["670 000", "680 000", "678 000", "700 000"],
+          ans: 1,
+          hint: "Десятки тысяч = 7. Следующая = 8 ≥ 5 → +1. 680 000.",
+        },
+        {
+          text: "Число 5 500 000, округлённое до миллионов, равно:",
+          opts: ["5 000 000", "6 000 000", "5 500 000", "4 000 000"],
+          ans: 1,
+          hint: "Миллионы = 5. Следующая = 5 ≥ 5 → +1. 6 000 000.",
+        },
+        {
+          text: "Округлите 3 456 до сотен.",
+          opts: ["3 400", "3 500", "3 450", "3 460"],
+          ans: 1,
+          hint: "Сотни = 4. Следующая = 5 ≥ 5 → +1. 3 500.",
+        },
+      ];
       function newTrainerProblem() {
         const q = allQuestions[Math.floor(Math.random() * allQuestions.length)];
         AppState.trainer.current = q;
-        const letters = ['A','B','C','D'];
-        const opts = q.opts.map((o,i) => letters[i]+') '+o).join(' | ');
-        document.getElementById('trainer-question').textContent = q.text + '\n' + opts;
-        document.getElementById('trainer-answer').value = '';
-        document.getElementById('trainer-feedback').innerHTML = '';
-        document.getElementById('trainer-hint').style.display = 'none';
-        document.getElementById('trainer-check-btn').disabled = false;
+        const letters = ["A", "B", "C", "D"];
+        const opts = q.opts.map((o, i) => letters[i] + ") " + o).join(" | ");
+        document.getElementById("trainer-question").textContent =
+          q.text + "\n" + opts;
+        document.getElementById("trainer-answer").value = "";
+        document.getElementById("trainer-feedback").innerHTML = "";
+        document.getElementById("trainer-hint").style.display = "none";
+        document.getElementById("trainer-check-btn").disabled = false;
       }
       function showTrainerHint() {
         if (!AppState.trainer.current) return;
-        document.getElementById('trainer-hint').style.display = 'block';
-        document.getElementById('trainer-hint').textContent = '💡 ' + AppState.trainer.current.hint;
+        document.getElementById("trainer-hint").style.display = "block";
+        document.getElementById("trainer-hint").textContent =
+          "💡 " + AppState.trainer.current.hint;
       }
       function checkTrainer() {
         if (!AppState.trainer.current) return;
-        const userStr = document.getElementById('trainer-answer').value.trim().toUpperCase();
+        const userStr = document
+          .getElementById("trainer-answer")
+          .value.trim()
+          .toUpperCase();
         if (!userStr) return;
         AppState.trainer.total++;
-        const letters = ['A','B','C','D'];
+        const letters = ["A", "B", "C", "D"];
         const correct = letters[AppState.trainer.current.ans];
         const isCorrect = userStr === correct;
         if (isCorrect) {
           AppState.trainer.correct++;
           AppState.trainer.streak++;
-          document.getElementById('trainer-feedback').innerHTML = '<div style="color:var(--success);font-weight:700;font-size:1.1rem;">✓ Верно!</div>';
+          document.getElementById("trainer-feedback").innerHTML =
+            '<div style="color:var(--success);font-weight:700;font-size:1.1rem;">✓ Верно!</div>';
         } else {
           AppState.trainer.streak = 0;
-          document.getElementById('trainer-feedback').innerHTML = '<div style="color:var(--error);font-weight:700;font-size:1.1rem;">✗ Неверно. Правильный ответ: ' + correct + '</div>';
+          document.getElementById("trainer-feedback").innerHTML =
+            '<div style="color:var(--error);font-weight:700;font-size:1.1rem;">✗ Неверно. Правильный ответ: ' +
+            correct +
+            "</div>";
         }
-        document.getElementById('trainer-correct').textContent = AppState.trainer.correct;
-        document.getElementById('trainer-total').textContent = AppState.trainer.total;
-        document.getElementById('trainer-streak').textContent = AppState.trainer.streak;
-        document.getElementById('trainer-check-btn').disabled = true;
+        document.getElementById("trainer-correct").textContent =
+          AppState.trainer.correct;
+        document.getElementById("trainer-total").textContent =
+          AppState.trainer.total;
+        document.getElementById("trainer-streak").textContent =
+          AppState.trainer.streak;
+        document.getElementById("trainer-check-btn").disabled = true;
       }
-      document.getElementById('trainer-answer')?.addEventListener('keypress', e => { if (e.key === 'Enter') checkTrainer(); });
+      document
+        .getElementById("trainer-answer")
+        ?.addEventListener("keypress", (e) => {
+          if (e.key === "Enter") checkTrainer();
+        });
       const diagnosticQuestions = allQuestions;
       function startDiagnostic() {
-        AppState.mode = 'diagnostic';
-        AppState.diagnostic = { current:0, score:0, answers:[] };
-        document.getElementById('diagnostic-ui').style.display = 'block';
-        document.getElementById('timeattack-ui').style.display = 'none';
-        document.getElementById('results-ui').style.display = 'none';
-        document.getElementById('diag-total').textContent = diagnosticQuestions.length;
+        AppState.mode = "diagnostic";
+        AppState.diagnostic = { current: 0, score: 0, answers: [] };
+        document.getElementById("diagnostic-ui").style.display = "block";
+        document.getElementById("timeattack-ui").style.display = "none";
+        document.getElementById("results-ui").style.display = "none";
+        document.getElementById("diag-total").textContent =
+          diagnosticQuestions.length;
         renderDiagnostic();
       }
       function renderDiagnostic() {
         const q = diagnosticQuestions[AppState.diagnostic.current];
-        document.getElementById('diag-current').textContent = AppState.diagnostic.current + 1;
-        document.getElementById('diag-score').textContent = AppState.diagnostic.score + ' правильных';
-        document.getElementById('diag-progress').style.width = ((AppState.diagnostic.current + 1) / diagnosticQuestions.length * 100) + '%';
-        document.getElementById('diag-question').textContent = q.text;
-        document.getElementById('diag-explanation').style.display = 'none';
-        document.getElementById('diag-next').disabled = true;
-        document.getElementById('diag-prev').disabled = AppState.diagnostic.current === 0;
-        const optsDiv = document.getElementById('diag-options');
-        optsDiv.innerHTML = '';
+        document.getElementById("diag-current").textContent =
+          AppState.diagnostic.current + 1;
+        document.getElementById("diag-score").textContent =
+          AppState.diagnostic.score + " правильных";
+        document.getElementById("diag-progress").style.width =
+          ((AppState.diagnostic.current + 1) / diagnosticQuestions.length) *
+            100 +
+          "%";
+        document.getElementById("diag-question").textContent = q.text;
+        document.getElementById("diag-explanation").style.display = "none";
+        document.getElementById("diag-next").disabled = true;
+        document.getElementById("diag-prev").disabled =
+          AppState.diagnostic.current === 0;
+        const optsDiv = document.getElementById("diag-options");
+        optsDiv.innerHTML = "";
         q.opts.forEach((opt, i) => {
-          const div = document.createElement('div');
-          div.className = 'quiz-option';
-          div.innerHTML = '<div class="option-letter">' + String.fromCharCode(65+i) + '</div><div>' + opt + '</div>';
+          const div = document.createElement("div");
+          div.className = "quiz-option";
+          div.innerHTML =
+            '<div class="option-letter">' +
+            String.fromCharCode(65 + i) +
+            "</div><div>" +
+            opt +
+            "</div>";
           div.onclick = () => selectDiagnostic(i, div, q);
           optsDiv.appendChild(div);
         });
       }
       function selectDiagnostic(i, div, q) {
-        document.querySelectorAll('#diag-options .quiz-option').forEach(o => o.classList.add('disabled'));
+        document
+          .querySelectorAll("#diag-options .quiz-option")
+          .forEach((o) => o.classList.add("disabled"));
         const isCorrect = i === q.ans;
-        div.classList.add(isCorrect ? 'correct' : 'wrong');
-        if (!isCorrect) document.querySelectorAll('#diag-options .quiz-option')[q.ans].classList.add('correct');
+        div.classList.add(isCorrect ? "correct" : "wrong");
+        if (!isCorrect)
+          document
+            .querySelectorAll("#diag-options .quiz-option")
+            [q.ans].classList.add("correct");
         if (isCorrect) AppState.diagnostic.score++;
         AppState.diagnostic.answers.push(i);
-        document.getElementById('diag-explanation').textContent = (isCorrect ? '✓ ' : '✗ ') + q.hint;
-        document.getElementById('diag-explanation').style.display = 'block';
-        document.getElementById('diag-next').disabled = false;
+        document.getElementById("diag-explanation").textContent =
+          (isCorrect ? "✓ " : "✗ ") + q.hint;
+        document.getElementById("diag-explanation").style.display = "block";
+        document.getElementById("diag-next").disabled = false;
       }
       function nextDiagnostic() {
         if (AppState.diagnostic.current < diagnosticQuestions.length - 1) {
           AppState.diagnostic.current++;
           renderDiagnostic();
         } else {
-          showResults(AppState.diagnostic.score, diagnosticQuestions.length, 0, 'diagnostic');
+          showResults(
+            AppState.diagnostic.score,
+            diagnosticQuestions.length,
+            0,
+            "diagnostic",
+          );
         }
       }
       function prevDiagnostic() {
-        if (AppState.diagnostic.current > 0) { AppState.diagnostic.current--; renderDiagnostic(); }
+        if (AppState.diagnostic.current > 0) {
+          AppState.diagnostic.current--;
+          renderDiagnostic();
+        }
       }
       function startTimeAttack() {
-        AppState.mode = 'timeattack';
-        AppState.timeAttack = { current:0, score:0, timer:null, timeLeft:600, startTime:Date.now(), answers:[] };
-        document.getElementById('diagnostic-ui').style.display = 'none';
-        document.getElementById('timeattack-ui').style.display = 'block';
-        document.getElementById('results-ui').style.display = 'none';
-        const timerEl = document.getElementById('ta-timer');
-        timerEl.classList.remove('hidden');
+        AppState.mode = "timeattack";
+        AppState.timeAttack = {
+          current: 0,
+          score: 0,
+          timer: null,
+          timeLeft: 600,
+          startTime: Date.now(),
+          answers: [],
+        };
+        document.getElementById("diagnostic-ui").style.display = "none";
+        document.getElementById("timeattack-ui").style.display = "block";
+        document.getElementById("results-ui").style.display = "none";
+        const timerEl = document.getElementById("ta-timer");
+        timerEl.classList.remove("hidden");
         AppState.timeAttack.timer = setInterval(() => {
           AppState.timeAttack.timeLeft--;
           const m = Math.floor(AppState.timeAttack.timeLeft / 60);
           const s = AppState.timeAttack.timeLeft % 60;
-          timerEl.textContent = m + ':' + (s < 10 ? '0' : '') + s;
-          timerEl.className = 'timer' + (AppState.timeAttack.timeLeft <= 60 ? ' danger' : AppState.timeAttack.timeLeft <= 120 ? ' warning' : '');
+          timerEl.textContent = m + ":" + (s < 10 ? "0" : "") + s;
+          timerEl.className =
+            "timer" +
+            (AppState.timeAttack.timeLeft <= 60
+              ? " danger"
+              : AppState.timeAttack.timeLeft <= 120
+                ? " warning"
+                : "");
           if (AppState.timeAttack.timeLeft <= 0) {
             clearInterval(AppState.timeAttack.timer);
-            showResults(AppState.timeAttack.score, diagnosticQuestions.length, 0, 'timeattack');
+            showResults(
+              AppState.timeAttack.score,
+              diagnosticQuestions.length,
+              0,
+              "timeattack",
+            );
           }
         }, 1000);
         renderTimeAttack();
       }
       function renderTimeAttack() {
         const q = diagnosticQuestions[AppState.timeAttack.current];
-        document.getElementById('ta-current').textContent = AppState.timeAttack.current + 1;
-        document.getElementById('ta-progress').style.width = ((AppState.timeAttack.current + 1) / diagnosticQuestions.length * 100) + '%';
-        document.getElementById('ta-question').textContent = q.text;
-        const optsDiv = document.getElementById('ta-options');
-        optsDiv.innerHTML = '';
+        document.getElementById("ta-current").textContent =
+          AppState.timeAttack.current + 1;
+        document.getElementById("ta-progress").style.width =
+          ((AppState.timeAttack.current + 1) / diagnosticQuestions.length) *
+            100 +
+          "%";
+        document.getElementById("ta-question").textContent = q.text;
+        const optsDiv = document.getElementById("ta-options");
+        optsDiv.innerHTML = "";
         q.opts.forEach((opt, i) => {
-          const div = document.createElement('div');
-          div.className = 'quiz-option';
-          div.innerHTML = '<div class="option-letter">' + String.fromCharCode(65+i) + '</div><div>' + opt + '</div>';
+          const div = document.createElement("div");
+          div.className = "quiz-option";
+          div.innerHTML =
+            '<div class="option-letter">' +
+            String.fromCharCode(65 + i) +
+            "</div><div>" +
+            opt +
+            "</div>";
           div.onclick = () => {
             if (i === q.ans) AppState.timeAttack.score++;
             AppState.timeAttack.answers.push(i);
@@ -854,7 +1961,7 @@
           };
           optsDiv.appendChild(div);
         });
-        document.getElementById('ta-next').style.display = 'none';
+        document.getElementById("ta-next").style.display = "none";
       }
       function nextTimeAttack() {
         if (AppState.timeAttack.current < diagnosticQuestions.length - 1) {
@@ -862,32 +1969,57 @@
           renderTimeAttack();
         } else {
           clearInterval(AppState.timeAttack.timer);
-          const elapsed = Math.round((Date.now() - AppState.timeAttack.startTime) / 1000);
-          showResults(AppState.timeAttack.score, diagnosticQuestions.length, elapsed, 'timeattack');
+          const elapsed = Math.round(
+            (Date.now() - AppState.timeAttack.startTime) / 1000,
+          );
+          showResults(
+            AppState.timeAttack.score,
+            diagnosticQuestions.length,
+            elapsed,
+            "timeattack",
+          );
         }
       }
       function showResults(correct, total, elapsed, mode) {
-        document.getElementById('diagnostic-ui').style.display = 'none';
-        document.getElementById('timeattack-ui').style.display = 'none';
-        document.getElementById('results-ui').style.display = 'block';
-        const pct = Math.round(correct / total * 100);
-        document.getElementById('result-circle').style.setProperty('--score', pct);
-        document.getElementById('result-percent').textContent = pct + '%';
-        document.getElementById('result-correct').textContent = correct;
-        document.getElementById('result-wrong').textContent = total - correct;
-        const m = Math.floor(elapsed/60), s = elapsed%60;
-        document.getElementById('result-time').textContent = m + ':' + (s<10?'0':'') + s;
-        const mastery = pct >= 90 ? 'Отлично' : pct >= 70 ? 'Хорошо' : pct >= 50 ? 'Удовл.' : 'Слабо';
-        document.getElementById('result-mastery').textContent = mastery;
-        document.getElementById('result-message').textContent = pct >= 90 ? '🏆 Отличный результат!' : pct >= 70 ? '👍 Хороший результат!' : '📚 Повторите теорию';
+        document.getElementById("diagnostic-ui").style.display = "none";
+        document.getElementById("timeattack-ui").style.display = "none";
+        document.getElementById("results-ui").style.display = "block";
+        const pct = Math.round((correct / total) * 100);
+        document
+          .getElementById("result-circle")
+          .style.setProperty("--score", pct);
+        document.getElementById("result-percent").textContent = pct + "%";
+        document.getElementById("result-correct").textContent = correct;
+        document.getElementById("result-wrong").textContent = total - correct;
+        const m = Math.floor(elapsed / 60),
+          s = elapsed % 60;
+        document.getElementById("result-time").textContent =
+          m + ":" + (s < 10 ? "0" : "") + s;
+        const mastery =
+          pct >= 90
+            ? "Отлично"
+            : pct >= 70
+              ? "Хорошо"
+              : pct >= 50
+                ? "Удовл."
+                : "Слабо";
+        document.getElementById("result-mastery").textContent = mastery;
+        document.getElementById("result-message").textContent =
+          pct >= 90
+            ? "🏆 Отличный результат!"
+            : pct >= 70
+              ? "👍 Хороший результат!"
+              : "📚 Повторите теорию";
       }
       function resetAssessment() {
-        document.getElementById('diagnostic-ui').style.display = 'none';
-        document.getElementById('timeattack-ui').style.display = 'none';
-        document.getElementById('results-ui').style.display = 'none';
-        document.getElementById('ta-timer').classList.add('hidden');
+        document.getElementById("diagnostic-ui").style.display = "none";
+        document.getElementById("timeattack-ui").style.display = "none";
+        document.getElementById("results-ui").style.display = "none";
+        document.getElementById("ta-timer").classList.add("hidden");
       }
-      document.addEventListener('DOMContentLoaded', () => { newTrainerProblem(); });
+      document.addEventListener("DOMContentLoaded", () => {
+        newTrainerProblem();
+      });
     </script>
   </body>
 </html>
