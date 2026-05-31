@@ -1,4 +1,4 @@
-<!doctype html>
+﻿<!doctype html>
 <html lang="ru">
   <head>
     <meta charset="UTF-8" />
@@ -259,21 +259,10 @@
         height: auto;
         width: 100%;
       }
-      .widget-track {
-        display: flex;
-        transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-        width: 100%;
-        will-change: transform;
-      }
-      .widget-slide {
-        flex: 0 0 100%;
-        width: 100%;
-        min-width: 100%;
-        padding: 20px;
-        box-sizing: border-box;
-        overflow-x: hidden;
-        overflow-y: visible;
-      }
+      .widget-viewport { width: 100%; }
+      .widget-slide { display: none; padding: 12px 16px; animation: slideFade 0.3s ease; }
+      .widget-slide.active { display: block; }
+      @keyframes slideFade { from { opacity: 0; } to { opacity: 1; } }
       .widget-slide h3 {
         font-size: 1.3rem;
         color: var(--accent);
@@ -814,10 +803,10 @@
         <div class="generate-widget">
           <div class="widget-progress">
             Слайд <span id="slide-num">1</span> из
-            <span id="slide-total">6</span>
+            <span id="slide-total">12</span>
           </div>
           <div class="widget-viewport">
-            <div class="widget-track" id="widget-track">
+            <div class="widget-track" id="track-slides">
               <!-- Slide 1 -->
               <div class="widget-slide active">
                 <h3>⚖️ Знаки сравнения &lt; &gt; =</h3>
@@ -1279,28 +1268,79 @@
                   </div>
                 </div>
               </div>
+              <!-- Slide 7 -->
+              <div class="widget-slide">
+                <h3>⚖️ Знаки сравнения &lt; &gt; = (применение)</h3>
+                <p>Знаки сравнения используются для записи неравенств:</p>
+                <div class="formula-box">a &lt; b — «a меньше b» &nbsp;|&nbsp; a &gt; b — «a больше b» &nbsp;|&nbsp; a = b — «a равно b»</div>
+                <p>Цепочки неравенств: 3 &lt; 5 &lt; 10 означает, что 3 меньше 5 и 5 меньше 10.</p>
+                <div class="tip-box">Знак «открывается» в сторону большего числа: 5 &gt; 3 (открыто влево, к 5).</div>
+              </div>
+              <!-- Slide 8 -->
+              <div class="widget-slide">
+                <h3>🔢 Сравнение многозначных чисел (поразрядно)</h3>
+                <p>Алгоритм сравнения многозначных чисел:</p>
+                <div style="display: grid; gap: 10px; margin: 16px 0">
+                  <div style="background: var(--bg-glass); border-radius: 10px; padding: 12px 16px;"><strong style="color: var(--accent)">1.</strong> Сравни количество цифр (разрядов): больше разрядов → больше число.</div>
+                  <div style="background: var(--bg-glass); border-radius: 10px; padding: 12px 16px;"><strong style="color: var(--accent)">2.</strong> Если разрядов одинаково — сравнивай цифры слева направо.</div>
+                  <div style="background: var(--bg-glass); border-radius: 10px; padding: 12px 16px;"><strong style="color: var(--accent)">3.</strong> Первое различие определяет результат.</div>
+                </div>
+                <div class="formula-box">4 856 702 и 4 856 098: оба 7-значные, 4=4, 8=8, 5=5, 6=6, следующие: 7 &gt; 0 → первое больше.</div>
+                <div class="tip-box">Никогда не сравнивай числа разной длины посимвольно — сначала посчитай разряды!</div>
+              </div>
+              <!-- Slide 9 -->
+              <div class="widget-slide">
+                <h3>📊 Сравнение на числовой прямой</h3>
+                <p>На числовой прямой: число, стоящее <strong>правее</strong>, всегда <strong>больше</strong>.</p>
+                <svg viewBox="0 0 400 80" aria-label="Числовая прямая для сравнения" style="width:100%;margin:12px 0">
+                  <defs><marker id="arr3" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#00d4aa"/></marker></defs>
+                  <line x1="10" y1="40" x2="380" y2="40" stroke="#00d4aa" stroke-width="2" marker-end="url(#arr3)"/>
+                  <circle cx="80" cy="40" r="6" fill="#ff6b6b"/><text x="80" y="30" text-anchor="middle" fill="#ff6b6b" font-size="11" font-family="Segoe UI, sans-serif">3</text>
+                  <circle cx="200" cy="40" r="6" fill="#4dabf7"/><text x="200" y="30" text-anchor="middle" fill="#4dabf7" font-size="11" font-family="Segoe UI, sans-serif">7</text>
+                  <text x="140" y="65" text-anchor="middle" fill="#a0a0b8" font-size="11" font-family="Segoe UI, sans-serif">3 &lt; 7</text>
+                </svg>
+                <div class="tip-box">Числовая прямая — лучший способ «увидеть» сравнение. Правее = больше.</div>
+              </div>
+              <!-- Slide 10 -->
+              <div class="widget-slide">
+                <h3>🔄 Упорядочивание чисел</h3>
+                <p><strong>По возрастанию</strong> — от меньшего к большему. <strong>По убыванию</strong> — от большего к меньшему.</p>
+                <div class="formula-box">Дано: 45, 8, 132, 21, 7<br>По возрастанию: 7, 8, 21, 45, 132<br>По убыванию: 132, 45, 21, 8, 7</div>
+                <p>Алгоритм: сначала найди наименьшее (наибольшее), затем из оставшихся — снова и т.д.</p>
+                <div class="tip-box">При упорядочивании удобно сначала разбить числа по количеству разрядов.</div>
+              </div>
+              <!-- Slide 11 -->
+              <div class="widget-slide">
+                <h3>🧮 Неравенства в задачах</h3>
+                <p>Неравенства применяются при решении задач с ограничениями и условиями «не менее», «не более», «больше», «меньше».</p>
+                <div class="formula-box">«Не менее 5» → x ≥ 5<br>«Не более 100» → x ≤ 100<br>«Больше 20» → x &gt; 20</div>
+                <p>Пример: «В класс пришло не менее 20 учеников» → количество ≥ 20.</p>
+                <div class="tip-box">Знак «больше» строгий: x &gt; 5 не включает 5. «Не менее 5»: x ≥ 5 включает 5.</div>
+              </div>
+              <!-- Slide 12 -->
+              <div class="widget-slide">
+                <h3>✅ Обобщение: правила сравнения</h3>
+                <p>Сводная таблица правил сравнения натуральных чисел:</p>
+                <div style="display: grid; gap: 8px; margin: 16px 0">
+                  <div style="background: var(--bg-glass); border-radius: 10px; padding: 10px 14px;">✔ Больше цифр → больше число (если нет ведущих нулей)</div>
+                  <div style="background: var(--bg-glass); border-radius: 10px; padding: 10px 14px;">✔ Одинаковое количество цифр → сравниваем поразрядно слева</div>
+                  <div style="background: var(--bg-glass); border-radius: 10px; padding: 10px 14px;">✔ Правее на числовой прямой → больше</div>
+                  <div style="background: var(--bg-glass); border-radius: 10px; padding: 10px 14px;">✔ Знак открывается к большему числу</div>
+                  <div style="background: var(--bg-glass); border-radius: 10px; padding: 10px 14px;">✔ Цепочка: a &lt; b &lt; c означает a &lt; c</div>
+                </div>
+                <div class="tip-box">Сравнение чисел — основа для сортировки, нахождения min/max и решения задач!</div>
+              </div>
             </div>
           </div>
           <div class="widget-nav">
-            <button class="btn btn-secondary" onclick="prevSlide()">
+            <button type="button" class="btn btn-secondary" onclick="prevSlide()">
               ← Назад
             </button>
-            <button class="btn btn-primary" onclick="nextSlide()">
+            <button type="button" class="btn btn-primary" onclick="nextSlide()">
               Вперёд →
             </button>
           </div>
         </div>
-      </div>
-      <div class="card">
-        <div class="card-title">
-          <span class="icon" style="background: var(--accent-blue-dim)">📖</span
-          >Из учебника
-        </div>
-        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px;margin-top:16px;">
-          <img src="../assets/img/pages/page_015.webp" alt="Страница учебника 015" style="width:100%;border-radius:12px;border:1px solid var(--border-glass);">
-          <img src="../assets/img/pages/page_016.webp" alt="Страница учебника 016" style="width:100%;border-radius:12px;border:1px solid var(--border-glass);">
-        </div>
-        <img src="../assets/img/pages/sec_s1_2_comparison.webp" alt="Раздел учебника" style="width:100%;max-width:600px;display:block;margin:16px auto 0;border-radius:12px;border:1px solid var(--border-glass);">
       </div>
     </section>
 
@@ -1733,7 +1773,6 @@
     <script>
       const AppState = {
         currentSection: "home",
-        slide: 0,
         trainer: { correct: 0, total: 0, streak: 0, current: null },
         diagnostic: { current: 0, score: 0, answers: [] },
         timeAttack: {
@@ -1766,28 +1805,25 @@
           showSection(link.dataset.section);
         });
       });
-      const totalSlides = 5;
-      const track = document.getElementById("widget-track");
+      let currentSlide = 0;
+      const slides = document.querySelectorAll("#track-slides .widget-slide");
+      const total = slides.length;
       const slideNumEl = document.getElementById("slide-num");
       const slideTotalEl = document.getElementById("slide-total");
-      if (slideTotalEl) slideTotalEl.textContent = totalSlides;
+      if (slideTotalEl) slideTotalEl.innerText = total;
       function renderSlide() {
-        if (track)
-          track.style.transform = "translateX(-" + AppState.slide * 100 + "%)";
-        if (slideNumEl) slideNumEl.textContent = AppState.slide + 1;
+        slides.forEach((s, i) => s.classList.toggle("active", i === currentSlide));
+        if (slideNumEl) slideNumEl.innerText = currentSlide + 1;
       }
       function nextSlide() {
-        if (AppState.slide < totalSlides - 1) {
-          AppState.slide++;
-          renderSlide();
-        }
+        if (currentSlide < total - 1) { currentSlide++; renderSlide(); }
       }
       function prevSlide() {
-        if (AppState.slide > 0) {
-          AppState.slide--;
-          renderSlide();
-        }
+        if (currentSlide > 0) { currentSlide--; renderSlide(); }
       }
+      renderSlide();
+      window.nextSlide = nextSlide;
+      window.prevSlide = prevSlide;
       function toggleSolution(id) {
         const el = document.getElementById(id);
         el.classList.toggle("active");
@@ -2221,4 +2257,5 @@
     </script>
   </body>
 </html>
+
 

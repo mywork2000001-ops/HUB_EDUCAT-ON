@@ -257,23 +257,12 @@
         border-radius: 20px;
         padding: 24px;
       }
-      .widget-viewport {
-        overflow: hidden;
-        position: relative;
-        min-height: 500px;
-        height: auto;
-      }
-      .widget-track {
-        display: flex;
-        transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
-      }
-      .widget-slide {
-        flex: 0 0 100%;
-        width: 100%;
-        padding: 20px;
-        box-sizing: border-box;
-        overflow-x: hidden;
-      }
+      .widget-viewport { width: 100%; }
+      .widget-slide { display: none; padding: 12px 16px; animation: slideFade 0.3s ease; }
+      .widget-slide.active { display: block; }
+      @keyframes slideFade { from { opacity: 0; } to { opacity: 1; } }
+      .widget-nav { display: flex; justify-content: space-between; margin-top: 20px; }
+      .widget-progress { text-align: center; font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 12px; }
       .widget-slide h3 {
         font-size: 1.3rem;
         color: var(--accent);
@@ -294,18 +283,6 @@
         border-radius: 12px;
         font-weight: 600;
         color: var(--text-primary);
-      }
-      .widget-nav {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-top: 16px;
-      }
-      .widget-progress {
-        text-align: center;
-        font-size: 0.9rem;
-        color: var(--text-secondary);
-        margin-bottom: 12px;
       }
 
       .sequence-component {
@@ -887,13 +864,12 @@
 
         <div class="generate-widget">
           <div class="widget-progress">
-            Слайд <span id="slide-num">1</span> из
-            <span id="slide-total">8</span>
+            Слайд <span id="slide-num">1</span> / <span id="slide-total">12</span>
           </div>
           <div class="widget-viewport">
-            <div class="widget-track" id="widget-track">
+            <div class="widget-track" id="track-slides">
               <!-- Slide 1 -->
-              <div class="widget-slide">
+              <div class="widget-slide active">
                 <h3>🍎 Зачем умножать десятичные на дроби?</h3>
                 <p>
                   В корзине 10 кг яблок. Продали <span class="highlight">⅗</span>
@@ -1162,6 +1138,43 @@
                   <strong style="color: var(--accent)">Кратко:</strong>
                   Перевод → действие → сокращение → перевод обратно.
                 </div>
+              </div>
+
+              <!-- Slide 9 -->
+              <div class="widget-slide">
+                <h3>🔄 Смешанные операции: × и ÷ в одном выражении</h3>
+                <p>В выражениях с умножением и делением одновременно соблюдайте порядок: действия выполняются слева направо.</p>
+                <div class="formula-box">1,8 · ¾ ÷ 0,5 = 1,35 ÷ 0,5 = 2,7</div>
+                <div class="tip-box">Скобки меняют порядок: сначала вычислите то, что в скобках.</div>
+              </div>
+
+              <!-- Slide 10 -->
+              <div class="widget-slide">
+                <h3>📐 Умножение обыкновенной на десятичную</h3>
+                <p>Переведите одну из дробей к типу другой, затем выполните умножение удобным способом.</p>
+                <div class="formula-box">¾ · 2,4 = 0,75 · 2,4 = 1,8<br>или: ¾ · 2,4 = 3·2,4÷4 = 7,2÷4 = 1,8</div>
+                <div class="tip-box">Второй способ часто быстрее: умножаем на числитель, делим на знаменатель.</div>
+              </div>
+
+              <!-- Slide 11 -->
+              <div class="widget-slide">
+                <h3>💡 Перевод перед умножением (какой удобнее?)</h3>
+                <p>Выбирайте способ исходя из удобства вычисления. Если обыкновенная дробь даёт короткую десятичную — переводите её.</p>
+                <div class="formula-box">½ = 0,5 ✓ удобно<br>⅓ = 0,333... ✗ неудобно → оставьте обыкновенную</div>
+                <div class="tip-box">Знаменатели 2, 4, 5, 8, 10, 20, 25, 50, 100 → точная десятичная дробь.</div>
+              </div>
+
+              <!-- Slide 12 -->
+              <div class="widget-slide">
+                <h3>✅ Итог: операции с разными видами дробей</h3>
+                <p>Главные правила при смешанных вычислениях:</p>
+                <div class="formula-box">
+                  1. Выбрать удобный вид (десятичная или обыкновенная)<br>
+                  2. При делении на дробь → умножить на обратную<br>
+                  3. Соблюдать порядок действий: () → ×÷ → ±<br>
+                  4. Проверить результат обратным действием
+                </div>
+                <div class="tip-box">Смешанные числа → сначала перевести в дробь или десятичную.</div>
               </div>
             </div>
           </div>
@@ -1905,28 +1918,20 @@
 
       // ================= GENERATE WIDGET (SLIDER) =================
       let currentSlide = 0;
-      const totalSlides = 8;
-      const track = document.getElementById("widget-track");
-      const slideNum = document.getElementById("slide-num");
-      const slideTotal = document.getElementById("slide-total");
-      slideTotal.textContent = totalSlides;
-
+      const slides = document.querySelectorAll("#track-slides .widget-slide");
+      const total = slides.length;
+      document.getElementById("slide-total").innerText = total;
       function renderSlide() {
-        track.style.transform = "translateX(-" + currentSlide * 100 + "%)";
-        slideNum.textContent = currentSlide + 1;
+        slides.forEach((s, i) => s.classList.toggle("active", i === currentSlide));
+        document.getElementById("slide-num").innerText = currentSlide + 1;
       }
       function nextSlide() {
-        if (currentSlide < totalSlides - 1) {
-          currentSlide++;
-          renderSlide();
-        }
+        if (currentSlide < total - 1) { currentSlide++; renderSlide(); }
       }
       function prevSlide() {
-        if (currentSlide > 0) {
-          currentSlide--;
-          renderSlide();
-        }
+        if (currentSlide > 0) { currentSlide--; renderSlide(); }
       }
+      renderSlide();
 
       // Grid visualization for slide 3
       function fillGrid(id, count, groupSize) {

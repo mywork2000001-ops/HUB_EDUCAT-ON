@@ -1,4 +1,4 @@
-<!doctype html>
+﻿<!doctype html>
 <html lang="ru">
   <head>
     <meta charset="UTF-8" />
@@ -51,9 +51,11 @@
       .btn-secondary:hover { background: var(--bg-card); }
       .btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none !important; }
       .generate-widget { background: var(--bg-card); border: 1px solid var(--border-glass); border-radius: 20px; padding: 24px; width: 100%; }
-      .widget-viewport { overflow: hidden; position: relative; min-height: 520px; height: auto; width: 100%; }
-      .widget-track { display: flex; transition: transform 0.5s cubic-bezier(0.4,0,0.2,1); width: 100%; will-change: transform; }
-      .widget-slide { flex: 0 0 100%; width: 100%; min-width: 100%; padding: 20px; box-sizing: border-box; overflow-x: hidden; overflow-y: visible; }
+      .widget-viewport { width: 100%; }
+      .widget-track { width: 100%; }
+      .widget-slide { display: none; padding: 12px 16px; animation: slideFade 0.3s ease; }
+      .widget-slide.active { display: block; }
+      @keyframes slideFade { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
       .widget-slide h3 { font-size: 1.3rem; color: var(--accent); margin-bottom: 16px; }
       .widget-slide p, .widget-slide li { color: var(--text-secondary); line-height: 1.8; margin-bottom: 12px; }
       .widget-slide .big-math { font-size: 1.6rem; text-align: center; margin: 20px 0; background: var(--bg-glass); padding: 20px; border-radius: 12px; font-weight: 600; color: var(--text-primary); }
@@ -163,8 +165,8 @@
         <div class="card-title"><span class="icon" style="background: var(--accent-dim)">📖</span>Глава 1. Визуальная теория</div>
         <p style="color: var(--text-secondary); margin-bottom: 20px">Листайте слайды. Каждый слайд — ключевой блок умножения дробей.</p>
         <div class="generate-widget">
-          <div class="widget-progress">Слайд <span id="slide-num">1</span> из <span id="slide-total">6</span></div>
-          <div class="widget-track" id="widget-track">
+          <div class="widget-progress">Слайд <span id="slide-num">1</span> из <span id="slide-total">12</span></div>
+          <div class="widget-viewport"><div class="widget-track" id="track-slides">
             <!-- Slide 1 -->
             <div class="widget-slide active">
               <h3>✖️ Правило умножения дробей</h3>
@@ -189,7 +191,7 @@
               <div class="tip-box">Общий знаменатель при умножении НЕ нужен — это главное отличие от сложения!</div>
             </div>
             <!-- Slide 2 -->
-            <div class="widget-slide">
+            <div class="widget-slide active">
               <h3>📐 Визуальная модель: площадь прямоугольника</h3>
               <p>Умножение дробей — это нахождение части от части. Представьте прямоугольник 1×1.</p>
               <svg viewBox="0 0 300 220" style="width:100%; max-width:340px; display:block; margin:16px auto;" aria-label="Прямоугольник: 2/3 по горизонтали, 3/4 по вертикали, площадь 1/2">
@@ -304,10 +306,148 @@
               </div>
               <div class="tip-box">«Найти X/Y от числа N» = N × X/Y. Умножение дробей!</div>
             </div>
-          </div>
+            <!-- Slide 7 -->
+            <div class="widget-slide">
+              <h3>🔄 Умножение смешанного числа на дробь</h3>
+              <p>Смешанное число сначала переводим в неправильную дробь, затем умножаем по правилу.</p>
+              <div class="big-math">
+                2<span class="fraction"><span class="top">1</span><span class="bottom">3</span></span> ×
+                <span class="fraction"><span class="top">3</span><span class="bottom">7</span></span>
+                =
+                <span class="fraction"><span class="top">7</span><span class="bottom">3</span></span> ×
+                <span class="fraction"><span class="top">3</span><span class="bottom">7</span></span>
+                = <span class="fraction"><span class="top">21</span><span class="bottom">21</span></span> = 1
+              </div>
+              <p><strong>Ещё пример:</strong></p>
+              <div class="formula-box">
+                1<span class="fraction"><span class="top">2</span><span class="bottom">5</span></span> ×
+                <span class="fraction"><span class="top">5</span><span class="bottom">7</span></span> =
+                <span class="fraction"><span class="top">7</span><span class="bottom">5</span></span> ×
+                <span class="fraction"><span class="top">5</span><span class="bottom">7</span></span> =
+                <span class="fraction"><span class="top">35</span><span class="bottom">35</span></span> = 1
+              </div>
+              <div class="tip-box">Шаги: перевести смешанное → умножить дроби → сократить → при необходимости перевести обратно.</div>
+            </div>
+            <!-- Slide 8 -->
+            <div class="widget-slide">
+              <h3>✖️ Умножение нескольких дробей подряд</h3>
+              <p>Правило расширяется на любое количество множителей:</p>
+              <div class="big-math">
+                <span class="fraction"><span class="top">a</span><span class="bottom">b</span></span> ×
+                <span class="fraction"><span class="top">c</span><span class="bottom">d</span></span> ×
+                <span class="fraction"><span class="top">e</span><span class="bottom">f</span></span>
+                =
+                <span class="fraction"><span class="top">a·c·e</span><span class="bottom">b·d·f</span></span>
+              </div>
+              <p><strong>Пример:</strong></p>
+              <div class="formula-box">
+                <span class="fraction"><span class="top">1</span><span class="bottom">2</span></span> ×
+                <span class="fraction"><span class="top">2</span><span class="bottom">3</span></span> ×
+                <span class="fraction"><span class="top">3</span><span class="bottom">4</span></span>
+                =
+                <span class="fraction"><span class="top">1×2×3</span><span class="bottom">2×3×4</span></span>
+                =
+                <span class="fraction"><span class="top">6</span><span class="bottom">24</span></span>
+                =
+                <span class="fraction"><span class="top">1</span><span class="bottom">4</span></span>
+              </div>
+              <div class="tip-box">Сокращайте крест-накрест сразу все пары числитель-знаменатель, это сильно упрощает вычисления.</div>
+            </div>
+            <!-- Slide 9 -->
+            <div class="widget-slide">
+              <h3>💡 Сокращение до умножения — детально</h3>
+              <p>Можно сокращать числитель одной дроби с знаменателем ЛЮБОЙ другой дроби в цепочке.</p>
+              <div class="formula-box">
+                <span class="fraction"><span class="top" style="color:var(--accent)">6</span><span class="bottom">7</span></span> ×
+                <span class="fraction"><span class="top">5</span><span class="bottom" style="color:var(--accent)">9</span></span> ×
+                <span class="fraction"><span class="top">7</span><span class="bottom">10</span></span>
+              </div>
+              <p>Сокращаем: 6 и 9 → 2 и 3; 5 и 10 → 1 и 2; 7 и 7 → 1 и 1:</p>
+              <div class="formula-box">
+                <span class="fraction"><span class="top">2</span><span class="bottom">1</span></span> ×
+                <span class="fraction"><span class="top">1</span><span class="bottom">3</span></span> ×
+                <span class="fraction"><span class="top">1</span><span class="bottom">2</span></span>
+                =
+                <span class="fraction"><span class="top">2</span><span class="bottom">6</span></span>
+                =
+                <span class="fraction"><span class="top">1</span><span class="bottom">3</span></span>
+              </div>
+              <div class="tip-box">Чем больше сократишь ДО умножения, тем меньшими числами придётся оперировать.</div>
+            </div>
+            <!-- Slide 10 -->
+            <div class="widget-slide">
+              <h3>🔢 Нахождение доли от числа</h3>
+              <p>«Найти <strong>a/b</strong> от числа <strong>N</strong>» — это задача на умножение:</p>
+              <div class="big-math">
+                N ×
+                <span class="fraction"><span class="top">a</span><span class="bottom">b</span></span>
+                =
+                <span class="fraction"><span class="top">N × a</span><span class="bottom">b</span></span>
+              </div>
+              <div style="display: flex; flex-direction: column; gap: 10px; margin: 16px 0;">
+                <div style="background: var(--bg-glass); border-radius: 10px; padding: 12px 16px;">
+                  <strong>3/4 от 60:</strong> 60 × 3/4 = 180/4 = <span style="color:var(--accent)">45</span>
+                </div>
+                <div style="background: var(--bg-glass); border-radius: 10px; padding: 12px 16px;">
+                  <strong>5/6 от 42:</strong> 42 × 5/6 = 210/6 = <span style="color:var(--accent)">35</span>
+                </div>
+                <div style="background: var(--bg-glass); border-radius: 10px; padding: 12px 16px;">
+                  <strong>2/7 от 35:</strong> 35 × 2/7 = 70/7 = <span style="color:var(--accent)">10</span>
+                </div>
+              </div>
+              <div class="tip-box">Удобный порядок: сначала разделить N на b, потом умножить на a.</div>
+            </div>
+            <!-- Slide 11 -->
+            <div class="widget-slide">
+              <h3>📊 Задачи на умножение дробей</h3>
+              <p>Типовые задачи, где применяется умножение дробей:</p>
+              <div style="display: flex; flex-direction: column; gap: 12px; margin: 16px 0;">
+                <div style="background: var(--bg-glass); border-radius: 12px; padding: 16px;">
+                  <strong>Площадь:</strong> длина 3/4 м × ширина 2/5 м = 3×2/(4×5) = <span style="color:var(--accent)">6/20 = 3/10 м²</span>
+                </div>
+                <div style="background: var(--bg-glass); border-radius: 12px; padding: 16px;">
+                  <strong>Скидка:</strong> Цена 240 р. Скидка 1/4. Скидка = 240 × 1/4 = <span style="color:var(--accent)">60 р.</span> Итого: 240 − 60 = 180 р.
+                </div>
+                <div style="background: var(--bg-glass); border-radius: 12px; padding: 16px;">
+                  <strong>Путь:</strong> Весь путь 15 км. Прошли 2/3. Прошли = 15 × 2/3 = <span style="color:var(--accent)">10 км.</span>
+                </div>
+              </div>
+              <div class="tip-box">Ключевое слово в задаче: «найти ... от ...», «составляет ... от ...» — сигнал к умножению!</div>
+            </div>
+            <!-- Slide 12 -->
+            <div class="widget-slide">
+              <h3>✅ Итог: все случаи умножения дробей</h3>
+              <p style="color: var(--text-secondary); margin-bottom: 16px">Сводная памятка урока:</p>
+              <div style="display: flex; flex-direction: column; gap: 10px;">
+                <div style="background: var(--bg-glass); border-radius: 10px; padding: 12px 16px; display: flex; gap: 12px; align-items: flex-start;">
+                  <span style="color: var(--accent); font-weight: 700; font-size: 1.2rem">1</span>
+                  <span><strong>Дробь × дробь:</strong> числитель × числитель / знаменатель × знаменатель</span>
+                </div>
+                <div style="background: var(--bg-glass); border-radius: 10px; padding: 12px 16px; display: flex; gap: 12px; align-items: flex-start;">
+                  <span style="color: var(--accent); font-weight: 700; font-size: 1.2rem">2</span>
+                  <span><strong>Дробь × целое:</strong> умножить только числитель</span>
+                </div>
+                <div style="background: var(--bg-glass); border-radius: 10px; padding: 12px 16px; display: flex; gap: 12px; align-items: flex-start;">
+                  <span style="color: var(--accent); font-weight: 700; font-size: 1.2rem">3</span>
+                  <span><strong>Смешанное × что-либо:</strong> сначала перевести в неправильную дробь</span>
+                </div>
+                <div style="background: var(--bg-glass); border-radius: 10px; padding: 12px 16px; display: flex; gap: 12px; align-items: flex-start;">
+                  <span style="color: var(--accent); font-weight: 700; font-size: 1.2rem">4</span>
+                  <span><strong>Сокращение крест-накрест:</strong> ДО умножения для упрощения</span>
+                </div>
+                <div style="background: var(--bg-glass); border-radius: 10px; padding: 12px 16px; display: flex; gap: 12px; align-items: flex-start;">
+                  <span style="color: var(--accent); font-weight: 700; font-size: 1.2rem">5</span>
+                  <span><strong>Доля от числа:</strong> N × a/b = Na/b</span>
+                </div>
+              </div>
+              <div style="text-align: center; margin-top: 20px; padding: 16px; background: var(--accent-dim); border-radius: 12px; color: var(--accent); font-weight: 700; font-size: 1.1rem;">
+                Отличная работа! Умножение дробей полностью освоено!
+              </div>
+            </div>
+          </div></div>
           <div class="widget-nav">
-            <button class="btn btn-secondary" onclick="prevSlide()">← Назад</button>
-            <button class="btn btn-primary" onclick="nextSlide()">Вперёд →</button>
+            <button type="button" class="btn btn-secondary" onclick="prevSlide()">← Назад</button>
+            <button type="button" class="btn btn-primary" onclick="nextSlide()">Вперёд →</button>
           </div>
         </div>
       </div>
@@ -538,7 +678,7 @@
 
     <script>
       const AppState = {
-        currentSection: 'home', slide: 0,
+        currentSection: 'home',
         trainer: { correct:0, total:0, streak:0, current:null },
         diagnostic: { current:0, score:0, answers:[] },
         timeAttack: { current:0, score:0, timer:null, timeLeft:600, startTime:0, answers:[] },
@@ -557,18 +697,23 @@
         link.addEventListener('click', e => { e.preventDefault(); showSection(link.dataset.section); });
       });
 
-      // Slider
-      const totalSlides = 5;
-      const track = document.getElementById('widget-track');
+      // ===== SLIDER =====
+      let currentSlide = 0;
+      const slides = document.querySelectorAll('#track-slides .widget-slide');
+      const total = slides.length;
       const slideNumEl = document.getElementById('slide-num');
       const slideTotalEl = document.getElementById('slide-total');
-      if (slideTotalEl) slideTotalEl.textContent = totalSlides;
+      if (slideTotalEl) slideTotalEl.innerText = total;
       function renderSlide() {
-        if (track) track.style.transform = 'translateX(-' + AppState.slide * 100 + '%)';
-        if (slideNumEl) slideNumEl.textContent = AppState.slide + 1;
+        slides.forEach((s, i) => s.classList.toggle('active', i === currentSlide));
+        if (slideNumEl) slideNumEl.innerText = currentSlide + 1;
       }
-      function nextSlide() { if (AppState.slide < totalSlides - 1) { AppState.slide++; renderSlide(); } }
-      function prevSlide() { if (AppState.slide > 0) { AppState.slide--; renderSlide(); } }
+      function nextSlide() { if (currentSlide < total - 1) { currentSlide++; renderSlide(); } }
+      function prevSlide() { if (currentSlide > 0) { currentSlide--; renderSlide(); } }
+      renderSlide();
+      window.nextSlide = nextSlide;
+      window.prevSlide = prevSlide;
+      // ===== END SLIDER =====
 
       // Solution toggles
       function toggleSolution(id) {
@@ -1188,3 +1333,4 @@
     </script>
   </body>
 </html>
+

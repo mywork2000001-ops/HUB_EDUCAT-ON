@@ -1,4 +1,4 @@
-<!doctype html>
+﻿<!doctype html>
 <html lang="ru">
   <head>
     <meta charset="UTF-8" />
@@ -894,11 +894,11 @@
         </p>
         <div class="generate-widget">
           <div class="widget-progress">
-            Слайд <span id="slide-num">1</span> из
-            <span id="slide-total">8</span>
+            Слайд <span id="slide-num">1</span> /
+            <span id="slide-total">12</span>
           </div>
           <div class="widget-viewport">
-            <div class="widget-track" id="widget-track">
+            <div class="widget-track" id="track-slides">
               <!-- Slide 1 -->
               <div class="widget-slide active">
                 <h3>🔢 Что такое процент?</h3>
@@ -1268,13 +1268,54 @@
                   школе, статистике.
                 </div>
               </div>
+              <!-- Slide 9 -->
+              <div class="widget-slide">
+                <h3>💡 Процент как доля</h3>
+                <p>Процент — это особый способ записать долю от целого. 1% всегда означает ровно одну сотую часть, независимо от того, о чём идёт речь: о деньгах, людях или расстоянии.</p>
+                <div class="formula-box">1% = 1/100 целого<br />Пример: 1% от 500 = 500/100 = 5</div>
+                <div class="tip-box">Чем больше процент, тем большую долю он занимает. 100% = целое, 50% = половина, 25% = четверть.</div>
+              </div>
+              <!-- Slide 10 -->
+              <div class="widget-slide">
+                <h3>🧮 Перевод процентов в дроби</h3>
+                <p>Любой процент можно записать как обыкновенную дробь, сократив её до наименьших членов. Это помогает при устном счёте.</p>
+                <div class="formula-box">
+                  25% = 25/100 = 1/4<br />
+                  50% = 50/100 = 1/2<br />
+                  75% = 75/100 = 3/4<br />
+                  10% = 10/100 = 1/10
+                </div>
+                <div class="tip-box">Запомните «золотую пятёрку»: 10%=1/10, 20%=1/5, 25%=1/4, 50%=1/2, 75%=3/4. Они покрывают большинство задач.</div>
+              </div>
+              <!-- Slide 11 -->
+              <div class="widget-slide">
+                <h3>📐 Сравнение процентов</h3>
+                <p>Проценты можно сравнивать между собой и с 100%. Число меньше 100% — это часть целого. Равно 100% — это целое. Больше 100% — больше целого.</p>
+                <div class="formula-box">
+                  50% &lt; 100% (половина меньше целого)<br />
+                  150% &gt; 100% (полтора целого)<br />
+                  200% = двойное целое
+                </div>
+                <div class="tip-box">Если цена выросла на 120%, это значит, что новая цена = 220% от старой (старая + 120% от старой).</div>
+              </div>
+              <!-- Slide 12 -->
+              <div class="widget-slide">
+                <h3>✅ Практические примеры из жизни</h3>
+                <p>Проценты помогают нам понимать реальные ситуации: результаты голосований, состав продуктов, банковские операции и успеваемость.</p>
+                <div class="formula-box">
+                  В классе 30 учеников, 60% — девочки.<br />
+                  Девочек: 30 × 0,60 = 18<br />
+                  Мальчиков: 30 − 18 = 12 (это 40%)
+                </div>
+                <div class="tip-box">Всегда проверяйте: сумма всех процентов должна равняться 100%. Если получается больше или меньше — ищите ошибку.</div>
+              </div>
             </div>
           </div>
           <div class="widget-nav">
-            <button class="btn btn-secondary" onclick="prevSlide()">
+            <button type="button" class="btn btn-secondary" onclick="prevSlide()">
               ← Назад
             </button>
-            <button class="btn btn-primary" onclick="nextSlide()">
+            <button type="button" class="btn btn-primary" onclick="nextSlide()">
               Вперёд →
             </button>
           </div>
@@ -1873,29 +1914,23 @@
       });
 
       // ================= SLIDER =================
-      const totalSlides = 8;
-      const track = document.getElementById("widget-track");
-      const slideNum = document.getElementById("slide-num");
-      const slideTotal = document.getElementById("slide-total");
-      slideTotal.textContent = totalSlides;
+      let currentSlide = 0;
+      const slides = document.querySelectorAll("#track-slides .widget-slide");
+      const total = slides.length;
+      document.getElementById("slide-total").innerText = total;
       function renderSlide() {
-        track.querySelectorAll(".widget-slide").forEach((s, i) => {
-          s.classList.toggle("active", i === AppState.slide);
-        });
-        slideNum.textContent = AppState.slide + 1;
+        slides.forEach((s, i) => s.classList.toggle("active", i === currentSlide));
+        document.getElementById("slide-num").innerText = currentSlide + 1;
       }
       function nextSlide() {
-        if (AppState.slide < totalSlides - 1) {
-          AppState.slide++;
-          renderSlide();
-        }
+        if (currentSlide < total - 1) { currentSlide++; renderSlide(); }
       }
       function prevSlide() {
-        if (AppState.slide > 0) {
-          AppState.slide--;
-          renderSlide();
-        }
+        if (currentSlide > 0) { currentSlide--; renderSlide(); }
       }
+      renderSlide();
+      window.nextSlide = nextSlide;
+      window.prevSlide = prevSlide;
 
       // ================= SOLUTION TOGGLES =================
       function toggleSolution(id) {
@@ -2508,3 +2543,5 @@
     </script>
   </body>
 </html>
+
+

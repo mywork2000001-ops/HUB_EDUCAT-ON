@@ -1,4 +1,4 @@
-<!doctype html>
+﻿<!doctype html>
 <html lang="ru">
   <head>
     <meta charset="UTF-8" />
@@ -869,11 +869,11 @@
         </p>
         <div class="generate-widget">
           <div class="widget-progress">
-            Слайд <span id="slide-num">1</span> из
-            <span id="slide-total">8</span>
+            Слайд <span id="slide-num">1</span> /
+            <span id="slide-total">12</span>
           </div>
           <div class="widget-viewport">
-            <div class="widget-track" id="widget-track">
+            <div class="widget-track" id="track-slides">
               <!-- Slide 1 -->
               <div class="widget-slide active">
                 <h3>🔢 Что такое процент?</h3>
@@ -1198,13 +1198,62 @@
                   1–2 действия.
                 </div>
               </div>
+              <!-- Slide 9 -->
+              <div class="widget-slide">
+                <h3>🗺️ Обзор всех типов задач на проценты</h3>
+                <p>Существует три основных типа задач на проценты. Умение распознать тип — это половина решения. Сравним их на одном примере.</p>
+                <div class="formula-box">
+                  Дано: число 200 и 30%<br />
+                  Тип 1 (% от числа): 30% от 200 = 60<br />
+                  Тип 2 (число по %): x, если 60 = 30% → x = 200<br />
+                  Тип 3 (% от числа): 60 — это сколько % от 200? → 30%
+                </div>
+                <div class="tip-box">Все три типа задач взаимосвязаны. Знание любых двух из трёх значений позволяет найти третье.</div>
+              </div>
+              <!-- Slide 10 -->
+              <div class="widget-slide">
+                <h3>🧩 Алгоритм решения любой задачи на %</h3>
+                <p>Универсальный алгоритм: определите, что известно и что нужно найти, выберите формулу и решите. Проверьте ответ подстановкой.</p>
+                <div class="formula-box">
+                  Шаг 1: Определите тип задачи (что дано, что найти)<br />
+                  Шаг 2: Переведите % в десятичную дробь<br />
+                  Шаг 3: Примените формулу<br />
+                  Шаг 4: Проверьте ответ
+                </div>
+                <div class="tip-box">Если задача кажется сложной — нарисуйте схему: «часть — целое — процент». Обычно сразу станет ясно, что искать.</div>
+              </div>
+              <!-- Slide 11 -->
+              <div class="widget-slide">
+                <h3>📊 Проценты в таблицах и диаграммах</h3>
+                <p>Данные часто представляют в виде таблиц и диаграмм, где указаны проценты. Умение читать такие данные и делать вычисления — важный навык.</p>
+                <div class="formula-box">
+                  Диаграмма расходов семьи (10 000 руб.):<br />
+                  Продукты 40% = 4000 руб.<br />
+                  Транспорт 15% = 1500 руб.<br />
+                  Развлечения 10% = 1000 руб.
+                </div>
+                <div class="tip-box">При чтении диаграммы всегда уточняйте, что принято за 100%. Это может быть общий бюджет, количество людей, объём производства.</div>
+              </div>
+              <!-- Slide 12 -->
+              <div class="widget-slide">
+                <h3>✅ Итоговая таблица формул</h3>
+                <p>Все формулы темы «Проценты» в одном месте. Эта таблица — ваша шпаргалка для решения любых задач.</p>
+                <div class="formula-box">
+                  Процент от числа: P = A × N / 100<br />
+                  Число по проценту: A = P × 100 / N<br />
+                  Процентное отношение: N = P / A × 100%<br />
+                  Увеличение на N%: A_new = A × (1 + N/100)<br />
+                  Уменьшение на N%: A_new = A × (1 − N/100)
+                </div>
+                <div class="tip-box">Выучите эти пять формул — и вы сможете решить любую задачу на проценты из школьной программы.</div>
+              </div>
             </div>
           </div>
           <div class="widget-nav">
-            <button class="btn btn-secondary" onclick="prevSlide()">
+            <button type="button" class="btn btn-secondary" onclick="prevSlide()">
               ← Назад
             </button>
-            <button class="btn btn-primary" onclick="nextSlide()">
+            <button type="button" class="btn btn-primary" onclick="nextSlide()">
               Вперёд →
             </button>
           </div>
@@ -1798,29 +1847,23 @@
       });
 
       // ================= SLIDER =================
-      const totalSlides = 8;
-      const track = document.getElementById("widget-track");
-      const slideNum = document.getElementById("slide-num");
-      const slideTotal = document.getElementById("slide-total");
-      slideTotal.textContent = totalSlides;
+      let currentSlide = 0;
+      const slides = document.querySelectorAll("#track-slides .widget-slide");
+      const total = slides.length;
+      document.getElementById("slide-total").innerText = total;
       function renderSlide() {
-        track.querySelectorAll(".widget-slide").forEach((s, i) => {
-          s.classList.toggle("active", i === AppState.slide);
-        });
-        slideNum.textContent = AppState.slide + 1;
+        slides.forEach((s, i) => s.classList.toggle("active", i === currentSlide));
+        document.getElementById("slide-num").innerText = currentSlide + 1;
       }
       function nextSlide() {
-        if (AppState.slide < totalSlides - 1) {
-          AppState.slide++;
-          renderSlide();
-        }
+        if (currentSlide < total - 1) { currentSlide++; renderSlide(); }
       }
       function prevSlide() {
-        if (AppState.slide > 0) {
-          AppState.slide--;
-          renderSlide();
-        }
+        if (currentSlide > 0) { currentSlide--; renderSlide(); }
       }
+      renderSlide();
+      window.nextSlide = nextSlide;
+      window.prevSlide = prevSlide;
 
       // ================= SOLUTION TOGGLES =================
       function toggleSolution(id) {
@@ -2524,3 +2567,5 @@
     </script>
   </body>
 </html>
+
+

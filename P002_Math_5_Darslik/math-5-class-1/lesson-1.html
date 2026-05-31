@@ -1,4 +1,4 @@
-<!doctype html>
+﻿<!doctype html>
 <html lang="ru">
   <head>
     <meta charset="UTF-8" />
@@ -51,13 +51,14 @@
       .btn-secondary:hover { background: var(--bg-card); }
       .btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none !important; }
       .generate-widget { background: var(--bg-card); border: 1px solid var(--border-glass); border-radius: 20px; padding: 24px; width: 100%; }
-      .widget-viewport { overflow: hidden; position: relative; min-height: 520px; height: auto; width: 100%; }
-      .widget-track { display: flex; transition: transform 0.5s cubic-bezier(0.4,0,0.2,1); width: 100%; will-change: transform; }
-      .widget-slide { flex: 0 0 100%; width: 100%; min-width: 100%; padding: 20px; box-sizing: border-box; overflow-x: hidden; overflow-y: visible; }
+      .widget-viewport { width: 100%; }
+      .widget-slide { display: none; padding: 12px 16px; animation: slideFade 0.3s ease; }
+      .widget-slide.active { display: block; }
+      @keyframes slideFade { from { opacity: 0; } to { opacity: 1; } }
       .widget-slide h3 { font-size: 1.3rem; color: var(--accent); margin-bottom: 16px; }
       .widget-slide p, .widget-slide li { color: var(--text-secondary); line-height: 1.8; margin-bottom: 12px; }
       .widget-slide .big-math { font-size: 1.6rem; text-align: center; margin: 20px 0; background: var(--bg-glass); padding: 20px; border-radius: 12px; font-weight: 600; color: var(--text-primary); }
-      .widget-nav { display: flex; justify-content: space-between; align-items: center; margin-top: 16px; }
+      .widget-nav { display: flex; justify-content: space-between; margin-top: 20px; }
       .widget-progress { text-align: center; font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 12px; }
       .sequence-component { display: flex; flex-direction: column; gap: 20px; position: relative; }
       .sequence-step { background: var(--bg-card); border: 1px solid var(--border-glass); border-radius: 16px; padding: 24px 24px 24px 72px; position: relative; transition: all 0.3s; }
@@ -117,7 +118,7 @@
       .breakdown-value { font-size: 1.5rem; font-weight: 700; color: var(--accent); }
       .breakdown-label { font-size: 0.85rem; color: var(--text-secondary); }
       .hidden { display: none !important; }
-      @media (max-width: 768px) { .hero h1 { font-size: 2rem; } .nav-links { display: none; } .timer { top: 70px; right: 10px; font-size: 1rem; padding: 10px 16px; } .card { padding: 20px; } section { padding: 80px 16px 40px; } .widget-viewport { min-height: 500px; } }
+      @media (max-width: 768px) { .hero h1 { font-size: 2rem; } .nav-links { display: none; } .timer { top: 70px; right: 10px; font-size: 1rem; padding: 10px 16px; } .card { padding: 20px; } section { padding: 80px 16px 40px; } }
     </style>
   </head>
   <body>
@@ -219,10 +220,10 @@
         <div class="generate-widget">
           <div class="widget-progress">
             Слайд <span id="slide-num">1</span> из
-            <span id="slide-total">5</span>
+            <span id="slide-total">12</span>
           </div>
           <div class="widget-viewport">
-            <div class="widget-track" id="widget-track">
+            <div class="widget-track" id="track-slides">
               <!-- Slide 1 -->
               <div class="widget-slide active">
                 <h3>🔢 Что такое натуральные числа?</h3>
@@ -570,28 +571,80 @@
                   каждый следующий урок опирается на предыдущий.
                 </div>
               </div>
+              <!-- Slide 6 -->
+              <div class="widget-slide">
+                <h3>🧮 Деление с остатком</h3>
+                <p>Когда одно число не делится на другое нацело, получается <strong>деление с остатком</strong>: <span class="highlight">a = b · q + r</span>, где r — остаток (0 ≤ r &lt; b).</p>
+                <div class="formula-box">17 = 5 · 3 + 2 &nbsp;→&nbsp; частное = 3, остаток = 2</div>
+                <p><strong>Проверка:</strong> делитель × частное + остаток = делимое.</p>
+                <div class="tip-box">Остаток всегда меньше делителя. Если r = 0 — деление нацело.</div>
+              </div>
+              <!-- Slide 7 -->
+              <div class="widget-slide">
+                <h3>📐 Свойства сложения</h3>
+                <p>Два главных закона сложения натуральных чисел:</p>
+                <div class="formula-box">Переместительное: a + b = b + a<br>Сочетательное: (a + b) + c = a + (b + c)</div>
+                <p>Переместительное свойство: порядок слагаемых не меняет суммы. Сочетательное: группировка слагаемых не меняет результат.</p>
+                <div class="tip-box">Эти свойства упрощают устный счёт: 37 + 48 + 63 = (37 + 63) + 48 = 100 + 48 = 148.</div>
+              </div>
+              <!-- Slide 8 -->
+              <div class="widget-slide">
+                <h3>✖️ Свойства умножения</h3>
+                <p>Ключевые законы умножения натуральных чисел:</p>
+                <div class="formula-box">Переместительное: a · b = b · a<br>Дистрибутивное: a · (b + c) = a·b + a·c</div>
+                <p>Дистрибутивное свойство связывает умножение со сложением и вычитанием, позволяя раскрывать скобки.</p>
+                <div class="tip-box">Пример: 7 · 98 = 7 · (100 − 2) = 700 − 14 = 686. Удобно для устного счёта!</div>
+              </div>
+              <!-- Slide 9 -->
+              <div class="widget-slide">
+                <h3>🔢 Делители и кратные</h3>
+                <p><strong>Делитель</strong> числа a — натуральное число, на которое a делится без остатка. <strong>Кратное</strong> числа b — число, которое делится на b нацело.</p>
+                <div class="formula-box">Делители 12: 1, 2, 3, 4, 6, 12<br>Кратные 5: 5, 10, 15, 20, 25, ...</div>
+                <p>Каждое число является кратным самого себя и единицы.</p>
+                <div class="tip-box">Признаки делимости: на 2 — чётное; на 5 — оканчивается на 0 или 5; на 3 — сумма цифр делится на 3.</div>
+              </div>
+              <!-- Slide 10 -->
+              <div class="widget-slide">
+                <h3>🔄 НОД и НОК</h3>
+                <p><strong>НОД(a, b)</strong> — наибольший общий делитель. <strong>НОК(a, b)</strong> — наименьшее общее кратное.</p>
+                <div class="formula-box">НОД(12, 8) = 4 &nbsp;|&nbsp; НОК(12, 8) = 24<br>НОД · НОК = a · b</div>
+                <p><strong>Алгоритм Евклида:</strong> НОД(a, b) = НОД(b, a mod b). Повторяем, пока остаток не станет 0.</p>
+                <div class="tip-box">НОД нужен для сокращения дробей. НОК — для приведения к общему знаменателю.</div>
+              </div>
+              <!-- Slide 11 -->
+              <div class="widget-slide">
+                <h3>📊 Числовые выражения</h3>
+                <p><strong>Числовое выражение</strong> — запись, состоящая из чисел, соединённых знаками действий и скобками.</p>
+                <div class="formula-box">Порядок: ( ) → × ÷ → + −<br>Пример: 3 + 4 · 2 = 3 + 8 = 11</div>
+                <p>Значение выражения зависит от порядка выполнения действий. Скобки меняют этот порядок.</p>
+                <div class="tip-box">Нельзя путать: 3 + 4 · 2 = 11, но (3 + 4) · 2 = 14. Скобки — высший приоритет!</div>
+              </div>
+              <!-- Slide 12 -->
+              <div class="widget-slide">
+                <h3>✅ Итог главы 1 — все темы</h3>
+                <p>Вы изучили все ключевые темы главы «Натуральные числа»:</p>
+                <div style="display: grid; gap: 8px; margin: 16px 0">
+                  <div style="background: var(--bg-glass); border-radius: 10px; padding: 10px 14px;">✔ Натуральные числа: разряды и классы</div>
+                  <div style="background: var(--bg-glass); border-radius: 10px; padding: 10px 14px;">✔ Сравнение и округление чисел</div>
+                  <div style="background: var(--bg-glass); border-radius: 10px; padding: 10px 14px;">✔ Сложение, вычитание, умножение, деление</div>
+                  <div style="background: var(--bg-glass); border-radius: 10px; padding: 10px 14px;">✔ Деление с остатком (a = bq + r)</div>
+                  <div style="background: var(--bg-glass); border-radius: 10px; padding: 10px 14px;">✔ Свойства сложения и умножения</div>
+                  <div style="background: var(--bg-glass); border-radius: 10px; padding: 10px 14px;">✔ Делители, кратные, НОД и НОК</div>
+                  <div style="background: var(--bg-glass); border-radius: 10px; padding: 10px 14px;">✔ Порядок действий в выражениях</div>
+                </div>
+                <div class="tip-box">Переходите к тренажёру и аттестации, чтобы закрепить знания!</div>
+              </div>
             </div>
           </div>
           <div class="widget-nav">
-            <button class="btn btn-secondary" onclick="prevSlide()">
+            <button type="button" class="btn btn-secondary" onclick="prevSlide()">
               ← Назад
             </button>
-            <button class="btn btn-primary" onclick="nextSlide()">
+            <button type="button" class="btn btn-primary" onclick="nextSlide()">
               Вперёд →
             </button>
           </div>
         </div>
-      </div>
-      <div class="card">
-        <div class="card-title">
-          <span class="icon" style="background: var(--accent-blue-dim)">📖</span
-          >Из учебника
-        </div>
-        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px;margin-top:16px;">
-          <img src="../assets/img/pages/page_011.webp" alt="Страница учебника 011" style="width:100%;border-radius:12px;border:1px solid var(--border-glass);">
-          <img src="../assets/img/pages/page_012.webp" alt="Страница учебника 012" style="width:100%;border-radius:12px;border:1px solid var(--border-glass);">
-        </div>
-        <img src="../assets/img/pages/sec_s1_2b.webp" alt="Раздел учебника" style="width:100%;max-width:600px;display:block;margin:16px auto 0;border-radius:12px;border:1px solid var(--border-glass);">
       </div>
     </section>
 
@@ -813,7 +866,7 @@
 
     <script>
       const AppState = {
-        currentSection: 'home', slide: 0,
+        currentSection: 'home',
         trainer: { correct:0, total:0, streak:0, current:null },
         diagnostic: { current:0, score:0, answers:[] },
         timeAttack: { current:0, score:0, timer:null, timeLeft:600, startTime:0, answers:[] },
@@ -833,17 +886,25 @@
       });
 
       // Slider
-      const totalSlides = 4;
-      const track = document.getElementById('widget-track');
-      const slideNumEl = document.getElementById('slide-num');
-      const slideTotalEl = document.getElementById('slide-total');
-      if (slideTotalEl) slideTotalEl.textContent = totalSlides;
+      let currentSlide = 0;
+      const slides = document.querySelectorAll("#track-slides .widget-slide");
+      const total = slides.length;
+      const slideNumEl = document.getElementById("slide-num");
+      const slideTotalEl = document.getElementById("slide-total");
+      if (slideTotalEl) slideTotalEl.innerText = total;
       function renderSlide() {
-        if (track) track.style.transform = 'translateX(-' + AppState.slide * 100 + '%)';
-        if (slideNumEl) slideNumEl.textContent = AppState.slide + 1;
+        slides.forEach((s, i) => s.classList.toggle("active", i === currentSlide));
+        if (slideNumEl) slideNumEl.innerText = currentSlide + 1;
       }
-      function nextSlide() { if (AppState.slide < totalSlides - 1) { AppState.slide++; renderSlide(); } }
-      function prevSlide() { if (AppState.slide > 0) { AppState.slide--; renderSlide(); } }
+      function nextSlide() {
+        if (currentSlide < total - 1) { currentSlide++; renderSlide(); }
+      }
+      function prevSlide() {
+        if (currentSlide > 0) { currentSlide--; renderSlide(); }
+      }
+      renderSlide();
+      window.nextSlide = nextSlide;
+      window.prevSlide = prevSlide;
 
       // Solution toggles
       function toggleSolution(id) {
@@ -1463,3 +1524,4 @@
     </script>
   </body>
 </html>
+

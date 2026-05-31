@@ -1,4 +1,4 @@
-<!doctype html>
+﻿<!doctype html>
 <html lang="ru">
   <head>
     <meta charset="UTF-8" />
@@ -919,11 +919,11 @@
         </p>
         <div class="generate-widget">
           <div class="widget-progress">
-            Слайд <span id="slide-num">1</span> из
-            <span id="slide-total">8</span>
+            Слайд <span id="slide-num">1</span> /
+            <span id="slide-total">12</span>
           </div>
           <div class="widget-viewport">
-            <div class="widget-track" id="widget-track">
+            <div class="widget-track" id="track-slides">
               <!-- Slide 1 -->
               <div class="widget-slide active">
                 <h3>🔍 Нахождение числа по проценту</h3>
@@ -1271,13 +1271,48 @@
                   1/2 → умножьте на 2.
                 </div>
               </div>
+              <!-- Slide 9 -->
+              <div class="widget-slide">
+                <h3>🔍 Когда нужна обратная задача</h3>
+                <p>Обратная задача возникает, когда дана часть и процент, а нужно найти целое. Например: «магазин продал 36 товаров, что составляет 12% от запаса. Каков весь запас?»</p>
+                <div class="formula-box">36 = 12% от x → x = 36 ÷ 0,12 = 300 товаров</div>
+                <div class="tip-box">Ключевые слова для обратной задачи: «составляет N%», «является N%», «это N% от…» — после них идёт указание на часть.</div>
+              </div>
+              <!-- Slide 10 -->
+              <div class="widget-slide">
+                <h3>⚖️ Сравнение: от числа к проценту и обратно</h3>
+                <p>Прямая задача (от числа к проценту) и обратная (от процента к числу) — две стороны одной монеты. Понять разницу помогает схема.</p>
+                <div class="formula-box">
+                  Прямая: N% от A = A × N/100 (дано A, найти часть)<br />
+                  Обратная: A = B × 100/N (дана часть B, найти A)
+                </div>
+                <div class="tip-box">Проверяйте себя: решив обратную задачу, подставьте ответ в прямую — должна получиться исходная часть.</div>
+              </div>
+              <!-- Slide 11 -->
+              <div class="widget-slide">
+                <h3>🔢 Типовые задачи на нахождение числа</h3>
+                <p>Разберём несколько стандартных ситуаций, которые часто встречаются в школьных задачах на нахождение числа по проценту.</p>
+                <div class="formula-box">
+                  1) 45 — это 15% → x = 45/0,15 = 300<br />
+                  2) 120 — это 40% → x = 120/0,40 = 300<br />
+                  3) 7,5 — это 25% → x = 7,5/0,25 = 30
+                </div>
+                <div class="tip-box">Замечаете паттерн? Делите часть на процент в виде десятичной дроби. Всегда.</div>
+              </div>
+              <!-- Slide 12 -->
+              <div class="widget-slide">
+                <h3>✅ Самопроверка через подстановку</h3>
+                <p>После нахождения числа по проценту всегда выполняйте проверку: найдите указанный процент от полученного числа и убедитесь, что получилась исходная часть.</p>
+                <div class="formula-box">Нашли: x = 300 (45 — это 15% от x)<br />Проверка: 15% от 300 = 300 × 0,15 = 45 ✓</div>
+                <div class="tip-box">Если при проверке не сходится — проверьте, не перепутали ли вы прямую и обратную задачу: может быть, нужно было умножить, а не делить.</div>
+              </div>
             </div>
           </div>
           <div class="widget-nav">
-            <button class="btn btn-secondary" onclick="prevSlide()">
+            <button type="button" class="btn btn-secondary" onclick="prevSlide()">
               ← Назад
             </button>
-            <button class="btn btn-primary" onclick="nextSlide()">
+            <button type="button" class="btn btn-primary" onclick="nextSlide()">
               Вперёд →
             </button>
           </div>
@@ -1880,29 +1915,23 @@
       });
 
       // ================= SLIDER =================
-      const totalSlides = 8;
-      const track = document.getElementById("widget-track");
-      const slideNum = document.getElementById("slide-num");
-      const slideTotal = document.getElementById("slide-total");
-      slideTotal.textContent = totalSlides;
+      let currentSlide = 0;
+      const slides = document.querySelectorAll("#track-slides .widget-slide");
+      const total = slides.length;
+      document.getElementById("slide-total").innerText = total;
       function renderSlide() {
-        track.querySelectorAll(".widget-slide").forEach((s, i) => {
-          s.classList.toggle("active", i === AppState.slide);
-        });
-        slideNum.textContent = AppState.slide + 1;
+        slides.forEach((s, i) => s.classList.toggle("active", i === currentSlide));
+        document.getElementById("slide-num").innerText = currentSlide + 1;
       }
       function nextSlide() {
-        if (AppState.slide < totalSlides - 1) {
-          AppState.slide++;
-          renderSlide();
-        }
+        if (currentSlide < total - 1) { currentSlide++; renderSlide(); }
       }
       function prevSlide() {
-        if (AppState.slide > 0) {
-          AppState.slide--;
-          renderSlide();
-        }
+        if (currentSlide > 0) { currentSlide--; renderSlide(); }
       }
+      renderSlide();
+      window.nextSlide = nextSlide;
+      window.prevSlide = prevSlide;
 
       // ================= SOLUTION TOGGLES =================
       function toggleSolution(id) {
@@ -2686,3 +2715,5 @@
     </script>
   </body>
 </html>
+
+

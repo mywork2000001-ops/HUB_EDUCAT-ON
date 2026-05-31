@@ -1,4 +1,4 @@
-<!doctype html>
+﻿<!doctype html>
 <html lang="ru">
   <head>
     <meta charset="UTF-8" />
@@ -259,21 +259,10 @@
         height: auto;
         width: 100%;
       }
-      .widget-track {
-        display: flex;
-        transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-        width: 100%;
-        will-change: transform;
-      }
-      .widget-slide {
-        flex: 0 0 100%;
-        width: 100%;
-        min-width: 100%;
-        padding: 20px;
-        box-sizing: border-box;
-        overflow-x: hidden;
-        overflow-y: visible;
-      }
+      .widget-viewport { width: 100%; }
+      .widget-slide { display: none; padding: 12px 16px; animation: slideFade 0.3s ease; }
+      .widget-slide.active { display: block; }
+      @keyframes slideFade { from { opacity: 0; } to { opacity: 1; } }
       .widget-slide h3 {
         font-size: 1.3rem;
         color: var(--accent);
@@ -765,25 +754,132 @@
     <section id="theory">
       <div class="card">
         <div class="card-title">
-          <span class="icon" style="background: var(--accent-dim)">📐</span
-          >Числовые выражения
+          <span class="icon" style="background: var(--accent-dim)">📖</span>Визуальная теория
         </div>
-        <p style="color: var(--text-secondary); margin-bottom: 24px">
-          Урок 8. Порядок действий. Скобки. Законы арифметики.
-        </p>
-      </div>
-      <div class="generate-widget">
-        <div class="widget-progress">
-          <span id="slide-num">1</span> / <span id="slide-total"></span>
-        </div>
-        <div class="widget-viewport">
-          <div class="widget-track" id="widget-track"></div>
-        </div>
-        <div class="widget-nav">
-          <button class="btn btn-secondary" onclick="prevSlide()">
-            ← Назад
-          </button>
-          <button class="btn btn-primary" onclick="nextSlide()">Далее →</button>
+        <p style="color: var(--text-secondary); margin-bottom: 20px">Листайте слайды — каждый слайд ключевой блок темы.</p>
+        <div class="generate-widget">
+          <div class="widget-progress">
+            Слайд <span id="slide-num">1</span> из <span id="slide-total">12</span>
+          </div>
+          <div class="widget-viewport">
+            <div class="widget-track" id="track-slides">
+              <!-- Slide 1 -->
+              <div class="widget-slide active">
+                <h3>🔢 Что такое числовое выражение?</h3>
+                <p><strong>Числовое выражение</strong> — запись из чисел, соединённых знаками арифметических действий и скобками, которая имеет числовое значение.</p>
+                <div class="formula-box">Примеры: 7 + 3, (15 − 4) × 2, 100 ÷ (5 + 5)</div>
+                <p>Значение числового выражения — результат вычислений. Например, значение 7 + 3 равно 10.</p>
+                <div class="tip-box">В отличие от уравнения, числовое выражение не содержит буквенных переменных.</div>
+              </div>
+              <!-- Slide 2 -->
+              <div class="widget-slide">
+                <h3>📐 Порядок действий — главное правило</h3>
+                <p>При вычислении числовых выражений действия выполняются в строгом порядке:</p>
+                <div style="display: grid; gap: 10px; margin: 16px 0">
+                  <div style="background: var(--bg-glass); border-radius: 10px; padding: 12px 16px; border-left: 4px solid var(--accent);"><strong style="color: var(--accent)">1-й приоритет:</strong> Действия в скобках ( )</div>
+                  <div style="background: var(--bg-glass); border-radius: 10px; padding: 12px 16px; border-left: 4px solid var(--accent-blue);"><strong style="color: var(--accent-blue)">2-й приоритет:</strong> Умножение × и деление ÷ (слева направо)</div>
+                  <div style="background: var(--bg-glass); border-radius: 10px; padding: 12px 16px; border-left: 4px solid var(--accent-warm);"><strong style="color: var(--accent-warm)">3-й приоритет:</strong> Сложение + и вычитание − (слева направо)</div>
+                </div>
+                <div class="tip-box">Запомни: «Скобки, Умножение-Деление, Сложение-Вычитание» — сокращённо «С-УД-СВ».</div>
+              </div>
+              <!-- Slide 3 -->
+              <div class="widget-slide">
+                <h3>🔡 Скобки — высший приоритет</h3>
+                <p>Скобки изменяют стандартный порядок действий. Всё, что в скобках, вычисляется <strong>первым</strong>.</p>
+                <div class="formula-box">Без скобок: 3 + 4 × 2 = 3 + 8 = 11<br>Со скобками: (3 + 4) × 2 = 7 × 2 = 14</div>
+                <p>При вложенных скобках начинаем с <strong>внутренних</strong>: ((2 + 3) × 4 − 1) × 2 = (5 × 4 − 1) × 2 = 19 × 2 = 38.</p>
+                <div class="tip-box">Скобки — самый мощный инструмент! Они могут полностью изменить результат.</div>
+              </div>
+              <!-- Slide 4 -->
+              <div class="widget-slide">
+                <h3>✖️ Умножение и деление — 2-й приоритет</h3>
+                <p>Умножение и деление выполняются <strong>после скобок</strong>, но <strong>перед сложением и вычитанием</strong>.</p>
+                <div class="formula-box">2 + 3 × 4 − 6 ÷ 2<br>= 2 + 12 − 3 &nbsp; (сначала 3×4=12 и 6÷2=3)<br>= 11</div>
+                <p>Если несколько операций умножения/деления — выполняем <strong>слева направо</strong>.</p>
+                <div class="formula-box">60 ÷ 3 × 4 = 20 × 4 = 80 &nbsp; (НЕ 60 ÷ 12 = 5)</div>
+                <div class="tip-box">Умножение и деление одного уровня — выполняй слева направо!</div>
+              </div>
+              <!-- Slide 5 -->
+              <div class="widget-slide">
+                <h3>➕ Сложение и вычитание — 3-й приоритет</h3>
+                <p>Сложение и вычитание — последние в очереди. Выполняются <strong>слева направо</strong>.</p>
+                <div class="formula-box">10 − 3 + 5 = 7 + 5 = 12 &nbsp; (слева направо)<br>НЕ: 10 − (3 + 5) = 10 − 8 = 2</div>
+                <p>Без скобок сложение и вычитание выполняются в порядке написания — слева направо.</p>
+                <div class="tip-box">Вычитание — не переместительное! 10 − 3 ≠ 3 − 10. Порядок важен!</div>
+              </div>
+              <!-- Slide 6 -->
+              <div class="widget-slide">
+                <h3>🧮 Вычисление выражений с одним действием</h3>
+                <p>Простейшие числовые выражения содержат одно арифметическое действие:</p>
+                <div style="display: grid; gap: 8px; margin: 16px 0">
+                  <div style="background: var(--bg-glass); border-radius: 10px; padding: 10px 14px;">5 374 + 2 819 = <strong style="color: var(--accent)">8 193</strong></div>
+                  <div style="background: var(--bg-glass); border-radius: 10px; padding: 10px 14px;">10 000 − 3 456 = <strong style="color: var(--accent)">6 544</strong></div>
+                  <div style="background: var(--bg-glass); border-radius: 10px; padding: 10px 14px;">347 × 8 = <strong style="color: var(--accent)">2 776</strong></div>
+                  <div style="background: var(--bg-glass); border-radius: 10px; padding: 10px 14px;">756 ÷ 9 = <strong style="color: var(--accent)">84</strong></div>
+                </div>
+                <div class="tip-box">Для проверки используй обратное действие: 84 × 9 = 756 ✓</div>
+              </div>
+              <!-- Slide 7 -->
+              <div class="widget-slide">
+                <h3>🔄 Вычисление выражений с двумя действиями</h3>
+                <p>При двух действиях — следуем правилу приоритетов:</p>
+                <div style="display: grid; gap: 10px; margin: 16px 0">
+                  <div style="background: var(--bg-glass); border-radius: 10px; padding: 12px 16px;"><strong>15 + 3 × 4</strong> = 15 + 12 = <strong style="color: var(--accent)">27</strong> (сначала ×)</div>
+                  <div style="background: var(--bg-glass); border-radius: 10px; padding: 12px 16px;"><strong>(15 + 3) × 4</strong> = 18 × 4 = <strong style="color: var(--accent)">72</strong> (сначала скобки)</div>
+                  <div style="background: var(--bg-glass); border-radius: 10px; padding: 12px 16px;"><strong>24 ÷ 8 + 5</strong> = 3 + 5 = <strong style="color: var(--accent)">8</strong> (сначала ÷)</div>
+                </div>
+                <div class="tip-box">Всегда указывай порядок выполнения действий над выражением (цифрами под знаками).</div>
+              </div>
+              <!-- Slide 8 -->
+              <div class="widget-slide">
+                <h3>📋 Выражения с тремя и более действиями</h3>
+                <p>Последовательно применяем правило приоритетов:</p>
+                <div class="formula-box">100 − (3 + 7) × 4 + 20 ÷ 5<br>= 100 − 10 × 4 + 20 ÷ 5 &nbsp; (скобки)<br>= 100 − 40 + 4 &nbsp; (× и ÷)<br>= 64 &nbsp; (+ и −)</div>
+                <p>Записываем решение по шагам — это помогает избежать ошибок и проверить работу.</p>
+                <div class="tip-box">Записывай промежуточные результаты! Не пытайся считать всё в уме сразу.</div>
+              </div>
+              <!-- Slide 9 -->
+              <div class="widget-slide">
+                <h3>🔢 Выражения со степенями (a², a³)</h3>
+                <p>Степени чисел выполняются <strong>до умножения и деления</strong> (высокий приоритет):</p>
+                <div class="formula-box">3² + 4 × 2 = 9 + 8 = 17<br>2³ − 6 ÷ 2 = 8 − 3 = 5<br>(1 + 2)² × 3 = 9 × 3 = 27</div>
+                <p>Порядок с учётом степеней: скобки → степени → × ÷ → + −.</p>
+                <div class="tip-box">Степень применяется только к основанию, а не ко всему выражению: 3 × 2² = 3 × 4 = 12 (не 6² = 36!).</div>
+              </div>
+              <!-- Slide 10 -->
+              <div class="widget-slide">
+                <h3>💡 Буквенные выражения (подстановка)</h3>
+                <p><strong>Буквенное выражение</strong> содержит переменные. Чтобы найти его значение, подставляем конкретные числа.</p>
+                <div class="formula-box">a + 5b, при a=3, b=4: 3 + 5×4 = 3 + 20 = 23<br>2x² − y, при x=3, y=1: 2×9 − 1 = 17</div>
+                <p>При подстановке соблюдаем тот же порядок действий, что и для числовых выражений.</p>
+                <div class="tip-box">Подставляй значения в скобках, если нет уверенности: a+5b → (3)+(5)(4) = 23.</div>
+              </div>
+              <!-- Slide 11 -->
+              <div class="widget-slide">
+                <h3>📊 Упрощение выражений (раскрытие скобок)</h3>
+                <p>Используем дистрибутивное свойство для раскрытия скобок:</p>
+                <div class="formula-box">a × (b + c) = a·b + a·c<br>Пример: 4 × (3 + 7) = 4×3 + 4×7 = 12 + 28 = 40</div>
+                <p>Если перед скобкой «−», знаки внутри меняются:</p>
+                <div class="formula-box">20 − (8 + 3) = 20 − 8 − 3 = 9</div>
+                <div class="tip-box">Раскрытие скобок полезно при упрощении и устном счёте.</div>
+              </div>
+              <!-- Slide 12 -->
+              <div class="widget-slide">
+                <h3>✅ Практика: вычисление сложных выражений</h3>
+                <p>Решаем сложные выражения пошагово:</p>
+                <div style="display: grid; gap: 10px; margin: 16px 0">
+                  <div style="background: var(--bg-glass); border-radius: 10px; padding: 12px 16px;"><strong style="color: var(--accent)">№1.</strong> (48 − 8) ÷ 5 + 3 × 6 = 40 ÷ 5 + 18 = 8 + 18 = <strong>26</strong></div>
+                  <div style="background: var(--bg-glass); border-radius: 10px; padding: 12px 16px;"><strong style="color: var(--accent)">№2.</strong> 7² − 3 × (4 + 5) = 49 − 27 = <strong>22</strong></div>
+                  <div style="background: var(--bg-glass); border-radius: 10px; padding: 12px 16px;"><strong style="color: var(--accent)">№3.</strong> 100 ÷ (2³ + 2) = 100 ÷ 10 = <strong>10</strong></div>
+                </div>
+                <div class="tip-box">Шаги: 1) Скобки 2) Степени 3) × ÷ слева направо 4) + − слева направо.</div>
+              </div>
+            </div>
+          </div>
+          <div class="widget-nav">
+            <button type="button" class="btn btn-secondary" onclick="prevSlide()">← Назад</button>
+            <button type="button" class="btn btn-primary" onclick="nextSlide()">Вперёд →</button>
+          </div>
         </div>
       </div>
     </section>
@@ -1209,7 +1305,6 @@
     <script>
       const AppState = {
         currentSection: "home",
-        slide: 0,
         trainer: { correct: 0, total: 0, streak: 0, current: null },
         diagnostic: { current: 0, score: 0, answers: [] },
         timeAttack: {
@@ -1242,28 +1337,25 @@
           showSection(link.dataset.section);
         });
       });
-      const totalSlides = 1;
-      const track = document.getElementById("widget-track");
+      let currentSlide = 0;
+      const slides = document.querySelectorAll("#track-slides .widget-slide");
+      const total = slides.length;
       const slideNumEl = document.getElementById("slide-num");
       const slideTotalEl = document.getElementById("slide-total");
-      if (slideTotalEl) slideTotalEl.textContent = totalSlides;
+      if (slideTotalEl) slideTotalEl.innerText = total;
       function renderSlide() {
-        if (track)
-          track.style.transform = "translateX(-" + AppState.slide * 100 + "%)";
-        if (slideNumEl) slideNumEl.textContent = AppState.slide + 1;
+        slides.forEach((s, i) => s.classList.toggle("active", i === currentSlide));
+        if (slideNumEl) slideNumEl.innerText = currentSlide + 1;
       }
       function nextSlide() {
-        if (AppState.slide < totalSlides - 1) {
-          AppState.slide++;
-          renderSlide();
-        }
+        if (currentSlide < total - 1) { currentSlide++; renderSlide(); }
       }
       function prevSlide() {
-        if (AppState.slide > 0) {
-          AppState.slide--;
-          renderSlide();
-        }
+        if (currentSlide > 0) { currentSlide--; renderSlide(); }
       }
+      renderSlide();
+      window.nextSlide = nextSlide;
+      window.prevSlide = prevSlide;
       function toggleSolution(id) {
         const el = document.getElementById(id);
         el.classList.toggle("active");
@@ -1657,3 +1749,5 @@
     </script>
   </body>
 </html>
+
+

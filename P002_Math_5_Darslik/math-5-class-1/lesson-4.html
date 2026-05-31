@@ -1,4 +1,4 @@
-<!doctype html>
+﻿<!doctype html>
 <html lang="ru">
   <head>
     <meta charset="UTF-8" />
@@ -259,21 +259,10 @@
         height: auto;
         width: 100%;
       }
-      .widget-track {
-        display: flex;
-        transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-        width: 100%;
-        will-change: transform;
-      }
-      .widget-slide {
-        flex: 0 0 100%;
-        width: 100%;
-        min-width: 100%;
-        padding: 20px;
-        box-sizing: border-box;
-        overflow-x: hidden;
-        overflow-y: visible;
-      }
+      .widget-viewport { width: 100%; }
+      .widget-slide { display: none; padding: 12px 16px; animation: slideFade 0.3s ease; }
+      .widget-slide.active { display: block; }
+      @keyframes slideFade { from { opacity: 0; } to { opacity: 1; } }
       .widget-slide h3 {
         font-size: 1.3rem;
         color: var(--accent);
@@ -813,10 +802,10 @@
         <div class="generate-widget">
           <div class="widget-progress">
             Слайд <span id="slide-num">1</span> из
-            <span id="slide-total">6</span>
+            <span id="slide-total">12</span>
           </div>
           <div class="widget-viewport">
-            <div class="widget-track" id="widget-track">
+            <div class="widget-track" id="track-slides">
               <!-- Slide 1 -->
               <div class="widget-slide active">
                 <h3>🤔 Зачем округляют числа?</h3>
@@ -1131,28 +1120,73 @@
                   проверять вычисления «в уме».
                 </div>
               </div>
+              <!-- Slide 7 -->
+              <div class="widget-slide">
+                <h3>🔟 Округление до тысяч и десятков тысяч</h3>
+                <p>Алгоритм округления до тысяч: смотрим на цифру <strong>сотен</strong> (3-й разряд).</p>
+                <div class="formula-box">До тысяч: 7 384 → сотни=3 &lt; 5 → 7 000<br>До тысяч: 7 684 → сотни=6 ≥ 5 → 8 000</div>
+                <p>Для округления до десятков тысяч смотрим на цифру тысяч (4-й разряд).</p>
+                <div class="tip-box">При округлении все цифры после округляемого разряда заменяются нулями.</div>
+              </div>
+              <!-- Slide 8 -->
+              <div class="widget-slide">
+                <h3>📊 Оценка результата через округление</h3>
+                <p><strong>Прикидка</strong> — быстрая оценка результата вычислений с помощью округления до удобного разряда.</p>
+                <div class="formula-box">482 + 319 ≈ 500 + 300 = 800 (точный: 801)<br>47 × 52 ≈ 50 × 50 = 2 500 (точный: 2 444)</div>
+                <p>Прикидка помогает проверить, не допущена ли грубая ошибка в вычислениях.</p>
+                <div class="tip-box">Если прикидка и точный ответ сильно расходятся — ищи ошибку!</div>
+              </div>
+              <!-- Slide 9 -->
+              <div class="widget-slide">
+                <h3>💡 Точное и приближённое значение</h3>
+                <p><strong>Точное значение</strong> — результат без округления. <strong>Приближённое</strong> — результат после округления.</p>
+                <div class="formula-box">Точное: 3,14159... &nbsp; Приближённое: π ≈ 3,14<br>Точное: 1 734 км &nbsp; Приближённое: ≈ 1 700 км</div>
+                <p>Знак <span class="highlight">≈</span> означает «приблизительно равно».</p>
+                <div class="tip-box">В задачах всегда уточняй: нужен точный ответ или приближённый. Это влияет на метод решения.</div>
+              </div>
+              <!-- Slide 10 -->
+              <div class="widget-slide">
+                <h3>🔢 Погрешность округления</h3>
+                <p><strong>Погрешность</strong> — разность между точным и приближённым значением.</p>
+                <div class="formula-box">Погрешность = |точное − приближённое|<br>3 748 → 4 000: погрешность = |3 748 − 4 000| = 252</div>
+                <p>Чем меньше разряд округления, тем меньше погрешность.</p>
+                <div class="tip-box">Максимальная погрешность при округлении до n составляет половину единицы этого разряда.</div>
+              </div>
+              <!-- Slide 11 -->
+              <div class="widget-slide">
+                <h3>📈 Применение округления в задачах</h3>
+                <p>Задачи, где используется округление:</p>
+                <div style="display: grid; gap: 10px; margin: 16px 0">
+                  <div style="background: var(--bg-glass); border-radius: 10px; padding: 12px 16px;"><strong style="color: var(--accent)">Задача 1.</strong> В магазине 3 982 товара. Округли до тысяч → <strong>4 000</strong></div>
+                  <div style="background: var(--bg-glass); border-radius: 10px; padding: 12px 16px;"><strong style="color: var(--accent)">Задача 2.</strong> Оцени: 285 + 314 ≈ 300 + 300 = <strong>600</strong></div>
+                  <div style="background: var(--bg-glass); border-radius: 10px; padding: 12px 16px;"><strong style="color: var(--accent)">Задача 3.</strong> Население 1 348 500 → до сотен тысяч → <strong>1 300 000</strong></div>
+                </div>
+                <div class="tip-box">Округляй в ту сторону, куда ближе — это главный принцип!</div>
+              </div>
+              <!-- Slide 12 -->
+              <div class="widget-slide">
+                <h3>✅ Всё об округлении — итог</h3>
+                <p>Ключевые правила округления натуральных чисел:</p>
+                <div style="display: grid; gap: 8px; margin: 16px 0">
+                  <div style="background: var(--bg-glass); border-radius: 10px; padding: 10px 14px;">✔ Смотри на следующую цифру после округляемого разряда</div>
+                  <div style="background: var(--bg-glass); border-radius: 10px; padding: 10px 14px;">✔ Цифра 0–4: округляем вниз (оставляем разряд)</div>
+                  <div style="background: var(--bg-glass); border-radius: 10px; padding: 10px 14px;">✔ Цифра 5–9: округляем вверх (+1 к разряду)</div>
+                  <div style="background: var(--bg-glass); border-radius: 10px; padding: 10px 14px;">✔ Все цифры правее обнуляем</div>
+                  <div style="background: var(--bg-glass); border-radius: 10px; padding: 10px 14px;">✔ Знак ≈ — «приблизительно равно»</div>
+                </div>
+                <div class="tip-box">Округление используется в науке, технике, экономике и повседневной жизни!</div>
+              </div>
             </div>
           </div>
           <div class="widget-nav">
-            <button class="btn btn-secondary" onclick="prevSlide()">
+            <button type="button" class="btn btn-secondary" onclick="prevSlide()">
               ← Назад
             </button>
-            <button class="btn btn-primary" onclick="nextSlide()">
+            <button type="button" class="btn btn-primary" onclick="nextSlide()">
               Вперёд →
             </button>
           </div>
         </div>
-      </div>
-      <div class="card">
-        <div class="card-title">
-          <span class="icon" style="background: var(--accent-blue-dim)">📖</span
-          >Из учебника
-        </div>
-        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px;margin-top:16px;">
-          <img src="../assets/img/pages/page_017.webp" alt="Страница учебника 017" style="width:100%;border-radius:12px;border:1px solid var(--border-glass);">
-          <img src="../assets/img/pages/page_018.webp" alt="Страница учебника 018" style="width:100%;border-radius:12px;border:1px solid var(--border-glass);">
-        </div>
-        <img src="../assets/img/pages/sec_s1_3_rounding.webp" alt="Раздел учебника" style="width:100%;max-width:600px;display:block;margin:16px auto 0;border-radius:12px;border:1px solid var(--border-glass);">
       </div>
     </section>
 
@@ -1575,7 +1609,6 @@
     <script>
       const AppState = {
         currentSection: "home",
-        slide: 0,
         trainer: { correct: 0, total: 0, streak: 0, current: null },
         diagnostic: { current: 0, score: 0, answers: [] },
         timeAttack: {
@@ -1608,28 +1641,25 @@
           showSection(link.dataset.section);
         });
       });
-      const totalSlides = 5;
-      const track = document.getElementById("widget-track");
+      let currentSlide = 0;
+      const slides = document.querySelectorAll("#track-slides .widget-slide");
+      const total = slides.length;
       const slideNumEl = document.getElementById("slide-num");
       const slideTotalEl = document.getElementById("slide-total");
-      if (slideTotalEl) slideTotalEl.textContent = totalSlides;
+      if (slideTotalEl) slideTotalEl.innerText = total;
       function renderSlide() {
-        if (track)
-          track.style.transform = "translateX(-" + AppState.slide * 100 + "%)";
-        if (slideNumEl) slideNumEl.textContent = AppState.slide + 1;
+        slides.forEach((s, i) => s.classList.toggle("active", i === currentSlide));
+        if (slideNumEl) slideNumEl.innerText = currentSlide + 1;
       }
       function nextSlide() {
-        if (AppState.slide < totalSlides - 1) {
-          AppState.slide++;
-          renderSlide();
-        }
+        if (currentSlide < total - 1) { currentSlide++; renderSlide(); }
       }
       function prevSlide() {
-        if (AppState.slide > 0) {
-          AppState.slide--;
-          renderSlide();
-        }
+        if (currentSlide > 0) { currentSlide--; renderSlide(); }
       }
+      renderSlide();
+      window.nextSlide = nextSlide;
+      window.prevSlide = prevSlide;
       function toggleSolution(id) {
         const el = document.getElementById(id);
         el.classList.toggle("active");
@@ -2023,3 +2053,5 @@
     </script>
   </body>
 </html>
+
+

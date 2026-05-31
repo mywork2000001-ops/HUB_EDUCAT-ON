@@ -1,4 +1,4 @@
-<!doctype html>
+﻿<!doctype html>
 <html lang="ru">
   <head>
     <meta charset="UTF-8" />
@@ -259,21 +259,10 @@
         height: auto;
         width: 100%;
       }
-      .widget-track {
-        display: flex;
-        transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-        width: 100%;
-        will-change: transform;
-      }
-      .widget-slide {
-        flex: 0 0 100%;
-        width: 100%;
-        min-width: 100%;
-        padding: 20px;
-        box-sizing: border-box;
-        overflow-x: hidden;
-        overflow-y: visible;
-      }
+      .widget-viewport { width: 100%; }
+      .widget-slide { display: none; padding: 12px 16px; animation: slideFade 0.3s ease; }
+      .widget-slide.active { display: block; }
+      @keyframes slideFade { from { opacity: 0; } to { opacity: 1; } }
       .widget-slide h3 {
         font-size: 1.3rem;
         color: var(--accent);
@@ -864,47 +853,146 @@
     <section id="theory">
       <div class="card">
         <div class="card-title">
-          <span class="icon" style="background: var(--accent-dim)">📐</span
-          >Обобщающий урок: Натуральные числа
+          <span class="icon" style="background: var(--accent-dim)">📖</span>Визуальная теория
         </div>
-        <p style="color: var(--text-secondary); margin-bottom: 24px">
-          Урок 10. Повторение всей главы: запись, сравнение, округление,
-          действия.
-        </p>
-      </div>
-      <div class="generate-widget">
-        <div class="widget-progress">
-          <span id="slide-num">1</span> / <span id="slide-total"></span>
-        </div>
-        <div class="widget-viewport">
-          <div class="widget-track" id="widget-track">
-            <div class="widget-slide">
-              <h3>Запись и чтение</h3>
-              <p>Классы и разряды. Развёрнутая запись. Степени числа 10.</p>
-            </div>
-            <div class="widget-slide">
-              <h3>Сравнение и порядок</h3>
-              <p>Поразрядное сравнение. Числовая прямая. Упорядочивание.</p>
-            </div>
-            <div class="widget-slide">
-              <h3>Округление</h3>
-              <p>Правило округления до любого разряда.</p>
-            </div>
-            <div class="widget-slide">
-              <h3>Действия с числами</h3>
-              <p>Сложение, вычитание, умножение, деление. Порядок действий.</p>
-            </div>
-            <div class="widget-slide">
-              <h3>Делители и кратные</h3>
-              <p>НОД, НОК, признаки делимости, простые числа.</p>
+        <p style="color: var(--text-secondary); margin-bottom: 20px">Листайте слайды — каждый слайд ключевой блок темы.</p>
+        <div class="generate-widget">
+          <div class="widget-progress">
+            Слайд <span id="slide-num">1</span> из <span id="slide-total">12</span>
+          </div>
+          <div class="widget-viewport">
+            <div class="widget-track" id="track-slides">
+              <!-- Slide 1 -->
+              <div class="widget-slide active">
+                <h3>📌 Запись и чтение натуральных чисел</h3>
+                <p>Повторяем: каждая цифра числа занимает разряд. Разряды объединяются в классы (по 3).</p>
+                <div class="formula-box">7 305 182 = 7 | 305 | 182<br>«Семь миллионов триста пять тысяч сто восемьдесят два»</div>
+                <div class="tip-box">Главное правило: нули внутри числа не пропускаются при записи цифрами!</div>
+              </div>
+              <!-- Slide 2 -->
+              <div class="widget-slide">
+                <h3>⚖️ Сравнение натуральных чисел</h3>
+                <p>Повторяем алгоритм сравнения:</p>
+                <div style="display: grid; gap: 10px; margin: 16px 0">
+                  <div style="background: var(--bg-glass); border-radius: 10px; padding: 12px 16px;"><strong style="color: var(--accent)">1.</strong> Больше разрядов → больше число.</div>
+                  <div style="background: var(--bg-glass); border-radius: 10px; padding: 12px 16px;"><strong style="color: var(--accent)">2.</strong> Одинаковое количество разрядов → сравниваем слева.</div>
+                  <div style="background: var(--bg-glass); border-radius: 10px; padding: 12px 16px;"><strong style="color: var(--accent)">3.</strong> Первое различие — результат сравнения.</div>
+                </div>
+                <div class="tip-box">Правее на числовой прямой = больше. Это всегда верно для натуральных чисел.</div>
+              </div>
+              <!-- Slide 3 -->
+              <div class="widget-slide">
+                <h3>🔟 Округление чисел</h3>
+                <p>Повторяем правило округления: смотрим на следующую цифру после нужного разряда.</p>
+                <div class="formula-box">Цифра 0–4: оставляем разряд (вниз)<br>Цифра 5–9: увеличиваем разряд на 1 (вверх)</div>
+                <div style="display: grid; gap: 8px; margin: 12px 0">
+                  <div style="background: var(--bg-glass); border-radius: 10px; padding: 10px 14px;">1 349 → до сотен → 1 300 (цифра десятков=4)</div>
+                  <div style="background: var(--bg-glass); border-radius: 10px; padding: 10px 14px;">1 361 → до сотен → 1 400 (цифра десятков=6)</div>
+                </div>
+                <div class="tip-box">Не забывай: округлённые цифры заменяются нулями!</div>
+              </div>
+              <!-- Slide 4 -->
+              <div class="widget-slide">
+                <h3>🧮 Действия с натуральными числами</h3>
+                <p>Четыре основных действия и их взаимосвязь:</p>
+                <div class="formula-box">a + b = c ↔ c − b = a ↔ c − a = b<br>a × b = c ↔ c ÷ b = a ↔ c ÷ a = b</div>
+                <p>Каждое действие имеет обратное. Проверяй через обратное!</p>
+                <div class="tip-box">Деление с остатком: a = b·q + r, где r &lt; b. Проверка: b·q + r = a.</div>
+              </div>
+              <!-- Slide 5 -->
+              <div class="widget-slide">
+                <h3>📏 Порядок действий — повторение</h3>
+                <p>Строгий порядок выполнения операций:</p>
+                <div style="display: grid; gap: 10px; margin: 16px 0">
+                  <div style="background: var(--bg-glass); border-radius: 10px; padding: 12px 16px; border-left: 4px solid var(--accent);"><strong style="color: var(--accent)">1:</strong> Скобки ( )</div>
+                  <div style="background: var(--bg-glass); border-radius: 10px; padding: 12px 16px; border-left: 4px solid var(--accent-blue);"><strong style="color: var(--accent-blue)">2:</strong> × ÷ (слева направо)</div>
+                  <div style="background: var(--bg-glass); border-radius: 10px; padding: 12px 16px; border-left: 4px solid var(--accent-warm);"><strong style="color: var(--accent-warm)">3:</strong> + − (слева направо)</div>
+                </div>
+                <div class="formula-box">(5 + 3) × 4 − 16 ÷ 2 = 32 − 8 = 24</div>
+              </div>
+              <!-- Slide 6 -->
+              <div class="widget-slide">
+                <h3>🔄 Обзор арифметических действий</h3>
+                <p>Сводка свойств арифметических действий для повторения:</p>
+                <div style="display: grid; gap: 8px; margin: 16px 0">
+                  <div style="background: var(--bg-glass); border-radius: 10px; padding: 10px 14px;"><strong style="color: var(--accent)">Переместительное:</strong> a+b=b+a, a×b=b×a</div>
+                  <div style="background: var(--bg-glass); border-radius: 10px; padding: 10px 14px;"><strong style="color: var(--accent-blue)">Сочетательное:</strong> (a+b)+c=a+(b+c), (a×b)×c=a×(b×c)</div>
+                  <div style="background: var(--bg-glass); border-radius: 10px; padding: 10px 14px;"><strong style="color: var(--accent-warm)">Дистрибутивное:</strong> a×(b+c)=a·b+a·c</div>
+                </div>
+                <div class="tip-box">Эти свойства помогают упрощать вычисления и решать задачи рациональнее.</div>
+              </div>
+              <!-- Slide 7 -->
+              <div class="widget-slide">
+                <h3>🔢 Числовые выражения — повторение</h3>
+                <p>Числовое выражение — комбинация чисел и операций. Порядок вычисления определяется приоритетами.</p>
+                <div style="display: grid; gap: 10px; margin: 16px 0">
+                  <div style="background: var(--bg-glass); border-radius: 10px; padding: 12px 16px;"><strong>Пример 1.</strong> 8 + 2 × 5 = 8 + 10 = <strong style="color: var(--accent)">18</strong></div>
+                  <div style="background: var(--bg-glass); border-radius: 10px; padding: 12px 16px;"><strong>Пример 2.</strong> (8 + 2) × 5 = 10 × 5 = <strong style="color: var(--accent)">50</strong></div>
+                  <div style="background: var(--bg-glass); border-radius: 10px; padding: 12px 16px;"><strong>Пример 3.</strong> 3² + 4 × 2 = 9 + 8 = <strong style="color: var(--accent)">17</strong></div>
+                </div>
+                <div class="tip-box">Всегда записывай решение пошагово — это помогает избежать ошибок.</div>
+              </div>
+              <!-- Slide 8 -->
+              <div class="widget-slide">
+                <h3>📐 Порядок действий — сложные примеры</h3>
+                <p>Тренируемся на сложных выражениях с несколькими приоритетами:</p>
+                <div class="formula-box">100 − (3 + 7) × 4 + 18 ÷ 3<br>= 100 − 40 + 6<br>= 66</div>
+                <div class="formula-box">(2³ + 1) × (10 − 4) ÷ 3<br>= 9 × 6 ÷ 3<br>= 54 ÷ 3 = 18</div>
+                <div class="tip-box">Разбивай сложное выражение на шаги. Проверяй каждый шаг!</div>
+              </div>
+              <!-- Slide 9 -->
+              <div class="widget-slide">
+                <h3>🧮 НОД и НОК — применение</h3>
+                <p>Применяем НОД и НОК для решения задач:</p>
+                <div style="display: grid; gap: 10px; margin: 16px 0">
+                  <div style="background: var(--bg-glass); border-radius: 10px; padding: 12px 16px;"><strong style="color: var(--accent)">НОД(24, 36)</strong> = ? Делители 24: 1,2,3,4,6,8,12,24. Делители 36: 1,2,3,4,6,9,12,18,36. НОД = <strong>12</strong></div>
+                  <div style="background: var(--bg-glass); border-radius: 10px; padding: 12px 16px;"><strong style="color: var(--accent-blue)">НОК(4, 6)</strong> = ? Кратные 4: 4,8,12,16... Кратные 6: 6,12,18... НОК = <strong>12</strong></div>
+                </div>
+                <div class="tip-box">Связь: НОД(a,b) × НОК(a,b) = a × b. Проверка: 12 × 12 = 144 = 24 × 6 ✓</div>
+              </div>
+              <!-- Slide 10 -->
+              <div class="widget-slide">
+                <h3>✏️ Типичные ошибки и как их избежать</h3>
+                <p>Самые частые ошибки при работе с натуральными числами:</p>
+                <div style="display: grid; gap: 8px; margin: 16px 0">
+                  <div style="background: var(--bg-glass); border-radius: 10px; padding: 10px 14px;">❌ 3 + 4 × 2 = 14 &nbsp;→&nbsp; ✅ = 11 (× выполняется первым)</div>
+                  <div style="background: var(--bg-glass); border-radius: 10px; padding: 10px 14px;">❌ 1 000 000 — 7 разрядов &nbsp;→&nbsp; ✅ 8 разрядов (10⁰–10⁷)</div>
+                  <div style="background: var(--bg-glass); border-radius: 10px; padding: 10px 14px;">❌ При округлении 345 → сотни = 400 &nbsp;→&nbsp; ✅ = 300 (4 &lt; 5)</div>
+                  <div style="background: var(--bg-glass); border-radius: 10px; padding: 10px 14px;">❌ 60 ÷ 3 × 4 = 5 &nbsp;→&nbsp; ✅ = 80 (слева направо)</div>
+                </div>
+                <div class="tip-box">Проверяй каждое действие! Спешка — главная причина ошибок.</div>
+              </div>
+              <!-- Slide 11 -->
+              <div class="widget-slide">
+                <h3>📊 Тренировочные задачи</h3>
+                <p>Решаем разнотипные задачи для повторения:</p>
+                <div style="display: grid; gap: 10px; margin: 16px 0">
+                  <div style="background: var(--bg-glass); border-radius: 10px; padding: 12px 16px;"><strong style="color: var(--accent)">1.</strong> Округли 4 856 742 до тысяч → <strong>4 857 000</strong></div>
+                  <div style="background: var(--bg-glass); border-radius: 10px; padding: 12px 16px;"><strong style="color: var(--accent)">2.</strong> НОД(48, 36) = ? → <strong>12</strong></div>
+                  <div style="background: var(--bg-glass); border-radius: 10px; padding: 12px 16px;"><strong style="color: var(--accent)">3.</strong> 144 ÷ (3² − 3) + 8 × 2 = 144 ÷ 6 + 16 = 24 + 16 = <strong>40</strong></div>
+                </div>
+                <div class="tip-box">Решай методично: шаг за шагом, без спешки.</div>
+              </div>
+              <!-- Slide 12 -->
+              <div class="widget-slide">
+                <h3>✅ Готовимся к итоговому уроку</h3>
+                <p>Контрольный список тем для повторения перед итоговым уроком:</p>
+                <div style="display: grid; gap: 8px; margin: 16px 0">
+                  <div style="background: var(--bg-glass); border-radius: 10px; padding: 10px 14px;">✔ Запись и чтение натуральных чисел (разряды, классы)</div>
+                  <div style="background: var(--bg-glass); border-radius: 10px; padding: 10px 14px;">✔ Сравнение чисел (поразрядно, числовая прямая)</div>
+                  <div style="background: var(--bg-glass); border-radius: 10px; padding: 10px 14px;">✔ Округление до любого разряда</div>
+                  <div style="background: var(--bg-glass); border-radius: 10px; padding: 10px 14px;">✔ Четыре действия + деление с остатком</div>
+                  <div style="background: var(--bg-glass); border-radius: 10px; padding: 10px 14px;">✔ Порядок действий в выражениях</div>
+                  <div style="background: var(--bg-glass); border-radius: 10px; padding: 10px 14px;">✔ НОД, НОК, признаки делимости</div>
+                </div>
+                <div class="tip-box">Проработай все темы — и итоговый урок пройдёт успешно!</div>
+              </div>
             </div>
           </div>
-        </div>
-        <div class="widget-nav">
-          <button class="btn btn-secondary" onclick="prevSlide()">
-            ← Назад
-          </button>
-          <button class="btn btn-primary" onclick="nextSlide()">Далее →</button>
+          <div class="widget-nav">
+            <button type="button" class="btn btn-secondary" onclick="prevSlide()">← Назад</button>
+            <button type="button" class="btn btn-primary" onclick="nextSlide()">Вперёд →</button>
+          </div>
         </div>
       </div>
     </section>
@@ -1336,7 +1424,6 @@
     <script>
       const AppState = {
         currentSection: "home",
-        slide: 0,
         trainer: { correct: 0, total: 0, streak: 0, current: null },
         diagnostic: { current: 0, score: 0, answers: [] },
         timeAttack: {
@@ -1369,28 +1456,25 @@
           showSection(link.dataset.section);
         });
       });
-      const totalSlides = 5;
-      const track = document.getElementById("widget-track");
+      let currentSlide = 0;
+      const slides = document.querySelectorAll("#track-slides .widget-slide");
+      const total = slides.length;
       const slideNumEl = document.getElementById("slide-num");
       const slideTotalEl = document.getElementById("slide-total");
-      if (slideTotalEl) slideTotalEl.textContent = totalSlides;
+      if (slideTotalEl) slideTotalEl.innerText = total;
       function renderSlide() {
-        if (track)
-          track.style.transform = "translateX(-" + AppState.slide * 100 + "%)";
-        if (slideNumEl) slideNumEl.textContent = AppState.slide + 1;
+        slides.forEach((s, i) => s.classList.toggle("active", i === currentSlide));
+        if (slideNumEl) slideNumEl.innerText = currentSlide + 1;
       }
       function nextSlide() {
-        if (AppState.slide < totalSlides - 1) {
-          AppState.slide++;
-          renderSlide();
-        }
+        if (currentSlide < total - 1) { currentSlide++; renderSlide(); }
       }
       function prevSlide() {
-        if (AppState.slide > 0) {
-          AppState.slide--;
-          renderSlide();
-        }
+        if (currentSlide > 0) { currentSlide--; renderSlide(); }
       }
+      renderSlide();
+      window.nextSlide = nextSlide;
+      window.prevSlide = prevSlide;
       function toggleSolution(id) {
         const el = document.getElementById(id);
         el.classList.toggle("active");
@@ -1799,3 +1883,5 @@
     </script>
   </body>
 </html>
+
+

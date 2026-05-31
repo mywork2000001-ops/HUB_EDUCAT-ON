@@ -582,6 +582,16 @@
             color: var(--accent);
             font-weight: 600;
         }
+        /* Slider */
+        .generate-widget { background: var(--bg-card); border: 1px solid var(--border-glass); border-radius: 20px; padding: 24px; }
+        .widget-viewport { width: 100%; }
+        .widget-slide { display: none; padding: 12px 16px; animation: slideFade 0.3s ease; }
+        .widget-slide.active { display: block; }
+        @keyframes slideFade { from { opacity: 0; } to { opacity: 1; } }
+        .widget-nav { display: flex; justify-content: space-between; margin-top: 20px; }
+        .widget-progress { text-align: center; font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 12px; }
+        .widget-slide h3 { font-size: 1.3rem; color: var(--accent); margin-bottom: 16px; }
+        .widget-slide p, .widget-slide li { color: var(--text-secondary); line-height: 1.8; margin-bottom: 12px; }
     </style>
 </head>
 <body>
@@ -629,85 +639,100 @@
 
     <!-- THEORY -->
     <section id="theory">
-        <div class="card">
-            <div class="card-title"><span class="icon" style="background: var(--accent-dim);">📚</span>Разряды десятичной дроби</div>
-            <p>В записи десятичной дроби первый разряд после запятой — <strong>десятые (ДЕ)</strong>, второй — <strong>сотые (СЕ)</strong>, третий — <strong>тысячные (ТЕ)</strong>.</p>
-            <div class="digit-table">
-                <div class="digit-cell header">Д</div>
-                <div class="digit-cell header">Е</div>
-                <div class="digit-cell header"></div>
-                <div class="digit-cell header">ДЕ</div>
-                <div class="digit-cell header">СЕ</div>
-                <div class="digit-cell header">ТЕ</div>
-                <div class="digit-cell header">ДТЕ</div>
-                <div class="digit-cell">1</div>
-                <div class="digit-cell">1</div>
-                <div class="digit-cell dot">,</div>
-                <div class="digit-cell">1</div>
-                <div class="digit-cell">2</div>
-                <div class="digit-cell">5</div>
-                <div class="digit-cell"></div>
-            </div>
-            <p style="text-align:center; color: var(--text-secondary);">Число <strong>11,125</strong> = 1·10 + 1·1 + 1·0,1 + 2·0,01 + 5·0,001</p>
-            <div class="formula-box">
-                1,125 = 1 Е + 1 ДЕ + 2 СЕ + 5 ТЕ = 1 + 0,1 + 0,02 + 0,005
-            </div>
-            <div class="tip-box">Читается: «одна целая сто двадцать пять тысячных».</div>
-        </div>
-
-        <div class="card">
-            <div class="card-title"><span class="icon" style="background: var(--accent-blue-dim);">🔗</span>Связь между разрядными единицами</div>
-            <div class="theory-grid">
-                <div class="theory-card">
-                    <h3>1 единица = 10 десятых</h3>
-                    <p>1 = 0,1 + 0,1 + ... + 0,1 (10 раз)</p>
+      <div class="card">
+        <div class="card-title">📖 Визуальная теория</div>
+        <div class="generate-widget">
+          <div class="widget-progress">
+            Слайд <span id="slide-num">1</span> / <span id="slide-total">12</span>
+          </div>
+          <div class="widget-viewport">
+            <div class="widget-track" id="track-slides">
+              <div class="widget-slide active">
+                <h3>💯 Что такое десятичная дробь?</h3>
+                <p>Десятичная дробь — это дробь, знаменатель которой равен 10, 100, 1000 и т.д., записанная через запятую.</p>
+                <div class="formula-box">3/10 = 0,3 &nbsp;&nbsp;&nbsp; 7/100 = 0,07 &nbsp;&nbsp;&nbsp; 15/1000 = 0,015</div>
+                <div class="tip-box">Запятая отделяет целую часть от дробной.</div>
+              </div>
+              <div class="widget-slide">
+                <h3>📊 Десятые, сотые, тысячные доли</h3>
+                <p>Разряды после запятой: первый — десятые, второй — сотые, третий — тысячные.</p>
+                <div class="formula-box">В числе 1,125: 1 — единицы, 1 — десятые, 2 — сотые, 5 — тысячные</div>
+                <div class="tip-box">Каждый разряд в 10 раз меньше предыдущего.</div>
+              </div>
+              <div class="widget-slide">
+                <h3>✏️ Запись десятичной дроби</h3>
+                <p>Пишем цифры целой части, затем запятую, затем цифры дробной части. Количество знаков после запятой зависит от знаменателя обыкновенной дроби.</p>
+                <div class="formula-box">5/1000 = 0,005 &nbsp;&nbsp; 73/1000 = 0,073 &nbsp;&nbsp; 2 3/1000 = 2,003</div>
+                <div class="tip-box">Нули перед значимой цифрой в дробной части обязательны!</div>
+              </div>
+              <div class="widget-slide">
+                <h3>📖 Чтение десятичных дробей</h3>
+                <p>Читаем: целая часть «целых», затем дробная часть + название разряда последней цифры.</p>
+                <div class="formula-box">0,3 = «ноль целых три десятых»<br>1,125 = «одна целая сто двадцать пять тысячных»</div>
+                <div class="tip-box">Название разряда определяется последней цифрой дробной части.</div>
+              </div>
+              <div class="widget-slide">
+                <h3>🔄 Перевод обыкновенной дроби в десятичную</h3>
+                <p>Если знаменатель 10, 100, 1000 — просто перепишем через запятую. Иначе разделим числитель на знаменатель.</p>
+                <div class="formula-box">3/4 = 3 ÷ 4 = 0,75<br>1/8 = 1 ÷ 8 = 0,125<br>1/5 = 0,2</div>
+                <div class="tip-box">Знаменатели 2, 4, 5, 8, 10, 20, 25, 50, 100 дают конечные десятичные дроби.</div>
+              </div>
+              <div class="widget-slide">
+                <h3>🔄 Перевод десятичной дроби в обыкновенную</h3>
+                <p>Цифры после запятой — числитель, знаменатель — 1 с нулями (по числу знаков после запятой).</p>
+                <div class="formula-box">0,007 = 7/1000<br>1,199 = 1199/1000 = 1 199/1000<br>0,75 = 75/100 = 3/4</div>
+                <div class="tip-box">Не забудьте сократить дробь, если возможно!</div>
+              </div>
+              <div class="widget-slide">
+                <h3>📐 Позиционная запись десятичных дробей</h3>
+                <p>Каждая цифра имеет своё место (позицию). Значение числа = сумма произведений цифр на их разрядные единицы.</p>
+                <div class="formula-box">1,125 = 1·1 + 1·0,1 + 2·0,01 + 5·0,001</div>
+                <div class="tip-box">Позиционная система позволяет точно записывать любые числа.</div>
+              </div>
+              <div class="widget-slide">
+                <h3>0️⃣ Нули после запятой (0.50 = 0.5)</h3>
+                <p>Нули в конце дробной части не меняют значение числа. Их можно добавлять или убирать.</p>
+                <div class="formula-box">0,50 = 0,5 = 0,500 &nbsp;&nbsp; 1,200 = 1,2</div>
+                <div class="tip-box">При сравнении удобно дополнить нулями до одинакового числа знаков.</div>
+              </div>
+              <div class="widget-slide">
+                <h3>⚖️ Сравнение десятичных дробей</h3>
+                <p>Сравниваем поразрядно: сначала целые части, затем десятые, потом сотые и т.д.</p>
+                <div class="formula-box">1,12 vs 1,09: целые = 1, десятые: 1 &gt; 0 → 1,12 &gt; 1,09<br>0,8 vs 0,80: равны!</div>
+                <div class="tip-box">Выравниваем числа нулями и сравниваем как натуральные.</div>
+              </div>
+              <div class="widget-slide">
+                <h3>📏 Десятичные дроби на числовой прямой</h3>
+                <p>Каждое число соответствует точке на прямой. Чем правее — тем больше.</p>
+                <div class="formula-box">0 —[0,1]—[0,2]—...—[0,9]—[1,0]—[1,1]—...</div>
+                <div class="tip-box">Между двумя любыми различными числами существует бесконечно много других чисел.</div>
+              </div>
+              <div class="widget-slide">
+                <h3>💰 Десятичные дроби в жизни (деньги, измерения)</h3>
+                <p>Цены, длины, масса, время — всё это записывается десятичными дробями в повседневной жизни.</p>
+                <div class="formula-box">1,50 ман. = 1 ман. 50 гяп.<br>1,75 м = 175 см<br>0,5 кг = 500 г</div>
+                <div class="tip-box">Десятичные дроби удобны для вычислений в столбик.</div>
+              </div>
+              <div class="widget-slide">
+                <h3>✅ Итог: обыкновенные и десятичные дроби</h3>
+                <p>Связь между двумя видами дробей:</p>
+                <div class="formula-box">
+                  Обыкновенная → десятичная: числитель ÷ знаменатель<br>
+                  Десятичная → обыкновенная: цифры / 10ⁿ, сократить<br>
+                  Сравнение: выровнять знаки, сравнить как целые
                 </div>
-                <div class="theory-card">
-                    <h3>1 десятая = 10 сотых</h3>
-                    <p>0,1 = 0,01 + 0,01 + ... + 0,01 (10 раз)</p>
-                </div>
-                <div class="theory-card">
-                    <h3>1 сотая = 10 тысячных</h3>
-                    <p>0,01 = 0,001 + ... + 0,001 (10 раз)</p>
-                </div>
+                <div class="tip-box">Все обыкновенные дроби с знаменателем 2, 4, 5, 8, 10... → конечная десятичная дробь.</div>
+              </div>
             </div>
-            <div class="formula-box">
-                1/10 = 0,1&nbsp;&nbsp;&nbsp;1/100 = 0,01&nbsp;&nbsp;&nbsp;1/1000 = 0,001&nbsp;&nbsp;&nbsp;1/10000 = 0,0001
-            </div>
-            <div class="tip-box">Каждая разрядная единица в 10 раз меньше той, что стоит слева от неё.</div>
+          </div>
+          <div class="widget-nav">
+            <button class="btn btn-secondary" onclick="prevSlide()">← Назад</button>
+            <button class="btn btn-primary" onclick="nextSlide()">Вперёд →</button>
+          </div>
         </div>
-
-        <div class="card">
-            <div class="card-title"><span class="icon" style="background: var(--accent-warm-dim);">📝</span>Переводы</div>
-            <p><strong>Обыкновенная → десятичная:</strong> знаменатель 10, 100, 1000 определяет количество знаков после запятой.</p>
-            <div class="formula-box">
-                5/1000 = 0,005&nbsp;&nbsp;&nbsp;73/1000 = 0,073&nbsp;&nbsp;&nbsp;2 3/1000 = 2,003
-            </div>
-            <p><strong>Десятичная → обыкновенная:</strong> запишите цифры числителем, а знаменатель — 1 с нужным количеством нулей.</p>
-            <div class="formula-box">
-                0,007 = 7/1000&nbsp;&nbsp;&nbsp;1,199 = 1199/1000 = 1 199/1000&nbsp;&nbsp;&nbsp;50,500 = 50 1/2
-            </div>
-            <div class="warning-box">При переводе смешанного числа целая часть остаётся целой, а дробная часть заменяется обыкновенной дробью.</div>
-        </div>
-
-        <div class="card">
-            <div class="card-title"><span class="icon" style="background: rgba(252, 196, 25, 0.2);">🔢</span>Нули в конце десятичной дроби</div>
-            <p>Нули в конце дробной части <strong>не меняют</strong> значения числа.</p>
-            <div class="formula-box">
-                0,15 = 0,150 = 0,1500 = 0,15000
-            </div>
-            <div class="tip-box">Это аналогично тому, что 15/100 = 150/1000 = 1500/10000.</div>
-        </div>
-
-        <div class="card">
-            <div class="card-title"><span class="icon" style="background: rgba(129, 201, 149, 0.2);">📏</span>Числовая ось</div>
-            <p>Десятичные дроби можно отмечать на числовой оси. Чем правее точка, тем больше число.</p>
-            <div class="formula-box">
-                1,12 &lt; 1,121 &lt; 1,122 &lt; ... &lt; 1,13
-            </div>
-            <div class="tip-box">Для сравнения допишите нули справа до одинакового количества знаков: 1,12 = 1,120.</div>
-        </div>
+      </div>
     </section>
+
 
     <!-- PRACTICE -->
     <section id="practice">

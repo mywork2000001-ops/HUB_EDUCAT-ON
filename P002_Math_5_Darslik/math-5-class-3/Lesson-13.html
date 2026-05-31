@@ -258,24 +258,12 @@ html = '''<!doctype html>
         border-radius: 20px;
         padding: 24px;
       }
-      .widget-viewport {
-        overflow: hidden;
-        position: relative;
-        /* Убираем жесткий min-height или делаем его больше */
-        min-height: 500px;
-        height: auto;
-      }
-      .widget-track {
-        display: flex;
-        transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
-      }
-      .widget-slide {
-        flex: 0 0 100%; /* Слайд всегда занимает ровно 100% ширины родителя */
-        width: 100%;
-        padding: 20px;
-        box-sizing: border-box; /* Чтобы padding не увеличивал ширину */
-        overflow-x: hidden; /* Запрещаем горизонтальный вылет контента */
-      }
+      .widget-viewport { width: 100%; }
+      .widget-slide { display: none; padding: 12px 16px; animation: slideFade 0.3s ease; }
+      .widget-slide.active { display: block; }
+      @keyframes slideFade { from { opacity: 0; } to { opacity: 1; } }
+      .widget-nav { display: flex; justify-content: space-between; margin-top: 20px; }
+      .widget-progress { text-align: center; font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 12px; }
       .widget-slide h3 {
         font-size: 1.3rem;
         color: var(--accent);
@@ -296,18 +284,6 @@ html = '''<!doctype html>
         border-radius: 12px;
         font-weight: 600;
         color: var(--text-primary);
-      }
-      .widget-nav {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-top: 16px;
-      }
-      .widget-progress {
-        text-align: center;
-        font-size: 0.9rem;
-        color: var(--text-secondary);
-        margin-bottom: 12px;
       }
 
       /* Sequence — пошаговый алгоритм */
@@ -879,13 +855,12 @@ html = '''<!doctype html>
 
         <div class="generate-widget">
           <div class="widget-progress">
-            Слайд <span id="slide-num">1</span> из
-            <span id="slide-total">8</span>
+            Слайд <span id="slide-num">1</span> / <span id="slide-total">12</span>
           </div>
           <div class="widget-viewport">
-            <div class="widget-track" id="widget-track">
+            <div class="widget-track" id="track-slides">
               <!-- Slide 1 -->
-              <div class="widget-slide">
+              <div class="widget-slide active">
                 <h3>🍔 Зачем делить десятичные дроби?</h3>
                 <p>
                   Повар разделил 3,12 кг фарша на котлеты по 0,1 кг. Сколько
@@ -1133,6 +1108,43 @@ html = '''<!doctype html>
                   оба числа на 10ⁿ, где n — количество знаков после запятой в
                   делителе. Потом дели как обычно.
                 </div>
+              </div>
+
+              <!-- Slide 9 -->
+              <div class="widget-slide">
+                <h3>🔢 Деление смешанного числа на десятичную дробь</h3>
+                <p>Чтобы разделить смешанное число на десятичную дробь, сначала переведите смешанное число в неправильную дробь, затем применяйте стандартный алгоритм.</p>
+                <div class="formula-box">2½ ÷ 0,5 = 2,5 ÷ 0,5 = 25 ÷ 5 = 5</div>
+                <div class="tip-box">Можно также перевести смешанное число в десятичную дробь и делить обычным способом.</div>
+              </div>
+
+              <!-- Slide 10 -->
+              <div class="widget-slide">
+                <h3>💡 Точное и приближённое частное</h3>
+                <p>Не всегда деление десятичных дробей даёт конечный результат. Иногда частное — бесконечная дробь, которую нужно округлить.</p>
+                <div class="formula-box">1 ÷ 3 = 0,333... ≈ 0,33 (до сотых)<br>2 ÷ 3 = 0,666... ≈ 0,67 (до сотых)</div>
+                <div class="tip-box">Округляйте до нужного разряда по правилу: если следующая цифра ≥ 5, прибавляем 1.</div>
+              </div>
+
+              <!-- Slide 11 -->
+              <div class="widget-slide">
+                <h3>📊 Задачи на нахождение скорости, цены</h3>
+                <p>Деление десятичных дробей применяется в задачах на скорость (v = S ÷ t) и цену (цена = стоимость ÷ количество).</p>
+                <div class="formula-box">Скорость: 12,6 км ÷ 0,9 ч = 14 км/ч<br>Цена: 7,5 ман. ÷ 2,5 кг = 3 ман./кг</div>
+                <div class="tip-box">Проверка: результат × делитель = делимое.</div>
+              </div>
+
+              <!-- Slide 12 -->
+              <div class="widget-slide">
+                <h3>✅ Итог: деление десятичных дробей</h3>
+                <p>Ключевые правила для запоминания:</p>
+                <div class="formula-box">
+                  1. Делитель → целое число: умножаем оба числа на 10ⁿ<br>
+                  2. Делим как натуральные числа<br>
+                  3. Запятая в частном — когда кончается целая часть<br>
+                  4. Проверяем: частное × делитель = делимое
+                </div>
+                <div class="tip-box">Деление на 0,1 = умножение на 10; на 0,01 = умножение на 100.</div>
               </div>
             </div>
           </div>
@@ -1754,28 +1766,20 @@ html = '''<!doctype html>
 
       // ================= GENERATE WIDGET (SLIDER) =================
       let currentSlide = 0;
-      const totalSlides = 8;
-      const track = document.getElementById("widget-track");
-      const slideNum = document.getElementById("slide-num");
-      const slideTotal = document.getElementById("slide-total");
-      slideTotal.textContent = totalSlides;
-
+      const slides = document.querySelectorAll("#track-slides .widget-slide");
+      const total = slides.length;
+      document.getElementById("slide-total").innerText = total;
       function renderSlide() {
-        track.style.transform = "translateX(-" + currentSlide * 100 + "%)";
-        slideNum.textContent = currentSlide + 1;
+        slides.forEach((s, i) => s.classList.toggle("active", i === currentSlide));
+        document.getElementById("slide-num").innerText = currentSlide + 1;
       }
       function nextSlide() {
-        if (currentSlide < totalSlides - 1) {
-          currentSlide++;
-          renderSlide();
-        }
+        if (currentSlide < total - 1) { currentSlide++; renderSlide(); }
       }
       function prevSlide() {
-        if (currentSlide > 0) {
-          currentSlide--;
-          renderSlide();
-        }
+        if (currentSlide > 0) { currentSlide--; renderSlide(); }
       }
+      renderSlide();
 
       // Grid visualization for slide 3
       function fillGrid(id, count, groupSize) {

@@ -1,4 +1,4 @@
-<!doctype html>
+﻿<!doctype html>
 <html lang="ru">
   <head>
     <meta charset="UTF-8" />
@@ -259,21 +259,10 @@
         height: auto;
         width: 100%;
       }
-      .widget-track {
-        display: flex;
-        transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-        width: 100%;
-        will-change: transform;
-      }
-      .widget-slide {
-        flex: 0 0 100%;
-        width: 100%;
-        min-width: 100%;
-        padding: 20px;
-        box-sizing: border-box;
-        overflow-x: hidden;
-        overflow-y: visible;
-      }
+      .widget-viewport { width: 100%; }
+      .widget-slide { display: none; padding: 12px 16px; animation: slideFade 0.3s ease; }
+      .widget-slide.active { display: block; }
+      @keyframes slideFade { from { opacity: 0; } to { opacity: 1; } }
       .widget-slide h3 {
         font-size: 1.3rem;
         color: var(--accent);
@@ -767,25 +756,142 @@
     <section id="theory">
       <div class="card">
         <div class="card-title">
-          <span class="icon" style="background: var(--accent-dim)">📐</span
-          >Умножение и деление
+          <span class="icon" style="background: var(--accent-dim)">📖</span>Визуальная теория
         </div>
-        <p style="color: var(--text-secondary); margin-bottom: 24px">
-          Урок 7. Умножение и деление натуральных чисел. Свойства и алгоритмы.
-        </p>
-      </div>
-      <div class="generate-widget">
-        <div class="widget-progress">
-          <span id="slide-num">1</span> / <span id="slide-total"></span>
-        </div>
-        <div class="widget-viewport">
-          <div class="widget-track" id="widget-track"></div>
-        </div>
-        <div class="widget-nav">
-          <button class="btn btn-secondary" onclick="prevSlide()">
-            ← Назад
-          </button>
-          <button class="btn btn-primary" onclick="nextSlide()">Далее →</button>
+        <p style="color: var(--text-secondary); margin-bottom: 20px">Листайте слайды — каждый слайд ключевой блок темы.</p>
+        <div class="generate-widget">
+          <div class="widget-progress">
+            Слайд <span id="slide-num">1</span> из <span id="slide-total">12</span>
+          </div>
+          <div class="widget-viewport">
+            <div class="widget-track" id="track-slides">
+              <!-- Slide 1 -->
+              <div class="widget-slide active">
+                <h3>✖️ Умножение — смысл действия</h3>
+                <p><strong>Умножение</strong> — это сокращённая запись многократного сложения одного и того же числа.</p>
+                <div class="formula-box">3 × 4 = 4 + 4 + 4 = 12 &nbsp; (3 раза по 4)<br>a × n = a + a + ... + a (n слагаемых)</div>
+                <p>Числа, которые перемножают, называются <strong>множителями</strong>. Результат — <strong>произведение</strong>.</p>
+                <div class="tip-box">Умножение на 0 даёт 0: a × 0 = 0. Умножение на 1 не меняет число: a × 1 = a.</div>
+              </div>
+              <!-- Slide 2 -->
+              <div class="widget-slide">
+                <h3>📋 Таблица умножения (1–10)</h3>
+                <p>Таблица умножения — основа арифметики. Нужно знать её наизусть!</p>
+                <div class="overflow-x-auto">
+                  <table class="compare-table">
+                    <tr><th>×</th><th>2</th><th>3</th><th>4</th><th>5</th><th>6</th><th>7</th><th>8</th><th>9</th><th>10</th></tr>
+                    <tr><th>2</th><td class="accent">4</td><td class="accent">6</td><td class="accent">8</td><td class="accent">10</td><td class="accent">12</td><td class="accent">14</td><td class="accent">16</td><td class="accent">18</td><td class="accent">20</td></tr>
+                    <tr><th>3</th><td class="accent">6</td><td class="accent">9</td><td class="accent">12</td><td class="accent">15</td><td class="accent">18</td><td class="accent">21</td><td class="accent">24</td><td class="accent">27</td><td class="accent">30</td></tr>
+                    <tr><th>5</th><td class="accent">10</td><td class="accent">15</td><td class="accent">20</td><td class="accent">25</td><td class="accent">30</td><td class="accent">35</td><td class="accent">40</td><td class="accent">45</td><td class="accent">50</td></tr>
+                  </table>
+                </div>
+                <div class="tip-box">Переместительное свойство: строки и столбцы симметричны! 3×7 = 7×3 = 21.</div>
+              </div>
+              <!-- Slide 3 -->
+              <div class="widget-slide">
+                <h3>🔢 Свойства умножения</h3>
+                <p>Три важных закона умножения натуральных чисел:</p>
+                <div style="display: grid; gap: 10px; margin: 16px 0">
+                  <div style="background: var(--bg-glass); border-radius: 10px; padding: 12px 16px;"><strong style="color: var(--accent)">Переместительное:</strong> a × b = b × a &nbsp; (5×3 = 3×5 = 15)</div>
+                  <div style="background: var(--bg-glass); border-radius: 10px; padding: 12px 16px;"><strong style="color: var(--accent-blue)">Сочетательное:</strong> (a×b)×c = a×(b×c) &nbsp; ((2×3)×4 = 2×(3×4) = 24)</div>
+                  <div style="background: var(--bg-glass); border-radius: 10px; padding: 12px 16px;"><strong style="color: var(--accent-warm)">Дистрибутивное:</strong> a×(b+c) = a×b + a×c &nbsp; (3×(4+5) = 12+15 = 27)</div>
+                </div>
+                <div class="tip-box">Свойства позволяют упрощать вычисления и делать удобные перегруппировки.</div>
+              </div>
+              <!-- Slide 4 -->
+              <div class="widget-slide">
+                <h3>✖️ Умножение на 10, 100, 1000</h3>
+                <p>При умножении на 10, 100, 1000 приписываем нули справа:</p>
+                <div class="formula-box">a × 10 → приписать 1 ноль<br>a × 100 → приписать 2 нуля<br>a × 1000 → приписать 3 нуля</div>
+                <div style="display: grid; gap: 8px; margin: 12px 0">
+                  <div style="background: var(--bg-glass); border-radius: 10px; padding: 10px 14px;">35 × 10 = <strong style="color: var(--accent)">350</strong></div>
+                  <div style="background: var(--bg-glass); border-radius: 10px; padding: 10px 14px;">47 × 100 = <strong style="color: var(--accent)">4 700</strong></div>
+                  <div style="background: var(--bg-glass); border-radius: 10px; padding: 10px 14px;">8 × 1 000 = <strong style="color: var(--accent)">8 000</strong></div>
+                </div>
+                <div class="tip-box">Обратно: при делении на 10 убираем ноль, на 100 — два нуля и т.д.</div>
+              </div>
+              <!-- Slide 5 -->
+              <div class="widget-slide">
+                <h3>📋 Умножение многозначных чисел столбиком</h3>
+                <p>Алгоритм умножения в столбик:</p>
+                <div style="display: grid; gap: 10px; margin: 16px 0">
+                  <div style="background: var(--bg-glass); border-radius: 10px; padding: 12px 16px;"><strong style="color: var(--accent)">1.</strong> Пишем второй множитель под первым (по разрядам).</div>
+                  <div style="background: var(--bg-glass); border-radius: 10px; padding: 12px 16px;"><strong style="color: var(--accent)">2.</strong> Умножаем первый множитель на каждую цифру второго.</div>
+                  <div style="background: var(--bg-glass); border-radius: 10px; padding: 12px 16px;"><strong style="color: var(--accent)">3.</strong> Каждое частичное произведение сдвигаем влево (на разряд).</div>
+                  <div style="background: var(--bg-glass); border-radius: 10px; padding: 12px 16px;"><strong style="color: var(--accent)">4.</strong> Складываем все частичные произведения.</div>
+                </div>
+                <div class="formula-box">234 × 12 = 234×2 + 234×10 = 468 + 2340 = 2 808</div>
+                <div class="tip-box">Проверка: поменяй множители местами и перемножи снова.</div>
+              </div>
+              <!-- Slide 6 -->
+              <div class="widget-slide">
+                <h3>➗ Деление — смысл действия</h3>
+                <p><strong>Деление</strong> — это нахождение одного из множителей по произведению и другому множителю. Или: разбить на равные части.</p>
+                <div class="formula-box">12 ÷ 4 = 3 &nbsp; (12 разбить на 4 равные части)<br>Делимое ÷ Делитель = Частное</div>
+                <p>Деление на 0 <strong>недопустимо</strong>! Деление на 1 не меняет число: a ÷ 1 = a.</p>
+                <div class="tip-box">Деление — обратная операция умножению: 12 ÷ 4 = 3, потому что 3 × 4 = 12.</div>
+              </div>
+              <!-- Slide 7 -->
+              <div class="widget-slide">
+                <h3>🔄 Взаимосвязь умножения и деления</h3>
+                <p>Умножение и деление — взаимно обратные действия:</p>
+                <div class="formula-box">a × b = c &nbsp;⟺&nbsp; c ÷ b = a &nbsp;⟺&nbsp; c ÷ a = b</div>
+                <p>Зная таблицу умножения, можно быстро делить: если 7×8=56, то 56÷7=8 и 56÷8=7.</p>
+                <div class="tip-box">Всегда проверяй деление умножением: частное × делитель = делимое.</div>
+              </div>
+              <!-- Slide 8 -->
+              <div class="widget-slide">
+                <h3>➗ Деление на 10, 100, 1000</h3>
+                <p>При делении на 10, 100, 1000 убираем нули справа (если они есть):</p>
+                <div class="formula-box">350 ÷ 10 = 35 (убрали 1 ноль)<br>4700 ÷ 100 = 47 (убрали 2 нуля)<br>8000 ÷ 1000 = 8 (убрали 3 нуля)</div>
+                <p>Работает только для чисел, кратных 10/100/1000 (с достаточным числом нулей).</p>
+                <div class="tip-box">Общий принцип: умножение на 10ⁿ — приписываем n нулей; деление — убираем n нулей.</div>
+              </div>
+              <!-- Slide 9 -->
+              <div class="widget-slide">
+                <h3>📋 Деление столбиком (алгоритм)</h3>
+                <p>Алгоритм деления в столбик (уголком):</p>
+                <div style="display: grid; gap: 10px; margin: 16px 0">
+                  <div style="background: var(--bg-glass); border-radius: 10px; padding: 12px 16px;"><strong style="color: var(--accent)">1.</strong> Выбираем неполное делимое (столько цифр делимого, чтобы оно было ≥ делителя).</div>
+                  <div style="background: var(--bg-glass); border-radius: 10px; padding: 12px 16px;"><strong style="color: var(--accent)">2.</strong> Подбираем цифру частного (подбором).</div>
+                  <div style="background: var(--bg-glass); border-radius: 10px; padding: 12px 16px;"><strong style="color: var(--accent)">3.</strong> Умножаем, вычитаем остаток, «сносим» следующую цифру.</div>
+                  <div style="background: var(--bg-glass); border-radius: 10px; padding: 12px 16px;"><strong style="color: var(--accent)">4.</strong> Повторяем до конца числа.</div>
+                </div>
+                <div class="formula-box">756 ÷ 4 = 189 (с проверкой: 189 × 4 = 756 ✓)</div>
+              </div>
+              <!-- Slide 10 -->
+              <div class="widget-slide">
+                <h3>➗ Деление с остатком</h3>
+                <p>Если делимое не делится на делитель нацело — получается <strong>остаток</strong>.</p>
+                <div class="formula-box">a = b · q + r, где 0 ≤ r &lt; b<br>Пример: 17 = 5 · 3 + 2 (частное=3, остаток=2)</div>
+                <p>Проверка: делитель × частное + остаток = делимое.</p>
+                <div class="tip-box">Остаток всегда меньше делителя. Если r = 0 — деление нацело (без остатка).</div>
+              </div>
+              <!-- Slide 11 -->
+              <div class="widget-slide">
+                <h3>🧮 Порядок действий при умножении и делении</h3>
+                <p>Умножение и деление выполняются <strong>слева направо</strong>, на одном приоритетном уровне, выше сложения и вычитания.</p>
+                <div class="formula-box">60 ÷ 3 × 4 = 20 × 4 = 80 &nbsp; (не 60 ÷ 12!)<br>5 + 3 × 4 = 5 + 12 = 17 &nbsp; (не 8 × 4!)</div>
+                <p>Скобки всегда имеют высший приоритет и меняют порядок выполнения.</p>
+                <div class="tip-box">Запомни: × ÷ раньше + −, и выполняй слева направо!</div>
+              </div>
+              <!-- Slide 12 -->
+              <div class="widget-slide">
+                <h3>✅ Практика: задачи на умножение и деление</h3>
+                <p>Решаем задачи:</p>
+                <div style="display: grid; gap: 10px; margin: 16px 0">
+                  <div style="background: var(--bg-glass); border-radius: 10px; padding: 12px 16px;"><strong style="color: var(--accent)">Задача 1.</strong> 384 ÷ 8 = <strong>48</strong> (проверка: 48 × 8 = 384 ✓)</div>
+                  <div style="background: var(--bg-glass); border-radius: 10px; padding: 12px 16px;"><strong style="color: var(--accent)">Задача 2.</strong> 125 × 8 = 125 × 4 × 2 = 500 × 2 = <strong>1 000</strong></div>
+                  <div style="background: var(--bg-glass); border-radius: 10px; padding: 12px 16px;"><strong style="color: var(--accent)">Задача 3.</strong> 100 ÷ 7 = <strong>14 остаток 2</strong> (14×7+2=100 ✓)</div>
+                </div>
+                <div class="tip-box">Умножение и деление — фундамент математики. Практикуйся каждый день!</div>
+              </div>
+            </div>
+          </div>
+          <div class="widget-nav">
+            <button type="button" class="btn btn-secondary" onclick="prevSlide()">← Назад</button>
+            <button type="button" class="btn btn-primary" onclick="nextSlide()">Вперёд →</button>
+          </div>
         </div>
       </div>
     </section>
@@ -1214,7 +1320,6 @@
     <script>
       const AppState = {
         currentSection: "home",
-        slide: 0,
         trainer: { correct: 0, total: 0, streak: 0, current: null },
         diagnostic: { current: 0, score: 0, answers: [] },
         timeAttack: {
@@ -1247,28 +1352,25 @@
           showSection(link.dataset.section);
         });
       });
-      const totalSlides = 1;
-      const track = document.getElementById("widget-track");
+      let currentSlide = 0;
+      const slides = document.querySelectorAll("#track-slides .widget-slide");
+      const total = slides.length;
       const slideNumEl = document.getElementById("slide-num");
       const slideTotalEl = document.getElementById("slide-total");
-      if (slideTotalEl) slideTotalEl.textContent = totalSlides;
+      if (slideTotalEl) slideTotalEl.innerText = total;
       function renderSlide() {
-        if (track)
-          track.style.transform = "translateX(-" + AppState.slide * 100 + "%)";
-        if (slideNumEl) slideNumEl.textContent = AppState.slide + 1;
+        slides.forEach((s, i) => s.classList.toggle("active", i === currentSlide));
+        if (slideNumEl) slideNumEl.innerText = currentSlide + 1;
       }
       function nextSlide() {
-        if (AppState.slide < totalSlides - 1) {
-          AppState.slide++;
-          renderSlide();
-        }
+        if (currentSlide < total - 1) { currentSlide++; renderSlide(); }
       }
       function prevSlide() {
-        if (AppState.slide > 0) {
-          AppState.slide--;
-          renderSlide();
-        }
+        if (currentSlide > 0) { currentSlide--; renderSlide(); }
       }
+      renderSlide();
+      window.nextSlide = nextSlide;
+      window.prevSlide = prevSlide;
       function toggleSolution(id) {
         const el = document.getElementById(id);
         el.classList.toggle("active");
@@ -1657,3 +1759,5 @@
     </script>
   </body>
 </html>
+
+

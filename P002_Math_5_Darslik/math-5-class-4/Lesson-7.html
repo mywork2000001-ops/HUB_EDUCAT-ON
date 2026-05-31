@@ -1,4 +1,4 @@
-<!doctype html>
+﻿<!doctype html>
 <html lang="ru">
   <head>
     <meta charset="UTF-8" />
@@ -886,11 +886,11 @@
         </p>
         <div class="generate-widget">
           <div class="widget-progress">
-            Слайд <span id="slide-num">1</span> из
-            <span id="slide-total">8</span>
+            Слайд <span id="slide-num">1</span> /
+            <span id="slide-total">12</span>
           </div>
           <div class="widget-viewport">
-            <div class="widget-track" id="widget-track">
+            <div class="widget-track" id="track-slides">
               <!-- Slide 1 -->
               <div class="widget-slide active">
                 <h3>🔢 Что такое обратное число?</h3>
@@ -1347,13 +1347,55 @@
                   время и уменьшает ошибки.
                 </div>
               </div>
+              <!-- Slide 9 -->
+              <div class="widget-slide">
+                <h3>🔄 Деление дроби на целое число</h3>
+                <p>Чтобы разделить обыкновенную дробь на целое число, умножьте знаменатель дроби на это число. Числитель остаётся без изменений.</p>
+                <div class="formula-box">
+                  (a/b) ÷ n = a / (b × n)<br />
+                  Пример: (3/4) ÷ 2 = 3 / (4 × 2) = 3/8
+                </div>
+                <div class="tip-box">Это частный случай деления на дробь: целое число n = n/1, и его обратная дробь = 1/n. Поэтому (a/b) ÷ n = (a/b) × (1/n).</div>
+              </div>
+              <!-- Slide 10 -->
+              <div class="widget-slide">
+                <h3>÷ Деление целого на дробь</h3>
+                <p>Чтобы разделить целое число на дробь, умножьте это число на обратную дробь. Обратная дробь получается переворачиванием: числитель и знаменатель меняются местами.</p>
+                <div class="formula-box">
+                  n ÷ (a/b) = n × (b/a)<br />
+                  Пример: 6 ÷ (3/4) = 6 × (4/3) = 24/3 = 8
+                </div>
+                <div class="tip-box">Смысл: «сколько раз дробь 3/4 помещается в 6?» — 8 раз. Проверка: 8 × (3/4) = 24/4 = 6. Верно!</div>
+              </div>
+              <!-- Slide 11 -->
+              <div class="widget-slide">
+                <h3>🧮 Деление смешанных чисел</h3>
+                <p>Для деления смешанных чисел сначала переведите их в неправильные дроби, затем примените правило деления дробей.</p>
+                <div class="formula-box">
+                  2½ ÷ 1⅓<br />
+                  = (5/2) ÷ (4/3)<br />
+                  = (5/2) × (3/4)<br />
+                  = 15/8 = 1⅞
+                </div>
+                <div class="tip-box">Никогда не делите смешанные числа «напрямую» — сначала всегда переводите в неправильные дроби, иначе получите неверный ответ.</div>
+              </div>
+              <!-- Slide 12 -->
+              <div class="widget-slide">
+                <h3>✅ Правило: a/b ÷ c/d = a/b × d/c</h3>
+                <p>Главное правило деления дробей: деление на дробь равно умножению на обратную дробь. Это единственное правило, которое нужно знать.</p>
+                <div class="formula-box">
+                  a/b ÷ c/d = a/b × d/c = (a × d) / (b × c)<br />
+                  Пример: 5/6 ÷ 7/9 = 5/6 × 9/7 = 45/42 = 15/14
+                </div>
+                <div class="tip-box">После умножения не забудьте сократить дробь! Перед умножением удобно сокращать «крест-накрест»: числитель первой на знаменатель второй и наоборот.</div>
+              </div>
             </div>
           </div>
           <div class="widget-nav">
-            <button class="btn btn-secondary" onclick="prevSlide()">
+            <button type="button" class="btn btn-secondary" onclick="prevSlide()">
               ← Назад
             </button>
-            <button class="btn btn-primary" onclick="nextSlide()">
+            <button type="button" class="btn btn-primary" onclick="nextSlide()">
               Вперёд →
             </button>
           </div>
@@ -2115,29 +2157,23 @@
       });
 
       // ================= SLIDER =================
-      const totalSlides = 8;
-      const track = document.getElementById("widget-track");
-      const slideNum = document.getElementById("slide-num");
-      const slideTotal = document.getElementById("slide-total");
-      slideTotal.textContent = totalSlides;
+      let currentSlide = 0;
+      const slides = document.querySelectorAll("#track-slides .widget-slide");
+      const total = slides.length;
+      document.getElementById("slide-total").innerText = total;
       function renderSlide() {
-        track.querySelectorAll(".widget-slide").forEach((s, i) => {
-          s.classList.toggle("active", i === AppState.slide);
-        });
-        slideNum.textContent = AppState.slide + 1;
+        slides.forEach((s, i) => s.classList.toggle("active", i === currentSlide));
+        document.getElementById("slide-num").innerText = currentSlide + 1;
       }
       function nextSlide() {
-        if (AppState.slide < totalSlides - 1) {
-          AppState.slide++;
-          renderSlide();
-        }
+        if (currentSlide < total - 1) { currentSlide++; renderSlide(); }
       }
       function prevSlide() {
-        if (AppState.slide > 0) {
-          AppState.slide--;
-          renderSlide();
-        }
+        if (currentSlide > 0) { currentSlide--; renderSlide(); }
       }
+      renderSlide();
+      window.nextSlide = nextSlide;
+      window.prevSlide = prevSlide;
 
       // ================= SOLUTION TOGGLES =================
       function toggleSolution(id) {
@@ -2883,3 +2919,5 @@
     </script>
   </body>
 </html>
+
+

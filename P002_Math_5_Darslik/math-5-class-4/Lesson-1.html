@@ -1,4 +1,4 @@
-<!doctype html>
+﻿<!doctype html>
 <html lang="ru">
   <head>
     <meta charset="UTF-8" />
@@ -892,11 +892,11 @@
         </p>
         <div class="generate-widget">
           <div class="widget-progress">
-            Слайд <span id="slide-num">1</span> из
-            <span id="slide-total">8</span>
+            Слайд <span id="slide-num">1</span> /
+            <span id="slide-total">12</span>
           </div>
           <div class="widget-viewport">
-            <div class="widget-track" id="widget-track">
+            <div class="widget-track" id="track-slides">
               <!-- Slide 1 -->
               <div class="widget-slide active">
                 <h3>🔢 Что такое процент?</h3>
@@ -1235,13 +1235,45 @@
                   перепутайте местами!
                 </div>
               </div>
+              <!-- Slide 9 -->
+              <div class="widget-slide">
+                <h3>📊 Процент в жизни</h3>
+                <p>Проценты встречаются повсюду: в магазинах (скидки), банках (ставки по вкладам и кредитам), государстве (налоги). Умение быстро считать проценты — необходимый жизненный навык.</p>
+                <div class="formula-box">Скидка 20% на товар 500 руб. → экономия = 500 · 0,20 = 100 руб. → платите 400 руб.</div>
+                <div class="tip-box">Банковский вклад 5% годовых: положили 10 000 руб. → за год получите 500 руб. процентов.</div>
+              </div>
+              <!-- Slide 10 -->
+              <div class="widget-slide">
+                <h3>🔢 Нахождение процента от числа</h3>
+                <p>Чтобы найти N% от числа A, умножьте A на N/100. Это самая распространённая задача на проценты.</p>
+                <div class="formula-box">N% от A = A × N / 100<br />Пример: 15% от 200 = 200 × 15 / 100 = 30</div>
+                <div class="tip-box">Быстрый способ: разделите число на 100 (получите 1%), затем умножьте на нужное количество процентов.</div>
+              </div>
+              <!-- Slide 11 -->
+              <div class="widget-slide">
+                <h3>📈 Нахождение числа по проценту</h3>
+                <p>Если известно, что B составляет N% от некоторого числа A, то A можно найти по формуле обратной задачи.</p>
+                <div class="formula-box">A = B ÷ N × 100<br />Пример: 30 — это 20% от A → A = 30 ÷ 20 × 100 = 150</div>
+                <div class="tip-box">Проверка: 20% от 150 = 150 × 0,20 = 30. Верно!</div>
+              </div>
+              <!-- Slide 12 -->
+              <div class="widget-slide">
+                <h3>✅ Обобщение: все формулы процентов</h3>
+                <p>Три типа задач на проценты сводятся к трём формулам. Определите тип задачи — и сразу знаете, какую формулу применить.</p>
+                <div class="formula-box">
+                  1) N% от A = A × N / 100<br />
+                  2) Число A, если B = N%: A = B × 100 / N<br />
+                  3) Сколько % B от A: P = B / A × 100%
+                </div>
+                <div class="tip-box">Все три формулы вытекают из одного определения: процент = часть/целое × 100.</div>
+              </div>
             </div>
           </div>
           <div class="widget-nav">
-            <button class="btn btn-secondary" onclick="prevSlide()">
+            <button type="button" class="btn btn-secondary" onclick="prevSlide()">
               ← Назад
             </button>
-            <button class="btn btn-primary" onclick="nextSlide()">
+            <button type="button" class="btn btn-primary" onclick="nextSlide()">
               Вперёд →
             </button>
           </div>
@@ -1822,29 +1854,23 @@
       });
 
       // ================= SLIDER =================
-      const totalSlides = 8;
-      const track = document.getElementById("widget-track");
-      const slideNum = document.getElementById("slide-num");
-      const slideTotal = document.getElementById("slide-total");
-      slideTotal.textContent = totalSlides;
+      let currentSlide = 0;
+      const slides = document.querySelectorAll("#track-slides .widget-slide");
+      const total = slides.length;
+      document.getElementById("slide-total").innerText = total;
       function renderSlide() {
-        track.querySelectorAll(".widget-slide").forEach((s, i) => {
-          s.classList.toggle("active", i === AppState.slide);
-        });
-        slideNum.textContent = AppState.slide + 1;
+        slides.forEach((s, i) => s.classList.toggle("active", i === currentSlide));
+        document.getElementById("slide-num").innerText = currentSlide + 1;
       }
       function nextSlide() {
-        if (AppState.slide < totalSlides - 1) {
-          AppState.slide++;
-          renderSlide();
-        }
+        if (currentSlide < total - 1) { currentSlide++; renderSlide(); }
       }
       function prevSlide() {
-        if (AppState.slide > 0) {
-          AppState.slide--;
-          renderSlide();
-        }
+        if (currentSlide > 0) { currentSlide--; renderSlide(); }
       }
+      renderSlide();
+      window.nextSlide = nextSlide;
+      window.prevSlide = prevSlide;
 
       // ================= SOLUTION TOGGLES =================
       function toggleSolution(id) {
@@ -2515,3 +2541,5 @@
     </script>
   </body>
 </html>
+
+

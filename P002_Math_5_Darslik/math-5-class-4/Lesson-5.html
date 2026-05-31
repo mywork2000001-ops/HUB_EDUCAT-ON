@@ -1,4 +1,4 @@
-<!doctype html>
+﻿<!doctype html>
 <html lang="ru">
   <head>
     <meta charset="UTF-8" />
@@ -856,11 +856,11 @@
         </p>
         <div class="generate-widget">
           <div class="widget-progress">
-            Слайд <span id="slide-num">1</span> из
-            <span id="slide-total">8</span>
+            Слайд <span id="slide-num">1</span> /
+            <span id="slide-total">12</span>
           </div>
           <div class="widget-viewport">
-            <div class="widget-track" id="widget-track">
+            <div class="widget-track" id="track-slides">
               <!-- Slide 1 -->
               <div class="widget-slide active">
                 <h3>📈 Увеличение числа на процент</h3>
@@ -1060,13 +1060,60 @@
                   получаем удвоение.
                 </div>
               </div>
+              <!-- Slide 9 -->
+              <div class="widget-slide">
+                <h3>📈 Коэффициент увеличения</h3>
+                <p>Когда число увеличивают на N%, это означает умножение на коэффициент (1 + N/100). Такой коэффициент называют коэффициентом роста.</p>
+                <div class="formula-box">
+                  +10% → ×1,10<br />
+                  +25% → ×1,25<br />
+                  +50% → ×1,50<br />
+                  +100% → ×2,00
+                </div>
+                <div class="tip-box">Коэффициент 1,N означает «исходное число плюс N% от него». Умножить на 1,20 = оставить 100% и добавить 20%.</div>
+              </div>
+              <!-- Slide 10 -->
+              <div class="widget-slide">
+                <h3>📉 Коэффициент уменьшения</h3>
+                <p>Когда число уменьшают на N%, это означает умножение на коэффициент (1 − N/100). Такой коэффициент называют коэффициентом снижения.</p>
+                <div class="formula-box">
+                  −10% → ×0,90<br />
+                  −25% → ×0,75<br />
+                  −50% → ×0,50<br />
+                  −30% → ×0,70
+                </div>
+                <div class="tip-box">Скидка 20% в магазине — это умножение цены на 0,80. Быстрый расчёт: 0,80 = 80/100, значит вы платите 80% от цены.</div>
+              </div>
+              <!-- Slide 11 -->
+              <div class="widget-slide">
+                <h3>🔄 Цепочка изменений</h3>
+                <p>Если число изменяют несколько раз подряд, перемножаем коэффициенты. Каждое изменение применяется к результату предыдущего.</p>
+                <div class="formula-box">
+                  Цена 1000 руб. → +20% → −10%<br />
+                  Шаг 1: 1000 × 1,20 = 1200<br />
+                  Шаг 2: 1200 × 0,90 = 1080<br />
+                  Итог: +8% от начальной цены
+                </div>
+                <div class="tip-box">Порядок изменений важен только при вычислении итоговой суммы в рублях, но не для итогового коэффициента: 1,20 × 0,90 = 0,90 × 1,20.</div>
+              </div>
+              <!-- Slide 12 -->
+              <div class="widget-slide">
+                <h3>✅ Итог: увеличить на N% = умножить на (1 + N/100)</h3>
+                <p>Главное правило темы: любое процентное изменение — это умножение на соответствующий коэффициент. Освоив это, вы сможете решать любые задачи на изменение величин.</p>
+                <div class="formula-box">
+                  Увеличить на N%: × (1 + N/100)<br />
+                  Уменьшить на N%: × (1 − N/100)<br />
+                  Два изменения: × k₁ × k₂
+                </div>
+                <div class="tip-box">Запомните: «увеличить на 100%» = удвоить (×2), «уменьшить на 50%» = уполовинить (×0,5). Это ориентиры для проверки.</div>
+              </div>
             </div>
           </div>
           <div class="widget-nav">
-            <button class="btn btn-secondary" onclick="prevSlide()">
+            <button type="button" class="btn btn-secondary" onclick="prevSlide()">
               ← Назад
             </button>
-            <button class="btn btn-primary" onclick="nextSlide()">
+            <button type="button" class="btn btn-primary" onclick="nextSlide()">
               Вперёд →
             </button>
           </div>
@@ -1632,29 +1679,23 @@
       });
 
       // ================= SLIDER =================
-      const totalSlides = 8;
-      const track = document.getElementById("widget-track");
-      const slideNum = document.getElementById("slide-num");
-      const slideTotal = document.getElementById("slide-total");
-      slideTotal.textContent = totalSlides;
+      let currentSlide = 0;
+      const slides = document.querySelectorAll("#track-slides .widget-slide");
+      const total = slides.length;
+      document.getElementById("slide-total").innerText = total;
       function renderSlide() {
-        track.querySelectorAll(".widget-slide").forEach((s, i) => {
-          s.classList.toggle("active", i === AppState.slide);
-        });
-        slideNum.textContent = AppState.slide + 1;
+        slides.forEach((s, i) => s.classList.toggle("active", i === currentSlide));
+        document.getElementById("slide-num").innerText = currentSlide + 1;
       }
       function nextSlide() {
-        if (AppState.slide < totalSlides - 1) {
-          AppState.slide++;
-          renderSlide();
-        }
+        if (currentSlide < total - 1) { currentSlide++; renderSlide(); }
       }
       function prevSlide() {
-        if (AppState.slide > 0) {
-          AppState.slide--;
-          renderSlide();
-        }
+        if (currentSlide > 0) { currentSlide--; renderSlide(); }
       }
+      renderSlide();
+      window.nextSlide = nextSlide;
+      window.prevSlide = prevSlide;
 
       // ================= SOLUTION TOGGLES =================
       function toggleSolution(id) {
@@ -2378,3 +2419,5 @@
     </script>
   </body>
 </html>
+
+
