@@ -1,471 +1,1738 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ru">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Урок 8 — Числовые неравенства и знаки сравнения</title>
-  <style>
-    :root {
-      --primary: #4f46e5;
-      --primary-light: #e0e7ff;
-      --bg: #f8fafc;
-      --card: #ffffff;
-      --text: #0f172a;
-      --text-light: #64748b;
-      --success: #10b981;
-      --error: #ef4444;
-      --warning: #f59e0b;
-      --border: #e2e8f0;
-    }
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', system-ui, -apple-system, sans-serif; }
-    body { background: var(--bg); color: var(--text); line-height: 1.6; }
-    .container { max-width: 850px; margin: 0 auto; padding: 20px; }
-    
-    nav { display: flex; justify-content: space-between; padding: 15px 0; border-bottom: 1px solid var(--border); margin-bottom: 30px; flex-wrap: wrap; gap: 10px; }
-    nav a { color: var(--text-light); text-decoration: none; font-size: 14px; font-weight: 500; transition: 0.2s; }
-    nav a:hover { color: var(--primary); }
-    
-    h1 { font-size: 28px; margin-bottom: 8px; }
-    h2 { font-size: 22px; margin: 40px 0 15px; display: flex; align-items: center; gap: 10px; }
-    .hero { background: linear-gradient(135deg, var(--primary-light), #f5f3ff); padding: 30px; border-radius: 16px; margin-bottom: 30px; }
-    .hero p { color: #334155; margin-bottom: 10px; }
-    .hero-buttons { display: flex; gap: 12px; margin: 20px 0; flex-wrap: wrap; }
-    .btn { padding: 10px 18px; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; transition: 0.2s; font-size: 14px; }
-    .btn:disabled { opacity: 0.5; cursor: not-allowed; }
-    .btn-primary { background: var(--primary); color: white; }
-    .btn-primary:hover:not(:disabled) { background: #4338ca; }
-    .btn-outline { background: white; border: 2px solid var(--primary); color: var(--primary); }
-    .btn-outline:hover:not(:disabled) { background: var(--primary-light); }
-    
-    .objectives { background: white; padding: 20px; border-radius: 12px; margin-top: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
-    .objectives ul { padding-left: 20px; }
-    .objectives li { margin-bottom: 8px; color: #475569; }
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Урок 8 — Числовые неравенства и знаки сравнения</title>
+    <style>
+      :root {
+        --bg-dark: #0f0f1a;
+        --bg-card: rgba(255, 255, 255, 0.05);
+        --bg-glass: rgba(255, 255, 255, 0.08);
+        --border-glass: rgba(255, 255, 255, 0.15);
+        --text-primary: #e8e8f0;
+        --text-secondary: #a0a0b8;
+        --accent: #00d4aa;
+        --accent-dim: rgba(0, 212, 170, 0.2);
+        --accent-warm: #ff6b6b;
+        --accent-warm-dim: rgba(255, 107, 107, 0.2);
+        --accent-blue: #4dabf7;
+        --accent-blue-dim: rgba(77, 171, 247, 0.2);
+        --success: #51cf66;
+        --error: #ff6b6b;
+        --warning: #fcc419;
+      }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      body {
+        font-family:
+          "Segoe UI",
+          system-ui,
+          -apple-system,
+          sans-serif;
+        background: var(--bg-dark);
+        color: var(--text-primary);
+        min-height: 100vh;
+        overflow-x: hidden;
+        line-height: 1.6;
+      }
+      .bg-animation {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: -1;
+        background:
+          radial-gradient(
+            ellipse at 20% 20%,
+            rgba(0, 212, 170, 0.08) 0%,
+            transparent 50%
+          ),
+          radial-gradient(
+            ellipse at 80% 80%,
+            rgba(77, 171, 247, 0.08) 0%,
+            transparent 50%
+          ),
+          radial-gradient(
+            ellipse at 50% 50%,
+            rgba(255, 107, 107, 0.05) 0%,
+            transparent 60%
+          );
+      }
+      .bg-animation::before {
+        content: "";
+        position: absolute;
+        width: 200%;
+        height: 200%;
+        top: -50%;
+        left: -50%;
+        background: repeating-linear-gradient(
+          0deg,
+          transparent,
+          transparent 40px,
+          rgba(255, 255, 255, 0.02) 40px,
+          rgba(255, 255, 255, 0.02) 41px
+        );
+        animation: bgMove 20s linear infinite;
+      }
+      @keyframes bgMove {
+        0% {
+          transform: translateY(0);
+        }
+        100% {
+          transform: translateY(40px);
+        }
+      }
 
-    /* Slides */
-    .slide-container { position: relative; background: white; border-radius: 16px; padding: 30px; min-height: 280px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
-    .slide-header { display: flex; justify-content: space-between; margin-bottom: 20px; color: var(--text-light); font-size: 14px; font-weight: 600; }
-    .slide-content { margin-bottom: 30px; min-height: 150px; }
-    .slide-nav { display: flex; justify-content: space-between; }
-    
-    /* Algorithm */
-    .algo-steps { display: grid; gap: 12px; }
-    .algo-step { background: white; padding: 15px; border-radius: 10px; border-left: 4px solid var(--primary); box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
-    .algo-step h3 { color: var(--primary); margin-bottom: 4px; font-size: 16px; }
-    .algo-step p { color: #475569; font-size: 14px; }
+      nav {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        background: rgba(15, 15, 26, 0.85);
+        backdrop-filter: blur(20px);
+        border-bottom: 1px solid var(--border-glass);
+        z-index: 1000;
+        padding: 0 20px;
+      }
+      .nav-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        height: 60px;
+      }
+      .logo {
+        font-size: 1.3rem;
+        font-weight: 700;
+        background: linear-gradient(135deg, var(--accent), var(--accent-blue));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        text-decoration: none;
+      }
+      .nav-links {
+        display: flex;
+        gap: 8px;
+        list-style: none;
+      }
+      .nav-links a {
+        color: var(--text-secondary);
+        text-decoration: none;
+        padding: 8px 16px;
+        border-radius: 8px;
+        transition: all 0.3s;
+        font-size: 0.9rem;
+        font-weight: 500;
+        cursor: pointer;
+        border: none;
+        background: transparent;
+      }
+      .nav-links a:hover,
+      .nav-links a.active {
+        color: var(--text-primary);
+        background: var(--bg-glass);
+      }
+      .nav-links a.active {
+        background: var(--accent-dim);
+        color: var(--accent);
+      }
 
-    /* Examples */
-    .example-card { background: white; padding: 20px; border-radius: 12px; margin-bottom: 15px; border: 1px solid var(--border); }
-    .solution-toggle { background: none; border: none; color: var(--primary); cursor: pointer; font-weight: 600; margin-top: 10px; padding: 0; font-size: 14px; }
-    .solution-content { display: none; margin-top: 12px; padding: 12px; background: #f8fafc; border-radius: 8px; border: 1px dashed var(--border); }
-    .solution-content.active { display: block; }
+      section {
+        display: none;
+        opacity: 0;
+        padding: 78px 20px 32px;
+        max-width: 1000px;
+        margin: 0 auto;
+        transition: opacity 0.3s ease;
+      }
+      section.active {
+        display: block;
+        opacity: 1;
+        animation: fadeIn 0.5s ease;
+      }
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
 
-    /* Trainer */
-    .trainer-box { background: white; padding: 30px; border-radius: 16px; text-align: center; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); }
-    .trainer-controls { display: flex; justify-content: center; gap: 10px; margin-top: 20px; flex-wrap: wrap; }
-    .stats { display: flex; justify-content: space-around; margin: 20px 0; border-top: 1px solid var(--border); padding-top: 20px; }
-    .stat-item { text-align: center; }
-    .stat-num { font-size: 24px; font-weight: bold; color: var(--primary); }
-    .trainer-feedback { margin-top: 15px; min-height: 24px; font-weight: 600; font-size: 15px; }
-    .trainer-input { padding: 12px; border: 2px solid var(--border); border-radius: 8px; width: 180px; font-size: 16px; text-align: center; margin: 15px auto; display: block; }
-    .trainer-input:focus { outline: none; border-color: var(--primary); }
+      .card {
+        background: var(--bg-card);
+        backdrop-filter: blur(20px);
+        border: 1px solid var(--border-glass);
+        border-radius: 20px;
+        padding: 20px;
+        margin-bottom: 16px;
+        transition:
+          transform 0.3s,
+          box-shadow 0.3s;
+      }
+      .card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+      }
+      .card-title {
+        font-size: 1.5rem;
+        font-weight: 700;
+        margin-bottom: 16px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+      .card-title .icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.3rem;
+      }
 
-    /* Assessment */
-    .assessment-modes { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px; }
-    .mode-card { background: white; padding: 20px; border-radius: 12px; border: 1px solid var(--border); cursor: pointer; transition: 0.2s; text-align: center; }
-    .mode-card:hover { border-color: var(--primary); box-shadow: 0 4px 12px rgba(79, 70, 229, 0.15); transform: translateY(-2px); }
-    .test-ui, .quiz-ui { background: white; padding: 25px; border-radius: 16px; }
-    .timer { font-size: 18px; font-weight: bold; color: var(--error); margin-left: auto; }
-    .progress-bar { height: 6px; background: var(--border); border-radius: 3px; margin-bottom: 20px; overflow: hidden; }
-    .progress-fill { height: 100%; background: var(--primary); border-radius: 3px; width: 0%; transition: 0.3s; }
-    .result-screen { text-align: center; padding: 40px; background: white; border-radius: 16px; }
-    .result-score { font-size: 48px; font-weight: bold; color: var(--primary); margin: 10px 0; }
-    .q-options-grid { display: grid; gap: 10px; margin-bottom: 20px; }
-    .q-btn { padding: 12px; text-align: left; border: 1px solid var(--border); border-radius: 8px; background: white; cursor: pointer; transition: 0.2s; }
-    .q-btn:hover:not(:disabled) { background: var(--primary-light); border-color: var(--primary); }
-    .q-btn.correct { background: #dcfce7; border-color: var(--success); color: #166534; }
-    .q-btn.wrong { background: #fee2e2; border-color: var(--error); color: #991b1b; }
-    .feedback-box { padding: 12px; border-radius: 8px; margin-bottom: 15px; font-size: 14px; display: none; }
+      .hero {
+        text-align: center;
+        padding: 140px 20px 80px;
+      }
+      .hero h1 {
+        font-size: 3rem;
+        font-weight: 800;
+        margin-bottom: 20px;
+        background: linear-gradient(
+          135deg,
+          var(--accent),
+          var(--accent-blue),
+          var(--accent-warm)
+        );
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        line-height: 1.2;
+      }
+      .hero p {
+        font-size: 1.2rem;
+        color: var(--text-secondary);
+        max-width: 600px;
+        margin: 0 auto 40px;
+      }
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 14px 32px;
+        border-radius: 12px;
+        border: none;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s;
+        text-decoration: none;
+      }
+      .btn-primary {
+        background: linear-gradient(135deg, var(--accent), var(--accent-blue));
+        color: #000;
+      }
+      .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 30px var(--accent-dim);
+      }
+      .btn-secondary {
+        background: var(--bg-glass);
+        color: var(--text-primary);
+        border: 1px solid var(--border-glass);
+      }
+      .btn-secondary:hover {
+        background: var(--bg-card);
+      }
+      .btn:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+        transform: none !important;
+      }
 
-    @media (max-width: 650px) {
-      .hero-buttons, .assessment-modes, .trainer-controls { flex-direction: column; }
-      nav { justify-content: center; }
-      .trainer-input { width: 100%; }
-    }
-  </style>
-</head>
-<body>
-  <div class="container">
+      .generate-widget {
+        background: var(--bg-card);
+        border: 1px solid var(--border-glass);
+        border-radius: 20px;
+        padding: 14px;
+        width: 100%;
+      }
+      .widget-viewport {
+        width: 100%;
+      }
+      .widget-track {
+        width: 100%;
+      }
+      .widget-slide {
+        display: none;
+        padding: 12px 16px;
+        box-sizing: border-box;
+        animation: slideFade 0.3s ease;
+      }
+      .widget-slide.active {
+        display: block;
+      }
+      @keyframes slideFade {
+        from {
+          opacity: 0;
+          transform: translateY(6px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      .widget-slide h3 {
+        font-size: 1.3rem;
+        color: var(--accent);
+        margin-bottom: 16px;
+      }
+      .widget-slide p,
+      .widget-slide li {
+        color: var(--text-secondary);
+        line-height: 1.8;
+        margin-bottom: 12px;
+      }
+      .widget-slide .big-math {
+        font-size: 1.6rem;
+        text-align: center;
+        margin: 20px 0;
+        background: var(--bg-glass);
+        padding: 20px;
+        border-radius: 12px;
+        font-weight: 600;
+        color: var(--text-primary);
+      }
+      .widget-slide code {
+        background: var(--bg-glass);
+        padding: 2px 6px;
+        border-radius: 4px;
+        font-weight: 700;
+        color: var(--accent);
+      }
+      .widget-nav {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 16px;
+      }
+      .widget-progress {
+        text-align: center;
+        font-size: 0.9rem;
+        color: var(--text-secondary);
+        margin-bottom: 12px;
+      }
+
+      .overflow-x-auto {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+      }
+      .compare-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 16px 0;
+      }
+      .compare-table th,
+      .compare-table td {
+        border: 1px solid var(--border-glass);
+        padding: 14px;
+        text-align: center;
+        color: var(--text-secondary);
+      }
+      .compare-table th {
+        background: var(--bg-glass);
+        color: var(--text-primary);
+        font-weight: 600;
+      }
+      .compare-table tr:hover td {
+        background: rgba(255, 255, 255, 0.03);
+        color: var(--text-primary);
+      }
+      .compare-table td.accent {
+        color: var(--accent);
+        font-weight: 700;
+      }
+
+      .sequence-component {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        position: relative;
+      }
+      .sequence-step {
+        background: var(--bg-card);
+        border: 1px solid var(--border-glass);
+        border-radius: 16px;
+        padding: 24px 24px 24px 72px;
+        position: relative;
+        transition: all 0.3s;
+      }
+      .sequence-step:hover {
+        border-color: var(--accent);
+        transform: translateX(4px);
+      }
+      .sequence-number {
+        position: absolute;
+        left: 20px;
+        top: 20px;
+        width: 40px;
+        height: 40px;
+        background: var(--accent);
+        color: #000;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 800;
+        font-size: 1.1rem;
+      }
+      .sequence-step h4 {
+        color: var(--text-primary);
+        margin-bottom: 8px;
+        font-size: 1.1rem;
+      }
+      .sequence-step p {
+        color: var(--text-secondary);
+        line-height: 1.7;
+      }
+      .sequence-connector {
+        position: absolute;
+        left: 39px;
+        top: 60px;
+        bottom: -30px;
+        width: 2px;
+        background: var(--accent-dim);
+        z-index: 0;
+      }
+      .sequence-step:last-child .sequence-connector {
+        display: none;
+      }
+
+      .formula-box {
+        background: var(--bg-glass);
+        border: 1px solid var(--border-glass);
+        border-radius: 12px;
+        padding: 20px;
+        margin: 16px 0;
+        text-align: center;
+        font-size: 1.2rem;
+      }
+      .tip-box {
+        background: var(--accent-blue-dim);
+        border-left: 4px solid var(--accent-blue);
+        padding: 16px 20px;
+        border-radius: 0 12px 12px 0;
+        margin: 16px 0;
+      }
+      .tip-box::before {
+        content: "💡 ";
+      }
+      .warning-box {
+        background: var(--accent-warm-dim);
+        border-left: 4px solid var(--accent-warm);
+        padding: 16px 20px;
+        border-radius: 0 12px 12px 0;
+        margin: 16px 0;
+      }
+      .warning-box::before {
+        content: "⚠️ ";
+      }
+      .highlight {
+        background: var(--accent-dim);
+        padding: 2px 6px;
+        border-radius: 4px;
+        color: var(--accent);
+        font-weight: 600;
+      }
+      .fraction {
+        display: inline-block;
+        text-align: center;
+        vertical-align: middle;
+        margin: 0 4px;
+      }
+      .fraction .top {
+        display: block;
+        border-bottom: 2px solid var(--text-primary);
+        padding: 0 4px;
+      }
+      .fraction .bottom {
+        display: block;
+        padding: 0 4px;
+      }
+
+      .problem-card {
+        background: var(--bg-card);
+        border: 1px solid var(--border-glass);
+        border-radius: 16px;
+        padding: 24px;
+        margin-bottom: 20px;
+      }
+      .problem-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 16px;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+      .problem-number {
+        background: var(--accent-dim);
+        color: var(--accent);
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        font-weight: 600;
+      }
+      .problem-type {
+        color: var(--text-secondary);
+        font-size: 0.85rem;
+      }
+      .problem-text {
+        font-size: 1.1rem;
+        margin-bottom: 16px;
+        line-height: 1.8;
+      }
+      .solution-btn {
+        background: var(--accent-dim);
+        color: var(--accent);
+        border: 1px solid var(--accent);
+        padding: 10px 20px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: 600;
+        transition: all 0.3s;
+      }
+      .solution-btn:hover {
+        background: var(--accent);
+        color: #000;
+      }
+      .solution {
+        display: none;
+        margin-top: 20px;
+        padding: 20px;
+        background: rgba(0, 212, 170, 0.05);
+        border-left: 3px solid var(--accent);
+        border-radius: 0 12px 12px 0;
+      }
+      .solution.active {
+        display: block;
+        animation: slideDown 0.3s ease;
+      }
+      @keyframes slideDown {
+        from {
+          opacity: 0;
+          max-height: 0;
+        }
+        to {
+          opacity: 1;
+          max-height: 1000px;
+        }
+      }
+      .solution-step {
+        margin-bottom: 12px;
+        padding: 8px 0;
+        border-bottom: 1px solid var(--border-glass);
+        white-space: pre-line;
+      }
+      .solution-step:last-child {
+        border-bottom: none;
+      }
+      .step-num {
+        display: inline-block;
+        width: 24px;
+        height: 24px;
+        background: var(--accent);
+        color: #000;
+        border-radius: 50%;
+        text-align: center;
+        line-height: 24px;
+        font-size: 0.8rem;
+        font-weight: 700;
+        margin-right: 8px;
+      }
+
+      .quiz-container {
+        background: var(--bg-card);
+        border: 1px solid var(--border-glass);
+        border-radius: 20px;
+        padding: 32px;
+      }
+      .quiz-progress {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 24px;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+      .progress-bar {
+        flex: 1;
+        height: 8px;
+        background: var(--bg-glass);
+        border-radius: 4px;
+        margin: 0 16px;
+        overflow: hidden;
+        min-width: 100px;
+      }
+      .progress-fill {
+        height: 100%;
+        background: linear-gradient(90deg, var(--accent), var(--accent-blue));
+        border-radius: 4px;
+        transition: width 0.5s ease;
+        width: 0%;
+      }
+      .quiz-question {
+        font-size: 1.2rem;
+        margin-bottom: 24px;
+        padding: 20px;
+        background: var(--bg-glass);
+        border-radius: 12px;
+        border-left: 4px solid var(--accent);
+      }
+      .quiz-options {
+        display: grid;
+        gap: 12px;
+      }
+      .quiz-option {
+        background: var(--bg-glass);
+        border: 2px solid var(--border-glass);
+        border-radius: 12px;
+        padding: 16px 20px;
+        cursor: pointer;
+        transition: all 0.3s;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+      .quiz-option:hover {
+        border-color: var(--accent);
+        background: var(--accent-dim);
+      }
+      .quiz-option.correct {
+        border-color: var(--success);
+        background: rgba(81, 207, 102, 0.15);
+      }
+      .quiz-option.wrong {
+        border-color: var(--error);
+        background: rgba(255, 107, 107, 0.15);
+      }
+      .quiz-option.disabled {
+        pointer-events: none;
+        opacity: 0.7;
+      }
+      .option-letter {
+        width: 32px;
+        height: 32px;
+        border-radius: 8px;
+        background: var(--bg-card);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        flex-shrink: 0;
+      }
+      .quiz-nav {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 24px;
+      }
+
+      .stat {
+        background: var(--bg-glass);
+        padding: 12px 24px;
+        border-radius: 12px;
+        text-align: center;
+        min-width: 100px;
+        border: 1px solid var(--border-glass);
+      }
+      .stat-value {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--accent);
+      }
+      .stat-label {
+        font-size: 0.85rem;
+        color: var(--text-secondary);
+      }
+
+      .timer {
+        position: fixed;
+        top: 80px;
+        right: 20px;
+        background: var(--bg-card);
+        backdrop-filter: blur(20px);
+        border: 1px solid var(--border-glass);
+        border-radius: 16px;
+        padding: 16px 24px;
+        font-size: 1.3rem;
+        font-weight: 700;
+        font-variant-numeric: tabular-nums;
+        z-index: 999;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+      }
+      .timer.warning {
+        border-color: var(--warning);
+        color: var(--warning);
+        animation: pulse 1s infinite;
+      }
+      .timer.danger {
+        border-color: var(--error);
+        color: var(--error);
+        animation: pulse 0.5s infinite;
+      }
+      @keyframes pulse {
+        0%,
+        100% {
+          transform: scale(1);
+        }
+        50% {
+          transform: scale(1.05);
+        }
+      }
+
+      .results-container {
+        text-align: center;
+        padding: 40px;
+      }
+      .score-circle {
+        width: 200px;
+        height: 200px;
+        border-radius: 50%;
+        background: conic-gradient(
+          var(--accent) calc(var(--score) * 3.6deg),
+          var(--bg-glass) 0
+        );
+        margin: 0 auto 32px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+      }
+      .score-circle::before {
+        content: "";
+        position: absolute;
+        width: 170px;
+        height: 170px;
+        background: var(--bg-dark);
+        border-radius: 50%;
+      }
+      .score-value {
+        position: relative;
+        font-size: 3rem;
+        font-weight: 800;
+        color: var(--accent);
+      }
+      .score-label {
+        font-size: 1.2rem;
+        color: var(--text-secondary);
+        margin-bottom: 8px;
+      }
+      .score-message {
+        font-size: 1.5rem;
+        font-weight: 700;
+        margin-bottom: 32px;
+      }
+      .results-breakdown {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 16px;
+        max-width: 600px;
+        margin: 0 auto 32px;
+      }
+      .breakdown-item {
+        background: var(--bg-glass);
+        padding: 16px;
+        border-radius: 12px;
+      }
+      .breakdown-value {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--accent);
+      }
+      .breakdown-label {
+        font-size: 0.85rem;
+        color: var(--text-secondary);
+      }
+
+      .hidden {
+        display: none !important;
+      }
+
+      @media (max-width: 768px) {
+        .hero h1 {
+          font-size: 2rem;
+        }
+        .nav-links {
+          display: none;
+        }
+        .timer {
+          top: 70px;
+          right: 10px;
+          font-size: 1rem;
+          padding: 10px 16px;
+        }
+        .card {
+          padding: 14px;
+        }
+        section {
+          padding: 70px 12px 24px;
+        }
+      }
+    </style>
+    <base target="_blank" />
+  </head>
+  <body>
+    <div class="bg-animation"></div>
+
     <nav>
-      <a href="index.html" style="font-weight:700;color:var(--primary);">← Глава 5</a>
-      <a href="#hero">🏠 Главная</a>
-      <a href="#theory">📖 Теория</a>
-      <a href="#algorithm">🪜 Алгоритм</a>
-      <a href="#examples">📝 Примеры</a>
-      <a href="#trainer">🏋️ Тренажёр</a>
-      <a href="#assessment">🧪 Аттестация</a>
-    </nav>
-
-    <section id="hero" class="hero">
-      <h1>📐 Урок 8</h1>
-      <p style="font-size: 18px; font-weight: 500;">Числовые неравенства и знаки сравнения</p>
-      <p>Урок 8. Понятие неравенства, знаки >, <, ≥, ≤, ≠, верные и неверные неравенства, сравнение десятичных дробей и выбор чисел по условию. 30 вопросов.</p>
-      <div class="hero-buttons">
-        <button class="btn btn-primary" onclick="document.getElementById('theory').scrollIntoView({behavior:'smooth'})">Начать обучение</button>
-        <button class="btn btn-outline" onclick="document.getElementById('assessment').scrollIntoView({behavior:'smooth'})">Проверить знания</button>
-      </div>
-      <div class="objectives">
-        <h3>🎯 Что вы изучите</h3>
-        <ul>
-          <li><strong>Знаки сравнения:</strong> > (больше), < (меньше), = (равно), ≠ (не равно), ≥ (больше или равно), ≤ (меньше или равно).</li>
-          <li><strong>Верные и неверные неравенства:</strong> Как определить, правильно ли стоит знак между двумя выражениями.</li>
-          <li><strong>Сравнение десятичных дробей:</strong> Пошаговое сравнение по разрядам (целые, десятые, сотые).</li>
-          <li><strong>Выбор чисел:</strong> Натуральные числа, удовлетворяющие условиям вида n < 6 или n ≥ 5.</li>
-          <li><strong>Запись условий через неравенства:</strong> Перевод текстовых ограничений (например, "3+") в математический вид.</li>
+      <div class="nav-container">
+        <a href="index.html" class="logo" target="_self">📐 Урок 8</a>
+        <ul class="nav-links">
+          <li><a href="#" class="active" data-section="home">Главная</a></li>
+          <li><a href="#" data-section="theory">Теория</a></li>
+          <li><a href="#" data-section="algorithm">Алгоритм</a></li>
+          <li><a href="#" data-section="examples">Примеры</a></li>
+          <li><a href="#" data-section="trainer">Тренажёр</a></li>
+          <li><a href="#" data-section="assessment">Аттестация</a></li>
         </ul>
       </div>
+    </nav>
+
+    <!-- ================= HOME ================= -->
+    <section id="home" class="active">
+      <div class="hero">
+        <h1>Числовые неравенства и знаки сравнения</h1>
+        <p>
+          Урок 8. Понятие неравенства, знаки &gt;, &lt;, ≥, ≤, ≠, верные и
+          неверные неравенства, сравнение десятичных дробей и выбор чисел по
+          условию. 30 вопросов для полной проверки.
+        </p>
+        <div
+          style="
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            flex-wrap: wrap;
+          "
+        >
+          <button class="btn btn-primary" onclick="showSection('theory')">
+            Начать обучение
+          </button>
+          <button class="btn btn-secondary" onclick="showSection('assessment')">
+            Проверить знания
+          </button>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">
+          <span class="icon" style="background: var(--accent-dim)">🎯</span>Что
+          вы изучите
+        </div>
+        <div
+          style="
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 20px;
+          "
+        >
+          <div class="card" style="padding: 20px">
+            <h3 style="color: var(--accent); margin-bottom: 8px">
+              Знаки сравнения
+            </h3>
+            <p style="color: var(--text-secondary)">
+              &gt; (больше), &lt; (меньше), = (равно), ≠ (не равно), ≥, ≤.
+            </p>
+          </div>
+          <div class="card" style="padding: 20px">
+            <h3 style="color: var(--accent-blue); margin-bottom: 8px">
+              Верные и неверные
+            </h3>
+            <p style="color: var(--text-secondary)">
+              Как определить, правильно ли стоит знак между двумя выражениями.
+            </p>
+          </div>
+          <div class="card" style="padding: 20px">
+            <h3 style="color: var(--accent-warm); margin-bottom: 8px">
+              Десятичные дроби
+            </h3>
+            <p style="color: var(--text-secondary)">
+              Пошаговое сравнение по разрядам: целые, десятые, сотые.
+            </p>
+          </div>
+          <div class="card" style="padding: 20px">
+            <h3 style="color: var(--warning); margin-bottom: 8px">
+              Выбор чисел
+            </h3>
+            <p style="color: var(--text-secondary)">
+              Натуральные числа по условиям вида n &lt; 6 или n ≥ 5 и запись
+              ограничений.
+            </p>
+          </div>
+        </div>
+      </div>
     </section>
 
+    <!-- ================= CHAPTER 1: THEORY ================= -->
     <section id="theory">
-      <h2>📖 Глава 1. Визуальная теория</h2>
-      <p style="margin-bottom: 20px; color: var(--text-light);">Листайте слайды. Каждый слайд — ключевой блок для решения задач.</p>
-      <div class="slide-container">
-        <div class="slide-header">
-          <span id="slide-counter">Слайд 1 / 8</span>
-          <span>📄 Теория</span>
+      <div class="card">
+        <div class="card-title">
+          <span class="icon" style="background: var(--accent-dim)">📖</span
+          >Глава 1. Визуальная теория
         </div>
-        <div class="slide-content" id="slide-content"></div>
-        <div class="slide-nav">
-          <button class="btn btn-outline" id="prev-slide" onclick="changeSlide(-1)">← Назад</button>
-          <button class="btn btn-primary" id="next-slide" onclick="changeSlide(1)">Вперёд →</button>
+        <p style="color: var(--text-secondary); margin-bottom: 20px">
+          Листайте слайды. Каждый слайд — ключевой блок для работы с
+          неравенствами.
+        </p>
+        <div class="generate-widget">
+          <div class="widget-progress">
+            Слайд <span id="slide-num">1</span> /
+            <span id="slide-total">8</span>
+          </div>
+          <div class="widget-viewport">
+            <div class="widget-track" id="track-slides">
+              <!-- slides injected here -->
+            </div>
+          </div>
+          <div class="widget-nav">
+            <button type="button" class="btn btn-secondary" onclick="prevSlide()">
+              ← Назад
+            </button>
+            <button type="button" class="btn btn-primary" onclick="nextSlide()">
+              Вперёд →
+            </button>
+          </div>
         </div>
       </div>
     </section>
 
+    <!-- ================= CHAPTER 2: ALGORITHM ================= -->
     <section id="algorithm">
-      <h2>🪜 Глава 2. Пошаговые алгоритмы</h2>
-      <p style="margin-bottom: 20px; color: var(--text-light);">Пятиступенчатый алгоритм работы с неравенствами.</p>
-      <div class="algo-steps">
-        <div class="algo-step"><h3>1. Определи тип сравнения</h3><p>Сравниваются целые числа, десятичные дроби или результаты выражений?</p></div>
-        <div class="algo-step"><h3>2. Вычисли значения</h3><p>Если в частях есть выражения (например, 2.7+1.41), сначала выполни арифметические действия.</p></div>
-        <div class="algo-step"><h3>3. Сравни по разрядам</h3><p>Сначала целые части. Если равны → десятые → сотые → тысячные и т.д.</p></div>
-        <div class="algo-step"><h3>4. Выбери правильный знак</h3><p>Поставь >, <, =, ≠, ≥ или ≤. Острие знака всегда смотрит на меньшее число.</p></div>
-        <div class="algo-step"><h3>5. Проверь условие</h3><p>Убедись, что выбранное число соответствует требованиям (натуральное, целое, ≥ и т.д.).</p></div>
+      <div class="card">
+        <div class="card-title">
+          <span class="icon" style="background: var(--accent-blue-dim)">🪜</span
+          >Глава 2. Пошаговые алгоритмы
+        </div>
+        <p style="color: var(--text-secondary); margin-bottom: 20px">
+          Пятиступенчатый алгоритм работы с неравенствами.
+        </p>
+        <div class="sequence-component">
+          <div class="sequence-step">
+            <div class="sequence-number">1</div>
+            <div class="sequence-connector"></div>
+            <h4>Определи тип сравнения</h4>
+            <p>
+              Сравниваются целые числа, десятичные дроби или результаты
+              выражений?
+            </p>
+          </div>
+          <div class="sequence-step">
+            <div class="sequence-number">2</div>
+            <div class="sequence-connector"></div>
+            <h4>Вычисли значения</h4>
+            <p>
+              Если в частях есть выражения (например, 2.7+1.41), сначала выполни
+              арифметические действия.
+            </p>
+          </div>
+          <div class="sequence-step">
+            <div class="sequence-number">3</div>
+            <div class="sequence-connector"></div>
+            <h4>Сравни по разрядам</h4>
+            <p>
+              Сначала целые части. Если равны → десятые → сотые → тысячные и т.д.
+            </p>
+          </div>
+          <div class="sequence-step">
+            <div class="sequence-number">4</div>
+            <div class="sequence-connector"></div>
+            <h4>Выбери правильный знак</h4>
+            <p>
+              Поставь &gt;, &lt;, =, ≠, ≥ или ≤. Острие знака всегда смотрит на
+              меньшее число.
+            </p>
+          </div>
+          <div class="sequence-step">
+            <div class="sequence-number">5</div>
+            <h4>Проверь условие</h4>
+            <p>
+              Убедись, что выбранное число соответствует требованиям
+              (натуральное, целое, ≥ и т.д.).
+            </p>
+          </div>
+        </div>
       </div>
     </section>
 
+    <!-- ================= CHAPTER 3: WORKED EXAMPLES ================= -->
     <section id="examples">
-      <h2>📝 Глава 3. Разбор задач</h2>
-      <p style="margin-bottom: 20px; color: var(--text-light);">Шесть типовых задач из параграфа.</p>
-      <div id="examples-container"></div>
+      <div class="card">
+        <div class="card-title">
+          <span class="icon" style="background: var(--accent-dim)">📝</span
+          >Глава 3. Разбор задач
+        </div>
+        <p style="color: var(--text-secondary); margin-bottom: 24px">
+          Шесть типовых задач из параграфа: от сравнения дробей до нестрогих
+          неравенств.
+        </p>
+      </div>
+      <div id="examples-container"><!-- examples injected here --></div>
     </section>
 
+    <!-- ================= CHAPTER 4: INFINITE TRAINER ================= -->
     <section id="trainer">
-      <h2>🏋️ Глава 4. Бесконечный тренажёр</h2>
-      <p style="margin-bottom: 20px; color: var(--text-light);">Генератор случайных задач: сравнение чисел, выбор подходящих значений, проверка неравенств.</p>
-      <div class="trainer-box">
-        <p id="trainer-task" style="font-size: 18px; margin-bottom: 10px; min-height: 50px; font-weight: 500;">Нажмите «Новая задача» для начала</p>
-        <input type="text" id="trainer-input" class="trainer-input" placeholder="Ваш ответ" disabled>
-        <div class="trainer-controls">
-          <button class="btn btn-primary" id="check-trainer" disabled onclick="checkTrainer()">Проверить</button>
-          <button class="btn btn-outline" onclick="generateTrainerTask()">Новая задача</button>
-          <button class="btn btn-outline" onclick="showTrainerHint()">Подсказка</button>
+      <div class="card">
+        <div class="card-title">
+          <span class="icon" style="background: var(--accent-dim)">🏋️</span
+          >Глава 4. Бесконечный тренажёр
         </div>
-        <div class="trainer-feedback" id="trainer-feedback"></div>
-        <div class="stats">
-          <div class="stat-item"><div class="stat-num" id="stat-correct">0</div><div>Верно</div></div>
-          <div class="stat-item"><div class="stat-num" id="stat-total">0</div><div>Всего</div></div>
-          <div class="stat-item"><div class="stat-num" id="stat-streak">0</div><div>Серия</div></div>
+        <p style="color: var(--text-secondary); margin-bottom: 24px">
+          Генератор случайных задач: сравнение чисел, выбор подходящих значений,
+          проверка неравенств. Подсказки и серия верных ответов.
+        </p>
+        <div class="quiz-container" style="margin-bottom: 20px">
+          <div
+            id="trainer-question"
+            style="
+              font-size: 1.4rem;
+              text-align: center;
+              margin-bottom: 24px;
+              padding: 24px;
+              background: var(--bg-glass);
+              border-radius: 12px;
+            "
+          >
+            Нажмите «Новая задача» для начала
+          </div>
+          <div style="display: flex; gap: 12px; margin-bottom: 20px">
+            <input
+              type="text"
+              id="trainer-answer"
+              placeholder="Ваш ответ (>, <, =, да/нет или число)"
+              style="
+                flex: 1;
+                padding: 14px 16px;
+                background: var(--bg-glass);
+                border: 2px solid var(--border-glass);
+                border-radius: 12px;
+                color: var(--text-primary);
+                font-size: 1rem;
+                outline: none;
+              "
+            />
+            <button
+              class="btn btn-primary"
+              onclick="checkTrainer()"
+              id="trainer-check-btn"
+              disabled
+            >
+              Проверить
+            </button>
+          </div>
+          <div
+            id="trainer-feedback"
+            style="min-height: 60px; margin-bottom: 16px"
+          ></div>
+          <div style="display: flex; gap: 12px; justify-content: center">
+            <button class="btn btn-secondary" onclick="newTrainerProblem()">
+              Новая задача
+            </button>
+            <button class="btn btn-secondary" onclick="showTrainerHint()">
+              Подсказка
+            </button>
+          </div>
+          <div
+            id="trainer-hint"
+            style="
+              display: none;
+              margin-top: 20px;
+              padding: 16px;
+              background: var(--accent-blue-dim);
+              border-radius: 12px;
+              border-left: 4px solid var(--accent-blue);
+            "
+          ></div>
+        </div>
+        <div
+          style="
+            display: flex;
+            justify-content: center;
+            gap: 24px;
+            flex-wrap: wrap;
+          "
+        >
+          <div class="stat">
+            <div class="stat-value" id="trainer-correct">0</div>
+            <div class="stat-label">Верно</div>
+          </div>
+          <div class="stat">
+            <div class="stat-value" id="trainer-total">0</div>
+            <div class="stat-label">Всего</div>
+          </div>
+          <div class="stat">
+            <div class="stat-value" id="trainer-streak">0</div>
+            <div class="stat-label">Серия</div>
+          </div>
         </div>
       </div>
     </section>
 
+    <!-- ================= CHAPTER 5: ASSESSMENT ================= -->
     <section id="assessment">
-      <h2>🧪 Глава 5. Аттестация — 30 вопросов</h2>
-      <p style="margin-bottom: 20px; color: var(--text-light);">Два режима: диагностический тест с объяснениями и скоростная викторина на 10 минут.</p>
-      <div class="assessment-modes">
-        <div class="mode-card" onclick="startAssessment('diagnostic')">
-          <h3>🔍 Диагностический тест</h3>
-          <p>30 вопросов с мгновенной обратной связью.</p>
-          <button class="btn btn-primary" style="margin-top: 15px;">Начать тест</button>
+      <div class="card">
+        <div class="card-title">
+          <span class="icon" style="background: var(--accent-blue-dim)">🧪</span
+          >Глава 5. Аттестация — 30 вопросов
         </div>
-        <div class="mode-card" onclick="startAssessment('speed')">
-          <h3>⏱️ Скоростная викторина</h3>
-          <p>30 вопросов • 10 минут • Итоговый дашборд.</p>
-          <button class="btn btn-outline" style="margin-top: 15px;">Начать викторину</button>
+        <p style="color: var(--text-secondary); margin-bottom: 24px">
+          Два режима: диагностический тест с объяснениями и скоростная викторина
+          на 10 минут.
+        </p>
+        <div
+          style="
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+          "
+        >
+          <div class="card" style="padding: 24px; text-align: center">
+            <div style="font-size: 3rem; margin-bottom: 12px">🔍</div>
+            <h3 style="margin-bottom: 8px">Диагностический тест</h3>
+            <p style="color: var(--text-secondary); margin-bottom: 20px">
+              30 вопросов с мгновенной обратной связью и педагогическими
+              объяснениями.
+            </p>
+            <button class="btn btn-primary" onclick="startDiagnostic()">
+              Начать тест
+            </button>
+          </div>
+          <div class="card" style="padding: 24px; text-align: center">
+            <div style="font-size: 3rem; margin-bottom: 12px">⏱️</div>
+            <h3 style="margin-bottom: 8px">Скоростная викторина</h3>
+            <p style="color: var(--text-secondary); margin-bottom: 20px">
+              30 вопросов • 10 минут • Итоговый дашборд.
+            </p>
+            <button class="btn btn-primary" onclick="startTimeAttack()">
+              Начать викторину
+            </button>
+          </div>
         </div>
       </div>
 
-      <div id="assessment-ui" class="hidden">
-        <div class="test-ui">
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-            <span id="assess-mode-title" style="font-weight:600;">🔍 Диагностический тест</span>
-            <div class="timer hidden" id="timer">10:00</div>
+      <!-- Diagnostic UI -->
+      <div id="diagnostic-ui" style="display: none">
+        <div class="card">
+          <div class="card-title">
+            <span class="icon" style="background: var(--accent-blue-dim)"
+              >🔍</span
+            >Диагностический тест (30 вопросов)
           </div>
-          <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
-          <p style="margin-bottom: 10px; font-weight: 600; color: var(--text-light);">Вопрос <span id="q-current">1</span> / <span id="q-total">30</span></p>
-          <p id="q-text" style="font-size: 18px; margin-bottom: 20px; min-height: 50px; font-weight: 500;"></p>
-          <div id="q-options" class="q-options-grid"></div>
-          <div id="q-feedback" class="feedback-box"></div>
-          <div style="display: flex; justify-content: space-between;">
-            <button class="btn btn-outline" onclick="assessPrev()">← Назад</button>
-            <button class="btn btn-primary" id="assess-next" onclick="assessNext()">Далее →</button>
+        </div>
+        <div class="quiz-container">
+          <div class="quiz-progress">
+            <span
+              >Вопрос <span id="diag-current">1</span> /
+              <span id="diag-total">30</span></span
+            >
+            <div class="progress-bar">
+              <div class="progress-fill" id="diag-progress"></div>
+            </div>
+            <span id="diag-score">0 правильных</span>
+          </div>
+          <div class="quiz-question" id="diag-question"></div>
+          <div class="quiz-options" id="diag-options"></div>
+          <div class="quiz-nav">
+            <button
+              class="btn btn-secondary"
+              onclick="prevDiagnostic()"
+              id="diag-prev"
+              disabled
+            >
+              ← Назад
+            </button>
+            <button
+              class="btn btn-primary"
+              onclick="nextDiagnostic()"
+              id="diag-next"
+              disabled
+            >
+              Далее →
+            </button>
+          </div>
+          <div
+            id="diag-explanation"
+            style="
+              display: none;
+              margin-top: 20px;
+              padding: 16px;
+              background: var(--accent-dim);
+              border-radius: 12px;
+              border-left: 4px solid var(--accent);
+            "
+          ></div>
+        </div>
+      </div>
+
+      <!-- Time Attack UI -->
+      <div id="timeattack-ui" style="display: none">
+        <div class="timer" id="ta-timer">10:00</div>
+        <div class="card">
+          <div class="card-title">
+            <span class="icon" style="background: var(--accent-warm-dim)"
+              >⏱️</span
+            >Скоростная викторина (30 вопросов)
+          </div>
+        </div>
+        <div class="quiz-container">
+          <div class="quiz-progress">
+            <span>Вопрос <span id="ta-current">1</span> / 30</span>
+            <div class="progress-bar">
+              <div class="progress-fill" id="ta-progress"></div>
+            </div>
+          </div>
+          <div class="quiz-question" id="ta-question"></div>
+          <div class="quiz-options" id="ta-options"></div>
+          <div
+            style="display: flex; justify-content: flex-end; margin-top: 24px"
+          >
+            <button
+              class="btn btn-primary"
+              onclick="nextTimeAttack()"
+              id="ta-next"
+            >
+              Ответить →
+            </button>
           </div>
         </div>
       </div>
 
-      <div id="result-screen" class="result-screen hidden">
-        <h2>Ваш результат</h2>
-        <div class="result-score" id="result-score">0%</div>
-        <p id="result-stats" style="margin: 10px 0; color: #475569;"></p>
-        <div style="margin-top: 20px; display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
-          <button class="btn btn-primary" onclick="startAssessment(currentAssessMode)">Пройти ещё раз</button>
-          <button class="btn btn-outline" onclick="document.getElementById('assessment').scrollIntoView()">Вернуться</button>
+      <!-- Results Dashboard -->
+      <div id="results-ui" style="display: none">
+        <div class="card">
+          <div class="results-container">
+            <div class="score-label">Ваш результат</div>
+            <div class="score-circle" id="result-circle">
+              <div class="score-value" id="result-percent">0%</div>
+            </div>
+            <div class="score-message" id="result-message"></div>
+            <div class="results-breakdown">
+              <div class="breakdown-item">
+                <div class="breakdown-value" id="result-correct">0</div>
+                <div class="breakdown-label">Верно</div>
+              </div>
+              <div class="breakdown-item">
+                <div class="breakdown-value" id="result-wrong">0</div>
+                <div class="breakdown-label">Ошибок</div>
+              </div>
+              <div class="breakdown-item">
+                <div class="breakdown-value" id="result-time">0:00</div>
+                <div class="breakdown-label">Время</div>
+              </div>
+              <div class="breakdown-item">
+                <div class="breakdown-value" id="result-mastery">—</div>
+                <div class="breakdown-label">Уровень</div>
+              </div>
+            </div>
+            <div
+              style="
+                display: flex;
+                gap: 16px;
+                justify-content: center;
+                flex-wrap: wrap;
+              "
+            >
+              <button class="btn btn-primary" onclick="resetAssessment()">
+                Пройти ещё раз
+              </button>
+              <button class="btn btn-secondary" onclick="showSection('theory')">
+                Вернуться к теории
+              </button>
+            </div>
+          </div>
         </div>
       </div>
     </section>
-  </div>
 
-  <script>
-    // SLIDES DATA
-    const slides = [
-      { title: "📐 Понятие неравенства", content: "<b>Неравенство</b> — это математическая запись отношения между двумя выражениями с помощью знаков сравнения.<br>Основные знаки:<br>• <b>></b> — больше<br>• <b><</b> — меньше<br>• <b>=</b> — равно<br>• <b>≠</b> — не равно<br><em>Острие знака всегда указывает на меньшее число.</em>" },
-      { title: "⚖️ Строгие и нестрогие", content: "Если к знаку добавляется «или равно», неравенство становится нестрогим:<br>• <b>≥</b> — больше или равно<br>• <b>≤</b> — меньше или равно<br>Пример: На коробке игрушки написано «3+».<br>Это означает, что рекомендуемый возраст <b>n ≥ 3</b>.<br><em>Нестрогие знаки включают границу.</em>" },
-      { title: "✅ Верные и ❌ неверные", content: "Если знак сравнения правильно отражает связь между числами, неравенство <b>верное</b>. Иначе — <b>неверное</b>.<br>Верные: 150 > 105, 5.6 > 5.56<br>Неверные: 6 > 9, 23 < 12<br><em>Всегда вычисляй части перед сравнением!</em>" },
-      { title: "📏 Сравнение десятичных дробей", content: "Сравниваем по разрядам слева направо:<br>1. Целые части.<br>2. Десятые.<br>3. Сотые и т.д.<br>Пример: 2.7 + 1.41 = 4.11<br>4.26 - 0.99 = 3.27<br>4.11 > 3.27 → неравенство верно.<br><em>Допиши нули, если нужно: 0.5 = 0.50</em>" },
-      { title: "🔍 Знак «не равно» (≠)", content: "Используется, когда значения точно различаются.<br>Пример: 5 + 2 ≠ 3 + 6, так как 7 ≠ 9.<br>Также: 0.4 ≠ 0.40 (если речь о точности), но в математике 0.4 = 0.40.<br>Знак ≠ часто встречается в проверках и ограничениях.<br><em>≠ означает «точно не совпадают».</em>" },
-      { title: "📊 Выбор чисел по условию", content: "Часто требуется выбрать числа, удовлетворяющие неравенству.<br>• Натуральные числа < 6: 1, 2, 3, 4, 5<br>• Натуральные числа ≠ 7: все, кроме 7<br>• Натуральные числа ≥ 5: 5, 6, 7, 8...<br><em>Натуральные числа — это 1, 2, 3, 4... (без нуля и дробей).</em>" },
-      { title: "🧩 Составление неравенств", content: "Переведи текст в математический язык.<br>«Возраст не менее 12 лет» → <b>n ≥ 12</b><br>«Температура не выше 30°» → <b>t ≤ 30</b><br>«Количество больше 5» → <b>k > 5</b><br><em>Ключевые слова: «не менее» = ≥, «не более» = ≤, «строго больше» = >.</em>" },
-      { title: "🔎 Проверка неравенств", content: "Как проверить, верно ли неравенство?<br>1. Вычисли левую часть.<br>2. Вычисли правую часть.<br>3. Сравни результаты.<br>Пример: (3-0.7)·2 * 42-7<br>Левая: 2.3·2 = 4.6<br>Правая: 35<br>4.6 < 35 → верно.<br><em>Арифметическая точность — основа верного ответа.</em>" }
-    ];
+    <script>
+      // ================= STATE =================
+      const AppState = {
+        currentSection: "home",
+        slide: 0,
+        trainer: { correct: 0, total: 0, streak: 0, current: null },
+        diagnostic: { current: 0, score: 0, answers: [] },
+        timeAttack: {
+          current: 0,
+          score: 0,
+          timer: null,
+          timeLeft: 600,
+          startTime: 0,
+          answers: [],
+        },
+        mode: null,
+      };
 
-    let currentSlide = 0;
-    function renderSlide() {
-      const s = slides[currentSlide];
-      document.getElementById('slide-counter').textContent = `Слайд ${currentSlide + 1} / ${slides.length}`;
-      document.getElementById('slide-content').innerHTML = `<h3 style="margin-bottom:10px;">${s.title}</h3><p style="color:#334155;">${s.content}</p>`;
-      document.getElementById('prev-slide').disabled = currentSlide === 0;
-      document.getElementById('next-slide').disabled = currentSlide === slides.length - 1;
-    }
-    function changeSlide(dir) {
-      currentSlide += dir;
-      currentSlide = Math.max(0, Math.min(slides.length - 1, currentSlide));
-      renderSlide();
-    }
-    renderSlide();
+      // ================= CONTENT DATA =================
+      const slides = [
+        { title: "📐 Понятие неравенства", content: "<b>Неравенство</b> — это математическая запись отношения между двумя выражениями с помощью знаков сравнения.<br>Основные знаки:<br>• <b>&gt;</b> — больше<br>• <b>&lt;</b> — меньше<br>• <b>=</b> — равно<br>• <b>≠</b> — не равно<br><em>Острие знака всегда указывает на меньшее число.</em>" },
+        { title: "⚖️ Строгие и нестрогие", content: "Если к знаку добавляется «или равно», неравенство становится нестрогим:<br>• <b>≥</b> — больше или равно<br>• <b>≤</b> — меньше или равно<br>Пример: На коробке игрушки написано «3+».<br>Это означает, что рекомендуемый возраст <b>n ≥ 3</b>.<br><em>Нестрогие знаки включают границу.</em>" },
+        { title: "✅ Верные и ❌ неверные", content: "Если знак сравнения правильно отражает связь между числами, неравенство <b>верное</b>. Иначе — <b>неверное</b>.<br>Верные: 150 &gt; 105, 5.6 &gt; 5.56<br>Неверные: 6 &gt; 9, 23 &lt; 12<br><em>Всегда вычисляй части перед сравнением!</em>" },
+        { title: "📏 Сравнение десятичных дробей", content: "Сравниваем по разрядам слева направо:<br>1. Целые части.<br>2. Десятые.<br>3. Сотые и т.д.<br>Пример: 2.7 + 1.41 = 4.11<br>4.26 - 0.99 = 3.27<br>4.11 &gt; 3.27 → неравенство верно.<br><em>Допиши нули, если нужно: 0.5 = 0.50</em>" },
+        { title: "🔍 Знак «не равно» (≠)", content: "Используется, когда значения точно различаются.<br>Пример: 5 + 2 ≠ 3 + 6, так как 7 ≠ 9.<br>Также: 0.4 ≠ 0.40 (если речь о точности), но в математике 0.4 = 0.40.<br>Знак ≠ часто встречается в проверках и ограничениях.<br><em>≠ означает «точно не совпадают».</em>" },
+        { title: "📊 Выбор чисел по условию", content: "Часто требуется выбрать числа, удовлетворяющие неравенству.<br>• Натуральные числа &lt; 6: 1, 2, 3, 4, 5<br>• Натуральные числа ≠ 7: все, кроме 7<br>• Натуральные числа ≥ 5: 5, 6, 7, 8...<br><em>Натуральные числа — это 1, 2, 3, 4... (без нуля и дробей).</em>" },
+        { title: "🧩 Составление неравенств", content: "Переведи текст в математический язык.<br>«Возраст не менее 12 лет» → <b>n ≥ 12</b><br>«Температура не выше 30°» → <b>t ≤ 30</b><br>«Количество больше 5» → <b>k &gt; 5</b><br><em>Ключевые слова: «не менее» = ≥, «не более» = ≤, «строго больше» = &gt;.</em>" },
+        { title: "🔎 Проверка неравенств", content: "Как проверить, верно ли неравенство?<br>1. Вычисли левую часть.<br>2. Вычисли правую часть.<br>3. Сравни результаты.<br>Пример: (3-0.7)·2 * 42-7<br>Левая: 2.3·2 = 4.6<br>Правая: 35<br>4.6 &lt; 35 → верно.<br><em>Арифметическая точность — основа верного ответа.</em>" }
+      ];
 
-    // EXAMPLES
-    const examples = [
-      { title: "№ 1 Сравнение десятичных", task: "Сравните 5.6 и 5.56. Верно ли 5.6 > 5.56?", sol: "Целые части равны (5). Десятые: 6 > 5. Значит, 5.60 > 5.56. Неравенство верное." },
-      { title: "№ 2 Проверка выражений", task: "Верно ли 2.7 + 1.41 > 4.26 - 0.99?", sol: "Левая часть: 4.11<br>Правая часть: 3.27<br>4.11 > 3.27 → Верно ✅" },
-      { title: "№ 3 Запись условия", task: "На игрушке написано «3+». Подойдет ли для 5 лет? Запишите неравенство.", sol: "Условие: n ≥ 3.<br>5 ≥ 3 — верно. Игрушка подходит." },
-      { title: "№ 4 Выбор натуральных чисел", task: "Выберите натуральные числа, меньшие 6: 7, 6, 5.5, 5, 4, 2", sol: "Натуральные числа < 6: 5, 4, 2.<br>(5.5 — дробь, 6 и 7 — не меньше)." },
-      { title: "№ 5 Знак ≠", task: "Верно ли 5 + 2 ≠ 3 + 6?", sol: "5 + 2 = 7<br>3 + 6 = 9<br>7 ≠ 9 → Неравенство верно ✅" },
-      { title: "№ 6 Нестрогое неравенство", task: "Выберите числа ≥ 5 из набора: 4, 5, 6, 6.5, 7, 8", sol: "Числа, большие или равные 5: 5, 6, 7, 8.<br>(6.5 подходит по значению, но если нужны натуральные — 5, 6, 7, 8)." }
-    ];
-    const exContainer = document.getElementById('examples-container');
-    examples.forEach(ex => {
-      exContainer.innerHTML += `
-        <div class="example-card">
-          <h3>${ex.title}</h3>
-          <p style="margin-bottom:10px;">${ex.task}</p>
-          <button class="solution-toggle" onclick="toggleSol(this)">Показать решение</button>
-          <div class="solution-content"><p>${ex.sol}</p></div>
-        </div>`;
-    });
-    function toggleSol(btn) {
-      const el = btn.nextElementSibling;
-      el.classList.toggle('active');
-      btn.textContent = el.classList.contains('active') ? 'Скрыть решение' : 'Показать решение';
-    }
+      const examples = [
+        { title: "№ 1 Сравнение десятичных", task: "Сравните 5.6 и 5.56. Верно ли 5.6 > 5.56?", sol: "Целые части равны (5). Десятые: 6 > 5. Значит, 5.60 > 5.56. Неравенство верное." },
+        { title: "№ 2 Проверка выражений", task: "Верно ли 2.7 + 1.41 > 4.26 - 0.99?", sol: "Левая часть: 4.11\nПравая часть: 3.27\n4.11 > 3.27 → Верно ✅" },
+        { title: "№ 3 Запись условия", task: "На игрушке написано «3+». Подойдет ли для 5 лет? Запишите неравенство.", sol: "Условие: n ≥ 3.\n5 ≥ 3 — верно. Игрушка подходит." },
+        { title: "№ 4 Выбор натуральных чисел", task: "Выберите натуральные числа, меньшие 6: 7, 6, 5.5, 5, 4, 2", sol: "Натуральные числа < 6: 5, 4, 2.\n(5.5 — дробь, 6 и 7 — не меньше)." },
+        { title: "№ 5 Знак ≠", task: "Верно ли 5 + 2 ≠ 3 + 6?", sol: "5 + 2 = 7\n3 + 6 = 9\n7 ≠ 9 → Неравенство верно ✅" },
+        { title: "№ 6 Нестрогое неравенство", task: "Выберите числа ≥ 5 из набора: 4, 5, 6, 6.5, 7, 8", sol: "Числа, большие или равные 5: 5, 6, 7, 8.\n(6.5 подходит по значению, но если нужны натуральные — 5, 6, 7, 8)." }
+      ];
 
-    // TRAINER
-    let trainerStats = { correct: 0, total: 0, streak: 0 };
-    let currentTask = null;
-    function generateTrainerTask() {
-      const types = ['compare_dec', 'check_ineq', 'pick_numbers', 'sign_fill'];
-      const type = types[Math.floor(Math.random() * types.length)];
-      let taskObj = {};
-      switch(type) {
-        case 'compare_dec': {
+      const questions = [
+        { q: "Какой знак означает «больше или равно»?", o: [">", "<", "≥", "≤"], a: 2 },
+        { q: "Верно ли неравенство 5.6 > 5.56?", o: ["Да", "Нет", "Зависит от контекста", "Нельзя сравнить"], a: 0 },
+        { q: "Что означает запись n ≥ 3?", o: ["n строго больше 3", "n меньше или равно 3", "n больше или равно 3", "n не равно 3"], a: 2 },
+        { q: "Сравните 0.45 и 0.5.", o: ["0.45 > 0.5", "0.45 < 0.5", "0.45 = 0.5", "Невозможно сравнить"], a: 1 },
+        { q: "Какое натуральное число меньше 6?", o: ["6", "7", "5.5", "4"], a: 3 },
+        { q: "Что означает знак ≠?", o: ["Равно", "Больше", "Не равно", "Меньше"], a: 2 },
+        { q: "Верно ли 2.7 + 1.41 > 4.26 - 0.99?", o: ["Да", "Нет", "Равны", "Зависит от округления"], a: 0 },
+        { q: "Выберите числа ≥ 5: 4, 5, 6, 6.5", o: ["4, 5", "5, 6", "5, 6, 6.5", "4, 5, 6"], a: 2 },
+        { q: "Как записать «возраст не менее 12 лет»?", o: ["a < 12", "a > 12", "a ≥ 12", "a ≤ 12"], a: 2 },
+        { q: "Какое неравенство неверное?", o: ["10 > 9", "5 < 8", "3 > 4", "2 ≤ 2"], a: 2 },
+        { q: "Сравните 12.01 и 12.1.", o: ["12.01 > 12.1", "12.01 < 12.1", "12.01 = 12.1", "Неизвестно"], a: 1 },
+        { q: "Натуральные числа, не равные 7:", o: ["1, 2, 3, 4, 5, 6, 8, 9...", "Только 8", "Только 1-6", "Нет таких"], a: 0 },
+        { q: "Что означает знак ≤?", o: ["Больше или равно", "Меньше или равно", "Строго меньше", "Не равно"], a: 1 },
+        { q: "Верно ли (3-0.7)·2 < 42-7?", o: ["Да", "Нет", "Равны", "Зависит от порядка"], a: 0 },
+        { q: "Сколько натуральных чисел < 4?", o: ["2", "3", "4", "Бесконечно"], a: 1 },
+        { q: "Как записать «температура не выше 30°»?", o: ["t > 30", "t < 30", "t ≥ 30", "t ≤ 30"], a: 3 },
+        { q: "Какое число подходит под условие x ≥ 5?", o: ["4", "4.9", "5", "Ни одно"], a: 2 },
+        { q: "Сравните 0.7 и 0.70.", o: ["0.7 > 0.70", "0.7 < 0.70", "0.7 = 0.70", "Нельзя сравнить"], a: 2 },
+        { q: "Верно ли 6 > 9?", o: ["Да", "Нет", "Иногда", "Зависит от знака"], a: 1 },
+        { q: "Выберите верное неравенство:", o: ["3 > 5", "8 ≤ 8", "10 < 9", "0 > 1"], a: 1 },
+        { q: "Если n < 6, какое n может быть?", o: ["6", "7", "5", "6.1"], a: 2 },
+        { q: "Что означает «строгое неравенство»?", o: ["Включает равно", "Не включает равно", "Всегда верно", "Всегда ложно"], a: 1 },
+        { q: "Сравните 2.5 и 2.49.", o: ["2.5 < 2.49", "2.5 > 2.49", "2.5 = 2.49", "Невозможно"], a: 1 },
+        { q: "Какое неравенство соответствует «количество больше 5»?", o: ["k ≤ 5", "k < 5", "k ≥ 5", "k > 5"], a: 3 },
+        { q: "Верно ли 5+2 ≠ 3+6?", o: ["Да", "Нет", "Зависит от вычислений", "Неопределено"], a: 0 },
+        { q: "Натуральные числа ≤ 3:", o: ["1, 2, 3", "0, 1, 2, 3", "3, 4, 5", "Бесконечно много"], a: 0 },
+        { q: "Как проверить неравенство?", o: ["Угадать", "Вычислить части и сравнить", "Посмотреть на первое число", "Игнорировать знаки"], a: 1 },
+        { q: "Какое число НЕ подходит под n ≥ 4?", o: ["4", "5", "3.9", "10"], a: 2 },
+        { q: "Сравните 100·0.5+1 и 51.", o: ["Левая > Правой", "Левая < Правой", "Левая = Правой", "Не сравнимо"], a: 2 },
+        { q: "Знак «не менее» в математике:", o: ["<", ">", "≤", "≥"], a: 3 }
+      ];
+
+      // ================= NAVIGATION =================
+      function showSection(id) {
+        document
+          .querySelectorAll("section")
+          .forEach((s) => s.classList.remove("active"));
+        document.getElementById(id).classList.add("active");
+        document
+          .querySelectorAll(".nav-links a")
+          .forEach((a) => a.classList.remove("active"));
+        document
+          .querySelector('.nav-links a[data-section="' + id + '"]')
+          ?.classList.add("active");
+        window.scrollTo(0, 0);
+        AppState.currentSection = id;
+      }
+      document.querySelectorAll(".nav-links a").forEach((link) => {
+        link.addEventListener("click", (e) => {
+          e.preventDefault();
+          showSection(link.dataset.section);
+        });
+      });
+
+      // ================= SLIDER =================
+      let currentSlide = 0;
+      let slideEls = [];
+      let totalSlides = 0;
+      function renderSlide() {
+        slideEls.forEach((s, i) => s.classList.toggle("active", i === currentSlide));
+        document.getElementById("slide-num").innerText = currentSlide + 1;
+      }
+      function nextSlide() {
+        if (currentSlide < totalSlides - 1) { currentSlide++; renderSlide(); }
+      }
+      function prevSlide() {
+        if (currentSlide > 0) { currentSlide--; renderSlide(); }
+      }
+      window.nextSlide = nextSlide;
+      window.prevSlide = prevSlide;
+
+      // ================= SOLUTION TOGGLES =================
+      function toggleSolution(id) {
+        const el = document.getElementById(id);
+        el.classList.toggle("active");
+        const btn = el.previousElementSibling;
+        btn.textContent = el.classList.contains("active")
+          ? "Скрыть решение"
+          : "Показать решение";
+      }
+
+      // ================= UTILS =================
+      function rand(min, max) {
+        return Math.floor(Math.random() * (max - min + 1)) + min;
+      }
+      function gcd(a, b) {
+        return b ? gcd(b, a % b) : a;
+      }
+      function simplifyFrac(num, den) {
+        const g = gcd(Math.abs(num), Math.abs(den));
+        return { num: num / g, den: den / g };
+      }
+      function formatFrac(num, den) {
+        const s = simplifyFrac(num, den);
+        if (s.den === 1) return s.num.toString();
+        return s.num + "/" + s.den;
+      }
+
+      // ================= INFINITE TRAINER =================
+      function generateTrainerProblem() {
+        const types = ['compare_dec', 'check_ineq', 'pick_numbers', 'sign_fill'];
+        const type = types[Math.floor(Math.random() * types.length)];
+        let text, answer, hint;
+        if (type === 'compare_dec') {
           const a = (Math.random() * 5 + 1).toFixed(2);
           const b = (parseFloat(a) - 0.1 + Math.random() * 0.2).toFixed(2);
-          taskObj = { text: `Сравните ${a} и ${b}. Какой знак стоит между ними? (<, >, =)`, answer: parseFloat(a) > parseFloat(b) ? '>' : (parseFloat(a) < parseFloat(b) ? '<' : '=') };
-          break;
-        }
-        case 'check_ineq': {
-          const x = Math.floor(Math.random() * 10) + 1;
-          const y = Math.floor(Math.random() * 10) + 1;
+          answer = parseFloat(a) > parseFloat(b) ? '>' : (parseFloat(a) < parseFloat(b) ? '<' : '=');
+          text = "Сравните " + a + " и " + b + ". Какой знак стоит между ними? (<, >, =)";
+          hint = "Сравните по разрядам слева направо: сначала целые части, затем десятые и сотые.";
+        } else if (type === 'check_ineq') {
+          const x = rand(1, 10);
+          const y = rand(1, 10);
           const cond = Math.random() > 0.5;
-          taskObj = { text: `Верно ли неравенство ${x} + 2 ${cond ? '>' : '<'} ${y} + 3 при x=${x}, y=${y}? (Да/Нет)`, answer: (x+2 > y+3) === cond ? 'да' : 'нет' };
-          break;
+          answer = (x + 2 > y + 3) === cond ? 'да' : 'нет';
+          text = "Верно ли неравенство " + x + " + 2 " + (cond ? '>' : '<') + " " + y + " + 3 при x=" + x + ", y=" + y + "? (Да/Нет)";
+          hint = "Вычислите левую и правую части, затем проверьте знак.";
+        } else if (type === 'pick_numbers') {
+          const limit = rand(4, 8);
+          answer = String(limit - 1);
+          text = "Сколько натуральных чисел меньше " + limit + "?";
+          hint = "Натуральные числа — это 1, 2, 3... Посчитайте, сколько из них меньше " + limit + ".";
+        } else {
+          const a = rand(5, 24);
+          const b = rand(5, 24);
+          answer = a > b ? '>' : (a < b ? '<' : '=');
+          text = "Вставьте знак: " + a + " * " + b + " (>, <, =)";
+          hint = "Сравните два числа: острие знака всегда смотрит на меньшее число.";
         }
-        case 'pick_numbers': {
-          const limit = Math.floor(Math.random() * 5) + 4;
-          taskObj = { text: `Сколько натуральных чисел меньше ${limit}?`, answer: limit - 1 };
-          break;
+        return { text, answer: String(answer), hint };
+      }
+      function newTrainerProblem() {
+        AppState.trainer.current = generateTrainerProblem();
+        document.getElementById("trainer-question").textContent =
+          AppState.trainer.current.text;
+        document.getElementById("trainer-answer").value = "";
+        document.getElementById("trainer-feedback").innerHTML = "";
+        document.getElementById("trainer-hint").style.display = "none";
+        document.getElementById("trainer-check-btn").disabled = false;
+      }
+      function showTrainerHint() {
+        if (!AppState.trainer.current) return;
+        document.getElementById("trainer-hint").style.display = "block";
+        document.getElementById("trainer-hint").textContent =
+          "💡 " + AppState.trainer.current.hint;
+      }
+      function checkTrainer() {
+        if (!AppState.trainer.current) return;
+        const userStr = document.getElementById("trainer-answer").value.trim();
+        if (!userStr) return;
+        const correctStr = AppState.trainer.current.answer;
+        const normUser = userStr.toLowerCase().replace(/\s/g, "");
+        const normCorrect = correctStr.toLowerCase().replace(/\s/g, "");
+        const isCorrect = normUser === normCorrect;
+        AppState.trainer.total++;
+        if (isCorrect) {
+          AppState.trainer.correct++;
+          AppState.trainer.streak++;
+          document.getElementById("trainer-feedback").innerHTML =
+            '<div style="color: var(--success); font-weight: 700; font-size: 1.1rem;">✓ Верно! Ответ: ' +
+            correctStr +
+            "</div>";
+        } else {
+          AppState.trainer.streak = 0;
+          document.getElementById("trainer-feedback").innerHTML =
+            '<div style="color: var(--error); font-weight: 700; font-size: 1.1rem;">✗ Неверно. Правильный ответ: ' +
+            correctStr +
+            "</div>";
         }
-        case 'sign_fill': {
-          const a = Math.floor(Math.random() * 20) + 5;
-          const b = Math.floor(Math.random() * 20) + 5;
-          taskObj = { text: `Вставьте знак: ${a} * ${b} (>, <, =)`, answer: a > b ? '>' : (a < b ? '<' : '=') };
-          break;
+        document.getElementById("trainer-correct").textContent =
+          AppState.trainer.correct;
+        document.getElementById("trainer-total").textContent =
+          AppState.trainer.total;
+        document.getElementById("trainer-streak").textContent =
+          AppState.trainer.streak;
+        document.getElementById("trainer-check-btn").disabled = true;
+      }
+
+      // ================= DIAGNOSTIC TEST =================
+      function startDiagnostic() {
+        AppState.mode = "diagnostic";
+        AppState.diagnostic = { current: 0, score: 0, answers: [] };
+        document.getElementById("diagnostic-ui").style.display = "block";
+        document.getElementById("timeattack-ui").style.display = "none";
+        document.getElementById("results-ui").style.display = "none";
+        document.getElementById("diag-total").textContent = questions.length;
+        renderDiagnostic();
+      }
+      function renderDiagnostic() {
+        const q = questions[AppState.diagnostic.current];
+        document.getElementById("diag-current").textContent =
+          AppState.diagnostic.current + 1;
+        document.getElementById("diag-score").textContent =
+          AppState.diagnostic.score + " правильных";
+        document.getElementById("diag-progress").style.width =
+          ((AppState.diagnostic.current + 1) / questions.length) * 100 + "%";
+        document.getElementById("diag-question").textContent = q.q;
+        const optsDiv = document.getElementById("diag-options");
+        optsDiv.innerHTML = "";
+        q.o.forEach((opt, i) => {
+          const div = document.createElement("div");
+          div.className = "quiz-option";
+          div.innerHTML =
+            '<div class="option-letter">' +
+            String.fromCharCode(65 + i) +
+            "</div><div>" +
+            opt +
+            "</div>";
+          div.onclick = () => selectDiagnostic(i, div);
+          optsDiv.appendChild(div);
+        });
+        document.getElementById("diag-explanation").style.display = "none";
+        document.getElementById("diag-prev").disabled =
+          AppState.diagnostic.current === 0;
+        document.getElementById("diag-next").disabled = true;
+      }
+      function selectDiagnostic(idx, el) {
+        if (document.getElementById("diag-next").disabled === false) return;
+        const q = questions[AppState.diagnostic.current];
+        const isCorrect = idx === q.a;
+        if (isCorrect) AppState.diagnostic.score++;
+        AppState.diagnostic.answers[AppState.diagnostic.current] = idx;
+        document
+          .querySelectorAll("#diag-options .quiz-option")
+          .forEach((opt, i) => {
+            opt.classList.add("disabled");
+            if (i === q.a) opt.classList.add("correct");
+            else if (i === idx && !isCorrect) opt.classList.add("wrong");
+          });
+        document.getElementById("diag-explanation").innerHTML =
+          "<strong>" +
+          (isCorrect ? "✓ Верно!" : "✗ Неверно.") +
+          "</strong> Правильный ответ: " +
+          q.o[q.a];
+        document.getElementById("diag-explanation").style.display = "block";
+        document.getElementById("diag-next").disabled = false;
+      }
+      function nextDiagnostic() {
+        if (AppState.diagnostic.current < questions.length - 1) {
+          AppState.diagnostic.current++;
+          renderDiagnostic();
+        } else {
+          showResults(
+            AppState.diagnostic.score,
+            questions.length,
+            0,
+            "diagnostic",
+          );
         }
       }
-      currentTask = taskObj;
-      document.getElementById('trainer-task').textContent = taskObj.text;
-      document.getElementById('trainer-input').value = '';
-      document.getElementById('trainer-input').disabled = false;
-      document.getElementById('check-trainer').disabled = false;
-      document.getElementById('trainer-feedback').textContent = '';
-      document.getElementById('trainer-input').focus();
-    }
-    function showTrainerHint() {
-      if(!currentTask) return;
-      document.getElementById('trainer-feedback').textContent = `💡 Подсказка: Вычислите обе части и сравните по разрядам.`;
-      document.getElementById('trainer-feedback').style.color = '#64748b';
-    }
-    function checkTrainer() {
-      const val = document.getElementById('trainer-input').value.trim().toLowerCase().replace(/\s/g, '');
-      const correct = String(currentTask.answer).toLowerCase().replace(/\s/g, '');
-      const isCorrect = val === correct;
-      trainerStats.total++;
-      if(isCorrect) { trainerStats.correct++; trainerStats.streak++; }
-      else { trainerStats.streak = 0; }
-      updateTrainerStats();
-      const fb = document.getElementById('trainer-feedback');
-      fb.textContent = isCorrect ? '✅ Верно!' : `❌ Неверно. Правильный ответ: ${currentTask.answer}`;
-      fb.style.color = isCorrect ? '#10b981' : '#ef4444';
-      document.getElementById('trainer-input').disabled = true;
-      document.getElementById('check-trainer').disabled = true;
-    }
-    function updateTrainerStats() {
-      document.getElementById('stat-correct').textContent = trainerStats.correct;
-      document.getElementById('stat-total').textContent = trainerStats.total;
-      document.getElementById('stat-streak').textContent = trainerStats.streak;
-    }
+      function prevDiagnostic() {
+        if (AppState.diagnostic.current > 0) {
+          AppState.diagnostic.current--;
+          renderDiagnostic();
+        }
+      }
 
-    // ASSESSMENT
-    const questions = [
-      { q: "Какой знак означает «больше или равно»?", o: [">", "<", "≥", "≤"], a: 2 },
-      { q: "Верно ли неравенство 5.6 > 5.56?", o: ["Да", "Нет", "Зависит от контекста", "Нельзя сравнить"], a: 0 },
-      { q: "Что означает запись n ≥ 3?", o: ["n строго больше 3", "n меньше или равно 3", "n больше или равно 3", "n не равно 3"], a: 2 },
-      { q: "Сравните 0.45 и 0.5.", o: ["0.45 > 0.5", "0.45 < 0.5", "0.45 = 0.5", "Невозможно сравнить"], a: 1 },
-      { q: "Какое натуральное число меньше 6?", o: ["6", "7", "5.5", "4"], a: 3 },
-      { q: "Что означает знак ≠?", o: ["Равно", "Больше", "Не равно", "Меньше"], a: 2 },
-      { q: "Верно ли 2.7 + 1.41 > 4.26 - 0.99?", o: ["Да", "Нет", "Равны", "Зависит от округления"], a: 0 },
-      { q: "Выберите числа ≥ 5: 4, 5, 6, 6.5", o: ["4, 5", "5, 6", "5, 6, 6.5", "4, 5, 6"], a: 2 },
-      { q: "Как записать «возраст не менее 12 лет»?", o: ["a < 12", "a > 12", "a ≥ 12", "a ≤ 12"], a: 2 },
-      { q: "Какое неравенство неверное?", o: ["10 > 9", "5 < 8", "3 > 4", "2 ≤ 2"], a: 2 },
-      { q: "Сравните 12.01 и 12.1.", o: ["12.01 > 12.1", "12.01 < 12.1", "12.01 = 12.1", "Неизвестно"], a: 1 },
-      { q: "Натуральные числа, не равные 7:", o: ["1, 2, 3, 4, 5, 6, 8, 9...", "Только 8", "Только 1-6", "Нет таких"], a: 0 },
-      { q: "Что означает знак ≤?", o: ["Больше или равно", "Меньше или равно", "Строго меньше", "Не равно"], a: 1 },
-      { q: "Верно ли (3-0.7)·2 < 42-7?", o: ["Да", "Нет", "Равны", "Зависит от порядка"], a: 0 },
-      { q: "Сколько натуральных чисел < 4?", o: ["2", "3", "4", "Бесконечно"], a: 1 },
-      { q: "Как записать «температура не выше 30°»?", o: ["t > 30", "t < 30", "t ≥ 30", "t ≤ 30"], a: 3 },
-      { q: "Какое число подходит под условие x ≥ 5?", o: ["4", "4.9", "5", "Ни одно"], a: 2 },
-      { q: "Сравните 0.7 и 0.70.", o: ["0.7 > 0.70", "0.7 < 0.70", "0.7 = 0.70", "Нельзя сравнить"], a: 2 },
-      { q: "Верно ли 6 > 9?", o: ["Да", "Нет", "Иногда", "Зависит от знака"], a: 1 },
-      { q: "Выберите верное неравенство:", o: ["3 > 5", "8 ≤ 8", "10 < 9", "0 > 1"], a: 1 },
-      { q: "Если n < 6, какое n может быть?", o: ["6", "7", "5", "6.1"], a: 2 },
-      { q: "Что означает «строгое неравенство»?", o: ["Включает равно", "Не включает равно", "Всегда верно", "Всегда ложно"], a: 1 },
-      { q: "Сравните 2.5 и 2.49.", o: ["2.5 < 2.49", "2.5 > 2.49", "2.5 = 2.49", "Невозможно"], a: 1 },
-      { q: "Какое неравенство соответствует «количество больше 5»?", o: ["k ≤ 5", "k < 5", "k ≥ 5", "k > 5"], a: 3 },
-      { q: "Верно ли 5+2 ≠ 3+6?", o: ["Да", "Нет", "Зависит от вычислений", "Неопределено"], a: 0 },
-      { q: "Натуральные числа ≤ 3:", o: ["1, 2, 3", "0, 1, 2, 3", "3, 4, 5", "Бесконечно много"], a: 0 },
-      { q: "Как проверить неравенство?", o: ["Угадать", "Вычислить части и сравнить", "Посмотреть на первое число", "Игнорировать знаки"], a: 1 },
-      { q: "Какое число НЕ подходит под n ≥ 4?", o: ["4", "5", "3.9", "10"], a: 2 },
-      { q: "Сравните 100·0.5+1 и 51.", o: ["Левая > Правой", "Левая < Правой", "Левая = Правой", "Не сравнимо"], a: 2 },
-      { q: "Знак «не менее» в математике:", o: ["<", ">", "≤", "≥"], a: 3 }
-    ];
-
-    let assessState = { mode: '', idx: 0, answers: [], timer: null, timeLeft: 600 };
-    let currentAssessMode = 'diagnostic';
-
-    function startAssessment(mode) {
-      currentAssessMode = mode;
-      document.getElementById('assessment-ui').classList.remove('hidden');
-      document.getElementById('result-screen').classList.add('hidden');
-      document.getElementById('assess-mode-title').textContent = mode === 'diagnostic' ? '🔍 Диагностический тест' : '⏱️ Скоростная викторина';
-      document.getElementById('timer').classList.toggle('hidden', mode !== 'speed');
-      
-      assessState = { mode, idx: 0, answers: new Array(questions.length).fill(null), timer: null, timeLeft: 600 };
-      renderQuestion();
-      if(mode === 'speed') {
-        clearInterval(assessState.timer);
-        assessState.timer = setInterval(() => {
-          assessState.timeLeft--;
-          const m = Math.floor(assessState.timeLeft/60);
-          const s = assessState.timeLeft%60;
-          document.getElementById('timer').textContent = `${m}:${s<10?'0':''}${s}`;
-          if(assessState.timeLeft <= 0) finishAssessment();
+      // ================= TIME ATTACK (30 questions, 10 min) =================
+      function startTimeAttack() {
+        AppState.mode = "timeattack";
+        AppState.timeAttack = {
+          current: 0,
+          score: 0,
+          timer: null,
+          timeLeft: 600,
+          startTime: Date.now(),
+          answers: [],
+        };
+        document.getElementById("diagnostic-ui").style.display = "none";
+        document.getElementById("timeattack-ui").style.display = "block";
+        document.getElementById("results-ui").style.display = "none";
+        document.getElementById("ta-timer").className = "timer";
+        renderTimeAttack();
+        if (AppState.timeAttack.timer) clearInterval(AppState.timeAttack.timer);
+        AppState.timeAttack.timer = setInterval(() => {
+          AppState.timeAttack.timeLeft--;
+          const m = Math.floor(AppState.timeAttack.timeLeft / 60);
+          const s = AppState.timeAttack.timeLeft % 60;
+          const timerEl = document.getElementById("ta-timer");
+          timerEl.textContent = m + ":" + s.toString().padStart(2, "0");
+          if (AppState.timeAttack.timeLeft <= 60)
+            timerEl.className = "timer danger";
+          else if (AppState.timeAttack.timeLeft <= 180)
+            timerEl.className = "timer warning";
+          if (AppState.timeAttack.timeLeft <= 0) finishTimeAttack();
         }, 1000);
       }
-    }
-
-    function renderQuestion() {
-      const q = questions[assessState.idx];
-      document.getElementById('q-current').textContent = assessState.idx + 1;
-      document.getElementById('q-text').textContent = q.q;
-      document.getElementById('progress-fill').style.width = `${((assessState.idx + 1)/questions.length)*100}%`;
-      const opts = document.getElementById('q-options');
-      opts.innerHTML = '';
-      q.o.forEach((opt, i) => {
-        const btn = document.createElement('button');
-        btn.className = 'q-btn';
-        btn.textContent = opt;
-        const sel = assessState.answers[assessState.idx];
-        if(sel !== null) {
-          btn.disabled = true;
-          if(i === q.a) btn.classList.add('correct');
-          else if(i === sel) btn.classList.add('wrong');
+      function renderTimeAttack() {
+        const q = questions[AppState.timeAttack.current];
+        document.getElementById("ta-current").textContent =
+          AppState.timeAttack.current + 1;
+        document.getElementById("ta-progress").style.width =
+          ((AppState.timeAttack.current + 1) / questions.length) * 100 + "%";
+        document.getElementById("ta-question").textContent = q.q;
+        const optsDiv = document.getElementById("ta-options");
+        optsDiv.innerHTML = "";
+        q.o.forEach((opt, i) => {
+          const div = document.createElement("div");
+          div.className = "quiz-option";
+          div.innerHTML =
+            '<div class="option-letter">' +
+            String.fromCharCode(65 + i) +
+            "</div><div>" +
+            opt +
+            "</div>";
+          div.onclick = () => selectTimeAttack(i, div);
+          optsDiv.appendChild(div);
+        });
+        document.getElementById("ta-next").disabled = true;
+      }
+      function selectTimeAttack(idx, el) {
+        if (document.getElementById("ta-next").disabled === false) return;
+        const q = questions[AppState.timeAttack.current];
+        const isCorrect = idx === q.a;
+        if (isCorrect) AppState.timeAttack.score++;
+        AppState.timeAttack.answers[AppState.timeAttack.current] = idx;
+        document
+          .querySelectorAll("#ta-options .quiz-option")
+          .forEach((opt, i) => {
+            opt.classList.add("disabled");
+            if (i === q.a) opt.classList.add("correct");
+            else if (i === idx && !isCorrect) opt.classList.add("wrong");
+          });
+        document.getElementById("ta-next").disabled = false;
+      }
+      function nextTimeAttack() {
+        if (AppState.timeAttack.current < questions.length - 1) {
+          AppState.timeAttack.current++;
+          renderTimeAttack();
+        } else {
+          finishTimeAttack();
         }
-        btn.onclick = () => selectOption(i);
-        opts.appendChild(btn);
+      }
+      function finishTimeAttack() {
+        clearInterval(AppState.timeAttack.timer);
+        const timeSpent = Math.floor(
+          (Date.now() - AppState.timeAttack.startTime) / 1000,
+        );
+        showResults(
+          AppState.timeAttack.score,
+          questions.length,
+          timeSpent,
+          "timeattack",
+        );
+      }
+
+      // ================= RESULTS =================
+      function showResults(score, total, timeSpent, mode) {
+        document.getElementById("diagnostic-ui").style.display = "none";
+        document.getElementById("timeattack-ui").style.display = "none";
+        document.getElementById("results-ui").style.display = "block";
+        const percent = Math.round((score / total) * 100);
+        const m = Math.floor(timeSpent / 60);
+        const s = timeSpent % 60;
+        let mastery = "Начальный";
+        if (percent >= 90) mastery = "Эксперт";
+        else if (percent >= 70) mastery = "Продвинутый";
+        else if (percent >= 50) mastery = "Средний";
+        let message = "";
+        if (percent >= 90)
+          message =
+            mode === "timeattack"
+              ? "🏆 Превосходно! Вы мастер!"
+              : "Отлично! Вы отлично знаете тему!";
+        else if (percent >= 70)
+          message =
+            mode === "timeattack"
+              ? "🥈 Отличный результат!"
+              : "Хорошо! Но есть куда стремиться.";
+        else if (percent >= 50)
+          message =
+            mode === "timeattack"
+              ? "🥉 Хорошо, но нужно подучить."
+              : "Удовлетворительно. Повторите теорию.";
+        else
+          message =
+            mode === "timeattack"
+              ? "💪 Попробуйте ещё раз после повторения теории."
+              : "Нужно больше практики. Вернитесь к интерактивному учебнику.";
+        document
+          .getElementById("result-circle")
+          .style.setProperty("--score", percent);
+        document.getElementById("result-percent").textContent = percent + "%";
+        document.getElementById("result-message").textContent = message;
+        document.getElementById("result-correct").textContent = score;
+        document.getElementById("result-wrong").textContent = total - score;
+        document.getElementById("result-time").textContent =
+          mode === "diagnostic" ? "—" : m + ":" + s.toString().padStart(2, "0");
+        document.getElementById("result-mastery").textContent = mastery;
+      }
+      function resetAssessment() {
+        document.getElementById("results-ui").style.display = "none";
+        if (AppState.mode === "diagnostic") startDiagnostic();
+        else startTimeAttack();
+      }
+
+      // ================= INIT =================
+      document.addEventListener("DOMContentLoaded", () => {
+        // Build slides
+        const track = document.getElementById("track-slides");
+        slides.forEach((s, i) => {
+          const div = document.createElement("div");
+          div.className = "widget-slide" + (i === 0 ? " active" : "");
+          div.innerHTML =
+            "<h3>" + s.title + "</h3>" +
+            '<div style="color:var(--text-secondary);line-height:1.8;margin-top:12px;">' +
+            s.content + "</div>";
+          track.appendChild(div);
+        });
+        slideEls = Array.from(track.querySelectorAll(".widget-slide"));
+        totalSlides = slideEls.length;
+        document.getElementById("slide-total").textContent = totalSlides;
+        renderSlide();
+
+        // Build examples
+        const exContainer = document.getElementById("examples-container");
+        examples.forEach((ex, i) => {
+          const card = document.createElement("div");
+          card.className = "problem-card";
+          card.innerHTML =
+            '<div class="problem-header">' +
+            '<span class="problem-number">' + ex.title + "</span>" +
+            '<span class="problem-type">Неравенства</span></div>' +
+            '<div class="problem-text">' + ex.task + "</div>" +
+            '<button class="solution-btn" onclick="toggleSolution(\'sol-' + i + '\')">Показать решение</button>' +
+            '<div class="solution" id="sol-' + i + '">' +
+            '<div class="solution-step" style="color: var(--accent); font-weight: 700;">' + ex.sol + "</div></div>";
+          exContainer.appendChild(card);
+        });
+
+        newTrainerProblem();
       });
-      const fb = document.getElementById('q-feedback');
-      fb.style.display = 'none';
-      if(assessState.mode === 'diagnostic' && assessState.answers[assessState.idx] !== null) {
-        const isCor = assessState.answers[assessState.idx] === q.a;
-        fb.style.display = 'block';
-        fb.textContent = isCor ? '✅ Верно!' : `❌ Ошибка. Правильный ответ: ${q.o[q.a]}`;
-        fb.style.background = isCor ? '#dcfce7' : '#fee2e2';
-        fb.style.color = isCor ? '#166534' : '#991b1b';
-      }
-    }
-
-    function selectOption(i) {
-      if(assessState.answers[assessState.idx] !== null) return;
-      assessState.answers[assessState.idx] = i;
-      renderQuestion();
-    }
-
-    function assessNext() {
-      if(assessState.idx < questions.length - 1) {
-        assessState.idx++;
-        renderQuestion();
-      } else {
-        finishAssessment();
-      }
-    }
-    function assessPrev() {
-      if(assessState.idx > 0) {
-        assessState.idx--;
-        renderQuestion();
-      }
-    }
-
-    function finishAssessment() {
-      clearInterval(assessState.timer);
-      document.getElementById('assessment-ui').classList.add('hidden');
-      document.getElementById('result-screen').classList.remove('hidden');
-      let correct = 0;
-      assessState.answers.forEach((a, i) => { if(a === questions[i].a) correct++; });
-      const pct = Math.round((correct/questions.length)*100);
-      document.getElementById('result-score').textContent = `${pct}%`;
-      const timeStr = assessState.mode==='speed' ? document.getElementById('timer').textContent : 'Без ограничений';
-      document.getElementById('result-stats').textContent = `Верно: ${correct} из ${questions.length} • Ошибок: ${questions.length-correct} • Время: ${timeStr}`;
-    }
-  </script>
-</body>
+    </script>
+  </body>
 </html>
-

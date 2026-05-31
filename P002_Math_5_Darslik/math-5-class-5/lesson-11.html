@@ -1,1211 +1,2047 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ru">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-  <title>Урок 11 — Обобщение: Выражения, уравнения, неравенства, зависимости</title>
-  <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    :root {
-      --bg-dark: #0f0f1a;
-      --bg-card: rgba(255, 255, 255, 0.05);
-      --bg-glass: rgba(255, 255, 255, 0.08);
-      --border-glass: rgba(255, 255, 255, 0.15);
-      --text-primary: #e8e8f0;
-      --text-secondary: #a0a0b8;
-      --accent: #00d4aa;
-      --accent-dim: rgba(0, 212, 170, 0.2);
-      --accent-warm: #ff6b6b;
-      --accent-warm-dim: rgba(255, 107, 107, 0.2);
-      --accent-blue: #4dabf7;
-      --accent-blue-dim: rgba(77, 171, 247, 0.2);
-      --success: #51cf66;
-      --error: #ff6b6b;
-      --warning: #fcc419;
-    }
-    body {
-      font-family: system-ui, "Segoe UI", -apple-system, sans-serif;
-      background: var(--bg-dark);
-      color: var(--text-primary);
-      min-height: 100vh;
-      line-height: 1.6;
-      overflow-x: hidden;
-    }
-    .bg-animation {
-      position: fixed;
-      top: 0; left: 0; width: 100%; height: 100%;
-      z-index: -1;
-      background:
-        radial-gradient(ellipse at 20% 20%, rgba(0, 212, 170, 0.08) 0%, transparent 50%),
-        radial-gradient(ellipse at 80% 80%, rgba(77, 171, 247, 0.08) 0%, transparent 50%);
-    }
-    .bg-animation::before {
-      content: "";
-      position: absolute;
-      width: 200%; height: 200%;
-      top: -50%; left: -50%;
-      background: repeating-linear-gradient(
-        0deg, transparent, transparent 40px,
-        rgba(255,255,255,0.02) 40px, rgba(255,255,255,0.02) 41px
-      );
-      animation: bgMove 20s linear infinite;
-    }
-    @keyframes bgMove { 100% { transform: translateY(40px); } }
-    nav {
-      position: fixed;
-      top: 0; left: 0; right: 0;
-      background: rgba(15, 15, 26, 0.85);
-      backdrop-filter: blur(20px);
-      border-bottom: 1px solid var(--border-glass);
-      z-index: 1000;
-      padding: 0 20px;
-    }
-    .nav-container {
-      max-width: 1200px;
-      margin: 0 auto;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      height: 60px;
-    }
-    .logo {
-      font-size: 1.3rem;
-      font-weight: 700;
-      background: linear-gradient(135deg, var(--accent), var(--accent-blue));
-      -webkit-background-clip: text;
-      background-clip: text;
-      color: transparent;
-    }
-    .nav-links {
-      display: flex;
-      gap: 8px;
-      list-style: none;
-    }
-    .nav-links a {
-      color: var(--text-secondary);
-      text-decoration: none;
-      padding: 8px 16px;
-      border-radius: 8px;
-      transition: 0.3s;
-      font-size: 0.9rem;
-      font-weight: 500;
-      cursor: pointer;
-    }
-    .nav-links a:hover, .nav-links a.active {
-      color: var(--text-primary);
-      background: var(--bg-glass);
-    }
-    .nav-links a.active {
-      background: var(--accent-dim);
-      color: var(--accent);
-    }
-    section {
-      display: none;
-      opacity: 0;
-      padding: 78px 20px 32px;
-      max-width: 1000px;
-      margin: 0 auto;
-      transition: opacity 0.3s;
-    }
-    section.active {
-      display: block;
-      opacity: 1;
-      animation: fadeIn 0.5s ease;
-    }
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(20px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-    .card {
-      background: var(--bg-card);
-      backdrop-filter: blur(20px);
-      border: 1px solid var(--border-glass);
-      border-radius: 20px;
-      padding: 24px;
-      margin-bottom: 20px;
-      transition: 0.2s;
-    }
-    .card-title {
-      font-size: 1.5rem;
-      font-weight: 700;
-      margin-bottom: 16px;
-      display: flex;
-      gap: 12px;
-      align-items: center;
-    }
-    .btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 12px 28px;
-      border-radius: 12px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: 0.3s;
-      border: none;
-      font-size: 0.95rem;
-    }
-    .btn-primary {
-      background: linear-gradient(135deg, var(--accent), var(--accent-blue));
-      color: #000;
-    }
-    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 20px var(--accent-dim); }
-    .btn-secondary {
-      background: var(--bg-glass);
-      color: var(--text-primary);
-      border: 1px solid var(--border-glass);
-    }
-    .btn-secondary:hover { background: rgba(255,255,255,0.12); }
-    .btn:disabled { opacity: 0.5; cursor: not-allowed; }
-    .widget-viewport { width: 100%; }
-    .widget-slide {
-      display: none;
-      padding: 12px 16px;
-      animation: slideFade 0.3s ease;
-    }
-    .widget-slide.active { display: block; }
-    @keyframes slideFade { from { opacity: 0; } to { opacity: 1; } }
-    .widget-nav {
-      display: flex;
-      justify-content: space-between;
-      margin-top: 20px;
-    }
-    .widget-progress {
-      text-align: center;
-      font-size: 0.9rem;
-      color: var(--text-secondary);
-      margin-bottom: 12px;
-    }
-    .big-math {
-      font-size: 1.5rem;
-      text-align: center;
-      background: var(--bg-glass);
-      padding: 20px;
-      border-radius: 16px;
-      margin: 16px 0;
-    }
-    .formula-box {
-      background: var(--bg-glass);
-      border: 1px solid var(--border-glass);
-      border-radius: 12px;
-      padding: 16px;
-      text-align: center;
-      margin: 16px 0;
-      font-size: 1.1rem;
-    }
-    .tip-box {
-      background: var(--accent-blue-dim);
-      border-left: 4px solid var(--accent-blue);
-      padding: 12px 16px;
-      border-radius: 0 12px 12px 0;
-      margin: 16px 0;
-    }
-    .compare-table {
-      width: 100%;
-      border-collapse: collapse;
-      margin: 16px 0;
-    }
-    .compare-table th, .compare-table td {
-      border: 1px solid var(--border-glass);
-      padding: 12px;
-      text-align: center;
-    }
-    .compare-table th { background: var(--bg-glass); }
-    .sequence-component {
-      display: flex;
-      flex-direction: column;
-      gap: 20px;
-      position: relative;
-    }
-    .sequence-step {
-      background: var(--bg-card);
-      border: 1px solid var(--border-glass);
-      border-radius: 16px;
-      padding: 20px 20px 20px 72px;
-      position: relative;
-    }
-    .sequence-number {
-      position: absolute;
-      left: 20px;
-      top: 20px;
-      width: 40px;
-      height: 40px;
-      background: var(--accent);
-      color: #000;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: 800;
-    }
-    .problem-card {
-      background: var(--bg-card);
-      border: 1px solid var(--border-glass);
-      border-radius: 16px;
-      padding: 24px;
-      margin-bottom: 20px;
-    }
-    .problem-header {
-      font-weight: 700;
-      font-size: 1.1rem;
-      margin-bottom: 10px;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-    .problem-number {
-      display: inline-block;
-      background: var(--accent-dim);
-      color: var(--accent);
-      padding: 4px 10px;
-      border-radius: 8px;
-      font-size: 0.9rem;
-    }
-    .solution-btn {
-      background: none;
-      border: none;
-      color: var(--accent);
-      cursor: pointer;
-      font-weight: 600;
-      margin-top: 10px;
-      padding: 0;
-      font-size: 0.95rem;
-    }
-    .solution-btn:hover { text-decoration: underline; }
-    .solution {
-      display: none;
-      margin-top: 16px;
-      padding: 16px;
-      background: rgba(0, 212, 170, 0.05);
-      border-left: 3px solid var(--accent);
-      border-radius: 0 12px 12px 0;
-    }
-    .solution.active { display: block; }
-    .solution-step { margin-bottom: 8px; }
-    .quiz-container {
-      background: var(--bg-card);
-      border-radius: 20px;
-      padding: 24px;
-    }
-    .quiz-option {
-      background: var(--bg-glass);
-      border: 2px solid var(--border-glass);
-      border-radius: 12px;
-      padding: 14px 20px;
-      margin-bottom: 12px;
-      cursor: pointer;
-      display: flex;
-      gap: 12px;
-      align-items: center;
-      transition: 0.2s;
-    }
-    .quiz-option:hover:not(:disabled) { background: rgba(255,255,255,0.12); }
-    .quiz-option.correct {
-      border-color: var(--success);
-      background: rgba(81, 207, 102, 0.15);
-    }
-    .quiz-option.wrong {
-      border-color: var(--error);
-      background: rgba(255, 107, 107, 0.15);
-    }
-    .timer {
-      position: fixed;
-      top: 80px;
-      right: 20px;
-      background: var(--bg-card);
-      backdrop-filter: blur(20px);
-      border: 1px solid var(--border-glass);
-      border-radius: 16px;
-      padding: 12px 20px;
-      font-size: 1.3rem;
-      font-weight: 700;
-      z-index: 999;
-    }
-    .timer.warning { border-color: var(--warning); color: var(--warning); }
-    .timer.danger { border-color: var(--error); color: var(--error); animation: pulse 1s infinite; }
-    @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } }
-    .results-container { text-align: center; padding: 24px; }
-    .score-circle {
-      width: 180px; height: 180px;
-      border-radius: 50%;
-      background: conic-gradient(var(--accent) calc(var(--score) * 3.6deg), var(--bg-glass) 0);
-      margin: 0 auto 24px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      position: relative;
-    }
-    .score-circle::before {
-      content: "";
-      position: absolute;
-      width: 150px; height: 150px;
-      background: var(--bg-dark);
-      border-radius: 50%;
-    }
-    .score-value {
-      position: relative;
-      font-size: 2.4rem;
-      font-weight: 800;
-      color: var(--accent);
-    }
-    .stat { text-align: center; }
-    .stat-value { font-size: 1.8rem; font-weight: 800; color: var(--accent); }
-    .progress-bar { height: 8px; background: var(--bg-glass); border-radius: 4px; margin-bottom: 20px; overflow: hidden; }
-    .progress-fill { height: 100%; background: var(--accent); border-radius: 4px; width: 0%; transition: 0.3s; }
-    .quiz-nav { display: flex; justify-content: space-between; margin-top: 20px; }
-    .quiz-progress { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; font-size: 0.9rem; color: var(--text-secondary); }
-    .mini-table { width: 100%; border-collapse: collapse; margin: 12px 0; }
-    .mini-table th, .mini-table td { border: 1px solid var(--border-glass); padding: 10px; text-align: center; }
-    .mini-table th { background: var(--bg-glass); }
-    .mind-map {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 16px;
-      margin-top: 16px;
-    }
-    .mind-node {
-      background: var(--bg-glass);
-      border: 1px solid var(--border-glass);
-      border-radius: 16px;
-      padding: 16px;
-      text-align: center;
-      transition: 0.3s;
-    }
-    .mind-node:hover { transform: translateY(-4px); border-color: var(--accent); }
-    .mind-node h4 { color: var(--accent); margin-bottom: 8px; font-size: 1.1rem; }
-    .mind-node p { font-size: 0.9rem; color: var(--text-secondary); }
-    @media (max-width: 768px) {
-      .nav-links { display: none; }
-      .timer { top: 70px; right: 12px; font-size: 1rem; padding: 8px 12px; }
-    }
-  </style>
-</head>
-<body>
-  <div class="bg-animation"></div>
-  <nav>
-    <div class="nav-container">
-      <div class="logo">📐 Урок 11 · Обобщение раздела 5</div>
-      <a href="index.html" style="color:var(--text-secondary);text-decoration:none;font-size:0.85rem;font-weight:600;padding:6px 14px;border:1px solid var(--border-glass);border-radius:8px;background:var(--bg-glass);white-space:nowrap;">← Глава 5</a>
-      <ul class="nav-links">
-        <li><a href="#" data-section="home" class="active">Главная</a></li>
-        <li><a href="#" data-section="theory">Теория</a></li>
-        <li><a href="#" data-section="algorithm">Алгоритм</a></li>
-        <li><a href="#" data-section="examples">Примеры</a></li>
-        <li><a href="#" data-section="trainer">Тренажёр</a></li>
-        <li><a href="#" data-section="assessment">Аттестация</a></li>
-      </ul>
-    </div>
-  </nav>
-
-  <!-- HOME -->
-  <section id="home" class="active">
-    <div class="hero" style="text-align: center; padding: 60px 20px;">
-      <h1 style="font-size: 2.6rem; background: linear-gradient(135deg, var(--accent), var(--accent-blue)); -webkit-background-clip: text; background-clip: text; color: transparent;">
-        Обобщение: выражения, уравнения, неравенства, зависимости
-      </h1>
-      <p style="font-size: 1.2rem; margin: 20px 0;">
-        Итоговый урок раздела 5. Все темы в одной системе: от переменной до графика.
-      </p>
-      <div style="display: flex; gap: 16px; justify-content: center; flex-wrap: wrap;">
-        <button class="btn btn-primary" onclick="showSection('theory')">Начать обучение</button>
-        <button class="btn btn-secondary" onclick="showSection('assessment')">Проверить знания</button>
-      </div>
-    </div>
-    <div class="card">
-      <div class="card-title">🗺️ Карта раздела 5</div>
-      <div class="mind-map">
-        <div class="mind-node">
-          <h4>🔢 Выражения</h4>
-          <p>Сумма ↔ произведение<br>Подстановка значений<br>Упрощение</p>
-        </div>
-        <div class="mind-node">
-          <h4>⚖️ Уравнения</h4>
-          <p>Составление из текста<br>Решение линейных<br>Свойства равенств</p>
-        </div>
-        <div class="mind-node">
-          <h4>📐 Неравенства</h4>
-          <p>Знаки &gt; &lt; ≥ ≤<br>Решение простых<br>Числовая ось</p>
-        </div>
-        <div class="mind-node">
-          <h4>🔗 Зависимости</h4>
-          <p>x и y<br>Формулы<br>Таблицы и графики</p>
-        </div>
-        <div class="mind-node">
-          <h4>⚙️ Машины</h4>
-          <p>Вход → выход<br>Алгоритмы<br>Обратные действия</p>
-        </div>
-        <div class="mind-node">
-          <h4>📈 Графики</h4>
-          <p>Координатная плоскость<br>Точки (x;y)<br>Линейные зависимости</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- THEORY -->
-  <section id="theory">
-    <div class="card">
-      <div class="card-title">📖 Визуальная теория — обобщение</div>
-      <div class="widget-progress">
-        Слайд <span id="slide-num">1</span> / <span id="slide-total">12</span>
-      </div>
-      <div class="widget-viewport">
-        <div class="widget-track" id="track-slides">
-          <div class="widget-slide active">
-            <h3>🗺️ Структура раздела 5</h3>
-            <p>Раздел объединяет пять связанных тем в одну систему. Всё начинается с переменной и заканчивается графиком.</p>
-            <div class="formula-box">
-              Переменная → Выражение → Уравнение/Неравенство → Зависимость → График
-            </div>
-            <div class="tip-box">Каждая следующая тема опирается на предыдущую. Нельзя понять график, не зная переменную.</div>
-          </div>
-          <div class="widget-slide">
-            <h3>🔢 Выражения с переменной</h3>
-            <p>Переменная заменяет число. Сумму одинаковых слагаемых записываем как произведение.</p>
-            <div class="formula-box">
-              5·a = a + a + a + a + a<br>
-              x + x + x = 3x<br>
-              Подстановка: при a=4 → 5·4 = 20
-            </div>
-            <div class="tip-box">Порядок действий: скобки → умножение/деление → сложение/вычитание.</div>
-          </div>
-          <div class="widget-slide">
-            <h3>⚖️ Уравнения и свойства равенств</h3>
-            <p>Уравнение — равенство с переменной. Решаем с помощью обратных действий.</p>
-            <div class="formula-box">
-              3x + 2 = 8<br>
-              3x = 8 − 2 → 3x = 6 → x = 2
-            </div>
-            <div class="tip-box">Свойства: a=b ↔ a+c=b+c; a=b ↔ a·c=b·c (c≠0). Можно переносить с изменением знака.</div>
-          </div>
-          <div class="widget-slide">
-            <h3>📐 Неравенства</h3>
-            <p>Неравенство — сравнение двух выражений. Знаки: &gt;, &lt;, ≥, ≤.</p>
-            <div class="formula-box">
-              x + 3 &lt; 9 → x &lt; 6<br>
-              2y ≥ 10 → y ≥ 5<br>
-              5 − x &gt; 2 → x &lt; 3
-            </div>
-            <div class="tip-box">На числовой оси: &gt; и &lt; — выколотая точка, ≥ и ≤ — закрашенная. Стрелка вправо — больше, влево — меньше.</div>
-          </div>
-          <div class="widget-slide">
-            <h3>🔗 Зависимость между переменными</h3>
-            <p>Если от изменения x меняется y — это зависимость. x — независимая, y — зависимая переменная.</p>
-            <div class="formula-box">
-              y = x + 4<br>
-              x=0 → y=4; x=1 → y=5; x=2 → y=6
-            </div>
-            <div class="tip-box">Зависимость можно задать формулой, таблицей или графиком.</div>
-          </div>
-          <div class="widget-slide">
-            <h3>⚙️ Вычислительные машины</h3>
-            <p>Машина преобразует вход x в выход y по алгоритму.</p>
-            <div class="formula-box">
-              x → +3 → y: формула y = x + 3<br>
-              x → ×2 → −1 → y: формула y = 2x − 1<br>
-              x=5 → y = 2·5 − 1 = 9
-            </div>
-          </div>
-          <div class="widget-slide">
-            <h3>📋 Таблицы зависимостей</h3>
-            <p>Таблица показывает соответствие x → y. Помогает найти формулу и построить график.</p>
-            <div class="formula-box">
-              y = 2x + 1
-              <table class="mini-table">
-                <tr><th>x</th><th>0</th><th>1</th><th>2</th><th>3</th><th>4</th></tr>
-                <tr><td>y</td><td>1</td><td>3</td><td>5</td><td>7</td><td>9</td></tr>
-              </table>
-            </div>
-          </div>
-          <div class="widget-slide">
-            <h3>📈 Координатная плоскость и графики</h3>
-            <p>Горизонтальная ось — x (абсцисса), вертикальная — y (ордината). Точка (x;y).</p>
-            <div class="formula-box">
-              y = x + 2: точки (0;2), (1;3), (2;4), (3;5)<br>
-              Нанесите → соедините → получите прямую
-            </div>
-            <div class="tip-box">Сначала вправо/влево по x, потом вверх/вниз по y.</div>
-          </div>
-          <div class="widget-slide">
-            <h3>📐 Формулы из геометрии и жизни</h3>
-            <p>Формулы — это тоже зависимости между величинами.</p>
-            <div class="formula-box">
-              P = 4a (периметр квадрата)<br>
-              S = a·b (площадь прямоугольника)<br>
-              S = v·t (путь = скорость × время)<br>
-              y = k·x (цена = количество × цена за штуку)
-            </div>
-          </div>
-          <div class="widget-slide">
-            <h3>🔍 Нахождение формулы по таблице</h3>
-            <p>Смотрим на разность между соседними y при росте x на 1.</p>
-            <div class="formula-box">
-              x: 1, 2, 3, 4 → y: 5, 8, 11, 14<br>
-              Разность = 3. При x=1 → 3·1=3, но y=5. Не хватает 2.<br>
-              Формула: <strong>y = 3x + 2</strong>
-            </div>
-            <div class="tip-box">Проверьте: 3·1+2=5 ✓, 3·2+2=8 ✓, 3·3+2=11 ✓</div>
-          </div>
-          <div class="widget-slide">
-            <h3>🔄 Обратные зависимости</h3>
-            <p>Иногда y уменьшается при росте x. Коэффициент при x отрицательный или формула вычитания.</p>
-            <div class="formula-box">
-              y = 12 − x: при x=2 → y=10; x=5 → y=7<br>
-              y = 20 − 3x: при x=1 → y=17; x=2 → y=14
-            </div>
-            <div class="tip-box">График убывающей зависимости идёт вниз при движении вправо.</div>
-          </div>
-          <div class="widget-slide">
-            <h3>🎯 Система знаний</h3>
-            <p>Все темы связаны. Переменная входит в выражение, выражение — в уравнение, уравнение — в формулу зависимости, формула — в таблицу и график.</p>
-            <div class="formula-box">
-              a + a + a = 3a → 3a + 2 = 14 → a = 4<br>
-              y = 3x + 2 → таблица → график<br>
-              P = 4a → при a=5 → P=20
-            </div>
-            <div class="tip-box">Умение переводить задачу из одной формы в другую — ключевой навык раздела 5.</div>
-          </div>
-        </div>
-      </div>
-      <div class="widget-nav">
-        <button type="button" class="btn btn-secondary" onclick="prevSlide()">← Назад</button>
-        <button type="button" class="btn btn-primary" onclick="nextSlide()">Вперёд →</button>
-      </div>
-    </div>
-  </section>
-
-  <!-- ALGORITHM -->
-  <section id="algorithm">
-    <div class="card">
-      <div class="card-title">🪜 Универсальный алгоритм решения задач раздела 5</div>
-      <div class="sequence-component">
-        <div class="sequence-step">
-          <div class="sequence-number">1</div>
-          <h4>Определи, что дано</h4>
-          <p>Переменные? Уравнение? Неравенство? Зависимость? Машина? Таблица? График? Текстовая задача?</p>
-        </div>
-        <div class="sequence-step">
-          <div class="sequence-number">2</div>
-          <h4>Переведи в математический язык</h4>
-          <p>«Сумма» → +, «произведение» → ×, «разность» → −, «частное» → :. Составь формулу или уравнение.</p>
-        </div>
-        <div class="sequence-step">
-          <div class="sequence-number">3</div>
-          <h4>Упрости и реши</h4>
-          <p>Собери подобные слагаемые. Для уравнений — изолируй переменную обратным действием. Для неравенств — сохрани знак.</p>
-        </div>
-        <div class="sequence-step">
-          <div class="sequence-number">4</div>
-          <h4>Проверь и оформи</h4>
-          <p>Подставь ответ обратно. Убедись, что таблица и график совпадают с формулой. Запиши ответ с единицами измерения.</p>
-        </div>
-      </div>
-    </div>
-    <div class="card">
-      <div class="card-title">📊 Сравнительная таблица тем</div>
-      <table class="compare-table">
-        <tr><th>Тема</th><th>Что изучаем</th><th>Ключевой навык</th><th>Пример</th></tr>
-        <tr><td>Выражения</td><td>Переменные, подстановка</td><td>Преобразование суммы в произведение</td><td>3a + 2a = 5a</td></tr>
-        <tr><td>Уравнения</td><td>Равенства с переменной</td><td>Изоляция переменной</td><td>2x + 3 = 11 → x=4</td></tr>
-        <tr><td>Неравенства</td><td>Сравнения с переменной</td><td>Решение и числовая ось</td><td>x + 2 &lt; 8 → x&lt;6</td></tr>
-        <tr><td>Зависимости</td><td>x и y, формулы</td><td>Составление формулы</td><td>y = 2x + 1</td></tr>
-        <tr><td>Машины</td><td>Алгоритмы преобразования</td><td>Перевод схемы в формулу</td><td>x→×3→+2→y</td></tr>
-        <tr><td>Графики</td><td>Координатная плоскость</td><td>Построение по точкам</td><td>(0;2), (1;3), (2;4)</td></tr>
-      </table>
-    </div>
-  </section>
-
-  <!-- EXAMPLES -->
-  <section id="examples">
-    <div class="card">
-      <div class="card-title">📝 Разобранные примеры — комплексные задачи</div>
-    </div>
-    <div class="problem-card">
-      <div class="problem-header"><span class="problem-number">№ 1</span> От выражения к уравнению</div>
-      <div class="problem-text">Сумма пяти одинаковых чисел равна 35. Составьте уравнение и найдите число.</div>
-      <button class="solution-btn" onclick="toggleSolution('ex1')">Показать решение</button>
-      <div id="ex1" class="solution">
-        <div class="solution-step">✔ Пусть число = x. Пять одинаковых → 5x.</div>
-        <div class="solution-step">✔ Уравнение: 5x = 35</div>
-        <div class="solution-step">✔ x = 35 : 5 = <strong>7</strong></div>
-        <div class="solution-step">✔ Проверка: 5·7 = 35 ✓</div>
-      </div>
-    </div>
-    <div class="problem-card">
-      <div class="problem-header"><span class="problem-number">№ 2</span> Уравнение из текста</div>
-      <div class="problem-text">Произведение числа и 3 равно сумме 15 и 6. Найдите число.</div>
-      <button class="solution-btn" onclick="toggleSolution('ex2')">Показать решение</button>
-      <div id="ex2" class="solution">
-        <div class="solution-step">✔ «Произведение числа и 3» → 3x</div>
-        <div class="solution-step">✔ «Сумма 15 и 6» → 15 + 6 = 21</div>
-        <div class="solution-step">✔ Уравнение: 3x = 21 → x = <strong>7</strong></div>
-      </div>
-    </div>
-    <div class="problem-card">
-      <div class="problem-header"><span class="problem-number">№ 3</span> Неравенство и числовая ось</div>
-      <div class="problem-text">Решите неравенство 2x + 4 ≤ 14. Изобразите решение на числовой оси.</div>
-      <button class="solution-btn" onclick="toggleSolution('ex3')">Показать решение</button>
-      <div id="ex3" class="solution">
-        <div class="solution-step">✔ 2x ≤ 14 − 4 → 2x ≤ 10</div>
-        <div class="solution-step">✔ x ≤ 5</div>
-        <div class="solution-step">✔ На числовой оси: закрашенная точка на 5, стрелка влево.</div>
-        <div class="solution-step">✅ Подходят: 5, 4, 3, 2, 1, 0, −1…</div>
-      </div>
-    </div>
-    <div class="problem-card">
-      <div class="problem-header"><span class="problem-number">№ 4</span> Вычислительная машина → формула → таблица</div>
-      <div class="problem-text">Машина: x → ×3 → −2 → y. Составьте формулу, заполните таблицу для x = 1, 2, 3, 4, 5.</div>
-      <button class="solution-btn" onclick="toggleSolution('ex4')">Показать решение</button>
-      <div id="ex4" class="solution">
-        <div class="solution-step">✔ Формула: y = 3x − 2</div>
-        <div class="solution-step">✔ x=1 → y=1; x=2 → y=4; x=3 → y=7; x=4 → y=10; x=5 → y=13</div>
-        <div class="solution-step">✔ Таблица: 1, 4, 7, 10, 13 (разность = 3)</div>
-      </div>
-    </div>
-    <div class="problem-card">
-      <div class="problem-header"><span class="problem-number">№ 5</span> Нахождение формулы по таблице → график</div>
-      <div class="problem-text">
-        <table class="mini-table">
-          <tr><th>x</th><th>1</th><th>2</th><th>3</th><th>4</th></tr>
-          <tr><td>y</td><td>6</td><td>10</td><td>14</td><td>18</td></tr>
-        </table>
-        Найдите формулу, постройте график.
-      </div>
-      <button class="solution-btn" onclick="toggleSolution('ex5')">Показать решение</button>
-      <div id="ex5" class="solution">
-        <div class="solution-step">✔ Разность = 4. При x=1: 4·1=4, но y=6. Не хватает 2.</div>
-        <div class="solution-step">✔ Формула: <strong>y = 4x + 2</strong></div>
-        <div class="solution-step">✔ Точки: (1;6), (2;10), (3;14), (4;18) — лежат на одной прямой.</div>
-      </div>
-    </div>
-    <div class="problem-card">
-      <div class="problem-header"><span class="problem-number">№ 6</span> Геометрия + формула зависимости</div>
-      <div class="problem-text">Периметр прямоугольника P = 2(a + b). При a = 5 см найдите P для b = 2, 3, 4, 5 см. Постройте график P(b).</div>
-      <button class="solution-btn" onclick="toggleSolution('ex6')">Показать решение</button>
-      <div id="ex6" class="solution">
-        <div class="solution-step">✔ P = 2(5 + b) = 10 + 2b</div>
-        <div class="solution-step">✔ b=2 → P=14; b=3 → P=16; b=4 → P=18; b=5 → P=20</div>
-        <div class="solution-step">✔ График: точки (2;14), (3;16), (4;18), (5;20) — возрастающая прямая.</div>
-      </div>
-    </div>
-    <div class="problem-card">
-      <div class="problem-header"><span class="problem-number">№ 7</span> Текстовая задача на зависимость</div>
-      <div class="problem-text">За 1 час автобус проходит 60 км. Составьте формулу пути S(t). Найдите S за 2, 3, 4 часа. Постройте график.</div>
-      <button class="solution-btn" onclick="toggleSolution('ex7')">Показать решение</button>
-      <div id="ex7" class="solution">
-        <div class="solution-step">✔ Формула: S = 60t</div>
-        <div class="solution-step">✔ t=2 → S=120; t=3 → S=180; t=4 → S=240</div>
-        <div class="solution-step">✔ График: (2;120), (3;180), (4;240) — прямая через начало координат.</div>
-      </div>
-    </div>
-    <div class="problem-card">
-      <div class="problem-header"><span class="problem-number">№ 8</span> Комплексная задача: всё вместе</div>
-      <div class="problem-text">Магазин продаёт ручки по x манат и тетради по y манат. a) Составьте формулу стоимости C при покупке 3 ручек и 5 тетрадей. b) Найдите C при x=1,2, y=0,5. c) Решите неравенство C &lt; 10.</div>
-      <button class="solution-btn" onclick="toggleSolution('ex8')">Показать решение</button>
-      <div id="ex8" class="solution">
-        <div class="solution-step">✔ a) C = 3x + 5y</div>
-        <div class="solution-step">✔ b) C = 3·1,2 + 5·0,5 = 3,6 + 2,5 = <strong>6,1 ман.</strong></div>
-        <div class="solution-step">✔ c) 3x + 5y &lt; 10. При y=0,5: 3x + 2,5 &lt; 10 → 3x &lt; 7,5 → x &lt; 2,5</div>
-        <div class="solution-step">✅ Ручки должны стоить меньше 2,5 ман.</div>
-      </div>
-    </div>
-  </section>
-
-  <!-- TRAINER -->
-  <section id="trainer">
-    <div class="card">
-      <div class="card-title">🏋️ Бесконечный тренажёр — все темы раздела 5</div>
-      <p style="margin-bottom: 20px;">Задачи: выражения, уравнения, неравенства, машины, таблицы, формулы, графики, текстовые задачи.</p>
-      <div class="quiz-container">
-        <div id="trainer-question" style="font-size: 1.3rem; text-align: center; padding: 24px; background: var(--bg-glass); border-radius: 16px; margin-bottom: 20px;">
-          Нажмите «Новая задача»
-        </div>
-        <div style="display: flex; gap: 12px; margin-bottom: 20px;">
-          <input type="text" id="trainer-answer" placeholder="Введите ответ (число, формула y=..., или x;y)" style="flex: 1; padding: 14px; background: var(--bg-glass); border: 1px solid var(--border-glass); border-radius: 12px; color: white; font-size: 1rem;">
-          <button class="btn btn-primary" id="trainer-check-btn" onclick="checkTrainer()" disabled>Проверить</button>
-        </div>
-        <div id="trainer-feedback" style="min-height: 60px; font-weight: 600;"></div>
-        <div style="display: flex; gap: 12px; justify-content: center;">
-          <button class="btn btn-secondary" onclick="newTrainerProblem()">Новая задача</button>
-          <button class="btn btn-secondary" onclick="showTrainerHint()">Подсказка</button>
-        </div>
-        <div id="trainer-hint" style="display: none; margin-top: 16px; background: var(--accent-dim); border-radius: 12px; padding: 12px;"></div>
-        <div style="display: flex; justify-content: center; gap: 24px; margin-top: 24px;">
-          <div class="stat"><div class="stat-value" id="trainer-correct">0</div><div>Верно</div></div>
-          <div class="stat"><div class="stat-value" id="trainer-total">0</div><div>Всего</div></div>
-          <div class="stat"><div class="stat-value" id="trainer-streak">0</div><div>Серия</div></div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ASSESSMENT -->
-  <section id="assessment">
-    <div class="card">
-      <div class="card-title">🧪 Итоговая аттестация раздела 5 — 30 вопросов</div>
-      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 20px;">
-        <div class="card" style="text-align: center;">
-          <div style="font-size: 3rem;">🔍</div>
-          <h3>Диагностический тест</h3>
-          <p>30 вопросов с объяснениями по всем темам раздела.</p>
-          <button class="btn btn-primary" onclick="startDiagnostic()">Начать</button>
-        </div>
-        <div class="card" style="text-align: center;">
-          <div style="font-size: 3rem;">⏱️</div>
-          <h3>Скоростная викторина (10 мин)</h3>
-          <p>30 вопросов • Итоговый дашборд.</p>
-          <button class="btn btn-primary" onclick="startTimeAttack()">Старт</button>
-        </div>
-      </div>
-    </div>
-
-    <div id="diagnostic-ui" style="display: none;">
-      <div class="card"><div class="card-title">📋 Диагностика</div></div>
-      <div class="quiz-container">
-        <div class="quiz-progress">
-          <span>Вопрос <span id="diag-current">1</span> / 30</span>
-          <div class="progress-bar" style="flex: 1;"><div class="progress-fill" id="diag-progress" style="width: 0%;"></div></div>
-          <span id="diag-score">0</span> верно
-        </div>
-        <div id="diag-question" style="font-size: 1.2rem; margin-bottom: 16px; font-weight: 600;"></div>
-        <div id="diag-options"></div>
-        <div class="quiz-nav">
-          <button class="btn btn-secondary" onclick="prevDiagnostic()">← Назад</button>
-          <button class="btn btn-primary" id="diag-next" onclick="nextDiagnostic()" disabled>Далее →</button>
-        </div>
-        <div id="diag-explanation" style="display: none; margin-top: 20px; background: var(--accent-dim); border-radius: 12px; padding: 12px;"></div>
-      </div>
-    </div>
-
-    <div id="timeattack-ui" style="display: none;">
-      <div class="timer" id="ta-timer">10:00</div>
-      <div class="card"><div class="card-title">⚡ Викторина на время</div></div>
-      <div class="quiz-container">
-        <div class="quiz-progress">
-          <span>Вопрос <span id="ta-current">1</span> / 30</span>
-          <div class="progress-bar" style="flex: 1;"><div class="progress-fill" id="ta-progress" style="width: 0%;"></div></div>
-        </div>
-        <div id="ta-question" style="font-size: 1.2rem; margin-bottom: 16px; font-weight: 600;"></div>
-        <div id="ta-options"></div>
-        <div style="text-align: right; margin-top: 20px;">
-          <button class="btn btn-primary" id="ta-next" onclick="nextTimeAttack()" disabled>Ответить →</button>
-        </div>
-      </div>
-    </div>
-
-    <div id="results-ui" style="display: none;">
-      <div class="card results-container">
-        <div class="score-label" style="font-size: 1.2rem; color: var(--text-secondary); margin-bottom: 8px;">Результат</div>
-        <div class="score-circle" id="result-circle" style="--score: 0;">
-          <div class="score-value" id="result-percent">0%</div>
-        </div>
-        <div id="result-message" style="margin-bottom: 20px; font-size: 1.1rem;"></div>
-        <div style="display: flex; gap: 20px; justify-content: center; margin-bottom: 24px;">
-          <div><div id="result-correct" style="font-size: 1.8rem; font-weight: 700; color: var(--accent);">0</div><div>Верно</div></div>
-          <div><div id="result-wrong" style="font-size: 1.8rem; font-weight: 700; color: var(--error);">0</div><div>Ошибок</div></div>
-          <div><div id="result-time" style="font-size: 1.8rem; font-weight: 700;">—</div><div>Время</div></div>
-        </div>
-        <button class="btn btn-primary" onclick="resetAssessment()">Пройти ещё раз</button>
-      </div>
-    </div>
-  </section>
-
-  <script>
-    // ================= NAVIGATION =================
-    function showSection(id) {
-      document.querySelectorAll('section').forEach(s => s.classList.remove('active'));
-      document.getElementById(id).classList.add('active');
-      document.querySelectorAll('.nav-links a').forEach(a => a.classList.remove('active'));
-      document.querySelector('.nav-links a[data-section="' + id + '"]').classList.add('active');
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-    document.querySelectorAll('.nav-links a').forEach(a =>
-      a.addEventListener('click', (e) => { e.preventDefault(); showSection(a.dataset.section); })
-    );
-
-    function toggleSolution(id) {
-      const el = document.getElementById(id);
-      el.classList.toggle('active');
-      const btn = el.previousElementSibling;
-      btn.innerText = el.classList.contains('active') ? 'Скрыть решение' : 'Показать решение';
-    }
-
-    // ================= SLIDER =================
-    let currentSlide = 0;
-    const slides = document.querySelectorAll('#track-slides .widget-slide');
-    const totalSlides = slides.length;
-    document.getElementById('slide-total').innerText = totalSlides;
-    function renderSlide() {
-      slides.forEach((s, i) => s.classList.toggle('active', i === currentSlide));
-      document.getElementById('slide-num').innerText = currentSlide + 1;
-    }
-    function nextSlide() { if (currentSlide < totalSlides - 1) { currentSlide++; renderSlide(); } }
-    function prevSlide() { if (currentSlide > 0) { currentSlide--; renderSlide(); } }
-    renderSlide();
-
-    // ================= TRAINER =================
-    let trainerState = { correct: 0, total: 0, streak: 0, currentProblem: null };
-
-    function generateTrainerProblem() {
-      const types = ['expression', 'equation', 'inequality', 'machine', 'table_fill', 'find_formula', 'geometry', 'price', 'graph_point', 'text_problem'];
-      const type = types[Math.floor(Math.random() * types.length)];
-      let text, answer, hint;
-
-      switch(type) {
-        case 'expression': {
-          const a = Math.floor(Math.random() * 5) + 2;
-          const b = Math.floor(Math.random() * 4) + 1;
-          const x = Math.floor(Math.random() * 5) + 2;
-          text = 'Вычислите ' + a + 'x + ' + b + ' при x = ' + x + '.';
-          answer = a * x + b;
-          hint = 'Сначала ' + a + '·' + x + ', потом + ' + b + '.';
-          break;
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Урок 11 — Обобщение: Выражения, уравнения, неравенства, зависимости</title>
+    <style>
+      :root {
+        --bg-dark: #0f0f1a;
+        --bg-card: rgba(255, 255, 255, 0.05);
+        --bg-glass: rgba(255, 255, 255, 0.08);
+        --border-glass: rgba(255, 255, 255, 0.15);
+        --text-primary: #e8e8f0;
+        --text-secondary: #a0a0b8;
+        --accent: #00d4aa;
+        --accent-dim: rgba(0, 212, 170, 0.2);
+        --accent-warm: #ff6b6b;
+        --accent-warm-dim: rgba(255, 107, 107, 0.2);
+        --accent-blue: #4dabf7;
+        --accent-blue-dim: rgba(77, 171, 247, 0.2);
+        --success: #51cf66;
+        --error: #ff6b6b;
+        --warning: #fcc419;
+      }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      body {
+        font-family:
+          "Segoe UI",
+          system-ui,
+          -apple-system,
+          sans-serif;
+        background: var(--bg-dark);
+        color: var(--text-primary);
+        min-height: 100vh;
+        overflow-x: hidden;
+        line-height: 1.6;
+      }
+      .bg-animation {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: -1;
+        background:
+          radial-gradient(
+            ellipse at 20% 20%,
+            rgba(0, 212, 170, 0.08) 0%,
+            transparent 50%
+          ),
+          radial-gradient(
+            ellipse at 80% 80%,
+            rgba(77, 171, 247, 0.08) 0%,
+            transparent 50%
+          ),
+          radial-gradient(
+            ellipse at 50% 50%,
+            rgba(255, 107, 107, 0.05) 0%,
+            transparent 60%
+          );
+      }
+      .bg-animation::before {
+        content: "";
+        position: absolute;
+        width: 200%;
+        height: 200%;
+        top: -50%;
+        left: -50%;
+        background: repeating-linear-gradient(
+          0deg,
+          transparent,
+          transparent 40px,
+          rgba(255, 255, 255, 0.02) 40px,
+          rgba(255, 255, 255, 0.02) 41px
+        );
+        animation: bgMove 20s linear infinite;
+      }
+      @keyframes bgMove {
+        0% {
+          transform: translateY(0);
         }
-        case 'equation': {
-          const c = Math.floor(Math.random() * 5) + 2;
-          const res = Math.floor(Math.random() * 10) + 5;
-          const hasOffset = Math.random() > 0.5;
-          if (hasOffset) {
-            const off = Math.floor(Math.random() * 5) + 1;
-            text = 'Решите: ' + c + 'x + ' + off + ' = ' + (c * res + off) + '. Чему равен x?';
-            answer = res;
-            hint = 'Вычтите ' + off + ', потом разделите на ' + c + '.';
-          } else {
-            text = 'Решите: ' + c + 'x = ' + (c * res) + '. Чему равен x?';
-            answer = res;
-            hint = 'Разделите обе части на ' + c + '.';
+        100% {
+          transform: translateY(40px);
+        }
+      }
+
+      nav {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        background: rgba(15, 15, 26, 0.85);
+        backdrop-filter: blur(20px);
+        border-bottom: 1px solid var(--border-glass);
+        z-index: 1000;
+        padding: 0 20px;
+      }
+      .nav-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        height: 60px;
+      }
+      .logo {
+        font-size: 1.3rem;
+        font-weight: 700;
+        background: linear-gradient(135deg, var(--accent), var(--accent-blue));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+      .nav-links {
+        display: flex;
+        gap: 8px;
+        list-style: none;
+      }
+      .nav-links a {
+        color: var(--text-secondary);
+        text-decoration: none;
+        padding: 8px 16px;
+        border-radius: 8px;
+        transition: all 0.3s;
+        font-size: 0.9rem;
+        font-weight: 500;
+        cursor: pointer;
+        border: none;
+        background: transparent;
+      }
+      .nav-links a:hover,
+      .nav-links a.active {
+        color: var(--text-primary);
+        background: var(--bg-glass);
+      }
+      .nav-links a.active {
+        background: var(--accent-dim);
+        color: var(--accent);
+      }
+
+      section {
+        display: none;
+        opacity: 0;
+        padding: 78px 20px 32px;
+        max-width: 1000px;
+        margin: 0 auto;
+        transition: opacity 0.3s ease;
+      }
+      section.active {
+        display: block;
+        opacity: 1;
+        animation: fadeIn 0.5s ease;
+      }
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .card {
+        background: var(--bg-card);
+        backdrop-filter: blur(20px);
+        border: 1px solid var(--border-glass);
+        border-radius: 20px;
+        padding: 20px;
+        margin-bottom: 16px;
+        transition:
+          transform 0.3s,
+          box-shadow 0.3s;
+      }
+      .card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+      }
+      .card-title {
+        font-size: 1.5rem;
+        font-weight: 700;
+        margin-bottom: 16px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+      .card-title .icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.3rem;
+      }
+
+      .hero {
+        text-align: center;
+        padding: 140px 20px 80px;
+      }
+      .hero h1 {
+        font-size: 3rem;
+        font-weight: 800;
+        margin-bottom: 20px;
+        background: linear-gradient(
+          135deg,
+          var(--accent),
+          var(--accent-blue),
+          var(--accent-warm)
+        );
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        line-height: 1.2;
+      }
+      .hero p {
+        font-size: 1.2rem;
+        color: var(--text-secondary);
+        max-width: 600px;
+        margin: 0 auto 40px;
+      }
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 14px 32px;
+        border-radius: 12px;
+        border: none;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s;
+        text-decoration: none;
+      }
+      .btn-primary {
+        background: linear-gradient(135deg, var(--accent), var(--accent-blue));
+        color: #000;
+      }
+      .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 30px var(--accent-dim);
+      }
+      .btn-secondary {
+        background: var(--bg-glass);
+        color: var(--text-primary);
+        border: 1px solid var(--border-glass);
+      }
+      .btn-secondary:hover {
+        background: var(--bg-card);
+      }
+      .btn:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+        transform: none !important;
+      }
+
+      .generate-widget {
+        background: var(--bg-card);
+        border: 1px solid var(--border-glass);
+        border-radius: 20px;
+        padding: 14px;
+        width: 100%;
+      }
+      .widget-viewport {
+        width: 100%;
+      }
+      .widget-track {
+        width: 100%;
+      }
+      .widget-slide {
+        display: none;
+        padding: 12px 16px;
+        box-sizing: border-box;
+        animation: slideFade 0.3s ease;
+      }
+      .widget-slide.active {
+        display: block;
+      }
+      @keyframes slideFade {
+        from {
+          opacity: 0;
+          transform: translateY(6px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      .widget-slide h3 {
+        font-size: 1.3rem;
+        color: var(--accent);
+        margin-bottom: 16px;
+      }
+      .widget-slide p,
+      .widget-slide li {
+        color: var(--text-secondary);
+        line-height: 1.8;
+        margin-bottom: 12px;
+      }
+      .widget-slide .big-math {
+        font-size: 1.6rem;
+        text-align: center;
+        margin: 20px 0;
+        background: var(--bg-glass);
+        padding: 20px;
+        border-radius: 12px;
+        font-weight: 600;
+        color: var(--text-primary);
+      }
+      .widget-nav {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 16px;
+      }
+      .widget-progress {
+        text-align: center;
+        font-size: 0.9rem;
+        color: var(--text-secondary);
+        margin-bottom: 12px;
+      }
+
+      .overflow-x-auto {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+      }
+      .compare-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 16px 0;
+      }
+      .compare-table th,
+      .compare-table td {
+        border: 1px solid var(--border-glass);
+        padding: 14px;
+        text-align: center;
+        color: var(--text-secondary);
+      }
+      .compare-table th {
+        background: var(--bg-glass);
+        color: var(--text-primary);
+        font-weight: 600;
+      }
+      .compare-table tr:hover td {
+        background: rgba(255, 255, 255, 0.03);
+        color: var(--text-primary);
+      }
+      .compare-table td.accent {
+        color: var(--accent);
+        font-weight: 700;
+      }
+      .mini-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 12px 0;
+      }
+      .mini-table th,
+      .mini-table td {
+        border: 1px solid var(--border-glass);
+        padding: 10px;
+        text-align: center;
+      }
+      .mini-table th {
+        background: var(--bg-glass);
+      }
+
+      .sequence-component {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        position: relative;
+      }
+      .sequence-step {
+        background: var(--bg-card);
+        border: 1px solid var(--border-glass);
+        border-radius: 16px;
+        padding: 24px 24px 24px 72px;
+        position: relative;
+        transition: all 0.3s;
+      }
+      .sequence-step:hover {
+        border-color: var(--accent);
+        transform: translateX(4px);
+      }
+      .sequence-number {
+        position: absolute;
+        left: 20px;
+        top: 20px;
+        width: 40px;
+        height: 40px;
+        background: var(--accent);
+        color: #000;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 800;
+        font-size: 1.1rem;
+      }
+      .sequence-step h4 {
+        color: var(--text-primary);
+        margin-bottom: 8px;
+        font-size: 1.1rem;
+      }
+      .sequence-step p {
+        color: var(--text-secondary);
+        line-height: 1.7;
+      }
+      .sequence-connector {
+        position: absolute;
+        left: 39px;
+        top: 60px;
+        bottom: -30px;
+        width: 2px;
+        background: var(--accent-dim);
+        z-index: 0;
+      }
+      .sequence-step:last-child .sequence-connector {
+        display: none;
+      }
+
+      .formula-box {
+        background: var(--bg-glass);
+        border: 1px solid var(--border-glass);
+        border-radius: 12px;
+        padding: 20px;
+        margin: 16px 0;
+        text-align: center;
+        font-size: 1.2rem;
+      }
+      .tip-box {
+        background: var(--accent-blue-dim);
+        border-left: 4px solid var(--accent-blue);
+        padding: 16px 20px;
+        border-radius: 0 12px 12px 0;
+        margin: 16px 0;
+      }
+      .tip-box::before {
+        content: "💡 ";
+      }
+      .warning-box {
+        background: var(--accent-warm-dim);
+        border-left: 4px solid var(--accent-warm);
+        padding: 16px 20px;
+        border-radius: 0 12px 12px 0;
+        margin: 16px 0;
+      }
+      .warning-box::before {
+        content: "⚠️ ";
+      }
+      .highlight {
+        background: var(--accent-dim);
+        padding: 2px 6px;
+        border-radius: 4px;
+        color: var(--accent);
+        font-weight: 600;
+      }
+
+      .problem-card {
+        background: var(--bg-card);
+        border: 1px solid var(--border-glass);
+        border-radius: 16px;
+        padding: 24px;
+        margin-bottom: 20px;
+      }
+      .problem-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 16px;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+      .problem-number {
+        background: var(--accent-dim);
+        color: var(--accent);
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        font-weight: 600;
+      }
+      .problem-type {
+        color: var(--text-secondary);
+        font-size: 0.85rem;
+      }
+      .problem-text {
+        font-size: 1.1rem;
+        margin-bottom: 16px;
+        line-height: 1.8;
+      }
+      .solution-btn {
+        background: var(--accent-dim);
+        color: var(--accent);
+        border: 1px solid var(--accent);
+        padding: 10px 20px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: 600;
+        transition: all 0.3s;
+      }
+      .solution-btn:hover {
+        background: var(--accent);
+        color: #000;
+      }
+      .solution {
+        display: none;
+        margin-top: 20px;
+        padding: 20px;
+        background: rgba(0, 212, 170, 0.05);
+        border-left: 3px solid var(--accent);
+        border-radius: 0 12px 12px 0;
+      }
+      .solution.active {
+        display: block;
+        animation: slideDown 0.3s ease;
+      }
+      @keyframes slideDown {
+        from {
+          opacity: 0;
+          max-height: 0;
+        }
+        to {
+          opacity: 1;
+          max-height: 1000px;
+        }
+      }
+      .solution-step {
+        margin-bottom: 12px;
+        padding: 8px 0;
+        border-bottom: 1px solid var(--border-glass);
+      }
+      .solution-step:last-child {
+        border-bottom: none;
+      }
+      .step-num {
+        display: inline-block;
+        width: 24px;
+        height: 24px;
+        background: var(--accent);
+        color: #000;
+        border-radius: 50%;
+        text-align: center;
+        line-height: 24px;
+        font-size: 0.8rem;
+        font-weight: 700;
+        margin-right: 8px;
+      }
+
+      .quiz-container {
+        background: var(--bg-card);
+        border: 1px solid var(--border-glass);
+        border-radius: 20px;
+        padding: 32px;
+      }
+      .quiz-progress {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 24px;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+      .progress-bar {
+        flex: 1;
+        height: 8px;
+        background: var(--bg-glass);
+        border-radius: 4px;
+        margin: 0 16px;
+        overflow: hidden;
+        min-width: 100px;
+      }
+      .progress-fill {
+        height: 100%;
+        background: linear-gradient(90deg, var(--accent), var(--accent-blue));
+        border-radius: 4px;
+        transition: width 0.5s ease;
+        width: 0%;
+      }
+      .quiz-question {
+        font-size: 1.2rem;
+        margin-bottom: 24px;
+        padding: 20px;
+        background: var(--bg-glass);
+        border-radius: 12px;
+        border-left: 4px solid var(--accent);
+      }
+      .quiz-options {
+        display: grid;
+        gap: 12px;
+      }
+      .quiz-option {
+        background: var(--bg-glass);
+        border: 2px solid var(--border-glass);
+        border-radius: 12px;
+        padding: 16px 20px;
+        cursor: pointer;
+        transition: all 0.3s;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+      .quiz-option:hover {
+        border-color: var(--accent);
+        background: var(--accent-dim);
+      }
+      .quiz-option.correct {
+        border-color: var(--success);
+        background: rgba(81, 207, 102, 0.15);
+      }
+      .quiz-option.wrong {
+        border-color: var(--error);
+        background: rgba(255, 107, 107, 0.15);
+      }
+      .quiz-option.disabled {
+        pointer-events: none;
+        opacity: 0.7;
+      }
+      .option-letter {
+        width: 32px;
+        height: 32px;
+        border-radius: 8px;
+        background: var(--bg-card);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        flex-shrink: 0;
+      }
+      .quiz-nav {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 24px;
+      }
+
+      .stat {
+        background: var(--bg-glass);
+        padding: 12px 24px;
+        border-radius: 12px;
+        text-align: center;
+        min-width: 100px;
+        border: 1px solid var(--border-glass);
+      }
+      .stat-value {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--accent);
+      }
+      .stat-label {
+        font-size: 0.85rem;
+        color: var(--text-secondary);
+      }
+
+      .timer {
+        position: fixed;
+        top: 80px;
+        right: 20px;
+        background: var(--bg-card);
+        backdrop-filter: blur(20px);
+        border: 1px solid var(--border-glass);
+        border-radius: 16px;
+        padding: 16px 24px;
+        font-size: 1.3rem;
+        font-weight: 700;
+        font-variant-numeric: tabular-nums;
+        z-index: 999;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+      }
+      .timer.warning {
+        border-color: var(--warning);
+        color: var(--warning);
+        animation: pulse 1s infinite;
+      }
+      .timer.danger {
+        border-color: var(--error);
+        color: var(--error);
+        animation: pulse 0.5s infinite;
+      }
+      @keyframes pulse {
+        0%,
+        100% {
+          transform: scale(1);
+        }
+        50% {
+          transform: scale(1.05);
+        }
+      }
+
+      .results-container {
+        text-align: center;
+        padding: 40px;
+      }
+      .score-circle {
+        width: 200px;
+        height: 200px;
+        border-radius: 50%;
+        background: conic-gradient(
+          var(--accent) calc(var(--score) * 3.6deg),
+          var(--bg-glass) 0
+        );
+        margin: 0 auto 32px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+      }
+      .score-circle::before {
+        content: "";
+        position: absolute;
+        width: 170px;
+        height: 170px;
+        background: var(--bg-dark);
+        border-radius: 50%;
+      }
+      .score-value {
+        position: relative;
+        font-size: 3rem;
+        font-weight: 800;
+        color: var(--accent);
+      }
+      .score-label {
+        font-size: 1.2rem;
+        color: var(--text-secondary);
+        margin-bottom: 8px;
+      }
+      .score-message {
+        font-size: 1.5rem;
+        font-weight: 700;
+        margin-bottom: 32px;
+      }
+      .results-breakdown {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 16px;
+        max-width: 600px;
+        margin: 0 auto 32px;
+      }
+      .breakdown-item {
+        background: var(--bg-glass);
+        padding: 16px;
+        border-radius: 12px;
+      }
+      .breakdown-value {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--accent);
+      }
+      .breakdown-label {
+        font-size: 0.85rem;
+        color: var(--text-secondary);
+      }
+
+      .hidden {
+        display: none !important;
+      }
+
+      @media (max-width: 768px) {
+        .hero h1 {
+          font-size: 2rem;
+        }
+        .nav-links {
+          display: none;
+        }
+        .timer {
+          top: 70px;
+          right: 10px;
+          font-size: 1rem;
+          padding: 10px 16px;
+        }
+        .card {
+          padding: 14px;
+        }
+        section {
+          padding: 70px 12px 24px;
+        }
+      }
+    </style>
+    <base target="_blank" />
+  </head>
+  <body>
+    <div class="bg-animation"></div>
+
+    <nav>
+      <div class="nav-container">
+        <a href="index.html" target="_self" class="logo" style="text-decoration: none">📐 Урок 11</a>
+        <ul class="nav-links">
+          <li><a href="#" class="active" data-section="home">Главная</a></li>
+          <li><a href="#" data-section="theory">Теория</a></li>
+          <li><a href="#" data-section="algorithm">Алгоритм</a></li>
+          <li><a href="#" data-section="examples">Примеры</a></li>
+          <li><a href="#" data-section="trainer">Тренажёр</a></li>
+          <li><a href="#" data-section="assessment">Аттестация</a></li>
+        </ul>
+      </div>
+    </nav>
+
+    <!-- ================= HOME ================= -->
+    <section id="home" class="active">
+      <div class="hero">
+        <h1>Обобщение: выражения, уравнения, неравенства, зависимости</h1>
+        <p>
+          Урок 11. Итоговый урок раздела 5. Все темы в одной системе: от
+          переменной до графика. 30 вопросов для полной проверки.
+        </p>
+        <div
+          style="
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            flex-wrap: wrap;
+          "
+        >
+          <button class="btn btn-primary" onclick="showSection('theory')">
+            Начать обучение
+          </button>
+          <button class="btn btn-secondary" onclick="showSection('assessment')">
+            Проверить знания
+          </button>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">
+          <span class="icon" style="background: var(--accent-dim)">🎯</span>Что
+          вы изучите
+        </div>
+        <div
+          style="
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 20px;
+          "
+        >
+          <div class="card" style="padding: 20px">
+            <h3 style="color: var(--accent); margin-bottom: 8px">Выражения</h3>
+            <p style="color: var(--text-secondary)">
+              Сумма ↔ произведение. Подстановка значений. Упрощение выражений.
+            </p>
+          </div>
+          <div class="card" style="padding: 20px">
+            <h3 style="color: var(--accent-blue); margin-bottom: 8px">
+              Уравнения и неравенства
+            </h3>
+            <p style="color: var(--text-secondary)">
+              Составление из текста, решение линейных, знаки сравнения и
+              числовая ось.
+            </p>
+          </div>
+          <div class="card" style="padding: 20px">
+            <h3 style="color: var(--accent-warm); margin-bottom: 8px">
+              Зависимости и машины
+            </h3>
+            <p style="color: var(--text-secondary)">
+              x и y, формулы, таблицы. Вычислительные машины «вход → выход».
+            </p>
+          </div>
+          <div class="card" style="padding: 20px">
+            <h3 style="color: var(--warning); margin-bottom: 8px">Графики</h3>
+            <p style="color: var(--text-secondary)">
+              Координатная плоскость, точки (x;y), построение линейных
+              зависимостей.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= CHAPTER 1: THEORY ================= -->
+    <section id="theory">
+      <div class="card">
+        <div class="card-title">
+          <span class="icon" style="background: var(--accent-dim)">📖</span
+          >Глава 1. Визуальная теория
+        </div>
+        <p style="color: var(--text-secondary); margin-bottom: 20px">
+          Листайте слайды. Каждый слайд — обобщение ключевой темы раздела 5.
+        </p>
+        <div class="generate-widget">
+          <div class="widget-progress">
+            Слайд <span id="slide-num">1</span> /
+            <span id="slide-total">12</span>
+          </div>
+          <div class="widget-viewport">
+            <div class="widget-track" id="track-slides">
+              <!-- Slides generated from slides[] at DOMContentLoaded -->
+            </div>
+          </div>
+          <div class="widget-nav">
+            <button type="button" class="btn btn-secondary" onclick="prevSlide()">
+              ← Назад
+            </button>
+            <button type="button" class="btn btn-primary" onclick="nextSlide()">
+              Вперёд →
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= CHAPTER 2: ALGORITHM ================= -->
+    <section id="algorithm">
+      <div class="card">
+        <div class="card-title">
+          <span class="icon" style="background: var(--accent-blue-dim)">🪜</span
+          >Глава 2. Пошаговые алгоритмы
+        </div>
+        <p style="color: var(--text-secondary); margin-bottom: 20px">
+          Универсальный алгоритм решения любой задачи раздела 5.
+        </p>
+        <div class="sequence-component">
+          <div class="sequence-step">
+            <div class="sequence-number">1</div>
+            <div class="sequence-connector"></div>
+            <h4>Определи, что дано</h4>
+            <p>
+              Переменные? Уравнение? Неравенство? Зависимость? Машина? Таблица?
+              График? Текстовая задача?
+            </p>
+          </div>
+          <div class="sequence-step">
+            <div class="sequence-number">2</div>
+            <div class="sequence-connector"></div>
+            <h4>Переведи в математический язык</h4>
+            <p>
+              «Сумма» → +, «произведение» → ×, «разность» → −, «частное» → :.
+              Составь формулу или уравнение.
+            </p>
+          </div>
+          <div class="sequence-step">
+            <div class="sequence-number">3</div>
+            <div class="sequence-connector"></div>
+            <h4>Упрости и реши</h4>
+            <p>
+              Собери подобные слагаемые. Для уравнений — изолируй переменную
+              обратным действием. Для неравенств — сохрани знак.
+            </p>
+          </div>
+          <div class="sequence-step">
+            <div class="sequence-number">4</div>
+            <h4>Проверь и оформи</h4>
+            <p>
+              Подставь ответ обратно. Убедись, что таблица и график совпадают с
+              формулой. Запиши ответ с единицами измерения.
+            </p>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">
+          <span class="icon" style="background: var(--accent-dim)">📊</span
+          >Сравнительная таблица тем
+        </div>
+        <div class="overflow-x-auto">
+          <table class="compare-table">
+            <tr>
+              <th>Тема</th>
+              <th>Что изучаем</th>
+              <th>Ключевой навык</th>
+              <th>Пример</th>
+            </tr>
+            <tr>
+              <td>Выражения</td>
+              <td>Переменные, подстановка</td>
+              <td>Преобразование суммы в произведение</td>
+              <td class="accent">3a + 2a = 5a</td>
+            </tr>
+            <tr>
+              <td>Уравнения</td>
+              <td>Равенства с переменной</td>
+              <td>Изоляция переменной</td>
+              <td class="accent">2x + 3 = 11 → x=4</td>
+            </tr>
+            <tr>
+              <td>Неравенства</td>
+              <td>Сравнения с переменной</td>
+              <td>Решение и числовая ось</td>
+              <td class="accent">x + 2 &lt; 8 → x&lt;6</td>
+            </tr>
+            <tr>
+              <td>Зависимости</td>
+              <td>x и y, формулы</td>
+              <td>Составление формулы</td>
+              <td class="accent">y = 2x + 1</td>
+            </tr>
+            <tr>
+              <td>Машины</td>
+              <td>Алгоритмы преобразования</td>
+              <td>Перевод схемы в формулу</td>
+              <td class="accent">x→×3→+2→y</td>
+            </tr>
+            <tr>
+              <td>Графики</td>
+              <td>Координатная плоскость</td>
+              <td>Построение по точкам</td>
+              <td class="accent">(0;2), (1;3), (2;4)</td>
+            </tr>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= CHAPTER 3: WORKED EXAMPLES ================= -->
+    <section id="examples">
+      <div class="card">
+        <div class="card-title">
+          <span class="icon" style="background: var(--accent-dim)">📝</span
+          >Глава 3. Разбор задач
+        </div>
+        <p style="color: var(--text-secondary); margin-bottom: 24px">
+          Восемь комплексных задач: от выражения к уравнению, графику и
+          текстовым задачам.
+        </p>
+      </div>
+      <div id="examples-list">
+        <!-- problem-card list generated from examples[] at DOMContentLoaded -->
+      </div>
+    </section>
+
+    <!-- ================= CHAPTER 4: INFINITE TRAINER ================= -->
+    <section id="trainer">
+      <div class="card">
+        <div class="card-title">
+          <span class="icon" style="background: var(--accent-dim)">🏋️</span
+          >Глава 4. Бесконечный тренажёр
+        </div>
+        <p style="color: var(--text-secondary); margin-bottom: 24px">
+          Генератор случайных задач: выражения, уравнения, неравенства, машины,
+          таблицы, формулы, графики, текстовые задачи.
+        </p>
+        <div class="quiz-container" style="margin-bottom: 20px">
+          <div
+            id="trainer-question"
+            style="
+              font-size: 1.4rem;
+              text-align: center;
+              margin-bottom: 24px;
+              padding: 24px;
+              background: var(--bg-glass);
+              border-radius: 12px;
+            "
+          >
+            Нажмите «Новая задача» для начала
+          </div>
+          <div style="display: flex; gap: 12px; margin-bottom: 20px">
+            <input
+              type="text"
+              id="trainer-answer"
+              placeholder="Введите ответ (число, формула y=..., или x;y)"
+              style="
+                flex: 1;
+                padding: 14px 16px;
+                background: var(--bg-glass);
+                border: 2px solid var(--border-glass);
+                border-radius: 12px;
+                color: var(--text-primary);
+                font-size: 1rem;
+                outline: none;
+              "
+            />
+            <button
+              class="btn btn-primary"
+              onclick="checkTrainer()"
+              id="trainer-check-btn"
+              disabled
+            >
+              Проверить
+            </button>
+          </div>
+          <div
+            id="trainer-feedback"
+            style="min-height: 60px; margin-bottom: 16px"
+          ></div>
+          <div style="display: flex; gap: 12px; justify-content: center">
+            <button class="btn btn-secondary" onclick="newTrainerProblem()">
+              Новая задача
+            </button>
+            <button class="btn btn-secondary" onclick="showTrainerHint()">
+              Подсказка
+            </button>
+          </div>
+          <div
+            id="trainer-hint"
+            style="
+              display: none;
+              margin-top: 20px;
+              padding: 16px;
+              background: var(--accent-blue-dim);
+              border-radius: 12px;
+              border-left: 4px solid var(--accent-blue);
+            "
+          ></div>
+        </div>
+        <div
+          style="
+            display: flex;
+            justify-content: center;
+            gap: 24px;
+            flex-wrap: wrap;
+          "
+        >
+          <div class="stat">
+            <div class="stat-value" id="trainer-correct">0</div>
+            <div class="stat-label">Верно</div>
+          </div>
+          <div class="stat">
+            <div class="stat-value" id="trainer-total">0</div>
+            <div class="stat-label">Всего</div>
+          </div>
+          <div class="stat">
+            <div class="stat-value" id="trainer-streak">0</div>
+            <div class="stat-label">Серия</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= CHAPTER 5: ASSESSMENT ================= -->
+    <section id="assessment">
+      <div class="card">
+        <div class="card-title">
+          <span class="icon" style="background: var(--accent-blue-dim)">🧪</span
+          >Глава 5. Аттестация — 30 вопросов
+        </div>
+        <p style="color: var(--text-secondary); margin-bottom: 24px">
+          Два режима: диагностический тест с объяснениями и скоростная викторина
+          на 10 минут.
+        </p>
+        <div
+          style="
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+          "
+        >
+          <div class="card" style="padding: 24px; text-align: center">
+            <div style="font-size: 3rem; margin-bottom: 12px">🔍</div>
+            <h3 style="margin-bottom: 8px">Диагностический тест</h3>
+            <p style="color: var(--text-secondary); margin-bottom: 20px">
+              30 вопросов с мгновенной обратной связью и педагогическими
+              объяснениями.
+            </p>
+            <button class="btn btn-primary" onclick="startDiagnostic()">
+              Начать тест
+            </button>
+          </div>
+          <div class="card" style="padding: 24px; text-align: center">
+            <div style="font-size: 3rem; margin-bottom: 12px">⏱️</div>
+            <h3 style="margin-bottom: 8px">Скоростная викторина</h3>
+            <p style="color: var(--text-secondary); margin-bottom: 20px">
+              30 вопросов • 10 минут • Итоговый дашборд.
+            </p>
+            <button class="btn btn-primary" onclick="startTimeAttack()">
+              Начать викторину
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Diagnostic UI -->
+      <div id="diagnostic-ui" style="display: none">
+        <div class="card">
+          <div class="card-title">
+            <span class="icon" style="background: var(--accent-blue-dim)"
+              >🔍</span
+            >Диагностический тест (30 вопросов)
+          </div>
+        </div>
+        <div class="quiz-container">
+          <div class="quiz-progress">
+            <span
+              >Вопрос <span id="diag-current">1</span> /
+              <span id="diag-total">30</span></span
+            >
+            <div class="progress-bar">
+              <div class="progress-fill" id="diag-progress"></div>
+            </div>
+            <span id="diag-score">0 правильных</span>
+          </div>
+          <div class="quiz-question" id="diag-question"></div>
+          <div class="quiz-options" id="diag-options"></div>
+          <div class="quiz-nav">
+            <button
+              class="btn btn-secondary"
+              onclick="prevDiagnostic()"
+              id="diag-prev"
+              disabled
+            >
+              ← Назад
+            </button>
+            <button
+              class="btn btn-primary"
+              onclick="nextDiagnostic()"
+              id="diag-next"
+              disabled
+            >
+              Далее →
+            </button>
+          </div>
+          <div
+            id="diag-explanation"
+            style="
+              display: none;
+              margin-top: 20px;
+              padding: 16px;
+              background: var(--accent-dim);
+              border-radius: 12px;
+              border-left: 4px solid var(--accent);
+            "
+          ></div>
+        </div>
+      </div>
+
+      <!-- Time Attack UI -->
+      <div id="timeattack-ui" style="display: none">
+        <div class="timer" id="ta-timer">10:00</div>
+        <div class="card">
+          <div class="card-title">
+            <span class="icon" style="background: var(--accent-warm-dim)"
+              >⏱️</span
+            >Скоростная викторина (30 вопросов)
+          </div>
+        </div>
+        <div class="quiz-container">
+          <div class="quiz-progress">
+            <span>Вопрос <span id="ta-current">1</span> / 30</span>
+            <div class="progress-bar">
+              <div class="progress-fill" id="ta-progress"></div>
+            </div>
+          </div>
+          <div class="quiz-question" id="ta-question"></div>
+          <div class="quiz-options" id="ta-options"></div>
+          <div
+            style="display: flex; justify-content: flex-end; margin-top: 24px"
+          >
+            <button
+              class="btn btn-primary"
+              onclick="nextTimeAttack()"
+              id="ta-next"
+            >
+              Ответить →
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Results Dashboard -->
+      <div id="results-ui" style="display: none">
+        <div class="card">
+          <div class="results-container">
+            <div class="score-label">Ваш результат</div>
+            <div class="score-circle" id="result-circle">
+              <div class="score-value" id="result-percent">0%</div>
+            </div>
+            <div class="score-message" id="result-message"></div>
+            <div class="results-breakdown">
+              <div class="breakdown-item">
+                <div class="breakdown-value" id="result-correct">0</div>
+                <div class="breakdown-label">Верно</div>
+              </div>
+              <div class="breakdown-item">
+                <div class="breakdown-value" id="result-wrong">0</div>
+                <div class="breakdown-label">Ошибок</div>
+              </div>
+              <div class="breakdown-item">
+                <div class="breakdown-value" id="result-time">0:00</div>
+                <div class="breakdown-label">Время</div>
+              </div>
+              <div class="breakdown-item">
+                <div class="breakdown-value" id="result-mastery">—</div>
+                <div class="breakdown-label">Уровень</div>
+              </div>
+            </div>
+            <div
+              style="
+                display: flex;
+                gap: 16px;
+                justify-content: center;
+                flex-wrap: wrap;
+              "
+            >
+              <button class="btn btn-primary" onclick="resetAssessment()">
+                Пройти ещё раз
+              </button>
+              <button class="btn btn-secondary" onclick="showSection('theory')">
+                Вернуться к теории
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <script>
+      // ================= STATE =================
+      const AppState = {
+        currentSection: "home",
+        slide: 0,
+        trainer: { correct: 0, total: 0, streak: 0, current: null },
+        diagnostic: { current: 0, score: 0, answers: [] },
+        timeAttack: {
+          current: 0,
+          score: 0,
+          timer: null,
+          timeLeft: 600,
+          startTime: 0,
+          answers: [],
+        },
+        mode: null,
+      };
+
+      // ================= CONTENT DATA =================
+      const slides = [
+        {
+          title: "🗺️ Структура раздела 5",
+          content:
+            '<p>Раздел объединяет пять связанных тем в одну систему. Всё начинается с переменной и заканчивается графиком.</p>' +
+            '<div class="formula-box">Переменная → Выражение → Уравнение/Неравенство → Зависимость → График</div>' +
+            '<div class="tip-box">Каждая следующая тема опирается на предыдущую. Нельзя понять график, не зная переменную.</div>',
+        },
+        {
+          title: "🔢 Выражения с переменной",
+          content:
+            '<p>Переменная заменяет число. Сумму одинаковых слагаемых записываем как произведение.</p>' +
+            '<div class="formula-box">5·a = a + a + a + a + a<br>x + x + x = 3x<br>Подстановка: при a=4 → 5·4 = 20</div>' +
+            '<div class="tip-box">Порядок действий: скобки → умножение/деление → сложение/вычитание.</div>',
+        },
+        {
+          title: "⚖️ Уравнения и свойства равенств",
+          content:
+            '<p>Уравнение — равенство с переменной. Решаем с помощью обратных действий.</p>' +
+            '<div class="formula-box">3x + 2 = 8<br>3x = 8 − 2 → 3x = 6 → x = 2</div>' +
+            '<div class="tip-box">Свойства: a=b ↔ a+c=b+c; a=b ↔ a·c=b·c (c≠0). Можно переносить с изменением знака.</div>',
+        },
+        {
+          title: "📐 Неравенства",
+          content:
+            '<p>Неравенство — сравнение двух выражений. Знаки: &gt;, &lt;, ≥, ≤.</p>' +
+            '<div class="formula-box">x + 3 &lt; 9 → x &lt; 6<br>2y ≥ 10 → y ≥ 5<br>5 − x &gt; 2 → x &lt; 3</div>' +
+            '<div class="tip-box">На числовой оси: &gt; и &lt; — выколотая точка, ≥ и ≤ — закрашенная. Стрелка вправо — больше, влево — меньше.</div>',
+        },
+        {
+          title: "🔗 Зависимость между переменными",
+          content:
+            '<p>Если от изменения x меняется y — это зависимость. x — независимая, y — зависимая переменная.</p>' +
+            '<div class="formula-box">y = x + 4<br>x=0 → y=4; x=1 → y=5; x=2 → y=6</div>' +
+            '<div class="tip-box">Зависимость можно задать формулой, таблицей или графиком.</div>',
+        },
+        {
+          title: "⚙️ Вычислительные машины",
+          content:
+            '<p>Машина преобразует вход x в выход y по алгоритму.</p>' +
+            '<div class="formula-box">x → +3 → y: формула y = x + 3<br>x → ×2 → −1 → y: формула y = 2x − 1<br>x=5 → y = 2·5 − 1 = 9</div>',
+        },
+        {
+          title: "📋 Таблицы зависимостей",
+          content:
+            '<p>Таблица показывает соответствие x → y. Помогает найти формулу и построить график.</p>' +
+            '<div class="formula-box">y = 2x + 1' +
+            '<table class="mini-table"><tr><th>x</th><th>0</th><th>1</th><th>2</th><th>3</th><th>4</th></tr>' +
+            '<tr><td>y</td><td>1</td><td>3</td><td>5</td><td>7</td><td>9</td></tr></table></div>',
+        },
+        {
+          title: "📈 Координатная плоскость и графики",
+          content:
+            '<p>Горизонтальная ось — x (абсцисса), вертикальная — y (ордината). Точка (x;y).</p>' +
+            '<div class="formula-box">y = x + 2: точки (0;2), (1;3), (2;4), (3;5)<br>Нанесите → соедините → получите прямую</div>' +
+            '<div class="tip-box">Сначала вправо/влево по x, потом вверх/вниз по y.</div>',
+        },
+        {
+          title: "📐 Формулы из геометрии и жизни",
+          content:
+            '<p>Формулы — это тоже зависимости между величинами.</p>' +
+            '<div class="formula-box">P = 4a (периметр квадрата)<br>S = a·b (площадь прямоугольника)<br>S = v·t (путь = скорость × время)<br>y = k·x (цена = количество × цена за штуку)</div>',
+        },
+        {
+          title: "🔍 Нахождение формулы по таблице",
+          content:
+            '<p>Смотрим на разность между соседними y при росте x на 1.</p>' +
+            '<div class="formula-box">x: 1, 2, 3, 4 → y: 5, 8, 11, 14<br>Разность = 3. При x=1 → 3·1=3, но y=5. Не хватает 2.<br>Формула: <strong>y = 3x + 2</strong></div>' +
+            '<div class="tip-box">Проверьте: 3·1+2=5 ✓, 3·2+2=8 ✓, 3·3+2=11 ✓</div>',
+        },
+        {
+          title: "🔄 Обратные зависимости",
+          content:
+            '<p>Иногда y уменьшается при росте x. Коэффициент при x отрицательный или формула вычитания.</p>' +
+            '<div class="formula-box">y = 12 − x: при x=2 → y=10; x=5 → y=7<br>y = 20 − 3x: при x=1 → y=17; x=2 → y=14</div>' +
+            '<div class="tip-box">График убывающей зависимости идёт вниз при движении вправо.</div>',
+        },
+        {
+          title: "🎯 Система знаний",
+          content:
+            '<p>Все темы связаны. Переменная входит в выражение, выражение — в уравнение, уравнение — в формулу зависимости, формула — в таблицу и график.</p>' +
+            '<div class="formula-box">a + a + a = 3a → 3a + 2 = 14 → a = 4<br>y = 3x + 2 → таблица → график<br>P = 4a → при a=5 → P=20</div>' +
+            '<div class="tip-box">Умение переводить задачу из одной формы в другую — ключевой навык раздела 5.</div>',
+        },
+      ];
+
+      const examples = [
+        {
+          title: "От выражения к уравнению",
+          task: "Сумма пяти одинаковых чисел равна 35. Составьте уравнение и найдите число.",
+          sol:
+            '<div class="solution-step"><span class="step-num">1</span>Пусть число = x. Пять одинаковых → 5x.</div>' +
+            '<div class="solution-step"><span class="step-num">2</span>Уравнение: 5x = 35</div>' +
+            '<div class="solution-step"><span class="step-num">3</span>x = 35 : 5 = <strong>7</strong></div>' +
+            '<div class="solution-step" style="color: var(--accent); font-weight: 700"><span class="step-num">✓</span>Проверка: 5·7 = 35 ✓</div>',
+        },
+        {
+          title: "Уравнение из текста",
+          task: "Произведение числа и 3 равно сумме 15 и 6. Найдите число.",
+          sol:
+            '<div class="solution-step"><span class="step-num">1</span>«Произведение числа и 3» → 3x</div>' +
+            '<div class="solution-step"><span class="step-num">2</span>«Сумма 15 и 6» → 15 + 6 = 21</div>' +
+            '<div class="solution-step" style="color: var(--accent); font-weight: 700"><span class="step-num">✓</span>Уравнение: 3x = 21 → x = <strong>7</strong></div>',
+        },
+        {
+          title: "Неравенство и числовая ось",
+          task: "Решите неравенство 2x + 4 ≤ 14. Изобразите решение на числовой оси.",
+          sol:
+            '<div class="solution-step"><span class="step-num">1</span>2x ≤ 14 − 4 → 2x ≤ 10</div>' +
+            '<div class="solution-step"><span class="step-num">2</span>x ≤ 5</div>' +
+            '<div class="solution-step"><span class="step-num">3</span>На числовой оси: закрашенная точка на 5, стрелка влево.</div>' +
+            '<div class="solution-step" style="color: var(--accent); font-weight: 700"><span class="step-num">✓</span>Подходят: 5, 4, 3, 2, 1, 0, −1…</div>',
+        },
+        {
+          title: "Машина → формула → таблица",
+          task: "Машина: x → ×3 → −2 → y. Составьте формулу, заполните таблицу для x = 1, 2, 3, 4, 5.",
+          sol:
+            '<div class="solution-step"><span class="step-num">1</span>Формула: y = 3x − 2</div>' +
+            '<div class="solution-step"><span class="step-num">2</span>x=1 → y=1; x=2 → y=4; x=3 → y=7; x=4 → y=10; x=5 → y=13</div>' +
+            '<div class="solution-step" style="color: var(--accent); font-weight: 700"><span class="step-num">✓</span>Таблица: 1, 4, 7, 10, 13 (разность = 3)</div>',
+        },
+        {
+          title: "Формула по таблице → график",
+          task:
+            '<table class="mini-table"><tr><th>x</th><th>1</th><th>2</th><th>3</th><th>4</th></tr>' +
+            '<tr><td>y</td><td>6</td><td>10</td><td>14</td><td>18</td></tr></table>Найдите формулу, постройте график.',
+          sol:
+            '<div class="solution-step"><span class="step-num">1</span>Разность = 4. При x=1: 4·1=4, но y=6. Не хватает 2.</div>' +
+            '<div class="solution-step"><span class="step-num">2</span>Формула: <strong>y = 4x + 2</strong></div>' +
+            '<div class="solution-step" style="color: var(--accent); font-weight: 700"><span class="step-num">✓</span>Точки: (1;6), (2;10), (3;14), (4;18) — лежат на одной прямой.</div>',
+        },
+        {
+          title: "Геометрия + формула зависимости",
+          task: "Периметр прямоугольника P = 2(a + b). При a = 5 см найдите P для b = 2, 3, 4, 5 см. Постройте график P(b).",
+          sol:
+            '<div class="solution-step"><span class="step-num">1</span>P = 2(5 + b) = 10 + 2b</div>' +
+            '<div class="solution-step"><span class="step-num">2</span>b=2 → P=14; b=3 → P=16; b=4 → P=18; b=5 → P=20</div>' +
+            '<div class="solution-step" style="color: var(--accent); font-weight: 700"><span class="step-num">✓</span>График: точки (2;14), (3;16), (4;18), (5;20) — возрастающая прямая.</div>',
+        },
+        {
+          title: "Текстовая задача на зависимость",
+          task: "За 1 час автобус проходит 60 км. Составьте формулу пути S(t). Найдите S за 2, 3, 4 часа. Постройте график.",
+          sol:
+            '<div class="solution-step"><span class="step-num">1</span>Формула: S = 60t</div>' +
+            '<div class="solution-step"><span class="step-num">2</span>t=2 → S=120; t=3 → S=180; t=4 → S=240</div>' +
+            '<div class="solution-step" style="color: var(--accent); font-weight: 700"><span class="step-num">✓</span>График: (2;120), (3;180), (4;240) — прямая через начало координат.</div>',
+        },
+        {
+          title: "Комплексная задача: всё вместе",
+          task: "Магазин продаёт ручки по x манат и тетради по y манат. а) Составьте формулу стоимости C при покупке 3 ручек и 5 тетрадей. б) Найдите C при x=1,2, y=0,5. в) Решите неравенство C &lt; 10.",
+          sol:
+            '<div class="solution-step"><span class="step-num">1</span>а) C = 3x + 5y</div>' +
+            '<div class="solution-step"><span class="step-num">2</span>б) C = 3·1,2 + 5·0,5 = 3,6 + 2,5 = <strong>6,1 ман.</strong></div>' +
+            '<div class="solution-step"><span class="step-num">3</span>в) 3x + 5y &lt; 10. При y=0,5: 3x + 2,5 &lt; 10 → 3x &lt; 7,5 → x &lt; 2,5</div>' +
+            '<div class="solution-step" style="color: var(--accent); font-weight: 700"><span class="step-num">✓</span>Ручки должны стоить меньше 2,5 ман.</div>',
+        },
+      ];
+
+      const questions = [
+        { q: "Как записать a + a + a + a в виде произведения?", o: ["4 + a", "4a", "a⁴", "4 / a"], a: 1, expl: "4 одинаковых слагаемых = 4·a" },
+        { q: "Чему равно 7·b при b = 3?", o: ["10", "21", "73", "4"], a: 1, expl: "7·3 = 21" },
+        { q: "Вычислите 2x + 5 при x = 4:", o: ["13", "8", "10", "18"], a: 0, expl: "2·4 + 5 = 8 + 5 = 13" },
+        { q: "Запишите 6 + 6 + 6 в виде произведения:", o: ["6³", "3·6", "6 + 3", "18"], a: 1, expl: "3·6" },
+        { q: "Чему равно 3m − n при m = 5, n = 2?", o: ["13", "15", "7", "17"], a: 0, expl: "3·5 − 2 = 15 − 2 = 13" },
+        { q: "Решите: 5x = 35", o: ["x = 5", "x = 7", "x = 30", "x = 175"], a: 1, expl: "35 : 5 = 7" },
+        { q: "Решите: 2x + 3 = 13", o: ["x = 5", "x = 8", "x = 6", "x = 10"], a: 0, expl: "2x = 10 → x = 5" },
+        { q: "Решите: x : 4 = 6", o: ["x = 1,5", "x = 10", "x = 24", "x = 2"], a: 2, expl: "x = 4·6 = 24" },
+        { q: "Решите: 3x − 2 = 16", o: ["x = 4", "x = 6", "x = 5", "x = 14"], a: 1, expl: "3x = 18 → x = 6" },
+        { q: "Решите: 4(x + 2) = 24", o: ["x = 4", "x = 6", "x = 8", "x = 10"], a: 0, expl: "x + 2 = 6 → x = 4" },
+        { q: "Решите: 7x = 0", o: ["x = 7", "x = 0", "x = 1", "x = −7"], a: 1, expl: "7·0 = 0" },
+        { q: "Решите: x + 5 = 5", o: ["x = 10", "x = 0", "x = 5", "x = 1"], a: 1, expl: "x = 5 − 5 = 0" },
+        { q: "Решите: x + 3 < 10", o: ["x < 7", "x > 7", "x < 13", "x > 13"], a: 0, expl: "x < 10 − 3 = 7" },
+        { q: "Решите: 2y ≥ 12", o: ["y ≥ 6", "y ≤ 6", "y > 6", "y < 6"], a: 0, expl: "y ≥ 12 : 2 = 6" },
+        { q: "Какой знак нужен: 5 ___ 3?", o: [">", "<", "=", "≠"], a: 0, expl: "5 больше 3" },
+        { q: "Запишите неравенство: «y не меньше 8»", o: ["y > 8", "y < 8", "y ≥ 8", "y ≤ 8"], a: 2, expl: "Не меньше = больше или равно" },
+        { q: "Решите: 3x > 15", o: ["x > 4", "x > 5", "x < 5", "x = 5"], a: 1, expl: "x > 15 : 3 = 5" },
+        { q: "Какое число НЕ подходит под x < 9?", o: ["5", "8", "9", "3"], a: 2, expl: "9 не меньше 9" },
+        { q: "Машина: x → +3 → y. При x = 7 найдите y.", o: ["10", "4", "21", "11"], a: 0, expl: "y = x + 3 = 7 + 3 = 10" },
+        { q: "Машина: x → ×4 → y. При x = 5 найдите y.", o: ["9", "20", "1", "45"], a: 1, expl: "y = 4x = 4·5 = 20" },
+        { q: "Периметр квадрата со стороной 6 см:", o: ["12 см", "24 см", "36 см", "6 см"], a: 1, expl: "P = 4a = 4·6 = 24 см" },
+        { q: "Площадь прямоугольника 5 см × 7 см:", o: ["24 см²", "35 см²", "12 см²", "40 см²"], a: 1, expl: "S = a·b = 5·7 = 35 см²" },
+        { q: "По формуле y = 3x найдите y при x = 4:", o: ["7", "12", "1", "34"], a: 1, expl: "y = 3·4 = 12" },
+        { q: "Найдите формулу: x=1→y=4, x=2→y=7, x=3→y=10", o: ["y = x+3", "y = 3x+1", "y = 2x+2", "y = 4x"], a: 1, expl: "Разность 3, при x=1: 3·1+1=4 → y=3x+1" },
+        { q: "Координаты точки: x=2, y=5. Как записать?", o: ["(5;2)", "(2;5)", "2,5", "2 и 5"], a: 1, expl: "Сначала x, потом y: (2;5)" },
+        { q: "Путь при v=40 км/ч и t=3 ч:", o: ["120 км", "43 км", "80 км", "13 км"], a: 0, expl: "S = v·t = 40·3 = 120 км" },
+        { q: "По формуле y = 12 − x найдите y при x = 5:", o: ["17", "7", "60", "8"], a: 1, expl: "y = 12 − 5 = 7" },
+        { q: "По формуле y = x + 2 найдите x, если y = 8:", o: ["10", "6", "4", "16"], a: 1, expl: "8 = x + 2 → x = 6" },
+        { q: "Какая величина зависит от x в формуле y = 4x + 3?", o: ["x", "y", "4", "3"], a: 1, expl: "y зависит от x. x — независимая, y — зависимая." },
+        { q: "Решите: x + 2x + 3x = 30", o: ["x = 5", "x = 6", "x = 10", "x = 15"], a: 0, expl: "6x = 30 → x = 5" },
+      ];
+
+      // ================= NAVIGATION =================
+      function showSection(id) {
+        document
+          .querySelectorAll("section")
+          .forEach((s) => s.classList.remove("active"));
+        document.getElementById(id).classList.add("active");
+        document
+          .querySelectorAll(".nav-links a")
+          .forEach((a) => a.classList.remove("active"));
+        document
+          .querySelector('.nav-links a[data-section="' + id + '"]')
+          ?.classList.add("active");
+        window.scrollTo(0, 0);
+        AppState.currentSection = id;
+      }
+      document.querySelectorAll(".nav-links a").forEach((link) => {
+        link.addEventListener("click", (e) => {
+          e.preventDefault();
+          showSection(link.dataset.section);
+        });
+      });
+
+      // ================= SLIDER =================
+      let currentSlide = 0;
+      let slideEls = [];
+      let totalSlides = 0;
+      function renderSlide() {
+        slideEls.forEach((s, i) =>
+          s.classList.toggle("active", i === currentSlide),
+        );
+        document.getElementById("slide-num").innerText = currentSlide + 1;
+      }
+      function nextSlide() {
+        if (currentSlide < totalSlides - 1) {
+          currentSlide++;
+          renderSlide();
+        }
+      }
+      function prevSlide() {
+        if (currentSlide > 0) {
+          currentSlide--;
+          renderSlide();
+        }
+      }
+      window.nextSlide = nextSlide;
+      window.prevSlide = prevSlide;
+
+      // ================= SOLUTION TOGGLES =================
+      function toggleSolution(id) {
+        const el = document.getElementById(id);
+        el.classList.toggle("active");
+        const btn = el.previousElementSibling;
+        btn.textContent = el.classList.contains("active")
+          ? "Скрыть решение"
+          : "Показать решение";
+      }
+
+      // ================= UTILS =================
+      function rand(min, max) {
+        return Math.floor(Math.random() * (max - min + 1)) + min;
+      }
+      function gcd(a, b) {
+        return b ? gcd(b, a % b) : a;
+      }
+      function simplifyFrac(num, den) {
+        const g = gcd(Math.abs(num), Math.abs(den));
+        return { num: num / g, den: den / g };
+      }
+      function formatFrac(num, den) {
+        const s = simplifyFrac(num, den);
+        if (s.den === 1) return s.num.toString();
+        return s.num + "/" + s.den;
+      }
+      function parseFrac(s) {
+        s = s.trim().replace(/\s/g, "").replace(",", ".");
+        if (s.includes("/")) {
+          const parts = s.split("/");
+          if (parts.length === 2)
+            return { num: parseInt(parts[0]), den: parseInt(parts[1]) };
+        }
+        const n = parseFloat(s);
+        if (!isNaN(n)) {
+          if (Number.isInteger(n)) return { num: n, den: 1 };
+          return { num: Math.round(n * 100), den: 100 };
+        }
+        return null;
+      }
+      function fracEqual(a, b) {
+        const s1 = simplifyFrac(a.num, a.den);
+        const s2 = simplifyFrac(b.num, b.den);
+        return s1.num === s2.num && s1.den === s2.den;
+      }
+
+      // ================= INFINITE TRAINER =================
+      function generateTrainerProblem() {
+        const types = [
+          "expression",
+          "equation",
+          "inequality",
+          "machine",
+          "table_fill",
+          "find_formula",
+          "geometry",
+          "price",
+          "graph_point",
+          "text_problem",
+        ];
+        const type = types[Math.floor(Math.random() * types.length)];
+        let text, answer, hint;
+
+        switch (type) {
+          case "expression": {
+            const a = rand(2, 6),
+              b = rand(1, 4),
+              x = rand(2, 6);
+            text = "Вычислите " + a + "x + " + b + " при x = " + x + ".";
+            answer = a * x + b;
+            hint = "Сначала " + a + "·" + x + ", потом + " + b + ".";
+            break;
           }
-          break;
-        }
-        case 'inequality': {
-          const ops = ['<', '>', '≤', '≥'];
-          const op = ops[Math.floor(Math.random() * ops.length)];
-          const a = Math.floor(Math.random() * 5) + 2;
-          const b = Math.floor(Math.random() * 10) + 2;
-          const res = Math.floor(Math.random() * 8) + 2;
-          const right = a * res + b;
-          text = 'Решите: ' + a + 'x + ' + b + ' ' + op + ' ' + right + '. x ' + op + ' ?';
-          answer = res;
-          hint = 'Вычтите ' + b + ', затем разделите на ' + a + '. Знак остаётся тем же.';
-          break;
-        }
-        case 'machine': {
-          const inp = Math.floor(Math.random() * 10) + 1;
-          const m1 = Math.floor(Math.random() * 3) + 2;
-          const m2 = Math.floor(Math.random() * 5) + 1;
-          const op = Math.random() > 0.5 ? '+' : '-';
-          text = 'Машина: Вход → ×' + m1 + ' → ' + op + ' ' + m2 + ' → Выход. Вход = ' + inp + '. Найдите выход.';
-          answer = op === '+' ? inp * m1 + m2 : inp * m1 - m2;
-          hint = 'Сначала ' + inp + '·' + m1 + ', потом ' + op + ' ' + m2 + '.';
-          break;
-        }
-        case 'table_fill': {
-          const a = Math.floor(Math.random() * 4) + 2;
-          const b = Math.floor(Math.random() * 5);
-          const x = Math.floor(Math.random() * 6) + 2;
-          text = 'По формуле y = ' + a + 'x + ' + b + ' найдите y, если x = ' + x + '.';
-          answer = a * x + b;
-          hint = 'Вычислите ' + a + '·' + x + ' + ' + b + '.';
-          break;
-        }
-        case 'find_formula': {
-          const a = Math.floor(Math.random() * 3) + 2;
-          const b = Math.floor(Math.random() * 4) + 1;
-          text = 'По таблице найдите формулу: при x=1 y=' + (a+b) + ', x=2 y=' + (2*a+b) + ', x=3 y=' + (3*a+b) + '. Запишите формулу y=...';
-          answer = 'y=' + a + 'x+' + b;
-          hint = 'y растёт на ' + a + ' при росте x на 1. При x=1: ' + a + '+b=' + (a+b) + ' → b=' + b + '.';
-          break;
-        }
-        case 'geometry': {
-          const shapes = ['квадрат', 'прямоугольник'];
-          const shape = shapes[Math.floor(Math.random() * shapes.length)];
-          if (shape === 'квадрат') {
-            const a = Math.floor(Math.random() * 8) + 3;
-            text = 'Сторона квадрата ' + a + ' см. Найдите периметр P.';
-            answer = 4 * a;
-            hint = 'P = 4a = 4·' + a + '.';
-          } else {
-            const a = Math.floor(Math.random() * 6) + 4;
-            const b = Math.floor(Math.random() * 4) + 2;
-            text = 'Прямоугольник: a = ' + a + ' см, b = ' + b + ' см. Найдите площадь S.';
-            answer = a * b;
-            hint = 'S = a·b = ' + a + '·' + b + '.';
+          case "equation": {
+            const c = rand(2, 6),
+              res = rand(5, 14);
+            if (Math.random() > 0.5) {
+              const off = rand(1, 5);
+              text =
+                "Решите: " + c + "x + " + off + " = " + (c * res + off) + ". Чему равен x?";
+              answer = res;
+              hint = "Вычтите " + off + ", потом разделите на " + c + ".";
+            } else {
+              text = "Решите: " + c + "x = " + c * res + ". Чему равен x?";
+              answer = res;
+              hint = "Разделите обе части на " + c + ".";
+            }
+            break;
           }
-          break;
+          case "inequality": {
+            const ops = ["<", ">", "≤", "≥"];
+            const op = ops[Math.floor(Math.random() * ops.length)];
+            const a = rand(2, 6),
+              b = rand(2, 11),
+              res = rand(2, 9);
+            const right = a * res + b;
+            text = "Решите: " + a + "x + " + b + " " + op + " " + right + ". x " + op + " ?";
+            answer = res;
+            hint = "Вычтите " + b + ", затем разделите на " + a + ". Знак остаётся тем же.";
+            break;
+          }
+          case "machine": {
+            const inp = rand(1, 10),
+              m1 = rand(2, 4),
+              m2 = rand(1, 5);
+            const op = Math.random() > 0.5 ? "+" : "-";
+            text =
+              "Машина: Вход → ×" + m1 + " → " + op + " " + m2 + " → Выход. Вход = " + inp + ". Найдите выход.";
+            answer = op === "+" ? inp * m1 + m2 : inp * m1 - m2;
+            hint = "Сначала " + inp + "·" + m1 + ", потом " + op + " " + m2 + ".";
+            break;
+          }
+          case "table_fill": {
+            const a = rand(2, 5),
+              b = rand(0, 4),
+              x = rand(2, 7);
+            text = "По формуле y = " + a + "x + " + b + " найдите y, если x = " + x + ".";
+            answer = a * x + b;
+            hint = "Вычислите " + a + "·" + x + " + " + b + ".";
+            break;
+          }
+          case "find_formula": {
+            const a = rand(2, 4),
+              b = rand(1, 4);
+            text =
+              "По таблице найдите формулу: при x=1 y=" + (a + b) + ", x=2 y=" + (2 * a + b) + ", x=3 y=" + (3 * a + b) + ". Запишите формулу y=...";
+            answer = "y=" + a + "x+" + b;
+            hint = "y растёт на " + a + " при росте x на 1. При x=1: " + a + "+b=" + (a + b) + " → b=" + b + ".";
+            break;
+          }
+          case "geometry": {
+            if (Math.random() > 0.5) {
+              const a = rand(3, 10);
+              text = "Сторона квадрата " + a + " см. Найдите периметр P.";
+              answer = 4 * a;
+              hint = "P = 4a = 4·" + a + ".";
+            } else {
+              const a = rand(4, 9),
+                b = rand(2, 5);
+              text = "Прямоугольник: a = " + a + " см, b = " + b + " см. Найдите площадь S.";
+              answer = a * b;
+              hint = "S = a·b = " + a + "·" + b + ".";
+            }
+            break;
+          }
+          case "price": {
+            const price = rand(2, 9) * 10,
+              x = rand(2, 6);
+            text = "Майки по " + price + " ₼. Найдите стоимость y при x = " + x + " штук.";
+            answer = price * x;
+            hint = "y = " + price + "·x. При x=" + x + ": " + price + "·" + x + ".";
+            break;
+          }
+          case "graph_point": {
+            const x = rand(1, 5),
+              y = rand(1, 5);
+            text = "Как записать координаты точки, где x = " + x + " и y = " + y + "? (формат: x;y)";
+            answer = x + ";" + y;
+            hint = "Сначала x, потом y, через точку с запятой: " + x + ";" + y + ".";
+            break;
+          }
+          default: {
+            const a = rand(2, 6),
+              res = rand(5, 14);
+            text = "Сумма " + a + " одинаковых чисел равна " + a * res + ". Найдите число.";
+            answer = res;
+            hint = "Уравнение: " + a + "x = " + a * res + " → x = " + res + ".";
+            break;
+          }
         }
-        case 'price': {
-          const price = (Math.floor(Math.random() * 8) + 2) * 10;
-          const x = Math.floor(Math.random() * 5) + 2;
-          text = 'Майки по ' + price + ' ₼. Найдите стоимость y при x = ' + x + ' штук.';
-          answer = price * x;
-          hint = 'y = ' + price + '·x. При x=' + x + ': ' + price + '·' + x + '.';
-          break;
+        return { text, answer: String(answer), hint };
+      }
+      function newTrainerProblem() {
+        AppState.trainer.current = generateTrainerProblem();
+        document.getElementById("trainer-question").textContent =
+          AppState.trainer.current.text;
+        document.getElementById("trainer-answer").value = "";
+        document.getElementById("trainer-feedback").innerHTML = "";
+        document.getElementById("trainer-hint").style.display = "none";
+        document.getElementById("trainer-check-btn").disabled = false;
+        document.getElementById("trainer-answer").focus();
+      }
+      function showTrainerHint() {
+        if (!AppState.trainer.current) return;
+        document.getElementById("trainer-hint").style.display = "block";
+        document.getElementById("trainer-hint").textContent =
+          "💡 " + AppState.trainer.current.hint;
+      }
+      function checkTrainer() {
+        if (!AppState.trainer.current) return;
+        const userStr = document.getElementById("trainer-answer").value.trim();
+        if (!userStr) return;
+        let isCorrect = false;
+        const correctStr = AppState.trainer.current.answer;
+        const normUser = userStr
+          .toLowerCase()
+          .replace(/\s/g, "")
+          .replace(",", ".");
+        const normCorrect = correctStr
+          .toLowerCase()
+          .replace(/\s/g, "")
+          .replace(",", ".");
+        if (normUser === normCorrect) isCorrect = true;
+        else if (normCorrect.includes("y=")) {
+          if (normUser === normCorrect.replace("y=", "")) isCorrect = true;
+        } else {
+          const u = parseFrac(userStr);
+          const c = parseFrac(correctStr);
+          if (u && c && fracEqual(u, c)) isCorrect = true;
         }
-        case 'graph_point': {
-          const x = Math.floor(Math.random() * 5) + 1;
-          const y = Math.floor(Math.random() * 5) + 1;
-          text = 'Как записать координаты точки, где x = ' + x + ' и y = ' + y + '? (формат: x;y)';
-          answer = x + ';' + y;
-          hint = 'Сначала x, потом y, через точку с запятой: ' + x + ';' + y + '.';
-          break;
+        AppState.trainer.total++;
+        if (isCorrect) {
+          AppState.trainer.correct++;
+          AppState.trainer.streak++;
+          document.getElementById("trainer-feedback").innerHTML =
+            '<div style="color: var(--success); font-weight: 700; font-size: 1.1rem;">✓ Верно! Ответ: ' +
+            correctStr +
+            "</div>";
+        } else {
+          AppState.trainer.streak = 0;
+          document.getElementById("trainer-feedback").innerHTML =
+            '<div style="color: var(--error); font-weight: 700; font-size: 1.1rem;">✗ Неверно. Правильный ответ: ' +
+            correctStr +
+            "</div>";
         }
-        case 'text_problem': {
-          const a = Math.floor(Math.random() * 5) + 2;
-          const res = Math.floor(Math.random() * 10) + 5;
-          text = 'Сумма ' + a + ' одинаковых чисел равна ' + (a * res) + '. Найдите число.';
-          answer = res;
-          hint = 'Уравнение: ' + a + 'x = ' + (a * res) + ' → x = ' + res + '.';
-          break;
-        }
+        document.getElementById("trainer-correct").textContent =
+          AppState.trainer.correct;
+        document.getElementById("trainer-total").textContent =
+          AppState.trainer.total;
+        document.getElementById("trainer-streak").textContent =
+          AppState.trainer.streak;
+        document.getElementById("trainer-check-btn").disabled = true;
       }
-      return { text, answer: String(answer), hint };
-    }
 
-    function newTrainerProblem() {
-      trainerState.currentProblem = generateTrainerProblem();
-      document.getElementById('trainer-question').innerText = trainerState.currentProblem.text;
-      document.getElementById('trainer-answer').value = '';
-      document.getElementById('trainer-feedback').innerHTML = '';
-      document.getElementById('trainer-hint').style.display = 'none';
-      document.getElementById('trainer-check-btn').disabled = false;
-      document.getElementById('trainer-answer').focus();
-    }
-
-    function showTrainerHint() {
-      if (!trainerState.currentProblem) return;
-      document.getElementById('trainer-hint').style.display = 'block';
-      document.getElementById('trainer-hint').innerHTML = '💡 ' + trainerState.currentProblem.hint;
-    }
-
-    function normalizeAnswer(str) {
-      return str.trim().toLowerCase().replace(/\s/g, '').replace(/,/g, '.').replace(/y=/g, 'y=');
-    }
-
-    function checkTrainer() {
-      if (!trainerState.currentProblem) return;
-      const userInput = document.getElementById('trainer-answer').value;
-      const userNorm = normalizeAnswer(userInput);
-      const correctNorm = normalizeAnswer(trainerState.currentProblem.answer);
-      let isOk = false;
-      if (correctNorm.includes('y=')) {
-        isOk = userNorm === correctNorm || userNorm === correctNorm.replace('y=', '');
-      } else {
-        isOk = userNorm === correctNorm;
-      }
-      trainerState.total++;
-      if (isOk) {
-        trainerState.correct++;
-        trainerState.streak++;
-        document.getElementById('trainer-feedback').innerHTML = '<div style="color:var(--success);">✓ Верно! Ответ: ' + trainerState.currentProblem.answer + '</div>';
-      } else {
-        trainerState.streak = 0;
-        document.getElementById('trainer-feedback').innerHTML = '<div style="color:var(--error);">✗ Неверно. Правильный ответ: ' + trainerState.currentProblem.answer + '</div>';
-      }
-      document.getElementById('trainer-correct').innerText = trainerState.correct;
-      document.getElementById('trainer-total').innerText = trainerState.total;
-      document.getElementById('trainer-streak').innerText = trainerState.streak;
-      document.getElementById('trainer-check-btn').disabled = true;
-    }
-
-    // ================= QUESTIONS (30) =================
-
-    const questions = [
-      { q: "Как записать a + a + a + a в виде произведения?", options: ["4 + a", "4a", "a⁴", "4 / a"], correct: 1, expl: "4 одинаковых слагаемых = 4·a" },
-      { q: "Чему равно 7·b при b = 3?", options: ["10", "21", "73", "4"], correct: 1, expl: "7·3 = 21" },
-      { q: "Вычислите 2x + 5 при x = 4:", options: ["13", "8", "10", "18"], correct: 0, expl: "2·4 + 5 = 8 + 5 = 13" },
-      { q: "Запишите 6 + 6 + 6 в виде произведения:", options: ["6³", "3·6", "6 + 3", "18"], correct: 1, expl: "3·6" },
-      { q: "Чему равно 3m − n при m = 5, n = 2?", options: ["13", "15", "7", "17"], correct: 0, expl: "3·5 − 2 = 15 − 2 = 13" },
-      { q: "Решите: 5x = 35", options: ["x = 5", "x = 7", "x = 30", "x = 175"], correct: 1, expl: "35 : 5 = 7" },
-      { q: "Решите: 2x + 3 = 13", options: ["x = 5", "x = 8", "x = 6", "x = 10"], correct: 0, expl: "2x = 10 → x = 5" },
-      { q: "Решите: x : 4 = 6", options: ["x = 1,5", "x = 10", "x = 24", "x = 2"], correct: 2, expl: "x = 4·6 = 24" },
-      { q: "Решите: 3x − 2 = 16", options: ["x = 4", "x = 6", "x = 5", "x = 14"], correct: 1, expl: "3x = 18 → x = 6" },
-      { q: "Решите: 4(x + 2) = 24", options: ["x = 4", "x = 6", "x = 8", "x = 10"], correct: 0, expl: "x + 2 = 6 → x = 4" },
-      { q: "Решите: 7x = 0", options: ["x = 7", "x = 0", "x = 1", "x = −7"], correct: 1, expl: "7·0 = 0" },
-      { q: "Решите: x + 5 = 5", options: ["x = 10", "x = 0", "x = 5", "x = 1"], correct: 1, expl: "x = 5 − 5 = 0" },
-      { q: "Решите: x + 3 < 10", options: ["x < 7", "x > 7", "x < 13", "x > 13"], correct: 0, expl: "x < 10 − 3 = 7" },
-      { q: "Решите: 2y ≥ 12", options: ["y ≥ 6", "y ≤ 6", "y > 6", "y < 6"], correct: 0, expl: "y ≥ 12 : 2 = 6" },
-      { q: "Какой знак нужен: 5 ___ 3?", options: [">", "<", "=", "≠"], correct: 0, expl: "5 больше 3" },
-      { q: "Запишите неравенство: «y не меньше 8»", options: ["y > 8", "y < 8", "y ≥ 8", "y ≤ 8"], correct: 2, expl: "Не меньше = больше или равно" },
-      { q: "Решите: 3x > 15", options: ["x > 4", "x > 5", "x < 5", "x = 5"], correct: 1, expl: "x > 15 : 3 = 5" },
-      { q: "Какое число НЕ подходит под x < 9?", options: ["5", "8", "9", "3"], correct: 2, expl: "9 не меньше 9" },
-      { q: "Машина: x → +3 → y. При x = 7 найдите y.", options: ["10", "4", "21", "11"], correct: 0, expl: "y = x + 3 = 7 + 3 = 10" },
-      { q: "Машина: x → ×4 → y. При x = 5 найдите y.", options: ["9", "20", "1", "45"], correct: 1, expl: "y = 4x = 4·5 = 20" },
-      { q: "Периметр квадрата со стороной 6 см:", options: ["12 см", "24 см", "36 см", "6 см"], correct: 1, expl: "P = 4a = 4·6 = 24 см" },
-      { q: "Площадь прямоугольника 5 см × 7 см:", options: ["24 см²", "35 см²", "12 см²", "40 см²"], correct: 1, expl: "S = a·b = 5·7 = 35 см²" },
-      { q: "По формуле y = 3x найдите y при x = 4:", options: ["7", "12", "1", "34"], correct: 1, expl: "y = 3·4 = 12" },
-      { q: "Найдите формулу: x=1→y=4, x=2→y=7, x=3→y=10", options: ["y = x+3", "y = 3x+1", "y = 2x+2", "y = 4x"], correct: 1, expl: "Разность 3, при x=1: 3·1+1=4 → y=3x+1" },
-      { q: "Координаты точки: x=2, y=5. Как записать?", options: ["(5;2)", "(2;5)", "2,5", "2 и 5"], correct: 1, expl: "Сначала x, потом y: (2;5)" },
-      { q: "Путь при v=40 км/ч и t=3 ч:", options: ["120 км", "43 км", "80 км", "13 км"], correct: 0, expl: "S = v·t = 40·3 = 120 км" },
-      { q: "По формуле y = 12 − x найдите y при x = 5:", options: ["17", "7", "60", "8"], correct: 1, expl: "y = 12 − 5 = 7" },
-      { q: "По формуле y = x + 2 найдите x, если y = 8:", options: ["10", "6", "4", "16"], correct: 1, expl: "8 = x + 2 → x = 6" },
-      { q: "Какая величина зависит от x в формуле y = 4x + 3?", options: ["x", "y", "4", "3"], correct: 1, expl: "y зависит от x. x — независимая, y — зависимая." }
-    ];
-
-    let diagState = { current: 0, score: 0, answers: [] };
-    let timeAttackState = { current: 0, score: 0, timer: null, timeLeft: 600, startTime: 0, answers: [] };
-
-    function renderDiagnostic() {
-      const q = questions[diagState.current];
-      document.getElementById('diag-current').innerText = diagState.current + 1;
-      document.getElementById('diag-progress').style.width = ((diagState.current + 1) / 30) * 100 + '%';
-      document.getElementById('diag-score').innerText = diagState.score;
-      document.getElementById('diag-question').innerText = q.q;
-      const optsDiv = document.getElementById('diag-options');
-      optsDiv.innerHTML = '';
-      q.options.forEach((opt, i) => {
-        const div = document.createElement('div');
-        div.className = 'quiz-option';
-        div.innerHTML = '<span style="font-weight:700; color:var(--text-secondary);">' + String.fromCharCode(65 + i) + '.</span> ' + opt;
-        div.onclick = () => selectDiagnostic(i);
-        optsDiv.appendChild(div);
-      });
-      document.getElementById('diag-explanation').style.display = 'none';
-      document.getElementById('diag-next').disabled = true;
-    }
-
-    function selectDiagnostic(idx) {
-      if (!document.getElementById('diag-next').disabled) return;
-      const q = questions[diagState.current];
-      const isCor = idx === q.correct;
-      if (isCor) diagState.score++;
-      diagState.answers[diagState.current] = idx;
-      const opts = document.querySelectorAll('#diag-options .quiz-option');
-      opts.forEach((opt, i) => {
-        opt.style.pointerEvents = 'none';
-        if (i === q.correct) opt.classList.add('correct');
-        else if (i === idx && !isCor) opt.classList.add('wrong');
-      });
-      document.getElementById('diag-explanation').innerHTML = '<strong style="color:' + (isCor ? 'var(--success)' : 'var(--error)') + ';">' + (isCor ? '✓ Верно' : '✗ Неверно') + '</strong> — ' + q.expl;
-      document.getElementById('diag-explanation').style.display = 'block';
-      document.getElementById('diag-next').disabled = false;
-    }
-
-    function nextDiagnostic() {
-      if (diagState.current < 29) {
-        diagState.current++;
-        renderDiagnostic();
-      } else {
-        showResults(diagState.score, 30, 0, 'diagnostic');
-      }
-    }
-
-    function prevDiagnostic() {
-      if (diagState.current > 0) {
-        diagState.current--;
+      // ================= DIAGNOSTIC TEST (30 questions) =================
+      function startDiagnostic() {
+        AppState.mode = "diagnostic";
+        AppState.diagnostic = { current: 0, score: 0, answers: [] };
+        document.getElementById("diagnostic-ui").style.display = "block";
+        document.getElementById("timeattack-ui").style.display = "none";
+        document.getElementById("results-ui").style.display = "none";
+        document.getElementById("diag-total").textContent = questions.length;
         renderDiagnostic();
       }
-    }
+      function renderDiagnostic() {
+        const q = questions[AppState.diagnostic.current];
+        document.getElementById("diag-current").textContent =
+          AppState.diagnostic.current + 1;
+        document.getElementById("diag-score").textContent =
+          AppState.diagnostic.score + " правильных";
+        document.getElementById("diag-progress").style.width =
+          ((AppState.diagnostic.current + 1) / questions.length) * 100 + "%";
+        document.getElementById("diag-question").textContent = q.q;
+        const optsDiv = document.getElementById("diag-options");
+        optsDiv.innerHTML = "";
+        q.o.forEach((opt, i) => {
+          const div = document.createElement("div");
+          div.className = "quiz-option";
+          div.innerHTML =
+            '<div class="option-letter">' +
+            String.fromCharCode(65 + i) +
+            "</div><div>" +
+            opt +
+            "</div>";
+          div.onclick = () => selectDiagnostic(i, div);
+          optsDiv.appendChild(div);
+        });
+        document.getElementById("diag-explanation").style.display = "none";
+        document.getElementById("diag-prev").disabled =
+          AppState.diagnostic.current === 0;
+        document.getElementById("diag-next").disabled = true;
+      }
+      function selectDiagnostic(idx, el) {
+        if (document.getElementById("diag-next").disabled === false) return;
+        const q = questions[AppState.diagnostic.current];
+        const isCorrect = idx === q.a;
+        if (isCorrect) AppState.diagnostic.score++;
+        AppState.diagnostic.answers[AppState.diagnostic.current] = idx;
+        document
+          .querySelectorAll("#diag-options .quiz-option")
+          .forEach((opt, i) => {
+            opt.classList.add("disabled");
+            if (i === q.a) opt.classList.add("correct");
+            else if (i === idx && !isCorrect) opt.classList.add("wrong");
+          });
+        document.getElementById("diag-explanation").innerHTML =
+          "<strong>" +
+          (isCorrect ? "✓ Верно!" : "✗ Неверно.") +
+          "</strong> " +
+          q.expl +
+          (isCorrect ? "" : " Правильный ответ: " + q.o[q.a]);
+        document.getElementById("diag-explanation").style.display = "block";
+        document.getElementById("diag-next").disabled = false;
+      }
+      function nextDiagnostic() {
+        if (AppState.diagnostic.current < questions.length - 1) {
+          AppState.diagnostic.current++;
+          renderDiagnostic();
+        } else {
+          showResults(AppState.diagnostic.score, questions.length, 0, "diagnostic");
+        }
+      }
+      function prevDiagnostic() {
+        if (AppState.diagnostic.current > 0) {
+          AppState.diagnostic.current--;
+          renderDiagnostic();
+        }
+      }
 
-    function startDiagnostic() {
-      document.getElementById('diagnostic-ui').style.display = 'block';
-      document.getElementById('timeattack-ui').style.display = 'none';
-      document.getElementById('results-ui').style.display = 'none';
-      diagState = { current: 0, score: 0, answers: [] };
-      renderDiagnostic();
-    }
-
-    function startTimeAttack() {
-      document.getElementById('diagnostic-ui').style.display = 'none';
-      document.getElementById('timeattack-ui').style.display = 'block';
-      document.getElementById('results-ui').style.display = 'none';
-      timeAttackState = { current: 0, score: 0, timer: null, timeLeft: 600, startTime: Date.now(), answers: [] };
-      renderTimeAttack();
-      if (timeAttackState.timer) clearInterval(timeAttackState.timer);
-      timeAttackState.timer = setInterval(() => {
-        timeAttackState.timeLeft--;
-        const m = Math.floor(timeAttackState.timeLeft / 60);
-        const s = timeAttackState.timeLeft % 60;
-        const timerDiv = document.getElementById('ta-timer');
-        timerDiv.innerText = m + ':' + (s < 10 ? '0' : '') + s;
-        if (timeAttackState.timeLeft <= 60) timerDiv.className = 'timer danger';
-        else if (timeAttackState.timeLeft <= 180) timerDiv.className = 'timer warning';
-        if (timeAttackState.timeLeft <= 0) finishTimeAttack();
-      }, 1000);
-    }
-
-    function renderTimeAttack() {
-      const q = questions[timeAttackState.current];
-      document.getElementById('ta-current').innerText = timeAttackState.current + 1;
-      document.getElementById('ta-progress').style.width = ((timeAttackState.current + 1) / 30) * 100 + '%';
-      document.getElementById('ta-question').innerText = q.q;
-      const optsDiv = document.getElementById('ta-options');
-      optsDiv.innerHTML = '';
-      q.options.forEach((opt, i) => {
-        const div = document.createElement('div');
-        div.className = 'quiz-option';
-        div.innerHTML = '<span style="font-weight:700; color:var(--text-secondary);">' + String.fromCharCode(65 + i) + '.</span> ' + opt;
-        div.onclick = () => selectTimeAttack(i);
-        optsDiv.appendChild(div);
-      });
-      document.getElementById('ta-next').disabled = true;
-    }
-
-    function selectTimeAttack(idx) {
-      const q = questions[timeAttackState.current];
-      const isCor = idx === q.correct;
-      if (isCor) timeAttackState.score++;
-      timeAttackState.answers[timeAttackState.current] = idx;
-      const opts = document.querySelectorAll('#ta-options .quiz-option');
-      opts.forEach((opt, i) => {
-        opt.style.pointerEvents = 'none';
-        if (i === q.correct) opt.classList.add('correct');
-        else if (i === idx && !isCor) opt.classList.add('wrong');
-      });
-      document.getElementById('ta-next').disabled = false;
-    }
-
-    function nextTimeAttack() {
-      if (timeAttackState.current < 29) {
-        timeAttackState.current++;
+      // ================= TIME ATTACK (30 questions, 10 min) =================
+      function startTimeAttack() {
+        AppState.mode = "timeattack";
+        AppState.timeAttack = {
+          current: 0,
+          score: 0,
+          timer: null,
+          timeLeft: 600,
+          startTime: Date.now(),
+          answers: [],
+        };
+        document.getElementById("diagnostic-ui").style.display = "none";
+        document.getElementById("timeattack-ui").style.display = "block";
+        document.getElementById("results-ui").style.display = "none";
+        document.getElementById("ta-timer").className = "timer";
         renderTimeAttack();
-      } else {
-        finishTimeAttack();
+        if (AppState.timeAttack.timer) clearInterval(AppState.timeAttack.timer);
+        AppState.timeAttack.timer = setInterval(() => {
+          AppState.timeAttack.timeLeft--;
+          const m = Math.floor(AppState.timeAttack.timeLeft / 60);
+          const s = AppState.timeAttack.timeLeft % 60;
+          const timerEl = document.getElementById("ta-timer");
+          timerEl.textContent = m + ":" + s.toString().padStart(2, "0");
+          if (AppState.timeAttack.timeLeft <= 60)
+            timerEl.className = "timer danger";
+          else if (AppState.timeAttack.timeLeft <= 180)
+            timerEl.className = "timer warning";
+          if (AppState.timeAttack.timeLeft <= 0) finishTimeAttack();
+        }, 1000);
       }
-    }
+      function renderTimeAttack() {
+        const q = questions[AppState.timeAttack.current];
+        document.getElementById("ta-current").textContent =
+          AppState.timeAttack.current + 1;
+        document.getElementById("ta-progress").style.width =
+          ((AppState.timeAttack.current + 1) / questions.length) * 100 + "%";
+        document.getElementById("ta-question").textContent = q.q;
+        const optsDiv = document.getElementById("ta-options");
+        optsDiv.innerHTML = "";
+        q.o.forEach((opt, i) => {
+          const div = document.createElement("div");
+          div.className = "quiz-option";
+          div.innerHTML =
+            '<div class="option-letter">' +
+            String.fromCharCode(65 + i) +
+            "</div><div>" +
+            opt +
+            "</div>";
+          div.onclick = () => selectTimeAttack(i, div);
+          optsDiv.appendChild(div);
+        });
+        document.getElementById("ta-next").disabled = true;
+      }
+      function selectTimeAttack(idx, el) {
+        if (document.getElementById("ta-next").disabled === false) return;
+        const q = questions[AppState.timeAttack.current];
+        const isCorrect = idx === q.a;
+        if (isCorrect) AppState.timeAttack.score++;
+        AppState.timeAttack.answers[AppState.timeAttack.current] = idx;
+        document
+          .querySelectorAll("#ta-options .quiz-option")
+          .forEach((opt, i) => {
+            opt.classList.add("disabled");
+            if (i === q.a) opt.classList.add("correct");
+            else if (i === idx && !isCorrect) opt.classList.add("wrong");
+          });
+        document.getElementById("ta-next").disabled = false;
+      }
+      function nextTimeAttack() {
+        if (AppState.timeAttack.current < questions.length - 1) {
+          AppState.timeAttack.current++;
+          renderTimeAttack();
+        } else {
+          finishTimeAttack();
+        }
+      }
+      function finishTimeAttack() {
+        clearInterval(AppState.timeAttack.timer);
+        const timeSpent = Math.floor(
+          (Date.now() - AppState.timeAttack.startTime) / 1000,
+        );
+        showResults(AppState.timeAttack.score, questions.length, timeSpent, "timeattack");
+      }
 
-    function finishTimeAttack() {
-      clearInterval(timeAttackState.timer);
-      const spent = Math.floor((Date.now() - timeAttackState.startTime) / 1000);
-      showResults(timeAttackState.score, 30, spent, 'timeattack');
-    }
+      // ================= RESULTS =================
+      function showResults(score, total, timeSpent, mode) {
+        document.getElementById("diagnostic-ui").style.display = "none";
+        document.getElementById("timeattack-ui").style.display = "none";
+        document.getElementById("results-ui").style.display = "block";
+        const percent = Math.round((score / total) * 100);
+        const m = Math.floor(timeSpent / 60);
+        const s = timeSpent % 60;
+        let mastery = "Начальный";
+        if (percent >= 90) mastery = "Эксперт";
+        else if (percent >= 70) mastery = "Продвинутый";
+        else if (percent >= 50) mastery = "Средний";
+        let message = "";
+        if (percent >= 90)
+          message =
+            mode === "timeattack"
+              ? "🏆 Превосходно! Вы мастер!"
+              : "Отлично! Вы отлично знаете тему!";
+        else if (percent >= 70)
+          message =
+            mode === "timeattack"
+              ? "🥈 Отличный результат!"
+              : "Хорошо! Но есть куда стремиться.";
+        else if (percent >= 50)
+          message =
+            mode === "timeattack"
+              ? "🥉 Хорошо, но нужно подучить."
+              : "Удовлетворительно. Повторите теорию.";
+        else
+          message =
+            mode === "timeattack"
+              ? "💪 Попробуйте ещё раз после повторения теории."
+              : "Нужно больше практики. Вернитесь к интерактивному учебнику.";
+        document
+          .getElementById("result-circle")
+          .style.setProperty("--score", percent);
+        document.getElementById("result-percent").textContent = percent + "%";
+        document.getElementById("result-message").textContent = message;
+        document.getElementById("result-correct").textContent = score;
+        document.getElementById("result-wrong").textContent = total - score;
+        document.getElementById("result-time").textContent =
+          mode === "diagnostic" ? "—" : m + ":" + s.toString().padStart(2, "0");
+        document.getElementById("result-mastery").textContent = mastery;
+      }
+      function resetAssessment() {
+        document.getElementById("results-ui").style.display = "none";
+        if (AppState.mode === "diagnostic") startDiagnostic();
+        else startTimeAttack();
+      }
 
-    function showResults(score, total, timeSec, mode) {
-      document.getElementById('diagnostic-ui').style.display = 'none';
-      document.getElementById('timeattack-ui').style.display = 'none';
-      document.getElementById('results-ui').style.display = 'block';
-      const percent = Math.round((score / total) * 100);
-      document.getElementById('result-circle').style.setProperty('--score', percent);
-      document.getElementById('result-percent').innerText = percent + '%';
-      document.getElementById('result-correct').innerText = score;
-      document.getElementById('result-wrong').innerText = total - score;
-      const timeStr = mode === 'diagnostic' ? '—' : Math.floor(timeSec / 60) + ':' + ((timeSec % 60) < 10 ? '0' : '') + (timeSec % 60);
-      document.getElementById('result-time').innerText = timeStr;
-      const msg = percent >= 90 ? "🎉 Отлично! Ты мастер!" :
-                  percent >= 70 ? "👍 Хороший результат!" :
-                  percent >= 50 ? "📘 Неплохо, но повтори теорию." :
-                  "💪 Попробуй ещё раз.";
-      document.getElementById('result-message').innerText = msg;
-    }
+      // ================= INIT =================
+      document.addEventListener("DOMContentLoaded", () => {
+        // Generate theory slides
+        const track = document.getElementById("track-slides");
+        slides.forEach((s, i) => {
+          const div = document.createElement("div");
+          div.className = "widget-slide" + (i === 0 ? " active" : "");
+          div.innerHTML =
+            "<h3>" +
+            s.title +
+            '</h3><div style="color:var(--text-secondary);line-height:1.8;margin-top:12px;">' +
+            s.content +
+            "</div>";
+          track.appendChild(div);
+        });
+        slideEls = Array.from(
+          document.querySelectorAll("#track-slides .widget-slide"),
+        );
+        totalSlides = slideEls.length;
+        document.getElementById("slide-total").textContent = totalSlides;
+        renderSlide();
 
-    function resetAssessment() {
-      document.getElementById('results-ui').style.display = 'none';
-      if (confirm('Пройти аттестацию заново?')) startDiagnostic();
-    }
+        // Generate worked examples
+        const list = document.getElementById("examples-list");
+        examples.forEach((ex, i) => {
+          const card = document.createElement("div");
+          card.className = "problem-card";
+          card.innerHTML =
+            '<div class="problem-header"><span class="problem-number">№ ' +
+            (i + 1) +
+            '</span><span class="problem-type">' +
+            ex.title +
+            "</span></div>" +
+            '<div class="problem-text">' +
+            ex.task +
+            "</div>" +
+            '<button class="solution-btn" onclick="toggleSolution(\'sol-' +
+            (i + 1) +
+            "')\">Показать решение</button>" +
+            '<div class="solution" id="sol-' +
+            (i + 1) +
+            '">' +
+            ex.sol +
+            "</div>";
+          list.appendChild(card);
+        });
 
-    // Expose
-    window.showSection = showSection;
-    window.toggleSolution = toggleSolution;
-    window.prevSlide = prevSlide;
-    window.nextSlide = nextSlide;
-    window.newTrainerProblem = newTrainerProblem;
-    window.showTrainerHint = showTrainerHint;
-    window.checkTrainer = checkTrainer;
-    window.startDiagnostic = startDiagnostic;
-    window.startTimeAttack = startTimeAttack;
-    window.nextDiagnostic = nextDiagnostic;
-    window.prevDiagnostic = prevDiagnostic;
-    window.nextTimeAttack = nextTimeAttack;
-    window.resetAssessment = resetAssessment;
-  </script>
-</body>
+        newTrainerProblem();
+      });
+    </script>
+  </body>
 </html>
