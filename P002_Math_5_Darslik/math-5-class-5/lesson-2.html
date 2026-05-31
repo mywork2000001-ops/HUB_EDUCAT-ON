@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Урок 2 — Выражения с переменной. Составление и значение</title>
+  <style>
+    :root {
+      --primary: #4f46e5;
+      --primary-light: #e0e7ff;
+      --bg: #f8fafc;
+      --card: #ffffff;
+      --text: #0f172a;
+      --text-light: #64748b;
+      --success: #10b981;
+      --error: #ef4444;
+      --warning: #f59e0b;
+      --border: #e2e8f0;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', system-ui, -apple-system, sans-serif; }
+    body { background: var(--bg); color: var(--text); line-height: 1.6; }
+    .container { max-width: 850px; margin: 0 auto; padding: 20px; }
+    
+    nav { display: flex; justify-content: space-between; padding: 15px 0; border-bottom: 1px solid var(--border); margin-bottom: 30px; flex-wrap: wrap; gap: 10px; }
+    nav a { color: var(--text-light); text-decoration: none; font-size: 14px; font-weight: 500; transition: 0.2s; }
+    nav a:hover { color: var(--primary); }
+    
+    h1 { font-size: 28px; margin-bottom: 8px; }
+    h2 { font-size: 22px; margin: 40px 0 15px; display: flex; align-items: center; gap: 10px; }
+    .hero { background: linear-gradient(135deg, var(--primary-light), #f5f3ff); padding: 30px; border-radius: 16px; margin-bottom: 30px; }
+    .hero p { color: #334155; margin-bottom: 10px; }
+    .hero-buttons { display: flex; gap: 12px; margin: 20px 0; flex-wrap: wrap; }
+    .btn { padding: 10px 18px; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; transition: 0.2s; font-size: 14px; }
+    .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+    .btn-primary { background: var(--primary); color: white; }
+    .btn-primary:hover:not(:disabled) { background: #4338ca; }
+    .btn-outline { background: white; border: 2px solid var(--primary); color: var(--primary); }
+    .btn-outline:hover:not(:disabled) { background: var(--primary-light); }
+    
+    .objectives { background: white; padding: 20px; border-radius: 12px; margin-top: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+    .objectives ul { padding-left: 20px; }
+    .objectives li { margin-bottom: 8px; color: #475569; }
+
+    /* Slides */
+    .slide-container { position: relative; background: white; border-radius: 16px; padding: 30px; min-height: 280px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
+    .slide-header { display: flex; justify-content: space-between; margin-bottom: 20px; color: var(--text-light); font-size: 14px; font-weight: 600; }
+    .slide-content { margin-bottom: 30px; min-height: 150px; }
+    .slide-nav { display: flex; justify-content: space-between; }
+    
+    /* Algorithm */
+    .algo-steps { display: grid; gap: 12px; }
+    .algo-step { background: white; padding: 15px; border-radius: 10px; border-left: 4px solid var(--primary); box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
+    .algo-step h3 { color: var(--primary); margin-bottom: 4px; font-size: 16px; }
+    .algo-step p { color: #475569; font-size: 14px; }
+
+    /* Examples */
+    .example-card { background: white; padding: 20px; border-radius: 12px; margin-bottom: 15px; border: 1px solid var(--border); }
+    .solution-toggle { background: none; border: none; color: var(--primary); cursor: pointer; font-weight: 600; margin-top: 10px; padding: 0; font-size: 14px; }
+    .solution-content { display: none; margin-top: 12px; padding: 12px; background: #f8fafc; border-radius: 8px; border: 1px dashed var(--border); }
+    .solution-content.active { display: block; }
+
+    /* Trainer */
+    .trainer-box { background: white; padding: 30px; border-radius: 16px; text-align: center; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); }
+    .trainer-controls { display: flex; justify-content: center; gap: 10px; margin-top: 20px; flex-wrap: wrap; }
+    .stats { display: flex; justify-content: space-around; margin: 20px 0; border-top: 1px solid var(--border); padding-top: 20px; }
+    .stat-item { text-align: center; }
+    .stat-num { font-size: 24px; font-weight: bold; color: var(--primary); }
+    .trainer-feedback { margin-top: 15px; min-height: 24px; font-weight: 600; font-size: 15px; }
+    .trainer-input { padding: 12px; border: 2px solid var(--border); border-radius: 8px; width: 180px; font-size: 16px; text-align: center; margin: 15px auto; display: block; }
+    .trainer-input:focus { outline: none; border-color: var(--primary); }
+
+    /* Assessment */
+    .assessment-modes { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px; }
+    .mode-card { background: white; padding: 20px; border-radius: 12px; border: 1px solid var(--border); cursor: pointer; transition: 0.2s; text-align: center; }
+    .mode-card:hover { border-color: var(--primary); box-shadow: 0 4px 12px rgba(79, 70, 229, 0.15); transform: translateY(-2px); }
+    .test-ui, .quiz-ui { background: white; padding: 25px; border-radius: 16px; }
+    .timer { font-size: 18px; font-weight: bold; color: var(--error); margin-left: auto; }
+    .progress-bar { height: 6px; background: var(--border); border-radius: 3px; margin-bottom: 20px; overflow: hidden; }
+    .progress-fill { height: 100%; background: var(--primary); border-radius: 3px; width: 0%; transition: 0.3s; }
+    .result-screen { text-align: center; padding: 40px; background: white; border-radius: 16px; }
+    .result-score { font-size: 48px; font-weight: bold; color: var(--primary); margin: 10px 0; }
+    .q-options-grid { display: grid; gap: 10px; margin-bottom: 20px; }
+    .q-btn { padding: 12px; text-align: left; border: 1px solid var(--border); border-radius: 8px; background: white; cursor: pointer; transition: 0.2s; }
+    .q-btn:hover:not(:disabled) { background: var(--primary-light); border-color: var(--primary); }
+    .q-btn.correct { background: #dcfce7; border-color: var(--success); color: #166534; }
+    .q-btn.wrong { background: #fee2e2; border-color: var(--error); color: #991b1b; }
+    .feedback-box { padding: 12px; border-radius: 8px; margin-bottom: 15px; font-size: 14px; display: none; }
+
+    @media (max-width: 650px) {
+      .hero-buttons, .assessment-modes, .trainer-controls { flex-direction: column; }
+      nav { justify-content: center; }
+      .trainer-input { width: 100%; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <nav>
+      <a href="index.html" style="font-weight:700;color:var(--primary);">← Глава 5</a>
+      <a href="#hero">🏠 Главная</a>
+      <a href="#theory">📖 Теория</a>
+      <a href="#algorithm">🪜 Алгоритм</a>
+      <a href="#examples">📝 Примеры</a>
+      <a href="#trainer">🏋️ Тренажёр</a>
+      <a href="#assessment">🧪 Аттестация</a>
+    </nav>
+
+    <section id="hero" class="hero">
+      <h1>📐 Урок 2</h1>
+      <p style="font-size: 18px; font-weight: 500;">Выражения с переменной. Составление, чтение и вычисление</p>
+      <p>Урок 2. Преобразование словесных условий в математические выражения, порядок действий, подстановка значений и решение текстовых задач. 30 вопросов.</p>
+      <div class="hero-buttons">
+        <button class="btn btn-primary" onclick="document.getElementById('theory').scrollIntoView({behavior:'smooth'})">Начать обучение</button>
+        <button class="btn btn-outline" onclick="document.getElementById('assessment').scrollIntoView({behavior:'smooth'})">Проверить знания</button>
+      </div>
+      <div class="objectives">
+        <h3>🎯 Что вы изучите</h3>
+        <ul>
+          <li><strong>Составление выражений:</strong> Перевод текста («сумма», «произведение», «разность») в математическую запись.</li>
+          <li><strong>Чтение выражений:</strong> Правильная расстановка приоритетов и скобок.</li>
+          <li><strong>Задачи на стоимость:</strong> Вычисление общей покупки и сдачи (Цена × Количество).</li>
+          <li><strong>Задачи на движение:</strong> Расстояние при движении навстречу и в противоположных направлениях.</li>
+          <li><strong>Подстановка значений:</strong> Нахождение числового значения выражения при заданных переменных (например, $a=4$).</li>
+        </ul>
+      </div>
+    </section>
+
+    <section id="theory">
+      <h2>📖 Глава 1. Визуальная теория</h2>
+      <p style="margin-bottom: 20px; color: var(--text-light);">Листайте слайды. Каждый слайд — ключевой блок для решения задач.</p>
+      <div class="slide-container">
+        <div class="slide-header">
+          <span id="slide-counter">Слайд 1 / 10</span>
+          <span>📄 Теория</span>
+        </div>
+        <div class="slide-content" id="slide-content"></div>
+        <div class="slide-nav">
+          <button class="btn btn-outline" id="prev-slide" onclick="changeSlide(-1)">← Назад</button>
+          <button class="btn btn-primary" id="next-slide" onclick="changeSlide(1)">Вперёд →</button>
+        </div>
+      </div>
+    </section>
+
+    <section id="algorithm">
+      <h2>🪜 Глава 2. Пошаговые алгоритмы</h2>
+      <p style="margin-bottom: 20px; color: var(--text-light);">Пятиступенчатый алгоритм решения задач на составление выражений.</p>
+      <div class="algo-steps">
+        <div class="algo-step"><h3>1. Определи вопрос задачи</h3><p>Что нужно найти? Стоимость? Расстояние? Остаток массы? Возраст?</p></div>
+        <div class="algo-step"><h3>2. Выдели известные и неизвестные</h3><p>Известные величины — это числа. Неизвестные обозначьте буквами (переменными), если их значение не дано.</p></div>
+        <div class="algo-step"><h3>3. Определи операции</h3><p>«Общая сумма» = сложение. «В ... раз больше» = умножение. «На ... меньше» = вычитание. «Разделить на части» = деление.</p></div>
+        <div class="algo-step"><h3>4. Запиши выражение</h3><p>Составь формулу. Используй скобки, если действие должно выполниться первым (например, сумма до умножения).</p></div>
+        <div class="algo-step"><h3>5. Подставь значения</h3><p>Если даны конкретные числа вместо букв (например, $n=4$), замени букву на число и вычисли результат.</p></div>
+      </div>
+    </section>
+
+    <section id="examples">
+      <h2>📝 Глава 3. Разбор задач</h2>
+      <p style="margin-bottom: 20px; color: var(--text-light);">Шесть типовых задач из параграфа.</p>
+      <div id="examples-container"></div>
+    </section>
+
+    <section id="trainer">
+      <h2>🏋️ Глава 4. Бесконечный тренажёр</h2>
+      <p style="margin-bottom: 20px; color: var(--text-light);">Генератор случайных задач: составление выражений, подстановка, текстовые задачи.</p>
+      <div class="trainer-box">
+        <p id="trainer-task" style="font-size: 18px; margin-bottom: 10px; min-height: 50px; font-weight: 500;">Нажмите «Новая задача» для начала</p>
+        <input type="text" id="trainer-input" class="trainer-input" placeholder="Ваш ответ" disabled>
+        <div class="trainer-controls">
+          <button class="btn btn-primary" id="check-trainer" disabled onclick="checkTrainer()">Проверить</button>
+          <button class="btn btn-outline" onclick="generateTrainerTask()">Новая задача</button>
+          <button class="btn btn-outline" onclick="showTrainerHint()">Подсказка</button>
+        </div>
+        <div class="trainer-feedback" id="trainer-feedback"></div>
+        <div class="stats">
+          <div class="stat-item"><div class="stat-num" id="stat-correct">0</div><div>Верно</div></div>
+          <div class="stat-item"><div class="stat-num" id="stat-total">0</div><div>Всего</div></div>
+          <div class="stat-item"><div class="stat-num" id="stat-streak">0</div><div>Серия</div></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="assessment">
+      <h2>🧪 Глава 5. Аттестация — 30 вопросов</h2>
+      <p style="margin-bottom: 20px; color: var(--text-light);">Два режима: диагностический тест с объяснениями и скоростная викторина на 10 минут.</p>
+      <div class="assessment-modes">
+        <div class="mode-card" onclick="startAssessment('diagnostic')">
+          <h3>🔍 Диагностический тест</h3>
+          <p>30 вопросов с мгновенной обратной связью.</p>
+          <button class="btn btn-primary" style="margin-top: 15px;">Начать тест</button>
+        </div>
+        <div class="mode-card" onclick="startAssessment('speed')">
+          <h3>⏱️ Скоростная викторина</h3>
+          <p>30 вопросов • 10 минут • Итоговый дашборд.</p>
+          <button class="btn btn-outline" style="margin-top: 15px;">Начать викторину</button>
+        </div>
+      </div>
+
+      <div id="assessment-ui" class="hidden">
+        <div class="test-ui">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+            <span id="assess-mode-title" style="font-weight:600;">🔍 Диагностический тест</span>
+            <div class="timer hidden" id="timer">10:00</div>
+          </div>
+          <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
+          <p style="margin-bottom: 10px; font-weight: 600; color: var(--text-light);">Вопрос <span id="q-current">1</span> / <span id="q-total">30</span></p>
+          <p id="q-text" style="font-size: 18px; margin-bottom: 20px; min-height: 50px; font-weight: 500;"></p>
+          <div id="q-options" class="q-options-grid"></div>
+          <div id="q-feedback" class="feedback-box"></div>
+          <div style="display: flex; justify-content: space-between;">
+            <button class="btn btn-outline" onclick="assessPrev()">← Назад</button>
+            <button class="btn btn-primary" id="assess-next" onclick="assessNext()">Далее →</button>
+          </div>
+        </div>
+      </div>
+
+      <div id="result-screen" class="result-screen hidden">
+        <h2>Ваш результат</h2>
+        <div class="result-score" id="result-score">0%</div>
+        <p id="result-stats" style="margin: 10px 0; color: #475569;"></p>
+        <div style="margin-top: 20px; display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
+          <button class="btn btn-primary" onclick="startAssessment(currentAssessMode)">Пройти ещё раз</button>
+          <button class="btn btn-outline" onclick="document.getElementById('assessment').scrollIntoView()">Вернуться</button>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    // SLIDES DATA
+    const slides = [
+      { title: "🔢 Чтение и запись выражений", content: "Выражение содержит числа, переменные, знаки действий и скобки.<br><b>Сумма 5 и a</b> → $5+a$<br><b>Разность 7 и b</b> → $7-b$<br><b>Произведение 2 и c</b> → $2c$ (знак умножения опускается, число пишут перед буквой).<br><b>Частное d и 2</b> → $d:2$<br><em>Важно: $3 \cdot n$ пишется как $3n$, а не $n3$.</em>" },
+      { title: "📊 Приоритет и скобки", content: "Скобки меняют порядок действий.<br>1. <b>$(2+a) \cdot 3$</b> — сначала сложить, потом умножить на 3.<br>2. <b>$2 \cdot (3-b)$</b> — сначала вычесть, потом умножить на 2.<br>3. <b>$(c+4) : 3$</b> — частное суммы $c$ и 4 и числа 3.<br><em>Если скобок нет, умножение выполняется раньше сложения.</em>" },
+      { title: "🛍️ Задачи на стоимость", content: "Формула стоимости: <b>Цена × Количество</b>.<br>Пример: Сампур купил $n$ альбомов по 2 маната и книгу за 6 манат.<br><b>Выражение:</b> $2n + 6$.<br>Если $n=4$, то $2\cdot4 + 6 = 14$ манат.<br><em>Сдача = Дано − Стоимость.</em>" },
+      { title: "⚖️ Задачи на массу", content: "Пример: Масса коробки с конфетами 14,3 кг. Вынули $n$ упаковок по 2 кг.<br><b>Выражение остатка:</b> $14,3 - 2n$.<br>Пример: В ящике $p$ кг яблок. В корзине в 4 раза меньше.<br><b>Выражение массы в корзине:</b> $p : 4$ или $p/4$.<br><em>Вычитайте то, что убрали. Делите, если сказано «в ... раз меньше».</em>" },
+      { title: "🚗 Движение в противоположных направлениях", content: "Две машины выехали в противоположных направлениях.<br>Скорость одной: 40 км/ч. Скорость другой: $a$ км/ч.<br>Время: 2 часа.<br><b>Формула расстояния:</b> $(v_1 + v_2) \cdot t$<br>Выражение: $(40 + a) \cdot 2$.<br>Если $a=50$: $(40+50)\cdot 2 = 180$ км.<br><em>Скорости при удалении складываются.</em>" },
+      { title: "👨‍👩‍👧‍👦 Задачи на возраст", content: "Лале $b$ лет.<br>• Брат старше на 5 лет → $b+5$.<br>• Отец старше на 24 года → $b+24$.<br>• Мать: на 1 год больше утроенного возраста Лалы → $3b+1$.<br>Если Лале 11 лет ($b=11$):<br>Матери: $3\cdot11 + 1 = 34$ года.<br><em>Слово «утроенный» означает умножение на 3.</em>" },
+      { title: "📝 Составление выражений из текста", content: "«Сумма числа 8 и произведения чисел 5 и m»<br>Сначала произведение: $5m$. Потом сумма с 8: <b>$8 + 5m$</b>.<br><br>«Разность чисел a и 3, деленная на 2»<br>Сначала разность: $a-3$. Затем деление: <b>$(a-3):2$</b>.<br><br>«Произведение суммы 7 и x и разности 8 и 5»<br><b>$(7+x) \cdot (8-5)$</b>." },
+      { title: "📐 Геометрические фигуры", content: "Фигура состоит из квадрата со стороной 5 и прямоугольника со сторонами 6 и $x$.<br>Площадь квадрата = $5 \cdot 5 = 25$.<br>Площадь прямоугольника = $6 \cdot x = 6x$.<br><b>Общая площадь:</b> $25 + 6x$.<br>При $x=2$: $25 + 6\cdot2 = 25+12 = 37$ см²." },
+      { title: "⚙️ Подстановка значений", content: "Чтобы найти значение выражения, замените букву числом и выполните действия.<br>Выражение: $m \cdot (2-n) + m:n$<br>При $m=8, n=0.25$:<br>1) $2 - 0.25 = 1.75$<br>2) $8 : 0.25 = 32$<br>3) $8 \cdot 1.75 + 32 = 14 + 32 = 46$." },
+      { title: "🔄 Обратные задачи", content: "По выражению можно составить задачу.<br>Выражение: $3n + 2$<br>Задача: Цена тетради $n$ манат. Купили 3 тетради и ручку за 2 маната. Какова общая стоимость?<br><br>Выражение: $(c-1):2$<br>Задача: Из числа $c$ вычли 1 и результат разделили на 2. Что получилось?" }
+    ];
+
+    let currentSlide = 0;
+    function renderSlide() {
+      const s = slides[currentSlide];
+      document.getElementById('slide-counter').textContent = `Слайд ${currentSlide + 1} / ${slides.length}`;
+      // Replace LaTeX-like notation if necessary, but here simple HTML is enough
+      let formattedContent = s.content.replace(/\$(.*?)\$/g, '<code style="background:#f1f5f9;padding:2px 4px;border-radius:4px;font-weight:bold;">$1</code>');
+      document.getElementById('slide-content').innerHTML = `<h3 style="margin-bottom:10px;">${s.title}</h3><p style="color:#334155;">${formattedContent}</p>`;
+      document.getElementById('prev-slide').disabled = currentSlide === 0;
+      document.getElementById('next-slide').disabled = currentSlide === slides.length - 1;
+    }
+    function changeSlide(dir) {
+      currentSlide += dir;
+      currentSlide = Math.max(0, Math.min(slides.length - 1, currentSlide));
+      renderSlide();
+    }
+    renderSlide();
+
+    // EXAMPLES
+    const examples = [
+      { title: "№ 1 Составление выражения", task: "Запишите: Сумма числа 8 и произведения чисел 5 и m.", sol: "Сначала произведение: 5·m (или 5m).<br>Затем сумма с 8.<br>Ответ: 8 + 5m." },
+      { title: "№ 2 Задача на стоимость", task: "Сампур купил 4 альбома по 2 маната и книгу за 6 манат. Сколько он заплатил?", sol: "Выражение: 2n + 6, где n — кол-во альбомов.<br>Подстановка n=4:<br>2·4 + 6 = 8 + 6 = 14 манат." },
+      { title: "№ 3 Движение", task: "Две машины (40 км/ч и 50 км/ч) выехали в противоположных направлениях. Расстояние через 2 часа?", sol: "Скорость удаления = 40 + 50 = 90 км/ч.<br>Расстояние = Скорость × Время.<br>90 · 2 = 180 км." },
+      { title: "№ 4 Задача на возраст", task: "Матери Лалы 3b+1 лет. Сколько ей лет, если Лале 11 лет?", sol: "Подставим b=11.<br>3·11 + 1 = 33 + 1 = 34 года." },
+      { title: "№ 5 Остаток массы", task: "Масса коробки 14,3 кг. Вынули n упаковок по 2 кг. Какова масса коробки, если n=3?", sol: "Выражение: 14,3 - 2n.<br>При n=3:<br>14,3 - 2·3 = 14,3 - 6 = 8,3 кг." },
+      { title: "№ 6 Сдача с покупки", task: "Сампур купил n ручек по 0,45 маната и дал 10 манат. Сколько сдачи (при n=6)?", sol: "Стоимость: 0,45n.<br>Сдача: 10 - 0,45n.<br>При n=6: 0,45·6 = 2,7.<br>10 - 2,7 = 7,3 маната." }
+    ];
+    const exContainer = document.getElementById('examples-container');
+    examples.forEach(ex => {
+      exContainer.innerHTML += `
+        <div class="example-card">
+          <h3>${ex.title}</h3>
+          <p style="margin-bottom:10px;">${ex.task}</p>
+          <button class="solution-toggle" onclick="toggleSol(this)">Показать решение</button>
+          <div class="solution-content"><p>${ex.sol}</p></div>
+        </div>`;
+    });
+    function toggleSol(btn) {
+      const el = btn.nextElementSibling;
+      el.classList.toggle('active');
+      btn.textContent = el.classList.contains('active') ? 'Скрыть решение' : 'Показать решение';
+    }
+
+    // TRAINER
+    let trainerStats = { correct: 0, total: 0, streak: 0 };
+    let currentTask = null;
+    function generateTrainerTask() {
+      const types = ['expression', 'cost', 'motion', 'age', 'substitution'];
+      const type = types[Math.floor(Math.random() * types.length)];
+      let taskObj = {};
+      switch(type) {
+        case 'expression': {
+          const a = Math.floor(Math.random()*10)+1;
+          const b = Math.floor(Math.random()*5)+2;
+          const v = 'x';
+          taskObj = { text: `Запишите «Сумма числа ${a} и произведения ${b} и x» без пробелов.`, answer: `${a}+${b}${v}` };
+          break;
+        }
+        case 'cost': {
+          const price = 2;
+          const count = Math.floor(Math.random()*5)+2;
+          const extra = Math.floor(Math.random()*5)+1;
+          taskObj = { text: `Цена книги ${price} ман. Купили ${count} книг и тетрадь за ${extra} ман. Общая стоимость?`, answer: price * count + extra };
+          break;
+        }
+        case 'motion': {
+          const v1 = 40;
+          const v2 = 50;
+          const t = 2;
+          taskObj = { text: `Две машины (40 и 50 км/ч) едут в противоположных направлениях. Расстояние через ${t} ч?`, answer: (v1 + v2) * t };
+          break;
+        }
+        case 'age': {
+          const age = 11;
+          // Mother's age formula 3b+1
+          taskObj = { text: `Матери 3b+1 год. Сколько ей лет, если дочери (b) ${age} лет?`, answer: 3*age+1 };
+          break;
+        }
+        case 'substitution': {
+          const x = Math.floor(Math.random()*5)+2;
+          taskObj = { text: `Вычислите 3x - 4 при x=${x}.`, answer: 3*x - 4 };
+          break;
+        }
+      }
+      currentTask = taskObj;
+      document.getElementById('trainer-task').textContent = taskObj.text;
+      document.getElementById('trainer-input').value = '';
+      document.getElementById('trainer-input').disabled = false;
+      document.getElementById('check-trainer').disabled = false;
+      document.getElementById('trainer-feedback').textContent = '';
+      document.getElementById('trainer-input').focus();
+    }
+    function showTrainerHint() {
+      if(!currentTask) return;
+      document.getElementById('trainer-feedback').textContent = `💡 Подсказка: Внимательно прочитайте условие. Сначала умножение, потом сложение.`;
+      document.getElementById('trainer-feedback').style.color = '#64748b';
+    }
+    function checkTrainer() {
+      const val = document.getElementById('trainer-input').value.trim().toLowerCase().replace(/\s/g, '');
+      const correct = String(currentTask.answer).toLowerCase().replace(/\s/g, '');
+      const isCorrect = val === correct;
+      trainerStats.total++;
+      if(isCorrect) { trainerStats.correct++; trainerStats.streak++; }
+      else { trainerStats.streak = 0; }
+      updateTrainerStats();
+      const fb = document.getElementById('trainer-feedback');
+      fb.textContent = isCorrect ? '✅ Верно!' : `❌ Неверно. Правильный ответ: ${currentTask.answer}`;
+      fb.style.color = isCorrect ? '#10b981' : '#ef4444';
+      document.getElementById('trainer-input').disabled = true;
+      document.getElementById('check-trainer').disabled = true;
+    }
+    function updateTrainerStats() {
+      document.getElementById('stat-correct').textContent = trainerStats.correct;
+      document.getElementById('stat-total').textContent = trainerStats.total;
+      document.getElementById('stat-streak').textContent = trainerStats.streak;
+    }
+
+    // ASSESSMENT
+    const questions = [
+      { q: "Как записать «Произведение числа 3 и x»?", o: ["3+x", "3x", "x³", "3/x"], a: 1 },
+      { q: "Чему равно выражение 2a + 4 при a=3?", o: ["6", "8", "10", "12"], a: 2 },
+      { q: "Запишите «Сумма числа 5 и произведения 2 и m».", o: ["5+2m", "2(5+m)", "5m+2", "7m"], a: 0 },
+      { q: "Цена тетради n манат. Купили 4 тетради. Стоимость?", o: ["n+4", "4n", "n/4", "n-4"], a: 1 },
+      { q: "Сампур дал 10 манат за покупку стоимостью x. Сдача?", o: ["10+x", "x-10", "10-x", "10x"], a: 2 },
+      { q: "Скорость пешехода a. Скорость велосипедиста в 3 раза больше.", o: ["a+3", "a/3", "3a", "a-3"], a: 2 },
+      { q: "Запишите «Разность чисел a и 3, деленная на 2».", o: ["a-3:2", "(a-3):2", "a:2-3", "2:(a-3)"], a: 1 },
+      { q: "В ящике p кг яблок. В корзине в 4 раза меньше. Масса в корзине?", o: ["4p", "p-4", "p:4", "p+4"], a: 2 },
+      { q: "Две машины (40 и a км/ч) едут навстречу. Скорость приближения?", o: ["40-a", "40a", "40+a", "40/a"], a: 2 },
+      { q: "Масса коробки 14,3 кг. Вынули n упаковок по 2 кг. Остаток?", o: ["14.3+2n", "14.3-2n", "2n-14.3", "14.3n"], a: 1 },
+      { q: "Вычислите 5(x-2) при x=4.", o: ["10", "20", "30", "5"], a: 0 },
+      { q: "Лале b лет. Брат старше на 5 лет. Возраст брата?", o: ["5b", "b+5", "b-5", "b/5"], a: 1 },
+      { q: "Чему равно 3n + 2 при n=10?", o: ["15", "23", "32", "50"], a: 2 },
+      { q: "Какое выражение соответствует «Утроенный возраст Лалы (b) плюс 1»?", o: ["3(b+1)", "3b+1", "b+3", "b³+1"], a: 1 },
+      { q: "Запишите произведение 7 и c.", o: ["7+c", "7c", "c⁷", "7/c"], a: 1 },
+      { q: "Вычислите 10 - 2y при y=2.", o: ["4", "6", "8", "20"], a: 1 },
+      { q: "Если x=5, y=2, чему равно 2x + 3y?", o: ["10", "13", "16", "21"], a: 2 },
+      { q: "Запишите частное суммы (a+b) и 5.", o: ["a+b:5", "(a+b):5", "a:(b+5)", "5:(a+b)"], a: 1 },
+      { q: "Площадь квадрата со стороной a?", o: ["4a", "a²", "2a", "a+4"], a: 1 },
+      { q: "Периметр прямоугольника со сторонами a и b?", o: ["ab", "a+b", "2(a+b)", "2ab"], a: 2 },
+      { q: "Вычислите (10 - n) / 2 при n=4.", o: ["2", "3", "4", "5"], a: 1 },
+      { q: "Машина проехала a км за 2 часа. Скорость машины?", o: ["2a", "a-2", "a:2", "a+2"], a: 2 },
+      { q: "Сумма трех последовательных чисел, начиная с x?", o: ["3x", "3x+3", "x+3", "3x+1"], a: 1 },
+      { q: "Запишите «Квадрат разности a и b».", o: ["a²-b²", "(a-b)²", "a-b²", "2(a-b)"], a: 1 },
+      { q: "Вычислите 4a - 2b при a=3, b=2.", o: ["6", "8", "10", "12"], a: 1 },
+      { q: "Какое число нужно подставить вместо x, чтобы 3x = 12?", o: ["3", "4", "6", "9"], a: 1 },
+      { q: "Чему равно 20% от числа a?", o: ["20a", "a/20", "0.2a", "5a"], a: 2 },
+      { q: "Запишите «Произведение суммы x и y на 5».", o: ["5x+y", "x+5y", "5(x+y)", "5xy"], a: 2 },
+      { q: "Вычислите значение выражения x² при x=3.", o: ["6", "9", "12", "33"], a: 1 },
+      { q: "Если a=0, чему равно выражение 5a + 2?", o: ["0", "2", "5", "7"], a: 1 }
+    ];
+
+    let assessState = { mode: '', idx: 0, answers: [], timer: null, timeLeft: 600 };
+    let currentAssessMode = 'diagnostic';
+
+    function startAssessment(mode) {
+      currentAssessMode = mode;
+      document.getElementById('assessment-ui').classList.remove('hidden');
+      document.getElementById('result-screen').classList.add('hidden');
+      document.getElementById('assess-mode-title').textContent = mode === 'diagnostic' ? '🔍 Диагностический тест' : '⏱️ Скоростная викторина';
+      document.getElementById('timer').classList.toggle('hidden', mode !== 'speed');
+      
+      assessState = { mode, idx: 0, answers: new Array(questions.length).fill(null), timer: null, timeLeft: 600 };
+      renderQuestion();
+      if(mode === 'speed') {
+        clearInterval(assessState.timer);
+        assessState.timer = setInterval(() => {
+          assessState.timeLeft--;
+          const m = Math.floor(assessState.timeLeft/60);
+          const s = assessState.timeLeft%60;
+          document.getElementById('timer').textContent = `${m}:${s<10?'0':''}${s}`;
+          if(assessState.timeLeft <= 0) finishAssessment();
+        }, 1000);
+      }
+    }
+
+    function renderQuestion() {
+      const q = questions[assessState.idx];
+      document.getElementById('q-current').textContent = assessState.idx + 1;
+      document.getElementById('q-text').textContent = q.q;
+      document.getElementById('progress-fill').style.width = `${((assessState.idx + 1)/questions.length)*100}%`;
+      const opts = document.getElementById('q-options');
+      opts.innerHTML = '';
+      q.o.forEach((opt, i) => {
+        const btn = document.createElement('button');
+        btn.className = 'q-btn';
+        btn.textContent = opt;
+        const sel = assessState.answers[assessState.idx];
+        if(sel !== null) {
+          btn.disabled = true;
+          if(i === q.a) btn.classList.add('correct');
+          else if(i === sel) btn.classList.add('wrong');
+        }
+        btn.onclick = () => selectOption(i);
+        opts.appendChild(btn);
+      });
+      const fb = document.getElementById('q-feedback');
+      fb.style.display = 'none';
+      if(assessState.mode === 'diagnostic' && assessState.answers[assessState.idx] !== null) {
+        const isCor = assessState.answers[assessState.idx] === q.a;
+        fb.style.display = 'block';
+        fb.textContent = isCor ? '✅ Верно!' : `❌ Ошибка. Правильный ответ: ${q.o[q.a]}`;
+        fb.style.background = isCor ? '#dcfce7' : '#fee2e2';
+        fb.style.color = isCor ? '#166534' : '#991b1b';
+      }
+    }
+
+    function selectOption(i) {
+      if(assessState.answers[assessState.idx] !== null) return;
+      assessState.answers[assessState.idx] = i;
+      renderQuestion();
+    }
+
+    function assessNext() {
+      if(assessState.idx < questions.length - 1) {
+        assessState.idx++;
+        renderQuestion();
+      } else {
+        finishAssessment();
+      }
+    }
+    function assessPrev() {
+      if(assessState.idx > 0) {
+        assessState.idx--;
+        renderQuestion();
+      }
+    }
+
+    function finishAssessment() {
+      clearInterval(assessState.timer);
+      document.getElementById('assessment-ui').classList.add('hidden');
+      document.getElementById('result-screen').classList.remove('hidden');
+      let correct = 0;
+      assessState.answers.forEach((a, i) => { if(a === questions[i].a) correct++; });
+      const pct = Math.round((correct/questions.length)*100);
+      document.getElementById('result-score').textContent = `${pct}%`;
+      const timeStr = assessState.mode==='speed' ? document.getElementById('timer').textContent : 'Без ограничений';
+      document.getElementById('result-stats').textContent = `Верно: ${correct} из ${questions.length} • Ошибок: ${questions.length-correct} • Время: ${timeStr}`;
+    }
+  </script>
+</body>
+</html>
+

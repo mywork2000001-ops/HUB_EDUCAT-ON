@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Урок 9 — Неравенства с переменными. Решение неравенств</title>
+  <style>
+    :root {
+      --primary: #4f46e5;
+      --primary-light: #e0e7ff;
+      --bg: #f8fafc;
+      --card: #ffffff;
+      --text: #0f172a;
+      --text-light: #64748b;
+      --success: #10b981;
+      --error: #ef4444;
+      --warning: #f59e0b;
+      --border: #e2e8f0;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', system-ui, -apple-system, sans-serif; }
+    body { background: var(--bg); color: var(--text); line-height: 1.6; }
+    .container { max-width: 850px; margin: 0 auto; padding: 20px; }
+    
+    nav { display: flex; justify-content: space-between; padding: 15px 0; border-bottom: 1px solid var(--border); margin-bottom: 30px; flex-wrap: wrap; gap: 10px; }
+    nav a { color: var(--text-light); text-decoration: none; font-size: 14px; font-weight: 500; transition: 0.2s; }
+    nav a:hover { color: var(--primary); }
+    
+    h1 { font-size: 28px; margin-bottom: 8px; }
+    h2 { font-size: 22px; margin: 40px 0 15px; display: flex; align-items: center; gap: 10px; }
+    .hero { background: linear-gradient(135deg, var(--primary-light), #f5f3ff); padding: 30px; border-radius: 16px; margin-bottom: 30px; }
+    .hero p { color: #334155; margin-bottom: 10px; }
+    .hero-buttons { display: flex; gap: 12px; margin: 20px 0; flex-wrap: wrap; }
+    .btn { padding: 10px 18px; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; transition: 0.2s; font-size: 14px; }
+    .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+    .btn-primary { background: var(--primary); color: white; }
+    .btn-primary:hover:not(:disabled) { background: #4338ca; }
+    .btn-outline { background: white; border: 2px solid var(--primary); color: var(--primary); }
+    .btn-outline:hover:not(:disabled) { background: var(--primary-light); }
+    
+    .objectives { background: white; padding: 20px; border-radius: 12px; margin-top: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+    .objectives ul { padding-left: 20px; }
+    .objectives li { margin-bottom: 8px; color: #475569; }
+
+    /* Slides */
+    .slide-container { position: relative; background: white; border-radius: 16px; padding: 30px; min-height: 280px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
+    .slide-header { display: flex; justify-content: space-between; margin-bottom: 20px; color: var(--text-light); font-size: 14px; font-weight: 600; }
+    .slide-content { margin-bottom: 30px; min-height: 150px; }
+    .slide-nav { display: flex; justify-content: space-between; }
+    
+    /* Algorithm */
+    .algo-steps { display: grid; gap: 12px; }
+    .algo-step { background: white; padding: 15px; border-radius: 10px; border-left: 4px solid var(--primary); box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
+    .algo-step h3 { color: var(--primary); margin-bottom: 4px; font-size: 16px; }
+    .algo-step p { color: #475569; font-size: 14px; }
+
+    /* Examples */
+    .example-card { background: white; padding: 20px; border-radius: 12px; margin-bottom: 15px; border: 1px solid var(--border); }
+    .solution-toggle { background: none; border: none; color: var(--primary); cursor: pointer; font-weight: 600; margin-top: 10px; padding: 0; font-size: 14px; }
+    .solution-content { display: none; margin-top: 12px; padding: 12px; background: #f8fafc; border-radius: 8px; border: 1px dashed var(--border); }
+    .solution-content.active { display: block; }
+
+    /* Trainer */
+    .trainer-box { background: white; padding: 30px; border-radius: 16px; text-align: center; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); }
+    .trainer-controls { display: flex; justify-content: center; gap: 10px; margin-top: 20px; flex-wrap: wrap; }
+    .stats { display: flex; justify-content: space-around; margin: 20px 0; border-top: 1px solid var(--border); padding-top: 20px; }
+    .stat-item { text-align: center; }
+    .stat-num { font-size: 24px; font-weight: bold; color: var(--primary); }
+    .trainer-feedback { margin-top: 15px; min-height: 24px; font-weight: 600; font-size: 15px; }
+    .trainer-input { padding: 12px; border: 2px solid var(--border); border-radius: 8px; width: 180px; font-size: 16px; text-align: center; margin: 15px auto; display: block; }
+    .trainer-input:focus { outline: none; border-color: var(--primary); }
+
+    /* Assessment */
+    .assessment-modes { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px; }
+    .mode-card { background: white; padding: 20px; border-radius: 12px; border: 1px solid var(--border); cursor: pointer; transition: 0.2s; text-align: center; }
+    .mode-card:hover { border-color: var(--primary); box-shadow: 0 4px 12px rgba(79, 70, 229, 0.15); transform: translateY(-2px); }
+    .test-ui, .quiz-ui { background: white; padding: 25px; border-radius: 16px; }
+    .timer { font-size: 18px; font-weight: bold; color: var(--error); margin-left: auto; }
+    .progress-bar { height: 6px; background: var(--border); border-radius: 3px; margin-bottom: 20px; overflow: hidden; }
+    .progress-fill { height: 100%; background: var(--primary); border-radius: 3px; width: 0%; transition: 0.3s; }
+    .result-screen { text-align: center; padding: 40px; background: white; border-radius: 16px; }
+    .result-score { font-size: 48px; font-weight: bold; color: var(--primary); margin: 10px 0; }
+    .q-options-grid { display: grid; gap: 10px; margin-bottom: 20px; }
+    .q-btn { padding: 12px; text-align: left; border: 1px solid var(--border); border-radius: 8px; background: white; cursor: pointer; transition: 0.2s; }
+    .q-btn:hover:not(:disabled) { background: var(--primary-light); border-color: var(--primary); }
+    .q-btn.correct { background: #dcfce7; border-color: var(--success); color: #166534; }
+    .q-btn.wrong { background: #fee2e2; border-color: var(--error); color: #991b1b; }
+    .feedback-box { padding: 12px; border-radius: 8px; margin-bottom: 15px; font-size: 14px; display: none; }
+
+    @media (max-width: 650px) {
+      .hero-buttons, .assessment-modes, .trainer-controls { flex-direction: column; }
+      nav { justify-content: center; }
+      .trainer-input { width: 100%; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <nav>
+      <a href="index.html" style="font-weight:700;color:var(--primary);">← Глава 5</a>
+      <a href="#hero">🏠 Главная</a>
+      <a href="#theory">📖 Теория</a>
+      <a href="#algorithm">🪜 Алгоритм</a>
+      <a href="#examples">📝 Примеры</a>
+      <a href="#trainer">🏋️ Тренажёр</a>
+      <a href="#assessment">🧪 Аттестация</a>
+    </nav>
+
+    <section id="hero" class="hero">
+      <h1>📐 Урок 9</h1>
+      <p style="font-size: 18px; font-weight: 500;">Неравенства с переменными. Решение неравенств</p>
+      <p>Урок 9. Запись неравенств по текстовым условиям, строгие и нестрогие знаки, изображение решений на числовой прямой, поиск натуральных чисел и практические задачи. 30 вопросов.</p>
+      <div class="hero-buttons">
+        <button class="btn btn-primary" onclick="document.getElementById('theory').scrollIntoView({behavior:'smooth'})">Начать обучение</button>
+        <button class="btn btn-outline" onclick="document.getElementById('assessment').scrollIntoView({behavior:'smooth'})">Проверить знания</button>
+      </div>
+      <div class="objectives">
+        <h3>🎯 Что вы изучите</h3>
+        <ul>
+          <li><strong>Запись неравенств:</strong> Перевод словесных условий («больше», «не меньше», «не больше») в математические знаки >, <, ≥, ≤, ≠.</li>
+          <li><strong>Решение неравенства:</strong> Значение переменной, превращающее неравенство в верное числовое утверждение.</li>
+          <li><strong>Числовая прямая:</strong> Открытый кружок (○) для строгих и закрашенный (●) для нестрогих неравенств.</li>
+          <li><strong>Натуральные решения:</strong> Поиск целых положительных чисел, удовлетворяющих заданному условию.</li>
+          <li><strong>Практические задачи:</strong> Использование неравенств для расчёта вместимости, стоимости и границ допустимых значений.</li>
+        </ul>
+      </div>
+    </section>
+
+    <section id="theory">
+      <h2>📖 Глава 1. Визуальная теория</h2>
+      <p style="margin-bottom: 20px; color: var(--text-light);">Листайте слайды. Каждый слайд — ключевой блок для решения задач.</p>
+      <div class="slide-container">
+        <div class="slide-header">
+          <span id="slide-counter">Слайд 1 / 8</span>
+          <span>📄 Теория</span>
+        </div>
+        <div class="slide-content" id="slide-content"></div>
+        <div class="slide-nav">
+          <button class="btn btn-outline" id="prev-slide" onclick="changeSlide(-1)">← Назад</button>
+          <button class="btn btn-primary" id="next-slide" onclick="changeSlide(1)">Вперёд →</button>
+        </div>
+      </div>
+    </section>
+
+    <section id="algorithm">
+      <h2>🪜 Глава 2. Пошаговые алгоритмы</h2>
+      <p style="margin-bottom: 20px; color: var(--text-light);">Пятиступенчатый алгоритм работы с неравенствами.</p>
+      <div class="algo-steps">
+        <div class="algo-step"><h3>1. Определи тип условия</h3><p>Что требуется: записать неравенство, найти решение, изобразить на прямой или выбрать подходящие числа?</p></div>
+        <div class="algo-step"><h3>2. Выбери правильный знак</h3><p>«Больше» → >, «Меньше» → <, «Не больше» → ≤, «Не меньше» → ≥, «Не равно» → ≠.</p></div>
+        <div class="algo-step"><h3>3. Определи границы</h3><p>Найди число, относительно которого сравнивается переменная. Это будет точка отсчёта на числовой прямой.</p></div>
+        <div class="algo-step"><h3>4. Изобрази или выпиши решения</h3><p>Для строгих неравенств используй открытый кружок, для нестрогих — закрашенный. Выпиши подходящие натуральные числа.</p></div>
+        <div class="algo-step"><h3>5. Проверь подстановкой</h3><p>Подставь найденные числа в исходное неравенство. Убедись, что утверждение остаётся верным.</p></div>
+      </div>
+    </section>
+
+    <section id="examples">
+      <h2>📝 Глава 3. Разбор задач</h2>
+      <p style="margin-bottom: 20px; color: var(--text-light);">Шесть типовых задач из параграфа.</p>
+      <div id="examples-container"></div>
+    </section>
+
+    <section id="trainer">
+      <h2>🏋️ Глава 4. Бесконечный тренажёр</h2>
+      <p style="margin-bottom: 20px; color: var(--text-light);">Генератор случайных задач: перевод текста, проверка решений, числовая прямая, натуральные числа.</p>
+      <div class="trainer-box">
+        <p id="trainer-task" style="font-size: 18px; margin-bottom: 10px; min-height: 50px; font-weight: 500;">Нажмите «Новая задача» для начала</p>
+        <input type="text" id="trainer-input" class="trainer-input" placeholder="Ваш ответ" disabled>
+        <div class="trainer-controls">
+          <button class="btn btn-primary" id="check-trainer" disabled onclick="checkTrainer()">Проверить</button>
+          <button class="btn btn-outline" onclick="generateTrainerTask()">Новая задача</button>
+          <button class="btn btn-outline" onclick="showTrainerHint()">Подсказка</button>
+        </div>
+        <div class="trainer-feedback" id="trainer-feedback"></div>
+        <div class="stats">
+          <div class="stat-item"><div class="stat-num" id="stat-correct">0</div><div>Верно</div></div>
+          <div class="stat-item"><div class="stat-num" id="stat-total">0</div><div>Всего</div></div>
+          <div class="stat-item"><div class="stat-num" id="stat-streak">0</div><div>Серия</div></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="assessment">
+      <h2>🧪 Глава 5. Аттестация — 30 вопросов</h2>
+      <p style="margin-bottom: 20px; color: var(--text-light);">Два режима: диагностический тест с объяснениями и скоростная викторина на 10 минут.</p>
+      <div class="assessment-modes">
+        <div class="mode-card" onclick="startAssessment('diagnostic')">
+          <h3>🔍 Диагностический тест</h3>
+          <p>30 вопросов с мгновенной обратной связью.</p>
+          <button class="btn btn-primary" style="margin-top: 15px;">Начать тест</button>
+        </div>
+        <div class="mode-card" onclick="startAssessment('speed')">
+          <h3>⏱️ Скоростная викторина</h3>
+          <p>30 вопросов • 10 минут • Итоговый дашборд.</p>
+          <button class="btn btn-outline" style="margin-top: 15px;">Начать викторину</button>
+        </div>
+      </div>
+
+      <div id="assessment-ui" class="hidden">
+        <div class="test-ui">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+            <span id="assess-mode-title" style="font-weight:600;">🔍 Диагностический тест</span>
+            <div class="timer hidden" id="timer">10:00</div>
+          </div>
+          <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
+          <p style="margin-bottom: 10px; font-weight: 600; color: var(--text-light);">Вопрос <span id="q-current">1</span> / <span id="q-total">30</span></p>
+          <p id="q-text" style="font-size: 18px; margin-bottom: 20px; min-height: 50px; font-weight: 500;"></p>
+          <div id="q-options" class="q-options-grid"></div>
+          <div id="q-feedback" class="feedback-box"></div>
+          <div style="display: flex; justify-content: space-between;">
+            <button class="btn btn-outline" onclick="assessPrev()">← Назад</button>
+            <button class="btn btn-primary" id="assess-next" onclick="assessNext()">Далее →</button>
+          </div>
+        </div>
+      </div>
+
+      <div id="result-screen" class="result-screen hidden">
+        <h2>Ваш результат</h2>
+        <div class="result-score" id="result-score">0%</div>
+        <p id="result-stats" style="margin: 10px 0; color: #475569;"></p>
+        <div style="margin-top: 20px; display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
+          <button class="btn btn-primary" onclick="startAssessment(currentAssessMode)">Пройти ещё раз</button>
+          <button class="btn btn-outline" onclick="document.getElementById('assessment').scrollIntoView()">Вернуться</button>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    // SLIDES DATA
+    const slides = [
+      { title: "📐 Неравенства с переменными", content: "Если в левой или правой части неравенства стоит выражение с буквой, оно называется <b>неравенством с переменной</b>.<br>Примеры: <b>x > 3</b>, <b>y < 10</b>, <b>n ≥ 5</b>, <b>5 > c</b>.<br>Переменная может принимать разные значения. Наша задача — найти те, при которых неравенство становится верным.<br><em>Неравенства описывают диапазоны, а не одно конкретное число.</em>" },
+      { title: "🔤 Перевод текста в знаки", content: "Словесные условия легко перевести в математический язык:<br>• «Больше» → <b>></b><br>• «Меньше» → <b><</b><br>• «Не больше» (≤) → <b>≤</b><br>• «Не меньше» (≥) → <b>≥</b><br>• «Не равно» → <b>≠</b><br>Пример: «Масса посылки больше 3 кг» → <b>c > 3</b>.<br><em>Ключевые слова «не» меняют строгий знак на нестрогий.</em>" },
+      { title: "✅ Что такое решение неравенства?", content: "<b>Решение неравенства</b> — это значение переменной, при котором неравенство превращается в верное числовое утверждение.<br>Проверка: Подставь число вместо буквы и вычисли.<br>Пример: Для <b>x > 2</b><br>• x = 3 → 3 > 2 ✅ (решение)<br>• x = 2 → 2 > 2 ❌ (не решение)<br><em>Одно неравенство может иметь бесконечно много решений.</em>" },
+      { title: "⭕ Строгие неравенства на прямой", content: "Для <b>x > 2</b> или <b>x < 5</b> граница не включается в решение.<br>На числовой прямой это отмечается <b>открытым кружком (○)</b>.<br>Все числа справа (для >) или слева (для <) от точки подходят.<br>Число 2 <b>не является</b> решением для x > 2.<br><em>Открытый кружок = строгая граница, точка «не входит».</em>" },
+      { title: "⚫ Нестрогие неравенства на прямой", content: "Для <b>x ≥ 2</b> или <b>x ≤ 5</b> граница включается в решение.<br>На числовой прямой это отмечается <b>закрашенным кружком (●)</b>.<br>Все числа справа (для ≥) или слева (для ≤) от точки подходят.<br>Число 2 <b>является</b> решением для x ≥ 2.<br><em>Закрашенный кружок = нестрогая граница, точка «входит».</em>" },
+      { title: "🔢 Натуральные решения", content: "Часто нужно найти только <b>натуральные числа</b> (1, 2, 3...), удовлетворяющие условию.<br>Пример: <b>x < 10</b> → 1, 2, 3, 4, 5, 6, 7, 8, 9.<br>Пример: <b>x > 5</b> → 6, 7, 8, 9, 10... (бесконечно много).<br>Пример: <b>3 ≤ x ≤ 7</b> → 3, 4, 5, 6, 7.<br><em>Натуральные числа всегда целые и положительные.</em>" },
+      { title: "🚢 Практика: Вместимость лайнера", content: "Круизный лайнер вмещает <b>не больше 168</b> пассажиров.<br>Неравенство: <b>n ≤ 168</b><br>Подходят: 150, 168, 100.<br>Не подходят: 170, 200.<br><em>Слово «не больше» всегда означает ≤. Граница включена.</em>" },
+      { title: "📦 Практика: Обои и бюджет", content: "На стены нужно от 6 до 9 рулонов: <b>6 ≤ x ≤ 9</b>.<br>Цена рулона = 8 манат.<br>Мин. стоимость: 6 × 8 = 48 ман.<br>Макс. стоимость: 9 × 8 = 72 ман.<br>Подходящие суммы: 48, 56, 64, 72.<br>Не подходят: 40, 80.<br><em>Сначала реши неравенство, потом умножай на цену.</em>" }
+    ];
+
+    let currentSlide = 0;
+    function renderSlide() {
+      const s = slides[currentSlide];
+      document.getElementById('slide-counter').textContent = `Слайд ${currentSlide + 1} / ${slides.length}`;
+      let formattedContent = s.content.replace(/\$(.*?)\$/g, '<code style="background:#f1f5f9;padding:2px 4px;border-radius:4px;font-weight:bold;">$1</code>');
+      document.getElementById('slide-content').innerHTML = `<h3 style="margin-bottom:10px;">${s.title}</h3><p style="color:#334155;">${formattedContent}</p>`;
+      document.getElementById('prev-slide').disabled = currentSlide === 0;
+      document.getElementById('next-slide').disabled = currentSlide === slides.length - 1;
+    }
+    function changeSlide(dir) {
+      currentSlide += dir;
+      currentSlide = Math.max(0, Math.min(slides.length - 1, currentSlide));
+      renderSlide();
+    }
+    renderSlide();
+
+    // EXAMPLES
+    const examples = [
+      { title: "№ 1 Запись неравенств", task: "Запишите неравенствами: а) возраст Сабины больше 12; б) длина ленты больше 3 м; в) балл не больше 100.", sol: "а) a > 12\nб) l > 3\nв) b ≤ 100" },
+      { title: "№ 2 Проверка решений", task: "Является ли число 5 решением неравенства x > 2? А число 2?", sol: "5 > 2 → Верно ✅ (5 — решение)\n2 > 2 → Неверно ❌ (2 — не решение)" },
+      { title: "№ 3 Натуральные числа", task: "Найдите натуральные числа, удовлетворяющие x < 4,5.", sol: "Натуральные числа меньше 4,5:\n1, 2, 3, 4." },
+      { title: "№ 4 Числовая прямая", task: "Изобразите решения x ≤ 7 на числовой прямой.", sol: "Отмечаем точку 7 закрашенным кружком (●). Штрихуем всё влево. Числа 7, 6, 5... входят в решение." },
+      { title: "№ 5 Задача про лайнер", task: "Лайнер вмещает не больше 168 пассажиров. Подходит ли билет на 170 мест?", sol: "Неравенство: n ≤ 168.\n170 ≤ 168 → Неверно ❌\nОтвет: Нет, не подходит." },
+      { title: "№ 6 Задача про обои", task: "Нужно 6-9 рулонов обоев по 8 манат. Подходит ли сумма 80 манат?", sol: "Мин: 6·8=48, Макс: 9·8=72.\n48 ≤ x ≤ 72.\n80 > 72 → Не подходит ❌" }
+    ];
+    const exContainer = document.getElementById('examples-container');
+    examples.forEach(ex => {
+      exContainer.innerHTML += `
+        <div class="example-card">
+          <h3>${ex.title}</h3>
+          <p style="margin-bottom:10px;">${ex.task}</p>
+          <button class="solution-toggle" onclick="toggleSol(this)">Показать решение</button>
+          <div class="solution-content"><p style="white-space:pre-line;">${ex.sol}</p></div>
+        </div>`;
+    });
+    function toggleSol(btn) {
+      const el = btn.nextElementSibling;
+      el.classList.toggle('active');
+      btn.textContent = el.classList.contains('active') ? 'Скрыть решение' : 'Показать решение';
+    }
+
+    // TRAINER
+    let trainerStats = { correct: 0, total: 0, streak: 0 };
+    let currentTask = null;
+    function generateTrainerTask() {
+      const types = ['sign_match', 'check_num', 'nat_limit', 'boundary_check'];
+      const type = types[Math.floor(Math.random() * types.length)];
+      let taskObj = {};
+      switch(type) {
+        case 'sign_match': {
+          const phrases = [
+            {t: "Не меньше 10", a: "≥"},
+            {t: "Строго больше 5", a: ">"},
+            {t: "Не больше 12", a: "≤"},
+            {t: "Меньше 8", a: "<"}
+          ];
+          const p = phrases[Math.floor(Math.random() * phrases.length)];
+          taskObj = { text: `Какой знак соответствует фразе "${p.t}"? (> < ≥ ≤)`, answer: p.a };
+          break;
+        }
+        case 'check_num': {
+          const lim = Math.floor(Math.random() * 10) + 3;
+          const strict = Math.random() > 0.5;
+          const op = strict ? '>' : '≥';
+          const testNum = lim + (Math.random() > 0.5 ? 1 : -1);
+          const isSol = strict ? (testNum > lim) : (testNum >= lim);
+          taskObj = { text: `Является ли ${testNum} решением x ${op} ${lim}? (Да/Нет)`, answer: isSol ? 'да' : 'нет' };
+          break;
+        }
+        case 'nat_limit': {
+          const lim = Math.floor(Math.random() * 8) + 3;
+          taskObj = { text: `Сколько натуральных чисел удовлетворяют x < ${lim}?`, answer: lim - 1 };
+          break;
+        }
+        case 'boundary_check': {
+          const val = Math.floor(Math.random() * 5) + 1;
+          taskObj = { text: `При x ${val}, верно ли неравенство 2x + 3 < ${2*val + 5}? (Да/Нет)`, answer: 'да' };
+          break;
+        }
+      }
+      currentTask = taskObj;
+      document.getElementById('trainer-task').textContent = taskObj.text;
+      document.getElementById('trainer-input').value = '';
+      document.getElementById('trainer-input').disabled = false;
+      document.getElementById('check-trainer').disabled = false;
+      document.getElementById('trainer-feedback').textContent = '';
+      document.getElementById('trainer-input').focus();
+    }
+    function showTrainerHint() {
+      if(!currentTask) return;
+      document.getElementById('trainer-feedback').textContent = `💡 Подсказка: Подставь число или вспомни перевод фразы на математический язык.`;
+      document.getElementById('trainer-feedback').style.color = '#64748b';
+    }
+    function checkTrainer() {
+      const val = document.getElementById('trainer-input').value.trim().toLowerCase().replace(/\s/g, '');
+      const correct = String(currentTask.answer).toLowerCase().replace(/\s/g, '');
+      const isCorrect = val === correct;
+      trainerStats.total++;
+      if(isCorrect) { trainerStats.correct++; trainerStats.streak++; }
+      else { trainerStats.streak = 0; }
+      updateTrainerStats();
+      const fb = document.getElementById('trainer-feedback');
+      fb.textContent = isCorrect ? '✅ Верно!' : `❌ Неверно. Правильный ответ: ${currentTask.answer}`;
+      fb.style.color = isCorrect ? '#10b981' : '#ef4444';
+      document.getElementById('trainer-input').disabled = true;
+      document.getElementById('check-trainer').disabled = true;
+    }
+    function updateTrainerStats() {
+      document.getElementById('stat-correct').textContent = trainerStats.correct;
+      document.getElementById('stat-total').textContent = trainerStats.total;
+      document.getElementById('stat-streak').textContent = trainerStats.streak;
+    }
+
+    // ASSESSMENT
+    const questions = [
+      { q: "Что означает знак ≤?", o: ["Строго меньше", "Меньше или равно", "Больше или равно", "Не равно"], a: 1 },
+      { q: "Как записать «масса не больше 3 кг»?", o: ["m > 3", "m < 3", "m ≥ 3", "m ≤ 3"], a: 3 },
+      { q: "Является ли 3 решением x > 3?", o: ["Да", "Нет", "Иногда", "Зависит от x"], a: 1 },
+      { q: "Как отмечается строгое неравенство на числовой прямой?", o: ["Закрашенным кружком", "Открытым кружком", "Квадратом", "Крестиком"], a: 1 },
+      { q: "Найдите натуральные числа, удовлетворяющие x < 4.", o: ["1, 2, 3", "0, 1, 2, 3", "1, 2, 3, 4", "4, 5, 6"], a: 0 },
+      { q: "Как записать «возраст не меньше 18 лет»?", o: ["a < 18", "a > 18", "a ≥ 18", "a ≤ 18"], a: 2 },
+      { q: "Верно ли неравенство 5,6 > 5,56?", o: ["Да", "Нет", "Равны", "Нельзя сравнить"], a: 0 },
+      { q: "Лайнер вмещает не больше 168 человек. Подходит ли 170?", o: ["Да", "Нет", "Зависит от погоды", "Только если есть места"], a: 1 },
+      { q: "Какое неравенство соответствует «x строго больше 7»?", o: ["x ≥ 7", "x ≤ 7", "x > 7", "x = 7"], a: 2 },
+      { q: "Сколько натуральных решений у неравенства x ≤ 5?", o: ["4", "5", "6", "Бесконечно"], a: 1 },
+      { q: "Что означает знак ≠?", o: ["Равно", "Больше", "Не равно", "Меньше"], a: 2 },
+      { q: "Является ли 5 решением x ≤ 5?", o: ["Да", "Нет", "Только для дробей", "Неизвестно"], a: 0 },
+      { q: "Обои стоят 8 манат/рулон. Нужно 6-9 рулонов. Подходит ли 72 манат?", o: ["Да", "Нет", "Не хватает", "Слишком много"], a: 0 },
+      { q: "Как записать «скорость не превышает 60 км/ч»?", o: ["v > 60", "v < 60", "v ≥ 60", "v ≤ 60"], a: 3 },
+      { q: "Какое число НЕ является решением x > 2?", o: ["2.1", "3", "5", "2"], a: 3 },
+      { q: "На числовой прямой закрашенный кружок означает:", o: ["Граница не входит", "Граница входит", "Ошибка", "Бесконечность"], a: 1 },
+      { q: "Решите: 3 ≤ x ≤ 7. Какие натуральные x подходят?", o: ["3, 4, 5, 6, 7", "4, 5, 6", "3, 7", "1, 2, 8"], a: 0 },
+      { q: "Если n ≤ 168, то n может быть:", o: ["170", "169", "168", "200"], a: 2 },
+      { q: "Как записать «количество конфет меньше 10»?", o: ["k ≥ 10", "k ≤ 10", "k > 10", "k < 10"], a: 3 },
+      { q: "Проверьте: верно ли 7,5 > 7,49?", o: ["Да", "Нет", "Равны", "Зависит от точности"], a: 0 },
+      { q: "Какое неравенство описывает «между 3 и 5, включая границы»?", o: ["3 < x < 5", "3 ≤ x ≤ 5", "x > 3", "x < 5"], a: 1 },
+      { q: "Сколько натуральных чисел удовлетворяют 2 < x < 6?", o: ["3 (3,4,5)", "4 (2,3,4,5)", "5", "Бесконечно"], a: 0 },
+      { q: "Если x ≥ 4, то x может быть:", o: ["3", "3.9", "4", "0"], a: 2 },
+      { q: "Как записать «балл на экзамене не больше 100»?", o: ["b < 100", "b > 100", "b ≤ 100", "b ≥ 100"], a: 2 },
+      { q: "Верно ли, что 0 является решением x > -2?", o: ["Да", "Нет", "Только для натуральных", "Не определено"], a: 0 },
+      { q: "Какое слово соответствует знаку ≥?", o: ["Больше", "Меньше", "Не меньше", "Не больше"], a: 2 },
+      { q: "Найдите наименьшее натуральное решение x > 3.", o: ["3", "4", "5", "2"], a: 1 },
+      { q: "Если 6 ≤ x ≤ 9, чему равно x при покупке 8 рулонов?", o: ["6", "7", "8", "9"], a: 2 },
+      { q: "Как проверить решение неравенства?", o: ["Подставить в условие", "Умножить на 0", "Сравнить с графиком", "Угадать"], a: 0 },
+      { q: "Какое неравенство НЕ имеет натуральных решений?", o: ["x > 1", "x ≥ 2", "x < 1", "x ≤ 5"], a: 2 }
+    ];
+
+    let assessState = { mode: '', idx: 0, answers: [], timer: null, timeLeft: 600 };
+    let currentAssessMode = 'diagnostic';
+
+    function startAssessment(mode) {
+      currentAssessMode = mode;
+      document.getElementById('assessment-ui').classList.remove('hidden');
+      document.getElementById('result-screen').classList.add('hidden');
+      document.getElementById('assess-mode-title').textContent = mode === 'diagnostic' ? '🔍 Диагностический тест' : '⏱️ Скоростная викторина';
+      document.getElementById('timer').classList.toggle('hidden', mode !== 'speed');
+      
+      assessState = { mode, idx: 0, answers: new Array(questions.length).fill(null), timer: null, timeLeft: 600 };
+      renderQuestion();
+      if(mode === 'speed') {
+        clearInterval(assessState.timer);
+        assessState.timer = setInterval(() => {
+          assessState.timeLeft--;
+          const m = Math.floor(assessState.timeLeft/60);
+          const s = assessState.timeLeft%60;
+          document.getElementById('timer').textContent = `${m}:${s<10?'0':''}${s}`;
+          if(assessState.timeLeft <= 0) finishAssessment();
+        }, 1000);
+      }
+    }
+
+    function renderQuestion() {
+      const q = questions[assessState.idx];
+      document.getElementById('q-current').textContent = assessState.idx + 1;
+      document.getElementById('q-text').textContent = q.q;
+      document.getElementById('progress-fill').style.width = `${((assessState.idx + 1)/questions.length)*100}%`;
+      const opts = document.getElementById('q-options');
+      opts.innerHTML = '';
+      q.o.forEach((opt, i) => {
+        const btn = document.createElement('button');
+        btn.className = 'q-btn';
+        btn.textContent = opt;
+        const sel = assessState.answers[assessState.idx];
+        if(sel !== null) {
+          btn.disabled = true;
+          if(i === q.a) btn.classList.add('correct');
+          else if(i === sel) btn.classList.add('wrong');
+        }
+        btn.onclick = () => selectOption(i);
+        opts.appendChild(btn);
+      });
+      const fb = document.getElementById('q-feedback');
+      fb.style.display = 'none';
+      if(assessState.mode === 'diagnostic' && assessState.answers[assessState.idx] !== null) {
+        const isCor = assessState.answers[assessState.idx] === q.a;
+        fb.style.display = 'block';
+        fb.textContent = isCor ? '✅ Верно!' : `❌ Ошибка. Правильный ответ: ${q.o[q.a]}`;
+        fb.style.background = isCor ? '#dcfce7' : '#fee2e2';
+        fb.style.color = isCor ? '#166534' : '#991b1b';
+      }
+    }
+
+    function selectOption(i) {
+      if(assessState.answers[assessState.idx] !== null) return;
+      assessState.answers[assessState.idx] = i;
+      renderQuestion();
+    }
+
+    function assessNext() {
+      if(assessState.idx < questions.length - 1) {
+        assessState.idx++;
+        renderQuestion();
+      } else {
+        finishAssessment();
+      }
+    }
+    function assessPrev() {
+      if(assessState.idx > 0) {
+        assessState.idx--;
+        renderQuestion();
+      }
+    }
+
+    function finishAssessment() {
+      clearInterval(assessState.timer);
+      document.getElementById('assessment-ui').classList.add('hidden');
+      document.getElementById('result-screen').classList.remove('hidden');
+      let correct = 0;
+      assessState.answers.forEach((a, i) => { if(a === questions[i].a) correct++; });
+      const pct = Math.round((correct/questions.length)*100);
+      document.getElementById('result-score').textContent = `${pct}%`;
+      const timeStr = assessState.mode==='speed' ? document.getElementById('timer').textContent : 'Без ограничений';
+      document.getElementById('result-stats').textContent = `Верно: ${correct} из ${questions.length} • Ошибок: ${questions.length-correct} • Время: ${timeStr}`;
+    }
+  </script>
+</body>
+</html>

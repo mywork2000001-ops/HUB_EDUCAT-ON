@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Урок 4 — Свойства равенств и решение уравнений</title>
+  <style>
+    :root {
+      --primary: #4f46e5;
+      --primary-light: #e0e7ff;
+      --bg: #f8fafc;
+      --card: #ffffff;
+      --text: #0f172a;
+      --text-light: #64748b;
+      --success: #10b981;
+      --error: #ef4444;
+      --warning: #f59e0b;
+      --border: #e2e8f0;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', system-ui, -apple-system, sans-serif; }
+    body { background: var(--bg); color: var(--text); line-height: 1.6; }
+    .container { max-width: 850px; margin: 0 auto; padding: 20px; }
+    
+    nav { display: flex; justify-content: space-between; padding: 15px 0; border-bottom: 1px solid var(--border); margin-bottom: 30px; flex-wrap: wrap; gap: 10px; }
+    nav a { color: var(--text-light); text-decoration: none; font-size: 14px; font-weight: 500; transition: 0.2s; }
+    nav a:hover { color: var(--primary); }
+    
+    h1 { font-size: 28px; margin-bottom: 8px; }
+    h2 { font-size: 22px; margin: 40px 0 15px; display: flex; align-items: center; gap: 10px; }
+    .hero { background: linear-gradient(135deg, var(--primary-light), #f5f3ff); padding: 30px; border-radius: 16px; margin-bottom: 30px; }
+    .hero p { color: #334155; margin-bottom: 10px; }
+    .hero-buttons { display: flex; gap: 12px; margin: 20px 0; flex-wrap: wrap; }
+    .btn { padding: 10px 18px; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; transition: 0.2s; font-size: 14px; }
+    .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+    .btn-primary { background: var(--primary); color: white; }
+    .btn-primary:hover:not(:disabled) { background: #4338ca; }
+    .btn-outline { background: white; border: 2px solid var(--primary); color: var(--primary); }
+    .btn-outline:hover:not(:disabled) { background: var(--primary-light); }
+    
+    .objectives { background: white; padding: 20px; border-radius: 12px; margin-top: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+    .objectives ul { padding-left: 20px; }
+    .objectives li { margin-bottom: 8px; color: #475569; }
+
+    /* Slides */
+    .slide-container { position: relative; background: white; border-radius: 16px; padding: 30px; min-height: 280px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
+    .slide-header { display: flex; justify-content: space-between; margin-bottom: 20px; color: var(--text-light); font-size: 14px; font-weight: 600; }
+    .slide-content { margin-bottom: 30px; min-height: 150px; }
+    .slide-nav { display: flex; justify-content: space-between; }
+    
+    /* Algorithm */
+    .algo-steps { display: grid; gap: 12px; }
+    .algo-step { background: white; padding: 15px; border-radius: 10px; border-left: 4px solid var(--primary); box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
+    .algo-step h3 { color: var(--primary); margin-bottom: 4px; font-size: 16px; }
+    .algo-step p { color: #475569; font-size: 14px; }
+
+    /* Examples */
+    .example-card { background: white; padding: 20px; border-radius: 12px; margin-bottom: 15px; border: 1px solid var(--border); }
+    .solution-toggle { background: none; border: none; color: var(--primary); cursor: pointer; font-weight: 600; margin-top: 10px; padding: 0; font-size: 14px; }
+    .solution-content { display: none; margin-top: 12px; padding: 12px; background: #f8fafc; border-radius: 8px; border: 1px dashed var(--border); }
+    .solution-content.active { display: block; }
+
+    /* Trainer */
+    .trainer-box { background: white; padding: 30px; border-radius: 16px; text-align: center; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); }
+    .trainer-controls { display: flex; justify-content: center; gap: 10px; margin-top: 20px; flex-wrap: wrap; }
+    .stats { display: flex; justify-content: space-around; margin: 20px 0; border-top: 1px solid var(--border); padding-top: 20px; }
+    .stat-item { text-align: center; }
+    .stat-num { font-size: 24px; font-weight: bold; color: var(--primary); }
+    .trainer-feedback { margin-top: 15px; min-height: 24px; font-weight: 600; font-size: 15px; }
+    .trainer-input { padding: 12px; border: 2px solid var(--border); border-radius: 8px; width: 180px; font-size: 16px; text-align: center; margin: 15px auto; display: block; }
+    .trainer-input:focus { outline: none; border-color: var(--primary); }
+
+    /* Assessment */
+    .assessment-modes { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px; }
+    .mode-card { background: white; padding: 20px; border-radius: 12px; border: 1px solid var(--border); cursor: pointer; transition: 0.2s; text-align: center; }
+    .mode-card:hover { border-color: var(--primary); box-shadow: 0 4px 12px rgba(79, 70, 229, 0.15); transform: translateY(-2px); }
+    .test-ui, .quiz-ui { background: white; padding: 25px; border-radius: 16px; }
+    .timer { font-size: 18px; font-weight: bold; color: var(--error); margin-left: auto; }
+    .progress-bar { height: 6px; background: var(--border); border-radius: 3px; margin-bottom: 20px; overflow: hidden; }
+    .progress-fill { height: 100%; background: var(--primary); border-radius: 3px; width: 0%; transition: 0.3s; }
+    .result-screen { text-align: center; padding: 40px; background: white; border-radius: 16px; }
+    .result-score { font-size: 48px; font-weight: bold; color: var(--primary); margin: 10px 0; }
+    .q-options-grid { display: grid; gap: 10px; margin-bottom: 20px; }
+    .q-btn { padding: 12px; text-align: left; border: 1px solid var(--border); border-radius: 8px; background: white; cursor: pointer; transition: 0.2s; }
+    .q-btn:hover:not(:disabled) { background: var(--primary-light); border-color: var(--primary); }
+    .q-btn.correct { background: #dcfce7; border-color: var(--success); color: #166534; }
+    .q-btn.wrong { background: #fee2e2; border-color: var(--error); color: #991b1b; }
+    .feedback-box { padding: 12px; border-radius: 8px; margin-bottom: 15px; font-size: 14px; display: none; }
+
+    @media (max-width: 650px) {
+      .hero-buttons, .assessment-modes, .trainer-controls { flex-direction: column; }
+      nav { justify-content: center; }
+      .trainer-input { width: 100%; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <nav>
+      <a href="index.html" style="font-weight:700;color:var(--primary);">← Глава 5</a>
+      <a href="#hero">🏠 Главная</a>
+      <a href="#theory">📖 Теория</a>
+      <a href="#algorithm">🪜 Алгоритм</a>
+      <a href="#examples">📝 Примеры</a>
+      <a href="#trainer">🏋️ Тренажёр</a>
+      <a href="#assessment">🧪 Аттестация</a>
+    </nav>
+
+    <section id="hero" class="hero">
+      <h1>📐 Урок 4</h1>
+      <p style="font-size: 18px; font-weight: 500;">Свойства равенств и решение уравнений</p>
+      <p>Урок 4. Свойства арифметических равенств (сложение, вычитание, умножение, деление), аналогия с весами, преобразование и проверка равенств, решение простейших уравнений. 30 вопросов.</p>
+      <div class="hero-buttons">
+        <button class="btn btn-primary" onclick="document.getElementById('theory').scrollIntoView({behavior:'smooth'})">Начать обучение</button>
+        <button class="btn btn-outline" onclick="document.getElementById('assessment').scrollIntoView({behavior:'smooth'})">Проверить знания</button>
+      </div>
+      <div class="objectives">
+        <h3>🎯 Что вы изучите</h3>
+        <ul>
+          <li><strong>Аналогия «Уравнение = Весы»:</strong> Понимание баланса: если изменить обе части одинаково, равенство сохранится.</li>
+          <li><strong>Свойства сложения и вычитания:</strong> Прибавление/вычитание одного и того же числа к обеим частям не нарушает равенство.</li>
+          <li><strong>Свойства умножения и деления:</strong> Умножение/деление обеих частей на одно и то же число (≠0) сохраняет верность.</li>
+          <li><strong>Проверка равенств:</strong> Как проверить, верно ли преобразованное равенство, используя обратные действия.</li>
+          <li><strong>Решение уравнений:</strong> Изоляция переменной путём применения свойств равенств.</li>
+        </ul>
+      </div>
+    </section>
+
+    <section id="theory">
+      <h2>📖 Глава 1. Визуальная теория</h2>
+      <p style="margin-bottom: 20px; color: var(--text-light);">Листайте слайды. Каждый слайд — ключевой блок для решения задач.</p>
+      <div class="slide-container">
+        <div class="slide-header">
+          <span id="slide-counter">Слайд 1 / 8</span>
+          <span>📄 Теория</span>
+        </div>
+        <div class="slide-content" id="slide-content"></div>
+        <div class="slide-nav">
+          <button class="btn btn-outline" id="prev-slide" onclick="changeSlide(-1)">← Назад</button>
+          <button class="btn btn-primary" id="next-slide" onclick="changeSlide(1)">Вперёд →</button>
+        </div>
+      </div>
+    </section>
+
+    <section id="algorithm">
+      <h2>🪜 Глава 2. Пошаговые алгоритмы</h2>
+      <p style="margin-bottom: 20px; color: var(--text-light);">Пятиступенчатый алгоритм решения уравнений с помощью свойств равенств.</p>
+      <div class="algo-steps">
+        <div class="algo-step"><h3>1. Определи тип уравнения</h3><p>Содержит ли оно сложение/вычитание с переменной или умножение/деление? Какое обратное действие нужно применить?</p></div>
+        <div class="algo-step"><h3>2. Примени свойство равенства</h3><p>Выполни одинаковое действие над обеими частями уравнения, чтобы «уравновесить» чаши весов. Например, вычти одинаковое число слева и справа.</p></div>
+        <div class="algo-step"><h3>3. Упрости выражения</h3><p>Выполни арифметические действия. Сократи подобные слагаемые. Приведи уравнение к виду $x = \text{число}$ или $ax = b$.</p></div>
+        <div class="algo-step"><h3>4. Найди корень</h3><p>Если осталось умножение/деление, раздели или умножь обе части, чтобы изолировать $x$.</p></div>
+        <div class="algo-step"><h3>5. Проверь подстановкой</h3><p>Подставь найденный корень в исходное уравнение. Если левая часть равна правой, решение верно.</p></div>
+      </div>
+    </section>
+
+    <section id="examples">
+      <h2>📝 Глава 3. Разбор задач</h2>
+      <p style="margin-bottom: 20px; color: var(--text-light);">Шесть типовых задач из параграфа.</p>
+      <div id="examples-container"></div>
+    </section>
+
+    <section id="trainer">
+      <h2>🏋️ Глава 4. Бесконечный тренажёр</h2>
+      <p style="margin-bottom: 20px; color: var(--text-light);">Генератор случайных задач: свойства равенств, решение уравнений, проверка баланса.</p>
+      <div class="trainer-box">
+        <p id="trainer-task" style="font-size: 18px; margin-bottom: 10px; min-height: 50px; font-weight: 500;">Нажмите «Новая задача» для начала</p>
+        <input type="text" id="trainer-input" class="trainer-input" placeholder="Ваш ответ" disabled>
+        <div class="trainer-controls">
+          <button class="btn btn-primary" id="check-trainer" disabled onclick="checkTrainer()">Проверить</button>
+          <button class="btn btn-outline" onclick="generateTrainerTask()">Новая задача</button>
+          <button class="btn btn-outline" onclick="showTrainerHint()">Подсказка</button>
+        </div>
+        <div class="trainer-feedback" id="trainer-feedback"></div>
+        <div class="stats">
+          <div class="stat-item"><div class="stat-num" id="stat-correct">0</div><div>Верно</div></div>
+          <div class="stat-item"><div class="stat-num" id="stat-total">0</div><div>Всего</div></div>
+          <div class="stat-item"><div class="stat-num" id="stat-streak">0</div><div>Серия</div></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="assessment">
+      <h2>🧪 Глава 5. Аттестация — 30 вопросов</h2>
+      <p style="margin-bottom: 20px; color: var(--text-light);">Два режима: диагностический тест с объяснениями и скоростная викторина на 10 минут.</p>
+      <div class="assessment-modes">
+        <div class="mode-card" onclick="startAssessment('diagnostic')">
+          <h3>🔍 Диагностический тест</h3>
+          <p>30 вопросов с мгновенной обратной связью.</p>
+          <button class="btn btn-primary" style="margin-top: 15px;">Начать тест</button>
+        </div>
+        <div class="mode-card" onclick="startAssessment('speed')">
+          <h3>⏱️ Скоростная викторина</h3>
+          <p>30 вопросов • 10 минут • Итоговый дашборд.</p>
+          <button class="btn btn-outline" style="margin-top: 15px;">Начать викторину</button>
+        </div>
+      </div>
+
+      <div id="assessment-ui" class="hidden">
+        <div class="test-ui">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+            <span id="assess-mode-title" style="font-weight:600;">🔍 Диагностический тест</span>
+            <div class="timer hidden" id="timer">10:00</div>
+          </div>
+          <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
+          <p style="margin-bottom: 10px; font-weight: 600; color: var(--text-light);">Вопрос <span id="q-current">1</span> / <span id="q-total">30</span></p>
+          <p id="q-text" style="font-size: 18px; margin-bottom: 20px; min-height: 50px; font-weight: 500;"></p>
+          <div id="q-options" class="q-options-grid"></div>
+          <div id="q-feedback" class="feedback-box"></div>
+          <div style="display: flex; justify-content: space-between;">
+            <button class="btn btn-outline" onclick="assessPrev()">← Назад</button>
+            <button class="btn btn-primary" id="assess-next" onclick="assessNext()">Далее →</button>
+          </div>
+        </div>
+      </div>
+
+      <div id="result-screen" class="result-screen hidden">
+        <h2>Ваш результат</h2>
+        <div class="result-score" id="result-score">0%</div>
+        <p id="result-stats" style="margin: 10px 0; color: #475569;"></p>
+        <div style="margin-top: 20px; display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
+          <button class="btn btn-primary" onclick="startAssessment(currentAssessMode)">Пройти ещё раз</button>
+          <button class="btn btn-outline" onclick="document.getElementById('assessment').scrollIntoView()">Вернуться</button>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    // SLIDES DATA
+    const slides = [
+      { title: "⚖️ Уравнение как весы", content: "Представь уравнение как весы. Если чаши в равновесии, левая часть равна правой.<br>Пример: $x + 5 = 10$<br>Чтобы найти $x$, нужно убрать одинаковый груз с обеих чаш.<br><em>Равенство не нарушится, если изменить обе части одинаково.</em>" },
+      { title: "➕ Свойство сложения", content: "Если к обеим частям верного равенства прибавить одно и то же число, равенство сохранится.<br>Пример: $10 - 3 = 7$<br>Прибавим 4 к обеим частям:<br>$(10 - 3) + 4 = 7 + 4$<br>$11 = 11$ ✅<br><em>Весы остаются в равновесии.</em>" },
+      { title: "➖ Свойство вычитания", content: "Если из обеих частей равенства вычесть одно и то же число, равенство сохранится.<br>Пример: $18 + 7 = 25$<br>Вычтем 6:<br>$(18 + 7) - 6 = 25 - 6$<br>$19 = 19$ ✅<br><em>Убираем одинаковый груз с обеих сторон.</em>" },
+      { title: "✖️ Свойство умножения", content: "Если обе части равенства умножить на одно и то же число (не ноль), равенство сохранится.<br>Пример: $12 : 12 = 1$<br>Умножим на 12:<br>$(12 : 12) \cdot 12 = 1 \cdot 12$<br>$12 = 12$ ✅<br><em>Увеличиваем нагрузку на обе чаши одинаково.</em>" },
+      { title: "➗ Свойство деления", content: "Если обе части равенства разделить на одно и то же число (не ноль), равенство сохранится.<br>Пример: $5 \cdot 3 = 15$<br>Разделим на 3:<br>$(5 \cdot 3) : 3 = 15 : 3$<br>$5 = 5$ ✅<br><em>Делим содержимое обеих чаш на равные части.</em>" },
+      { title: "🔍 Проверка преобразований", content: "Как проверить, верно ли преобразование?<br>1. Вычисли левую часть.<br>2. Вычисли правую часть.<br>3. Сравни результаты.<br>Пример: $(18 - 6) + 4 = 36 - 14$<br>$12 + 4 = 22 \Rightarrow 16 = 22$ ❌ (Неверно)<br><em>Всегда проверяй числами!</em>" },
+      { title: "🔑 Изоляция переменной", content: "Цель решения уравнения: оставить $x$ в одиночестве на одной стороне.<br>Если $x + 4 = 10$, вычти 4 из обеих частей:<br>$x + 4 - 4 = 10 - 4$<br>$x = 6$<br><em>Обратное действие «уравнивает» одну сторону.</em>" },
+      { title: "🔄 Комплексные преобразования", content: "Иногда нужно несколько шагов:<br>Уравнение: $2x + 3 = 11$<br>1) Вычтем 3: $2x = 8$<br>2) Разделим на 2: $x = 4$<br>Проверка: $2(4) + 3 = 11$ ✅<br><em>Сначала убирай сложение/вычитание, потом умножение/деление.</em>" }
+    ];
+
+    let currentSlide = 0;
+    function renderSlide() {
+      const s = slides[currentSlide];
+      document.getElementById('slide-counter').textContent = `Слайд ${currentSlide + 1} / ${slides.length}`;
+      let formattedContent = s.content.replace(/\$(.*?)\$/g, '<code style="background:#f1f5f9;padding:2px 4px;border-radius:4px;font-weight:bold;">$1</code>');
+      document.getElementById('slide-content').innerHTML = `<h3 style="margin-bottom:10px;">${s.title}</h3><p style="color:#334155;">${formattedContent}</p>`;
+      document.getElementById('prev-slide').disabled = currentSlide === 0;
+      document.getElementById('next-slide').disabled = currentSlide === slides.length - 1;
+    }
+    function changeSlide(dir) {
+      currentSlide += dir;
+      currentSlide = Math.max(0, Math.min(slides.length - 1, currentSlide));
+      renderSlide();
+    }
+    renderSlide();
+
+    // EXAMPLES
+    const examples = [
+      { title: "№ 1 Проверка равенства", task: "Верно ли преобразование: если $10-3=7$, то $(10-3)+4=7+4$?", sol: "Вычисляем обе части:<br>Левая: $7+4=11$<br>Правая: $7+4=11$<br>11=11. Равенство верно (свойство сложения)." },
+      { title: "№ 2 Свойство вычитания", task: "Проверь: $(18+7)-6 = 25-6$.", sol: "$25-6 = 19$<br>Левая часть: $18+7-6 = 25-6 = 19$.<br>Равенство сохраняется." },
+      { title: "№ 3 Умножение обеих частей", task: "Если $12:12=1$, чему равно $(12:12) \cdot 12$?", sol: "По свойству умножения:<br>$1 \cdot 12 = 12$.<br>Ответ: 12." },
+      { title: "№ 4 Решение уравнения (сложение)", task: "Реши $x + 5 = 13$, вычитая 5 из обеих частей.", sol: "$x + 5 - 5 = 13 - 5$<br>$x = 8$<br>Проверка: $8+5=13$ ✅" },
+      { title: "№ 5 Решение уравнения (умножение)", task: "Реши $3x = 15$, разделив обе части на 3.", sol: "$3x : 3 = 15 : 3$<br>$x = 5$<br>Проверка: $3 \cdot 5 = 15$ ✅" },
+      { title: "№ 6 Двухшаговое уравнение", task: "Реши $2x + 4 = 10$.", sol: "1) Вычтем 4: $2x = 6$<br>2) Разделим на 2: $x = 3$<br>Проверка: $2(3)+4=10$ ✅" }
+    ];
+    const exContainer = document.getElementById('examples-container');
+    examples.forEach(ex => {
+      exContainer.innerHTML += `
+        <div class="example-card">
+          <h3>${ex.title}</h3>
+          <p style="margin-bottom:10px;">${ex.task}</p>
+          <button class="solution-toggle" onclick="toggleSol(this)">Показать решение</button>
+          <div class="solution-content"><p>${ex.sol}</p></div>
+        </div>`;
+    });
+    function toggleSol(btn) {
+      const el = btn.nextElementSibling;
+      el.classList.toggle('active');
+      btn.textContent = el.classList.contains('active') ? 'Скрыть решение' : 'Показать решение';
+    }
+
+    // TRAINER
+    let trainerStats = { correct: 0, total: 0, streak: 0 };
+    let currentTask = null;
+    function generateTrainerTask() {
+      const types = ['add_prop', 'sub_prop', 'mul_prop', 'div_prop', 'solve_add', 'solve_mul'];
+      const type = types[Math.floor(Math.random() * types.length)];
+      let taskObj = {};
+      switch(type) {
+        case 'add_prop': {
+          const a = Math.floor(Math.random()*10)+5;
+          const b = Math.floor(Math.random()*5)+2;
+          taskObj = { text: `Если ${a}-${b}=${a-b}, чему равно (${a}-${b})+${b+3}?`, answer: (a-b)+b+3 };
+          break;
+        }
+        case 'sub_prop': {
+          const a = Math.floor(Math.random()*10)+5;
+          const c = Math.floor(Math.random()*5)+2;
+          taskObj = { text: `Если ${a}+${c}=${a+c}, чему равно (${a}+${c})-${c}?`, answer: a+c-c };
+          break;
+        }
+        case 'mul_prop': {
+          const a = Math.floor(Math.random()*5)+2;
+          const b = Math.floor(Math.random()*5)+2;
+          taskObj = { text: `Если ${a}:${a}=1, чему равно (${a}:${a}) * ${b}?`, answer: b };
+          break;
+        }
+        case 'div_prop': {
+          const a = Math.floor(Math.random()*5)+2;
+          const b = Math.floor(Math.random()*5)+2;
+          taskObj = { text: `Если ${a}*${b}=${a*b}, чему равно (${a}*${b}):${b}?`, answer: a };
+          break;
+        }
+        case 'solve_add': {
+          const x = Math.floor(Math.random()*10)+1;
+          const c = Math.floor(Math.random()*5)+2;
+          taskObj = { text: `Реши уравнение: x + ${c} = ${x+c}. Чему равен x?`, answer: x };
+          break;
+        }
+        case 'solve_mul': {
+          const x = Math.floor(Math.random()*5)+2;
+          const a = Math.floor(Math.random()*5)+2;
+          taskObj = { text: `Реши уравнение: ${a}x = ${a*x}. Чему равен x?`, answer: x };
+          break;
+        }
+      }
+      currentTask = taskObj;
+      document.getElementById('trainer-task').textContent = taskObj.text;
+      document.getElementById('trainer-input').value = '';
+      document.getElementById('trainer-input').disabled = false;
+      document.getElementById('check-trainer').disabled = false;
+      document.getElementById('trainer-feedback').textContent = '';
+      document.getElementById('trainer-input').focus();
+    }
+    function showTrainerHint() {
+      if(!currentTask) return;
+      document.getElementById('trainer-feedback').textContent = `💡 Подсказка: Примени одинаковое действие к обеим частям равенства.`;
+      document.getElementById('trainer-feedback').style.color = '#64748b';
+    }
+    function checkTrainer() {
+      const val = document.getElementById('trainer-input').value.trim().toLowerCase().replace(/\s/g, '');
+      const correct = String(currentTask.answer).toLowerCase().replace(/\s/g, '');
+      const isCorrect = val === correct;
+      trainerStats.total++;
+      if(isCorrect) { trainerStats.correct++; trainerStats.streak++; }
+      else { trainerStats.streak = 0; }
+      updateTrainerStats();
+      const fb = document.getElementById('trainer-feedback');
+      fb.textContent = isCorrect ? '✅ Верно!' : `❌ Неверно. Правильный ответ: ${currentTask.answer}`;
+      fb.style.color = isCorrect ? '#10b981' : '#ef4444';
+      document.getElementById('trainer-input').disabled = true;
+      document.getElementById('check-trainer').disabled = true;
+    }
+    function updateTrainerStats() {
+      document.getElementById('stat-correct').textContent = trainerStats.correct;
+      document.getElementById('stat-total').textContent = trainerStats.total;
+      document.getElementById('stat-streak').textContent = trainerStats.streak;
+    }
+
+    // ASSESSMENT
+    const questions = [
+      { q: "Если к обеим частям верного равенства прибавить одно и то же число, что произойдет?", o: ["Равенство нарушится", "Равенство сохранится", "Левая часть станет больше", "Правая часть станет меньше"], a: 1 },
+      { q: "Верно ли преобразование: из $10=10$ получили $10-2=10$?", o: ["Да", "Нет", "Зависит от числа", "Только для 0"], a: 1 },
+      { q: "Какое действие нужно выполнить, чтобы из $x+5=12$ получить $x=7$?", o: ["Прибавить 5", "Вычесть 5", "Умножить на 5", "Разделить на 5"], a: 1 },
+      { q: "Если $a=b$, то чему равно $3a$?", o: ["b", "3b", "a+3", "b/3"], a: 1 },
+      { q: "Решите уравнение: $x - 4 = 9$.", o: ["x=5", "x=13", "x=9", "x=-5"], a: 1 },
+      { q: "Какое свойство используется в преобразовании $(12:4)\cdot4 = 3\cdot4$?", o: ["Свойство сложения", "Свойство умножения", "Свойство вычитания", "Распределительное"], a: 1 },
+      { q: "Если $2x = 10$, чему равен x?", o: ["20", "5", "12", "8"], a: 1 },
+      { q: "Верно ли, что если $x=y$, то $x+7 = y+7$?", o: ["Да", "Нет", "Только при x=0", "Только при x=7"], a: 0 },
+      { q: "Как сохранить равенство $15:3=5$?", o: ["Умножить левую часть на 2", "Разделить обе части на 3", "Прибавить 1 только справа", "Вычесть 5 только слева"], a: 1 },
+      { q: "Решите: $x + 8 = 15$.", o: ["x=7", "x=23", "x=8", "x=15"], a: 0 },
+      { q: "Если $a-b=c$, то чему равно $(a-b)+d$?", o: ["c", "c+d", "c-d", "a+d"], a: 1 },
+      { q: "Какое число нужно подставить вместо ?, чтобы $(10-3)+? = 7+4$?", o: ["3", "4", "7", "10"], a: 1 },
+      { q: "Решите уравнение: $4x = 20$.", o: ["x=80", "x=5", "x=24", "x=16"], a: 1 },
+      { q: "Если обе части равенства умножить на 0, сохранится ли оно?", o: ["Да, всегда", "Нет, станет неверным", "Станет 0=0, но теряет смысл", "Зависит от чисел"], a: 2 },
+      { q: "Преобразование $18:6=3 \Rightarrow (18:6):3 = 3:3$ верно?", o: ["Да", "Нет", "Только для 18", "Только для 3"], a: 0 },
+      { q: "Решите: $x - 7 = -2$.", o: ["x=9", "x=5", "x=-9", "x=-2"], a: 1 },
+      { q: "Какой шаг первым при решении $2x+3=11$?", o: ["Умножить на 2", "Вычесть 3", "Разделить на 2", "Прибавить 3"], a: 1 },
+      { q: "Если $x=6$, чему равно $x+4-4$?", o: ["4", "6", "10", "0"], a: 1 },
+      { q: "Верно ли $5\cdot4=20 \Rightarrow 5\cdot4:2 = 20:2$?", o: ["Да", "Нет", "Только для четных", "Только для 20"], a: 0 },
+      { q: "Решите: $x/3 = 4$.", o: ["x=7", "x=12", "x=1", "x=4"], a: 1 },
+      { q: "Какое действие обратно сложению?", o: ["Умножение", "Деление", "Вычитание", "Возведение в степень"], a: 2 },
+      { q: "Если $a=b$, то $a/2$ равно:", o: ["b/2", "2b", "b", "a+2"], a: 0 },
+      { q: "Преобразование $7+2=9 \Rightarrow 7+2+5 = 9$ верно?", o: ["Да", "Нет", "Только при 5", "Зависит от 7"], a: 1 },
+      { q: "Решите: $3x - 1 = 8$.", o: ["x=3", "x=7/3", "x=9", "x=2"], a: 0 },
+      { q: "Что произойдет, если к одной части равенства прибавить 5, а к другой 3?", o: ["Сохранится", "Нарушится", "Увеличится", "Уменьшится"], a: 1 },
+      { q: "Если $x+10=20$, то x равно:", o: ["30", "10", "200", "2"], a: 1 },
+      { q: "Верно ли $(a\cdot b) : b = a$ (при b≠0)?", o: ["Да", "Нет", "Только если a=1", "Только если b=1"], a: 0 },
+      { q: "Решите: $5x = 0$.", o: ["x=5", "x=0", "x=1", "Нет решений"], a: 1 },
+      { q: "Как называется число, обращающее уравнение в верное равенство?", o: ["Переменная", "Корень", "Коэффициент", "Слагаемое"], a: 1 },
+      { q: "Если $2x+4=10$, то $2x=$?", o: ["14", "6", "8", "10"], a: 1 }
+    ];
+
+    let assessState = { mode: '', idx: 0, answers: [], timer: null, timeLeft: 600 };
+    let currentAssessMode = 'diagnostic';
+
+    function startAssessment(mode) {
+      currentAssessMode = mode;
+      document.getElementById('assessment-ui').classList.remove('hidden');
+      document.getElementById('result-screen').classList.add('hidden');
+      document.getElementById('assess-mode-title').textContent = mode === 'diagnostic' ? '🔍 Диагностический тест' : '⏱️ Скоростная викторина';
+      document.getElementById('timer').classList.toggle('hidden', mode !== 'speed');
+      
+      assessState = { mode, idx: 0, answers: new Array(questions.length).fill(null), timer: null, timeLeft: 600 };
+      renderQuestion();
+      if(mode === 'speed') {
+        clearInterval(assessState.timer);
+        assessState.timer = setInterval(() => {
+          assessState.timeLeft--;
+          const m = Math.floor(assessState.timeLeft/60);
+          const s = assessState.timeLeft%60;
+          document.getElementById('timer').textContent = `${m}:${s<10?'0':''}${s}`;
+          if(assessState.timeLeft <= 0) finishAssessment();
+        }, 1000);
+      }
+    }
+
+    function renderQuestion() {
+      const q = questions[assessState.idx];
+      document.getElementById('q-current').textContent = assessState.idx + 1;
+      document.getElementById('q-text').textContent = q.q;
+      document.getElementById('progress-fill').style.width = `${((assessState.idx + 1)/questions.length)*100}%`;
+      const opts = document.getElementById('q-options');
+      opts.innerHTML = '';
+      q.o.forEach((opt, i) => {
+        const btn = document.createElement('button');
+        btn.className = 'q-btn';
+        btn.textContent = opt;
+        const sel = assessState.answers[assessState.idx];
+        if(sel !== null) {
+          btn.disabled = true;
+          if(i === q.a) btn.classList.add('correct');
+          else if(i === sel) btn.classList.add('wrong');
+        }
+        btn.onclick = () => selectOption(i);
+        opts.appendChild(btn);
+      });
+      const fb = document.getElementById('q-feedback');
+      fb.style.display = 'none';
+      if(assessState.mode === 'diagnostic' && assessState.answers[assessState.idx] !== null) {
+        const isCor = assessState.answers[assessState.idx] === q.a;
+        fb.style.display = 'block';
+        fb.textContent = isCor ? '✅ Верно!' : `❌ Ошибка. Правильный ответ: ${q.o[q.a]}`;
+        fb.style.background = isCor ? '#dcfce7' : '#fee2e2';
+        fb.style.color = isCor ? '#166534' : '#991b1b';
+      }
+    }
+
+    function selectOption(i) {
+      if(assessState.answers[assessState.idx] !== null) return;
+      assessState.answers[assessState.idx] = i;
+      renderQuestion();
+    }
+
+    function assessNext() {
+      if(assessState.idx < questions.length - 1) {
+        assessState.idx++;
+        renderQuestion();
+      } else {
+        finishAssessment();
+      }
+    }
+    function assessPrev() {
+      if(assessState.idx > 0) {
+        assessState.idx--;
+        renderQuestion();
+      }
+    }
+
+    function finishAssessment() {
+      clearInterval(assessState.timer);
+      document.getElementById('assessment-ui').classList.add('hidden');
+      document.getElementById('result-screen').classList.remove('hidden');
+      let correct = 0;
+      assessState.answers.forEach((a, i) => { if(a === questions[i].a) correct++; });
+      const pct = Math.round((correct/questions.length)*100);
+      document.getElementById('result-score').textContent = `${pct}%`;
+      const timeStr = assessState.mode==='speed' ? document.getElementById('timer').textContent : 'Без ограничений';
+      document.getElementById('result-stats').textContent = `Верно: ${correct} из ${questions.length} • Ошибок: ${questions.length-correct} • Время: ${timeStr}`;
+    }
+  </script>
+</body>
+</html>
+
