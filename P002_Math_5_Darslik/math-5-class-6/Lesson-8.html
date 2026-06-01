@@ -1,0 +1,941 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Урок 8 — Построение прямой, параллельной данной</title>
+    <style>
+      :root{--bg-dark:#0f0f1a;--bg-card:rgba(255,255,255,0.05);--bg-glass:rgba(255,255,255,0.08);--border-glass:rgba(255,255,255,0.15);--text-primary:#e8e8f0;--text-secondary:#a0a0b8;--accent:#00d4aa;--accent-dim:rgba(0,212,170,0.2);--accent-warm:#ff6b6b;--accent-warm-dim:rgba(255,107,107,0.2);--accent-blue:#4dabf7;--accent-blue-dim:rgba(77,171,247,0.2);--success:#51cf66;--error:#ff6b6b;--warning:#fcc419;}
+      *{margin:0;padding:0;box-sizing:border-box;}
+      body{font-family:"Segoe UI",system-ui,sans-serif;background:var(--bg-dark);color:var(--text-primary);min-height:100vh;overflow-x:hidden;line-height:1.6;}
+      .bg-animation{position:fixed;top:0;left:0;width:100%;height:100%;z-index:-1;background:radial-gradient(ellipse at 20% 20%,rgba(0,212,170,0.08) 0%,transparent 50%),radial-gradient(ellipse at 80% 80%,rgba(77,171,247,0.08) 0%,transparent 50%);}
+      .bg-animation::before{content:"";position:absolute;width:200%;height:200%;top:-50%;left:-50%;background:repeating-linear-gradient(0deg,transparent,transparent 40px,rgba(255,255,255,0.02) 40px,rgba(255,255,255,0.02) 41px);animation:bgMove 20s linear infinite;}
+      @keyframes bgMove{0%{transform:translateY(0)}100%{transform:translateY(40px)}}
+      nav{position:fixed;top:0;left:0;right:0;background:rgba(15,15,26,0.85);backdrop-filter:blur(20px);border-bottom:1px solid var(--border-glass);z-index:1000;padding:0 20px;}
+      .nav-container{max-width:1200px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;height:60px;}
+      .logo{font-size:1.3rem;font-weight:700;background:linear-gradient(135deg,var(--accent),var(--accent-blue));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;text-decoration:none;}
+      .nav-links{display:flex;gap:8px;list-style:none;}
+      .nav-links a{color:var(--text-secondary);text-decoration:none;padding:8px 16px;border-radius:8px;transition:all 0.3s;font-size:0.9rem;font-weight:500;cursor:pointer;border:none;background:transparent;}
+      .nav-links a:hover,.nav-links a.active{color:var(--text-primary);background:var(--bg-glass);}
+      .nav-links a.active{background:var(--accent-dim);color:var(--accent);}
+      section{display:none;opacity:0;padding:78px 20px 32px;max-width:1000px;margin:0 auto;transition:opacity 0.3s ease;}
+      section.active{display:block;opacity:1;animation:fadeIn 0.5s ease;}
+      @keyframes fadeIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+      .card{background:var(--bg-card);backdrop-filter:blur(20px);border:1px solid var(--border-glass);border-radius:20px;padding:20px;margin-bottom:16px;transition:transform 0.3s,box-shadow 0.3s;}
+      .card:hover{transform:translateY(-2px);box-shadow:0 20px 40px rgba(0,0,0,0.3);}
+      .card-title{font-size:1.5rem;font-weight:700;margin-bottom:16px;display:flex;align-items:center;gap:12px;}
+      .card-title .icon{width:40px;height:40px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.3rem;}
+      .hero{text-align:center;padding:140px 20px 80px;}
+      .hero h1{font-size:3rem;font-weight:800;margin-bottom:20px;background:linear-gradient(135deg,var(--accent),var(--accent-blue),var(--accent-warm));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1.2;}
+      .hero p{font-size:1.2rem;color:var(--text-secondary);max-width:600px;margin:0 auto 40px;}
+      .btn{display:inline-flex;align-items:center;gap:8px;padding:14px 32px;border-radius:12px;border:none;font-size:1rem;font-weight:600;cursor:pointer;transition:all 0.3s;text-decoration:none;}
+      .btn-primary{background:linear-gradient(135deg,var(--accent),var(--accent-blue));color:#000;}
+      .btn-primary:hover{transform:translateY(-2px);box-shadow:0 10px 30px var(--accent-dim);}
+      .btn-secondary{background:var(--bg-glass);color:var(--text-primary);border:1px solid var(--border-glass);}
+      .btn-secondary:hover{background:var(--bg-card);}
+      .btn:disabled{opacity:0.5;cursor:not-allowed;transform:none!important;}
+      .generate-widget{background:var(--bg-card);border:1px solid var(--border-glass);border-radius:20px;padding:14px;width:100%;}
+      .widget-slide{display:none;padding:12px 16px;animation:slideFade 0.3s ease;}
+      .widget-slide.active{display:block;}
+      @keyframes slideFade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+      .widget-slide h3{font-size:1.3rem;color:var(--accent);margin-bottom:16px;}
+      .widget-slide p,.widget-slide li{color:var(--text-secondary);line-height:1.8;margin-bottom:12px;}
+      .widget-slide table{width:100%;border-collapse:collapse;margin:12px 0;color:var(--text-secondary);}
+      .widget-slide table th,.widget-slide table td{border:1px solid var(--border-glass);padding:10px;text-align:left;}
+      .widget-slide table th{background:var(--bg-glass);color:var(--text-primary);}
+      .widget-nav{display:flex;justify-content:space-between;align-items:center;margin-top:16px;}
+      .widget-progress{text-align:center;font-size:0.9rem;color:var(--text-secondary);margin-bottom:12px;}
+      .sequence-component{display:flex;flex-direction:column;gap:20px;position:relative;}
+      .sequence-step{background:var(--bg-card);border:1px solid var(--border-glass);border-radius:16px;padding:24px 24px 24px 72px;position:relative;transition:all 0.3s;}
+      .sequence-step:hover{border-color:var(--accent);transform:translateX(4px);}
+      .sequence-number{position:absolute;left:20px;top:20px;width:40px;height:40px;background:var(--accent);color:#000;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:1.1rem;}
+      .sequence-step h4{color:var(--text-primary);margin-bottom:8px;font-size:1.1rem;}
+      .sequence-step p{color:var(--text-secondary);line-height:1.7;}
+      .sequence-connector{position:absolute;left:39px;top:60px;bottom:-30px;width:2px;background:var(--accent-dim);z-index:0;}
+      .sequence-step:last-child .sequence-connector{display:none;}
+      .problem-card{background:var(--bg-card);border:1px solid var(--border-glass);border-radius:16px;padding:24px;margin-bottom:20px;}
+      .problem-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:8px;}
+      .problem-number{background:var(--accent-dim);color:var(--accent);padding:4px 12px;border-radius:20px;font-size:0.85rem;font-weight:600;}
+      .problem-type{color:var(--text-secondary);font-size:0.85rem;}
+      .problem-text{font-size:1.1rem;margin-bottom:16px;line-height:1.8;}
+      .solution-btn{background:var(--accent-dim);color:var(--accent);border:1px solid var(--accent);padding:10px 20px;border-radius:8px;cursor:pointer;font-weight:600;transition:all 0.3s;}
+      .solution-btn:hover{background:var(--accent);color:#000;}
+      .solution{display:none;margin-top:20px;padding:20px;background:rgba(0,212,170,0.05);border-left:3px solid var(--accent);border-radius:0 12px 12px 0;}
+      .solution.active{display:block;animation:slideDown 0.3s ease;}
+      @keyframes slideDown{from{opacity:0;max-height:0}to{opacity:1;max-height:1000px}}
+      .solution p{margin-bottom:8px;color:var(--text-secondary);}
+      .solution strong{color:var(--accent);}
+      .quiz-container{background:var(--bg-card);border:1px solid var(--border-glass);border-radius:20px;padding:32px;}
+      .quiz-progress{display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;flex-wrap:wrap;gap:8px;}
+      .progress-bar{flex:1;height:8px;background:var(--bg-glass);border-radius:4px;margin:0 16px;overflow:hidden;min-width:100px;}
+      .progress-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent-blue));border-radius:4px;transition:width 0.5s ease;width:0%;}
+      .quiz-question{font-size:1.2rem;margin-bottom:24px;padding:20px;background:var(--bg-glass);border-radius:12px;border-left:4px solid var(--accent);}
+      .quiz-options{display:grid;gap:12px;}
+      .quiz-option{background:var(--bg-glass);border:2px solid var(--border-glass);border-radius:12px;padding:16px 20px;cursor:pointer;transition:all 0.3s;display:flex;align-items:center;gap:12px;}
+      .quiz-option:hover{border-color:var(--accent);background:var(--accent-dim);}
+      .quiz-option.correct{border-color:var(--success);background:rgba(81,207,102,0.15);}
+      .quiz-option.wrong{border-color:var(--error);background:rgba(255,107,107,0.15);}
+      .quiz-option.disabled{pointer-events:none;opacity:0.7;}
+      .option-letter{width:32px;height:32px;border-radius:8px;background:var(--bg-card);display:flex;align-items:center;justify-content:center;font-weight:700;flex-shrink:0;}
+      .quiz-nav{display:flex;justify-content:space-between;margin-top:24px;}
+      .stat{background:var(--bg-glass);padding:12px 24px;border-radius:12px;text-align:center;min-width:100px;border:1px solid var(--border-glass);}
+      .stat-value{font-size:1.5rem;font-weight:700;color:var(--accent);}
+      .stat-label{font-size:0.85rem;color:var(--text-secondary);}
+      .timer{position:fixed;top:80px;right:20px;background:var(--bg-card);backdrop-filter:blur(20px);border:1px solid var(--border-glass);border-radius:16px;padding:16px 24px;font-size:1.3rem;font-weight:700;font-variant-numeric:tabular-nums;z-index:999;box-shadow:0 10px 30px rgba(0,0,0,0.3);}
+      .timer.warning{border-color:var(--warning);color:var(--warning);animation:pulse 1s infinite;}
+      .timer.danger{border-color:var(--error);color:var(--error);animation:pulse 0.5s infinite;}
+      @keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.05)}}
+      .results-container{text-align:center;padding:40px;}
+      .score-circle{width:200px;height:200px;border-radius:50%;background:conic-gradient(var(--accent) calc(var(--score)*3.6deg),var(--bg-glass) 0);margin:0 auto 32px;display:flex;align-items:center;justify-content:center;position:relative;}
+      .score-circle::before{content:"";position:absolute;width:170px;height:170px;background:var(--bg-dark);border-radius:50%;}
+      .score-value{position:relative;font-size:3rem;font-weight:800;color:var(--accent);}
+      .score-label{font-size:1.2rem;color:var(--text-secondary);margin-bottom:8px;}
+      .score-message{font-size:1.5rem;font-weight:700;margin-bottom:32px;}
+      .results-breakdown{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:16px;max-width:600px;margin:0 auto 32px;}
+      .breakdown-item{background:var(--bg-glass);padding:16px;border-radius:12px;}
+      .breakdown-value{font-size:1.5rem;font-weight:700;color:var(--accent);}
+      .breakdown-label{font-size:0.85rem;color:var(--text-secondary);}
+      @media(max-width:768px){.hero h1{font-size:2rem}.nav-links{display:none}.timer{top:70px;right:10px;font-size:1rem;padding:10px 16px}.card{padding:14px}section{padding:70px 12px 24px}}
+    </style>
+  </head>
+  <body>
+    <div class="bg-animation"></div>
+
+    <nav>
+      <div class="nav-container">
+        <a href="index.html" class="logo">&#x2225; Урок 8</a>
+        <ul class="nav-links">
+          <li><a href="#" class="active" data-section="home">Главная</a></li>
+          <li><a href="#" data-section="theory">Теория</a></li>
+          <li><a href="#" data-section="algorithm">Алгоритм</a></li>
+          <li><a href="#" data-section="examples">Примеры</a></li>
+          <li><a href="#" data-section="trainer">Тренажёр</a></li>
+          <li><a href="#" data-section="assessment">Аттестация</a></li>
+        </ul>
+      </div>
+    </nav>
+
+    <!-- HOME -->
+    <section id="home" class="active">
+      <div class="hero">
+        <h1>Построение параллельных прямых</h1>
+        <p>Урок 8. Свойства параллельных прямых, расстояние между ними и алгоритм построения с угольником и линейкой. 30 вопросов для полного освоения темы.</p>
+        <div style="display:flex;gap:16px;justify-content:center;flex-wrap:wrap;">
+          <button class="btn btn-primary" onclick="showSection('theory')">Начать обучение</button>
+          <button class="btn btn-secondary" onclick="showSection('assessment')">Проверить знания</button>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title"><span class="icon" style="background:var(--accent-dim)">&#127919;</span>Что вы изучите</div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px;">
+          <div class="card" style="padding:20px;">
+            <h3 style="color:var(--accent);margin-bottom:8px;">Параллельные прямые</h3>
+            <p style="color:var(--text-secondary);">Прямые в одной плоскости, которые не пересекаются. Расстояние между ними всегда одинаково.</p>
+          </div>
+          <div class="card" style="padding:20px;">
+            <h3 style="color:var(--accent-blue);margin-bottom:8px;">Расстояние между ними</h3>
+            <p style="color:var(--text-secondary);">Длина перпендикуляра из любой точки одной прямой на другую. Это расстояние постоянно.</p>
+          </div>
+          <div class="card" style="padding:20px;">
+            <h3 style="color:var(--accent-warm);margin-bottom:8px;">Построение с угольником</h3>
+            <p style="color:var(--text-secondary);">Пошаговый алгоритм: угольник + линейка = точное построение параллельной прямой через любую точку.</p>
+          </div>
+          <div class="card" style="padding:20px;">
+            <h3 style="color:var(--warning);margin-bottom:8px;">Обозначение &#8741;</h3>
+            <p style="color:var(--text-secondary);">AB &#8741; CD — знак параллельности. Через точку можно провести только одну прямую, параллельную данной.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- THEORY -->
+    <section id="theory">
+      <div class="card">
+        <div class="card-title"><span class="icon" style="background:var(--accent-dim)">&#128218;</span>Глава 1. Визуальная теория</div>
+        <p style="color:var(--text-secondary);margin-bottom:20px;">Изучите понятие параллельных прямых, расстояние между ними и правила обозначения.</p>
+        <div class="generate-widget">
+          <div class="widget-progress">Слайд <span id="slide-num">1</span> / <span id="slide-total">5</span></div>
+          <div class="widget-track" id="track-slides"></div>
+          <div class="widget-nav">
+            <button type="button" class="btn btn-secondary" onclick="prevSlide()">&#8592; Назад</button>
+            <button type="button" class="btn btn-primary" onclick="nextSlide()">Вперёд &#8594;</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ALGORITHM -->
+    <section id="algorithm">
+      <div class="card">
+        <div class="card-title"><span class="icon" style="background:var(--accent-blue-dim)">&#129332;</span>Глава 2. Алгоритм построения параллельной прямой</div>
+        <p style="color:var(--text-secondary);margin-bottom:20px;">Пошаговый алгоритм построения прямой, параллельной данной, через заданную точку.</p>
+        <div class="sequence-component">
+          <div class="sequence-step">
+            <div class="sequence-number">1</div>
+            <div class="sequence-connector"></div>
+            <h4>Приставь угольник к прямой AB</h4>
+            <p>Положи один катет угольника вдоль прямой AB так, чтобы он совпадал с ней. Угольник должен лежать плотно.</p>
+          </div>
+          <div class="sequence-step">
+            <div class="sequence-number">2</div>
+            <div class="sequence-connector"></div>
+            <h4>Приставь линейку ко второму катету угольника</h4>
+            <p>Плотно прижми линейку к другому (свободному) катету угольника. Линейка будет направляющей для скольжения.</p>
+          </div>
+          <div class="sequence-step">
+            <div class="sequence-number">3</div>
+            <div class="sequence-connector"></div>
+            <h4>Скользи угольник вдоль линейки</h4>
+            <p>Удерживая линейку неподвижно, скользи угольник вдоль неё вверх или вниз до тех пор, пока вершина катета не совпадёт с точкой D.</p>
+          </div>
+          <div class="sequence-step">
+            <div class="sequence-number">4</div>
+            <div class="sequence-connector"></div>
+            <h4>Проведи прямую через точку D</h4>
+            <p>Удерживая угольник в новом положении, проведи прямую вдоль катета, который раньше лежал на AB. Это и есть параллельная прямая.</p>
+          </div>
+          <div class="sequence-step">
+            <div class="sequence-number">5</div>
+            <h4>Проверь расстояние</h4>
+            <p>Измерь длину перпендикуляра между AB и новой прямой в нескольких точках — она должна быть одинаковой. Обозначь: новая прямая &#8741; AB.</p>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title"><span class="icon" style="background:var(--accent-warm-dim)">&#128161;</span>Ключевые свойства</div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px;">
+          <div style="background:var(--bg-glass);border-radius:12px;padding:16px;border-left:3px solid var(--accent);">
+            <strong style="color:var(--accent);">Единственность</strong>
+            <p style="color:var(--text-secondary);margin-top:8px;">Через данную точку можно провести одну и только одну прямую, параллельную данной прямой.</p>
+          </div>
+          <div style="background:var(--bg-glass);border-radius:12px;padding:16px;border-left:3px solid var(--accent-blue);">
+            <strong style="color:var(--accent-blue);">Постоянное расстояние</strong>
+            <p style="color:var(--text-secondary);margin-top:8px;">Расстояние между параллельными прямыми одинаково во всех точках и равно длине перпендикуляра.</p>
+          </div>
+          <div style="background:var(--bg-glass);border-radius:12px;padding:16px;border-left:3px solid var(--accent-warm);">
+            <strong style="color:var(--accent-warm);">Прямые углы</strong>
+            <p style="color:var(--text-secondary);margin-top:8px;">Перпендикуляр, опущенный на параллельную прямую, образует прямой угол (90°) с обеими прямыми.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- EXAMPLES -->
+    <section id="examples">
+      <div class="card">
+        <div class="card-title"><span class="icon" style="background:var(--accent-dim)">&#128221;</span>Глава 3. Разбор задач</div>
+        <p style="color:var(--text-secondary);margin-bottom:24px;">Пять задач с подробным решением по теме построения параллельных прямых.</p>
+      </div>
+      <div id="examples-container"></div>
+    </section>
+
+    <!-- TRAINER -->
+    <section id="trainer">
+      <div class="card">
+        <div class="card-title"><span class="icon" style="background:var(--accent-dim)">&#127947;</span>Глава 4. Тренажёр</div>
+        <p style="color:var(--text-secondary);margin-bottom:24px;">Введите числовой ответ (расстояние в см или угол в градусах).</p>
+        <div class="quiz-container" style="margin-bottom:20px;">
+          <div id="trainer-question" style="font-size:1.3rem;text-align:center;margin-bottom:24px;padding:24px;background:var(--bg-glass);border-radius:12px;">Нажмите «Новая задача» для начала</div>
+          <div style="display:flex;gap:12px;margin-bottom:20px;">
+            <input type="number" id="trainer-answer" placeholder="Введите число" style="flex:1;padding:14px 16px;background:var(--bg-glass);border:2px solid var(--border-glass);border-radius:12px;color:var(--text-primary);font-size:1rem;outline:none;" onkeydown="if(event.key==='Enter')checkTrainer();" />
+            <button class="btn btn-primary" onclick="checkTrainer()" id="trainer-check-btn" disabled>Проверить</button>
+          </div>
+          <div id="trainer-feedback" style="min-height:60px;margin-bottom:16px;"></div>
+          <div style="display:flex;gap:12px;justify-content:center;">
+            <button class="btn btn-secondary" onclick="newTrainerProblem()">Новая задача</button>
+            <button class="btn btn-secondary" onclick="showTrainerHint()">Подсказка</button>
+          </div>
+          <div id="trainer-hint" style="display:none;margin-top:20px;padding:16px;background:var(--accent-blue-dim);border-radius:12px;border-left:4px solid var(--accent-blue);color:var(--text-secondary);"></div>
+        </div>
+        <div style="display:flex;justify-content:center;gap:24px;flex-wrap:wrap;">
+          <div class="stat"><div class="stat-value" id="trainer-correct">0</div><div class="stat-label">Верно</div></div>
+          <div class="stat"><div class="stat-value" id="trainer-total">0</div><div class="stat-label">Всего</div></div>
+          <div class="stat"><div class="stat-value" id="trainer-streak">0</div><div class="stat-label">Серия</div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ASSESSMENT -->
+    <section id="assessment">
+      <div class="card">
+        <div class="card-title"><span class="icon" style="background:var(--accent-blue-dim)">&#129514;</span>Глава 5. Аттестация — 30 вопросов</div>
+        <p style="color:var(--text-secondary);margin-bottom:24px;">Диагностика и скоростная викторина по теме параллельных прямых.</p>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px;">
+          <div class="card" style="padding:24px;text-align:center;">
+            <div style="font-size:3rem;margin-bottom:12px;">&#128269;</div>
+            <h3 style="margin-bottom:8px;">Диагностический тест</h3>
+            <p style="color:var(--text-secondary);margin-bottom:20px;">30 вопросов с объяснениями.</p>
+            <button class="btn btn-primary" onclick="startDiagnostic()">Начать тест</button>
+          </div>
+          <div class="card" style="padding:24px;text-align:center;">
+            <div style="font-size:3rem;margin-bottom:12px;">&#9201;</div>
+            <h3 style="margin-bottom:8px;">Скоростная викторина</h3>
+            <p style="color:var(--text-secondary);margin-bottom:20px;">30 вопросов &#8226; 10 минут.</p>
+            <button class="btn btn-primary" onclick="startTimeAttack()">Начать викторину</button>
+          </div>
+        </div>
+      </div>
+      <div id="diagnostic-ui" style="display:none;">
+        <div class="card"><div class="card-title"><span class="icon" style="background:var(--accent-blue-dim)">&#128269;</span>Диагностический тест (30 вопросов)</div></div>
+        <div class="quiz-container">
+          <div class="quiz-progress">
+            <span>Вопрос <span id="diag-current">1</span> / <span id="diag-total">30</span></span>
+            <div class="progress-bar"><div class="progress-fill" id="diag-progress"></div></div>
+            <span id="diag-score">0 правильных</span>
+          </div>
+          <div class="quiz-question" id="diag-question"></div>
+          <div class="quiz-options" id="diag-options"></div>
+          <div class="quiz-nav">
+            <button class="btn btn-secondary" onclick="prevDiagnostic()" id="diag-prev" disabled>&#8592; Назад</button>
+            <button class="btn btn-primary" onclick="nextDiagnostic()" id="diag-next" disabled>Далее &#8594;</button>
+          </div>
+          <div id="diag-explanation" style="display:none;margin-top:20px;padding:16px;background:var(--accent-dim);border-radius:12px;border-left:4px solid var(--accent);color:var(--text-secondary);"></div>
+        </div>
+      </div>
+      <div id="timeattack-ui" style="display:none;">
+        <div class="timer" id="ta-timer">10:00</div>
+        <div class="card"><div class="card-title"><span class="icon" style="background:var(--accent-warm-dim)">&#9201;</span>Скоростная викторина</div></div>
+        <div class="quiz-container">
+          <div class="quiz-progress">
+            <span>Вопрос <span id="ta-current">1</span> / 30</span>
+            <div class="progress-bar"><div class="progress-fill" id="ta-progress"></div></div>
+          </div>
+          <div class="quiz-question" id="ta-question"></div>
+          <div class="quiz-options" id="ta-options"></div>
+          <div style="display:flex;justify-content:flex-end;margin-top:24px;">
+            <button class="btn btn-primary" onclick="nextTimeAttack()" id="ta-next">Ответить &#8594;</button>
+          </div>
+        </div>
+      </div>
+      <div id="results-ui" style="display:none;">
+        <div class="card">
+          <div class="results-container">
+            <div class="score-label">Ваш результат</div>
+            <div class="score-circle" id="result-circle"><div class="score-value" id="result-percent">0%</div></div>
+            <div class="score-message" id="result-message"></div>
+            <div class="results-breakdown">
+              <div class="breakdown-item"><div class="breakdown-value" id="result-correct">0</div><div class="breakdown-label">Верно</div></div>
+              <div class="breakdown-item"><div class="breakdown-value" id="result-wrong">0</div><div class="breakdown-label">Ошибок</div></div>
+              <div class="breakdown-item"><div class="breakdown-value" id="result-time">0:00</div><div class="breakdown-label">Время</div></div>
+              <div class="breakdown-item"><div class="breakdown-value" id="result-mastery">—</div><div class="breakdown-label">Уровень</div></div>
+            </div>
+            <div style="display:flex;gap:16px;justify-content:center;flex-wrap:wrap;">
+              <button class="btn btn-primary" onclick="resetAssessment()">Пройти ещё раз</button>
+              <button class="btn btn-secondary" onclick="showSection('theory')">К теории</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <script>
+      // ===================== APP STATE =====================
+      const AppState = {
+        currentSection: "home",
+        slide: 0,
+        trainer: { correct: 0, total: 0, streak: 0, current: null },
+        diagnostic: { current: 0, score: 0, answers: [] },
+        timeAttack: { current: 0, score: 0, timer: null, timeLeft: 600, startTime: 0, answers: [] },
+        mode: null
+      };
+
+      // ===================== SLIDES DATA =====================
+      const slides = [
+        {
+          title: "Параллельные прямые",
+          content: `
+            <p style="margin-bottom:12px;"><strong>Параллельные прямые</strong> — это прямые в одной плоскости, которые не пересекаются, сколько бы их ни продолжали.</p>
+            <div style="display:flex;justify-content:center;margin:20px 0;">
+              <svg viewBox="0 0 320 140" width="320" height="140" aria-label="Две параллельные прямые AB и CD с расстоянием d между ними" role="img">
+                <!-- Прямая AB -->
+                <line x1="20" y1="40" x2="300" y2="40" stroke="#00d4aa" stroke-width="2.5"/>
+                <text x="8" y="44" fill="#00d4aa" font-size="14" font-family="sans-serif" font-weight="bold">A</text>
+                <text x="302" y="44" fill="#00d4aa" font-size="14" font-family="sans-serif" font-weight="bold">B</text>
+                <!-- Прямая CD -->
+                <line x1="20" y1="100" x2="300" y2="100" stroke="#4dabf7" stroke-width="2.5"/>
+                <text x="8" y="104" fill="#4dabf7" font-size="14" font-family="sans-serif" font-weight="bold">C</text>
+                <text x="302" y="104" fill="#4dabf7" font-size="14" font-family="sans-serif" font-weight="bold">D</text>
+                <!-- Перпендикуляр d -->
+                <line x1="160" y1="40" x2="160" y2="100" stroke="#fcc419" stroke-width="1.5" stroke-dasharray="5,3"/>
+                <text x="167" y="74" fill="#fcc419" font-size="14" font-family="sans-serif" font-style="italic" font-weight="bold">d</text>
+                <!-- Стрелочки-метки расстояния -->
+                <line x1="156" y1="40" x2="164" y2="40" stroke="#fcc419" stroke-width="1.5"/>
+                <line x1="156" y1="100" x2="164" y2="100" stroke="#fcc419" stroke-width="1.5"/>
+                <!-- Символ параллельности -->
+                <text x="110" y="128" fill="#a0a0b8" font-size="13" font-family="sans-serif">AB &#8741; CD</text>
+              </svg>
+            </div>
+            <div style="background:var(--accent-dim);padding:14px 18px;border-radius:10px;">
+              <p style="margin:0;"><strong>Ключевое свойство:</strong> расстояние <em>d</em> между параллельными прямыми одинаково в любой точке. AB &#8741; CD.</p>
+            </div>`
+        },
+        {
+          title: "Расстояние между параллельными прямыми",
+          content: `
+            <p style="margin-bottom:12px;"><strong>Расстояние между параллельными прямыми</strong> — это длина перпендикуляра, опущенного из любой точки одной прямой на другую.</p>
+            <div style="display:flex;justify-content:center;margin:16px 0;">
+              <svg viewBox="0 0 320 160" width="320" height="160" aria-label="Перпендикуляр из точки M на прямую CD показывает расстояние d" role="img">
+                <!-- Прямая AB -->
+                <line x1="20" y1="40" x2="300" y2="40" stroke="#00d4aa" stroke-width="2.5"/>
+                <text x="8" y="44" fill="#00d4aa" font-size="13" font-family="sans-serif" font-weight="bold">A</text>
+                <text x="302" y="44" fill="#00d4aa" font-size="13" font-family="sans-serif" font-weight="bold">B</text>
+                <!-- Прямая CD -->
+                <line x1="20" y1="120" x2="300" y2="120" stroke="#4dabf7" stroke-width="2.5"/>
+                <text x="8" y="124" fill="#4dabf7" font-size="13" font-family="sans-serif" font-weight="bold">C</text>
+                <text x="302" y="124" fill="#4dabf7" font-size="13" font-family="sans-serif" font-weight="bold">D</text>
+                <!-- Точка M на AB -->
+                <circle cx="130" cy="40" r="4" fill="#ff6b6b"/>
+                <text x="122" y="30" fill="#ff6b6b" font-size="13" font-family="sans-serif" font-weight="bold">M</text>
+                <!-- Перпендикуляр MN -->
+                <line x1="130" y1="40" x2="130" y2="120" stroke="#fcc419" stroke-width="2" stroke-dasharray="0"/>
+                <!-- Прямой угол -->
+                <rect x="130" y="108" width="10" height="10" fill="none" stroke="#fcc419" stroke-width="1.5"/>
+                <!-- Точка N на CD -->
+                <circle cx="130" cy="120" r="4" fill="#ff6b6b"/>
+                <text x="122" y="148" fill="#ff6b6b" font-size="13" font-family="sans-serif" font-weight="bold">N</text>
+                <!-- Метка d -->
+                <text x="140" y="85" fill="#fcc419" font-size="14" font-family="sans-serif" font-weight="bold" font-style="italic">d</text>
+                <!-- Второй перпендикуляр (другая точка) пунктирный -->
+                <line x1="220" y1="40" x2="220" y2="120" stroke="#a0a0b8" stroke-width="1.5" stroke-dasharray="5,3"/>
+                <text x="228" y="85" fill="#a0a0b8" font-size="12" font-family="sans-serif" font-style="italic">d</text>
+              </svg>
+            </div>
+            <p style="color:var(--text-secondary);"><strong style="color:var(--accent);">MN &#8869; CD</strong> — перпендикуляр из точки M на прямую CD.<br>
+            MN = d — это и есть расстояние между прямыми. Из любой другой точки AB перпендикуляр будет такой же длины.</p>`
+        },
+        {
+          title: "Построение с угольником и линейкой",
+          content: `
+            <p style="margin-bottom:12px;">Для построения параллельной прямой используют угольник и линейку.</p>
+            <div style="display:flex;justify-content:center;margin:16px 0;">
+              <svg viewBox="0 0 340 200" width="340" height="200" aria-label="Построение параллельной прямой с помощью угольника и линейки" role="img">
+                <!-- Прямая AB (исходная) -->
+                <line x1="20" y1="150" x2="320" y2="150" stroke="#00d4aa" stroke-width="2.5"/>
+                <text x="6" y="154" fill="#00d4aa" font-size="13" font-family="sans-serif" font-weight="bold">A</text>
+                <text x="322" y="154" fill="#00d4aa" font-size="13" font-family="sans-serif" font-weight="bold">B</text>
+                <!-- Линейка (вертикальная направляющая) -->
+                <rect x="195" y="20" width="14" height="170" rx="3" fill="rgba(77,171,247,0.2)" stroke="#4dabf7" stroke-width="1.5"/>
+                <text x="196" y="15" fill="#4dabf7" font-size="10" font-family="sans-serif">линейка</text>
+                <!-- Угольник (в начальном положении на AB) -->
+                <polygon points="60,150 140,150 60,80" fill="rgba(0,212,170,0.15)" stroke="#00d4aa" stroke-width="1.5" stroke-dasharray="4,2"/>
+                <!-- Угольник (в положении у точки D) -->
+                <polygon points="100,80 180,80 100,10" fill="rgba(0,212,170,0.25)" stroke="#00d4aa" stroke-width="2"/>
+                <!-- Прямой угол угольника -->
+                <rect x="100" y="68" width="10" height="10" fill="none" stroke="#00d4aa" stroke-width="1.5"/>
+                <!-- Точка D -->
+                <circle cx="100" cy="80" r="5" fill="#ff6b6b"/>
+                <text x="85" y="77" fill="#ff6b6b" font-size="13" font-family="sans-serif" font-weight="bold">D</text>
+                <!-- Параллельная прямая (новая) -->
+                <line x1="20" y1="80" x2="320" y2="80" stroke="#4dabf7" stroke-width="2.5" stroke-dasharray="8,3"/>
+                <!-- Стрелки скольжения -->
+                <text x="215" y="120" fill="#fcc419" font-size="20" font-family="sans-serif">&#8593;</text>
+                <text x="213" y="52" fill="#a0a0b8" font-size="10" font-family="sans-serif">новая</text>
+                <text x="213" y="63" fill="#a0a0b8" font-size="10" font-family="sans-serif">прямая</text>
+              </svg>
+            </div>
+            <ol style="color:var(--text-secondary);padding-left:20px;">
+              <li>Один катет угольника &#8212; вдоль AB.</li>
+              <li>Линейка &#8212; к другому катету (как рельс).</li>
+              <li>Скользи угольник по линейке до точки D.</li>
+              <li>Проведи прямую &#8212; она будет параллельна AB.</li>
+            </ol>`
+        },
+        {
+          title: "Обозначение параллельности",
+          content: `
+            <p style="margin-bottom:16px;"><strong>Знак параллельности:</strong> &#8741; (две вертикальные черты). Пример: AB &#8741; CD.</p>
+            <div style="display:flex;justify-content:center;margin:16px 0;">
+              <svg viewBox="0 0 320 130" width="320" height="130" aria-label="Схема: AB параллельно CD, расстояния AD и BC равны" role="img">
+                <!-- Прямая AB -->
+                <line x1="30" y1="35" x2="290" y2="35" stroke="#00d4aa" stroke-width="2.5"/>
+                <text x="14" y="39" fill="#00d4aa" font-size="13" font-family="sans-serif" font-weight="bold">A</text>
+                <text x="292" y="39" fill="#00d4aa" font-size="13" font-family="sans-serif" font-weight="bold">B</text>
+                <!-- Прямая CD -->
+                <line x1="30" y1="95" x2="290" y2="95" stroke="#4dabf7" stroke-width="2.5"/>
+                <text x="14" y="99" fill="#4dabf7" font-size="13" font-family="sans-serif" font-weight="bold">C</text>
+                <text x="292" y="99" fill="#4dabf7" font-size="13" font-family="sans-serif" font-weight="bold">D</text>
+                <!-- Перпендикуляры AD и BC -->
+                <line x1="30" y1="35" x2="30" y2="95" stroke="#fcc419" stroke-width="2"/>
+                <rect x="30" y="83" width="10" height="10" fill="none" stroke="#fcc419" stroke-width="1.5"/>
+                <line x1="290" y1="35" x2="290" y2="95" stroke="#fcc419" stroke-width="2"/>
+                <rect x="280" y="83" width="10" height="10" fill="none" stroke="#fcc419" stroke-width="1.5"/>
+                <!-- Метки расстояний -->
+                <text x="4" y="68" fill="#fcc419" font-size="11" font-family="sans-serif">AD</text>
+                <text x="296" y="68" fill="#fcc419" font-size="11" font-family="sans-serif">BC</text>
+                <!-- Текст -->
+                <text x="90" y="120" fill="#a0a0b8" font-size="12" font-family="sans-serif">AB &#8741; CD, поэтому AD = BC = d</text>
+              </svg>
+            </div>
+            <div style="background:var(--accent-blue-dim);padding:14px 18px;border-radius:10px;">
+              <p style="margin:0;"><strong>Если AB &#8741; CD, то перпендикуляры AD и BC равны:</strong> AD = BC = d (расстояние между прямыми).</p>
+            </div>
+            <table style="margin-top:16px;">
+              <tr><th>Обозначение</th><th>Читается</th></tr>
+              <tr><td>AB &#8741; CD</td><td>Прямая AB параллельна прямой CD</td></tr>
+              <tr><td>a &#8741; b</td><td>Прямая a параллельна прямой b</td></tr>
+              <tr><td>MN &#8869; AB</td><td>MN перпендикулярна AB (образует 90°)</td></tr>
+            </table>`
+        },
+        {
+          title: "Свойства параллельных прямых",
+          content: `
+            <p style="margin-bottom:14px;">Важнейшие свойства параллельных прямых:</p>
+            <ul style="padding-left:20px;color:var(--text-secondary);">
+              <li style="margin-bottom:10px;"><strong style="color:var(--accent);">Единственность:</strong> через точку, не лежащую на прямой, можно провести <em>одну и только одну</em> прямую, параллельную данной.</li>
+              <li style="margin-bottom:10px;"><strong style="color:var(--accent-blue);">Постоянство расстояния:</strong> расстояние между двумя параллельными прямыми одинаково в любой точке.</li>
+              <li style="margin-bottom:10px;"><strong style="color:var(--accent-warm);">Прямые углы с перпендикуляром:</strong> перпендикуляр, опущенный на одну из параллельных прямых, перпендикулярен и другой.</li>
+              <li style="margin-bottom:10px;"><strong style="color:var(--warning);">Транзитивность:</strong> если прямая a &#8741; b и b &#8741; c, то a &#8741; c.</li>
+            </ul>
+            <div style="display:flex;justify-content:center;margin:14px 0;">
+              <svg viewBox="0 0 300 120" width="300" height="120" aria-label="Три параллельные прямые a, b, c" role="img">
+                <line x1="20" y1="20" x2="280" y2="20" stroke="#00d4aa" stroke-width="2"/>
+                <text x="6" y="24" fill="#00d4aa" font-size="13" font-family="sans-serif" font-style="italic">a</text>
+                <line x1="20" y1="60" x2="280" y2="60" stroke="#4dabf7" stroke-width="2"/>
+                <text x="6" y="64" fill="#4dabf7" font-size="13" font-family="sans-serif" font-style="italic">b</text>
+                <line x1="20" y1="100" x2="280" y2="100" stroke="#ff6b6b" stroke-width="2"/>
+                <text x="6" y="104" fill="#ff6b6b" font-size="13" font-family="sans-serif" font-style="italic">c</text>
+                <text x="85" y="115" fill="#a0a0b8" font-size="11" font-family="sans-serif">a &#8741; b &#8741; c &#8658; все три параллельны</text>
+              </svg>
+            </div>`
+        }
+      ];
+
+      // ===================== EXAMPLES DATA =====================
+      const examples = [
+        {
+          title: "Построение параллельной прямой через точку",
+          type: "Построение",
+          task: "Дана прямая AB и точка D, не лежащая на ней. Постройте прямую через точку D, параллельную AB.",
+          sol: `<p><strong>Шаг 1.</strong> Положи угольник одним катетом вдоль прямой AB.</p>
+                <p><strong>Шаг 2.</strong> Приложи линейку к другому (вертикальному) катету угольника — линейка будет направляющей.</p>
+                <p><strong>Шаг 3.</strong> Удерживая линейку неподвижно, скользи угольник вдоль линейки до тех пор, пока угол угольника не окажется у точки D.</p>
+                <p><strong>Шаг 4.</strong> Проведи прямую через точку D вдоль горизонтального катета угольника.</p>
+                <p><strong>Вывод:</strong> полученная прямая параллельна AB. Обозначь: <strong>новая прямая &#8741; AB</strong>.</p>`
+        },
+        {
+          title: "Расстояние между параллельными прямыми",
+          type: "Задача на расстояние",
+          task: "Прямые AB &#8741; CD. Из точки F на прямой AB опущен перпендикуляр CF = 5 см на прямую CD. Чему равно расстояние между прямыми?",
+          sol: `<p><strong>Дано:</strong> AB &#8741; CD, перпендикуляр CF = 5 см.</p>
+                <p><strong>Решение:</strong> по определению, расстояние между параллельными прямыми равно длине перпендикуляра, опущенного из любой точки одной прямой на другую.</p>
+                <p>Так как CF &#8869; CD и CF = 5 см, то расстояние d = CF = <strong>5 см</strong>.</p>
+                <p><strong>Ответ: d = 5 см.</strong></p>`
+        },
+        {
+          title: "Доказательство параллельности двух прямых",
+          type: "Доказательство",
+          task: "Из точки A прямой a опущен перпендикуляр на прямую b, его длина 4 см. Из точки B той же прямой a опущен перпендикуляр на прямую b, его длина тоже 4 см. Параллельны ли прямые a и b?",
+          sol: `<p><strong>Дано:</strong> перпендикуляры из A и B на прямую b равны (оба = 4 см).</p>
+                <p><strong>Рассуждение:</strong> если расстояния от двух различных точек одной прямой до другой прямой одинаковы, то прямые параллельны.</p>
+                <p>Поскольку оба перпендикуляра равны 4 см, расстояние постоянно.</p>
+                <p><strong>Вывод: прямые a &#8741; b.</strong> Расстояние между ними d = 4 см.</p>`
+        },
+        {
+          title: "Прямые AB &#8741; CD: расстояние из точки E",
+          type: "Применение свойства",
+          task: "Прямые AB &#8741; CD, расстояние между ними 3 см. Точка E лежит на прямой AB. Чему равно расстояние от точки E до прямой CD?",
+          sol: `<p><strong>Дано:</strong> AB &#8741; CD, d = 3 см, точка E &#8712; AB.</p>
+                <p><strong>Решение:</strong> расстояние между параллельными прямыми одинаково во всех точках. Перпендикуляр из любой точки AB на CD имеет длину d.</p>
+                <p>Следовательно, перпендикуляр из точки E на прямую CD = <strong>3 см</strong>.</p>
+                <p><strong>Ответ: расстояние от E до CD равно 3 см.</strong></p>`
+        },
+        {
+          title: "Построение прямоугольника с помощью параллельных прямых",
+          type: "Построение",
+          task: "Постройте прямоугольник со сторонами 4 см и 2 см, используя свойства параллельных прямых.",
+          sol: `<p><strong>Шаг 1.</strong> Проведи горизонтальную прямую и отметь на ней отрезок AB = 4 см.</p>
+                <p><strong>Шаг 2.</strong> Из точки A проведи перпендикуляр (угольником) вверх, отметь на нём точку D, AD = 2 см.</p>
+                <p><strong>Шаг 3.</strong> Через точку D проведи прямую, параллельную AB (угольником + линейкой). Отметь точку C: DC = 4 см.</p>
+                <p><strong>Шаг 4.</strong> Из точки B проведи перпендикуляр вверх и соедини с точкой C. BC = 2 см.</p>
+                <p><strong>Результат:</strong> ABCD — прямоугольник. AB &#8741; DC, AD &#8741; BC, все углы = 90°.</p>
+                <p><strong>Проверка:</strong> AB = DC = 4 см; AD = BC = 2 см. &#10003;</p>`
+        }
+      ];
+
+      // ===================== TRAINER DATA =====================
+      const trainerQs = [
+        { q: "Прямые AB &#8741; CD. Расстояние между ними d = 5 см. Перпендикуляр из точки A на CD = ? (в см)", a: 5, hint: "Расстояние между параллельными одинаково: перпендикуляр = d = 5 см." },
+        { q: "Прямые AB &#8741; CD, d = 7 см. Расстояние из любой точки AB до CD = ? (в см)", a: 7, hint: "Свойство: расстояние между параллельными постоянно и равно d = 7 см." },
+        { q: "Угол между параллельными прямыми и перпендикуляром к ним = ? (в градусах)", a: 90, hint: "Перпендикуляр всегда образует прямой угол = 90°." },
+        { q: "Из точки M на прямую n опущен перпендикуляр MN = 8 см. Расстояние между параллельными m и n = ? (в см)", a: 8, hint: "Длина перпендикуляра и есть расстояние между параллельными." },
+        { q: "Прямые a &#8741; b, d = 6 см. Точка P на прямой a. Расстояние от P до b = ? (в см)", a: 6, hint: "Для любой точки одной параллельной прямой расстояние до другой = d = 6 см." },
+        { q: "Перпендикуляр EF между параллельными = 12 см. Перпендикуляр GH между теми же прямыми = ? (в см)", a: 12, hint: "Все перпендикуляры между параллельными равны: GH = EF = 12 см." },
+        { q: "Сколько прямых можно провести через точку D параллельно данной прямой a? (число)", a: 1, hint: "Аксиома параллельных: через точку вне прямой проходит одна и только одна параллельная." },
+        { q: "Прямые AB &#8741; CD. Угол между AB и перпендикуляром MN = ? (в градусах)", a: 90, hint: "Перпендикуляр образует прямой угол с обеими параллельными прямыми." },
+        { q: "Перпендикуляр между AB и CD равен 3 см. Расстояние d = ? (в см)", a: 3, hint: "Расстояние между параллельными прямыми = длина перпендикуляра." },
+        { q: "Прямые a &#8741; b &#8741; c. Расстояние a до b = 4 см, b до c = 4 см. Расстояние a до c = ? (в см)", a: 8, hint: "a до c = (a до b) + (b до c) = 4 + 4 = 8 см." }
+      ];
+
+      // ===================== MCQ QUESTIONS (30) =====================
+      const questions = [
+        { q: "Параллельные прямые — это прямые, которые:", o: ["Пересекаются под прямым углом", "Не пересекаются ни при каком продолжении", "Имеют одну общую точку", "Пересекаются в двух точках"], a: 1 },
+        { q: "Расстояние между параллельными прямыми:", o: ["Меняется в зависимости от точки", "Одинаково во всех точках", "Равно нулю", "Бесконечно"], a: 1 },
+        { q: "Как обозначается параллельность прямых AB и CD?", o: ["AB = CD", "AB &#8869; CD", "AB &#8741; CD", "AB × CD"], a: 2 },
+        { q: "Расстояние между параллельными прямыми определяется как:", o: ["Сумма координат точек", "Длина перпендикуляра из точки одной прямой на другую", "Полусумма длин прямых", "Длина дуги между ними"], a: 1 },
+        { q: "Сколько прямых, параллельных данной, можно провести через точку вне этой прямой?", o: ["Ни одной", "Одну", "Две", "Бесконечно много"], a: 1 },
+        { q: "Прямые AB &#8741; CD, d = 5 см. Расстояние из точки E &#8712; AB до CD равно:", o: ["0 см", "2,5 см", "5 см", "10 см"], a: 2 },
+        { q: "Для построения параллельной прямой используют:", o: ["Только циркуль", "Угольник и линейку", "Только линейку", "Транспортир и циркуль"], a: 1 },
+        { q: "Перпендикуляр между двумя параллельными прямыми образует с ними угол:", o: ["45°", "60°", "90°", "180°"], a: 2 },
+        { q: "Если AB &#8741; CD и перпендикуляр EF = 7 см, то расстояние между прямыми:", o: ["3,5 см", "14 см", "7 см", "49 см"], a: 2 },
+        { q: "Какой инструмент скользит по линейке при построении параллельной прямой?", o: ["Циркуль", "Транспортир", "Угольник", "Линейка"], a: 2 },
+        { q: "При построении параллельной прямой угольник располагают:", o: ["Катетом вдоль данной прямой", "Гипотенузой вдоль данной прямой", "Под углом 45°", "Произвольно"], a: 0 },
+        { q: "Прямые a &#8741; b. Угол между ними равен:", o: ["0°", "90°", "180°", "45°"], a: 0 },
+        { q: "Если a &#8741; b и b &#8741; c, то:", o: ["a &#8869; c", "a &#8741; c", "a и c пересекаются", "a и c совпадают"], a: 1 },
+        { q: "Расстояние между параллельными прямыми равно длине:", o: ["Любого отрезка между ними", "Перпендикуляра из точки одной прямой на другую", "Гипотенузы треугольника", "Дуги окружности"], a: 1 },
+        { q: "Прямые AB и CD называются параллельными, если:", o: ["Они лежат в разных плоскостях", "Они совпадают", "Они не пересекаются, лежа в одной плоскости", "Они перпендикулярны"], a: 2 },
+        { q: "При скольжении угольника вдоль линейки направляющий инструмент (линейка):", o: ["Движется вместе с угольником", "Остаётся неподвижной", "Вращается", "Убирается"], a: 1 },
+        { q: "Прямые AB &#8741; CD, d = 3 см. Точка F &#8712; AB. Расстояние от F до CD:", o: ["6 см", "1,5 см", "3 см", "9 см"], a: 2 },
+        { q: "Перпендикуляр MN между параллельными прямыми образует с обеими прямыми:", o: ["Острый угол", "Тупой угол", "Прямой угол (90°)", "Развёрнутый угол"], a: 2 },
+        { q: "Расстояние между параллельными прямыми a и b равно 4 см. Перпендикуляр из любой точки a на b равен:", o: ["8 см", "2 см", "4 см", "16 см"], a: 2 },
+        { q: "В прямоугольнике ABCD стороны AB и CD:", o: ["Пересекаются", "Параллельны и равны", "Перпендикулярны", "Не равны"], a: 1 },
+        { q: "Две прямые параллельны, если из двух разных точек одной прямой перпендикуляры на другую:", o: ["Разные по длине", "Равны по длине", "Отсутствуют", "Образуют острый угол"], a: 1 },
+        { q: "Прямые AB &#8741; CD. Отрезок EF &#8869; AB и EF &#8869; CD. Тогда EF — это:", o: ["Биссектриса", "Диагональ", "Расстояние между параллельными", "Медиана"], a: 2 },
+        { q: "Чему равен угол между параллельной прямой и перпендикуляром к ней?", o: ["45°", "60°", "90°", "30°"], a: 2 },
+        { q: "Прямые a &#8741; b, расстояние 6 см. Прямые b &#8741; c, расстояние 4 см (с той же стороны, последовательно). d(a,c) = ?", o: ["2 см", "10 см", "6 см", "4 см"], a: 1 },
+        { q: "Линейка при построении параллельной прямой прикладывается к:", o: ["Первому катету угольника, лежащему на AB", "Второму катету угольника (свободному)", "Гипотенузе угольника", "Прямой AB"], a: 1 },
+        { q: "Признак параллельности: если два перпендикуляра из разных точек одной прямой на другую равны, то прямые:", o: ["Пересекаются", "Совпадают", "Параллельны", "Перпендикулярны"], a: 2 },
+        { q: "Расстояние между параллельными AB &#8741; CD равно 9 см. Перпендикуляр PQ между ними равен:", o: ["3 см", "18 см", "9 см", "81 см"], a: 2 },
+        { q: "Сколько раз можно изменить расстояние между фиксированными параллельными прямыми?", o: ["Бесконечно часто", "Один раз", "Ни разу — оно постоянно", "Два раза"], a: 2 },
+        { q: "При построении прямоугольника параллельные стороны строятся с помощью:", o: ["Произвольного смещения", "Угольника и линейки (построение параллельных)", "Циркуля и транспортира", "Только транспортира"], a: 1 },
+        { q: "Если прямая t перпендикулярна прямой a, а прямая a &#8741; b, то прямая t и прямая b:", o: ["Параллельны", "Совпадают", "Перпендикулярны", "Не связаны"], a: 2 }
+      ];
+
+      // ===================== NAVIGATION =====================
+      function showSection(id) {
+        document.querySelectorAll("section").forEach(s => s.classList.remove("active"));
+        document.querySelectorAll(".nav-links a").forEach(a => a.classList.remove("active"));
+        const sec = document.getElementById(id);
+        if (sec) sec.classList.add("active");
+        const link = document.querySelector(`.nav-links a[data-section="${id}"]`);
+        if (link) link.classList.add("active");
+        AppState.currentSection = id;
+        if (id === "examples") renderExamples();
+        if (id === "assessment") {
+          document.getElementById("diagnostic-ui").style.display = "none";
+          document.getElementById("timeattack-ui").style.display = "none";
+          document.getElementById("results-ui").style.display = "none";
+        }
+      }
+
+      document.querySelectorAll(".nav-links a[data-section]").forEach(a => {
+        a.addEventListener("click", e => { e.preventDefault(); showSection(a.dataset.section); });
+      });
+
+      // ===================== SLIDES =====================
+      function renderSlide() {
+        const track = document.getElementById("track-slides");
+        const total = slides.length;
+        document.getElementById("slide-num").textContent = AppState.slide + 1;
+        document.getElementById("slide-total").textContent = total;
+        track.innerHTML = "";
+        slides.forEach((s, i) => {
+          const div = document.createElement("div");
+          div.className = "widget-slide" + (i === AppState.slide ? " active" : "");
+          div.innerHTML = `<h3>${s.title}</h3>${s.content}`;
+          track.appendChild(div);
+        });
+      }
+
+      function nextSlide() {
+        if (AppState.slide < slides.length - 1) { AppState.slide++; renderSlide(); }
+        else showSection("algorithm");
+      }
+
+      function prevSlide() {
+        if (AppState.slide > 0) { AppState.slide--; renderSlide(); }
+      }
+
+      renderSlide();
+
+      // ===================== EXAMPLES =====================
+      function renderExamples() {
+        const container = document.getElementById("examples-container");
+        if (container.dataset.rendered) return;
+        container.dataset.rendered = "1";
+        examples.forEach((ex, i) => {
+          const div = document.createElement("div");
+          div.className = "problem-card";
+          div.innerHTML = `
+            <div class="problem-header">
+              <span class="problem-number">Задача ${i + 1}</span>
+              <span class="problem-type">${ex.type}</span>
+            </div>
+            <div class="problem-text"><strong>${ex.title}</strong><br>${ex.task}</div>
+            <button class="solution-btn" onclick="toggleSolution(this)">Показать решение</button>
+            <div class="solution">${ex.sol}</div>`;
+          container.appendChild(div);
+        });
+      }
+
+      function toggleSolution(btn) {
+        const sol = btn.nextElementSibling;
+        const active = sol.classList.toggle("active");
+        btn.textContent = active ? "Скрыть решение" : "Показать решение";
+      }
+
+      // ===================== TRAINER =====================
+      function newTrainerProblem() {
+        const idx = Math.floor(Math.random() * trainerQs.length);
+        AppState.trainer.current = trainerQs[idx];
+        document.getElementById("trainer-question").innerHTML = AppState.trainer.current.q;
+        document.getElementById("trainer-answer").value = "";
+        document.getElementById("trainer-feedback").innerHTML = "";
+        document.getElementById("trainer-hint").style.display = "none";
+        document.getElementById("trainer-check-btn").disabled = false;
+        document.getElementById("trainer-answer").focus();
+      }
+
+      function checkTrainer() {
+        const cur = AppState.trainer.current;
+        if (!cur) return;
+        const val = parseFloat(document.getElementById("trainer-answer").value);
+        AppState.trainer.total++;
+        document.getElementById("trainer-total").textContent = AppState.trainer.total;
+        const fb = document.getElementById("trainer-feedback");
+        if (!isNaN(val) && Math.abs(val - cur.a) < 0.01) {
+          AppState.trainer.correct++;
+          AppState.trainer.streak++;
+          document.getElementById("trainer-correct").textContent = AppState.trainer.correct;
+          document.getElementById("trainer-streak").textContent = AppState.trainer.streak;
+          fb.innerHTML = `<div style="padding:14px;background:rgba(81,207,102,0.15);border-radius:12px;border-left:3px solid var(--success);color:var(--success);font-weight:600;">&#10003; Верно! Ответ: ${cur.a}</div>`;
+        } else {
+          AppState.trainer.streak = 0;
+          document.getElementById("trainer-streak").textContent = 0;
+          fb.innerHTML = `<div style="padding:14px;background:rgba(255,107,107,0.15);border-radius:12px;border-left:3px solid var(--error);color:var(--error);font-weight:600;">&#10007; Неверно. Правильный ответ: ${cur.a}</div>`;
+        }
+        document.getElementById("trainer-check-btn").disabled = true;
+      }
+
+      function showTrainerHint() {
+        const cur = AppState.trainer.current;
+        if (!cur) return;
+        const hint = document.getElementById("trainer-hint");
+        hint.style.display = "block";
+        hint.textContent = cur.hint;
+      }
+
+      // ===================== DIAGNOSTIC =====================
+      let diagAnswers = [];
+      let diagCurrent = 0;
+      let diagScore = 0;
+
+      function startDiagnostic() {
+        diagAnswers = new Array(questions.length).fill(null);
+        diagCurrent = 0;
+        diagScore = 0;
+        document.getElementById("diagnostic-ui").style.display = "block";
+        document.getElementById("timeattack-ui").style.display = "none";
+        document.getElementById("results-ui").style.display = "none";
+        renderDiagnosticQ();
+        document.getElementById("diagnostic-ui").scrollIntoView({ behavior: "smooth" });
+      }
+
+      function renderDiagnosticQ() {
+        const q = questions[diagCurrent];
+        document.getElementById("diag-current").textContent = diagCurrent + 1;
+        document.getElementById("diag-total").textContent = questions.length;
+        document.getElementById("diag-score").textContent = diagScore + " правильных";
+        const pct = ((diagCurrent) / questions.length * 100).toFixed(0);
+        document.getElementById("diag-progress").style.width = pct + "%";
+        document.getElementById("diag-question").innerHTML = q.q;
+        document.getElementById("diag-explanation").style.display = "none";
+        const opts = document.getElementById("diag-options");
+        opts.innerHTML = "";
+        const letters = ["А", "Б", "В", "Г"];
+        q.o.forEach((opt, i) => {
+          const div = document.createElement("div");
+          div.className = "quiz-option";
+          if (diagAnswers[diagCurrent] !== null) {
+            div.classList.add("disabled");
+            if (i === q.a) div.classList.add("correct");
+            else if (i === diagAnswers[diagCurrent]) div.classList.add("wrong");
+          }
+          div.innerHTML = `<span class="option-letter">${letters[i]}</span><span>${opt}</span>`;
+          div.addEventListener("click", () => selectDiagAnswer(i));
+          opts.appendChild(div);
+        });
+        document.getElementById("diag-prev").disabled = diagCurrent === 0;
+        document.getElementById("diag-next").disabled = diagAnswers[diagCurrent] === null;
+      }
+
+      function selectDiagAnswer(i) {
+        if (diagAnswers[diagCurrent] !== null) return;
+        diagAnswers[diagCurrent] = i;
+        if (i === questions[diagCurrent].a) diagScore++;
+        document.getElementById("diag-score").textContent = diagScore + " правильных";
+        document.getElementById("diag-next").disabled = false;
+        const expl = document.getElementById("diag-explanation");
+        expl.style.display = "block";
+        if (i === questions[diagCurrent].a) {
+          expl.style.borderLeftColor = "var(--success)";
+          expl.style.background = "rgba(81,207,102,0.1)";
+          expl.innerHTML = "<strong style='color:var(--success)'>&#10003; Правильно!</strong> " + getExplanation(diagCurrent, i);
+        } else {
+          expl.style.borderLeftColor = "var(--error)";
+          expl.style.background = "rgba(255,107,107,0.1)";
+          expl.innerHTML = "<strong style='color:var(--error)'>&#10007; Неверно.</strong> Правильный ответ: <strong>" + questions[diagCurrent].o[questions[diagCurrent].a] + "</strong>. " + getExplanation(diagCurrent, i);
+        }
+        renderDiagnosticQ();
+      }
+
+      function getExplanation(idx) {
+        const explanations = [
+          "Параллельные прямые не пересекаются ни при каком продолжении.",
+          "Ключевое свойство: расстояние между параллельными прямыми постоянно.",
+          "Символ &#8741; (две вертикальные черты) обозначает параллельность.",
+          "Расстояние = длина перпендикуляра из точки одной прямой на другую.",
+          "Аксиома Евклида: через точку вне прямой проходит единственная параллельная.",
+          "Расстояние постоянно, поэтому оно равно d = 5 см для любой точки.",
+          "Угольник задаёт направление, линейка — путь скольжения.",
+          "Перпендикуляр всегда образует 90° с каждой из параллельных прямых.",
+          "Расстояние = длина перпендикуляра = 7 см.",
+          "Угольник скользит вдоль неподвижной линейки.",
+          "Один катет угольника кладётся на данную прямую.",
+          "Угол между параллельными прямыми равен 0° (они не пересекаются).",
+          "Свойство транзитивности: a &#8741; b и b &#8741; c &#8658; a &#8741; c.",
+          "По определению расстояния между параллельными прямыми.",
+          "Параллельные прямые лежат в одной плоскости и не пересекаются.",
+          "Линейка остаётся неподвижной, угольник скользит по ней.",
+          "Расстояние постоянно, поэтому = d = 3 см.",
+          "Перпендикуляр образует прямой угол 90° с обеими прямыми.",
+          "Расстояние = 4 см, поэтому любой перпендикуляр = 4 см.",
+          "В прямоугольнике противоположные стороны параллельны и равны.",
+          "Равные перпендикуляры — признак параллельности прямых.",
+          "EF является перпендикуляром к обеим прямым — это расстояние между ними.",
+          "Перпендикуляр к параллельной прямой образует 90°.",
+          "Расстояния складываются: 6 + 4 = 10 см.",
+          "Линейка прикладывается к свободному (второму) катету угольника.",
+          "Равные перпендикуляры из двух точек — признак параллельности.",
+          "Расстояние постоянно: PQ = 9 см.",
+          "Расстояние между фиксированными параллельными прямыми не меняется.",
+          "Параллельные стороны прямоугольника строятся с помощью угольника и линейки.",
+          "Если t &#8869; a и a &#8741; b, то t &#8869; b."
+        ];
+        return explanations[idx] || "";
+      }
+
+      function nextDiagnostic() {
+        if (diagCurrent < questions.length - 1) {
+          diagCurrent++;
+          renderDiagnosticQ();
+        } else {
+          showResults("diagnostic", diagScore, questions.length, 0);
+        }
+      }
+
+      function prevDiagnostic() {
+        if (diagCurrent > 0) { diagCurrent--; renderDiagnosticQ(); }
+      }
+
+      // ===================== TIME ATTACK =====================
+      let taAnswers = [];
+      let taCurrent = 0;
+      let taScore = 0;
+      let taTimerInterval = null;
+      let taTimeLeft = 600;
+      let taStartTime = 0;
+      let taSelectedOption = null;
+
+      function startTimeAttack() {
+        taAnswers = new Array(questions.length).fill(null);
+        taCurrent = 0;
+        taScore = 0;
+        taTimeLeft = 600;
+        taStartTime = Date.now();
+        taSelectedOption = null;
+        document.getElementById("timeattack-ui").style.display = "block";
+        document.getElementById("diagnostic-ui").style.display = "none";
+        document.getElementById("results-ui").style.display = "none";
+        if (taTimerInterval) clearInterval(taTimerInterval);
+        taTimerInterval = setInterval(tickTimer, 1000);
+        renderTAQuestion();
+        document.getElementById("timeattack-ui").scrollIntoView({ behavior: "smooth" });
+      }
+
+      function tickTimer() {
+        taTimeLeft--;
+        const m = Math.floor(taTimeLeft / 60);
+        const s = taTimeLeft % 60;
+        const t = document.getElementById("ta-timer");
+        t.textContent = m + ":" + String(s).padStart(2, "0");
+        t.className = "timer";
+        if (taTimeLeft <= 60) t.classList.add("warning");
+        if (taTimeLeft <= 20) t.classList.add("danger");
+        if (taTimeLeft <= 0) {
+          clearInterval(taTimerInterval);
+          showResults("timeattack", taScore, questions.length, 600 - taTimeLeft);
+        }
+      }
+
+      function renderTAQuestion() {
+        const q = questions[taCurrent];
+        document.getElementById("ta-current").textContent = taCurrent + 1;
+        const pct = (taCurrent / questions.length * 100).toFixed(0);
+        document.getElementById("ta-progress").style.width = pct + "%";
+        document.getElementById("ta-question").innerHTML = q.q;
+        taSelectedOption = null;
+        document.getElementById("ta-next").disabled = true;
+        const opts = document.getElementById("ta-options");
+        opts.innerHTML = "";
+        const letters = ["А", "Б", "В", "Г"];
+        q.o.forEach((opt, i) => {
+          const div = document.createElement("div");
+          div.className = "quiz-option";
+          div.innerHTML = `<span class="option-letter">${letters[i]}</span><span>${opt}</span>`;
+          div.addEventListener("click", () => {
+            document.querySelectorAll("#ta-options .quiz-option").forEach(o => o.classList.remove("correct", "wrong"));
+            div.classList.add(i === q.a ? "correct" : "wrong");
+            if (i === q.a && taAnswers[taCurrent] === null) taScore++;
+            taAnswers[taCurrent] = i;
+            taSelectedOption = i;
+            document.getElementById("ta-next").disabled = false;
+          });
+          opts.appendChild(div);
+        });
+      }
+
+      function nextTimeAttack() {
+        if (taCurrent < questions.length - 1) {
+          taCurrent++;
+          renderTAQuestion();
+        } else {
+          clearInterval(taTimerInterval);
+          const elapsed = 600 - taTimeLeft;
+          showResults("timeattack", taScore, questions.length, elapsed);
+        }
+      }
+
+      // ===================== RESULTS =====================
+      function showResults(mode, score, total, elapsed) {
+        document.getElementById("diagnostic-ui").style.display = "none";
+        document.getElementById("timeattack-ui").style.display = "none";
+        document.getElementById("results-ui").style.display = "block";
+        const pct = Math.round(score / total * 100);
+        document.getElementById("result-circle").style.setProperty("--score", pct);
+        document.getElementById("result-percent").textContent = pct + "%";
+        document.getElementById("result-correct").textContent = score;
+        document.getElementById("result-wrong").textContent = total - score;
+        const mm = Math.floor(elapsed / 60);
+        const ss = elapsed % 60;
+        document.getElementById("result-time").textContent = mm + ":" + String(ss).padStart(2, "0");
+        let mastery, msg;
+        if (pct >= 90) { mastery = "Отлично"; msg = "&#127942; Отличный результат! Вы мастерски освоили тему параллельных прямых!"; }
+        else if (pct >= 75) { mastery = "Хорошо"; msg = "&#128077; Хороший результат! Ещё немного практики — и будет отлично."; }
+        else if (pct >= 50) { mastery = "Удовл."; msg = "&#128218; Неплохо, но стоит повторить теорию о построении параллельных прямых."; }
+        else { mastery = "Слабо"; msg = "&#128161; Рекомендуем изучить теорию ещё раз и воспользоваться тренажёром."; }
+        document.getElementById("result-mastery").textContent = mastery;
+        document.getElementById("result-message").innerHTML = msg;
+        document.getElementById("results-ui").scrollIntoView({ behavior: "smooth" });
+      }
+
+      function resetAssessment() {
+        document.getElementById("diagnostic-ui").style.display = "none";
+        document.getElementById("timeattack-ui").style.display = "none";
+        document.getElementById("results-ui").style.display = "none";
+        if (taTimerInterval) { clearInterval(taTimerInterval); taTimerInterval = null; }
+        document.getElementById("ta-timer").textContent = "10:00";
+        document.getElementById("ta-timer").className = "timer";
+      }
+    </script>
+  </body>
+</html>

@@ -1,480 +1,708 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ru">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Урок 3 — § 2.2 Сравнение дробей</title>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Урок 3 — Сравнение и упорядочивание дробей</title>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        :root { --bg-dark:#0f0f1a; --bg-card:rgba(255,255,255,0.05); --bg-glass:rgba(255,255,255,0.08); --border-glass:rgba(255,255,255,0.15); --text-primary:#e8e8f0; --text-secondary:#a0a0b8; --accent:#00d4aa; --accent-dim:rgba(0,212,170,0.2); --accent-warm:#ff6b6b; --accent-warm-dim:rgba(255,107,107,0.2); --accent-blue:#4dabf7; --accent-blue-dim:rgba(77,171,247,0.2); --success:#51cf66; --error:#ff6b6b; --warning:#fcc419; }
-        body { font-family:'Segoe UI',system-ui,-apple-system,sans-serif; background:var(--bg-dark); color:var(--text-primary); min-height:100vh; overflow-x:hidden; line-height:1.6; }
-        .bg-animation { position:fixed; top:0; left:0; width:100%; height:100%; z-index:-1; background:radial-gradient(ellipse at 20% 20%,rgba(0,212,170,0.08) 0%,transparent 50%),radial-gradient(ellipse at 80% 80%,rgba(77,171,247,0.08) 0%,transparent 50%),radial-gradient(ellipse at 50% 50%,rgba(255,107,107,0.05) 0%,transparent 60%); }
-        .bg-animation::before { content:''; position:absolute; width:200%; height:200%; top:-50%; left:-50%; background:repeating-linear-gradient(0deg,transparent,transparent 40px,rgba(255,255,255,0.02) 40px,rgba(255,255,255,0.02) 41px); animation:bgMove 20s linear infinite; }
-        @keyframes bgMove { 0%{transform:translateY(0)} 100%{transform:translateY(40px)} }
-        nav { position:fixed; top:0; left:0; right:0; background:rgba(15,15,26,0.85); backdrop-filter:blur(20px); border-bottom:1px solid var(--border-glass); z-index:1000; padding:0 20px; }
-        .nav-container { max-width:1200px; margin:0 auto; display:flex; justify-content:space-between; align-items:center; height:60px; }
-        .logo { font-size:1.3rem; font-weight:700; background:linear-gradient(135deg,var(--accent),var(--accent-blue)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
-        .nav-links { display:flex; gap:8px; list-style:none; }
-        .nav-links a { color:var(--text-secondary); text-decoration:none; padding:8px 16px; border-radius:8px; transition:all 0.3s; font-size:0.9rem; font-weight:500; cursor:pointer; border:none; background:transparent; }
-        .nav-links a:hover,.nav-links a.active { color:var(--text-primary); background:var(--bg-glass); }
-        .nav-links a.active { background:var(--accent-dim); color:var(--accent); }
-        section { display:none; padding:100px 20px 60px; max-width:1000px; margin:0 auto; animation:fadeIn 0.5s ease; }
-        section.active { display:block; }
-        @keyframes fadeIn { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
-        .card { background:var(--bg-card); backdrop-filter:blur(20px); border:1px solid var(--border-glass); border-radius:20px; padding:32px; margin-bottom:24px; transition:transform 0.3s,box-shadow 0.3s; }
-        .card:hover { transform:translateY(-2px); box-shadow:0 20px 40px rgba(0,0,0,0.3); }
-        .card-title { font-size:1.5rem; font-weight:700; margin-bottom:16px; display:flex; align-items:center; gap:12px; }
-        .card-title .icon { width:40px; height:40px; border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:1.3rem; }
-        .hero { text-align:center; padding:140px 20px 80px; }
-        .hero h1 { font-size:3rem; font-weight:800; margin-bottom:20px; background:linear-gradient(135deg,var(--accent),var(--accent-blue),var(--accent-warm)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; line-height:1.2; }
-        .hero p { font-size:1.2rem; color:var(--text-secondary); max-width:600px; margin:0 auto 40px; }
-        .hero-stats { display:flex; justify-content:center; gap:40px; margin-top:40px; flex-wrap:wrap; }
-        .stat { text-align:center; }
-        .stat-value { font-size:2.5rem; font-weight:800; color:var(--accent); }
-        .stat-label { color:var(--text-secondary); font-size:0.9rem; }
-        .btn { display:inline-flex; align-items:center; gap:8px; padding:14px 32px; border-radius:12px; border:none; font-size:1rem; font-weight:600; cursor:pointer; transition:all 0.3s; text-decoration:none; }
-        .btn-primary { background:linear-gradient(135deg,var(--accent),var(--accent-blue)); color:#000; }
-        .btn-primary:hover { transform:translateY(-2px); box-shadow:0 10px 30px var(--accent-dim); }
-        .btn-secondary { background:var(--bg-glass); color:var(--text-primary); border:1px solid var(--border-glass); }
-        .btn-secondary:hover { background:var(--bg-card); }
-        .theory-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:20px; }
-        .theory-card { background:var(--bg-card); backdrop-filter:blur(20px); border:1px solid var(--border-glass); border-radius:16px; padding:24px; transition:all 0.3s; }
-        .theory-card:hover { border-color:var(--accent); transform:translateY(-4px); }
-        .theory-card h3 { color:var(--accent); margin-bottom:12px; font-size:1.1rem; }
-        .formula-box { background:var(--bg-glass); border:1px solid var(--border-glass); border-radius:12px; padding:20px; margin:16px 0; text-align:center; font-size:1.2rem; }
-        .tip-box { background:var(--accent-blue-dim); border-left:4px solid var(--accent-blue); padding:16px 20px; border-radius:0 12px 12px 0; margin:16px 0; }
-        .tip-box::before { content:'💡 '; }
-        .warning-box { background:var(--accent-warm-dim); border-left:4px solid var(--accent-warm); padding:16px 20px; border-radius:0 12px 12px 0; margin:16px 0; }
-        .warning-box::before { content:'⚠️ '; }
-        .problem-card { background:var(--bg-card); border:1px solid var(--border-glass); border-radius:16px; padding:24px; margin-bottom:20px; }
-        .problem-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; }
-        .problem-number { background:var(--accent-dim); color:var(--accent); padding:4px 12px; border-radius:20px; font-size:0.85rem; font-weight:600; }
-        .problem-type { color:var(--text-secondary); font-size:0.85rem; }
-        .problem-text { font-size:1.1rem; margin-bottom:16px; line-height:1.8; }
-        .solution-btn { background:var(--accent-dim); color:var(--accent); border:1px solid var(--accent); padding:10px 20px; border-radius:8px; cursor:pointer; font-weight:600; transition:all 0.3s; }
-        .solution-btn:hover { background:var(--accent); color:#000; }
-        .solution { display:none; margin-top:20px; padding:20px; background:rgba(0,212,170,0.05); border-left:3px solid var(--accent); border-radius:0 12px 12px 0; }
-        .solution.active { display:block; animation:slideDown 0.3s ease; }
-        @keyframes slideDown { from{opacity:0} to{opacity:1} }
-        .solution-step { margin-bottom:12px; padding:8px 0; border-bottom:1px solid var(--border-glass); }
-        .solution-step:last-child { border-bottom:none; }
-        .step-num { display:inline-block; width:24px; height:24px; background:var(--accent); color:#000; border-radius:50%; text-align:center; line-height:24px; font-size:0.8rem; font-weight:700; margin-right:8px; }
-        .quiz-container { background:var(--bg-card); border:1px solid var(--border-glass); border-radius:20px; padding:32px; }
-        .quiz-progress { display:flex; justify-content:space-between; align-items:center; margin-bottom:24px; }
-        .progress-bar { flex:1; height:8px; background:var(--bg-glass); border-radius:4px; margin:0 16px; overflow:hidden; }
-        .progress-fill { height:100%; background:linear-gradient(90deg,var(--accent),var(--accent-blue)); border-radius:4px; transition:width 0.5s ease; width:0%; }
-        .quiz-question { font-size:1.2rem; margin-bottom:24px; padding:20px; background:var(--bg-glass); border-radius:12px; border-left:4px solid var(--accent); }
-        .quiz-options { display:grid; gap:12px; }
-        .quiz-option { background:var(--bg-glass); border:2px solid var(--border-glass); border-radius:12px; padding:16px 20px; cursor:pointer; transition:all 0.3s; display:flex; align-items:center; gap:12px; }
-        .quiz-option:hover { border-color:var(--accent); background:var(--accent-dim); }
-        .quiz-option.correct { border-color:var(--success); background:rgba(81,207,102,0.15); }
-        .quiz-option.wrong { border-color:var(--error); background:rgba(255,107,107,0.15); }
-        .quiz-option.disabled { pointer-events:none; opacity:0.7; }
-        .option-letter { width:32px; height:32px; border-radius:8px; background:var(--bg-card); display:flex; align-items:center; justify-content:center; font-weight:700; flex-shrink:0; }
-        .quiz-nav { display:flex; justify-content:space-between; margin-top:24px; }
-        .timer { position:fixed; top:80px; right:20px; background:var(--bg-card); backdrop-filter:blur(20px); border:1px solid var(--border-glass); border-radius:16px; padding:16px 24px; font-size:1.3rem; font-weight:700; font-variant-numeric:tabular-nums; z-index:999; box-shadow:0 10px 30px rgba(0,0,0,0.3); }
-        .timer.warning { border-color:var(--warning); color:var(--warning); animation:pulse 1s infinite; }
-        .timer.danger { border-color:var(--error); color:var(--error); animation:pulse 0.5s infinite; }
-        @keyframes pulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.05)} }
-        .results-container { text-align:center; padding:40px; }
-        .score-circle { width:200px; height:200px; border-radius:50%; background:conic-gradient(var(--accent) calc(var(--score)*3.6deg),var(--bg-glass) 0); margin:0 auto 32px; display:flex; align-items:center; justify-content:center; position:relative; }
-        .score-circle::before { content:''; position:absolute; width:170px; height:170px; background:var(--bg-dark); border-radius:50%; }
-        .score-value { position:relative; font-size:3rem; font-weight:800; color:var(--accent); }
-        .score-label { font-size:1.2rem; color:var(--text-secondary); margin-bottom:8px; }
-        .score-message { font-size:1.5rem; font-weight:700; margin-bottom:32px; }
-        .results-breakdown { display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:16px; max-width:600px; margin:0 auto 32px; }
-        .breakdown-item { background:var(--bg-glass); padding:16px; border-radius:12px; }
-        .breakdown-value { font-size:1.5rem; font-weight:700; color:var(--accent); }
-        .breakdown-label { font-size:0.85rem; color:var(--text-secondary); }
-        .generate-widget { background:var(--bg-card); border:1px solid var(--border-glass); border-radius:20px; padding:24px; }
-        .widget-viewport { width:100%; }
-        .widget-slide { display:none; padding:12px 16px; animation:slideFade 0.3s ease; }
-        .widget-slide.active { display:block; }
-        @keyframes slideFade { from{opacity:0} to{opacity:1} }
-        .widget-nav { display:flex; justify-content:space-between; margin-top:20px; }
-        .widget-progress { text-align:center; font-size:0.9rem; color:var(--text-secondary); margin-bottom:12px; }
-        .widget-slide h3 { font-size:1.3rem; color:var(--accent); margin-bottom:16px; }
-        .widget-slide p,.widget-slide li { color:var(--text-secondary); line-height:1.8; margin-bottom:12px; }
-        @media(max-width:768px) { .hero h1{font-size:2rem} .nav-links{display:none} .timer{top:70px;right:10px;font-size:1rem;padding:10px 16px} .card{padding:20px} section{padding:80px 16px 40px} }
+      :root {
+        --bg-dark: #0f0f1a;
+        --bg-card: rgba(255, 255, 255, 0.05);
+        --bg-glass: rgba(255, 255, 255, 0.08);
+        --border-glass: rgba(255, 255, 255, 0.15);
+        --text-primary: #e8e8f0;
+        --text-secondary: #a0a0b8;
+        --accent: #00d4aa;
+        --accent-dim: rgba(0, 212, 170, 0.2);
+        --accent-warm: #ff6b6b;
+        --accent-warm-dim: rgba(255, 107, 107, 0.2);
+        --accent-blue: #4dabf7;
+        --accent-blue-dim: rgba(77, 171, 247, 0.2);
+        --success: #51cf66;
+        --error: #ff6b6b;
+        --warning: #fcc419;
+      }
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      body { font-family: "Segoe UI", system-ui, -apple-system, sans-serif; background: var(--bg-dark); color: var(--text-primary); min-height: 100vh; overflow-x: hidden; line-height: 1.6; }
+      .bg-animation { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; background: radial-gradient(ellipse at 20% 20%, rgba(0,212,170,0.08) 0%, transparent 50%), radial-gradient(ellipse at 80% 80%, rgba(77,171,247,0.08) 0%, transparent 50%), radial-gradient(ellipse at 50% 50%, rgba(255,107,107,0.05) 0%, transparent 60%); }
+      .bg-animation::before { content: ""; position: absolute; width: 200%; height: 200%; top: -50%; left: -50%; background: repeating-linear-gradient(0deg, transparent, transparent 40px, rgba(255,255,255,0.02) 40px, rgba(255,255,255,0.02) 41px); animation: bgMove 20s linear infinite; }
+      @keyframes bgMove { 0% { transform: translateY(0); } 100% { transform: translateY(40px); } }
+      nav { position: fixed; top: 0; left: 0; right: 0; background: rgba(15,15,26,0.85); backdrop-filter: blur(20px); border-bottom: 1px solid var(--border-glass); z-index: 1000; padding: 0 20px; }
+      .nav-container { max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; height: 60px; }
+      .logo { font-size: 1.3rem; font-weight: 700; background: linear-gradient(135deg, var(--accent), var(--accent-blue)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+      .nav-links { display: flex; gap: 8px; list-style: none; }
+      .nav-links a { color: var(--text-secondary); text-decoration: none; padding: 8px 16px; border-radius: 8px; transition: all 0.3s; font-size: 0.9rem; font-weight: 500; cursor: pointer; border: none; background: transparent; }
+      .nav-links a:hover, .nav-links a.active { color: var(--text-primary); background: var(--bg-glass); }
+      .nav-links a.active { background: var(--accent-dim); color: var(--accent); }
+      section { display: none; opacity: 0; padding: 100px 20px 60px; max-width: 1000px; margin: 0 auto; transition: opacity 0.3s ease; }
+      section.active { display: block; opacity: 1; animation: fadeIn 0.5s ease; }
+      @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+      .card { background: var(--bg-card); backdrop-filter: blur(20px); border: 1px solid var(--border-glass); border-radius: 20px; padding: 32px; margin-bottom: 24px; transition: transform 0.3s, box-shadow 0.3s; }
+      .card:hover { transform: translateY(-2px); box-shadow: 0 20px 40px rgba(0,0,0,0.3); }
+      .card-title { font-size: 1.5rem; font-weight: 700; margin-bottom: 16px; display: flex; align-items: center; gap: 12px; }
+      .card-title .icon { width: 40px; height: 40px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.3rem; }
+      .hero { text-align: center; padding: 140px 20px 80px; }
+      .hero h1 { font-size: 3rem; font-weight: 800; margin-bottom: 20px; background: linear-gradient(135deg, var(--accent), var(--accent-blue), var(--accent-warm)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; line-height: 1.2; }
+      .hero p { font-size: 1.2rem; color: var(--text-secondary); max-width: 600px; margin: 0 auto 40px; }
+      .btn { display: inline-flex; align-items: center; gap: 8px; padding: 14px 32px; border-radius: 12px; border: none; font-size: 1rem; font-weight: 600; cursor: pointer; transition: all 0.3s; text-decoration: none; }
+      .btn-primary { background: linear-gradient(135deg, var(--accent), var(--accent-blue)); color: #000; }
+      .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 10px 30px var(--accent-dim); }
+      .btn-secondary { background: var(--bg-glass); color: var(--text-primary); border: 1px solid var(--border-glass); }
+      .btn-secondary:hover { background: var(--bg-card); }
+      .btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none !important; }
+      .generate-widget { background: var(--bg-card); border: 1px solid var(--border-glass); border-radius: 20px; padding: 24px; width: 100%; }
+      .widget-viewport { overflow: hidden; position: relative; min-height: 520px; height: auto; width: 100%; }
+      .widget-track { display: flex; transition: transform 0.5s cubic-bezier(0.4,0,0.2,1); width: 100%; will-change: transform; }
+      .widget-slide { flex: 0 0 100%; width: 100%; min-width: 100%; padding: 20px; box-sizing: border-box; overflow-x: hidden; overflow-y: visible; }
+      .widget-slide h3 { font-size: 1.3rem; color: var(--accent); margin-bottom: 16px; }
+      .widget-slide p, .widget-slide li { color: var(--text-secondary); line-height: 1.8; margin-bottom: 12px; }
+      .widget-slide .big-math { font-size: 1.6rem; text-align: center; margin: 20px 0; background: var(--bg-glass); padding: 20px; border-radius: 12px; font-weight: 600; color: var(--text-primary); }
+      .widget-nav { display: flex; justify-content: space-between; align-items: center; margin-top: 16px; }
+      .widget-progress { text-align: center; font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 12px; }
+      .sequence-component { display: flex; flex-direction: column; gap: 20px; position: relative; }
+      .sequence-step { background: var(--bg-card); border: 1px solid var(--border-glass); border-radius: 16px; padding: 24px 24px 24px 72px; position: relative; transition: all 0.3s; }
+      .sequence-step:hover { border-color: var(--accent); transform: translateX(4px); }
+      .sequence-number { position: absolute; left: 20px; top: 20px; width: 40px; height: 40px; background: var(--accent); color: #000; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 1.1rem; }
+      .sequence-step h4 { color: var(--text-primary); margin-bottom: 8px; font-size: 1.1rem; }
+      .sequence-step p { color: var(--text-secondary); line-height: 1.7; }
+      .sequence-connector { position: absolute; left: 39px; top: 60px; bottom: -30px; width: 2px; background: var(--accent-dim); z-index: 0; }
+      .sequence-step:last-child .sequence-connector { display: none; }
+      .formula-box { background: var(--bg-glass); border: 1px solid var(--border-glass); border-radius: 12px; padding: 20px; margin: 16px 0; text-align: center; font-size: 1.2rem; }
+      .tip-box { background: var(--accent-blue-dim); border-left: 4px solid var(--accent-blue); padding: 16px 20px; border-radius: 0 12px 12px 0; margin: 16px 0; }
+      .tip-box::before { content: "💡 "; }
+      .warning-box { background: var(--accent-warm-dim); border-left: 4px solid var(--accent-warm); padding: 16px 20px; border-radius: 0 12px 12px 0; margin: 16px 0; }
+      .warning-box::before { content: "⚠️ "; }
+      .highlight { background: var(--accent-dim); padding: 2px 6px; border-radius: 4px; color: var(--accent); font-weight: 600; }
+      .problem-card { background: var(--bg-card); border: 1px solid var(--border-glass); border-radius: 16px; padding: 24px; margin-bottom: 20px; }
+      .problem-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+      .problem-number { background: var(--accent-dim); color: var(--accent); padding: 4px 12px; border-radius: 20px; font-size: 0.85rem; font-weight: 600; }
+      .problem-type { color: var(--text-secondary); font-size: 0.85rem; }
+      .problem-text { font-size: 1.1rem; margin-bottom: 16px; line-height: 1.8; }
+      .solution-btn { background: var(--accent-dim); color: var(--accent); border: 1px solid var(--accent); padding: 10px 20px; border-radius: 8px; cursor: pointer; font-weight: 600; transition: all 0.3s; }
+      .solution-btn:hover { background: var(--accent); color: #000; }
+      .solution { display: none; margin-top: 20px; padding: 20px; background: rgba(0,212,170,0.05); border-left: 3px solid var(--accent); border-radius: 0 12px 12px 0; }
+      .solution.active { display: block; animation: slideDown 0.3s ease; }
+      @keyframes slideDown { from { opacity: 0; max-height: 0; } to { opacity: 1; max-height: 1000px; } }
+      .solution-step { margin-bottom: 12px; padding: 8px 0; border-bottom: 1px solid var(--border-glass); }
+      .solution-step:last-child { border-bottom: none; }
+      .step-num { display: inline-block; width: 24px; height: 24px; background: var(--accent); color: #000; border-radius: 50%; text-align: center; line-height: 24px; font-size: 0.8rem; font-weight: 700; margin-right: 8px; }
+      .quiz-container { background: var(--bg-card); border: 1px solid var(--border-glass); border-radius: 20px; padding: 32px; }
+      .quiz-progress { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; flex-wrap: wrap; gap: 8px; }
+      .progress-bar { flex: 1; height: 8px; background: var(--bg-glass); border-radius: 4px; margin: 0 16px; overflow: hidden; min-width: 100px; }
+      .progress-fill { height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent-blue)); border-radius: 4px; transition: width 0.5s ease; width: 0%; }
+      .quiz-question { font-size: 1.2rem; margin-bottom: 24px; padding: 20px; background: var(--bg-glass); border-radius: 12px; border-left: 4px solid var(--accent); }
+      .quiz-options { display: grid; gap: 12px; }
+      .quiz-option { background: var(--bg-glass); border: 2px solid var(--border-glass); border-radius: 12px; padding: 16px 20px; cursor: pointer; transition: all 0.3s; display: flex; align-items: center; gap: 12px; }
+      .quiz-option:hover { border-color: var(--accent); background: var(--accent-dim); }
+      .quiz-option.correct { border-color: var(--success); background: rgba(81,207,102,0.15); }
+      .quiz-option.wrong { border-color: var(--error); background: rgba(255,107,107,0.15); }
+      .quiz-option.disabled { pointer-events: none; opacity: 0.7; }
+      .option-letter { width: 32px; height: 32px; border-radius: 8px; background: var(--bg-card); display: flex; align-items: center; justify-content: center; font-weight: 700; flex-shrink: 0; }
+      .quiz-nav { display: flex; justify-content: space-between; margin-top: 24px; }
+      .stat { background: var(--bg-glass); padding: 12px 24px; border-radius: 12px; text-align: center; min-width: 100px; border: 1px solid var(--border-glass); }
+      .stat-value { font-size: 1.5rem; font-weight: 700; color: var(--accent); }
+      .stat-label { font-size: 0.85rem; color: var(--text-secondary); }
+      .timer { position: fixed; top: 80px; right: 20px; background: var(--bg-card); backdrop-filter: blur(20px); border: 1px solid var(--border-glass); border-radius: 16px; padding: 16px 24px; font-size: 1.3rem; font-weight: 700; font-variant-numeric: tabular-nums; z-index: 999; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
+      .timer.warning { border-color: var(--warning); color: var(--warning); animation: pulse 1s infinite; }
+      .timer.danger { border-color: var(--error); color: var(--error); animation: pulse 0.5s infinite; }
+      @keyframes pulse { 0%,100% { transform: scale(1); } 50% { transform: scale(1.05); } }
+      .results-container { text-align: center; padding: 40px; }
+      .score-circle { width: 200px; height: 200px; border-radius: 50%; background: conic-gradient(var(--accent) calc(var(--score) * 3.6deg), var(--bg-glass) 0); margin: 0 auto 32px; display: flex; align-items: center; justify-content: center; position: relative; }
+      .score-circle::before { content: ""; position: absolute; width: 170px; height: 170px; background: var(--bg-dark); border-radius: 50%; }
+      .score-value { position: relative; font-size: 3rem; font-weight: 800; color: var(--accent); }
+      .score-label { font-size: 1.2rem; color: var(--text-secondary); margin-bottom: 8px; }
+      .score-message { font-size: 1.5rem; font-weight: 700; margin-bottom: 32px; }
+      .results-breakdown { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px,1fr)); gap: 16px; max-width: 600px; margin: 0 auto 32px; }
+      .breakdown-item { background: var(--bg-glass); padding: 16px; border-radius: 12px; }
+      .breakdown-value { font-size: 1.5rem; font-weight: 700; color: var(--accent); }
+      .breakdown-label { font-size: 0.85rem; color: var(--text-secondary); }
+      .hidden { display: none !important; }
+      @media (max-width: 768px) { .hero h1 { font-size: 2rem; } .nav-links { display: none; } .timer { top: 70px; right: 10px; font-size: 1rem; padding: 10px 16px; } .card { padding: 20px; } section { padding: 80px 16px 40px; } .widget-viewport { min-height: 500px; } }
     </style>
-</head>
-<body>
+  </head>
+  <body>
     <div class="bg-animation"></div>
     <nav>
-        <div class="nav-container">
-            <div class="logo">⚖️ § 2.2 Сравнение</div>
-            <ul class="nav-links">
-                <li><a href="#" class="active" data-section="home">Главная</a></li>
-                <li><a href="#" data-section="theory">Теория</a></li>
-                <li><a href="#" data-section="practice">Практика</a></li>
-                <li><a href="#" data-section="trainer">Тренажёр</a></li>
-                <li><a href="#" data-section="test">Тест</a></li>
-                <li><a href="#" data-section="final">Викторина</a></li>
-            </ul>
-        </div>
+      <div class="nav-container">
+        <div class="logo">Урок 3</div>
+        <ul class="nav-links">
+          <li><a href="#" class="active" data-section="home">Главная</a></li>
+          <li><a href="#" data-section="theory">Теория</a></li>
+          <li><a href="#" data-section="algorithm">Алгоритм</a></li>
+          <li><a href="#" data-section="examples">Примеры</a></li>
+          <li><a href="#" data-section="trainer">Тренажёр</a></li>
+          <li><a href="#" data-section="assessment">Аттестация</a></li>
+        </ul>
+      </div>
     </nav>
 
     <section id="home" class="active">
-        <div class="hero">
-            <h1>§ 2.2 Сравнение дробей</h1>
-            <p>Урок 3 — Правила сравнения дробей с одинаковыми и разными знаменателями. Приведение к общему знаменателю. Упорядочивание.</p>
-            <div style="display:flex;gap:16px;justify-content:center;flex-wrap:wrap;">
-                <button class="btn btn-primary" onclick="showSection('theory')">Начать обучение</button>
-                <button class="btn btn-secondary" onclick="showSection('test')">Проверить знания</button>
-            </div>
-            <div class="hero-stats">
-                <div class="stat"><div class="stat-value">20</div><div class="stat-label">Тестовых вопросов</div></div>
-                <div class="stat"><div class="stat-value">4</div><div class="stat-label">Задачи практики</div></div>
-                <div class="stat"><div class="stat-value">12</div><div class="stat-label">Слайдов теории</div></div>
-                <div class="stat"><div class="stat-value">∞</div><div class="stat-label">Тренажёр</div></div>
-            </div>
+      <div class="hero"><h1>Сравнение и упорядочивание дробей</h1><p>Урок 3. Алгоритм сравнения дробей с одинаковыми и разными знаменателями. 20 вопросов.</p>
+        <div style="display:flex;gap:16px;justify-content:center;flex-wrap:wrap">
+          <button class="btn btn-primary" onclick="showSection('theory')">Начать обучение</button>
+          <button class="btn btn-secondary" onclick="showSection('assessment')">Проверить знания</button>
         </div>
-        <div class="card">
-            <div class="card-title"><span class="icon" style="background:var(--accent-dim)">🎯</span>Что вы изучите</div>
-            <div class="theory-grid">
-                <div class="theory-card"><h3>Одинаковые знаменатели</h3><p>Сравниваем числители — больший числитель = большая дробь.</p></div>
-                <div class="theory-card"><h3>Разные знаменатели</h3><p>НОК — наименьший общий знаменатель. Приводим и сравниваем.</p></div>
-                <div class="theory-card"><h3>Числовая прямая</h3><p>Расположение дробей: чем правее, тем больше.</p></div>
-                <div class="theory-card"><h3>Смешанные числа</h3><p>Сначала целые части, затем дробные — пошаговый алгоритм.</p></div>
-            </div>
-        </div>
+      </div>
+      <div class="card"><div class="card-title">Что вы изучите</div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px"><div class="card" style="padding:20px"><h3 style="color:var(--accent);margin-bottom:8px">Одинаковые знаменатели</h3><p style="color:var(--text-secondary)">Сравниваем числители — больше числитель = больше дробь.</p></div>
+<div class="card" style="padding:20px"><h3 style="color:var(--accent-blue);margin-bottom:8px">Одинаковые числители</h3><p style="color:var(--text-secondary)">Меньший знаменатель = большая дробь.</p></div>
+<div class="card" style="padding:20px"><h3 style="color:var(--accent-warm);margin-bottom:8px">Через НОК</h3><p style="color:var(--text-secondary)">Приводим к общему знаменателю и сравниваем.</p></div>
+<div class="card" style="padding:20px"><h3 style="color:var(--warning);margin-bottom:8px">Упорядочивание</h3><p style="color:var(--text-secondary)">По возрастанию и убыванию; дроби на числовой прямой.</p></div></div>
+      </div>
     </section>
 
-    <section id="theory">
+<section id="theory">
+  <div class="card"><div class="card-title">Визуальная теория — 12 слайдов</div>
+    <p style="color:var(--text-secondary);margin-bottom:20px">Листайте слайды. Каждый блок — ключевой элемент темы.</p>
+    <div class="generate-widget">
+      <div class="widget-progress">Слайд <span id="slide-num">1</span> из <span id="slide-total">12</span></div>
+      <div class="widget-viewport"><div class="widget-track" id="track-slides"><div class="widget-slide active"><h3>Правило 1: одинаковые знаменатели</h3><p>Если знаменатели дробей одинаковы — сравниваем только числители.</p><div class="big-math">3/7 и 5/7 → 3 < 5 → 3/7 < 5/7</div><p><strong>Примеры:</strong></p><div style="display:flex;flex-direction:column;gap:8px;margin:12px 0"><div style="background:var(--bg-glass);border-radius:10px;padding:12px 16px">1/8 < 3/8 < 7/8</div><div style="background:var(--bg-glass);border-radius:10px;padding:12px 16px">4/9 > 2/9 (4 > 2)</div><div style="background:var(--bg-glass);border-radius:10px;padding:12px 16px">5/11 = 5/11</div></div><div class="tip-box">Одинаковые знаменатели — делим поровну. Кто больше взял — у того больше.</div></div><div class="widget-slide"><h3>Правило 2: одинаковые числители</h3><p>Если числители одинаковы — меньший знаменатель даёт бо́льшую дробь.</p><div class="big-math">3/4 и 3/7 → 4 < 7 → 3/4 > 3/7</div><p>Почему? Чем на меньшее число делят, тем больше каждая часть.</p><div class="tip-box">Представьте: пирог разрезан на 4 или 7 частей — кусок больше при 4 частях.</div></div><div class="widget-slide"><h3>Приведение к общему знаменателю (НОК)</h3><p>Чтобы сравнить дроби с разными числителями и знаменателями — ищем НОК знаменателей.</p><p><strong>Алгоритм нахождения НОК:</strong></p><div style="display:flex;flex-direction:column;gap:8px;margin:12px 0"><div style="background:var(--bg-glass);border-radius:10px;padding:12px 16px">Перечислить кратные знаменателя 1</div><div style="background:var(--bg-glass);border-radius:10px;padding:12px 16px">Перечислить кратные знаменателя 2</div><div style="background:var(--bg-glass);border-radius:10px;padding:12px 16px">Найти наименьшее общее кратное</div><div style="background:var(--bg-glass);border-radius:10px;padding:12px 16px">НОК(4,6): кратные 4: 4,8,12,16... кратные 6: 6,12,18... НОК=12</div></div><div class="tip-box">Если числа взаимно просты (НОД=1), то НОК = произведению.</div></div><div class="widget-slide"><h3>Сравнение через НОК: шаг 1 — найти НОК</h3><p>Пример: сравнить 2/3 и 3/5.</p><div class="formula-box">Кратные 3: 3, 6, 9, 12, 15...<br>Кратные 5: 5, 10, 15, 20...<br>НОК(3,5) = 15</div><div class="tip-box">Найденный НОК станет общим знаменателем обеих дробей.</div></div><div class="widget-slide"><h3>Сравнение через НОК: шаг 2 — пересчитать числители</h3><p>Умножаем числитель и знаменатель каждой дроби на нужный множитель.</p><div class="formula-box">2/3 → ×5/5 → 10/15<br>3/5 → ×3/3 → 9/15</div><div class="tip-box">Умножайте числитель на то же число, что и знаменатель — дробь не изменится.</div></div><div class="widget-slide"><h3>Сравнение через НОК: шаг 3 — сравнить</h3><p>Теперь знаменатели одинаковы — сравниваем числители.</p><div class="big-math">10/15 и 9/15 → 10 > 9 → 2/3 > 3/5</div><p><strong>Вывод:</strong></p><div style="display:flex;flex-direction:column;gap:8px;margin:12px 0"><div style="background:var(--bg-glass);border-radius:10px;padding:12px 16px">НОК(3,5)=15</div><div style="background:var(--bg-glass);border-radius:10px;padding:12px 16px">2/3=10/15</div><div style="background:var(--bg-glass);border-radius:10px;padding:12px 16px">3/5=9/15</div><div style="background:var(--bg-glass);border-radius:10px;padding:12px 16px">10 > 9 → 2/3 > 3/5</div></div><div class="tip-box">Алгоритм: НОК → пересчёт числителей → сравнение.</div></div><div class="widget-slide"><h3>Перевод в десятичные для сравнения</h3><p>Альтернативный метод: разделить числитель на знаменатель.</p><p><strong>Примеры:</strong></p><div style="display:flex;flex-direction:column;gap:8px;margin:12px 0"><div style="background:var(--bg-glass);border-radius:10px;padding:12px 16px">3/4 = 3÷4 = 0,75</div><div style="background:var(--bg-glass);border-radius:10px;padding:12px 16px">5/7 ≈ 5÷7 ≈ 0,714</div><div style="background:var(--bg-glass);border-radius:10px;padding:12px 16px">0,75 > 0,714 → 3/4 > 5/7</div></div><div class="warning-box">Десятичный метод даёт приближение — для точного сравнения лучше использовать НОК.</div></div><div class="widget-slide"><h3>Упорядочивание по возрастанию</h3><p>Шаги: привести все дроби к НОК → сравнить числители → расставить в порядке от меньшего к большему.</p><div class="formula-box">Упорядочить: 1/2, 1/3, 3/4<br>НОК(2,3,4)=12<br>6/12; 4/12; 9/12<br>4/12 &lt; 6/12 &lt; 9/12 → 1/3 &lt; 1/2 &lt; 3/4</div><div class="tip-box">По возрастанию — от самой маленькой к самой большой.</div></div><div class="widget-slide"><h3>Упорядочивание по убыванию</h3><p>Тот же принцип, только расставляем от большего к меньшему.</p><div class="formula-box">Упорядочить: 2/3, 5/6, 3/4<br>НОК(3,6,4)=12<br>8/12; 10/12; 9/12<br>10/12 > 9/12 > 8/12 → 5/6 > 3/4 > 2/3</div><div class="tip-box">По убыванию — от самой большой к самой маленькой.</div></div><div class="widget-slide"><h3>Расположение дробей на числовой прямой</h3><p>Каждую дробь можно точно отметить на числовой прямой.</p><svg viewBox="0 0 300 70" width="100%"><line x1="10" y1="35" x2="290" y2="35" stroke="var(--accent)" stroke-width="2"/><line x1="10" y1="25" x2="10" y2="45" stroke="var(--accent)" stroke-width="2"/><line x1="290" y1="25" x2="290" y2="45" stroke="var(--accent)" stroke-width="2"/><circle cx="80" cy="35" r="5" fill="var(--accent-blue)"/><circle cx="150" cy="35" r="5" fill="var(--accent)"/><circle cx="220" cy="35" r="5" fill="var(--accent-warm)"/><text x="72" y="58" fill="var(--accent-blue)" font-size="11">1/3</text><text x="144" y="58" fill="var(--accent)" font-size="11">1/2</text><text x="214" y="58" fill="var(--accent-warm)" font-size="11">2/3</text><text x="7" y="58" fill="var(--text-secondary)" font-size="11">0</text><text x="286" y="58" fill="var(--text-secondary)" font-size="11">1</text></svg><div class="tip-box">Чем правее точка, тем больше дробь.</div></div><div class="widget-slide"><h3>Нахождение дроби между двумя дробями</h3><p>Между любыми двумя различными дробями всегда есть дробь.</p><div class="formula-box">Между 1/3 и 1/2:<br>НОК→ 2/6 и 3/6 → между ними 5/12<br>(2/6=4/12; 3/6=6/12; 5/12 между ними)</div><div class="tip-box">Простой способ: сложите числители и знаменатели: между a/b и c/d → (a+c)/(b+d).</div></div><div class="widget-slide"><h3>Итог урока</h3><div style="display:flex;flex-direction:column;gap:10px;margin:16px 0"><div style="background:var(--bg-glass);border-radius:10px;padding:12px 16px;display:flex;gap:12px;align-items:flex-start"><span style="color:var(--accent);font-weight:700;font-size:1.2rem">1</span><span>Одинаковые знаменатели: сравниваем числители</span></div><div style="background:var(--bg-glass);border-radius:10px;padding:12px 16px;display:flex;gap:12px;align-items:flex-start"><span style="color:var(--accent);font-weight:700;font-size:1.2rem">2</span><span>Одинаковые числители: меньший знаменатель = больше</span></div><div style="background:var(--bg-glass);border-radius:10px;padding:12px 16px;display:flex;gap:12px;align-items:flex-start"><span style="color:var(--accent);font-weight:700;font-size:1.2rem">3</span><span>Разные: приводим к НОК, сравниваем числители</span></div><div style="background:var(--bg-glass);border-radius:10px;padding:12px 16px;display:flex;gap:12px;align-items:flex-start"><span style="color:var(--accent);font-weight:700;font-size:1.2rem">4</span><span>Упорядочивание: через НОК, от меньшего или большего</span></div><div style="background:var(--bg-glass);border-radius:10px;padding:12px 16px;display:flex;gap:12px;align-items:flex-start"><span style="color:var(--accent);font-weight:700;font-size:1.2rem">5</span><span>Числовая прямая: правее = больше</span></div></div><div style="text-align:center;margin-top:20px;padding:16px;background:var(--accent-dim);border-radius:12px;color:var(--accent);font-weight:700">Отлично! Переходите к тренажёру.</div></div></div></div>
+      <div class="widget-nav">
+        <button class="btn btn-secondary" onclick="prevSlide()">Назад</button>
+        <button class="btn btn-primary" onclick="nextSlide()">Вперёд</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="algorithm">
+  <div class="card"><div class="card-title">Пошаговый алгоритм</div>
+    <div class="sequence-component"><div class="sequence-step"><div class="sequence-number">1</div><div class='sequence-connector'></div><h4>Определить тип сравнения</h4><p>Одинаковые знаменатели, одинаковые числители, или разные — выбрать подходящий метод.</p></div>
+<div class="sequence-step"><div class="sequence-number">2</div><div class='sequence-connector'></div><h4>Найти НОК</h4><p>Перечислить кратные обоих знаменателей. Взять наименьшее общее.</p></div>
+<div class="sequence-step"><div class="sequence-number">3</div><div class='sequence-connector'></div><h4>Привести к общему знаменателю</h4><p>Умножить числитель и знаменатель каждой дроби на нужный множитель.</p></div>
+<div class="sequence-step"><div class="sequence-number">4</div><div class='sequence-connector'></div><h4>Сравнить числители</h4><p>Теперь знаменатели равны. Больший числитель = большая дробь.</p></div>
+<div class="sequence-step"><div class="sequence-number">5</div><h4>Упорядочить</h4><p>Расставить дроби в нужном порядке (возрастание/убывание).</p></div></div>
+  </div>
+</section>
+
+<section id="examples">
+  <div class="card"><div class="card-title">Разбор задач</div></div>
+  <div class="problem-card"><div class="problem-header"><span class="problem-number">No 1</span><span class="problem-type">Одинаковые знаменатели</span></div><div class="problem-text">Сравните 5/9 и 7/9.</div><button class="solution-btn" onclick="toggleSolution('sol-1')">Показать решение</button><div class="solution" id="sol-1"><div class="solution-step"><span class="step-num">1</span>Знаменатели равны: 9</div><div class="solution-step"><span class="step-num">2</span>5 < 7 → <strong>5/9 < 7/9</strong></div></div></div>
+<div class="problem-card"><div class="problem-header"><span class="problem-number">No 2</span><span class="problem-type">Одинаковые числители</span></div><div class="problem-text">Сравните 3/5 и 3/8.</div><button class="solution-btn" onclick="toggleSolution('sol-2')">Показать решение</button><div class="solution" id="sol-2"><div class="solution-step"><span class="step-num">1</span>Числители равны: 3</div><div class="solution-step"><span class="step-num">2</span>5 < 8 → 3/5 > 3/8 → <strong>3/5 > 3/8</strong></div></div></div>
+<div class="problem-card"><div class="problem-header"><span class="problem-number">No 3</span><span class="problem-type">Через НОК</span></div><div class="problem-text">Сравните 5/6 и 7/9.</div><button class="solution-btn" onclick="toggleSolution('sol-3')">Показать решение</button><div class="solution" id="sol-3"><div class="solution-step"><span class="step-num">1</span>НОК(6,9)=18</div><div class="solution-step"><span class="step-num">2</span>5/6=15/18; 7/9=14/18</div><div class="solution-step"><span class="step-num">3</span>15 > 14 → <strong>5/6 > 7/9</strong></div></div></div>
+<div class="problem-card"><div class="problem-header"><span class="problem-number">No 4</span><span class="problem-type">Упорядочивание</span></div><div class="problem-text">Расставьте по возрастанию: 1/2, 2/3, 3/8.</div><button class="solution-btn" onclick="toggleSolution('sol-4')">Показать решение</button><div class="solution" id="sol-4"><div class="solution-step"><span class="step-num">1</span>НОК(2,3,8)=24</div><div class="solution-step"><span class="step-num">2</span>12/24; 16/24; 9/24</div><div class="solution-step"><span class="step-num">3</span>9<12<16 → <strong>3/8 < 1/2 < 2/3</strong></div></div></div>
+<div class="problem-card"><div class="problem-header"><span class="problem-number">No 5</span><span class="problem-type">Числовая прямая</span></div><div class="problem-text">Отметьте на числовой прямой дроби 1/4, 1/2, 3/4.</div><button class="solution-btn" onclick="toggleSolution('sol-5')">Показать решение</button><div class="solution" id="sol-5"><div class="solution-step"><span class="step-num">1</span>1/4=0,25; 1/2=0,5; 3/4=0,75</div><div class="solution-step"><span class="step-num">2</span><strong>Порядок: 1/4 < 1/2 < 3/4</strong></div></div></div>
+<div class="problem-card"><div class="problem-header"><span class="problem-number">No 6</span><span class="problem-type">Дробь между дробями</span></div><div class="problem-text">Найдите дробь между 2/5 и 3/5.</div><button class="solution-btn" onclick="toggleSolution('sol-6')">Показать решение</button><div class="solution" id="sol-6"><div class="solution-step"><span class="step-num">1</span>2/5 = 4/10; 3/5 = 6/10</div><div class="solution-step"><span class="step-num">2</span>5/10 = 1/2 лежит между ними → <strong>1/2</strong></div></div></div>
+</section>
+
+    <!-- TRAINER -->
+    <section id="trainer">
       <div class="card">
-        <div class="card-title"><span class="icon" style="background:var(--accent-dim)">📖</span>Визуальная теория</div>
-        <div class="generate-widget">
-          <div class="widget-progress">Слайд <span id="slide-num">1</span> / <span id="slide-total">12</span></div>
-          <div class="widget-viewport">
-            <div class="widget-track" id="track-slides">
-              <div class="widget-slide active">
-                <h3>⚖️ Зачем сравнивать дроби?</h3>
-                <p>Сравнение дробей нужно повсюду: 3/4 пиццы или 5/8 — что больше? Какая скидка выгоднее: 1/3 или 30%? Умение сравнивать — ключевой навык.</p>
-                <div class="formula-box">3/4 = 6/8 &gt; 5/8 → три четверти больше пяти восьмых!</div>
-                <div class="tip-box">Сравнить дроби — найти, какая занимает большую «долю» единицы.</div>
-              </div>
-              <div class="widget-slide">
-                <h3>📏 Правило 1: одинаковый знаменатель</h3>
-                <p>Если знаменатели равны — сравниваем числители. Больший числитель = большая дробь.</p>
-                <div class="formula-box">3/7 &lt; 5/7 &lt; 6/7<br>Знаменатель 7 одинаков, сравниваем 3 &lt; 5 &lt; 6</div>
-                <div class="tip-box">Логика: делим целое на 7 частей. Взяли 5 — больше, чем если взяли 3.</div>
-              </div>
-              <div class="widget-slide">
-                <h3>🔢 Правило 2: одинаковый числитель</h3>
-                <p>Если числители равны — у кого знаменатель БОЛЬШЕ, та дробь МЕНЬШЕ. Парадоксально, но логично!</p>
-                <div class="formula-box">1/3 &gt; 1/5 &gt; 1/8<br>(части: 8 долей меньше, чем 3 доли)</div>
-                <div class="tip-box">Пиццу делят на 8 — каждый кусок меньше, чем если делить на 3.</div>
-              </div>
-              <div class="widget-slide">
-                <h3>🔄 НОК — общий знаменатель</h3>
-                <p>Для дробей с разными знаменателями — приводим к НОК (наименьшее общее кратное).</p>
-                <div class="formula-box">НОК(4,6) = 12<br>1/4 = 3/12 &nbsp;&nbsp; 5/6 = 10/12<br>3/12 &lt; 10/12 → 1/4 &lt; 5/6</div>
-                <div class="tip-box">НОК — наименьшее число, делящееся и на 4, и на 6.</div>
-              </div>
-              <div class="widget-slide">
-                <h3>📐 Нахождение НОК</h3>
-                <p>Два способа найти НОК:</p>
-                <div class="formula-box">
-                  Способ 1 (перебор): кратные 4: 4,8,12... кратные 6: 6,12... НОК=12<br><br>
-                  Способ 2 (формула): НОК(a,b) = a·b / НОД(a,b)<br>
-                  НОК(4,6) = 24 / НОД(4,6) = 24/2 = 12
-                </div>
-                <div class="tip-box">НОД находим алгоритмом Евклида или перечислением делителей.</div>
-              </div>
-              <div class="widget-slide">
-                <h3>🧮 Пример: 2/3 и 3/4</h3>
-                <p>Пошаговый разбор сравнения 2/3 и 3/4:</p>
-                <div class="formula-box">
-                  Шаг 1: НОК(3,4) = 12<br>
-                  Шаг 2: 2/3 × 4/4 = 8/12<br>
-                  Шаг 3: 3/4 × 3/3 = 9/12<br>
-                  Шаг 4: 8 &lt; 9 → 2/3 &lt; 3/4 ✓
-                </div>
-                <div class="tip-box">Умножаем числитель и знаменатель на одно и то же число!</div>
-              </div>
-              <div class="widget-slide">
-                <h3>📊 Сравнение через десятичные</h3>
-                <p>Быстрый способ: переводим в десятичные дроби (делим числитель на знаменатель).</p>
-                <div class="formula-box">5/8 = 0,625 &nbsp;&nbsp; 7/12 ≈ 0,583<br>0,625 &gt; 0,583 → 5/8 &gt; 7/12</div>
-                <div class="tip-box">Этот способ удобен, но иногда получаются бесконечные дроби — тогда лучше НОК.</div>
-              </div>
-              <div class="widget-slide">
-                <h3>📐 Смешанные числа: алгоритм</h3>
-                <p>Сравниваем смешанные числа в два этапа:</p>
-                <div class="formula-box">
-                  Этап 1: сравниваем ЦЕЛЫЕ части.<br>
-                  Если разные → решено!<br><br>
-                  Этап 2: если целые равны → сравниваем ДРОБНЫЕ части.
-                </div>
-                <div class="tip-box">3²⁄₅ vs 2⁷⁄₈: сразу видно 3 &gt; 2, поэтому 3²⁄₅ &gt; 2⁷⁄₈.</div>
-              </div>
-              <div class="widget-slide">
-                <h3>📍 Числовая прямая</h3>
-                <p>На числовой прямой дроби упорядочены слева направо по возрастанию.</p>
-                <div class="formula-box">0 — 1/4 — 1/3 — 1/2 — 2/3 — 3/4 — 1 — 5/4 — 3/2 — 2<br>Чем правее — тем БОЛЬШЕ</div>
-                <div class="tip-box">Числовая прямая наглядно подтверждает результат сравнения.</div>
-              </div>
-              <div class="widget-slide">
-                <h3>🔢 Упорядочивание нескольких дробей</h3>
-                <p>Чтобы упорядочить несколько дробей — приводим все к одному знаменателю.</p>
-                <div class="formula-box">1/2, 2/3, 3/8: НОК=24<br>12/24, 16/24, 9/24<br>9 &lt; 12 &lt; 16 → 3/8 &lt; 1/2 &lt; 2/3</div>
-                <div class="tip-box">НОК нескольких чисел: НОК(НОК(a,b), c) и т.д.</div>
-              </div>
-              <div class="widget-slide">
-                <h3>⚡ Быстрые приёмы сравнения</h3>
-                <p>Не всегда нужен НОК — есть быстрые трюки:</p>
-                <div class="formula-box">
-                  Трюк 1: дробь &lt; 1/2 ↔ числитель &lt; знаменатель/2<br>
-                  Трюк 2: дроби вида (n-1)/n близки к 1 (напр. 7/8, 9/10)<br>
-                  Трюк 3: «крест-накрест» a/b vs c/d → a·d vs b·c
-                </div>
-                <div class="tip-box">Крест-накрест: 2/3 vs 3/4 → 2·4=8 vs 3·3=9 → 8 &lt; 9 → 2/3 &lt; 3/4.</div>
-              </div>
-              <div class="widget-slide">
-                <h3>✅ Алгоритм сравнения (итог)</h3>
-                <p>Выбирайте самый короткий путь:</p>
-                <div class="formula-box">
-                  1. Одинаковые знам.? → сравни числители<br>
-                  2. Одинаковые числит.? → меньший знам. = большая дробь<br>
-                  3. Смешанные? → сначала целые части<br>
-                  4. Разные знам.? → НОК и сравни<br>
-                  5. Сложно? → переведи в десятичные
-                </div>
-                <div class="tip-box">Тренируйся на примерах и выбор правила станет автоматическим!</div>
-              </div>
-            </div>
+        <div class="card-title"><span class="icon" style="background:var(--accent-dim)">🏋️</span>Тренажёр</div>
+        <p style="color:var(--text-secondary);margin-bottom:24px">Случайные задачи. Подсказки и счётчик серий.</p>
+        <div class="quiz-container" style="margin-bottom:20px">
+          <div id="trainer-question" style="font-size:1.4rem;text-align:center;margin-bottom:24px;padding:24px;background:var(--bg-glass);border-radius:12px;">Нажмите «Новая задача» для начала</div>
+          <div style="display:flex;gap:12px;margin-bottom:20px">
+            <input type="text" id="trainer-answer" placeholder="0, 1, 2 или 3" style="flex:1;padding:14px 16px;background:var(--bg-glass);border:2px solid var(--border-glass);border-radius:12px;color:var(--text-primary);font-size:1rem;outline:none;" />
+            <button class="btn btn-primary" onclick="checkTrainer()" id="trainer-check-btn" disabled>Проверить</button>
           </div>
-          <div class="widget-nav">
-            <button class="btn btn-secondary" onclick="prevSlide()">← Назад</button>
-            <button class="btn btn-primary" onclick="nextSlide()">Вперёд →</button>
+          <div id="trainer-feedback" style="min-height:60px;margin-bottom:16px;"></div>
+          <div style="display:flex;gap:12px;justify-content:center">
+            <button class="btn btn-secondary" onclick="newTrainerProblem()">Новая задача</button>
+            <button class="btn btn-secondary" onclick="showTrainerHint()">Подсказка</button>
+          </div>
+          <div id="trainer-hint" style="display:none;margin-top:20px;padding:16px;background:var(--accent-blue-dim);border-radius:12px;border-left:4px solid var(--accent-blue);"></div>
+        </div>
+        <div style="display:flex;justify-content:center;gap:24px;flex-wrap:wrap;">
+          <div class="stat"><div class="stat-value" id="trainer-correct">0</div><div class="stat-label">Верно</div></div>
+          <div class="stat"><div class="stat-value" id="trainer-total">0</div><div class="stat-label">Всего</div></div>
+          <div class="stat"><div class="stat-value" id="trainer-streak">0</div><div class="stat-label">Серия</div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ASSESSMENT -->
+    <section id="assessment">
+      <div class="card">
+        <div class="card-title"><span class="icon" style="background:var(--accent-blue-dim)">🧪</span>Аттестация — 20 вопросов</div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px;">
+          <div class="card" style="padding:24px;text-align:center">
+            <div style="font-size:3rem;margin-bottom:12px">🔍</div>
+            <h3 style="margin-bottom:8px">Диагностический тест</h3>
+            <p style="color:var(--text-secondary);margin-bottom:20px">20 вопросов с мгновенной обратной связью.</p>
+            <button class="btn btn-primary" onclick="startDiagnostic()">Начать тест</button>
+          </div>
+          <div class="card" style="padding:24px;text-align:center">
+            <div style="font-size:3rem;margin-bottom:12px">⏱️</div>
+            <h3 style="margin-bottom:8px">Скоростная викторина</h3>
+            <p style="color:var(--text-secondary);margin-bottom:20px">20 вопросов • 10 минут.</p>
+            <button class="btn btn-primary" onclick="startTimeAttack()">Начать викторину</button>
+          </div>
+        </div>
+      </div>
+      <div id="diagnostic-ui" style="display:none">
+        <div class="card"><div class="card-title"><span class="icon" style="background:var(--accent-blue-dim)">🔍</span>Диагностический тест</div></div>
+        <div class="quiz-container">
+          <div class="quiz-progress">
+            <span>Вопрос <span id="diag-current">1</span> / <span id="diag-total">20</span></span>
+            <div class="progress-bar"><div class="progress-fill" id="diag-progress"></div></div>
+            <span id="diag-score">0 правильных</span>
+          </div>
+          <div class="quiz-question" id="diag-question"></div>
+          <div class="quiz-options" id="diag-options"></div>
+          <div class="quiz-nav">
+            <button class="btn btn-secondary" onclick="prevDiagnostic()" id="diag-prev" disabled>← Назад</button>
+            <button class="btn btn-primary" onclick="nextDiagnostic()" id="diag-next" disabled>Далее →</button>
+          </div>
+          <div id="diag-explanation" style="display:none;margin-top:20px;padding:16px;background:var(--accent-dim);border-radius:12px;border-left:4px solid var(--accent);"></div>
+        </div>
+      </div>
+      <div id="timeattack-ui" style="display:none">
+        <div class="timer hidden" id="ta-timer">10:00</div>
+        <div class="card"><div class="card-title"><span class="icon" style="background:var(--accent-warm-dim)">⏱️</span>Скоростная викторина</div></div>
+        <div class="quiz-container">
+          <div class="quiz-progress">
+            <span>Вопрос <span id="ta-current">1</span> / 20</span>
+            <div class="progress-bar"><div class="progress-fill" id="ta-progress"></div></div>
+          </div>
+          <div class="quiz-question" id="ta-question"></div>
+          <div class="quiz-options" id="ta-options"></div>
+          <div style="display:flex;justify-content:flex-end;margin-top:24px">
+            <button class="btn btn-primary" onclick="nextTimeAttack()" id="ta-next">Ответить →</button>
+          </div>
+        </div>
+      </div>
+      <div id="results-ui" style="display:none">
+        <div class="card">
+          <div class="results-container">
+            <div class="score-label">Ваш результат</div>
+            <div class="score-circle" id="result-circle"><div class="score-value" id="result-percent">0%</div></div>
+            <div class="score-message" id="result-message"></div>
+            <div class="results-breakdown">
+              <div class="breakdown-item"><div class="breakdown-value" id="result-correct">0</div><div class="breakdown-label">Верно</div></div>
+              <div class="breakdown-item"><div class="breakdown-value" id="result-wrong">0</div><div class="breakdown-label">Ошибок</div></div>
+              <div class="breakdown-item"><div class="breakdown-value" id="result-time">0:00</div><div class="breakdown-label">Время</div></div>
+              <div class="breakdown-item"><div class="breakdown-value" id="result-mastery">—</div><div class="breakdown-label">Уровень</div></div>
+            </div>
+            <div style="display:flex;gap:16px;justify-content:center;flex-wrap:wrap;">
+              <button class="btn btn-primary" onclick="resetAssessment()">Пройти ещё раз</button>
+              <button class="btn btn-secondary" onclick="showSection('theory')">Вернуться к теории</button>
+            </div>
           </div>
         </div>
       </div>
     </section>
 
-    <section id="practice">
-        <div class="card">
-            <div class="card-title"><span class="icon" style="background:var(--accent-dim)">📝</span>Задачи по § 2.2</div>
-            <p style="color:var(--text-secondary);margin-bottom:24px">Сравнение и упорядочивание дробей.</p>
-        </div>
-        <div class="problem-card">
-            <div class="problem-header"><span class="problem-number">Задача 1</span><span class="problem-type">Одинаковые знаменатели</span></div>
-            <div class="problem-text">Расставьте знаки >, &lt;, = :<br>а) 5/9 и 7/9; б) 11/15 и 8/15; в) 3/7 и 3/7; г) 13/20 и 17/20.</div>
-            <button class="solution-btn" onclick="toggleSolution('sol-1')">Показать решение</button>
-            <div class="solution" id="sol-1">
-                <div class="solution-step"><span class="step-num">а</span>Знам. равны (9). 5 &lt; 7 → <strong>5/9 &lt; 7/9</strong></div>
-                <div class="solution-step"><span class="step-num">б</span>Знам. равны (15). 11 &gt; 8 → <strong>11/15 &gt; 8/15</strong></div>
-                <div class="solution-step"><span class="step-num">в</span>Одинаковые дроби → <strong>3/7 = 3/7</strong></div>
-                <div class="solution-step"><span class="step-num">г</span>Знам. равны (20). 13 &lt; 17 → <strong>13/20 &lt; 17/20</strong></div>
-                <div class="solution-step" style="color:var(--accent);font-weight:700"><span class="step-num">✓</span>а) &lt; &nbsp; б) &gt; &nbsp; в) = &nbsp; г) &lt;</div>
-            </div>
-        </div>
-        <div class="problem-card">
-            <div class="problem-header"><span class="problem-number">Задача 2</span><span class="problem-type">Разные знаменатели</span></div>
-            <div class="problem-text">Сравните: а) 2/3 и 3/5; б) 5/6 и 7/9; в) 3/8 и 5/12; г) 7/10 и 3/4.</div>
-            <button class="solution-btn" onclick="toggleSolution('sol-2')">Показать решение</button>
-            <div class="solution" id="sol-2">
-                <div class="solution-step"><span class="step-num">а</span>НОК(3,5)=15: 10/15 и 9/15. 10&gt;9 → <strong>2/3 &gt; 3/5</strong></div>
-                <div class="solution-step"><span class="step-num">б</span>НОК(6,9)=18: 15/18 и 14/18. 15&gt;14 → <strong>5/6 &gt; 7/9</strong></div>
-                <div class="solution-step"><span class="step-num">в</span>НОК(8,12)=24: 9/24 и 10/24. 9&lt;10 → <strong>3/8 &lt; 5/12</strong></div>
-                <div class="solution-step"><span class="step-num">г</span>НОК(10,4)=20: 14/20 и 15/20. 14&lt;15 → <strong>7/10 &lt; 3/4</strong></div>
-                <div class="solution-step" style="color:var(--accent);font-weight:700"><span class="step-num">✓</span>а) &gt; &nbsp; б) &gt; &nbsp; в) &lt; &nbsp; г) &lt;</div>
-            </div>
-        </div>
-        <div class="problem-card">
-            <div class="problem-header"><span class="problem-number">Задача 3</span><span class="problem-type">Упорядочивание</span></div>
-            <div class="problem-text">Расположите в порядке возрастания: 2/3, 1/2, 5/6, 3/4.</div>
-            <button class="solution-btn" onclick="toggleSolution('sol-3')">Показать решение</button>
-            <div class="solution" id="sol-3">
-                <div class="solution-step"><span class="step-num">1</span>НОК(3,2,6,4) = 12</div>
-                <div class="solution-step"><span class="step-num">2</span>2/3=8/12; 1/2=6/12; 5/6=10/12; 3/4=9/12</div>
-                <div class="solution-step"><span class="step-num">3</span>6 &lt; 8 &lt; 9 &lt; 10</div>
-                <div class="solution-step" style="color:var(--accent);font-weight:700"><span class="step-num">✓</span><strong>1/2 &lt; 2/3 &lt; 3/4 &lt; 5/6</strong></div>
-            </div>
-        </div>
-        <div class="problem-card">
-            <div class="problem-header"><span class="problem-number">Задача 4</span><span class="problem-type">Смешанные числа</span></div>
-            <div class="problem-text">Сравните: а) 3½ и 3¾; б) 2⅔ и 2⅗; в) 4⅙ и 4⅛.</div>
-            <button class="solution-btn" onclick="toggleSolution('sol-4')">Показать решение</button>
-            <div class="solution" id="sol-4">
-                <div class="solution-step"><span class="step-num">а</span>Целые равны (3). НОК(2,4)=4: 2/4 и 3/4. 2&lt;3 → <strong>3½ &lt; 3¾</strong></div>
-                <div class="solution-step"><span class="step-num">б</span>Целые равны (2). НОК(3,5)=15: 10/15 и 9/15. 10&gt;9 → <strong>2⅔ &gt; 2⅗</strong></div>
-                <div class="solution-step"><span class="step-num">в</span>Целые равны (4). НОК(6,8)=24: 4/24 и 3/24. 4&gt;3 → <strong>4⅙ &gt; 4⅛</strong></div>
-                <div class="solution-step" style="color:var(--accent);font-weight:700"><span class="step-num">✓</span>а) &lt; &nbsp; б) &gt; &nbsp; в) &gt;</div>
-            </div>
-        </div>
-    </section>
-
-    <section id="trainer">
-        <div class="card">
-            <div class="card-title"><span class="icon" style="background:var(--accent-dim)">🏋️</span>Тренажёр: сравнение дробей</div>
-            <p style="color:var(--text-secondary);margin-bottom:24px">Введите знак &gt;, &lt; или = для сравнения двух дробей.</p>
-            <div class="quiz-container" style="margin-bottom:20px">
-                <div id="trainer-question" style="font-size:1.4rem;text-align:center;margin-bottom:24px;padding:24px;background:var(--bg-glass);border-radius:12px">Нажмите «Новая задача»</div>
-                <div style="display:flex;gap:12px;margin-bottom:20px">
-                    <input type="text" id="trainer-answer" placeholder="Введите >, < или ="
-                        style="flex:1;padding:14px 16px;background:var(--bg-glass);border:2px solid var(--border-glass);border-radius:12px;color:var(--text-primary);font-size:1rem;outline:none">
-                    <button class="btn btn-primary" onclick="checkTrainer()" id="trainer-check-btn" disabled>Проверить</button>
-                </div>
-                <div id="trainer-feedback" style="min-height:60px;margin-bottom:16px"></div>
-                <div style="display:flex;gap:12px;justify-content:center">
-                    <button class="btn btn-secondary" onclick="newTrainerProblem()">Новая задача</button>
-                    <button class="btn btn-secondary" onclick="showTrainerHint()">Подсказка</button>
-                </div>
-                <div id="trainer-hint" style="display:none;margin-top:20px;padding:16px;background:var(--accent-blue-dim);border-radius:12px;border-left:4px solid var(--accent-blue)"></div>
-            </div>
-            <div style="display:flex;justify-content:center;gap:24px;flex-wrap:wrap">
-                <div class="stat"><div class="stat-value" id="trainer-correct">0</div><div class="stat-label">Верно</div></div>
-                <div class="stat"><div class="stat-value" id="trainer-total">0</div><div class="stat-label">Всего</div></div>
-                <div class="stat"><div class="stat-value" id="trainer-streak">0</div><div class="stat-label">Серия</div></div>
-            </div>
-        </div>
-    </section>
-
-    <section id="test">
-        <div class="card">
-            <div class="card-title"><span class="icon" style="background:var(--accent-blue-dim)">🧪</span>Тест: 20 вопросов</div>
-        </div>
-        <div class="quiz-container">
-            <div class="quiz-progress">
-                <span>Вопрос <span id="test-current">1</span> / <span id="test-total">20</span></span>
-                <div class="progress-bar"><div class="progress-fill" id="test-progress"></div></div>
-                <span id="test-score">0 правильных</span>
-            </div>
-            <div class="quiz-question" id="test-question"></div>
-            <div class="quiz-options" id="test-options"></div>
-            <div class="quiz-nav">
-                <button class="btn btn-secondary" onclick="prevTest()" id="test-prev" disabled>← Назад</button>
-                <button class="btn btn-primary" onclick="nextTest()" id="test-next" disabled>Далее →</button>
-            </div>
-            <div id="test-explanation" style="display:none;margin-top:20px;padding:16px;background:var(--accent-dim);border-radius:12px;border-left:4px solid var(--accent)"></div>
-        </div>
-    </section>
-
-    <section id="final">
-        <div class="card"><div class="card-title"><span class="icon" style="background:var(--accent-warm-dim)">🏆</span>Финальная викторина</div></div>
-        <div id="final-start" style="text-align:center;padding:60px 20px">
-            <div style="font-size:4rem;margin-bottom:24px">⏱️</div>
-            <h2 style="margin-bottom:16px">Готовы?</h2>
-            <p style="color:var(--text-secondary);margin-bottom:32px">10 вопросов • 5 минут</p>
-            <button class="btn btn-primary" onclick="startFinal()" style="font-size:1.2rem;padding:16px 48px">Начать</button>
-        </div>
-        <div id="final-quiz" style="display:none">
-            <div class="timer" id="final-timer">5:00</div>
-            <div class="quiz-container">
-                <div class="quiz-progress">
-                    <span>Вопрос <span id="final-current">1</span> / 10</span>
-                    <div class="progress-bar"><div class="progress-fill" id="final-progress"></div></div>
-                </div>
-                <div class="quiz-question" id="final-question"></div>
-                <div class="quiz-options" id="final-options"></div>
-                <div style="display:flex;justify-content:flex-end;margin-top:24px">
-                    <button class="btn btn-primary" onclick="nextFinal()" id="final-next">Ответить →</button>
-                </div>
-            </div>
-        </div>
-        <div id="final-results" style="display:none">
-            <div class="card"><div class="results-container">
-                <div class="score-label">Ваш результат</div>
-                <div class="score-circle" id="score-circle"><div class="score-value" id="final-score">0</div></div>
-                <div class="score-message" id="final-message"></div>
-                <div class="results-breakdown">
-                    <div class="breakdown-item"><div class="breakdown-value" id="final-correct">0</div><div class="breakdown-label">Верно</div></div>
-                    <div class="breakdown-item"><div class="breakdown-value" id="final-wrong">0</div><div class="breakdown-label">Ошибок</div></div>
-                    <div class="breakdown-item"><div class="breakdown-value" id="final-time">0:00</div><div class="breakdown-label">Время</div></div>
-                    <div class="breakdown-item"><div class="breakdown-value" id="final-percent">0%</div><div class="breakdown-label">Процент</div></div>
-                </div>
-                <div style="display:flex;gap:16px;justify-content:center;flex-wrap:wrap">
-                    <button class="btn btn-primary" onclick="startFinal()">Ещё раз</button>
-                    <button class="btn btn-secondary" onclick="showSection('theory')">К теории</button>
-                </div>
-            </div></div>
-        </div>
-    </section>
-
-<script>
-function showSection(id){document.querySelectorAll('section').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');document.querySelectorAll('.nav-links a').forEach(a=>a.classList.remove('active'));document.querySelector(`.nav-links a[data-section="${id}"]`)?.classList.add('active');window.scrollTo(0,0);}
-document.querySelectorAll('.nav-links a').forEach(link=>{link.addEventListener('click',e=>{e.preventDefault();showSection(link.dataset.section);});});
-
-let currentSlide=0;
-const slides=document.querySelectorAll("#track-slides .widget-slide");
-const total=slides.length;
-document.getElementById("slide-total").innerText=total;
-function renderSlide(){slides.forEach((s,i)=>s.classList.toggle("active",i===currentSlide));document.getElementById("slide-num").innerText=currentSlide+1;}
-function nextSlide(){if(currentSlide<total-1){currentSlide++;renderSlide();}}
-function prevSlide(){if(currentSlide>0){currentSlide--;renderSlide();}}
-renderSlide();
-
-function toggleSolution(id){const el=document.getElementById(id);el.classList.toggle('active');const btn=el.previousElementSibling;btn.textContent=el.classList.contains('active')?'Скрыть решение':'Показать решение';}
-
-let trainerState={correct:0,total:0,streak:0,current:null};
-function gcd(a,b){return b?gcd(b,a%b):a;}
-function lcm(a,b){return a*b/gcd(a,b);}
-function generateTrainerProblem(){
-    const d1=Math.floor(Math.random()*9)+2,n1=Math.floor(Math.random()*(d1*2))+1;
-    const d2=Math.floor(Math.random()*9)+2,n2=Math.floor(Math.random()*(d2*2))+1;
-    const v1=n1/d1,v2=n2/d2;
-    const sign=v1>v2?'>':v1<v2?'<':'=';
-    const L=lcm(d1,d2);
-    return{text:`Сравните: ${n1}/${d1} и ${n2}/${d2}`,answer:sign,hint:`НОК(${d1},${d2})=${L}. Приведите и сравните числители.`};
-}
-function newTrainerProblem(){trainerState.current=generateTrainerProblem();document.getElementById('trainer-question').innerHTML=trainerState.current.text;document.getElementById('trainer-answer').value='';document.getElementById('trainer-feedback').innerHTML='';document.getElementById('trainer-hint').style.display='none';document.getElementById('trainer-check-btn').disabled=false;}
-function showTrainerHint(){if(!trainerState.current)return;document.getElementById('trainer-hint').style.display='block';document.getElementById('trainer-hint').textContent='💡 '+trainerState.current.hint;}
-function checkTrainer(){if(!trainerState.current)return;const user=document.getElementById('trainer-answer').value.trim();const isCorrect=user===trainerState.current.answer;trainerState.total++;if(isCorrect){trainerState.correct++;trainerState.streak++;document.getElementById('trainer-feedback').innerHTML=`<div style="color:var(--success);font-weight:700">✓ Верно! Ответ: ${trainerState.current.answer}</div>`;}else{trainerState.streak=0;document.getElementById('trainer-feedback').innerHTML=`<div style="color:var(--error);font-weight:700">✗ Неверно. Правильный ответ: ${trainerState.current.answer}</div>`;}document.getElementById('trainer-correct').textContent=trainerState.correct;document.getElementById('trainer-total').textContent=trainerState.total;document.getElementById('trainer-streak').textContent=trainerState.streak;document.getElementById('trainer-check-btn').disabled=true;}
-document.getElementById('trainer-answer').addEventListener('keydown',e=>{if(e.key==='Enter')checkTrainer();});
-
-const testQuestions=[
-    {q:"Сравните: 3/7 и 5/7",options:["<","=",">","Нельзя"],correct:0,expl:"Одинаковые знаменатели: 3 < 5."},
-    {q:"Сравните: 1/3 и 1/5",options:["<","=",">","Нельзя"],correct:2,expl:"Одинаковые числители: меньший знаменатель = большая дробь. 1/3 > 1/5."},
-    {q:"НОК(4, 6) = ?",options:["2","12","24","6"],correct:1,expl:"НОК(4,6)=12."},
-    {q:"Сравните: 2/3 и 3/4",options:["2/3 > 3/4","2/3 = 3/4","2/3 < 3/4","Нельзя"],correct:2,expl:"НОК=12: 8/12 < 9/12."},
-    {q:"НОК(6, 9) = ?",options:["3","18","54","9"],correct:1,expl:"НОК(6,9)=18."},
-    {q:"Сравните: 5/8 и 3/5",options:["<","=",">","Нельзя"],correct:2,expl:"НОК=40: 25/40 > 24/40."},
-    {q:"Порядок по возрастанию: 3/4, 2/3, 5/6",options:["2/3 < 3/4 < 5/6","3/4 < 2/3 < 5/6","5/6 < 3/4 < 2/3","2/3 < 5/6 < 3/4"],correct:0,expl:"НОК=12: 8 < 9 < 10."},
-    {q:"Сравните смешанные: 3²⁄₅ и 2⁹⁄₁₀",options:["<","=",">","Нельзя"],correct:2,expl:"Целые: 3 > 2. Достаточно."},
-    {q:"Сравните: 5⅓ и 5½",options:[">","=","<","Нельзя"],correct:2,expl:"Целые равны. 1/3 < 1/2."},
-    {q:"Наибольшее из: 4/5, 7/10, 3/4?",options:["7/10","3/4","4/5","Равны"],correct:2,expl:"НОК=20: 16/20, 14/20, 15/20. Наибольшее: 4/5."},
-    {q:"НОК(4, 8) = ?",options:["4","8","32","16"],correct:1,expl:"8 кратно 4, поэтому НОК=8."},
-    {q:"Сравните: 7/9 и 5/6",options:["7/9 > 5/6","7/9 = 5/6","7/9 < 5/6","Нельзя"],correct:2,expl:"НОК=18: 14/18 < 15/18."},
-    {q:"Верно ли 1/2 = 3/6?",options:["Да","Нет","Только приближённо","Зависит"],correct:0,expl:"3/6 = 1/2. Да."},
-    {q:"Наименьшее из: 1/2, 1/3, 1/4, 1/5?",options:["1/2","1/3","1/4","1/5"],correct:3,expl:"Одинаковые числители: больший знам. = меньшая дробь."},
-    {q:"Сравните: 11/12 и 12/13",options:["11/12 > 12/13","=","11/12 < 12/13","Нельзя"],correct:2,expl:"1−11/12=1/12; 1−12/13=1/13. 1/12>1/13, значит 11/12 < 12/13."},
-    {q:"НОК(2, 3, 4) = ?",options:["6","12","24","4"],correct:1,expl:"НОК(2,3)=6; НОК(6,4)=12."},
-    {q:"Порядок по убыванию: 5/6, 4/5, 7/8?",options:["7/8 > 5/6 > 4/5","4/5 < 5/6 < 7/8","5/6 > 7/8 > 4/5","7/8 > 4/5 > 5/6"],correct:0,expl:"НОК=120: 105/120, 100/120, 96/120. Убывание: 7/8 > 5/6 > 4/5."},
-    {q:"2/3 > 3/4?",options:["Да","Нет","Равны","Нельзя"],correct:1,expl:"8/12 < 9/12. Нет, 2/3 < 3/4."},
-    {q:"Сравните: 3⁷⁄₈ и 3⁶⁄₇",options:["<","=",">","Нельзя"],correct:2,expl:"НОК(8,7)=56: 49/56 > 48/56."},
-    {q:"НОК(5, 7) = ?",options:["1","12","35","25"],correct:2,expl:"5 и 7 — взаимно простые. НОК=35."}
+    <script>
+      const AppState = {
+        currentSection: 'home', slide: 0,
+        trainer: { correct:0, total:0, streak:0, current:null },
+        diagnostic: { current:0, score:0, answers:[] },
+        timeAttack: { current:0, score:0, timer:null, timeLeft:600, startTime:0, answers:[] },
+        mode: null
+      };
+      function showSection(id) {
+        document.querySelectorAll('section').forEach(s => s.classList.remove('active'));
+        document.getElementById(id).classList.add('active');
+        document.querySelectorAll('.nav-links a').forEach(a => a.classList.remove('active'));
+        document.querySelector('.nav-links a[data-section="' + id + '"]')?.classList.add('active');
+        window.scrollTo(0, 0);
+        AppState.currentSection = id;
+      }
+      document.querySelectorAll('.nav-links a').forEach(link => {
+        link.addEventListener('click', e => { e.preventDefault(); showSection(link.dataset.section); });
+      });
+      const totalSlides = 12;
+      const track = document.getElementById('track-slides');
+      const slideNumEl = document.getElementById('slide-num');
+      const slideTotalEl = document.getElementById('slide-total');
+      if (slideTotalEl) slideTotalEl.textContent = totalSlides;
+      function renderSlide() {
+        if (track) track.style.transform = 'translateX(-' + AppState.slide * 100 + '%)';
+        if (slideNumEl) slideNumEl.textContent = AppState.slide + 1;
+      }
+      function nextSlide() { if (AppState.slide < totalSlides - 1) { AppState.slide++; renderSlide(); } }
+      function prevSlide() { if (AppState.slide > 0) { AppState.slide--; renderSlide(); } }
+      function toggleSolution(id) {
+        const el = document.getElementById(id);
+        el.classList.toggle('active');
+        const btn = el.previousElementSibling;
+        if (btn) btn.textContent = el.classList.contains('active') ? 'Скрыть решение' : 'Показать решение';
+      }
+      const allQuestions = [
+  {
+    "text": "Сравните 3/5 и 7/10:",
+    "opts": [
+      "3/5 > 7/10",
+      "3/5 < 7/10",
+      "3/5 = 7/10",
+      "нельзя"
+    ],
+    "ans": 1,
+    "hint": "НОК(5,10)=10. 3/5=6/10; 7/10. 6<7 → 3/5 < 7/10."
+  },
+  {
+    "text": "Сравните 4/7 и 4/9:",
+    "opts": [
+      "4/7 < 4/9",
+      "4/7 = 4/9",
+      "4/7 > 4/9",
+      "нельзя"
+    ],
+    "ans": 2,
+    "hint": "Одинаковые числители. Меньший знаменатель → больше. 7<9 → 4/7 > 4/9."
+  },
+  {
+    "text": "НОК(6, 8) = ?",
+    "opts": [
+      "2",
+      "24",
+      "16",
+      "12"
+    ],
+    "ans": 1,
+    "hint": "Кратные 6: 6,12,18,24... Кратные 8: 8,16,24... НОК(6,8)=24."
+  },
+  {
+    "text": "Какая дробь больше: 5/6 или 4/5?",
+    "opts": [
+      "5/6",
+      "4/5",
+      "равны",
+      "нельзя"
+    ],
+    "ans": 0,
+    "hint": "НОК(6,5)=30. 5/6=25/30; 4/5=24/30. 25>24 → 5/6 > 4/5."
+  },
+  {
+    "text": "Упорядочите по возрастанию: 1/2, 1/3, 1/4",
+    "opts": [
+      "1/4 < 1/3 < 1/2",
+      "1/2 < 1/3 < 1/4",
+      "1/3 < 1/4 < 1/2",
+      "равны"
+    ],
+    "ans": 0,
+    "hint": "Одинаковые числители. Больший знаменатель → меньше. 1/4 < 1/3 < 1/2."
+  },
+  {
+    "text": "Сравните: 2/3 и 3/4",
+    "opts": [
+      "2/3 > 3/4",
+      "2/3 = 3/4",
+      "2/3 < 3/4",
+      "нельзя"
+    ],
+    "ans": 2,
+    "hint": "НОК(3,4)=12. 2/3=8/12; 3/4=9/12. 8<9 → 2/3 < 3/4."
+  },
+  {
+    "text": "Какая дробь наибольшая: 3/4, 5/6, 7/8?",
+    "opts": [
+      "3/4",
+      "5/6",
+      "7/8",
+      "равны"
+    ],
+    "ans": 2,
+    "hint": "НОК(4,6,8)=24. 18/24; 20/24; 21/24. 21>20>18 → 7/8 наибольшая."
+  },
+  {
+    "text": "Найдите дробь между 1/3 и 1/2:",
+    "opts": [
+      "1/4",
+      "5/12",
+      "2/3",
+      "1/6"
+    ],
+    "ans": 1,
+    "hint": "1/3=4/12; 1/2=6/12. 5/12 между ними."
+  },
+  {
+    "text": "Сравните: 7/12 и 5/8",
+    "opts": [
+      "7/12 > 5/8",
+      "7/12 = 5/8",
+      "7/12 < 5/8",
+      "нельзя"
+    ],
+    "ans": 2,
+    "hint": "НОК(12,8)=24. 7/12=14/24; 5/8=15/24. 14<15 → 7/12 < 5/8."
+  },
+  {
+    "text": "Дробь 0.5 = ?",
+    "opts": [
+      "1/3",
+      "1/4",
+      "1/2",
+      "2/3"
+    ],
+    "ans": 2,
+    "hint": "0.5 = 5/10 = 1/2."
+  },
+  {
+    "text": "Сравните: 11/12 и 12/13",
+    "opts": [
+      "11/12 > 12/13",
+      "11/12 = 12/13",
+      "11/12 < 12/13",
+      "нельзя"
+    ],
+    "ans": 2,
+    "hint": "Оба близки к 1: 11/12=1-1/12; 12/13=1-1/13. 1/13 < 1/12 → 12/13 ближе к 1 → 12/13 > 11/12."
+  },
+  {
+    "text": "Что меньше: 3/7 или 4/9?",
+    "opts": [
+      "3/7",
+      "4/9",
+      "равны",
+      "нельзя"
+    ],
+    "ans": 1,
+    "hint": "НОК(7,9)=63. 3/7=27/63; 4/9=28/63. 27<28 → 3/7 < 4/9."
+  },
+  {
+    "text": "Упорядочьте по убыванию: 2/3, 3/5, 7/10",
+    "opts": [
+      "7/10>3/5>2/3",
+      "2/3>7/10>3/5",
+      "7/10>2/3>3/5",
+      "2/3>3/5>7/10"
+    ],
+    "ans": 2,
+    "hint": "НОК=30: 2/3=20/30; 3/5=18/30; 7/10=21/30. Убывание: 21>20>18 → 7/10>2/3>3/5."
+  },
+  {
+    "text": "Сравните: 5/9 и 6/11",
+    "opts": [
+      "5/9 > 6/11",
+      "5/9 = 6/11",
+      "5/9 < 6/11",
+      "нельзя"
+    ],
+    "ans": 0,
+    "hint": "НОК(9,11)=99. 5/9=55/99; 6/11=54/99. 55>54 → 5/9 > 6/11."
+  },
+  {
+    "text": "Какая дробь ближе к 1: 7/8 или 9/11?",
+    "opts": [
+      "7/8",
+      "9/11",
+      "равноудалены",
+      "нельзя"
+    ],
+    "ans": 0,
+    "hint": "7/8=0.875; 9/11≈0.818. 7/8 ближе к 1."
+  },
+  {
+    "text": "Сравните через НОК: 1/4 и 2/7",
+    "opts": [
+      "1/4 < 2/7",
+      "1/4 = 2/7",
+      "1/4 > 2/7",
+      "нельзя"
+    ],
+    "ans": 0,
+    "hint": "НОК(4,7)=28. 1/4=7/28; 2/7=8/28. 7<8 → 1/4 < 2/7."
+  },
+  {
+    "text": "Расположите на числовой прямой: 0, 1/3, 2/3, 1. Что идёт после 1/3?",
+    "opts": [
+      "0",
+      "1",
+      "2/3",
+      "1/3"
+    ],
+    "ans": 2,
+    "hint": "0 < 1/3 < 2/3 < 1. После 1/3 идёт 2/3."
+  },
+  {
+    "text": "Сравните: 4/5 и 0,8",
+    "opts": [
+      "4/5 > 0,8",
+      "4/5 = 0,8",
+      "4/5 < 0,8",
+      "нельзя"
+    ],
+    "ans": 1,
+    "hint": "4/5 = 0,8. Они равны."
+  },
+  {
+    "text": "Найдите наибольшую из дробей: 2/5, 3/8, 7/20",
+    "opts": [
+      "2/5",
+      "3/8",
+      "7/20",
+      "равны"
+    ],
+    "ans": 0,
+    "hint": "НОК(5,8,20)=40. 16/40; 15/40; 14/40. 16>15>14 → 2/5 наибольшая."
+  },
+  {
+    "text": "Правда ли, что 1/2 < 2/3 < 3/4?",
+    "opts": [
+      "Да",
+      "Нет",
+      "Только 1/2<2/3",
+      "Только 2/3<3/4"
+    ],
+    "ans": 0,
+    "hint": "НОК(2,3,4)=12. 6/12<8/12<9/12. Да, верно."
+  }
 ];
+      const diagnosticQuestions = allQuestions;
+      function showTrainerHint() {
+        if (!AppState.trainer.current) return;
+        document.getElementById('trainer-hint').style.display = 'block';
+        document.getElementById('trainer-hint').textContent = '💡 ' + AppState.trainer.current.hint;
+      }
+      document.getElementById('trainer-answer')?.addEventListener('keypress', e => { if (e.key === 'Enter') checkTrainer(); });
 
-let testState={current:0,score:0,answers:[]};
-function initTest(){testState={current:0,score:0,answers:[]};document.getElementById('test-total').textContent=testQuestions.length;renderTestQuestion();}
-function renderTestQuestion(){const q=testQuestions[testState.current];document.getElementById('test-current').textContent=testState.current+1;document.getElementById('test-score').textContent=`${testState.score} правильных`;document.getElementById('test-progress').style.width=`${((testState.current+1)/testQuestions.length)*100}%`;document.getElementById('test-question').innerHTML=q.q;const optsDiv=document.getElementById('test-options');optsDiv.innerHTML='';q.options.forEach((opt,i)=>{const div=document.createElement('div');div.className='quiz-option';div.innerHTML=`<div class="option-letter">${String.fromCharCode(65+i)}</div><div>${opt}</div>`;div.onclick=()=>selectTestOption(i);optsDiv.appendChild(div);});document.getElementById('test-explanation').style.display='none';document.getElementById('test-prev').disabled=testState.current===0;document.getElementById('test-next').disabled=true;}
-function selectTestOption(idx){if(!document.getElementById('test-next').disabled)return;const q=testQuestions[testState.current];const isCorrect=idx===q.correct;if(isCorrect)testState.score++;testState.answers[testState.current]=idx;document.querySelectorAll('#test-options .quiz-option').forEach((opt,i)=>{opt.classList.add('disabled');if(i===q.correct)opt.classList.add('correct');else if(i===idx&&!isCorrect)opt.classList.add('wrong');});document.getElementById('test-explanation').innerHTML=`<strong>${isCorrect?'✓ Верно!':'✗ Неверно.'}</strong> ${q.expl}`;document.getElementById('test-explanation').style.display='block';document.getElementById('test-next').disabled=false;}
-function nextTest(){if(testState.current<testQuestions.length-1){testState.current++;renderTestQuestion();}else{showTestResults();}}
-function prevTest(){if(testState.current>0){testState.current--;renderTestQuestion();}}
-function showTestResults(){const percent=Math.round((testState.score/testQuestions.length)*100);const message=percent>=90?'Отлично!':percent>=70?'Хорошо!':percent>=50?'Удовлетворительно.':'Повторите теорию.';document.getElementById('test').innerHTML=`<div class="card"><div class="results-container"><div class="score-label">Результат теста</div><div class="score-circle" style="--score:${percent};"><div class="score-value">${percent}%</div></div><div class="score-message">${message}</div><div class="results-breakdown"><div class="breakdown-item"><div class="breakdown-value">${testState.score}</div><div class="breakdown-label">Верно</div></div><div class="breakdown-item"><div class="breakdown-value">${testQuestions.length-testState.score}</div><div class="breakdown-label">Ошибок</div></div></div><div style="display:flex;gap:16px;justify-content:center;flex-wrap:wrap"><button class="btn btn-primary" onclick="initTest()">Ещё раз</button><button class="btn btn-secondary" onclick="showSection('theory')">В теорию</button></div></div></div>`;}
-
-const finalQuestions=[
-    {q:"Сравните: 4/9 и 7/9",options:["<","=",">","Нельзя"],correct:0},
-    {q:"Сравните: 1/4 и 1/3",options:["<","=",">","Нельзя"],correct:0},
-    {q:"НОК(4, 8) = ?",options:["4","8","32","16"],correct:1},
-    {q:"Сравните: 5/6 и 7/8",options:["<","=",">","Нельзя"],correct:0},
-    {q:"Наибольшее из: 2/3, 3/5, 7/10?",options:["2/3","3/5","7/10","Равны"],correct:0},
-    {q:"Сравните: 4⅔ и 4½",options:[">","=","<","Нельзя"],correct:0},
-    {q:"Порядок: 1/2, 2/5, 3/10",options:["3/10 < 2/5 < 1/2","2/5 < 3/10 < 1/2","1/2 < 2/5 < 3/10","3/10 < 1/2 < 2/5"],correct:0},
-    {q:"НОК(3, 5, 7) = ?",options:["15","35","105","21"],correct:2},
-    {q:"Сравните: 8/9 и 9/10",options:[">","=","<","Нельзя"],correct:2},
-    {q:"Наименьшее из: 3/4, 5/8, 2/3?",options:["3/4","5/8","2/3","Равны"],correct:1}
-];
-
-let finalState={current:0,score:0,timer:null,timeLeft:300,startTime:0,answers:[]};
-function startFinal(){finalState={current:0,score:0,timer:null,timeLeft:300,startTime:Date.now(),answers:[]};document.getElementById('final-start').style.display='none';document.getElementById('final-results').style.display='none';document.getElementById('final-quiz').style.display='block';document.getElementById('final-timer').className='timer';renderFinalQuestion();finalState.timer=setInterval(()=>{finalState.timeLeft--;const m=Math.floor(finalState.timeLeft/60),s=finalState.timeLeft%60;const el=document.getElementById('final-timer');el.textContent=`${m}:${s.toString().padStart(2,'0')}`;if(finalState.timeLeft<=60)el.className='timer danger';else if(finalState.timeLeft<=120)el.className='timer warning';if(finalState.timeLeft<=0)finishFinal();},1000);}
-function renderFinalQuestion(){const q=finalQuestions[finalState.current];document.getElementById('final-current').textContent=finalState.current+1;document.getElementById('final-progress').style.width=`${((finalState.current+1)/finalQuestions.length)*100}%`;document.getElementById('final-question').textContent=q.q;const optsDiv=document.getElementById('final-options');optsDiv.innerHTML='';q.options.forEach((opt,i)=>{const div=document.createElement('div');div.className='quiz-option';div.innerHTML=`<div class="option-letter">${String.fromCharCode(65+i)}</div><div>${opt}</div>`;div.onclick=()=>selectFinalOption(i);optsDiv.appendChild(div);});document.getElementById('final-next').disabled=true;}
-function selectFinalOption(idx){if(!document.getElementById('final-next').disabled)return;const q=finalQuestions[finalState.current];const isCorrect=idx===q.correct;if(isCorrect)finalState.score++;finalState.answers[finalState.current]=idx;document.querySelectorAll('#final-options .quiz-option').forEach((opt,i)=>{opt.classList.add('disabled');if(i===q.correct)opt.classList.add('correct');else if(i===idx&&!isCorrect)opt.classList.add('wrong');});document.getElementById('final-next').disabled=false;}
-function nextFinal(){if(finalState.current<finalQuestions.length-1){finalState.current++;renderFinalQuestion();}else{finishFinal();}}
-function finishFinal(){clearInterval(finalState.timer);document.getElementById('final-quiz').style.display='none';document.getElementById('final-results').style.display='block';const percent=Math.round((finalState.score/finalQuestions.length)*100);const timeSpent=Math.floor((Date.now()-finalState.startTime)/1000);const m=Math.floor(timeSpent/60),s=timeSpent%60;document.getElementById('score-circle').style.setProperty('--score',percent);document.getElementById('final-score').textContent=`${percent}%`;document.getElementById('final-correct').textContent=finalState.score;document.getElementById('final-wrong').textContent=finalQuestions.length-finalState.score;document.getElementById('final-time').textContent=`${m}:${s.toString().padStart(2,'0')}`;document.getElementById('final-percent').textContent=`${percent}%`;document.getElementById('final-message').textContent=percent>=90?'🏆 Превосходно!':percent>=70?'🥈 Отличный результат!':percent>=50?'🥉 Нужно подтянуть.':'💪 Повторите теорию.';}
-
-document.addEventListener('DOMContentLoaded',()=>{initTest();newTrainerProblem();});
-</script>
-</body>
+      function newTrainerProblem() {
+        const q = allQuestions[Math.floor(Math.random() * allQuestions.length)];
+        AppState.trainer.current = q;
+        let txt = q.text + '
+';
+        q.opts.forEach((o, i) => { txt += i + ': ' + o + '  '; });
+        document.getElementById('trainer-question').textContent = txt;
+        document.getElementById('trainer-answer').value = '';
+        document.getElementById('trainer-feedback').innerHTML = '';
+        document.getElementById('trainer-hint').style.display = 'none';
+        document.getElementById('trainer-check-btn').disabled = false;
+      }
+      function checkTrainer() {
+        if (!AppState.trainer.current) return;
+        const userStr = document.getElementById('trainer-answer').value.trim();
+        if (!userStr) return;
+        AppState.trainer.total++;
+        const isCorrect = parseInt(userStr, 10) === AppState.trainer.current.ans;
+        if (isCorrect) {
+          AppState.trainer.correct++;
+          AppState.trainer.streak++;
+          document.getElementById('trainer-feedback').innerHTML = '<div style="color:var(--success);font-weight:700;font-size:1.1rem;">✓ Верно!</div>';
+        } else {
+          AppState.trainer.streak = 0;
+          document.getElementById('trainer-feedback').innerHTML = '<div style="color:var(--error);font-weight:700;font-size:1.1rem;">✗ Неверно. Правильный ответ: ' + AppState.trainer.current.ans + '</div>';
+        }
+        document.getElementById('trainer-correct').textContent = AppState.trainer.correct;
+        document.getElementById('trainer-total').textContent = AppState.trainer.total;
+        document.getElementById('trainer-streak').textContent = AppState.trainer.streak;
+        document.getElementById('trainer-check-btn').disabled = true;
+      }
+      function startDiagnostic() {
+        AppState.mode = 'diagnostic';
+        AppState.diagnostic = { current:0, score:0, answers:[] };
+        document.getElementById('diagnostic-ui').style.display = 'block';
+        document.getElementById('timeattack-ui').style.display = 'none';
+        document.getElementById('results-ui').style.display = 'none';
+        document.getElementById('diag-total').textContent = diagnosticQuestions.length;
+        renderDiagnostic();
+      }
+      function renderDiagnostic() {
+        const q = diagnosticQuestions[AppState.diagnostic.current];
+        document.getElementById('diag-current').textContent = AppState.diagnostic.current + 1;
+        document.getElementById('diag-score').textContent = AppState.diagnostic.score + ' правильных';
+        document.getElementById('diag-progress').style.width = ((AppState.diagnostic.current + 1) / diagnosticQuestions.length * 100) + '%';
+        document.getElementById('diag-question').textContent = q.text;
+        document.getElementById('diag-explanation').style.display = 'none';
+        document.getElementById('diag-next').disabled = true;
+        document.getElementById('diag-prev').disabled = AppState.diagnostic.current === 0;
+        const optsDiv = document.getElementById('diag-options');
+        optsDiv.innerHTML = '';
+        q.opts.forEach((opt, i) => {
+          const div = document.createElement('div');
+          div.className = 'quiz-option';
+          div.innerHTML = '<div class="option-letter">' + String.fromCharCode(65+i) + '</div><div>' + opt + '</div>';
+          div.onclick = () => selectDiagnostic(i, div, q);
+          optsDiv.appendChild(div);
+        });
+      }
+      function selectDiagnostic(i, div, q) {
+        document.querySelectorAll('#diag-options .quiz-option').forEach(o => o.classList.add('disabled'));
+        const isCorrect = i === q.ans;
+        div.classList.add(isCorrect ? 'correct' : 'wrong');
+        if (!isCorrect) document.querySelectorAll('#diag-options .quiz-option')[q.ans].classList.add('correct');
+        if (isCorrect) AppState.diagnostic.score++;
+        AppState.diagnostic.answers.push(i);
+        document.getElementById('diag-explanation').textContent = (isCorrect ? '✓ ' : '✗ ') + q.hint;
+        document.getElementById('diag-explanation').style.display = 'block';
+        document.getElementById('diag-next').disabled = false;
+      }
+      function nextDiagnostic() {
+        if (AppState.diagnostic.current < diagnosticQuestions.length - 1) {
+          AppState.diagnostic.current++;
+          renderDiagnostic();
+        } else {
+          showResults(AppState.diagnostic.score, diagnosticQuestions.length, 0, 'diagnostic');
+        }
+      }
+      function prevDiagnostic() {
+        if (AppState.diagnostic.current > 0) { AppState.diagnostic.current--; renderDiagnostic(); }
+      }
+      function startTimeAttack() {
+        AppState.mode = 'timeattack';
+        AppState.timeAttack = { current:0, score:0, timer:null, timeLeft:600, startTime:Date.now(), answers:[] };
+        document.getElementById('diagnostic-ui').style.display = 'none';
+        document.getElementById('timeattack-ui').style.display = 'block';
+        document.getElementById('results-ui').style.display = 'none';
+        const timerEl = document.getElementById('ta-timer');
+        timerEl.classList.remove('hidden');
+        AppState.timeAttack.timer = setInterval(() => {
+          AppState.timeAttack.timeLeft--;
+          const m = Math.floor(AppState.timeAttack.timeLeft / 60);
+          const s = AppState.timeAttack.timeLeft % 60;
+          timerEl.textContent = m + ':' + (s < 10 ? '0' : '') + s;
+          timerEl.className = 'timer' + (AppState.timeAttack.timeLeft <= 60 ? ' danger' : AppState.timeAttack.timeLeft <= 120 ? ' warning' : '');
+          if (AppState.timeAttack.timeLeft <= 0) {
+            clearInterval(AppState.timeAttack.timer);
+            showResults(AppState.timeAttack.score, diagnosticQuestions.length, 0, 'timeattack');
+          }
+        }, 1000);
+        renderTimeAttack();
+      }
+      function renderTimeAttack() {
+        const q = diagnosticQuestions[AppState.timeAttack.current];
+        document.getElementById('ta-current').textContent = AppState.timeAttack.current + 1;
+        document.getElementById('ta-progress').style.width = ((AppState.timeAttack.current + 1) / diagnosticQuestions.length * 100) + '%';
+        document.getElementById('ta-question').textContent = q.text;
+        const optsDiv = document.getElementById('ta-options');
+        optsDiv.innerHTML = '';
+        q.opts.forEach((opt, i) => {
+          const div = document.createElement('div');
+          div.className = 'quiz-option';
+          div.innerHTML = '<div class="option-letter">' + String.fromCharCode(65+i) + '</div><div>' + opt + '</div>';
+          div.onclick = () => {
+            if (i === q.ans) AppState.timeAttack.score++;
+            AppState.timeAttack.answers.push(i);
+            nextTimeAttack();
+          };
+          optsDiv.appendChild(div);
+        });
+        document.getElementById('ta-next').style.display = 'none';
+      }
+      function nextTimeAttack() {
+        if (AppState.timeAttack.current < diagnosticQuestions.length - 1) {
+          AppState.timeAttack.current++;
+          renderTimeAttack();
+        } else {
+          clearInterval(AppState.timeAttack.timer);
+          const elapsed = Math.round((Date.now() - AppState.timeAttack.startTime) / 1000);
+          showResults(AppState.timeAttack.score, diagnosticQuestions.length, elapsed, 'timeattack');
+        }
+      }
+      function showResults(correct, total, elapsed, mode) {
+        document.getElementById('diagnostic-ui').style.display = 'none';
+        document.getElementById('timeattack-ui').style.display = 'none';
+        document.getElementById('results-ui').style.display = 'block';
+        const pct = Math.round(correct / total * 100);
+        document.getElementById('result-circle').style.setProperty('--score', pct);
+        document.getElementById('result-percent').textContent = pct + '%';
+        document.getElementById('result-correct').textContent = correct;
+        document.getElementById('result-wrong').textContent = total - correct;
+        const m = Math.floor(elapsed/60), s = elapsed%60;
+        document.getElementById('result-time').textContent = m + ':' + (s<10?'0':'') + s;
+        const mastery = pct >= 90 ? 'Отлично' : pct >= 70 ? 'Хорошо' : pct >= 50 ? 'Удовл.' : 'Слабо';
+        document.getElementById('result-mastery').textContent = mastery;
+        document.getElementById('result-message').textContent = pct >= 90 ? '🏆 Отличный результат!' : pct >= 70 ? '👍 Хороший результат!' : '📚 Повторите теорию';
+      }
+      function resetAssessment() {
+        document.getElementById('diagnostic-ui').style.display = 'none';
+        document.getElementById('timeattack-ui').style.display = 'none';
+        document.getElementById('results-ui').style.display = 'none';
+        document.getElementById('ta-timer').classList.add('hidden');
+      }
+      
+    </script>
+  </body>
 </html>

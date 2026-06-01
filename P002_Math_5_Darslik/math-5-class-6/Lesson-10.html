@@ -1,0 +1,404 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Урок 10 — Заключение: Плоские фигуры</title>
+    <style>
+      :root{--bg-dark:#0f0f1a;--bg-card:rgba(255,255,255,0.05);--bg-glass:rgba(255,255,255,0.08);--border-glass:rgba(255,255,255,0.15);--text-primary:#e8e8f0;--text-secondary:#a0a0b8;--accent:#00d4aa;--accent-dim:rgba(0,212,170,0.2);--accent-warm:#ff6b6b;--accent-warm-dim:rgba(255,107,107,0.2);--accent-blue:#4dabf7;--accent-blue-dim:rgba(77,171,247,0.2);--success:#51cf66;--error:#ff6b6b;--warning:#fcc419;}
+      *{margin:0;padding:0;box-sizing:border-box;}
+      body{font-family:"Segoe UI",system-ui,sans-serif;background:var(--bg-dark);color:var(--text-primary);min-height:100vh;overflow-x:hidden;line-height:1.6;}
+      .bg-animation{position:fixed;top:0;left:0;width:100%;height:100%;z-index:-1;background:radial-gradient(ellipse at 20% 20%,rgba(0,212,170,0.08) 0%,transparent 50%),radial-gradient(ellipse at 80% 80%,rgba(77,171,247,0.08) 0%,transparent 50%);}
+      .bg-animation::before{content:"";position:absolute;width:200%;height:200%;top:-50%;left:-50%;background:repeating-linear-gradient(0deg,transparent,transparent 40px,rgba(255,255,255,0.02) 40px,rgba(255,255,255,0.02) 41px);animation:bgMove 20s linear infinite;}
+      @keyframes bgMove{0%{transform:translateY(0)}100%{transform:translateY(40px)}}
+      nav{position:fixed;top:0;left:0;right:0;background:rgba(15,15,26,0.85);backdrop-filter:blur(20px);border-bottom:1px solid var(--border-glass);z-index:1000;padding:0 20px;}
+      .nav-container{max-width:1200px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;height:60px;}
+      .logo{font-size:1.3rem;font-weight:700;background:linear-gradient(135deg,var(--accent),var(--accent-blue));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;text-decoration:none;}
+      .nav-links{display:flex;gap:8px;list-style:none;}
+      .nav-links a{color:var(--text-secondary);text-decoration:none;padding:8px 16px;border-radius:8px;transition:all 0.3s;font-size:0.9rem;font-weight:500;cursor:pointer;border:none;background:transparent;}
+      .nav-links a:hover,.nav-links a.active{color:var(--text-primary);background:var(--bg-glass);}
+      .nav-links a.active{background:var(--accent-dim);color:var(--accent);}
+      section{display:none;opacity:0;padding:78px 20px 32px;max-width:1000px;margin:0 auto;transition:opacity 0.3s ease;}
+      section.active{display:block;opacity:1;animation:fadeIn 0.5s ease;}
+      @keyframes fadeIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+      .card{background:var(--bg-card);backdrop-filter:blur(20px);border:1px solid var(--border-glass);border-radius:20px;padding:20px;margin-bottom:16px;transition:transform 0.3s,box-shadow 0.3s;}
+      .card:hover{transform:translateY(-2px);box-shadow:0 20px 40px rgba(0,0,0,0.3);}
+      .card-title{font-size:1.5rem;font-weight:700;margin-bottom:16px;display:flex;align-items:center;gap:12px;}
+      .card-title .icon{width:40px;height:40px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.3rem;}
+      .hero{text-align:center;padding:140px 20px 80px;}
+      .hero h1{font-size:3rem;font-weight:800;margin-bottom:20px;background:linear-gradient(135deg,var(--accent),var(--accent-blue),var(--accent-warm));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1.2;}
+      .hero p{font-size:1.2rem;color:var(--text-secondary);max-width:600px;margin:0 auto 40px;}
+      .btn{display:inline-flex;align-items:center;gap:8px;padding:14px 32px;border-radius:12px;border:none;font-size:1rem;font-weight:600;cursor:pointer;transition:all 0.3s;text-decoration:none;}
+      .btn-primary{background:linear-gradient(135deg,var(--accent),var(--accent-blue));color:#000;}
+      .btn-primary:hover{transform:translateY(-2px);box-shadow:0 10px 30px var(--accent-dim);}
+      .btn-secondary{background:var(--bg-glass);color:var(--text-primary);border:1px solid var(--border-glass);}
+      .btn-secondary:hover{background:var(--bg-card);}
+      .btn:disabled{opacity:0.5;cursor:not-allowed;transform:none!important;}
+      .generate-widget{background:var(--bg-card);border:1px solid var(--border-glass);border-radius:20px;padding:14px;width:100%;}
+      .widget-slide{display:none;padding:12px 16px;}
+      .widget-slide.active{display:block;}
+      .widget-slide h3{font-size:1.3rem;color:var(--accent);margin-bottom:16px;}
+      .widget-slide p,.widget-slide li{color:var(--text-secondary);line-height:1.8;margin-bottom:12px;}
+      .widget-slide table{width:100%;border-collapse:collapse;margin:12px 0;color:var(--text-secondary);}
+      .widget-slide table th,.widget-slide table td{border:1px solid var(--border-glass);padding:10px;text-align:left;}
+      .widget-slide table th{background:var(--bg-glass);color:var(--text-primary);}
+      .widget-nav{display:flex;justify-content:space-between;align-items:center;margin-top:16px;}
+      .widget-progress{text-align:center;font-size:0.9rem;color:var(--text-secondary);margin-bottom:12px;}
+      .sequence-component{display:flex;flex-direction:column;gap:20px;}
+      .sequence-step{background:var(--bg-card);border:1px solid var(--border-glass);border-radius:16px;padding:24px 24px 24px 72px;position:relative;transition:all 0.3s;}
+      .sequence-step:hover{border-color:var(--accent);transform:translateX(4px);}
+      .sequence-number{position:absolute;left:20px;top:20px;width:40px;height:40px;background:var(--accent);color:#000;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:1.1rem;}
+      .sequence-step h4{color:var(--text-primary);margin-bottom:8px;font-size:1.1rem;}
+      .sequence-step p{color:var(--text-secondary);line-height:1.7;}
+      .problem-card{background:var(--bg-card);border:1px solid var(--border-glass);border-radius:16px;padding:24px;margin-bottom:20px;}
+      .problem-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:8px;}
+      .problem-number{background:var(--accent-dim);color:var(--accent);padding:4px 12px;border-radius:20px;font-size:0.85rem;font-weight:600;}
+      .problem-type{color:var(--text-secondary);font-size:0.85rem;}
+      .problem-text{font-size:1.1rem;margin-bottom:16px;line-height:1.8;}
+      .solution-btn{background:var(--accent-dim);color:var(--accent);border:1px solid var(--accent);padding:10px 20px;border-radius:8px;cursor:pointer;font-weight:600;transition:all 0.3s;}
+      .solution-btn:hover{background:var(--accent);color:#000;}
+      .solution{display:none;margin-top:20px;padding:20px;background:rgba(0,212,170,0.05);border-left:3px solid var(--accent);border-radius:0 12px 12px 0;}
+      .solution.active{display:block;}
+      .solution p{margin-bottom:8px;color:var(--text-secondary);}
+      .solution strong{color:var(--accent);}
+      .quiz-container{background:var(--bg-card);border:1px solid var(--border-glass);border-radius:20px;padding:32px;}
+      .quiz-progress{display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;flex-wrap:wrap;gap:8px;}
+      .progress-bar{flex:1;height:8px;background:var(--bg-glass);border-radius:4px;margin:0 16px;overflow:hidden;min-width:100px;}
+      .progress-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent-blue));border-radius:4px;transition:width 0.5s ease;width:0%;}
+      .quiz-question{font-size:1.2rem;margin-bottom:24px;padding:20px;background:var(--bg-glass);border-radius:12px;border-left:4px solid var(--accent);}
+      .quiz-options{display:grid;gap:12px;}
+      .quiz-option{background:var(--bg-glass);border:2px solid var(--border-glass);border-radius:12px;padding:16px 20px;cursor:pointer;transition:all 0.3s;display:flex;align-items:center;gap:12px;}
+      .quiz-option:hover{border-color:var(--accent);background:var(--accent-dim);}
+      .quiz-option.correct{border-color:var(--success);background:rgba(81,207,102,0.15);}
+      .quiz-option.wrong{border-color:var(--error);background:rgba(255,107,107,0.15);}
+      .quiz-option.disabled{pointer-events:none;opacity:0.7;}
+      .option-letter{width:32px;height:32px;border-radius:8px;background:var(--bg-card);display:flex;align-items:center;justify-content:center;font-weight:700;flex-shrink:0;}
+      .quiz-nav{display:flex;justify-content:space-between;margin-top:24px;}
+      .stat{background:var(--bg-glass);padding:12px 24px;border-radius:12px;text-align:center;min-width:100px;border:1px solid var(--border-glass);}
+      .stat-value{font-size:1.5rem;font-weight:700;color:var(--accent);}
+      .stat-label{font-size:0.85rem;color:var(--text-secondary);}
+      .timer{position:fixed;top:80px;right:20px;background:var(--bg-card);backdrop-filter:blur(20px);border:1px solid var(--border-glass);border-radius:16px;padding:16px 24px;font-size:1.3rem;font-weight:700;font-variant-numeric:tabular-nums;z-index:999;}
+      .timer.warning{border-color:var(--warning);color:var(--warning);animation:pulse 1s infinite;}
+      .timer.danger{border-color:var(--error);color:var(--error);animation:pulse 0.5s infinite;}
+      @keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.05)}}
+      .results-container{text-align:center;padding:40px;}
+      .score-circle{width:200px;height:200px;border-radius:50%;background:conic-gradient(var(--accent) calc(var(--score)*3.6deg),var(--bg-glass) 0);margin:0 auto 32px;display:flex;align-items:center;justify-content:center;position:relative;}
+      .score-circle::before{content:"";position:absolute;width:170px;height:170px;background:var(--bg-dark);border-radius:50%;}
+      .score-value{position:relative;font-size:3rem;font-weight:800;color:var(--accent);}
+      .score-label{font-size:1.2rem;color:var(--text-secondary);margin-bottom:8px;}
+      .score-message{font-size:1.5rem;font-weight:700;margin-bottom:32px;}
+      .results-breakdown{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:16px;max-width:600px;margin:0 auto 32px;}
+      .breakdown-item{background:var(--bg-glass);padding:16px;border-radius:12px;}
+      .breakdown-value{font-size:1.5rem;font-weight:700;color:var(--accent);}
+      .breakdown-label{font-size:0.85rem;color:var(--text-secondary);}
+      @media(max-width:768px){.hero h1{font-size:2rem}.nav-links{display:none}.timer{top:70px;right:10px;font-size:1rem;padding:10px 16px}.card{padding:14px}section{padding:70px 12px 24px}}
+    </style>
+  </head>
+  <body>
+    <div class="bg-animation"></div>
+    <nav>
+      <div class="nav-container">
+        <a href="index.html" class="logo" target="_self">📐 Урок 10</a>
+        <ul class="nav-links">
+          <li><a href="#" class="active" data-section="home">Главная</a></li>
+          <li><a href="#" data-section="theory">Теория</a></li>
+          <li><a href="#" data-section="algorithm">Алгоритм</a></li>
+          <li><a href="#" data-section="examples">Примеры</a></li>
+          <li><a href="#" data-section="trainer">Тренажёр</a></li>
+          <li><a href="#" data-section="assessment">Аттестация</a></li>
+        </ul>
+      </div>
+    </nav>
+
+    <section id="home" class="active">
+      <div class="hero">
+        <h1>Заключение: Плоские фигуры</h1>
+        <p>Урок 10. Итоговое повторение всего раздела «Плоские фигуры»: углы, биссектрисы, площади, параллельные прямые, построение треугольников.</p>
+        <div style="display:flex;gap:16px;justify-content:center;flex-wrap:wrap;">
+          <button class="btn btn-primary" onclick="showSection('theory')">Повторить теорию</button>
+          <button class="btn btn-secondary" onclick="showSection('assessment')">Проверить знания</button>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title"><span class="icon" style="background:var(--accent-dim)">📚</span>Темы раздела 6</div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px;">
+          <div class="card" style="padding:20px;"><h3 style="color:var(--accent);margin-bottom:8px;">Углы и биссектрисы</h3><p style="color:var(--text-secondary);">Биссектриса делит угол пополам. Смежные: сумма 180°. Вертикальные: равны.</p></div>
+          <div class="card" style="padding:20px;"><h3 style="color:var(--accent-blue);margin-bottom:8px;">Площадь треугольника</h3><p style="color:var(--text-secondary);">S = ½ × a × b — площадь прямоугольного треугольника. Составные фигуры: сумма частей.</p></div>
+          <div class="card" style="padding:20px;"><h3 style="color:var(--accent-warm);margin-bottom:8px;">Параллельные прямые</h3><p style="color:var(--text-secondary);">Не пересекаются. Постоянное расстояние. Построение с угольником и линейкой.</p></div>
+          <div class="card" style="padding:20px;"><h3 style="color:var(--warning);margin-bottom:8px;">Построение треугольника</h3><p style="color:var(--text-secondary);">По двум сторонам и углу (SAS). Инструменты: линейка, транспортир.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="theory">
+      <div class="card">
+        <div class="card-title"><span class="icon" style="background:var(--accent-dim)">📖</span>Глава 1. Итоговая теория раздела</div>
+        <p style="color:var(--text-secondary);margin-bottom:20px;">Все ключевые формулы и понятия раздела «Плоские фигуры».</p>
+        <div class="generate-widget">
+          <div class="widget-progress">Слайд <span id="slide-num">1</span> / <span id="slide-total">5</span></div>
+          <div class="widget-track" id="track-slides"></div>
+          <div class="widget-nav">
+            <button type="button" class="btn btn-secondary" onclick="prevSlide()">← Назад</button>
+            <button type="button" class="btn btn-primary" onclick="nextSlide()">Вперёд →</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="algorithm">
+      <div class="card">
+        <div class="card-title"><span class="icon" style="background:var(--accent-blue-dim)">🪜</span>Глава 2. Как решать задачи раздела</div>
+        <p style="color:var(--text-secondary);margin-bottom:20px;">Универсальный подход к задачам по всем темам раздела.</p>
+        <div class="sequence-component">
+          <div class="sequence-step"><div class="sequence-number">1</div><h4>Определи тип задачи</h4><p>Это задача на углы (биссектриса / смежные / вертикальные), площадь (треугольник / составная фигура), параллельные прямые или построение?</p></div>
+          <div class="sequence-step"><div class="sequence-number">2</div><h4>Выбери формулу</h4><p>Биссектриса: ∠AOC = ½∠AOB. Смежные: α+β=180°. Вертикальные: α=β. Площадь: S=½ab. Параллельные: d=const.</p></div>
+          <div class="sequence-step"><div class="sequence-number">3</div><h4>Нарисуй чертёж</h4><p>Схематично изобрази фигуры. Обозначь известные и неизвестные величины.</p></div>
+          <div class="sequence-step"><div class="sequence-number">4</div><h4>Составь уравнение</h4><p>Запиши условие в виде математического выражения.</p></div>
+          <div class="sequence-step"><div class="sequence-number">5</div><h4>Реши и проверь</h4><p>Найди ответ. Проверь подстановкой в условие задачи.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="examples">
+      <div class="card">
+        <div class="card-title"><span class="icon" style="background:var(--accent-dim)">📝</span>Глава 3. Итоговые задачи</div>
+        <p style="color:var(--text-secondary);margin-bottom:24px;">Комплексные задачи, охватывающие все темы раздела.</p>
+      </div>
+      <div id="examples-container"></div>
+    </section>
+
+    <section id="trainer">
+      <div class="card">
+        <div class="card-title"><span class="icon" style="background:var(--accent-dim)">🏋️</span>Глава 4. Тренажёр</div>
+        <p style="color:var(--text-secondary);margin-bottom:24px;">Смешанные задачи по всем темам раздела.</p>
+        <div class="quiz-container" style="margin-bottom:20px;">
+          <div id="trainer-question" style="font-size:1.3rem;text-align:center;margin-bottom:24px;padding:24px;background:var(--bg-glass);border-radius:12px;">Нажмите «Новая задача» для начала</div>
+          <div style="display:flex;gap:12px;margin-bottom:20px;">
+            <input type="text" id="trainer-answer" placeholder="Введите число" style="flex:1;padding:14px 16px;background:var(--bg-glass);border:2px solid var(--border-glass);border-radius:12px;color:var(--text-primary);font-size:1rem;outline:none;" />
+            <button class="btn btn-primary" onclick="checkTrainer()" id="trainer-check-btn" disabled>Проверить</button>
+          </div>
+          <div id="trainer-feedback" style="min-height:60px;margin-bottom:16px;"></div>
+          <div style="display:flex;gap:12px;justify-content:center;">
+            <button class="btn btn-secondary" onclick="newTrainerProblem()">Новая задача</button>
+            <button class="btn btn-secondary" onclick="showTrainerHint()">Подсказка</button>
+          </div>
+          <div id="trainer-hint" style="display:none;margin-top:20px;padding:16px;background:var(--accent-blue-dim);border-radius:12px;border-left:4px solid var(--accent-blue);"></div>
+        </div>
+        <div style="display:flex;justify-content:center;gap:24px;flex-wrap:wrap;">
+          <div class="stat"><div class="stat-value" id="trainer-correct">0</div><div class="stat-label">Верно</div></div>
+          <div class="stat"><div class="stat-value" id="trainer-total">0</div><div class="stat-label">Всего</div></div>
+          <div class="stat"><div class="stat-value" id="trainer-streak">0</div><div class="stat-label">Серия</div></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="assessment">
+      <div class="card">
+        <div class="card-title"><span class="icon" style="background:var(--accent-blue-dim)">🧪</span>Глава 5. Итоговая аттестация — 30 вопросов</div>
+        <p style="color:var(--text-secondary);margin-bottom:24px;">Комплексная проверка всего раздела «Плоские фигуры».</p>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px;">
+          <div class="card" style="padding:24px;text-align:center;"><div style="font-size:3rem;margin-bottom:12px;">🔍</div><h3 style="margin-bottom:8px;">Диагностический тест</h3><p style="color:var(--text-secondary);margin-bottom:20px;">30 вопросов с объяснениями.</p><button class="btn btn-primary" onclick="startDiagnostic()">Начать тест</button></div>
+          <div class="card" style="padding:24px;text-align:center;"><div style="font-size:3rem;margin-bottom:12px;">⏱️</div><h3 style="margin-bottom:8px;">Скоростная викторина</h3><p style="color:var(--text-secondary);margin-bottom:20px;">30 вопросов • 10 минут.</p><button class="btn btn-primary" onclick="startTimeAttack()">Начать викторину</button></div>
+        </div>
+      </div>
+      <div id="diagnostic-ui" style="display:none;">
+        <div class="card"><div class="card-title"><span class="icon" style="background:var(--accent-blue-dim)">🔍</span>Диагностический тест (30 вопросов)</div></div>
+        <div class="quiz-container">
+          <div class="quiz-progress"><span>Вопрос <span id="diag-current">1</span> / <span id="diag-total">30</span></span><div class="progress-bar"><div class="progress-fill" id="diag-progress"></div></div><span id="diag-score">0 правильных</span></div>
+          <div class="quiz-question" id="diag-question"></div>
+          <div class="quiz-options" id="diag-options"></div>
+          <div class="quiz-nav"><button class="btn btn-secondary" onclick="prevDiagnostic()" id="diag-prev" disabled>← Назад</button><button class="btn btn-primary" onclick="nextDiagnostic()" id="diag-next" disabled>Далее →</button></div>
+          <div id="diag-explanation" style="display:none;margin-top:20px;padding:16px;background:var(--accent-dim);border-radius:12px;border-left:4px solid var(--accent);"></div>
+        </div>
+      </div>
+      <div id="timeattack-ui" style="display:none;">
+        <div class="timer" id="ta-timer">10:00</div>
+        <div class="card"><div class="card-title"><span class="icon" style="background:var(--accent-warm-dim)">⏱️</span>Скоростная викторина</div></div>
+        <div class="quiz-container">
+          <div class="quiz-progress"><span>Вопрос <span id="ta-current">1</span> / 30</span><div class="progress-bar"><div class="progress-fill" id="ta-progress"></div></div></div>
+          <div class="quiz-question" id="ta-question"></div>
+          <div class="quiz-options" id="ta-options"></div>
+          <div style="display:flex;justify-content:flex-end;margin-top:24px;"><button class="btn btn-primary" onclick="nextTimeAttack()" id="ta-next">Ответить →</button></div>
+        </div>
+      </div>
+      <div id="results-ui" style="display:none;">
+        <div class="card">
+          <div class="results-container">
+            <div class="score-label">Ваш результат</div>
+            <div class="score-circle" id="result-circle"><div class="score-value" id="result-percent">0%</div></div>
+            <div class="score-message" id="result-message"></div>
+            <div class="results-breakdown">
+              <div class="breakdown-item"><div class="breakdown-value" id="result-correct">0</div><div class="breakdown-label">Верно</div></div>
+              <div class="breakdown-item"><div class="breakdown-value" id="result-wrong">0</div><div class="breakdown-label">Ошибок</div></div>
+              <div class="breakdown-item"><div class="breakdown-value" id="result-time">0:00</div><div class="breakdown-label">Время</div></div>
+              <div class="breakdown-item"><div class="breakdown-value" id="result-mastery">—</div><div class="breakdown-label">Уровень</div></div>
+            </div>
+            <div style="display:flex;gap:16px;justify-content:center;flex-wrap:wrap;">
+              <button class="btn btn-primary" onclick="resetAssessment()">Пройти ещё раз</button>
+              <button class="btn btn-secondary" onclick="showSection('theory')">К теории</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <script>
+      const AppState={currentSection:"home",slide:0,trainer:{correct:0,total:0,streak:0,current:null},diagnostic:{current:0,score:0,answers:[]},timeAttack:{current:0,score:0,timer:null,timeLeft:600,startTime:0,answers:[]},mode:null};
+
+      const slides=[
+        {title:"Сводная таблица: Углы",content:`
+          <table>
+            <tr><th>Понятие</th><th>Определение</th><th>Свойство/формула</th></tr>
+            <tr><td>Биссектриса</td><td>Луч из вершины, делящий угол пополам</td><td>∠AOC = ½∠AOB</td></tr>
+            <tr><td>Конгруэнтные углы</td><td>Углы с равными градусными мерами</td><td>∠A ≅ ∠B → ∠A = ∠B</td></tr>
+            <tr><td>Смежные углы</td><td>Общая сторона, сумма = 180°</td><td>α + β = 180°</td></tr>
+            <tr><td>Вертикальные углы</td><td>При пересечении прямых, напротив</td><td>α = β</td></tr>
+          </table>`
+        },
+        {title:"Сводная таблица: Площади",content:`
+          <table>
+            <tr><th>Фигура</th><th>Формула</th><th>Пример</th></tr>
+            <tr><td>Прямоугольник</td><td>S = a × b</td><td>3×4 = 12 см²</td></tr>
+            <tr><td>Прямоугол. треугольник</td><td>S = ½ × a × b</td><td>½×3×4 = 6 см²</td></tr>
+            <tr><td>Составная фигура</td><td>S = S₁ + S₂ + ...</td><td>12 + 6 = 18 см²</td></tr>
+          </table>
+          <div style="background:var(--accent-dim);padding:12px;border-radius:8px;margin-top:12px;">
+            <p style="margin:0;"><strong>Ключ:</strong> прямоугольный треугольник = половина прямоугольника с теми же сторонами.</p>
+          </div>`
+        },
+        {title:"Параллельные прямые и построение",content:`
+          <p style="margin-bottom:12px;"><strong>Параллельные прямые</strong> (AB ∥ CD): не пересекаются, расстояние d постоянно.</p>
+          <div style="display:flex;justify-content:center;margin:12px 0;">
+            <svg viewBox="0 0 240 80" width="240" height="80" aria-label="Параллельные прямые AB и CD">
+              <line x1="10" y1="20" x2="230" y2="20" stroke="#4dabf7" stroke-width="2"/>
+              <line x1="10" y1="60" x2="230" y2="60" stroke="#4dabf7" stroke-width="2"/>
+              <line x1="120" y1="20" x2="120" y2="60" stroke="#fcc419" stroke-width="1.5" stroke-dasharray="4,3"/>
+              <text x="4" y="18" fill="#e8e8f0" font-size="11" font-family="sans-serif">A</text>
+              <text x="224" y="18" fill="#e8e8f0" font-size="11" font-family="sans-serif">B</text>
+              <text x="4" y="58" fill="#e8e8f0" font-size="11" font-family="sans-serif">C</text>
+              <text x="224" y="58" fill="#e8e8f0" font-size="11" font-family="sans-serif">D</text>
+              <text x="125" y="43" fill="#fcc419" font-size="11" font-family="sans-serif">d</text>
+            </svg>
+          </div>
+          <p><strong>Построение треугольника (SAS):</strong> даны две стороны и угол между ними.</p>
+          <p style="color:var(--text-secondary);">Инструменты: линейка (стороны), транспортир (угол).</p>`
+        },
+        {title:"Решение исходной задачи раздела",content:`
+          <p style="margin-bottom:12px;">Задача из учебника: На рисунке S = 5 см (сторона). Клетки = 1 см.</p>
+          <p>Найти площадь участка = прямоугольник 25×40 − прямоугольник 8×30 − треугольник ½×25×40</p>
+          <div style="background:var(--accent-blue-dim);padding:16px;border-radius:10px;margin:12px 0;">
+            <p style="margin:0;"><strong>Метод разбиения:</strong><br>
+            1. Разбей на прямоугольники и прямоугольные треугольники.<br>
+            2. Найди площадь каждой части.<br>
+            3. Сложи (или вычти, если одна часть не входит в фигуру).</p>
+          </div>`
+        },
+        {title:"Ключевые формулы раздела",content:`
+          <div style="display:grid;gap:10px;">
+            <div style="background:var(--accent-dim);padding:12px;border-radius:8px;border-left:3px solid var(--accent);">
+              <strong>Биссектриса:</strong> ∠AOC = ∠COB = ½∠AOB
+            </div>
+            <div style="background:var(--accent-blue-dim);padding:12px;border-radius:8px;border-left:3px solid var(--accent-blue);">
+              <strong>Смежные:</strong> α + β = 180°
+            </div>
+            <div style="background:var(--accent-warm-dim);padding:12px;border-radius:8px;border-left:3px solid var(--accent-warm);">
+              <strong>Вертикальные:</strong> α = β
+            </div>
+            <div style="background:rgba(252,196,25,0.2);padding:12px;border-radius:8px;border-left:3px solid var(--warning);">
+              <strong>Площадь:</strong> S△ = ½ × a × b; S□ = a × b
+            </div>
+            <div style="background:var(--accent-dim);padding:12px;border-radius:8px;border-left:3px solid var(--accent);">
+              <strong>Параллельные:</strong> AB ∥ CD → d = const
+            </div>
+          </div>`
+        }
+      ];
+
+      const examples=[
+        {title:"Биссектриса + смежные углы",task:"Луч OC — биссектриса ∠AOB = 100°. Найдите ∠AOC и смежный с ним угол ∠AOC'.",sol:"<p>∠AOC = ½ × 100° = 50°.</p><p>Смежный с ∠AOC: 180° − 50° = <strong>130°</strong>.</p>"},
+        {title:"Площадь составной фигуры",task:"Фигура состоит из прямоугольника 6×4 см и прямоугольного треугольника с катетами 2 и 4 см. Найдите площадь.",sol:"<p>S_прямоугольника = 6 × 4 = 24 см²</p><p>S_треугольника = ½ × 2 × 4 = 4 см²</p><p>S_общая = 24 + 4 = <strong>28 см²</strong></p>"},
+        {title:"Параллельные прямые и перпендикуляр",task:"AB ∥ CD. Из точки M на AB опущен перпендикуляр MN на CD. MN = 7 см. Чему равно расстояние между прямыми?",sol:"<p>Расстояние между параллельными прямыми равно длине перпендикуляра.</p><p>d = MN = <strong>7 см</strong></p>"},
+        {title:"Вертикальные углы + площадь",task:"При пересечении прямых один угол = 60°. Найдите все четыре угла. Если эти углы — углы треугольника с катетами 4 и 3 см, найдите площадь.",sol:"<p>Углы: 60°, 120°, 60°, 120°. (Вертикальные равны, смежные дополняют до 180°.)</p><p>S = ½ × 4 × 3 = <strong>6 см²</strong></p>"},
+        {title:"Построение и расчёт",task:"Постройте треугольник ABC: AB = 5 см, AC = 6 см, ∠A = 50°. Затем найдите площадь прямоугольного треугольника с катетами 5 и 6 см.",sol:"<p>Построение по признаку SAS: откладываем AB=5 см, из A строим угол 50°, откладываем AC=6 см, соединяем B и C.</p><p>Площадь прямоугольного с катетами 5 и 6: S = ½ × 5 × 6 = <strong>15 см²</strong></p>"}
+      ];
+
+      const trainerQs=[
+        {q:"Биссектриса ∠AOB = 84°. Найдите ∠AOC.",a:42,hint:"∠AOC = 84° ÷ 2 = 42°."},
+        {q:"Смежный угол к 128°.",a:52,hint:"180° − 128° = 52°."},
+        {q:"Вертикальный угол к 67°.",a:67,hint:"Вертикальные углы равны."},
+        {q:"Катеты 6 и 8 см. S треугольника = ?",a:24,hint:"S = ½ × 6 × 8 = 24."},
+        {q:"Прямоугольник 7×4 + треугольник ½×3×4. S = ?",a:34,hint:"S=7×4+½×3×4=28+6=34."},
+        {q:"∠1 = 3x, ∠2 = x (смежные). ∠2 = ?",a:45,hint:"3x+x=180 → x=45."},
+        {q:"Расстояние между параллельными = 5 см. Перпендикуляр из любой точки = ?",a:5,hint:"Расстояние постоянно = 5."},
+        {q:"S = 36 см², a = 9 см. Катет b = ?",a:8,hint:"b = 2×36÷9 = 8."},
+        {q:"Два прямоугольника: 4×3 и 5×2. Общая S = ?",a:22,hint:"S=4×3+5×2=12+10=22."},
+        {q:"∠AOC = ∠COB. ∠AOB = 110°. ∠AOC = ?",a:55,hint:"110° ÷ 2 = 55°."}
+      ];
+
+      const questions=[
+        {q:"Биссектриса угла 70° делит его на угол:",o:["35°","70°","140°","17,5°"],a:0},
+        {q:"Смежные углы в сумме дают:",o:["90°","180°","270°","360°"],a:1},
+        {q:"Вертикальные углы:",o:["В сумме 180°","Равны","Смежные","Прямые"],a:1},
+        {q:"Формула площади прямоугольного треугольника:",o:["a×b","½×a×b","2(a+b)","a+b"],a:1},
+        {q:"Параллельные прямые:",o:["Пересекаются","Не пересекаются","Перпендикулярны","Совпадают"],a:1},
+        {q:"∠AOB = 90°, биссектриса OC. ∠AOC = ?",o:["90°","45°","30°","60°"],a:1},
+        {q:"∠1 = 55°. Смежный ∠2 = ?",o:["55°","125°","135°","145°"],a:1},
+        {q:"Катеты 4 и 5. S = ?",o:["20 см²","10 см²","9 см²","40 см²"],a:1},
+        {q:"Расстояние между параллельными — это:",o:["Произвольная длина","Длина перпендикуляра","Длина прямой","Угол между прямыми"],a:1},
+        {q:"При SAS для построения треугольника нужно:",o:["3 стороны","2 стороны и угол между ними","2 угла и сторона","3 угла"],a:1},
+        {q:"∠1 и ∠3 — вертикальные. ∠1 = 80°. ∠3 = ?",o:["100°","80°","40°","160°"],a:1},
+        {q:"Прямоугольник 5×3 + треугольник ½×2×3. S составной = ?",o:["18 см²","21 см²","15 см²","24 см²"],a:0},
+        {q:"Сумма всех 4 углов при пересечении двух прямых:",o:["180°","270°","360°","720°"],a:2},
+        {q:"S = 20 см², b = 8 см. Катет a = ?",o:["2,5 см","5 см","10 см","40 см"],a:1},
+        {q:"Биссектриса — это:",o:["Высота треугольника","Луч из вершины, делящий угол пополам","Медиана","Перпендикуляр"],a:1},
+        {q:"AB ∥ CD. Перпендикуляр MN = 9 см. Расстояние между AB и CD = ?",o:["9 м","18 см","4,5 см","9 см"],a:3},
+        {q:"∠AOC = 35°. OC — биссектриса ∠AOB. ∠AOB = ?",o:["35°","17,5°","70°","105°"],a:2},
+        {q:"Составная фигура: прямоугольник 6×2 + треугольник ½×4×2. S = ?",o:["16 см²","20 см²","12 см²","24 см²"],a:0},
+        {q:"Инструменты для построения треугольника по SAS:",o:["Только линейка","Линейка и циркуль","Линейка и транспортир","Только транспортир"],a:2},
+        {q:"Если один из смежных углов = 90°, то другой:",o:["45°","90°","180°","270°"],a:1},
+        {q:"Катеты 3 и 6. S = ?",o:["18 см²","9 см²","36 см²","6 см²"],a:1},
+        {q:"Вертикальные углы образуются при:",o:["Параллельных прямых","Пересечении двух прямых","Биссектрисе","Перпендикуляре"],a:1},
+        {q:"∠1 = 2x, ∠2 = x (смежные). ∠1 = ?",o:["60°","90°","120°","180°"],a:2},
+        {q:"Что постоянно для параллельных прямых?",o:["Угол пересечения","Расстояние между ними","Их длина","Точка пересечения"],a:1},
+        {q:"S прямоугольного треугольника = S прямоугольника × ?",o:["2","1","½","¼"],a:2},
+        {q:"OC — биссектриса ∠AOB. ∠COB = 40°. ∠AOB = ?",o:["20°","40°","80°","160°"],a:2},
+        {q:"Два прямоугольника: 3×3 и 4×4. Общая S = ?",o:["25 см²","49 см²","9+16=25 см²","144 см²"],a:2},
+        {q:"При пересечении двух прямых: ∠1 = 45°. Наибольший из 4 углов = ?",o:["45°","90°","135°","180°"],a:2},
+        {q:"S = 24 см², a = b. Каждый катет = ?",o:["4 см","6 см","8 см","12 см"],a:1},
+        {q:"∠1 = 5x − 10, ∠3 — вертикальный = 3x + 20. x = ?",o:["10","15","20","25"],a:1}
+      ];
+
+      function showSection(id){document.querySelectorAll("section").forEach(s=>s.classList.remove("active"));document.getElementById(id).classList.add("active");document.querySelectorAll(".nav-links a").forEach(a=>a.classList.remove("active"));document.querySelector('.nav-links a[data-section="'+id+'"]')?.classList.add("active");window.scrollTo(0,0);AppState.currentSection=id;}
+      document.querySelectorAll(".nav-links a").forEach(link=>{link.addEventListener("click",e=>{e.preventDefault();showSection(link.dataset.section);});});
+      let currentSlide=0,slideEls=[],slideTotal=0;
+      function renderSlide(){slideEls.forEach((s,i)=>s.classList.toggle("active",i===currentSlide));document.getElementById("slide-num").innerText=currentSlide+1;}
+      function nextSlide(){if(currentSlide<slideTotal-1){currentSlide++;renderSlide();}}
+      function prevSlide(){if(currentSlide>0){currentSlide--;renderSlide();}}
+      function toggleSolution(id){const el=document.getElementById(id);el.classList.toggle("active");el.previousElementSibling.textContent=el.classList.contains("active")?"Скрыть решение":"Показать решение";}
+      let trainerOrder=0;
+      function newTrainerProblem(){AppState.trainer.current=trainerQs[trainerOrder%trainerQs.length];trainerOrder++;document.getElementById("trainer-question").textContent=AppState.trainer.current.q;document.getElementById("trainer-answer").value="";document.getElementById("trainer-feedback").innerHTML="";document.getElementById("trainer-hint").style.display="none";document.getElementById("trainer-check-btn").disabled=false;}
+      function showTrainerHint(){if(!AppState.trainer.current)return;document.getElementById("trainer-hint").style.display="block";document.getElementById("trainer-hint").textContent="💡 "+AppState.trainer.current.hint;}
+      function checkTrainer(){if(!AppState.trainer.current)return;const val=parseFloat(document.getElementById("trainer-answer").value.trim().replace(",","."));const ok=!isNaN(val)&&Math.abs(val-AppState.trainer.current.a)<0.1;AppState.trainer.total++;if(ok){AppState.trainer.correct++;AppState.trainer.streak++;document.getElementById("trainer-feedback").innerHTML='<div style="color:var(--success);font-weight:700;">✓ Верно! Ответ: '+AppState.trainer.current.a+'</div>';}else{AppState.trainer.streak=0;document.getElementById("trainer-feedback").innerHTML='<div style="color:var(--error);font-weight:700;">✗ Правильный: '+AppState.trainer.current.a+'</div>';}document.getElementById("trainer-correct").textContent=AppState.trainer.correct;document.getElementById("trainer-total").textContent=AppState.trainer.total;document.getElementById("trainer-streak").textContent=AppState.trainer.streak;document.getElementById("trainer-check-btn").disabled=true;}
+      function startDiagnostic(){AppState.mode="diagnostic";AppState.diagnostic={current:0,score:0,answers:[]};document.getElementById("diagnostic-ui").style.display="block";document.getElementById("timeattack-ui").style.display="none";document.getElementById("results-ui").style.display="none";document.getElementById("diag-total").textContent=questions.length;renderDiagnostic();}
+      function renderDiagnostic(){const q=questions[AppState.diagnostic.current];document.getElementById("diag-current").textContent=AppState.diagnostic.current+1;document.getElementById("diag-score").textContent=AppState.diagnostic.score+" правильных";document.getElementById("diag-progress").style.width=((AppState.diagnostic.current+1)/questions.length*100)+"%";document.getElementById("diag-question").textContent=q.q;const od=document.getElementById("diag-options");od.innerHTML="";q.o.forEach((opt,i)=>{const div=document.createElement("div");div.className="quiz-option";div.innerHTML='<div class="option-letter">'+String.fromCharCode(65+i)+"</div><div>"+opt+"</div>";div.onclick=()=>selectDiagnostic(i);od.appendChild(div);});document.getElementById("diag-explanation").style.display="none";document.getElementById("diag-prev").disabled=AppState.diagnostic.current===0;document.getElementById("diag-next").disabled=true;}
+      function selectDiagnostic(idx){if(!document.getElementById("diag-next").disabled)return;const q=questions[AppState.diagnostic.current];const ok=idx===q.a;if(ok)AppState.diagnostic.score++;AppState.diagnostic.answers[AppState.diagnostic.current]=idx;document.querySelectorAll("#diag-options .quiz-option").forEach((opt,i)=>{opt.classList.add("disabled");if(i===q.a)opt.classList.add("correct");else if(i===idx&&!ok)opt.classList.add("wrong");});document.getElementById("diag-explanation").innerHTML="<strong>"+(ok?"✓ Верно!":"✗ Неверно.")+"</strong> Правильный: "+q.o[q.a];document.getElementById("diag-explanation").style.display="block";document.getElementById("diag-next").disabled=false;}
+      function nextDiagnostic(){if(AppState.diagnostic.current<questions.length-1){AppState.diagnostic.current++;renderDiagnostic();}else showResults(AppState.diagnostic.score,questions.length,0,"diagnostic");}
+      function prevDiagnostic(){if(AppState.diagnostic.current>0){AppState.diagnostic.current--;renderDiagnostic();}}
+      function startTimeAttack(){AppState.mode="timeattack";AppState.timeAttack={current:0,score:0,timer:null,timeLeft:600,startTime:Date.now(),answers:[]};document.getElementById("diagnostic-ui").style.display="none";document.getElementById("timeattack-ui").style.display="block";document.getElementById("results-ui").style.display="none";document.getElementById("ta-timer").className="timer";renderTimeAttack();if(AppState.timeAttack.timer)clearInterval(AppState.timeAttack.timer);AppState.timeAttack.timer=setInterval(()=>{AppState.timeAttack.timeLeft--;const m=Math.floor(AppState.timeAttack.timeLeft/60),s=AppState.timeAttack.timeLeft%60;const el=document.getElementById("ta-timer");el.textContent=m+":"+s.toString().padStart(2,"0");if(AppState.timeAttack.timeLeft<=60)el.className="timer danger";else if(AppState.timeAttack.timeLeft<=180)el.className="timer warning";if(AppState.timeAttack.timeLeft<=0)finishTimeAttack();},1000);}
+      function renderTimeAttack(){const q=questions[AppState.timeAttack.current];document.getElementById("ta-current").textContent=AppState.timeAttack.current+1;document.getElementById("ta-progress").style.width=((AppState.timeAttack.current+1)/questions.length*100)+"%";document.getElementById("ta-question").textContent=q.q;const od=document.getElementById("ta-options");od.innerHTML="";q.o.forEach((opt,i)=>{const div=document.createElement("div");div.className="quiz-option";div.innerHTML='<div class="option-letter">'+String.fromCharCode(65+i)+"</div><div>"+opt+"</div>";div.onclick=()=>selectTimeAttack(i);od.appendChild(div);});document.getElementById("ta-next").disabled=true;}
+      function selectTimeAttack(idx){if(!document.getElementById("ta-next").disabled)return;const q=questions[AppState.timeAttack.current];if(idx===q.a)AppState.timeAttack.score++;AppState.timeAttack.answers[AppState.timeAttack.current]=idx;document.querySelectorAll("#ta-options .quiz-option").forEach((opt,i)=>{opt.classList.add("disabled");if(i===q.a)opt.classList.add("correct");else if(i===idx&&idx!==q.a)opt.classList.add("wrong");});document.getElementById("ta-next").disabled=false;}
+      function nextTimeAttack(){if(AppState.timeAttack.current<questions.length-1){AppState.timeAttack.current++;renderTimeAttack();}else finishTimeAttack();}
+      function finishTimeAttack(){clearInterval(AppState.timeAttack.timer);showResults(AppState.timeAttack.score,questions.length,Math.floor((Date.now()-AppState.timeAttack.startTime)/1000),"timeattack");}
+      function showResults(score,total,timeSpent,mode){document.getElementById("diagnostic-ui").style.display="none";document.getElementById("timeattack-ui").style.display="none";document.getElementById("results-ui").style.display="block";const percent=Math.round(score/total*100);const m=Math.floor(timeSpent/60),s=timeSpent%60;let mastery=percent>=90?"Эксперт":percent>=70?"Продвинутый":percent>=50?"Средний":"Начальный";let msg=percent>=90?"🏆 Отлично! Раздел освоен!":percent>=70?"🥈 Хорошо!":percent>=50?"🥉 Удовлетворительно.":"💪 Повторите раздел.";document.getElementById("result-circle").style.setProperty("--score",percent);document.getElementById("result-percent").textContent=percent+"%";document.getElementById("result-message").textContent=msg;document.getElementById("result-correct").textContent=score;document.getElementById("result-wrong").textContent=total-score;document.getElementById("result-time").textContent=mode==="diagnostic"?"—":m+":"+s.toString().padStart(2,"0");document.getElementById("result-mastery").textContent=mastery;}
+      function resetAssessment(){document.getElementById("results-ui").style.display="none";if(AppState.mode==="diagnostic")startDiagnostic();else startTimeAttack();}
+      document.addEventListener("DOMContentLoaded",()=>{
+        const track=document.getElementById("track-slides");
+        slides.forEach((s,i)=>{const div=document.createElement("div");div.className="widget-slide"+(i===0?" active":"");div.innerHTML="<h3>"+s.title+'</h3><div style="color:var(--text-secondary);line-height:1.8;margin-top:12px;">'+s.content+"</div>";track.appendChild(div);});
+        slideEls=track.querySelectorAll(".widget-slide");slideTotal=slideEls.length;document.getElementById("slide-total").textContent=slideTotal;renderSlide();
+        const ec=document.getElementById("examples-container");
+        examples.forEach((ex,i)=>{const card=document.createElement("div");card.className="problem-card";card.innerHTML='<div class="problem-header"><span class="problem-number">№ '+(i+1)+'</span><span class="problem-type">'+ex.title+'</span></div><div class="problem-text">'+ex.task+'</div><button class="solution-btn" onclick="toggleSolution(\'sol-'+i+'\')">Показать решение</button><div class="solution" id="sol-'+i+'">'+ex.sol+'</div>';ec.appendChild(card);});
+        newTrainerProblem();
+      });
+    </script>
+  </body>
+</html>

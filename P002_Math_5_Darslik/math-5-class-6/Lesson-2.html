@@ -1,0 +1,906 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Урок 6-2 — Равные фигуры. Углы</title>
+  <style>
+    :root {
+      --bg-dark: #0f0f1a;
+      --bg-card: rgba(255, 255, 255, 0.05);
+      --bg-glass: rgba(255, 255, 255, 0.08);
+      --border-glass: rgba(255, 255, 255, 0.15);
+      --text-primary: #e8e8f0;
+      --text-secondary: #a0a0b8;
+      --accent: #00d4aa;
+      --accent-dim: rgba(0, 212, 170, 0.2);
+      --accent-warm: #ff6b6b;
+      --accent-warm-dim: rgba(255, 107, 107, 0.2);
+      --accent-blue: #4dabf7;
+      --accent-blue-dim: rgba(77, 171, 247, 0.2);
+      --accent-purple: #a78bfa;
+      --accent-purple-dim: rgba(167, 139, 250, 0.2);
+      --success: #51cf66;
+      --error: #ff6b6b;
+      --warning: #fcc419;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+      background: var(--bg-dark);
+      color: var(--text-primary);
+      min-height: 100vh;
+      overflow-x: hidden;
+      line-height: 1.6;
+    }
+    .bg-animation {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;
+      background:
+        radial-gradient(ellipse at 20% 20%, rgba(0, 212, 170, 0.08) 0%, transparent 50%),
+        radial-gradient(ellipse at 80% 80%, rgba(77, 171, 247, 0.08) 0%, transparent 50%),
+        radial-gradient(ellipse at 50% 50%, rgba(167, 139, 250, 0.05) 0%, transparent 60%);
+    }
+    .bg-animation::before {
+      content: ""; position: absolute; width: 200%; height: 200%; top: -50%; left: -50%;
+      background: repeating-linear-gradient(0deg, transparent, transparent 40px, rgba(255,255,255,0.02) 40px, rgba(255,255,255,0.02) 41px);
+      animation: bgMove 20s linear infinite;
+    }
+    @keyframes bgMove { 0% { transform: translateY(0); } 100% { transform: translateY(40px); } }
+
+    nav {
+      position: fixed; top: 0; left: 0; right: 0;
+      background: rgba(15, 15, 26, 0.85);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border-glass);
+      z-index: 1000; padding: 0 20px;
+    }
+    .nav-container {
+      max-width: 1200px; margin: 0 auto;
+      display: flex; justify-content: space-between; align-items: center; height: 60px;
+    }
+    .logo {
+      font-size: 1.3rem; font-weight: 700;
+      background: linear-gradient(135deg, var(--accent), var(--accent-blue));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text; text-decoration: none;
+    }
+    .nav-links { display: flex; gap: 8px; list-style: none; align-items: center; }
+    .nav-links a, .lang-btn {
+      color: var(--text-secondary); text-decoration: none; padding: 8px 16px;
+      border-radius: 8px; transition: all 0.3s; font-size: 0.9rem; font-weight: 500;
+      cursor: pointer; border: none; background: transparent;
+    }
+    .nav-links a:hover, .nav-links a.active, .lang-btn:hover {
+      color: var(--text-primary); background: var(--bg-glass);
+    }
+    .nav-links a.active { background: var(--accent-dim); color: var(--accent); }
+    .lang-btn { border: 1px solid var(--border-glass); margin-left: 8px; }
+
+    section {
+      display: none; opacity: 0; padding: 78px 20px 32px;
+      max-width: 1000px; margin: 0 auto; transition: opacity 0.3s ease;
+    }
+    section.active { display: block; opacity: 1; animation: fadeIn 0.5s ease; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+    .card {
+      background: var(--bg-card); backdrop-filter: blur(20px);
+      border: 1px solid var(--border-glass); border-radius: 20px;
+      padding: 24px; margin-bottom: 16px; transition: transform 0.3s, box-shadow 0.3s;
+    }
+    .card:hover { transform: translateY(-2px); box-shadow: 0 20px 40px rgba(0,0,0,0.3); }
+    .card-title {
+      font-size: 1.5rem; font-weight: 700; margin-bottom: 16px;
+      display: flex; align-items: center; gap: 12px;
+    }
+    .card-title .icon {
+      width: 40px; height: 40px; border-radius: 12px;
+      display: flex; align-items: center; justify-content: center; font-size: 1.3rem;
+    }
+
+    .hero { text-align: center; padding: 140px 20px 80px; }
+    .hero h1 {
+      font-size: 3rem; font-weight: 800; margin-bottom: 20px; line-height: 1.2;
+      background: linear-gradient(135deg, var(--accent), var(--accent-blue), var(--accent-purple));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    }
+    .hero p { font-size: 1.2rem; color: var(--text-secondary); max-width: 600px; margin: 0 auto 40px; }
+    .btn {
+      display: inline-flex; align-items: center; gap: 8px; padding: 14px 32px;
+      border-radius: 12px; border: none; font-size: 1rem; font-weight: 600;
+      cursor: pointer; transition: all 0.3s; text-decoration: none;
+    }
+    .btn-primary {
+      background: linear-gradient(135deg, var(--accent), var(--accent-blue)); color: #000;
+    }
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 10px 30px var(--accent-dim); }
+    .btn-secondary {
+      background: var(--bg-glass); color: var(--text-primary); border: 1px solid var(--border-glass);
+    }
+    .btn-secondary:hover { background: var(--bg-card); }
+    .btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none !important; }
+
+    .generate-widget {
+      background: var(--bg-card); border: 1px solid var(--border-glass);
+      border-radius: 20px; padding: 14px; width: 100%;
+    }
+    .widget-progress { text-align: center; font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 12px; }
+    .widget-slide { display: none; padding: 12px 16px; animation: slideFade 0.3s ease; }
+    .widget-slide.active { display: block; }
+    @keyframes slideFade { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+    .widget-slide h3 { font-size: 1.3rem; color: var(--accent); margin-bottom: 16px; }
+    .widget-slide p, .widget-slide li { color: var(--text-secondary); line-height: 1.8; margin-bottom: 12px; }
+    .widget-slide .big-math {
+      font-size: 1.6rem; text-align: center; margin: 20px 0;
+      background: var(--bg-glass); padding: 20px; border-radius: 12px;
+      font-weight: 600; color: var(--text-primary);
+    }
+    .widget-nav { display: flex; justify-content: space-between; align-items: center; margin-top: 16px; }
+
+    .fig-box {
+      width: 100%; display: flex; justify-content: center; 
+      padding: 20px; background: rgba(255,255,255,0.03); border-radius: 15px; margin: 15px 0;
+    }
+    .fig-svg { max-width: 300px; height: auto; stroke: var(--accent); stroke-width: 2; fill: var(--accent-dim); }
+
+    .sequence-component { display: flex; flex-direction: column; gap: 20px; position: relative; }
+    .sequence-step {
+      background: var(--bg-card); border: 1px solid var(--border-glass);
+      border-radius: 16px; padding: 24px 24px 24px 72px; position: relative; transition: all 0.3s;
+    }
+    .sequence-step:hover { border-color: var(--accent); transform: translateX(4px); }
+    .sequence-number {
+      position: absolute; left: 20px; top: 20px; width: 40px; height: 40px;
+      background: var(--accent); color: #000; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 800; font-size: 1.1rem;
+    }
+    .sequence-connector {
+      position: absolute; left: 39px; top: 60px; bottom: -30px; width: 2px;
+      background: var(--accent-dim); z-index: 0;
+    }
+    .sequence-step:last-child .sequence-connector { display: none; }
+    .sequence-step h4 { color: var(--text-primary); margin-bottom: 8px; font-size: 1.1rem; }
+    .sequence-step p { color: var(--text-secondary); line-height: 1.7; }
+
+    .tip-box {
+      background: var(--accent-blue-dim); border-left: 4px solid var(--accent-blue);
+      padding: 16px 20px; border-radius: 0 12px 12px 0; margin: 16px 0;
+    }
+    .warning-box {
+      background: var(--accent-warm-dim); border-left: 4px solid var(--accent-warm);
+      padding: 16px 20px; border-radius: 0 12px 12px 0; margin: 16px 0;
+    }
+
+    .problem-card {
+      background: var(--bg-card); border: 1px solid var(--border-glass);
+      border-radius: 16px; padding: 24px; margin-bottom: 20px;
+    }
+    .problem-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 8px; }
+    .problem-number { background: var(--accent-dim); color: var(--accent); padding: 4px 12px; border-radius: 20px; font-size: 0.85rem; font-weight: 600; }
+    .problem-type { color: var(--text-secondary); font-size: 0.85rem; }
+    .problem-text { font-size: 1.1rem; margin-bottom: 16px; line-height: 1.8; }
+    .solution-btn {
+      background: var(--accent-dim); color: var(--accent); border: 1px solid var(--accent);
+      padding: 10px 20px; border-radius: 8px; cursor: pointer; font-weight: 600; transition: all 0.3s;
+    }
+    .solution-btn:hover { background: var(--accent); color: #000; }
+    .solution { display: none; margin-top: 20px; padding: 20px; background: rgba(0,212,170,0.05); border-left: 3px solid var(--accent); border-radius: 0 12px 12px 0; }
+    .solution.active { display: block; animation: slideDown 0.3s ease; }
+    @keyframes slideDown { from { opacity: 0; max-height: 0; } to { opacity: 1; max-height: 1000px; } }
+    .solution-step { margin-bottom: 12px; padding: 8px 0; border-bottom: 1px solid var(--border-glass); }
+    .solution-step:last-child { border-bottom: none; }
+
+    .quiz-container { background: var(--bg-card); border: 1px solid var(--border-glass); border-radius: 20px; padding: 32px; }
+    .quiz-progress { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; flex-wrap: wrap; gap: 8px; }
+    .progress-bar { flex: 1; height: 8px; background: var(--bg-glass); border-radius: 4px; margin: 0 16px; overflow: hidden; min-width: 100px; }
+    .progress-fill { height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent-blue)); border-radius: 4px; transition: width 0.5s ease; width: 0%; }
+    .quiz-question { font-size: 1.2rem; margin-bottom: 24px; padding: 20px; background: var(--bg-glass); border-radius: 12px; border-left: 4px solid var(--accent); }
+    .quiz-options { display: grid; gap: 12px; }
+    .quiz-option {
+      background: var(--bg-glass); border: 2px solid var(--border-glass); border-radius: 12px;
+      padding: 16px 20px; cursor: pointer; transition: all 0.3s; display: flex; align-items: center; gap: 12px;
+    }
+    .quiz-option:hover:not(.disabled) { border-color: var(--accent); background: var(--accent-dim); }
+    .quiz-option.correct { border-color: var(--success); background: rgba(81,207,102,0.15); }
+    .quiz-option.wrong { border-color: var(--error); background: rgba(255,107,107,0.15); }
+    .quiz-option.disabled { pointer-events: none; opacity: 0.9; }
+    .option-letter { width: 32px; height: 32px; border-radius: 8px; background: var(--bg-card); display: flex; align-items: center; justify-content: center; font-weight: 700; flex-shrink: 0; }
+    .quiz-nav { display: flex; justify-content: space-between; margin-top: 24px; }
+
+    .stat { background: var(--bg-glass); padding: 12px 24px; border-radius: 12px; text-align: center; min-width: 100px; border: 1px solid var(--border-glass); }
+    .stat-value { font-size: 1.5rem; font-weight: 700; color: var(--accent); }
+    .stat-label { font-size: 0.85rem; color: var(--text-secondary); }
+
+    .timer {
+      position: fixed; top: 80px; right: 20px; background: var(--bg-card);
+      backdrop-filter: blur(20px); border: 1px solid var(--border-glass);
+      border-radius: 16px; padding: 16px 24px; font-size: 1.3rem; font-weight: 700;
+      font-variant-numeric: tabular-nums; z-index: 999; box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    }
+    .timer.warning { border-color: var(--warning); color: var(--warning); animation: pulse 1s infinite; }
+    .timer.danger { border-color: var(--error); color: var(--error); animation: pulse 0.5s infinite; }
+    @keyframes pulse { 0%,100% { transform: scale(1); } 50% { transform: scale(1.05); } }
+
+    .results-container { text-align: center; padding: 40px; }
+    .score-circle {
+      width: 200px; height: 200px; border-radius: 50%; margin: 0 auto 32px;
+      display: flex; align-items: center; justify-content: center; position: relative;
+      background: conic-gradient(var(--accent) calc(var(--score) * 3.6deg), var(--bg-glass) 0);
+    }
+    .score-circle::before { content: ""; position: absolute; width: 170px; height: 170px; background: var(--bg-dark); border-radius: 50%; }
+    .score-value { position: relative; font-size: 3rem; font-weight: 800; color: var(--accent); }
+    .score-label { font-size: 1.2rem; color: var(--text-secondary); margin-bottom: 8px; }
+    .score-message { font-size: 1.5rem; font-weight: 700; margin-bottom: 32px; }
+    .results-breakdown { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 16px; max-width: 600px; margin: 0 auto 32px; }
+    .breakdown-item { background: var(--bg-glass); padding: 16px; border-radius: 12px; }
+    .breakdown-value { font-size: 1.5rem; font-weight: 700; color: var(--accent); }
+    .breakdown-label { font-size: 0.85rem; color: var(--text-secondary); }
+
+    .lang-az { display: none; }
+    body.az .lang-ru { display: none; }
+    body.az .lang-az { display: inline; }
+    body.az .lang-az-block { display: block; }
+    body.az .lang-ru-block { display: none; }
+
+    .trainer-stats { display: flex; gap: 12px; justify-content: center; margin-bottom: 16px; flex-wrap: wrap; }
+
+    @media (max-width: 768px) {
+      .hero h1 { font-size: 2rem; }
+      .nav-links { display: none; }
+      .timer { top: 70px; right: 10px; font-size: 1rem; padding: 10px 16px; }
+      .card { padding: 16px; }
+      section { padding: 70px 12px 24px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="bg-animation"></div>
+
+  <nav>
+    <div class="nav-container">
+      <a href="javascript:void(0)" class="logo" onclick="showSection('home'); return false;">📐 Урок 6-2</a>
+      <ul class="nav-links">
+        <li><a href="javascript:void(0)" class="active" data-section="home" onclick="showSection('home'); return false;"><span class="lang-ru">Главная</span><span class="lang-az">Ana səhifə</span></a></li>
+        <li><a href="javascript:void(0)" data-section="theory" onclick="showSection('theory'); return false;"><span class="lang-ru">Теория</span><span class="lang-az">Nəzəriyyə</span></a></li>
+        <li><a href="javascript:void(0)" data-section="didactic" onclick="showSection('didactic'); return false;"><span class="lang-ru">Дидактика</span><span class="lang-az">Didaktika</span></a></li>
+        <li><a href="javascript:void(0)" data-section="algorithm" onclick="showSection('algorithm'); return false;"><span class="lang-ru">Алгоритм</span><span class="lang-az">Alqoritm</span></a></li>
+        <li><a href="javascript:void(0)" data-section="examples" onclick="showSection('examples'); return false;"><span class="lang-ru">Примеры</span><span class="lang-az">Nümunələr</span></a></li>
+        <li><a href="javascript:void(0)" data-section="trainer" onclick="showSection('trainer'); return false;"><span class="lang-ru">Тренажёр</span><span class="lang-az">Trenajor</span></a></li>
+        <li><a href="javascript:void(0)" data-section="assessment" onclick="showSection('assessment'); return false;"><span class="lang-ru">Аттестация</span><span class="lang-az">Attestasiya</span></a></li>
+        <li><button class="lang-btn" onclick="toggleLang(); return false;">🇦🇿 AZ / RU 🇷🇺</button></li>
+      </ul>
+    </div>
+  </nav>
+
+  <section id="home" class="active">
+    <div class="hero">
+      <h1>
+        <span class="lang-ru">Равные фигуры. Смежные и вертикальные углы</span>
+        <span class="lang-az">Bərabər fiqurlar. Qonşu və qarşılıqlı bucaqlar</span>
+      </h1>
+      <p>
+        <span class="lang-ru">Урок 6-2. Конгруэнтность, измерение и построение углов, смежные и вертикальные углы. Полное управление состоянием и рандомизация для тестов.</span>
+        <span class="lang-az">Dərs 6-2. Konqruentlik, bucaqların ölçülməsi və qurulması, qonşu və qarşılıqlı bucaqlar.</span>
+      </p>
+      <div style="display: flex; gap: 16px; justify-content: center; flex-wrap: wrap;">
+        <button class="btn btn-primary" onclick="showSection('theory')"><span class="lang-ru">Начать обучение</span><span class="lang-az">Öyrənməyə başla</span></button>
+        <button class="btn btn-secondary" onclick="showSection('assessment')"><span class="lang-ru">Проверить знания</span><span class="lang-az">Bilikləri yoxla</span></button>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">
+        <span class="icon" style="background: var(--accent-dim)">🎯</span>
+        <span class="lang-ru">Что вы изучите</span><span class="lang-az">Nə öyrənəcəksiniz</span>
+      </div>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 20px;">
+        <div class="card" style="padding: 20px">
+          <h3 style="color: var(--accent); margin-bottom: 8px"><span class="lang-ru">Равные фигуры</span><span class="lang-az">Bərabər fiqurlar</span></h3>
+          <p style="color: var(--text-secondary)"><span class="lang-ru">Определение, наложение, конгруэнтность (≅).</span><span class="lang-az">Tərif, üst-üstə qoyma, konqruentlik (≅).</span></p>
+        </div>
+        <div class="card" style="padding: 20px">
+          <h3 style="color: var(--accent-blue); margin-bottom: 8px"><span class="lang-ru">Углы</span><span class="lang-az">Bucaqlar</span></h3>
+          <p style="color: var(--text-secondary)"><span class="lang-ru">Смежные (180°), вертикальные (равны).</span><span class="lang-az">Qonşu (180°), qarşılıqlı (bərabər).</span></p>
+        </div>
+        <div class="card" style="padding: 20px">
+          <h3 style="color: var(--accent-warm); margin-bottom: 8px"><span class="lang-ru">Практика и Архитектура</span><span class="lang-az">Praktika və Memarlıq</span></h3>
+          <p style="color: var(--text-secondary)"><span class="lang-ru">Применение углов в дизайне и расчетах.</span><span class="lang-az">Dizayn və hesablamalarda bucaqların tətbiqi.</span></p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="theory">
+    <div class="card">
+      <div class="card-title">
+        <span class="icon" style="background: var(--accent-dim)">📖</span>
+        <span class="lang-ru">Глава 1. Визуальная теория</span><span class="lang-az">Fəsil 1. Vizual nəzəriyyə</span>
+      </div>
+      <div class="generate-widget">
+        <div class="widget-progress">
+          <span class="lang-ru">Слайд</span><span class="lang-az">Slayd</span>
+          <span id="slide-num">1</span> / <span id="slide-total">10</span>
+        </div>
+        <div id="track-slides"></div>
+        <div class="widget-nav">
+          <button class="btn btn-secondary" onclick="prevSlide()" id="slide-prev">← <span class="lang-ru">Назад</span><span class="lang-az">Geri</span></button>
+          <button class="btn btn-primary" onclick="nextSlide()" id="slide-next"><span class="lang-ru">Вперёд</span><span class="lang-az">İrəli</span> →</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="didactic">
+    <div class="card">
+      <div class="card-title">
+        <span class="icon" style="background: var(--accent-purple-dim)">🏛️</span>
+        <span class="lang-ru">Глава 0. Связь с реальностью (Дидактика)</span><span class="lang-az">Fəsil 0. Reallıqla əlaqə (Didaktika)</span>
+      </div>
+      <p style="color: var(--text-secondary); margin-bottom: 20px">
+        <span class="lang-ru">Где математика встречается с архитектурой и физикой. Зачем нам знать свойства углов?</span>
+        <span class="lang-az">Riyaziyyatın memarlıq və fizika ilə kəsişdiyi yer. Bucaqların xassələrini nə üçün bilməliyik?</span>
+      </p>
+      
+      <div class="sequence-component">
+        <div class="sequence-step">
+          <div class="sequence-number">📐</div>
+          <h4><span class="lang-ru">Мостостроение (Конгруэнтные фермы)</span><span class="lang-az">Körpü tikintisi (Konqruent fermalar)</span></h4>
+          <p><span class="lang-ru">Для равномерного распределения нагрузки инженеры используют конгруэнтные треугольники. Равные стороны и углы гарантируют, что мост не деформируется под весом поездов.</span><span class="lang-az">Yükün bərabər paylanması üçün mühəndislər konqruent üçbucaqlardan istifadə edirlər. Bərabər tərəflər və bucaqlar körpünün deformasiyaya uğramayacağına zəmanət verir.</span></p>
+          <div class="fig-box">
+             <svg class="fig-svg" viewBox="0 0 200 60">
+                <line x1="10" y1="50" x2="190" y2="50" stroke="var(--text-secondary)" stroke-width="2"/>
+                <line x1="10" y1="10" x2="190" y2="10" stroke="var(--text-secondary)" stroke-width="2"/>
+                <polygon points="10,50 40,10 70,50" fill="none" stroke="var(--accent)" stroke-width="2"/>
+                <polygon points="70,50 100,10 130,50" fill="none" stroke="var(--accent-blue)" stroke-width="2"/>
+                <polygon points="130,50 160,10 190,50" fill="none" stroke="var(--accent-purple)" stroke-width="2"/>
+             </svg>
+          </div>
+        </div>
+        <div class="sequence-step">
+          <div class="sequence-number">💡</div>
+          <h4><span class="lang-ru">Оптика и Отражение (Биссектрисы)</span><span class="lang-az">Optika və İşıq Qayıtması (Tənbülənlər)</span></h4>
+          <p><span class="lang-ru">В физике угол падения света равен углу отражения. Нормаль (перпендикуляр к зеркалу) является биссектрисой угла, образованного падающим и отраженным лучами.</span><span class="lang-az">Fizikada işığın düşmə bucağı qayıtma bucağına bərabərdir. Normal xətt (güzgüyə perpendikulyar) düşən və qayıdan şüaların əmələ gətirdiyi bucağın tənbülənidir.</span></p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="algorithm">
+    <div class="card">
+      <div class="card-title">
+        <span class="icon" style="background: var(--accent-blue-dim)">🪜</span>
+        <span class="lang-ru">Глава 2. Алгоритм решения</span><span class="lang-az">Fəsil 2. Həlli alqoritmi</span>
+      </div>
+      <div class="sequence-component">
+        <div class="sequence-step">
+          <div class="sequence-number">1</div><div class="sequence-connector"></div>
+          <h4><span class="lang-ru">Понять условие</span><span class="lang-az">Şərti başa düş</span></h4>
+        </div>
+        <div class="sequence-step">
+          <div class="sequence-number">2</div><div class="sequence-connector"></div>
+          <h4><span class="lang-ru">Сделать чертёж</span><span class="lang-az">Çertyoj çəkin</span></h4>
+        </div>
+        <div class="sequence-step">
+          <div class="sequence-number">3</div><div class="sequence-connector"></div>
+          <h4><span class="lang-ru">Выбрать свойство (180° или Равенство)</span><span class="lang-az">Xassəni seçin (180° və ya Bərabərlik)</span></h4>
+        </div>
+        <div class="sequence-step">
+          <div class="sequence-number">4</div>
+          <h4><span class="lang-ru">Составить и решить уравнение</span><span class="lang-az">Tənlik tərtib et və həll et</span></h4>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="examples">
+    <div class="card">
+      <div class="card-title">
+        <span class="icon" style="background: var(--accent-dim)">📝</span>
+        <span class="lang-ru">Глава 3. Разбор задач</span><span class="lang-az">Fəsil 3. Məsələlərin təhlili</span>
+      </div>
+    </div>
+    <div id="examples-container"></div>
+  </section>
+
+  <section id="trainer">
+    <div class="card">
+      <div class="card-title">
+        <span class="icon" style="background: var(--accent-dim)">🏋️</span>
+        <span class="lang-ru">Глава 4. Тренажёр</span><span class="lang-az">Fəsil 4. Trenajor</span>
+      </div>
+      <div class="trainer-stats" id="trainer-stats"></div>
+      <div class="quiz-container" style="margin-bottom: 20px">
+        <div id="trainer-question" style="font-size: 1.3rem; text-align: center; margin-bottom: 24px; padding: 24px; background: var(--bg-glass); border-radius: 12px;"></div>
+        <div style="display: flex; gap: 12px; margin-bottom: 20px;">
+          <input type="text" id="trainer-answer" placeholder="..." onkeydown="if(event.key==='Enter')checkTrainer()" style="flex: 1; padding: 14px 16px; background: var(--bg-glass); border: 2px solid var(--border-glass); border-radius: 12px; color: var(--text-primary); font-size: 1rem; outline: none;" />
+          <button class="btn btn-primary" onclick="checkTrainer()" id="trainer-check-btn"><span class="lang-ru">Проверить</span><span class="lang-az">Yoxla</span></button>
+        </div>
+        <div id="trainer-feedback" style="min-height: 40px; margin-bottom: 16px;"></div>
+        <div style="display: flex; gap: 12px; justify-content: center;">
+          <button class="btn btn-secondary" onclick="newTrainerProblem()" id="trainer-new-btn"><span class="lang-ru">Новая задача</span><span class="lang-az">Yeni məsələ</span></button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="assessment">
+    <div id="assessment-menu">
+      <div class="card">
+        <div class="card-title">
+          <span class="icon" style="background: var(--accent-blue-dim)">🧪</span>
+          <span class="lang-ru">Глава 5. Аттестация</span><span class="lang-az">Fəsil 5. Attestasiya</span>
+        </div>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
+          <div class="card" style="padding: 24px; text-align: center">
+            <div style="font-size: 3rem; margin-bottom: 12px">🔍</div>
+            <h3 style="margin-bottom: 8px"><span class="lang-ru">Диагностический тест</span><span class="lang-az">Diaqnostik test</span></h3>
+            <button class="btn btn-primary" onclick="startDiagnostic()"><span class="lang-ru">Начать тест</span><span class="lang-az">Testə başla</span></button>
+          </div>
+          <div class="card" style="padding: 24px; text-align: center">
+            <div style="font-size: 3rem; margin-bottom: 12px">⏱️</div>
+            <h3 style="margin-bottom: 8px"><span class="lang-ru">Скоростная викторина</span><span class="lang-az">Sürətli viktorina</span></h3>
+            <button class="btn btn-primary" onclick="startTimeAttack()"><span class="lang-ru">Начать викторину</span><span class="lang-az">Viktorinaya başla</span></button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="diagnostic-ui" style="display: none">
+      <div class="card">
+        <div class="card-title">
+          <span class="icon" style="background: var(--accent-blue-dim)">🔍</span>
+          <span class="lang-ru">Диагностический тест</span><span class="lang-az">Diaqnostik test</span>
+        </div>
+      </div>
+      <div class="quiz-container">
+        <div class="quiz-progress">
+          <span><span class="lang-ru">Вопрос</span><span class="lang-az">Sual</span> <span id="diag-current">1</span> / <span id="diag-total">30</span></span>
+          <div class="progress-bar"><div class="progress-fill" id="diag-progress"></div></div>
+          <span id="diag-score">0 <span class="lang-ru">правильных</span><span class="lang-az">düzgün</span></span>
+        </div>
+        <div class="quiz-question" id="diag-question"></div>
+        <div class="quiz-options" id="diag-options"></div>
+        <div class="quiz-nav">
+          <button class="btn btn-secondary" onclick="prevDiagnostic()" id="diag-prev" disabled>← <span class="lang-ru">Назад</span><span class="lang-az">Geri</span></button>
+          <button class="btn btn-primary" onclick="nextDiagnostic()" id="diag-next" disabled><span class="lang-ru">Далее</span><span class="lang-az">İrəli</span> →</button>
+        </div>
+        <div id="diag-explanation" style="display: none; margin-top: 20px; padding: 16px; background: var(--accent-dim); border-radius: 12px; border-left: 4px solid var(--accent);"></div>
+      </div>
+    </div>
+
+    <div id="timeattack-ui" style="display: none">
+      <div class="timer" id="ta-timer">10:00</div>
+      <div class="card">
+        <div class="card-title">
+          <span class="icon" style="background: var(--accent-warm-dim)">⏱️</span>
+          <span class="lang-ru">Скоростная викторина</span><span class="lang-az">Sürətli viktorina</span>
+        </div>
+      </div>
+      <div class="quiz-container">
+        <div class="quiz-progress">
+          <span><span class="lang-ru">Вопрос</span><span class="lang-az">Sual</span> <span id="ta-current">1</span> / <span id="ta-total">30</span></span>
+          <div class="progress-bar"><div class="progress-fill" id="ta-progress"></div></div>
+        </div>
+        <div class="quiz-question" id="ta-question"></div>
+        <div class="quiz-options" id="ta-options"></div>
+        <div style="display: flex; justify-content: flex-end; margin-top: 24px">
+          <button class="btn btn-primary" onclick="nextTimeAttack()" id="ta-next"><span class="lang-ru">Ответить</span><span class="lang-az">Cavab ver</span> →</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="results-ui" style="display: none">
+      <div class="card">
+        <div class="results-container">
+          <div class="score-label"><span class="lang-ru">Ваш результат</span><span class="lang-az">Sizin nəticəniz</span></div>
+          <div class="score-circle" id="result-circle"><div class="score-value" id="result-percent">0%</div></div>
+          <div class="score-message" id="result-message"></div>
+          <div class="results-breakdown">
+            <div class="breakdown-item"><div class="breakdown-value" id="result-correct">0</div><div class="breakdown-label"><span class="lang-ru">Верно</span><span class="lang-az">Düzgün</span></div></div>
+            <div class="breakdown-item"><div class="breakdown-value" id="result-wrong">0</div><div class="breakdown-label"><span class="lang-ru">Ошибок</span><span class="lang-az">Səhvlər</span></div></div>
+          </div>
+          <div style="display: flex; gap: 16px; justify-content: center; flex-wrap: wrap;">
+            <button class="btn btn-primary" onclick="resetAssessment()"><span class="lang-ru">Пройти ещё раз</span><span class="lang-az">Təkrar keç</span></button>
+            <button class="btn btn-secondary" onclick="backToMenu()"><span class="lang-ru">Назад к меню</span><span class="lang-az">Menyuya qayıt</span></button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <script>
+    // ================= DATA & STATE =================
+    const AppState = {
+      currentSection: 'home',
+      slide: 0,
+      trainer: { correct: 0, total: 0, streak: 0, current: null },
+      diagnostic: { current: 0, score: 0, answers: [], shuffled: [] },
+      timeAttack: { current: 0, score: 0, timer: null, timeLeft: 600, answers: [], shuffled: [] },
+      mode: null,
+      lang: 'ru'
+    };
+
+    const SVGS = {
+      equal: `<svg class="fig-svg" viewBox="0 0 120 60"><polygon points="10,50 30,10 50,50" fill="var(--accent-dim)" /><polygon points="70,50 90,10 110,50" fill="var(--accent-blue-dim)" /><text x="60" y="55" text-anchor="middle" fill="var(--text-secondary)" font-size="10">≅</text></svg>`,
+      adjacent: `<svg class="fig-svg" viewBox="0 0 100 60"><line x1="10" y1="50" x2="90" y2="50" stroke="var(--text-secondary)"/><line x1="50" y1="50" x2="50" y2="10" stroke="var(--accent)"/><line x1="50" y1="50" x2="85" y2="25" stroke="var(--accent-blue)"/><text x="35" y="40" fill="var(--accent)" font-size="10">α</text><text x="60" y="40" fill="var(--accent-blue)" font-size="10">β</text></svg>`,
+      vertical: `<svg class="fig-svg" viewBox="0 0 100 80"><line x1="20" y1="20" x2="80" y2="60" stroke="var(--accent)"/><line x1="20" y1="60" x2="80" y2="20" stroke="var(--accent)"/><text x="45" y="35" fill="var(--accent)" font-size="10">1</text><text x="45" y="55" fill="var(--accent-blue)" font-size="10">2</text><text x="30" y="45" fill="var(--accent-warm)" font-size="10">3</text><text x="60" y="45" fill="var(--accent-warm)" font-size="10">4</text></svg>`,
+      protractor: `<svg class="fig-svg" viewBox="0 0 120 70"><path d="M 10 60 A 50 50 0 0 1 110 60" fill="none" stroke="var(--accent)"/><line x1="10" y1="60" x2="110" y2="60" stroke="var(--text-secondary)"/><line x1="60" y1="60" x2="60" y2="15" stroke="var(--accent-warm)"/><text x="60" y="75" text-anchor="middle" fill="var(--text-secondary)" font-size="10">0°–180°</text></svg>`,
+      bisector: `<svg class="fig-svg" viewBox="0 0 100 60"><polygon points="20,50 80,50 50,10" fill="var(--accent-dim)"/><line x1="50" y1="50" x2="50" y2="10" stroke="var(--accent-warm)" stroke-dasharray="4"/><text x="55" y="35" fill="var(--accent-warm)" font-size="10">биссектриса</text></svg>`,
+      congruent: `<svg class="fig-svg" viewBox="0 0 140 60"><rect x="10" y="15" width="40" height="30" fill="var(--accent-dim)"/><rect x="90" y="15" width="40" height="30" fill="var(--accent-blue-dim)"/><text x="70" y="35" text-anchor="middle" fill="var(--text-secondary)" font-size="12">≅</text></svg>`,
+      construction: `<svg class="fig-svg" viewBox="0 0 100 60"><line x1="10" y1="50" x2="70" y2="50" stroke="var(--text-secondary)"/><circle cx="10" cy="50" r="3" fill="var(--accent)"/><text x="10" y="60" text-anchor="middle" fill="var(--text-secondary)" font-size="8">O</text><line x1="10" y1="50" x2="50" y2="15" stroke="var(--accent)"/><text x="30" y="35" fill="var(--accent)" font-size="10">60°</text></svg>`,
+    };
+
+    const slides = [
+      { title: {ru: "📐 Равные фигуры", az: "📐 Bərabər fiqurlar"},
+        content: {ru: "Совпадают при наложении. Равны соответствующие стороны и углы.<div class='fig-box'>"+SVGS.equal+"</div>", az: "Üst-üstə qoyulduqda üst-üstə düşür. Müvafiq tərəflər və bucaqlar bərabərdir.<div class='fig-box'>"+SVGS.equal+"</div>"} },
+      { title: {ru: "📐 Конгруэнтность", az: "📐 Konqruentlik"},
+        content: {ru: "Символ <b>≅</b> означает «конгруэнтно».<div class='fig-box'>"+SVGS.congruent+"</div>", az: "<b>≅</b> simvolu «konqruentdir» deməkdir.<div class='fig-box'>"+SVGS.congruent+"</div>"} },
+      { title: {ru: "📐 Смежные углы", az: "📐 Qonşu bucaqlar"},
+        content: {ru: "Сумма смежных углов равна <b>180°</b>.<<div class='fig-box'>"+SVGS.adjacent+"</div>", az: "Qonşu bucaqların cəmi <b>180°</b>-yə bərabərdir.<div class='fig-box'>"+SVGS.adjacent+"</div>"} },
+      { title: {ru: "📐 Вертикальные углы", az: "📐 Qarşılıqlı bucaqlar"},
+        content: {ru: "Вертикальные углы <b>равны</b>.<<div class='fig-box'>"+SVGS.vertical+"</div>", az: "Qarşılıqlı bucaqlar <b>bərabərdir</b>.<<div class='fig-box'>"+SVGS.vertical+"</div>"} },
+      { title: {ru: "📐 Биссектриса", az: "📐 Tənbülən"},
+        content: {ru: "Биссектриса делит угол пополам.<div class='fig-box'>"+SVGS.bisector+"</div>", az: "Tənbülən bucağı yarı bölür.<div class='fig-box'>"+SVGS.bisector+"</div>"} }
+    ];
+
+    const examples = [
+      { title: {ru: "Смежные углы", az: "Qonşu bucaqlar"}, type: {ru: "Углы", az: "Bucaqlar"},
+        task: {ru: "Два смежных угла относятся как 2:3. Найдите их.", az: "İki qonşu bucaq 2:3 nisbətindədir. Onları tapın."},
+        sol: {ru: "2x + 3x = 180°\n5x = 180° → x = 36°\nУглы: 72° и 108°", az: "2x + 3x = 180°\n5x = 180° → x = 36°\nBucaqlar: 72° və 108°"} },
+    ];
+
+    const questions = [
+      { q: {ru: "Чему равна сумма смежных углов?", az: "Qonşu bucaqların cəmi nəyə bərabərdir?"}, o: {ru: ["90°", "180°", "360°", "45°"], az: ["90°", "180°", "360°", "45°"]}, a: 1 },
+      { q: {ru: "Вертикальные углы:", az: "Qarşılıqlı bucaqlar:"}, o: {ru: ["В сумме 180°", "Равны", "В сумме 90°", "Смежные"], az: ["Cəmi 180°", "Bərabərdir", "Cəmi 90°", "Qonşudur"]}, a: 1 },
+      { q: {ru: "Какой символ обозначает конгруэнтность?", az: "Hansı işarə konqruentliyi göstərir?"}, o: {ru: ["=", "≅", "∠", "△"], az: ["=", "≅", "∠", "△"]}, a: 1 },
+      { q: {ru: "Биссектриса делит угол:", az: "Tənbülən bucağı:"}, o: {ru: ["Удваивает", "Делит пополам", "Утраивает", "Не меняет"], az: ["İkiqat artırır", "Yarıya bölür", "Üçqat artırır", "Dəyişmir"]}, a: 1 },
+      { q: {ru: "Две прямые пересекаются. Один угол 40°. Вертикальный ему:", az: "İki düz xətt kəsişir. Bucaq 40°. Ona qarşılıqlı:"}, o: {ru: ["40°", "140°", "180°", "90°"], az: ["40°", "140°", "180°", "90°"]}, a: 0 }
+    ];
+
+    // Array Shuffle (Fisher-Yates)
+    function shuffleArray(array) {
+      let currentIndex = array.length, randomIndex;
+      while (currentIndex !== 0) {
+        randomIndex = Math.floor(Math.random() * currentIndex);
+        currentIndex--;
+        [array[currentIndex], array[randomIndex]] = [array[randomIndex], array[currentIndex]];
+      }
+      return array;
+    }
+
+    // ================= UTILS =================
+    function formatTime(sec) {
+      const m = Math.floor(sec / 60).toString().padStart(2, '0');
+      const s = (sec % 60).toString().padStart(2, '0');
+      return m + ':' + s;
+    }
+    function updateProgress(id, current, total) {
+      const el = document.getElementById(id);
+      if (el) el.style.width = ((current / total) * 100) + '%';
+    }
+    function stopTimer() {
+      if (AppState.timeAttack.timer) {
+        clearInterval(AppState.timeAttack.timer);
+        AppState.timeAttack.timer = null;
+      }
+    }
+
+    // ================= NAVIGATION =================
+    function showSection(id) {
+      document.querySelectorAll('section').forEach(s => s.classList.remove('active'));
+      const target = document.getElementById(id);
+      if (target) target.classList.add('active');
+      document.querySelectorAll('.nav-links a').forEach(a => a.classList.remove('active'));
+      const activeLink = document.querySelector('.nav-links a[data-section="' + id + '"]');
+      if (activeLink) activeLink.classList.add('active');
+      window.scrollTo(0, 0);
+      AppState.currentSection = id;
+    }
+
+    // ================= LANGUAGE =================
+    function toggleLang() {
+      AppState.lang = AppState.lang === 'ru' ? 'az' : 'ru';
+      document.body.classList.toggle('az', AppState.lang === 'az');
+      updateAllContent();
+    }
+
+    function updateAllContent() {
+      // Update totals
+      document.getElementById('slide-total').textContent = slides.length;
+      document.getElementById('diag-total').textContent = questions.length;
+      document.getElementById('ta-total').textContent = questions.length;
+
+      // SLIDES
+      const track = document.getElementById('track-slides');
+      track.innerHTML = '';
+      slides.forEach((s, i) => {
+        const div = document.createElement('div');
+        div.className = 'widget-slide' + (i === AppState.slide ? ' active' : '');
+        div.innerHTML = '<h3>' + (AppState.lang === 'ru' ? s.title.ru : s.title.az) + '</h3><div style="color:var(--text-secondary);line-height:1.8;margin-top:12px;">' + (AppState.lang === 'ru' ? s.content.ru : s.content.az) + '</div>';
+        track.appendChild(div);
+      });
+      renderSlide();
+
+      // EXAMPLES
+      const exContainer = document.getElementById('examples-container');
+      exContainer.innerHTML = '';
+      examples.forEach((ex, i) => {
+        const card = document.createElement('div');
+        card.className = 'problem-card';
+        const ru = AppState.lang === 'ru';
+        card.innerHTML = '<div class="problem-header"><span class="problem-number">' + (ru ? ex.title.ru : ex.title.az) + '</span><span class="problem-type">' + (ru ? ex.type.ru : ex.type.az) + '</span></div><div class="problem-text">' + (ru ? ex.task.ru : ex.task.az) + '</div><button class="solution-btn" onclick="toggleSolution(\'sol-' + i + '\')">' + (ru ? 'Показать решение' : 'Həlli göstər') + '</button><div class="solution" id="sol-' + i + '"><div class="solution-step" style="color: var(--accent); font-weight: 700; white-space: pre-line;">' + (ru ? ex.sol.ru : ex.sol.az) + '</div></div>';
+        exContainer.appendChild(card);
+      });
+
+      // TRAINER
+      if(AppState.trainer.current) {
+         document.getElementById('trainer-question').textContent = (AppState.lang === 'ru') ? AppState.trainer.current.textRu : AppState.trainer.current.textAz;
+      }
+      document.getElementById('trainer-check-btn').innerHTML = '<span class="lang-ru">Проверить</span><span class="lang-az">Yoxla</span>';
+      document.getElementById('trainer-new-btn').innerHTML = '<span class="lang-ru">Новая задача</span><span class="lang-az">Yeni məsələ</span>';
+      document.getElementById('trainer-answer').placeholder = (AppState.lang === 'ru') ? 'Ваш ответ...' : 'Cavabınız...';
+      updateTrainerStats();
+    }
+
+    // ================= SLIDER =================
+    function renderSlide() {
+      document.querySelectorAll('.widget-slide').forEach((s, i) => s.classList.toggle('active', i === AppState.slide));
+      document.getElementById('slide-num').innerText = AppState.slide + 1;
+      // Disable buttons at boundaries
+      const prevBtn = document.getElementById('slide-prev');
+      const nextBtn = document.getElementById('slide-next');
+      if (prevBtn) prevBtn.disabled = AppState.slide === 0;
+      if (nextBtn) nextBtn.disabled = AppState.slide === slides.length - 1;
+    }
+    function nextSlide() { if (AppState.slide < slides.length - 1) { AppState.slide++; renderSlide(); } }
+    function prevSlide() { if (AppState.slide > 0) { AppState.slide--; renderSlide(); } }
+
+    function toggleSolution(id) {
+      const el = document.getElementById(id);
+      el.classList.toggle('active');
+    }
+
+    // ================= TRAINER =================
+    function updateTrainerStats() {
+      const ru = AppState.lang === 'ru';
+      const html = '<div class="stat"><div class="stat-value">' + AppState.trainer.correct + '</div><div class="stat-label">' + (ru ? 'Верно' : 'Düzgün') + '</div></div>' +
+                   '<div class="stat"><div class="stat-value">' + AppState.trainer.total + '</div><div class="stat-label">' + (ru ? 'Всего' : 'Cəmi') + '</div></div>' +
+                   '<div class="stat"><div class="stat-value">' + AppState.trainer.streak + '</div><div class="stat-label">' + (ru ? 'Серия' : 'Seriya') + '</div></div>';
+      document.getElementById('trainer-stats').innerHTML = html;
+    }
+    function newTrainerProblem() {
+      const a = Math.floor(Math.random() * 60) + 20;
+      const b = 180 - a;
+      AppState.trainer.current = {
+         answer: b.toString(),
+         textRu: `Смежный угол к ${a}°. Найдите второй.`,
+         textAz: `${a}° bucağına qonşu olan bucağı tapın.`
+      };
+      document.getElementById('trainer-question').textContent = (AppState.lang === 'ru') ? AppState.trainer.current.textRu : AppState.trainer.current.textAz;
+      document.getElementById('trainer-answer').value = '';
+      document.getElementById('trainer-feedback').innerHTML = '';
+    }
+    function checkTrainer() {
+      const v = document.getElementById('trainer-answer').value.trim();
+      if (!v) return;
+      const isCorrect = v === AppState.trainer.current.answer;
+      const ru = AppState.lang === 'ru';
+      if (isCorrect) {
+         AppState.trainer.correct++;
+         AppState.trainer.streak++;
+         document.getElementById('trainer-feedback').innerHTML = '<span style="color:var(--success)">✓ ' + (ru ? 'Верно' : 'Düzgün') + '</span>';
+      } else {
+         AppState.trainer.streak = 0;
+         document.getElementById('trainer-feedback').innerHTML = '<span style="color:var(--error)">✗ ' + (ru ? 'Ошибка. Правильный ответ: ' : 'Səhv. Düzgün cavab: ') + AppState.trainer.current.answer + '</span>';
+      }
+      AppState.trainer.total++;
+      updateTrainerStats();
+    }
+
+    // ================= DIAGNOSTIC =================
+    function startDiagnostic() {
+      AppState.mode = 'diagnostic';
+      AppState.diagnostic = { 
+         current: 0, score: 0, answers: [], 
+         shuffled: questions.map(() => shuffleArray([0, 1, 2, 3]))
+      };
+      document.getElementById('assessment-menu').style.display = 'none';
+      document.getElementById('diagnostic-ui').style.display = 'block';
+      document.getElementById('timeattack-ui').style.display = 'none';
+      document.getElementById('results-ui').style.display = 'none';
+      renderDiagnostic();
+    }
+
+    function renderDiagnostic() {
+      const st = AppState.diagnostic;
+      const q = questions[st.current];
+      const ru = AppState.lang === 'ru';
+      const order = st.shuffled[st.current];
+      const ans = st.answers[st.current];
+      const isAnswered = ans !== undefined;
+
+      document.getElementById('diag-current').textContent = st.current + 1;
+      document.getElementById('diag-score').innerHTML = st.score + ' <span class="' + (ru ? 'lang-ru' : 'lang-az') + '">' + (ru ? 'правильных' : 'düzgün') + '</span>';
+      updateProgress('diag-progress', st.current + 1, questions.length);
+      document.getElementById('diag-question').textContent = ru ? q.q.ru : q.q.az;
+      
+      const optsDiv = document.getElementById('diag-options');
+      optsDiv.innerHTML = '';
+      const optsTexts = ru ? q.o.ru : q.o.az;
+      
+      order.forEach((origIdx, i) => {
+        const div = document.createElement('div');
+        div.className = 'quiz-option';
+        div.innerHTML = '<div class="option-letter">' + String.fromCharCode(65 + i) + '</div><div>' + optsTexts[origIdx] + '</div>';
+        
+        if (isAnswered) {
+            div.classList.add('disabled');
+            if (origIdx === q.a) div.classList.add('correct');
+            else if (origIdx === ans && origIdx !== q.a) div.classList.add('wrong');
+        } else {
+            div.onclick = () => selectDiagnostic(origIdx);
+        }
+        optsDiv.appendChild(div);
+      });
+
+      if (isAnswered) {
+         document.getElementById('diag-explanation').innerHTML = '<strong>' + (ans === q.a ? (ru ? '✓ Верно!' : '✓ Düzgün!') : (ru ? '✗ Неверно.' : '✗ Səhv.')) + '</strong> ' + (ru ? 'Правильный ответ: ' : 'Düzgün cavab: ') + optsTexts[q.a];
+         document.getElementById('diag-explanation').style.display = 'block';
+         document.getElementById('diag-next').disabled = false;
+      } else {
+         document.getElementById('diag-explanation').style.display = 'none';
+         document.getElementById('diag-next').disabled = true;
+      }
+      document.getElementById('diag-prev').disabled = st.current === 0;
+    }
+
+    function selectDiagnostic(origIdx) {
+      const st = AppState.diagnostic;
+      if (st.answers[st.current] !== undefined) return;
+      const q = questions[st.current];
+      if (origIdx === q.a) st.score++;
+      st.answers[st.current] = origIdx;
+      renderDiagnostic();
+    }
+
+    function nextDiagnostic() {
+      if (AppState.diagnostic.current < questions.length - 1) {
+        AppState.diagnostic.current++;
+        renderDiagnostic();
+      } else {
+        showResults(AppState.diagnostic.score, questions.length, 'diagnostic');
+      }
+    }
+    function prevDiagnostic() {
+      if (AppState.diagnostic.current > 0) {
+        AppState.diagnostic.current--;
+        renderDiagnostic();
+      }
+    }
+
+    // ================= TIME ATTACK =================
+    function startTimeAttack() {
+      stopTimer();
+      AppState.mode = 'timeattack';
+      AppState.timeAttack = { 
+         current: 0, score: 0, timeLeft: 600, timer: null, answers: [], 
+         shuffled: questions.map(() => shuffleArray([0, 1, 2, 3]))
+      };
+      document.getElementById('assessment-menu').style.display = 'none';
+      document.getElementById('timeattack-ui').style.display = 'block';
+      document.getElementById('diagnostic-ui').style.display = 'none';
+      document.getElementById('results-ui').style.display = 'none';
+      
+      // Start timer
+      AppState.timeAttack.timer = setInterval(() => {
+        AppState.timeAttack.timeLeft--;
+        const timerEl = document.getElementById('ta-timer');
+        timerEl.textContent = formatTime(AppState.timeAttack.timeLeft);
+        if (AppState.timeAttack.timeLeft <= 0) {
+          stopTimer();
+          showResults(AppState.timeAttack.score, questions.length, 'timeattack');
+        } else if (AppState.timeAttack.timeLeft <= 60) {
+          timerEl.className = 'timer danger';
+        } else if (AppState.timeAttack.timeLeft <= 120) {
+          timerEl.className = 'timer warning';
+        } else {
+          timerEl.className = 'timer';
+        }
+      }, 1000);
+      document.getElementById('ta-timer').textContent = formatTime(AppState.timeAttack.timeLeft);
+      document.getElementById('ta-timer').className = 'timer';
+      
+      renderTimeAttack();
+    }
+
+    function renderTimeAttack() {
+      const st = AppState.timeAttack;
+      const q = questions[st.current];
+      const ru = AppState.lang === 'ru';
+      const order = st.shuffled[st.current];
+      const ans = st.answers[st.current];
+      const isAnswered = ans !== undefined;
+
+      document.getElementById('ta-current').textContent = st.current + 1;
+      updateProgress('ta-progress', st.current + 1, questions.length);
+      document.getElementById('ta-question').textContent = ru ? q.q.ru : q.q.az;
+      
+      const optsDiv = document.getElementById('ta-options');
+      optsDiv.innerHTML = '';
+      const optsTexts = ru ? q.o.ru : q.o.az;
+      
+      order.forEach((origIdx, i) => {
+        const div = document.createElement('div');
+        div.className = 'quiz-option';
+        div.innerHTML = '<div class="option-letter">' + String.fromCharCode(65 + i) + '</div><div>' + optsTexts[origIdx] + '</div>';
+        
+        if (isAnswered) {
+            div.classList.add('disabled');
+            if (origIdx === q.a) div.classList.add('correct');
+            else if (origIdx === ans && origIdx !== q.a) div.classList.add('wrong');
+        } else {
+            div.onclick = () => {
+               if (st.answers[st.current] !== undefined) return;
+               if (origIdx === q.a) st.score++;
+               st.answers[st.current] = origIdx;
+               renderTimeAttack();
+            };
+        }
+        optsDiv.appendChild(div);
+      });
+      document.getElementById('ta-next').disabled = !isAnswered;
+    }
+
+    function nextTimeAttack() {
+      if (AppState.timeAttack.current < questions.length - 1) {
+        AppState.timeAttack.current++;
+        renderTimeAttack();
+      } else {
+        stopTimer();
+        showResults(AppState.timeAttack.score, questions.length, 'timeattack');
+      }
+    }
+
+    // ================= RESULTS =================
+    function showResults(score, total, mode) {
+      stopTimer();
+      document.getElementById('diagnostic-ui').style.display = 'none';
+      document.getElementById('timeattack-ui').style.display = 'none';
+      document.getElementById('results-ui').style.display = 'block';
+      const percent = Math.round((score / total) * 100);
+      document.getElementById('result-circle').style.setProperty('--score', percent);
+      document.getElementById('result-percent').textContent = percent + '%';
+      document.getElementById('result-correct').textContent = score;
+      document.getElementById('result-wrong').textContent = total - score;
+      
+      const ru = AppState.lang === 'ru';
+      let msg = '';
+      if (percent >= 90) msg = ru ? 'Отлично! 🎉' : 'Əla! 🎉';
+      else if (percent >= 70) msg = ru ? 'Хорошо! 👍' : 'Yaxşı! 👍';
+      else if (percent >= 50) msg = ru ? 'Удовлетворительно' : 'Kafi';
+      else msg = ru ? 'Нужно больше практики 💪' : 'Daha çox praktika lazımdır 💪';
+      document.getElementById('result-message').textContent = msg;
+    }
+
+    function resetAssessment() {
+      document.getElementById('results-ui').style.display = 'none';
+      if (AppState.mode === 'diagnostic') startDiagnostic();
+      else if (AppState.mode === 'timeattack') startTimeAttack();
+    }
+
+    function backToMenu() {
+      stopTimer();
+      document.getElementById('results-ui').style.display = 'none';
+      document.getElementById('diagnostic-ui').style.display = 'none';
+      document.getElementById('timeattack-ui').style.display = 'none';
+      document.getElementById('assessment-menu').style.display = 'block';
+    }
+
+    // ================= INIT =================
+    document.addEventListener('DOMContentLoaded', () => {
+      updateAllContent();
+      newTrainerProblem();
+    });
+  </script>
+</body>
+</html>

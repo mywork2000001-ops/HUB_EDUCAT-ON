@@ -1,0 +1,795 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Урок 8.3 — Представление информации</title>
+    <style>
+      :root{--bg-dark:#0f0f1a;--bg-card:rgba(255,255,255,0.05);--bg-glass:rgba(255,255,255,0.08);--border-glass:rgba(255,255,255,0.15);--text-primary:#e8e8f0;--text-secondary:#a0a0b8;--accent:#00d4aa;--accent-dim:rgba(0,212,170,0.2);--accent-warm:#ff6b6b;--accent-warm-dim:rgba(255,107,107,0.2);--accent-blue:#4dabf7;--accent-blue-dim:rgba(77,171,247,0.2);--success:#51cf66;--error:#ff6b6b;--warning:#fcc419;}
+      *{margin:0;padding:0;box-sizing:border-box;}
+      body{font-family:"Segoe UI",system-ui,sans-serif;background:var(--bg-dark);color:var(--text-primary);min-height:100vh;overflow-x:hidden;line-height:1.6;}
+      .bg-animation{position:fixed;top:0;left:0;width:100%;height:100%;z-index:-1;background:radial-gradient(ellipse at 20% 20%,rgba(0,212,170,0.08) 0%,transparent 50%),radial-gradient(ellipse at 80% 80%,rgba(77,171,247,0.08) 0%,transparent 50%);}
+      .bg-animation::before{content:"";position:absolute;width:200%;height:200%;top:-50%;left:-50%;background:repeating-linear-gradient(0deg,transparent,transparent 40px,rgba(255,255,255,0.02) 40px,rgba(255,255,255,0.02) 41px);animation:bgMove 20s linear infinite;}
+      @keyframes bgMove{0%{transform:translateY(0)}100%{transform:translateY(40px)}}
+      nav{position:fixed;top:0;left:0;right:0;background:rgba(15,15,26,0.85);backdrop-filter:blur(20px);border-bottom:1px solid var(--border-glass);z-index:1000;padding:0 20px;}
+      .nav-container{max-width:1200px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;height:60px;}
+      .logo{font-size:1.3rem;font-weight:700;background:linear-gradient(135deg,var(--accent),var(--accent-blue));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;text-decoration:none;}
+      .nav-links{display:flex;gap:8px;list-style:none;}
+      .nav-links a{color:var(--text-secondary);text-decoration:none;padding:8px 16px;border-radius:8px;transition:all 0.3s;font-size:0.9rem;font-weight:500;cursor:pointer;border:none;background:transparent;}
+      .nav-links a:hover,.nav-links a.active{color:var(--text-primary);background:var(--bg-glass);}
+      .nav-links a.active{background:var(--accent-dim);color:var(--accent);}
+      section{display:none;opacity:0;padding:78px 20px 32px;max-width:1000px;margin:0 auto;transition:opacity 0.3s ease;}
+      section.active{display:block;opacity:1;animation:fadeIn 0.5s ease;}
+      @keyframes fadeIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+      .card{background:var(--bg-card);backdrop-filter:blur(20px);border:1px solid var(--border-glass);border-radius:20px;padding:20px;margin-bottom:16px;transition:transform 0.3s,box-shadow 0.3s;}
+      .card:hover{transform:translateY(-2px);box-shadow:0 20px 40px rgba(0,0,0,0.3);}
+      .card-title{font-size:1.5rem;font-weight:700;margin-bottom:16px;display:flex;align-items:center;gap:12px;}
+      .card-title .icon{width:40px;height:40px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.3rem;}
+      .hero{text-align:center;padding:140px 20px 80px;}
+      .hero h1{font-size:3rem;font-weight:800;margin-bottom:20px;background:linear-gradient(135deg,var(--accent),var(--accent-blue),var(--accent-warm));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1.2;}
+      .hero p{font-size:1.2rem;color:var(--text-secondary);max-width:600px;margin:0 auto 40px;}
+      .btn{display:inline-flex;align-items:center;gap:8px;padding:14px 32px;border-radius:12px;border:none;font-size:1rem;font-weight:600;cursor:pointer;transition:all 0.3s;text-decoration:none;}
+      .btn-primary{background:linear-gradient(135deg,var(--accent),var(--accent-blue));color:#000;}
+      .btn-primary:hover{transform:translateY(-2px);box-shadow:0 10px 30px var(--accent-dim);}
+      .btn-secondary{background:var(--bg-glass);color:var(--text-primary);border:1px solid var(--border-glass);}
+      .btn-secondary:hover{background:var(--bg-card);}
+      .btn:disabled{opacity:0.5;cursor:not-allowed;transform:none!important;}
+      .generate-widget{background:var(--bg-card);border:1px solid var(--border-glass);border-radius:20px;padding:14px;width:100%;}
+      .widget-slide{display:none;padding:12px 16px;animation:slideFade 0.3s ease;}
+      .widget-slide.active{display:block;}
+      @keyframes slideFade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+      .widget-slide h3{font-size:1.3rem;color:var(--accent);margin-bottom:16px;}
+      .widget-slide p,.widget-slide li{color:var(--text-secondary);line-height:1.8;margin-bottom:12px;}
+      .widget-slide table{width:100%;border-collapse:collapse;margin:12px 0;color:var(--text-secondary);}
+      .widget-slide table th,.widget-slide table td{border:1px solid var(--border-glass);padding:10px;text-align:left;}
+      .widget-slide table th{background:var(--bg-glass);color:var(--text-primary);}
+      .widget-nav{display:flex;justify-content:space-between;align-items:center;margin-top:16px;}
+      .widget-progress{text-align:center;font-size:0.9rem;color:var(--text-secondary);margin-bottom:12px;}
+      .sequence-component{display:flex;flex-direction:column;gap:20px;}
+      .sequence-step{background:var(--bg-card);border:1px solid var(--border-glass);border-radius:16px;padding:24px 24px 24px 72px;position:relative;transition:all 0.3s;}
+      .sequence-step:hover{border-color:var(--accent);transform:translateX(4px);}
+      .sequence-number{position:absolute;left:20px;top:20px;width:40px;height:40px;background:var(--accent);color:#000;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:1.1rem;}
+      .sequence-step h4{color:var(--text-primary);margin-bottom:8px;font-size:1.1rem;}
+      .sequence-step p{color:var(--text-secondary);line-height:1.7;}
+      .sequence-connector{position:absolute;left:39px;top:60px;bottom:-30px;width:2px;background:var(--accent-dim);}
+      .sequence-step:last-child .sequence-connector{display:none;}
+      .problem-card{background:var(--bg-card);border:1px solid var(--border-glass);border-radius:16px;padding:24px;margin-bottom:20px;}
+      .problem-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:8px;}
+      .problem-number{background:var(--accent-dim);color:var(--accent);padding:4px 12px;border-radius:20px;font-size:0.85rem;font-weight:600;}
+      .problem-type{color:var(--text-secondary);font-size:0.85rem;}
+      .problem-text{font-size:1.1rem;margin-bottom:16px;line-height:1.8;}
+      .solution-btn{background:var(--accent-dim);color:var(--accent);border:1px solid var(--accent);padding:10px 20px;border-radius:8px;cursor:pointer;font-weight:600;transition:all 0.3s;}
+      .solution-btn:hover{background:var(--accent);color:#000;}
+      .solution{display:none;margin-top:20px;padding:20px;background:rgba(0,212,170,0.05);border-left:3px solid var(--accent);border-radius:0 12px 12px 0;}
+      .solution.active{display:block;animation:slideDown 0.3s ease;}
+      @keyframes slideDown{from{opacity:0;max-height:0}to{opacity:1;max-height:1000px}}
+      .solution p{margin-bottom:8px;color:var(--text-secondary);}
+      .solution strong{color:var(--accent);}
+      .quiz-container{background:var(--bg-card);border:1px solid var(--border-glass);border-radius:20px;padding:32px;}
+      .quiz-progress{display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;flex-wrap:wrap;gap:8px;}
+      .progress-bar{flex:1;height:8px;background:var(--bg-glass);border-radius:4px;margin:0 16px;overflow:hidden;min-width:100px;}
+      .progress-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent-blue));border-radius:4px;transition:width 0.5s ease;width:0%;}
+      .quiz-question{font-size:1.2rem;margin-bottom:24px;padding:20px;background:var(--bg-glass);border-radius:12px;border-left:4px solid var(--accent);}
+      .quiz-options{display:grid;gap:12px;}
+      .quiz-option{background:var(--bg-glass);border:2px solid var(--border-glass);border-radius:12px;padding:16px 20px;cursor:pointer;transition:all 0.3s;display:flex;align-items:center;gap:12px;}
+      .quiz-option:hover{border-color:var(--accent);background:var(--accent-dim);}
+      .quiz-option.correct{border-color:var(--success);background:rgba(81,207,102,0.15);}
+      .quiz-option.wrong{border-color:var(--error);background:rgba(255,107,107,0.15);}
+      .quiz-option.disabled{pointer-events:none;opacity:0.7;}
+      .option-letter{width:32px;height:32px;border-radius:8px;background:var(--bg-card);display:flex;align-items:center;justify-content:center;font-weight:700;flex-shrink:0;}
+      .quiz-nav{display:flex;justify-content:space-between;margin-top:24px;}
+      .stat{background:var(--bg-glass);padding:12px 24px;border-radius:12px;text-align:center;min-width:100px;border:1px solid var(--border-glass);}
+      .stat-value{font-size:1.5rem;font-weight:700;color:var(--accent);}
+      .stat-label{font-size:0.85rem;color:var(--text-secondary);}
+      .timer{position:fixed;top:80px;right:20px;background:var(--bg-card);backdrop-filter:blur(20px);border:1px solid var(--border-glass);border-radius:16px;padding:16px 24px;font-size:1.3rem;font-weight:700;font-variant-numeric:tabular-nums;z-index:999;box-shadow:0 10px 30px rgba(0,0,0,0.3);}
+      .timer.warning{border-color:var(--warning);color:var(--warning);animation:pulse 1s infinite;}
+      .timer.danger{border-color:var(--error);color:var(--error);animation:pulse 0.5s infinite;}
+      @keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.05)}}
+      .results-container{text-align:center;padding:40px;}
+      .score-circle{width:200px;height:200px;border-radius:50%;background:conic-gradient(var(--accent) calc(var(--score)*3.6deg),var(--bg-glass) 0);margin:0 auto 32px;display:flex;align-items:center;justify-content:center;position:relative;}
+      .score-circle::before{content:"";position:absolute;width:170px;height:170px;background:var(--bg-dark);border-radius:50%;}
+      .score-value{position:relative;font-size:3rem;font-weight:800;color:var(--accent);}
+      .score-label{font-size:1.2rem;color:var(--text-secondary);margin-bottom:8px;}
+      .score-message{font-size:1.5rem;font-weight:700;margin-bottom:32px;}
+      .results-breakdown{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:16px;max-width:600px;margin:0 auto 32px;}
+      .breakdown-item{background:var(--bg-glass);padding:16px;border-radius:12px;}
+      .breakdown-value{font-size:1.5rem;font-weight:700;color:var(--accent);}
+      .breakdown-label{font-size:0.85rem;color:var(--text-secondary);}
+      .chart-type-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin:16px 0;}
+      .chart-type-card{background:var(--bg-glass);border:1px solid var(--border-glass);border-radius:12px;padding:16px;text-align:center;}
+      .chart-type-card svg{margin-bottom:8px;}
+      .chart-type-card h4{font-size:0.95rem;color:var(--text-primary);margin-bottom:4px;}
+      .chart-type-card p{font-size:0.8rem;color:var(--text-secondary);}
+      @media(max-width:768px){.hero h1{font-size:2rem}.nav-links{display:none}.timer{top:70px;right:10px;font-size:1rem;padding:10px 16px}.card{padding:14px}section{padding:70px 12px 24px}}
+    </style>
+  </head>
+  <body>
+    <div class="bg-animation"></div>
+    <nav>
+      <div class="nav-container">
+        <a href="index.html" class="logo">&#128202; Урок 8.3</a>
+        <ul class="nav-links">
+          <li><a href="#" class="active" data-section="home">Главная</a></li>
+          <li><a href="#" data-section="theory">Теория</a></li>
+          <li><a href="#" data-section="types">Виды диаграмм</a></li>
+          <li><a href="#" data-section="examples">Примеры</a></li>
+          <li><a href="#" data-section="trainer">Тренажёр</a></li>
+          <li><a href="#" data-section="assessment">Аттестация</a></li>
+        </ul>
+      </div>
+    </nav>
+
+    <!-- HOME -->
+    <section id="home" class="active">
+      <div class="hero">
+        <h1>Представление информации</h1>
+        <p>Урок 8.3. Таблица, столбчатая диаграмма, круговая диаграмма, линейная диаграмма и пиктограмма — как выбрать нужный способ представления данных.</p>
+        <div style="display:flex;gap:16px;justify-content:center;flex-wrap:wrap;">
+          <button class="btn btn-primary" onclick="showSection('theory')">Начать обучение</button>
+          <button class="btn btn-secondary" onclick="showSection('assessment')">Проверить знания</button>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title"><span class="icon" style="background:var(--accent-dim)">&#127919;</span>Что вы изучите</div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;">
+          <div class="card" style="padding:16px;text-align:center;">
+            <div style="font-size:2rem;margin-bottom:8px;">&#128202;</div>
+            <h3 style="color:var(--accent);margin-bottom:6px;font-size:1rem;">Таблица</h3>
+            <p style="color:var(--text-secondary);font-size:0.85rem;">Точное представление данных в строках и столбцах.</p>
+          </div>
+          <div class="card" style="padding:16px;text-align:center;">
+            <div style="font-size:2rem;margin-bottom:8px;">&#9638;</div>
+            <h3 style="color:var(--accent-blue);margin-bottom:6px;font-size:1rem;">Столбчатая диаграмма</h3>
+            <p style="color:var(--text-secondary);font-size:0.85rem;">Сравнение значений между категориями.</p>
+          </div>
+          <div class="card" style="padding:16px;text-align:center;">
+            <div style="font-size:2rem;margin-bottom:8px;">&#9685;</div>
+            <h3 style="color:var(--accent-warm);margin-bottom:6px;font-size:1rem;">Круговая диаграмма</h3>
+            <p style="color:var(--text-secondary);font-size:0.85rem;">Части одного целого в процентах.</p>
+          </div>
+          <div class="card" style="padding:16px;text-align:center;">
+            <div style="font-size:2rem;margin-bottom:8px;">&#128200;</div>
+            <h3 style="color:var(--warning);margin-bottom:6px;font-size:1rem;">Линейная диаграмма</h3>
+            <p style="color:var(--text-secondary);font-size:0.85rem;">Изменение данных во времени.</p>
+          </div>
+          <div class="card" style="padding:16px;text-align:center;">
+            <div style="font-size:2rem;margin-bottom:8px;">&#128084;</div>
+            <h3 style="color:var(--success);margin-bottom:6px;font-size:1rem;">Пиктограмма</h3>
+            <p style="color:var(--text-secondary);font-size:0.85rem;">Данные в виде символов и рисунков.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- THEORY -->
+    <section id="theory">
+      <div class="card">
+        <div class="card-title"><span class="icon" style="background:var(--accent-dim)">&#128218;</span>Глава 1. Способы представления информации</div>
+        <p style="color:var(--text-secondary);margin-bottom:20px;">Изучите пять основных способов представления статистических данных.</p>
+        <div class="generate-widget">
+          <div class="widget-progress">Слайд <span id="slide-num">1</span> / <span id="slide-total">5</span></div>
+          <div class="widget-track" id="track-slides"></div>
+          <div class="widget-nav">
+            <button type="button" class="btn btn-secondary" onclick="prevSlide()">&#8592; Назад</button>
+            <button type="button" class="btn btn-primary" onclick="nextSlide()">Вперёд &#8594;</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TYPES -->
+    <section id="types">
+      <div class="card">
+        <div class="card-title"><span class="icon" style="background:var(--accent-blue-dim)">&#128290;</span>Глава 2. Когда использовать каждый вид</div>
+        <p style="color:var(--text-secondary);margin-bottom:20px;">Правильный выбор типа диаграммы делает данные понятными.</p>
+        <div class="sequence-component">
+          <div class="sequence-step">
+            <div class="sequence-number">&#128202;</div>
+            <div class="sequence-connector"></div>
+            <h4>Таблица — точность прежде всего</h4>
+            <p>Используйте таблицу, когда важны точные числа и нужно вычислять значения (складывать, находить среднее). Легко сравнивать отдельные значения.</p>
+          </div>
+          <div class="sequence-step">
+            <div class="sequence-number">&#9638;</div>
+            <div class="sequence-connector"></div>
+            <h4>Столбчатая диаграмма — сравнение категорий</h4>
+            <p>Удобна для сравнения нескольких объектов или категорий. Легко видно, какая категория больше или меньше. Хорошо работает для 3–10 категорий.</p>
+          </div>
+          <div class="sequence-step">
+            <div class="sequence-number">&#9685;</div>
+            <div class="sequence-connector"></div>
+            <h4>Круговая диаграмма — части целого</h4>
+            <p>Лучший выбор, когда нужно показать, какую долю составляет каждая часть от 100%. Сумма секторов всегда = 100%. Удобна для 2–6 категорий.</p>
+          </div>
+          <div class="sequence-step">
+            <div class="sequence-number">&#128200;</div>
+            <div class="sequence-connector"></div>
+            <h4>Линейная диаграмма — изменение во времени</h4>
+            <p>Показывает тренды и изменения данных во времени (по дням, месяцам, годам). По ней легко увидеть рост, спад или стабильность.</p>
+          </div>
+          <div class="sequence-step">
+            <div class="sequence-number">&#128084;</div>
+            <h4>Пиктограмма — наглядность и интерес</h4>
+            <p>Данные представлены в виде рисунков или символов. Каждый символ = определённое количество единиц. Делает данные привлекательными для восприятия.</p>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title"><span class="icon" style="background:var(--accent-warm-dim)">&#128161;</span>Таблица выбора</div>
+        <div style="overflow-x:auto;">
+          <table style="width:100%;border-collapse:collapse;color:var(--text-secondary);">
+            <tr style="background:var(--bg-glass);"><th style="border:1px solid var(--border-glass);padding:12px;color:var(--text-primary);">Вид</th><th style="border:1px solid var(--border-glass);padding:12px;color:var(--text-primary);">Когда удобен</th><th style="border:1px solid var(--border-glass);padding:12px;color:var(--text-primary);">Пример применения</th></tr>
+            <tr><td style="border:1px solid var(--border-glass);padding:12px;color:#00d4aa;">Таблица</td><td style="border:1px solid var(--border-glass);padding:12px;">Нужны точные данные для вычислений</td><td style="border:1px solid var(--border-glass);padding:12px;">Расписание, прайс-лист, табель оценок</td></tr>
+            <tr><td style="border:1px solid var(--border-glass);padding:12px;color:#4dabf7;">Столбчатая</td><td style="border:1px solid var(--border-glass);padding:12px;">Сравнение нескольких значений</td><td style="border:1px solid var(--border-glass);padding:12px;">Рост детей, урожай по городам</td></tr>
+            <tr><td style="border:1px solid var(--border-glass);padding:12px;color:#ff6b6b;">Круговая</td><td style="border:1px solid var(--border-glass);padding:12px;">Части одного целого (% от 100)</td><td style="border:1px solid var(--border-glass);padding:12px;">Бюджет семьи, опрос о предпочтениях</td></tr>
+            <tr><td style="border:1px solid var(--border-glass);padding:12px;color:#fcc419;">Линейная</td><td style="border:1px solid var(--border-glass);padding:12px;">Изменение данных во времени</td><td style="border:1px solid var(--border-glass);padding:12px;">Температура, курс валют, рост продаж</td></tr>
+            <tr><td style="border:1px solid var(--border-glass);padding:12px;color:#51cf66;">Пиктограмма</td><td style="border:1px solid var(--border-glass);padding:12px;">Наглядное, образное представление</td><td style="border:1px solid var(--border-glass);padding:12px;">Количество машин, книг, людей</td></tr>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- EXAMPLES -->
+    <section id="examples">
+      <div class="card">
+        <div class="card-title"><span class="icon" style="background:var(--accent-dim)">&#128221;</span>Глава 3. Разбор задач</div>
+        <p style="color:var(--text-secondary);margin-bottom:24px;">Пять задач на выбор и чтение нужного вида диаграммы.</p>
+      </div>
+      <div id="examples-container"></div>
+    </section>
+
+    <!-- TRAINER -->
+    <section id="trainer">
+      <div class="card">
+        <div class="card-title"><span class="icon" style="background:var(--accent-dim)">&#127947;</span>Глава 4. Тренажёр</div>
+        <p style="color:var(--text-secondary);margin-bottom:24px;">Введите числовой ответ по данным диаграммы или таблицы.</p>
+        <div class="quiz-container" style="margin-bottom:20px;">
+          <div id="trainer-question" style="font-size:1.3rem;text-align:center;margin-bottom:24px;padding:24px;background:var(--bg-glass);border-radius:12px;">Нажмите «Новая задача» для начала</div>
+          <div style="display:flex;gap:12px;margin-bottom:20px;">
+            <input type="number" id="trainer-answer" placeholder="Введите число" style="flex:1;padding:14px 16px;background:var(--bg-glass);border:2px solid var(--border-glass);border-radius:12px;color:var(--text-primary);font-size:1rem;outline:none;" onkeydown="if(event.key==='Enter')checkTrainer();" />
+            <button class="btn btn-primary" onclick="checkTrainer()" id="trainer-check-btn" disabled>Проверить</button>
+          </div>
+          <div id="trainer-feedback" style="min-height:60px;margin-bottom:16px;"></div>
+          <div style="display:flex;gap:12px;justify-content:center;">
+            <button class="btn btn-secondary" onclick="newTrainerProblem()">Новая задача</button>
+            <button class="btn btn-secondary" onclick="showTrainerHint()">Подсказка</button>
+          </div>
+          <div id="trainer-hint" style="display:none;margin-top:20px;padding:16px;background:var(--accent-blue-dim);border-radius:12px;border-left:4px solid var(--accent-blue);color:var(--text-secondary);"></div>
+        </div>
+        <div style="display:flex;justify-content:center;gap:24px;flex-wrap:wrap;">
+          <div class="stat"><div class="stat-value" id="trainer-correct">0</div><div class="stat-label">Верно</div></div>
+          <div class="stat"><div class="stat-value" id="trainer-total">0</div><div class="stat-label">Всего</div></div>
+          <div class="stat"><div class="stat-value" id="trainer-streak">0</div><div class="stat-label">Серия</div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ASSESSMENT -->
+    <section id="assessment">
+      <div class="card">
+        <div class="card-title"><span class="icon" style="background:var(--accent-blue-dim)">&#129514;</span>Глава 5. Аттестация — 30 вопросов</div>
+        <p style="color:var(--text-secondary);margin-bottom:24px;">Диагностика и скоростная викторина по теме представления информации.</p>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px;">
+          <div class="card" style="padding:24px;text-align:center;">
+            <div style="font-size:3rem;margin-bottom:12px;">&#128269;</div>
+            <h3 style="margin-bottom:8px;">Диагностический тест</h3>
+            <p style="color:var(--text-secondary);margin-bottom:20px;">30 вопросов с объяснениями.</p>
+            <button class="btn btn-primary" onclick="startDiagnostic()">Начать тест</button>
+          </div>
+          <div class="card" style="padding:24px;text-align:center;">
+            <div style="font-size:3rem;margin-bottom:12px;">&#9201;</div>
+            <h3 style="margin-bottom:8px;">Скоростная викторина</h3>
+            <p style="color:var(--text-secondary);margin-bottom:20px;">30 вопросов &#8226; 10 минут.</p>
+            <button class="btn btn-primary" onclick="startTimeAttack()">Начать викторину</button>
+          </div>
+        </div>
+      </div>
+      <div id="diagnostic-ui" style="display:none;">
+        <div class="card"><div class="card-title"><span class="icon" style="background:var(--accent-blue-dim)">&#128269;</span>Диагностический тест (30 вопросов)</div></div>
+        <div class="quiz-container">
+          <div class="quiz-progress">
+            <span>Вопрос <span id="diag-current">1</span> / <span id="diag-total">30</span></span>
+            <div class="progress-bar"><div class="progress-fill" id="diag-progress"></div></div>
+            <span id="diag-score">0 правильных</span>
+          </div>
+          <div class="quiz-question" id="diag-question"></div>
+          <div class="quiz-options" id="diag-options"></div>
+          <div class="quiz-nav">
+            <button class="btn btn-secondary" onclick="prevDiagnostic()" id="diag-prev" disabled>&#8592; Назад</button>
+            <button class="btn btn-primary" onclick="nextDiagnostic()" id="diag-next" disabled>Далее &#8594;</button>
+          </div>
+          <div id="diag-explanation" style="display:none;margin-top:20px;padding:16px;background:var(--accent-dim);border-radius:12px;border-left:4px solid var(--accent);color:var(--text-secondary);"></div>
+        </div>
+      </div>
+      <div id="timeattack-ui" style="display:none;">
+        <div class="timer" id="ta-timer">10:00</div>
+        <div class="card"><div class="card-title"><span class="icon" style="background:var(--accent-warm-dim)">&#9201;</span>Скоростная викторина</div></div>
+        <div class="quiz-container">
+          <div class="quiz-progress">
+            <span>Вопрос <span id="ta-current">1</span> / 30</span>
+            <div class="progress-bar"><div class="progress-fill" id="ta-progress"></div></div>
+          </div>
+          <div class="quiz-question" id="ta-question"></div>
+          <div class="quiz-options" id="ta-options"></div>
+          <div style="display:flex;justify-content:flex-end;margin-top:24px;">
+            <button class="btn btn-primary" onclick="nextTimeAttack()" id="ta-next">Ответить &#8594;</button>
+          </div>
+        </div>
+      </div>
+      <div id="results-ui" style="display:none;">
+        <div class="card">
+          <div class="results-container">
+            <div class="score-label">Ваш результат</div>
+            <div class="score-circle" id="result-circle"><div class="score-value" id="result-percent">0%</div></div>
+            <div class="score-message" id="result-message"></div>
+            <div class="results-breakdown">
+              <div class="breakdown-item"><div class="breakdown-value" id="result-correct">0</div><div class="breakdown-label">Верно</div></div>
+              <div class="breakdown-item"><div class="breakdown-value" id="result-wrong">0</div><div class="breakdown-label">Ошибок</div></div>
+              <div class="breakdown-item"><div class="breakdown-value" id="result-time">0:00</div><div class="breakdown-label">Время</div></div>
+              <div class="breakdown-item"><div class="breakdown-value" id="result-mastery">—</div><div class="breakdown-label">Уровень</div></div>
+            </div>
+            <div style="display:flex;gap:16px;justify-content:center;flex-wrap:wrap;">
+              <button class="btn btn-primary" onclick="resetAssessment()">Пройти ещё раз</button>
+              <button class="btn btn-secondary" onclick="showSection('theory')">К теории</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <script>
+      const AppState={currentSection:"home",slide:0,trainer:{correct:0,total:0,streak:0,current:null}};
+
+      const slides=[
+        {
+          title:"Таблица — точное представление данных",
+          content:`
+            <p style="margin-bottom:12px;"><strong>Таблица</strong> — самый точный способ представить информацию. Строки и столбцы позволяют легко найти нужное значение и выполнять вычисления.</p>
+            <div style="overflow-x:auto;margin:16px 0;">
+              <table>
+                <tr><th>Месяц</th><th>Янв</th><th>Фев</th><th>Мар</th><th>Апр</th><th>Май</th><th>Июн</th></tr>
+                <tr><td>Расстояние (км)</td><td style="color:#00d4aa">25</td><td style="color:#4dabf7">30</td><td style="color:#ff6b6b">18</td><td style="color:#fcc419">22</td><td style="color:#00d4aa">35</td><td style="color:#4dabf7">28</td></tr>
+              </table>
+            </div>
+            <p style="color:var(--text-secondary);margin-bottom:12px;">По таблице легко найти: сумму (158 км), среднее (158÷6≈26,3 км), максимум (35, май), минимум (18, март).</p>
+            <div style="background:var(--accent-dim);padding:14px;border-radius:10px;">
+              <p style="margin:0;"><strong>Когда использовать таблицу?</strong> Когда нужны точные числа для вычислений, или когда данных много и важна систематизация.</p>
+            </div>`
+        },
+        {
+          title:"Столбчатая диаграмма — сравнение значений",
+          content:`
+            <p style="margin-bottom:12px;"><strong>Столбчатая диаграмма</strong> наглядно показывает разницу между значениями разных категорий.</p>
+            <div style="display:flex;justify-content:center;margin:16px 0;">
+              <svg viewBox="0 0 280 160" width="280" height="160" aria-label="Столбчатая диаграмма: рост детей Айнур, Эльнар, Самир, Лала, Сабина" role="img">
+                <line x1="30" y1="10" x2="30" y2="130" stroke="#333" stroke-width="1.5"/>
+                <line x1="30" y1="130" x2="270" y2="130" stroke="#333" stroke-width="1.5"/>
+                <!-- Bars -->
+                <rect x="42" y="50" width="28" height="80" fill="#00d4aa" rx="4"/>
+                <rect x="88" y="30" width="28" height="100" fill="#4dabf7" rx="4"/>
+                <rect x="134" y="40" width="28" height="90" fill="#ff6b6b" rx="4"/>
+                <rect x="180" y="60" width="28" height="70" fill="#fcc419" rx="4"/>
+                <rect x="226" y="35" width="28" height="95" fill="#51cf66" rx="4"/>
+                <!-- Labels -->
+                <text x="56" y="145" text-anchor="middle" fill="#a0a0b8" font-size="9" font-family="sans-serif">Айнур</text>
+                <text x="102" y="145" text-anchor="middle" fill="#a0a0b8" font-size="9" font-family="sans-serif">Эльнар</text>
+                <text x="148" y="145" text-anchor="middle" fill="#a0a0b8" font-size="9" font-family="sans-serif">Самир</text>
+                <text x="194" y="145" text-anchor="middle" fill="#a0a0b8" font-size="9" font-family="sans-serif">Лала</text>
+                <text x="240" y="145" text-anchor="middle" fill="#a0a0b8" font-size="9" font-family="sans-serif">Сабина</text>
+                <!-- Values -->
+                <text x="56" y="46" text-anchor="middle" fill="#e8e8f0" font-size="10" font-family="sans-serif">145</text>
+                <text x="102" y="26" text-anchor="middle" fill="#e8e8f0" font-size="10" font-family="sans-serif">150</text>
+                <text x="148" y="36" text-anchor="middle" fill="#e8e8f0" font-size="10" font-family="sans-serif">148</text>
+                <text x="194" y="56" text-anchor="middle" fill="#e8e8f0" font-size="10" font-family="sans-serif">143</text>
+                <text x="240" y="31" text-anchor="middle" fill="#e8e8f0" font-size="10" font-family="sans-serif">149</text>
+              </svg>
+            </div>
+            <p style="color:var(--text-secondary);">Сразу видно: Эльнар — самый высокий (150 см), Лала — самая низкая (143 см). Легко сравнивать рост всех детей одновременно.</p>`
+        },
+        {
+          title:"Линейная диаграмма — изменение во времени",
+          content:`
+            <p style="margin-bottom:12px;"><strong>Линейная диаграмма</strong> (график) показывает, как данные изменяются во времени. Точки соединяются линиями — виден тренд.</p>
+            <div style="display:flex;justify-content:center;margin:16px 0;">
+              <svg viewBox="0 0 300 160" width="300" height="160" aria-label="Линейная диаграмма: температура воздуха по дням недели" role="img">
+                <line x1="30" y1="10" x2="30" y2="130" stroke="#333" stroke-width="1.5"/>
+                <line x1="30" y1="130" x2="285" y2="130" stroke="#333" stroke-width="1.5"/>
+                <!-- Grid lines -->
+                <line x1="30" y1="90" x2="285" y2="90" stroke="#333" stroke-width="0.5" stroke-dasharray="4,4"/>
+                <line x1="30" y1="55" x2="285" y2="55" stroke="#333" stroke-width="0.5" stroke-dasharray="4,4"/>
+                <text x="22" y="134" text-anchor="end" fill="#a0a0b8" font-size="9">20</text>
+                <text x="22" y="93" text-anchor="end" fill="#a0a0b8" font-size="9">25</text>
+                <text x="22" y="58" text-anchor="end" fill="#a0a0b8" font-size="9">30</text>
+                <!-- Data points and line -->
+                <!-- Пн=22, Вт=24, Ср=28, Чт=30, Пт=27, Сб=25, Вс=23 -->
+                <!-- y = 130 - (val-20)*8 -->
+                <polyline points="65,114 103,98 141,66 180,50 218,74 257,90 285,90" fill="none" stroke="#00d4aa" stroke-width="2.5" stroke-linejoin="round"/>
+                <circle cx="65" cy="114" r="4" fill="#00d4aa"/><text x="65" y="108" text-anchor="middle" fill="#e8e8f0" font-size="9">22°</text>
+                <circle cx="103" cy="98" r="4" fill="#4dabf7"/><text x="103" y="92" text-anchor="middle" fill="#e8e8f0" font-size="9">24°</text>
+                <circle cx="141" cy="66" r="4" fill="#ff6b6b"/><text x="141" y="60" text-anchor="middle" fill="#e8e8f0" font-size="9">28°</text>
+                <circle cx="180" cy="50" r="4" fill="#fcc419"/><text x="180" y="44" text-anchor="middle" fill="#e8e8f0" font-size="9">30°</text>
+                <circle cx="218" cy="74" r="4" fill="#ff6b6b"/><text x="218" y="68" text-anchor="middle" fill="#e8e8f0" font-size="9">27°</text>
+                <circle cx="257" cy="90" r="4" fill="#4dabf7"/><text x="257" y="84" text-anchor="middle" fill="#e8e8f0" font-size="9">25°</text>
+                <circle cx="285" cy="90" r="4" fill="#00d4aa"/>
+                <!-- Day labels -->
+                <text x="65" y="144" text-anchor="middle" fill="#a0a0b8" font-size="9">Пн</text>
+                <text x="103" y="144" text-anchor="middle" fill="#a0a0b8" font-size="9">Вт</text>
+                <text x="141" y="144" text-anchor="middle" fill="#a0a0b8" font-size="9">Ср</text>
+                <text x="180" y="144" text-anchor="middle" fill="#a0a0b8" font-size="9">Чт</text>
+                <text x="218" y="144" text-anchor="middle" fill="#a0a0b8" font-size="9">Пт</text>
+                <text x="257" y="144" text-anchor="middle" fill="#a0a0b8" font-size="9">Сб</text>
+                <text x="285" y="144" text-anchor="middle" fill="#a0a0b8" font-size="9">Вс</text>
+              </svg>
+            </div>
+            <p style="color:var(--text-secondary);">Линия показывает: температура росла с понедельника до четверга (пик 30°), затем снижалась. Тренд виден сразу!</p>`
+        },
+        {
+          title:"Круговая диаграмма — части целого",
+          content:`
+            <p style="margin-bottom:12px;"><strong>Круговая диаграмма</strong> лучше всего показывает структуру: как целое делится на части. Каждый сектор = доля в процентах.</p>
+            <div style="display:flex;align-items:center;gap:24px;flex-wrap:wrap;justify-content:center;margin:16px 0;">
+              <svg viewBox="0 0 160 160" width="140" height="140" aria-label="Круговая диаграмма любимое мороженое: шоколадное 40%, клубничное 30%, ванильное 20%, другое 10%" role="img">
+                <!-- r=45, C≈283. 40%=113, 30%=85, 20%=57, 10%=28 -->
+                <circle cx="80" cy="80" r="45" fill="none" stroke="#00d4aa" stroke-width="90" stroke-dasharray="113 170" transform="rotate(-90 80 80)"/>
+                <circle cx="80" cy="80" r="45" fill="none" stroke="#ff6b6b" stroke-width="90" stroke-dasharray="85 198" stroke-dashoffset="-113" transform="rotate(-90 80 80)"/>
+                <circle cx="80" cy="80" r="45" fill="none" stroke="#fcc419" stroke-width="90" stroke-dasharray="57 226" stroke-dashoffset="-198" transform="rotate(-90 80 80)"/>
+                <circle cx="80" cy="80" r="45" fill="none" stroke="#4dabf7" stroke-width="90" stroke-dasharray="28 255" stroke-dashoffset="-255" transform="rotate(-90 80 80)"/>
+                <circle cx="80" cy="80" r="8" fill="#0f0f1a"/>
+              </svg>
+              <div style="display:flex;flex-direction:column;gap:6px;">
+                <div style="display:flex;align-items:center;gap:8px;"><div style="width:14px;height:14px;background:#00d4aa;border-radius:3px;"></div><span style="color:var(--text-secondary);font-size:0.9rem;">Шоколадное — 40%</span></div>
+                <div style="display:flex;align-items:center;gap:8px;"><div style="width:14px;height:14px;background:#ff6b6b;border-radius:3px;"></div><span style="color:var(--text-secondary);font-size:0.9rem;">Клубничное — 30%</span></div>
+                <div style="display:flex;align-items:center;gap:8px;"><div style="width:14px;height:14px;background:#fcc419;border-radius:3px;"></div><span style="color:var(--text-secondary);font-size:0.9rem;">Ванильное — 20%</span></div>
+                <div style="display:flex;align-items:center;gap:8px;"><div style="width:14px;height:14px;background:#4dabf7;border-radius:3px;"></div><span style="color:var(--text-secondary);font-size:0.9rem;">Другое — 10%</span></div>
+              </div>
+            </div>
+            <p style="color:var(--text-secondary);">Сразу видно: большинство предпочитает шоколадное. Сумма: 40+30+20+10 = 100% ✓</p>`
+        },
+        {
+          title:"Пиктограмма — образное представление",
+          content:`
+            <p style="margin-bottom:12px;"><strong>Пиктограмма</strong> использует символы или рисунки для отображения данных. Каждый символ = определённое количество единиц.</p>
+            <div style="background:var(--bg-glass);border-radius:12px;padding:16px;margin:16px 0;">
+              <p style="color:var(--text-secondary);margin-bottom:12px;font-weight:600;">Количество книг в библиотеке (каждая 📚 = 10 книг):</p>
+              <div style="display:flex;flex-direction:column;gap:10px;">
+                <div style="display:flex;align-items:center;gap:12px;"><span style="width:80px;color:var(--text-secondary);font-size:0.9rem;">5-А класс</span><span style="font-size:1.2rem;">📚📚📚</span><span style="color:var(--accent);margin-left:8px;">30 книг</span></div>
+                <div style="display:flex;align-items:center;gap:12px;"><span style="width:80px;color:var(--text-secondary);font-size:0.9rem;">5-Б класс</span><span style="font-size:1.2rem;">📚📚📚📚📚</span><span style="color:var(--accent-blue);margin-left:8px;">50 книг</span></div>
+                <div style="display:flex;align-items:center;gap:12px;"><span style="width:80px;color:var(--text-secondary);font-size:0.9rem;">5-В класс</span><span style="font-size:1.2rem;">📚📚📚📚</span><span style="color:var(--accent-warm);margin-left:8px;">40 книг</span></div>
+              </div>
+            </div>
+            <div style="background:var(--accent-dim);padding:14px;border-radius:10px;">
+              <p style="margin:0;"><strong>Важно:</strong> в легенде пиктограммы всегда указывают, сколько единиц обозначает один символ. Это называется «масштаб» или «ключ».</p>
+            </div>`
+        }
+      ];
+
+      const examples=[
+        {
+          title:"Выбор вида диаграммы для расстояния туриста",
+          type:"Выбор типа диаграммы",
+          task:"Расстояние, которое Самир прошёл за 7 дней недели, представлено в двух формах. Какая форма лучше показывает зависимость пройденного расстояния от времени?",
+          sol:`<p><strong>Анализ:</strong> данные — расстояние по дням (Пн, Вт, Ср, ...) — это изменение во времени.</p>
+               <p><strong>Таблица:</strong> даёт точные числа, но не показывает тренд.</p>
+               <p><strong>Линейная диаграмма:</strong> соединяет точки линией — сразу виден рост или спад.</p>
+               <p><strong>Ответ:</strong> для показа <em>зависимости от времени</em> лучше использовать <strong>линейную диаграмму</strong>. Таблица удобнее для точных вычислений.</p>`
+        },
+        {
+          title:"Сравнение данных в столбчатой диаграмме",
+          type:"Чтение столбчатой диаграммы",
+          task:"По столбчатой диаграмме роста детей в баскетбольной команде определите: Айнур=145, Эльнар=150, Самир=148, Лала=143, Сабина=149 см. Найдите средний рост команды.",
+          sol:`<p><strong>Данные:</strong> 145, 150, 148, 143, 149 см.</p>
+               <p><strong>Сумма:</strong> 145+150+148+143+149 = 735 см.</p>
+               <p><strong>Количество:</strong> 5 детей.</p>
+               <p><strong>Средний рост:</strong> 735 ÷ 5 = <strong>147 см</strong>.</p>
+               <p><strong>По диаграмме также видно:</strong> самый высокий — Эльнар (150 см), самый низкий — Лала (143 см).</p>`
+        },
+        {
+          title:"Чтение линейной диаграммы температуры",
+          type:"Чтение линейной диаграммы",
+          task:"По линейной диаграмме температуры за неделю: Пн=22°, Вт=24°, Ср=28°, Чт=30°, Пт=27°, Сб=25°, Вс=23°. В какой день температура была наибольшей? Найдите среднюю температуру.",
+          sol:`<p><strong>Наибольшая температура:</strong> 30°C в <strong>четверг</strong>.</p>
+               <p><strong>Сумма:</strong> 22+24+28+30+27+25+23 = 179°C.</p>
+               <p><strong>Средняя температура:</strong> 179 ÷ 7 ≈ <strong>25,6°C</strong>.</p>
+               <p><strong>Тренд:</strong> температура росла с понедельника по четверг, затем снижалась. Линейная диаграмма наглядно показывает этот тренд.</p>`
+        },
+        {
+          title:"Пиктограмма: подсчёт по символам",
+          type:"Чтение пиктограммы",
+          task:"В пиктограмме каждая книга 📚 = 10 книг. 5-А: 3 значка, 5-Б: 5 значков, 5-В: 4 значка. Сколько всего книг? В каком классе больше всего?",
+          sol:`<p><strong>5-А класс:</strong> 3 × 10 = <strong>30 книг</strong>.</p>
+               <p><strong>5-Б класс:</strong> 5 × 10 = <strong>50 книг</strong>.</p>
+               <p><strong>5-В класс:</strong> 4 × 10 = <strong>40 книг</strong>.</p>
+               <p><strong>Всего:</strong> 30 + 50 + 40 = <strong>120 книг</strong>.</p>
+               <p><strong>Больше всего книг в 5-Б классе (50 книг).</strong></p>`
+        },
+        {
+          title:"Выбор лучшего вида диаграммы",
+          type:"Выбор вида диаграммы",
+          task:"Для каждой ситуации выберите наиболее подходящий вид диаграммы: а) расходы семьи по категориям; б) изменение температуры за месяц; в) сравнение урожая в 5 городах.",
+          sol:`<p><strong>а) Расходы семьи по категориям</strong> (еда 40%, жильё 30%, транспорт 20%, другое 10%):</p>
+               <p>→ <strong>Круговая диаграмма</strong>. Лучше всего показывает доли от общего бюджета (100%).</p>
+               <p><strong>б) Изменение температуры за месяц</strong> (данные за каждый день):</p>
+               <p>→ <strong>Линейная диаграмма</strong>. Показывает тренд — рост/спад во времени.</p>
+               <p><strong>в) Сравнение урожая в 5 городах</strong> (разные количества в каждом):</p>
+               <p>→ <strong>Столбчатая диаграмма</strong>. Наглядно сравнивает 5 независимых категорий.</p>`
+        }
+      ];
+
+      const trainerQs=[
+        { q:"В пиктограмме каждый символ 🚗 = 5 машин. Показано 6 символов. Сколько всего машин?", a:30, hint:"6 × 5 = 30 машин." },
+        { q:"По линейной диаграмме температура: Пн=22, Вт=24, Ср=28, Чт=30. Средняя за 4 дня?", a:26, hint:"(22+24+28+30)÷4 = 104÷4 = 26°." },
+        { q:"В столбчатой диаграмме роста: 145, 150, 148, 143, 149 см. Средний рост?", a:147, hint:"(145+150+148+143+149)÷5 = 735÷5 = 147 см." },
+        { q:"Пиктограмма: 🐄 = 20 коров. 5-А: 4 значка. Сколько коров?", a:80, hint:"4 × 20 = 80 коров." },
+        { q:"Сумма данных в линейной диаграмме за 5 дней: 10, 12, 15, 13, 10. Средняя?", a:12, hint:"(10+12+15+13+10)÷5 = 60÷5 = 12." },
+        { q:"По столбчатой диаграмме 3 города: 300, 500, 200 тыс. жителей. Население какого города нужно найти, если среднее = 400 тыс.? Сумма трёх городов = ?", a:1200, hint:"Сумма = 400×3 = 1200 тыс. Или: 300+500+200=1000, но среднее нужно пересчитать: (300+500+?)/3=400 → ?=400." },
+        { q:"Пиктограмма: 📚 = 10 книг. 5-А: 3 знака, 5-Б: 5 знаков, 5-В: 4 знака. Сколько всего книг?", a:120, hint:"(3+5+4)×10 = 12×10 = 120 книг." },
+        { q:"По линейной диаграмме: Пн=5, Вт=7, Ср=9, Чт=8, Пт=6. В какой день максимум? (ответ: порядковый номер дня)", a:3, hint:"Максимум = 9, это среда — 3-й день." },
+        { q:"Столбчатая диаграмма: 5 детей ростом 140, 145, 150, 155, 160 см. Средний рост?", a:150, hint:"(140+145+150+155+160)÷5 = 750÷5 = 150 см." },
+        { q:"Пиктограмма: 🍎 = 4 яблока. Показано 8 значков. Сколько яблок?", a:32, hint:"8 × 4 = 32 яблока." }
+      ];
+
+      const questions=[
+        { q:"Какой вид диаграммы лучше всего показывает части одного целого в %?",o:["Линейная","Столбчатая","Круговая","Пиктограмма"],a:2 },
+        { q:"Какой вид диаграммы используют для показа изменений данных во времени?",o:["Круговая","Линейная","Столбчатая","Таблица"],a:1 },
+        { q:"Какой вид представления данных даёт наиболее точные числа?",o:["Пиктограмма","Линейная диаграмма","Столбчатая диаграмма","Таблица"],a:3 },
+        { q:"В пиктограмме каждый значок 🚗 = 5 машин. Показано 4 значка. Сколько машин?",o:["4","5","20","25"],a:2 },
+        { q:"Столбчатая диаграмма удобна для:",o:["Показа долей от целого","Сравнения нескольких значений","Показа изменений во времени","Точных вычислений"],a:1 },
+        { q:"По линейной диаграмме легче всего определить:",o:["Точные значения","Доли от целого","Тренд изменения данных","Количество категорий"],a:2 },
+        { q:"Сумма всех данных в столбчатой диаграмме: 25, 30, 45. Всего:",o:["90","95","100","105"],a:2 },
+        { q:"В пиктограмме 🐄 = 20 коров. Показано 3 значка. Сколько коров?",o:["3","20","60","80"],a:2 },
+        { q:"Какую диаграмму следует выбрать для показа расходов семьи по статьям?",o:["Линейную","Пиктограмму","Круговую","Столбчатую"],a:2 },
+        { q:"По температурному графику (линейная диаграмма): Пн=22, Вт=24, Ср=28, Чт=30, Пт=27. В какой день максимум?",o:["Вторник","Среда","Четверг","Пятница"],a:2 },
+        { q:"В пиктограмме каждый символ = 10 единиц. Всего символов 7. Сколько единиц?",o:["7","10","70","100"],a:2 },
+        { q:"Для сравнения урожая зерна в 6 городах лучше использовать:",o:["Круговую диаграмму","Пиктограмму","Столбчатую диаграмму","Линейную диаграмму"],a:2 },
+        { q:"По линейной диаграмме роста: Янв=10, Фев=12, Мар=15. Среднее значение?",o:["10","12","12,3","15"],a:2 },
+        { q:"Пиктограмма: 📚=5 книг. 5-А: 6 значков. Сколько книг?",o:["5","6","30","36"],a:2 },
+        { q:"Столбчатая диаграмма показывает рост 5 детей. Наибольший столбик соответствует:",o:["Самому низкому ребёнку","Самому высокому ребёнку","Среднему росту","Минимальному значению"],a:1 },
+        { q:"В круговой диаграмме есть три сектора: 40%, 35% и X%. Чему равен X?",o:["15%","20%","25%","30%"],a:2 },
+        { q:"Для показа изменения температуры воздуха по часам лучше использовать:",o:["Пиктограмму","Круговую диаграмму","Столбчатую диаграмму","Линейную диаграмму"],a:3 },
+        { q:"В пиктограмме 🍎=4 яблока. Показано 5 значков. Сколько яблок?",o:["4","5","20","25"],a:2 },
+        { q:"По столбчатой диаграмме: 5 значений = 10, 20, 15, 25, 30. Наименьшее значение:",o:["10","15","20","25"],a:0 },
+        { q:"Какой из видов диаграмм использует символы для обозначения данных?",o:["Линейная","Столбчатая","Круговая","Пиктограмма"],a:3 },
+        { q:"По линейной диаграмме: данные растут, если линия:",o:["Горизонтальная","Идёт вниз","Идёт вверх","Прерывистая"],a:2 },
+        { q:"В пиктограмме: 🚗=10 машин. 5-А: 3 знака, 5-Б: 7 знаков. Разница?",o:["4","30","40","70"],a:2 },
+        { q:"Что означает «масштаб» в пиктограмме?",o:["Размер рисунков","Сколько единиц обозначает один символ","Количество символов","Цвет символов"],a:1 },
+        { q:"По температурному графику: рост с Пн по Чт, затем спад. В Пт температура:",o:["Выше, чем в Чт","Равна температуре Пн","Ниже, чем в Чт","Равна нулю"],a:2 },
+        { q:"Столбчатая диаграмма: 5-А=30, 5-Б=50, 5-В=40 книг. Средний показатель?",o:["30","40","50","120"],a:1 },
+        { q:"В круговой диаграмме два сектора: 60% и 40%. Угол большего сектора:",o:["60°","144°","216°","240°"],a:2 },
+        { q:"Для показа структуры бюджета города (по статьям расходов) лучше всего подходит:",o:["Линейная диаграмма","Столбчатая диаграмма","Пиктограмма","Круговая диаграмма"],a:3 },
+        { q:"В пиктограмме: 🐄=25 коров. Показано 4 значка. Сколько коров?",o:["4","25","100","125"],a:2 },
+        { q:"По линейной диаграмме: Пн=5, Вт=10, Ср=15, Чт=20. Рост за каждый день:",o:["5 единиц","10 единиц","15 единиц","Неодинаковый"],a:0 },
+        { q:"Какая диаграмма наиболее наглядна для детей младшего возраста?",o:["Таблица","Линейная диаграмма","Пиктограмма","Круговая диаграмма"],a:2 }
+      ];
+
+      // ===================== NAVIGATION =====================
+      function showSection(id){
+        document.querySelectorAll("section").forEach(s=>s.classList.remove("active"));
+        document.querySelectorAll(".nav-links a").forEach(a=>a.classList.remove("active"));
+        const sec=document.getElementById(id); if(sec) sec.classList.add("active");
+        const lnk=document.querySelector(`.nav-links a[data-section="${id}"]`); if(lnk) lnk.classList.add("active");
+        AppState.currentSection=id;
+        if(id==="examples") renderExamples();
+        if(id==="assessment"){
+          document.getElementById("diagnostic-ui").style.display="none";
+          document.getElementById("timeattack-ui").style.display="none";
+          document.getElementById("results-ui").style.display="none";
+        }
+      }
+      document.querySelectorAll(".nav-links a[data-section]").forEach(a=>{
+        a.addEventListener("click",e=>{e.preventDefault();showSection(a.dataset.section);});
+      });
+
+      function renderSlide(){
+        const track=document.getElementById("track-slides");
+        document.getElementById("slide-num").textContent=AppState.slide+1;
+        document.getElementById("slide-total").textContent=slides.length;
+        track.innerHTML="";
+        slides.forEach((s,i)=>{
+          const div=document.createElement("div");
+          div.className="widget-slide"+(i===AppState.slide?" active":"");
+          div.innerHTML=`<h3>${s.title}</h3>${s.content}`;
+          track.appendChild(div);
+        });
+      }
+      function nextSlide(){ if(AppState.slide<slides.length-1){AppState.slide++;renderSlide();}else showSection("types"); }
+      function prevSlide(){ if(AppState.slide>0){AppState.slide--;renderSlide();} }
+      renderSlide();
+
+      function renderExamples(){
+        const c=document.getElementById("examples-container");
+        if(c.dataset.rendered) return; c.dataset.rendered="1";
+        examples.forEach((ex,i)=>{
+          const div=document.createElement("div"); div.className="problem-card";
+          div.innerHTML=`<div class="problem-header"><span class="problem-number">Задача ${i+1}</span><span class="problem-type">${ex.type}</span></div><div class="problem-text"><strong>${ex.title}</strong><br>${ex.task}</div><button class="solution-btn" onclick="toggleSolution(this)">Показать решение</button><div class="solution">${ex.sol}</div>`;
+          c.appendChild(div);
+        });
+      }
+      function toggleSolution(btn){ const s=btn.nextElementSibling; const a=s.classList.toggle("active"); btn.textContent=a?"Скрыть решение":"Показать решение"; }
+
+      function newTrainerProblem(){
+        const idx=Math.floor(Math.random()*trainerQs.length);
+        AppState.trainer.current=trainerQs[idx];
+        document.getElementById("trainer-question").innerHTML=AppState.trainer.current.q;
+        document.getElementById("trainer-answer").value="";
+        document.getElementById("trainer-feedback").innerHTML="";
+        document.getElementById("trainer-hint").style.display="none";
+        document.getElementById("trainer-check-btn").disabled=false;
+        document.getElementById("trainer-answer").focus();
+      }
+      function checkTrainer(){
+        const cur=AppState.trainer.current; if(!cur) return;
+        const val=parseFloat(document.getElementById("trainer-answer").value);
+        AppState.trainer.total++;
+        document.getElementById("trainer-total").textContent=AppState.trainer.total;
+        const fb=document.getElementById("trainer-feedback");
+        if(!isNaN(val)&&Math.abs(val-cur.a)<0.01){
+          AppState.trainer.correct++; AppState.trainer.streak++;
+          document.getElementById("trainer-correct").textContent=AppState.trainer.correct;
+          document.getElementById("trainer-streak").textContent=AppState.trainer.streak;
+          fb.innerHTML=`<div style="padding:14px;background:rgba(81,207,102,0.15);border-radius:12px;border-left:3px solid var(--success);color:var(--success);font-weight:600;">&#10003; Верно! Ответ: ${cur.a}</div>`;
+        } else {
+          AppState.trainer.streak=0; document.getElementById("trainer-streak").textContent=0;
+          fb.innerHTML=`<div style="padding:14px;background:rgba(255,107,107,0.15);border-radius:12px;border-left:3px solid var(--error);color:var(--error);font-weight:600;">&#10007; Неверно. Правильный ответ: ${cur.a}</div>`;
+        }
+        document.getElementById("trainer-check-btn").disabled=true;
+      }
+      function showTrainerHint(){ const cur=AppState.trainer.current; if(!cur) return; const h=document.getElementById("trainer-hint"); h.style.display="block"; h.textContent=cur.hint; }
+
+      let diagAnswers=[],diagCurrent=0,diagScore=0;
+      function startDiagnostic(){
+        diagAnswers=new Array(questions.length).fill(null); diagCurrent=0; diagScore=0;
+        document.getElementById("diagnostic-ui").style.display="block";
+        document.getElementById("timeattack-ui").style.display="none";
+        document.getElementById("results-ui").style.display="none";
+        renderDiagnosticQ();
+        document.getElementById("diagnostic-ui").scrollIntoView({behavior:"smooth"});
+      }
+      function renderDiagnosticQ(){
+        const q=questions[diagCurrent];
+        document.getElementById("diag-current").textContent=diagCurrent+1;
+        document.getElementById("diag-total").textContent=questions.length;
+        document.getElementById("diag-score").textContent=diagScore+" правильных";
+        document.getElementById("diag-progress").style.width=(diagCurrent/questions.length*100).toFixed(0)+"%";
+        document.getElementById("diag-question").innerHTML=q.q;
+        document.getElementById("diag-explanation").style.display="none";
+        const opts=document.getElementById("diag-options"); opts.innerHTML="";
+        const letters=["А","Б","В","Г"];
+        q.o.forEach((opt,i)=>{
+          const div=document.createElement("div"); div.className="quiz-option";
+          if(diagAnswers[diagCurrent]!==null){ div.classList.add("disabled"); if(i===q.a) div.classList.add("correct"); else if(i===diagAnswers[diagCurrent]) div.classList.add("wrong"); }
+          div.innerHTML=`<span class="option-letter">${letters[i]}</span><span>${opt}</span>`;
+          div.addEventListener("click",()=>selectDiagAnswer(i));
+          opts.appendChild(div);
+        });
+        document.getElementById("diag-prev").disabled=diagCurrent===0;
+        document.getElementById("diag-next").disabled=diagAnswers[diagCurrent]===null;
+      }
+      function selectDiagAnswer(i){
+        if(diagAnswers[diagCurrent]!==null) return;
+        diagAnswers[diagCurrent]=i;
+        if(i===questions[diagCurrent].a) diagScore++;
+        document.getElementById("diag-score").textContent=diagScore+" правильных";
+        document.getElementById("diag-next").disabled=false;
+        const expl=document.getElementById("diag-explanation"); expl.style.display="block";
+        if(i===questions[diagCurrent].a){
+          expl.style.borderLeftColor="var(--success)"; expl.style.background="rgba(81,207,102,0.1)";
+          expl.innerHTML="<strong style='color:var(--success)'>&#10003; Правильно!</strong> "+getExplanation(diagCurrent);
+        } else {
+          expl.style.borderLeftColor="var(--error)"; expl.style.background="rgba(255,107,107,0.1)";
+          expl.innerHTML="<strong style='color:var(--error)'>&#10007; Неверно.</strong> Правильный ответ: <strong>"+questions[diagCurrent].o[questions[diagCurrent].a]+"</strong>. "+getExplanation(diagCurrent);
+        }
+        renderDiagnosticQ();
+      }
+      function getExplanation(idx){
+        const e=[
+          "Круговая диаграмма делит круг на секторы = части целого.",
+          "Линейная диаграмма соединяет точки данных во времени.",
+          "Таблица даёт точные числа без искажений.",
+          "4 × 5 = 20 машин.",
+          "Столбчатая диаграмма наглядно сравнивает значения разных категорий.",
+          "Линия показывает тренд — направление изменения данных.",
+          "25 + 30 + 45 = 100.",
+          "3 × 20 = 60 коров.",
+          "Круговая диаграмма показывает части (%) от общей суммы.",
+          "Максимум 30° в четверг.",
+          "7 × 10 = 70 единиц.",
+          "Столбчатая диаграмма — для сравнения нескольких значений.",
+          "(10+12+15)÷3 = 37÷3 ≈ 12,3.",
+          "6 × 5 = 30 книг.",
+          "Наибольший столбик = наибольшее значение = самый высокий ребёнок.",
+          "100 - 40 - 35 = 25%.",
+          "Линейная диаграмма показывает изменение во времени.",
+          "5 × 4 = 20 яблок.",
+          "Минимум = 10.",
+          "Пиктограмма использует символы/рисунки.",
+          "Линия вверх = рост данных.",
+          "Разница: 7-3=4 значка × 10 = 40 машин.",
+          "Масштаб = сколько единиц обозначает один символ.",
+          "После пика в Чт данные снижаются → Пт ниже Чт.",
+          "(30+50+40)÷3 = 120÷3 = 40.",
+          "Угол 60% = 60 × 3,6 = 216°.",
+          "Круговая диаграмма — для структуры данных.",
+          "4 × 25 = 100 коров.",
+          "Рост каждый день = 20-15=5, 15-10=5, 10-5=5 → 5 единиц.",
+          "Пиктограмма с символами наиболее образна и понятна детям."
+        ];
+        return e[idx]||"";
+      }
+      function nextDiagnostic(){ if(diagCurrent<questions.length-1){diagCurrent++;renderDiagnosticQ();}else showResults(diagScore,questions.length,0); }
+      function prevDiagnostic(){ if(diagCurrent>0){diagCurrent--;renderDiagnosticQ();} }
+
+      let taAnswers=[],taCurrent=0,taScore=0,taTimerInterval=null,taTimeLeft=600;
+      function startTimeAttack(){
+        taAnswers=new Array(questions.length).fill(null); taCurrent=0; taScore=0; taTimeLeft=600;
+        document.getElementById("timeattack-ui").style.display="block";
+        document.getElementById("diagnostic-ui").style.display="none";
+        document.getElementById("results-ui").style.display="none";
+        if(taTimerInterval) clearInterval(taTimerInterval);
+        taTimerInterval=setInterval(tickTimer,1000);
+        renderTAQuestion();
+        document.getElementById("timeattack-ui").scrollIntoView({behavior:"smooth"});
+      }
+      function tickTimer(){
+        taTimeLeft--;
+        const m=Math.floor(taTimeLeft/60),s=taTimeLeft%60,t=document.getElementById("ta-timer");
+        t.textContent=m+":"+String(s).padStart(2,"0"); t.className="timer";
+        if(taTimeLeft<=60) t.classList.add("warning");
+        if(taTimeLeft<=20) t.classList.add("danger");
+        if(taTimeLeft<=0){clearInterval(taTimerInterval);showResults(taScore,questions.length,600-taTimeLeft);}
+      }
+      function renderTAQuestion(){
+        const q=questions[taCurrent];
+        document.getElementById("ta-current").textContent=taCurrent+1;
+        document.getElementById("ta-progress").style.width=(taCurrent/questions.length*100).toFixed(0)+"%";
+        document.getElementById("ta-question").innerHTML=q.q;
+        document.getElementById("ta-next").disabled=true;
+        const opts=document.getElementById("ta-options"); opts.innerHTML="";
+        const letters=["А","Б","В","Г"];
+        q.o.forEach((opt,i)=>{
+          const div=document.createElement("div"); div.className="quiz-option";
+          div.innerHTML=`<span class="option-letter">${letters[i]}</span><span>${opt}</span>`;
+          div.addEventListener("click",()=>{
+            document.querySelectorAll("#ta-options .quiz-option").forEach(o=>o.classList.remove("correct","wrong"));
+            div.classList.add(i===q.a?"correct":"wrong");
+            if(i===q.a&&taAnswers[taCurrent]===null) taScore++;
+            taAnswers[taCurrent]=i;
+            document.getElementById("ta-next").disabled=false;
+          });
+          opts.appendChild(div);
+        });
+      }
+      function nextTimeAttack(){
+        if(taCurrent<questions.length-1){taCurrent++;renderTAQuestion();}
+        else{clearInterval(taTimerInterval);showResults(taScore,questions.length,600-taTimeLeft);}
+      }
+      function showResults(score,total,elapsed){
+        document.getElementById("diagnostic-ui").style.display="none";
+        document.getElementById("timeattack-ui").style.display="none";
+        document.getElementById("results-ui").style.display="block";
+        const pct=Math.round(score/total*100);
+        document.getElementById("result-circle").style.setProperty("--score",pct);
+        document.getElementById("result-percent").textContent=pct+"%";
+        document.getElementById("result-correct").textContent=score;
+        document.getElementById("result-wrong").textContent=total-score;
+        const mm=Math.floor(elapsed/60),ss=elapsed%60;
+        document.getElementById("result-time").textContent=mm+":"+String(ss).padStart(2,"0");
+        let mastery,msg;
+        if(pct>=90){mastery="Отлично";msg="&#127942; Отлично! Вы умеете выбирать и читать любые виды диаграмм!";}
+        else if(pct>=75){mastery="Хорошо";msg="&#128077; Хорошо! Повторите отличия видов диаграмм.";}
+        else if(pct>=50){mastery="Удовл.";msg="&#128218; Неплохо, но повторите теорию о видах диаграмм.";}
+        else{mastery="Слабо";msg="&#128161; Изучите теорию ещё раз — каждый вид для своей задачи.";}
+        document.getElementById("result-mastery").textContent=mastery;
+        document.getElementById("result-message").innerHTML=msg;
+        document.getElementById("results-ui").scrollIntoView({behavior:"smooth"});
+      }
+      function resetAssessment(){
+        document.getElementById("diagnostic-ui").style.display="none";
+        document.getElementById("timeattack-ui").style.display="none";
+        document.getElementById("results-ui").style.display="none";
+        if(taTimerInterval){clearInterval(taTimerInterval);taTimerInterval=null;}
+        document.getElementById("ta-timer").textContent="10:00";
+        document.getElementById("ta-timer").className="timer";
+      }
+    </script>
+  </body>
+</html>

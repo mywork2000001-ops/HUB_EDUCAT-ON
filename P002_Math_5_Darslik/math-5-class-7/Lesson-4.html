@@ -1,0 +1,766 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Урок 4 — Площадь поверхности прямой призмы</title>
+    <style>
+      :root{--bg-dark:#0f0f1a;--bg-card:rgba(255,255,255,0.05);--bg-glass:rgba(255,255,255,0.08);--border-glass:rgba(255,255,255,0.15);--text-primary:#e8e8f0;--text-secondary:#a0a0b8;--accent:#00d4aa;--accent-dim:rgba(0,212,170,0.2);--accent-warm:#ff6b6b;--accent-warm-dim:rgba(255,107,107,0.2);--accent-blue:#4dabf7;--accent-blue-dim:rgba(77,171,247,0.2);--success:#51cf66;--error:#ff6b6b;--warning:#fcc419;}
+      *{margin:0;padding:0;box-sizing:border-box;}
+      body{font-family:"Segoe UI",system-ui,sans-serif;background:var(--bg-dark);color:var(--text-primary);min-height:100vh;overflow-x:hidden;line-height:1.6;}
+      .bg-animation{position:fixed;top:0;left:0;width:100%;height:100%;z-index:-1;background:radial-gradient(ellipse at 20% 20%,rgba(0,212,170,0.08) 0%,transparent 50%),radial-gradient(ellipse at 80% 80%,rgba(77,171,247,0.08) 0%,transparent 50%);}
+      .bg-animation::before{content:"";position:absolute;width:200%;height:200%;top:-50%;left:-50%;background:repeating-linear-gradient(0deg,transparent,transparent 40px,rgba(255,255,255,0.02) 40px,rgba(255,255,255,0.02) 41px);animation:bgMove 20s linear infinite;}
+      @keyframes bgMove{0%{transform:translateY(0)}100%{transform:translateY(40px)}}
+      nav{position:fixed;top:0;left:0;right:0;background:rgba(15,15,26,0.85);backdrop-filter:blur(20px);border-bottom:1px solid var(--border-glass);z-index:1000;padding:0 20px;}
+      .nav-container{max-width:1200px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;height:60px;}
+      .logo{font-size:1.3rem;font-weight:700;background:linear-gradient(135deg,var(--accent),var(--accent-blue));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;text-decoration:none;}
+      .nav-links{display:flex;gap:8px;list-style:none;}
+      .nav-links a{color:var(--text-secondary);text-decoration:none;padding:8px 16px;border-radius:8px;transition:all 0.3s;font-size:0.9rem;font-weight:500;cursor:pointer;border:none;background:transparent;}
+      .nav-links a:hover,.nav-links a.active{color:var(--text-primary);background:var(--bg-glass);}
+      .nav-links a.active{background:var(--accent-dim);color:var(--accent);}
+      section{display:none;opacity:0;padding:78px 20px 32px;max-width:1000px;margin:0 auto;transition:opacity 0.3s ease;}
+      section.active{display:block;opacity:1;animation:fadeIn 0.5s ease;}
+      @keyframes fadeIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+      .card{background:var(--bg-card);backdrop-filter:blur(20px);border:1px solid var(--border-glass);border-radius:20px;padding:20px;margin-bottom:16px;transition:transform 0.3s,box-shadow 0.3s;}
+      .card:hover{transform:translateY(-2px);box-shadow:0 20px 40px rgba(0,0,0,0.3);}
+      .card-title{font-size:1.5rem;font-weight:700;margin-bottom:16px;display:flex;align-items:center;gap:12px;}
+      .card-title .icon{width:40px;height:40px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.3rem;}
+      .hero{text-align:center;padding:140px 20px 80px;}
+      .hero h1{font-size:3rem;font-weight:800;margin-bottom:20px;background:linear-gradient(135deg,var(--accent),var(--accent-blue),var(--accent-warm));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1.2;}
+      .hero p{font-size:1.2rem;color:var(--text-secondary);max-width:600px;margin:0 auto 40px;}
+      .btn{display:inline-flex;align-items:center;gap:8px;padding:14px 32px;border-radius:12px;border:none;font-size:1rem;font-weight:600;cursor:pointer;transition:all 0.3s;text-decoration:none;}
+      .btn-primary{background:linear-gradient(135deg,var(--accent),var(--accent-blue));color:#000;}
+      .btn-primary:hover{transform:translateY(-2px);box-shadow:0 10px 30px var(--accent-dim);}
+      .btn-secondary{background:var(--bg-glass);color:var(--text-primary);border:1px solid var(--border-glass);}
+      .btn-secondary:hover{background:var(--bg-card);}
+      .btn:disabled{opacity:0.5;cursor:not-allowed;transform:none!important;}
+      .generate-widget{background:var(--bg-card);border:1px solid var(--border-glass);border-radius:20px;padding:14px;width:100%;}
+      .widget-slide{display:none;padding:12px 16px;animation:slideFade 0.3s ease;}
+      .widget-slide.active{display:block;}
+      @keyframes slideFade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+      .widget-slide h3{font-size:1.3rem;color:var(--accent);margin-bottom:16px;}
+      .widget-slide p,.widget-slide li{color:var(--text-secondary);line-height:1.8;margin-bottom:12px;}
+      .widget-slide table{width:100%;border-collapse:collapse;margin:12px 0;color:var(--text-secondary);}
+      .widget-slide table th,.widget-slide table td{border:1px solid var(--border-glass);padding:10px;text-align:left;}
+      .widget-slide table th{background:var(--bg-glass);color:var(--text-primary);}
+      .widget-nav{display:flex;justify-content:space-between;align-items:center;margin-top:16px;}
+      .widget-progress{text-align:center;font-size:0.9rem;color:var(--text-secondary);margin-bottom:12px;}
+      .sequence-component{display:flex;flex-direction:column;gap:20px;position:relative;}
+      .sequence-step{background:var(--bg-card);border:1px solid var(--border-glass);border-radius:16px;padding:24px 24px 24px 72px;position:relative;transition:all 0.3s;}
+      .sequence-step:hover{border-color:var(--accent);transform:translateX(4px);}
+      .sequence-number{position:absolute;left:20px;top:20px;width:40px;height:40px;background:var(--accent);color:#000;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:1.1rem;}
+      .sequence-step h4{color:var(--text-primary);margin-bottom:8px;font-size:1.1rem;}
+      .sequence-step p{color:var(--text-secondary);line-height:1.7;}
+      .sequence-connector{position:absolute;left:39px;top:60px;bottom:-30px;width:2px;background:var(--accent-dim);z-index:0;}
+      .sequence-step:last-child .sequence-connector{display:none;}
+      .problem-card{background:var(--bg-card);border:1px solid var(--border-glass);border-radius:16px;padding:24px;margin-bottom:20px;}
+      .problem-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:8px;}
+      .problem-number{background:var(--accent-dim);color:var(--accent);padding:4px 12px;border-radius:20px;font-size:0.85rem;font-weight:600;}
+      .problem-type{color:var(--text-secondary);font-size:0.85rem;}
+      .problem-text{font-size:1.1rem;margin-bottom:16px;line-height:1.8;}
+      .solution-btn{background:var(--accent-dim);color:var(--accent);border:1px solid var(--accent);padding:10px 20px;border-radius:8px;cursor:pointer;font-weight:600;transition:all 0.3s;}
+      .solution-btn:hover{background:var(--accent);color:#000;}
+      .solution{display:none;margin-top:20px;padding:20px;background:rgba(0,212,170,0.05);border-left:3px solid var(--accent);border-radius:0 12px 12px 0;}
+      .solution.active{display:block;animation:slideDown 0.3s ease;}
+      @keyframes slideDown{from{opacity:0;max-height:0}to{opacity:1;max-height:1000px}}
+      .solution p{margin-bottom:8px;color:var(--text-secondary);}
+      .solution strong{color:var(--accent);}
+      .quiz-container{background:var(--bg-card);border:1px solid var(--border-glass);border-radius:20px;padding:32px;}
+      .quiz-progress{display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;flex-wrap:wrap;gap:8px;}
+      .progress-bar{flex:1;height:8px;background:var(--bg-glass);border-radius:4px;margin:0 16px;overflow:hidden;min-width:100px;}
+      .progress-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent-blue));border-radius:4px;transition:width 0.5s ease;width:0%;}
+      .quiz-question{font-size:1.2rem;margin-bottom:24px;padding:20px;background:var(--bg-glass);border-radius:12px;border-left:4px solid var(--accent);}
+      .quiz-options{display:grid;gap:12px;}
+      .quiz-option{background:var(--bg-glass);border:2px solid var(--border-glass);border-radius:12px;padding:16px 20px;cursor:pointer;transition:all 0.3s;display:flex;align-items:center;gap:12px;}
+      .quiz-option:hover{border-color:var(--accent);background:var(--accent-dim);}
+      .quiz-option.correct{border-color:var(--success);background:rgba(81,207,102,0.15);}
+      .quiz-option.wrong{border-color:var(--error);background:rgba(255,107,107,0.15);}
+      .quiz-option.disabled{pointer-events:none;opacity:0.7;}
+      .option-letter{width:32px;height:32px;border-radius:8px;background:var(--bg-card);display:flex;align-items:center;justify-content:center;font-weight:700;flex-shrink:0;}
+      .quiz-nav{display:flex;justify-content:space-between;margin-top:24px;}
+      .stat{background:var(--bg-glass);padding:12px 24px;border-radius:12px;text-align:center;min-width:100px;border:1px solid var(--border-glass);}
+      .stat-value{font-size:1.5rem;font-weight:700;color:var(--accent);}
+      .stat-label{font-size:0.85rem;color:var(--text-secondary);}
+      .timer{position:fixed;top:80px;right:20px;background:var(--bg-card);backdrop-filter:blur(20px);border:1px solid var(--border-glass);border-radius:16px;padding:16px 24px;font-size:1.3rem;font-weight:700;font-variant-numeric:tabular-nums;z-index:999;box-shadow:0 10px 30px rgba(0,0,0,0.3);}
+      .timer.warning{border-color:var(--warning);color:var(--warning);animation:pulse 1s infinite;}
+      .timer.danger{border-color:var(--error);color:var(--error);animation:pulse 0.5s infinite;}
+      @keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.05)}}
+      .results-container{text-align:center;padding:40px;}
+      .score-circle{width:200px;height:200px;border-radius:50%;background:conic-gradient(var(--accent) calc(var(--score)*3.6deg),var(--bg-glass) 0);margin:0 auto 32px;display:flex;align-items:center;justify-content:center;position:relative;}
+      .score-circle::before{content:"";position:absolute;width:170px;height:170px;background:var(--bg-dark);border-radius:50%;}
+      .score-value{position:relative;font-size:3rem;font-weight:800;color:var(--accent);}
+      .score-label{font-size:1.2rem;color:var(--text-secondary);margin-bottom:8px;}
+      .score-message{font-size:1.5rem;font-weight:700;margin-bottom:32px;}
+      .results-breakdown{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:16px;max-width:600px;margin:0 auto 32px;}
+      .breakdown-item{background:var(--bg-glass);padding:16px;border-radius:12px;}
+      .breakdown-value{font-size:1.5rem;font-weight:700;color:var(--accent);}
+      .breakdown-label{font-size:0.85rem;color:var(--text-secondary);}
+      @media(max-width:768px){.hero h1{font-size:2rem}.nav-links{display:none}.timer{top:70px;right:10px;font-size:1rem;padding:10px 16px}.card{padding:14px}section{padding:70px 12px 24px}}
+    </style>
+  </head>
+  <body>
+    <div class="bg-animation"></div>
+    <nav>
+      <div class="nav-container">
+        <a href="index.html" class="logo" target="_self">📐 Урок 4</a>
+        <ul class="nav-links">
+          <li><a href="#" class="active" data-section="home">Главная</a></li>
+          <li><a href="#" data-section="theory">Теория</a></li>
+          <li><a href="#" data-section="algorithm">Алгоритм</a></li>
+          <li><a href="#" data-section="examples">Примеры</a></li>
+          <li><a href="#" data-section="trainer">Тренажёр</a></li>
+          <li><a href="#" data-section="assessment">Аттестация</a></li>
+        </ul>
+      </div>
+    </nav>
+
+    <!-- HOME -->
+    <section id="home" class="active">
+      <div class="hero">
+        <h1>Площадь поверхности прямой призмы</h1>
+        <p>Урок 4. §7.2. Призма с прямоугольным треугольником в основании. S = 2·S_осн + S_бок. 30 вопросов для полного освоения темы.</p>
+        <div style="display:flex;gap:16px;justify-content:center;flex-wrap:wrap;">
+          <button class="btn btn-primary" onclick="showSection('theory')">Начать обучение</button>
+          <button class="btn btn-secondary" onclick="showSection('assessment')">Проверить знания</button>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title"><span class="icon" style="background:var(--accent-dim)">🎯</span>Что вы изучите</div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px;">
+          <div class="card" style="padding:20px;"><h3 style="color:var(--accent);margin-bottom:8px;">Прямая призма</h3><p style="color:var(--text-secondary);">Тело с основаниями-равными многоугольниками и перпендикулярными боковыми рёбрами. Боковые грани — прямоугольники.</p></div>
+          <div class="card" style="padding:20px;"><h3 style="color:var(--accent-blue);margin-bottom:8px;">Прямоугольный треугольник в основании</h3><p style="color:var(--text-secondary);">5 граней, 9 рёбер, 6 вершин. Катеты a, b; гипотенуза c = √(a²+b²).</p></div>
+          <div class="card" style="padding:20px;"><h3 style="color:var(--accent-warm);margin-bottom:8px;">Формула поверхности</h3><p style="color:var(--text-secondary);">S = 2·S_осн + S_бок = a·b + (a+b+c)·h. Основание + боковая поверхность.</p></div>
+          <div class="card" style="padding:20px;"><h3 style="color:var(--warning);margin-bottom:8px;">Боковая поверхность</h3><p style="color:var(--text-secondary);">S_бок = P · h, где P = a+b+c — периметр основания, h — высота призмы.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- THEORY -->
+    <section id="theory">
+      <div class="card">
+        <div class="card-title"><span class="icon" style="background:var(--accent-dim)">📖</span>Глава 1. Визуальная теория</div>
+        <p style="color:var(--text-secondary);margin-bottom:20px;">Изучите понятие прямой призмы и формулу площади поверхности.</p>
+        <div class="generate-widget">
+          <div class="widget-progress">Слайд <span id="slide-num">1</span> / <span id="slide-total">5</span></div>
+          <div class="widget-track" id="track-slides"></div>
+          <div class="widget-nav">
+            <button type="button" class="btn btn-secondary" onclick="prevSlide()">← Назад</button>
+            <button type="button" class="btn btn-primary" onclick="nextSlide()">Вперёд →</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ALGORITHM -->
+    <section id="algorithm">
+      <div class="card">
+        <div class="card-title"><span class="icon" style="background:var(--accent-blue-dim)">🪜</span>Глава 2. Алгоритм вычисления площади поверхности прямой призмы</div>
+        <p style="color:var(--text-secondary);margin-bottom:20px;">Пошаговый алгоритм для нахождения полной поверхности треугольной прямой призмы.</p>
+        <div class="sequence-component">
+          <div class="sequence-step">
+            <div class="sequence-number">1</div>
+            <div class="sequence-connector"></div>
+            <h4>Определи катеты и гипотенузу основания</h4>
+            <p>Запиши катеты a и b прямоугольного треугольника в основании. Найди гипотенузу: c = √(a² + b²). Например: a=3, b=4 → c=√(9+16)=√25=5.</p>
+          </div>
+          <div class="sequence-step">
+            <div class="sequence-number">2</div>
+            <div class="sequence-connector"></div>
+            <h4>Найди площадь основания</h4>
+            <p>Площадь прямоугольного треугольника: S_осн = ½ × a × b. Две основания дают: 2 × S_осн = a × b. Пример: a=3, b=4 → 2·S_осн = 3×4 = 12 см².</p>
+          </div>
+          <div class="sequence-step">
+            <div class="sequence-number">3</div>
+            <div class="sequence-connector"></div>
+            <h4>Найди периметр основания</h4>
+            <p>Периметр треугольного основания: P = a + b + c. Пример: P = 3+4+5 = 12 см. Это нужно для расчёта боковой поверхности.</p>
+          </div>
+          <div class="sequence-step">
+            <div class="sequence-number">4</div>
+            <div class="sequence-connector"></div>
+            <h4>Вычисли боковую поверхность</h4>
+            <p>S_бок = P × h, где h — высота призмы. Боковая поверхность = три прямоугольника: a×h + b×h + c×h = (a+b+c)×h. Пример: P=12, h=6 → S_бок=72 см².</p>
+          </div>
+          <div class="sequence-step">
+            <div class="sequence-number">5</div>
+            <h4>Сложи: S = 2·S_осн + S_бок</h4>
+            <p>Полная поверхность = два основания + боковая поверхность. S = a·b + (a+b+c)·h. Запиши единицы (см², м²). Пример: S = 12 + 72 = 84 см².</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- EXAMPLES -->
+    <section id="examples">
+      <div class="card">
+        <div class="card-title"><span class="icon" style="background:var(--accent-dim)">📝</span>Глава 3. Разбор задач</div>
+        <p style="color:var(--text-secondary);margin-bottom:24px;">Пять задач с подробным решением по теме площади поверхности прямой призмы.</p>
+      </div>
+      <div id="examples-container"></div>
+    </section>
+
+    <!-- TRAINER -->
+    <section id="trainer">
+      <div class="card">
+        <div class="card-title"><span class="icon" style="background:var(--accent-dim)">🏋️</span>Глава 4. Тренажёр</div>
+        <p style="color:var(--text-secondary);margin-bottom:24px;">Введите площадь поверхности призмы (в см²).</p>
+        <div class="quiz-container" style="margin-bottom:20px;">
+          <div id="trainer-question" style="font-size:1.3rem;text-align:center;margin-bottom:24px;padding:24px;background:var(--bg-glass);border-radius:12px;">Нажмите «Новая задача» для начала</div>
+          <div style="display:flex;gap:12px;margin-bottom:20px;">
+            <input type="text" id="trainer-answer" placeholder="Введите число (в см²)" style="flex:1;padding:14px 16px;background:var(--bg-glass);border:2px solid var(--border-glass);border-radius:12px;color:var(--text-primary);font-size:1rem;outline:none;" />
+            <button class="btn btn-primary" onclick="checkTrainer()" id="trainer-check-btn" disabled>Проверить</button>
+          </div>
+          <div id="trainer-feedback" style="min-height:60px;margin-bottom:16px;"></div>
+          <div style="display:flex;gap:12px;justify-content:center;">
+            <button class="btn btn-secondary" onclick="newTrainerProblem()">Новая задача</button>
+            <button class="btn btn-secondary" onclick="showTrainerHint()">Подсказка</button>
+          </div>
+          <div id="trainer-hint" style="display:none;margin-top:20px;padding:16px;background:var(--accent-blue-dim);border-radius:12px;border-left:4px solid var(--accent-blue);"></div>
+        </div>
+        <div style="display:flex;justify-content:center;gap:24px;flex-wrap:wrap;">
+          <div class="stat"><div class="stat-value" id="trainer-correct">0</div><div class="stat-label">Верно</div></div>
+          <div class="stat"><div class="stat-value" id="trainer-total">0</div><div class="stat-label">Всего</div></div>
+          <div class="stat"><div class="stat-value" id="trainer-streak">0</div><div class="stat-label">Серия</div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ASSESSMENT -->
+    <section id="assessment">
+      <div class="card">
+        <div class="card-title"><span class="icon" style="background:var(--accent-blue-dim)">🧪</span>Глава 5. Аттестация — 30 вопросов</div>
+        <p style="color:var(--text-secondary);margin-bottom:24px;">Диагностика и скоростная викторина по площади поверхности прямой призмы.</p>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px;">
+          <div class="card" style="padding:24px;text-align:center;">
+            <div style="font-size:3rem;margin-bottom:12px;">🔍</div>
+            <h3 style="margin-bottom:8px;">Диагностический тест</h3>
+            <p style="color:var(--text-secondary);margin-bottom:20px;">30 вопросов с объяснениями.</p>
+            <button class="btn btn-primary" onclick="startDiagnostic()">Начать тест</button>
+          </div>
+          <div class="card" style="padding:24px;text-align:center;">
+            <div style="font-size:3rem;margin-bottom:12px;">⏱️</div>
+            <h3 style="margin-bottom:8px;">Скоростная викторина</h3>
+            <p style="color:var(--text-secondary);margin-bottom:20px;">30 вопросов • 10 минут.</p>
+            <button class="btn btn-primary" onclick="startTimeAttack()">Начать викторину</button>
+          </div>
+        </div>
+      </div>
+
+      <div id="diagnostic-ui" style="display:none;">
+        <div class="card">
+          <div class="card-title"><span class="icon" style="background:var(--accent-blue-dim)">🔍</span>Диагностический тест (30 вопросов)</div>
+        </div>
+        <div class="quiz-container">
+          <div class="quiz-progress">
+            <span>Вопрос <span id="diag-current">1</span> / <span id="diag-total">30</span></span>
+            <div class="progress-bar"><div class="progress-fill" id="diag-progress"></div></div>
+            <span id="diag-score">0 правильных</span>
+          </div>
+          <div class="quiz-question" id="diag-question"></div>
+          <div class="quiz-options" id="diag-options"></div>
+          <div class="quiz-nav">
+            <button class="btn btn-secondary" onclick="prevDiagnostic()" id="diag-prev" disabled>← Назад</button>
+            <button class="btn btn-primary" onclick="nextDiagnostic()" id="diag-next" disabled>Далее →</button>
+          </div>
+          <div id="diag-explanation" style="display:none;margin-top:20px;padding:16px;background:var(--accent-dim);border-radius:12px;border-left:4px solid var(--accent);"></div>
+        </div>
+      </div>
+
+      <div id="timeattack-ui" style="display:none;">
+        <div class="timer" id="ta-timer">10:00</div>
+        <div class="card">
+          <div class="card-title"><span class="icon" style="background:var(--accent-warm-dim)">⏱️</span>Скоростная викторина</div>
+        </div>
+        <div class="quiz-container">
+          <div class="quiz-progress">
+            <span>Вопрос <span id="ta-current">1</span> / 30</span>
+            <div class="progress-bar"><div class="progress-fill" id="ta-progress"></div></div>
+          </div>
+          <div class="quiz-question" id="ta-question"></div>
+          <div class="quiz-options" id="ta-options"></div>
+          <div style="display:flex;justify-content:flex-end;margin-top:24px;">
+            <button class="btn btn-primary" onclick="nextTimeAttack()" id="ta-next">Ответить →</button>
+          </div>
+        </div>
+      </div>
+
+      <div id="results-ui" style="display:none;">
+        <div class="card">
+          <div class="results-container">
+            <div class="score-label">Ваш результат</div>
+            <div class="score-circle" id="result-circle"><div class="score-value" id="result-percent">0%</div></div>
+            <div class="score-message" id="result-message"></div>
+            <div class="results-breakdown">
+              <div class="breakdown-item"><div class="breakdown-value" id="result-correct">0</div><div class="breakdown-label">Верно</div></div>
+              <div class="breakdown-item"><div class="breakdown-value" id="result-wrong">0</div><div class="breakdown-label">Ошибок</div></div>
+              <div class="breakdown-item"><div class="breakdown-value" id="result-time">0:00</div><div class="breakdown-label">Время</div></div>
+              <div class="breakdown-item"><div class="breakdown-value" id="result-mastery">—</div><div class="breakdown-label">Уровень</div></div>
+            </div>
+            <div style="display:flex;gap:16px;justify-content:center;flex-wrap:wrap;">
+              <button class="btn btn-primary" onclick="resetAssessment()">Пройти ещё раз</button>
+              <button class="btn btn-secondary" onclick="showSection('theory')">К теории</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <script>
+      const AppState = {
+        currentSection: "home",
+        slide: 0,
+        trainer: { correct: 0, total: 0, streak: 0, current: null },
+        diagnostic: { current: 0, score: 0, answers: [] },
+        timeAttack: { current: 0, score: 0, timer: null, timeLeft: 600, startTime: 0, answers: [] },
+        mode: null
+      };
+
+      const slides = [
+        {
+          title: "Прямая призма — определение",
+          content: `
+            <p style="margin-bottom:12px;"><strong>Прямая призма</strong> — тело, у которого основания являются равными многоугольниками, а боковые рёбра перпендикулярны основаниям. Все боковые грани прямой призмы — прямоугольники.</p>
+            <div style="background:var(--accent-dim);padding:16px;border-radius:10px;margin-bottom:12px;">
+              <p style="margin-bottom:6px;"><strong>Прямая треугольная призма с прямоугольным треугольником в основании:</strong></p>
+              <ul style="margin-left:16px;">
+                <li>Граней: 5 (2 треугольника + 3 прямоугольника)</li>
+                <li>Рёбер: 9</li>
+                <li>Вершин: 6</li>
+              </ul>
+            </div>
+            <div style="display:flex;justify-content:center;margin:16px 0;">
+              <svg viewBox="0 0 260 180" width="260" height="180" aria-label="Прямая треугольная призма с прямоугольным треугольником в основании">
+                <polygon points="30,150 130,150 30,80" fill="rgba(0,212,170,0.08)" stroke="#00d4aa" stroke-width="2"/>
+                <polygon points="80,110 180,110 80,40" fill="rgba(0,212,170,0.05)" stroke="#00d4aa" stroke-width="2" stroke-dasharray="4,3"/>
+                <line x1="30" y1="150" x2="80" y2="110" stroke="#4dabf7" stroke-width="2"/>
+                <line x1="130" y1="150" x2="180" y2="110" stroke="#4dabf7" stroke-width="2"/>
+                <line x1="30" y1="80" x2="80" y2="40" stroke="#4dabf7" stroke-width="2"/>
+                <polyline points="30,150 30,162 42,162" fill="none" stroke="#00d4aa" stroke-width="1.5"/>
+                <text x="26" y="170" fill="#e8e8f0" font-size="11" font-family="sans-serif">a</text>
+                <text x="74" y="170" fill="#e8e8f0" font-size="11" font-family="sans-serif">b</text>
+                <text x="18" y="115" fill="#4dabf7" font-size="11" font-family="sans-serif">h</text>
+                <text x="85" y="130" fill="#fcc419" font-size="11" font-family="sans-serif">c</text>
+              </svg>
+            </div>
+            <p style="color:var(--text-secondary);">Катеты основания: a, b. Гипотенуза: c = √(a² + b²). Высота призмы: h (длина бокового ребра).</p>`
+        },
+        {
+          title: "Боковая поверхность прямой призмы",
+          content: `
+            <p style="margin-bottom:12px;">Боковая поверхность — сумма площадей всех боковых граней. Для треугольной призмы это три прямоугольника:</p>
+            <div style="background:var(--accent-blue-dim);padding:16px;border-radius:10px;margin-bottom:12px;text-align:center;">
+              <p style="font-size:1.2rem;margin-bottom:8px;"><strong>S_бок = a·h + b·h + c·h = (a + b + c) · h</strong></p>
+              <p style="color:var(--text-secondary);">или: S_бок = P · h, где P = a + b + c — периметр основания</p>
+            </div>
+            <table>
+              <tr><th>Грань</th><th>Размеры</th><th>Площадь</th></tr>
+              <tr><td>Прямоугольник 1</td><td>a × h</td><td>a · h</td></tr>
+              <tr><td>Прямоугольник 2</td><td>b × h</td><td>b · h</td></tr>
+              <tr><td>Прямоугольник 3</td><td>c × h</td><td>c · h</td></tr>
+              <tr><td><strong>Итого</strong></td><td></td><td><strong>(a+b+c) · h</strong></td></tr>
+            </table>
+            <p style="margin-top:12px;"><strong>Пример:</strong> a=4, b=3, c=5, h=6: S_бок = (4+3+5)×6 = 12×6 = <strong>72 см²</strong></p>`
+        },
+        {
+          title: "Полная поверхность: формула",
+          content: `
+            <p style="margin-bottom:12px;"><strong>Полная поверхность</strong> = 2 × S_основания + S_боковая</p>
+            <div style="background:var(--accent-dim);padding:16px;border-radius:10px;margin-bottom:16px;text-align:center;">
+              <p style="font-size:1.3rem;margin-bottom:8px;"><strong>S = a·b + (a+b+c)·h</strong></p>
+              <p style="color:var(--text-secondary);">где: a, b — катеты; c = √(a²+b²) — гипотенуза; h — высота призмы</p>
+            </div>
+            <p style="margin-bottom:8px;"><strong>Вывод:</strong></p>
+            <ul style="margin-left:16px;">
+              <li>Площадь одного основания: S_осн = ½ · a · b</li>
+              <li>Два основания: 2 · S_осн = a · b</li>
+              <li>Боковая: S_бок = (a+b+c) · h</li>
+              <li><strong>Итого: S = a·b + (a+b+c)·h</strong></li>
+            </ul>
+            <div style="background:var(--accent-blue-dim);padding:14px;border-radius:10px;margin-top:14px;">
+              <p style="margin:0;"><strong>Пример:</strong> a=4, b=3, c=5, h=6: S = 4×3 + (4+3+5)×6 = 12 + 72 = <strong>84 см²</strong></p>
+            </div>`
+        },
+        {
+          title: "Пример из учебника: нахождение по развёртке",
+          content: `
+            <p style="margin-bottom:12px;"><strong>Задача:</strong> Прямоугольный треугольник в основании призмы имеет катеты 5 и 12 см (гипотенуза 13 см). Высота призмы h = 8 см. Найдите полную поверхность.</p>
+            <div style="background:var(--bg-glass);padding:16px;border-radius:10px;margin-bottom:12px;">
+              <p style="margin-bottom:6px;"><strong>Шаг 1.</strong> Два основания: 2 × S_осн = 5 × 12 = <strong>60 см²</strong></p>
+              <p style="margin-bottom:6px;"><strong>Шаг 2.</strong> Периметр: P = 5 + 12 + 13 = <strong>30 см</strong></p>
+              <p style="margin-bottom:6px;"><strong>Шаг 3.</strong> Боковая: S_бок = 30 × 8 = <strong>240 см²</strong></p>
+              <p style="margin:0;font-size:1.1rem;"><strong>Шаг 4.</strong> S = 60 + 240 = <strong>300 см²</strong></p>
+            </div>
+            <p style="color:var(--text-secondary);">На развёртке видно: два треугольника (основания) + три прямоугольника (боковые грани). Сумма всех граней = 300 см².</p>
+            <div style="background:var(--accent-warm-dim);padding:12px;border-radius:8px;margin-top:12px;">
+              <p style="margin:0;"><strong>Проверка тройки Пифагора:</strong> 5²+12²=25+144=169=13². ✓</p>
+            </div>`
+        },
+        {
+          title: "Практическое применение",
+          content: `
+            <p style="margin-bottom:12px;"><strong>Задача:</strong> Палатка имеет форму прямой призмы. Основание — прямоугольный треугольник с катетами 2 м и 1,5 м. Высота палатки 2 м. Найдите площадь ткани (полную поверхность).</p>
+            <div style="background:var(--bg-glass);padding:16px;border-radius:10px;margin-bottom:12px;">
+              <p style="margin-bottom:6px;"><strong>Гипотенуза:</strong> c = √(2²+1,5²) = √(4+2,25) = √6,25 = <strong>2,5 м</strong></p>
+              <p style="margin-bottom:6px;"><strong>Два основания:</strong> 2 × ½ × 2 × 1,5 = <strong>3 м²</strong></p>
+              <p style="margin-bottom:6px;"><strong>Боковая:</strong> (2+1,5+2,5) × 2 = 6 × 2 = <strong>12 м²</strong></p>
+              <p style="margin:0;font-size:1.1rem;"><strong>S = 3 + 12 = 15 м²</strong></p>
+            </div>
+            <table>
+              <tr><th>Параметр</th><th>Значение</th></tr>
+              <tr><td>Катеты основания</td><td>a = 2 м, b = 1,5 м</td></tr>
+              <tr><td>Гипотенуза</td><td>c = 2,5 м</td></tr>
+              <tr><td>Высота призмы</td><td>h = 2 м</td></tr>
+              <tr><td>Площадь ткани</td><td>15 м²</td></tr>
+            </table>`
+        }
+      ];
+
+      const examples = [
+        {
+          title: "Базовый пример: катеты 3, 4, гипотенуза 5",
+          task: "Прямая призма с прямоугольным треугольником в основании: катеты 3 и 4 см, гипотенуза 5 см, высота призмы h = 10 см. Найдите полную поверхность.",
+          sol: "<p><strong>Шаг 1.</strong> Два основания: 2 × ½ × 3 × 4 = <strong>12 см²</strong></p><p><strong>Шаг 2.</strong> Периметр: P = 3+4+5 = 12 см</p><p><strong>Шаг 3.</strong> Боковая: S_бок = 12 × 10 = <strong>120 см²</strong></p><p><strong>Ответ: S = 12 + 120 = 132 см²</strong></p>"
+        },
+        {
+          title: "Пример из учебника: катеты 5, 12, гипотенуза 13",
+          task: "Прямая призма с прямоугольным треугольником в основании: катеты 5 и 12 см, гипотенуза 13 см, высота призмы h = 8 см. Найдите полную поверхность.",
+          sol: "<p><strong>Шаг 1.</strong> Два основания: 5 × 12 = <strong>60 см²</strong></p><p><strong>Шаг 2.</strong> Периметр: P = 5+12+13 = 30 см</p><p><strong>Шаг 3.</strong> S_бок = 30 × 8 = <strong>240 см²</strong></p><p><strong>Ответ: S = 60 + 240 = 300 см²</strong></p>"
+        },
+        {
+          title: "Катеты 6, 8, гипотенуза 10",
+          task: "Прямая призма с прямоугольным треугольником в основании: катеты 6 и 8 см, гипотенуза 10 см, высота призмы h = 5 см. Найдите полную поверхность.",
+          sol: "<p><strong>Шаг 1.</strong> Два основания: 6 × 8 = <strong>48 см²</strong></p><p><strong>Шаг 2.</strong> Периметр: P = 6+8+10 = 24 см</p><p><strong>Шаг 3.</strong> S_бок = 24 × 5 = <strong>120 см²</strong></p><p><strong>Ответ: S = 48 + 120 = 168 см²</strong></p>"
+        },
+        {
+          title: "Нахождение высоты по известной поверхности",
+          task: "Полная поверхность прямой призмы S = 84 см². Основание — прямоугольный треугольник с катетами 3 и 4 см (гипотенуза 5 см). Найдите высоту призмы h.",
+          sol: "<p><strong>Шаг 1.</strong> Два основания: 3 × 4 = 12 см²</p><p><strong>Шаг 2.</strong> Периметр: P = 3+4+5 = 12 см</p><p><strong>Шаг 3.</strong> S_бок = 84 − 12 = 72 см²</p><p><strong>Шаг 4.</strong> h = S_бок ÷ P = 72 ÷ 12 = <strong>6 см</strong></p><p><strong>Ответ: h = 6 см</strong></p>"
+        },
+        {
+          title: "Задача-палатка: практическое применение",
+          task: "Палатка в форме прямой призмы. Основание — прямоугольный треугольник с катетами 2 м и 1,5 м. Высота палатки 2 м. Найдите площадь ткани.",
+          sol: "<p><strong>Шаг 1.</strong> Гипотенуза: c = √(4+2,25) = √6,25 = <strong>2,5 м</strong></p><p><strong>Шаг 2.</strong> Два основания: 2 × 1,5 = <strong>3 м²</strong></p><p><strong>Шаг 3.</strong> P = 2+1,5+2,5 = 6 м</p><p><strong>Шаг 4.</strong> S_бок = 6 × 2 = <strong>12 м²</strong></p><p><strong>Ответ: S = 3 + 12 = 15 м²</strong></p>"
+        }
+      ];
+
+      const trainerQs = [
+        { q: "Призма: катеты 3, 4, гипотенуза 5, высота 10 см. S = ? (в см²)", a: 132, hint: "S = 2×½×3×4 + (3+4+5)×10 = 12 + 120 = 132" },
+        { q: "Призма: катеты 6, 8, гипотенуза 10, высота 5 см. S = ? (в см²)", a: 168, hint: "S = 6×8 + (6+8+10)×5 = 48 + 120 = 168" },
+        { q: "Призма: катеты 5, 12, гипотенуза 13, высота 8 см. S = ? (в см²)", a: 300, hint: "S = 5×12 + (5+12+13)×8 = 60 + 240 = 300" },
+        { q: "Призма: катеты 3, 4, гипотенуза 5, высота 6 см. S = ? (в см²)", a: 84, hint: "S = 3×4 + (3+4+5)×6 = 12 + 72 = 84" },
+        { q: "Периметр прямоугольного треугольника с катетами 3 и 4. P = ? (в см)", a: 12, hint: "P = 3+4+5 = 12 (гипотенуза = 5 по теореме Пифагора)" },
+        { q: "S_осн (одного треугольника) с катетами 6 и 8. S_осн = ? (в см²)", a: 24, hint: "S_осн = ½×6×8 = 24" },
+        { q: "S_бок призмы при P = 20 см, h = 5 см. S_бок = ? (в см²)", a: 100, hint: "S_бок = P×h = 20×5 = 100" },
+        { q: "Призма: P = 15 см, h = 4 см. S_бок = ? (в см²)", a: 60, hint: "S_бок = P×h = 15×4 = 60" },
+        { q: "Призма: катеты 9, 12, гипотенуза 15, высота 3 см. S = ? (в см²)", a: 216, hint: "S = 9×12 + (9+12+15)×3 = 108 + 108 = 216" },
+        { q: "Призма: катеты 8, 6, гипотенуза 10, высота 7 см. S = ? (в см²)", a: 216, hint: "S = 8×6 + (8+6+10)×7 = 48 + 168 = 216" }
+      ];
+
+      const questions = [
+        { q: "Все боковые грани прямой призмы являются:", o: ["Треугольниками", "Прямоугольниками", "Трапециями", "Параллелограммами"], a: 1 },
+        { q: "Формула полной поверхности прямой призмы с треугольным основанием:", o: ["S = a+b+c+h", "S = 2·S_осн + S_бок", "S = S_осн · h", "S = (a+b+c) · h"], a: 1 },
+        { q: "Боковая поверхность прямой призмы вычисляется по формуле:", o: ["S_бок = S_осн + h", "S_бок = P · h", "S_бок = 2 · P · h", "S_бок = P / h"], a: 1 },
+        { q: "Прямая призма с основанием — прямоугольный треугольник с катетами 3 и 4 (гипотенуза 5), высота 10. S = ?", o: ["120 см²", "132 см²", "144 см²", "110 см²"], a: 1 },
+        { q: "Два основания призмы с прямоугольным треугольником (катеты 4 и 3). Суммарная площадь двух оснований = ?", o: ["6 см²", "12 см²", "24 см²", "7 см²"], a: 1 },
+        { q: "Периметр прямоугольного треугольника с катетами 5 и 12 = ?", o: ["17 см", "30 см", "60 см", "25 см"], a: 1 },
+        { q: "Призма: катеты 5, 12, гипотенуза 13, h = 8. S_бок = ?", o: ["240 см²", "120 см²", "300 см²", "200 см²"], a: 0 },
+        { q: "Призма: катеты 5, 12, гипотенуза 13, h = 8. S_полная = ?", o: ["240 см²", "260 см²", "300 см²", "320 см²"], a: 2 },
+        { q: "S_бок призмы при P = 24 см, h = 5 см. S_бок = ?", o: ["120 см²", "100 см²", "80 см²", "60 см²"], a: 0 },
+        { q: "Прямоугольный треугольник в основании: катеты 6 и 8, гипотенуза 10, высота h = 5. S = ?", o: ["120 см²", "168 см²", "100 см²", "80 см²"], a: 1 },
+        { q: "Сколько граней у прямой треугольной призмы?", o: ["4", "5", "6", "8"], a: 1 },
+        { q: "Сколько рёбер у прямой треугольной призмы?", o: ["6", "8", "9", "12"], a: 2 },
+        { q: "Гипотенуза прямоугольного треугольника с катетами 3 и 4 = ?", o: ["7 см", "5 см", "6 см", "√7 см"], a: 1 },
+        { q: "Гипотенуза прямоугольного треугольника с катетами 6 и 8 = ?", o: ["10 см", "14 см", "100 см", "12 см"], a: 0 },
+        { q: "Призма: катеты 3, 4, гипотенуза 5, h = 6. S = ?", o: ["72 см²", "84 см²", "96 см²", "60 см²"], a: 1 },
+        { q: "Формула площади прямоугольного треугольника с катетами a и b:", o: ["S = a × b", "S = ½ × a × b", "S = 2 × a × b", "S = (a+b)/2"], a: 1 },
+        { q: "Призма: P_осн = 15 см, h = 7. S_бок = ?", o: ["22 см²", "105 см²", "210 см²", "15 см²"], a: 1 },
+        { q: "Полная поверхность призмы S = 84 см², два основания = 12 см². S_бок = ?", o: ["96 см²", "72 см²", "60 см²", "48 см²"], a: 1 },
+        { q: "Нужно найти h если S=300, катеты 5 и 12 (гипот. 13). h = ?", o: ["10 см", "8 см", "6 см", "12 см"], a: 1 },
+        { q: "Призма: катеты 9, 12, гипотенуза 15, высота 3. S = ?", o: ["216 см²", "234 см²", "180 см²", "252 см²"], a: 0 },
+        { q: "Развёртка прямой призмы содержит:", o: ["Только боковые грани", "2 основания и боковую поверхность", "Только основания", "4 прямоугольника"], a: 1 },
+        { q: "Призма с основанием (катеты 2, 1,5, гипот. 2,5), h=2. Два основания = ?", o: ["3 м²", "6 м²", "1,5 м²", "4,5 м²"], a: 0 },
+        { q: "Призма: катеты 2, 1,5, гипот. 2,5, h=2. S_бок = ?", o: ["6 м²", "12 м²", "10 м²", "8 м²"], a: 1 },
+        { q: "Призма: катеты 2, 1,5, гипот. 2,5, h=2. S_полная = ?", o: ["12 м²", "18 м²", "15 м²", "9 м²"], a: 2 },
+        { q: "Призма: катеты 8, 6, гипот. 10, h = 7. S = ?", o: ["168 см²", "192 см²", "216 см²", "240 см²"], a: 2 },
+        { q: "S = 2·S_осн + S_бок. Если S_осн = 30, S_бок = 240. S = ?", o: ["270 см²", "300 см²", "360 см²", "240 см²"], a: 1 },
+        { q: "Что такое S_бок прямой призмы геометрически?", o: ["Площадь одного основания", "Сумма площадей всех боковых граней-прямоугольников", "Периметр основания", "Объём призмы"], a: 1 },
+        { q: "Формула S_бок через периметр P и высоту h:", o: ["S_бок = P + h", "S_бок = P × h", "S_бок = P / h", "S_бок = P²"], a: 1 },
+        { q: "Призма: P = 30, h = 8. S_бок = ?", o: ["240 см²", "120 см²", "300 см²", "38 см²"], a: 0 },
+        { q: "Все боковые рёбра прямой призмы равны высоте призмы. Это утверждение:", o: ["Ложно для прямой призмы", "Верно для прямой призмы", "Верно только для куба", "Зависит от основания"], a: 1 }
+      ];
+
+      // ── Navigation ──────────────────────────────────────────────────────────
+      function showSection(id) {
+        document.querySelectorAll("section").forEach(s => s.classList.remove("active"));
+        document.getElementById(id).classList.add("active");
+        document.querySelectorAll(".nav-links a").forEach(a => a.classList.remove("active"));
+        const link = document.querySelector('.nav-links a[data-section="' + id + '"]');
+        if (link) link.classList.add("active");
+        window.scrollTo(0, 0);
+        AppState.currentSection = id;
+      }
+
+      document.querySelectorAll(".nav-links a").forEach(link => {
+        link.addEventListener("click", e => {
+          e.preventDefault();
+          showSection(link.dataset.section);
+        });
+      });
+
+      // ── Slides ───────────────────────────────────────────────────────────────
+      let currentSlide = 0, slideEls = [], slideTotal = 0;
+
+      function renderSlide() {
+        slideEls.forEach((s, i) => s.classList.toggle("active", i === currentSlide));
+        document.getElementById("slide-num").innerText = currentSlide + 1;
+      }
+
+      function nextSlide() {
+        if (currentSlide < slideTotal - 1) { currentSlide++; renderSlide(); }
+      }
+
+      function prevSlide() {
+        if (currentSlide > 0) { currentSlide--; renderSlide(); }
+      }
+
+      // ── Examples ─────────────────────────────────────────────────────────────
+      function toggleSolution(id) {
+        const el = document.getElementById(id);
+        el.classList.toggle("active");
+        el.previousElementSibling.textContent = el.classList.contains("active") ? "Скрыть решение" : "Показать решение";
+      }
+
+      // ── Trainer ──────────────────────────────────────────────────────────────
+      let trainerOrder = 0;
+
+      function newTrainerProblem() {
+        AppState.trainer.current = trainerQs[trainerOrder % trainerQs.length];
+        trainerOrder++;
+        document.getElementById("trainer-question").textContent = AppState.trainer.current.q;
+        document.getElementById("trainer-answer").value = "";
+        document.getElementById("trainer-feedback").innerHTML = "";
+        document.getElementById("trainer-hint").style.display = "none";
+        document.getElementById("trainer-check-btn").disabled = false;
+      }
+
+      function showTrainerHint() {
+        if (!AppState.trainer.current) return;
+        const hintEl = document.getElementById("trainer-hint");
+        hintEl.style.display = "block";
+        hintEl.textContent = "💡 " + AppState.trainer.current.hint;
+      }
+
+      function checkTrainer() {
+        if (!AppState.trainer.current) return;
+        const raw = document.getElementById("trainer-answer").value.trim().replace(",", ".");
+        const val = parseFloat(raw);
+        const ok = !isNaN(val) && Math.abs(val - AppState.trainer.current.a) < 0.1;
+        AppState.trainer.total++;
+        if (ok) {
+          AppState.trainer.correct++;
+          AppState.trainer.streak++;
+          document.getElementById("trainer-feedback").innerHTML = '<div style="color:var(--success);font-weight:700;">✓ Верно! Ответ: ' + AppState.trainer.current.a + ' см²</div>';
+        } else {
+          AppState.trainer.streak = 0;
+          document.getElementById("trainer-feedback").innerHTML = '<div style="color:var(--error);font-weight:700;">✗ Правильный ответ: ' + AppState.trainer.current.a + ' см²</div>';
+        }
+        document.getElementById("trainer-correct").textContent = AppState.trainer.correct;
+        document.getElementById("trainer-total").textContent = AppState.trainer.total;
+        document.getElementById("trainer-streak").textContent = AppState.trainer.streak;
+        document.getElementById("trainer-check-btn").disabled = true;
+      }
+
+      // ── Diagnostic ───────────────────────────────────────────────────────────
+      function startDiagnostic() {
+        AppState.mode = "diagnostic";
+        AppState.diagnostic = { current: 0, score: 0, answers: [] };
+        document.getElementById("diagnostic-ui").style.display = "block";
+        document.getElementById("timeattack-ui").style.display = "none";
+        document.getElementById("results-ui").style.display = "none";
+        document.getElementById("diag-total").textContent = questions.length;
+        renderDiagnostic();
+      }
+
+      function renderDiagnostic() {
+        const q = questions[AppState.diagnostic.current];
+        document.getElementById("diag-current").textContent = AppState.diagnostic.current + 1;
+        document.getElementById("diag-score").textContent = AppState.diagnostic.score + " правильных";
+        document.getElementById("diag-progress").style.width = ((AppState.diagnostic.current + 1) / questions.length * 100) + "%";
+        document.getElementById("diag-question").textContent = q.q;
+        const od = document.getElementById("diag-options");
+        od.innerHTML = "";
+        q.o.forEach((opt, i) => {
+          const div = document.createElement("div");
+          div.className = "quiz-option";
+          div.innerHTML = '<div class="option-letter">' + String.fromCharCode(65 + i) + "</div><div>" + opt + "</div>";
+          div.onclick = () => selectDiagnostic(i);
+          od.appendChild(div);
+        });
+        document.getElementById("diag-explanation").style.display = "none";
+        document.getElementById("diag-prev").disabled = AppState.diagnostic.current === 0;
+        document.getElementById("diag-next").disabled = true;
+      }
+
+      function selectDiagnostic(idx) {
+        if (!document.getElementById("diag-next").disabled) return;
+        const q = questions[AppState.diagnostic.current];
+        const ok = idx === q.a;
+        if (ok) AppState.diagnostic.score++;
+        AppState.diagnostic.answers[AppState.diagnostic.current] = idx;
+        document.querySelectorAll("#diag-options .quiz-option").forEach((opt, i) => {
+          opt.classList.add("disabled");
+          if (i === q.a) opt.classList.add("correct");
+          else if (i === idx && !ok) opt.classList.add("wrong");
+        });
+        const expEl = document.getElementById("diag-explanation");
+        expEl.innerHTML = "<strong>" + (ok ? "✓ Верно!" : "✗ Неверно.") + "</strong> Правильный ответ: " + q.o[q.a];
+        expEl.style.display = "block";
+        document.getElementById("diag-next").disabled = false;
+      }
+
+      function nextDiagnostic() {
+        if (AppState.diagnostic.current < questions.length - 1) {
+          AppState.diagnostic.current++;
+          renderDiagnostic();
+        } else {
+          showResults(AppState.diagnostic.score, questions.length, 0, "diagnostic");
+        }
+      }
+
+      function prevDiagnostic() {
+        if (AppState.diagnostic.current > 0) {
+          AppState.diagnostic.current--;
+          renderDiagnostic();
+        }
+      }
+
+      // ── Time Attack ──────────────────────────────────────────────────────────
+      function startTimeAttack() {
+        AppState.mode = "timeattack";
+        AppState.timeAttack = { current: 0, score: 0, timer: null, timeLeft: 600, startTime: Date.now(), answers: [] };
+        document.getElementById("diagnostic-ui").style.display = "none";
+        document.getElementById("timeattack-ui").style.display = "block";
+        document.getElementById("results-ui").style.display = "none";
+        document.getElementById("ta-timer").className = "timer";
+        renderTimeAttack();
+        if (AppState.timeAttack.timer) clearInterval(AppState.timeAttack.timer);
+        AppState.timeAttack.timer = setInterval(() => {
+          AppState.timeAttack.timeLeft--;
+          const m = Math.floor(AppState.timeAttack.timeLeft / 60);
+          const s = AppState.timeAttack.timeLeft % 60;
+          const el = document.getElementById("ta-timer");
+          el.textContent = m + ":" + s.toString().padStart(2, "0");
+          if (AppState.timeAttack.timeLeft <= 60) el.className = "timer danger";
+          else if (AppState.timeAttack.timeLeft <= 180) el.className = "timer warning";
+          if (AppState.timeAttack.timeLeft <= 0) finishTimeAttack();
+        }, 1000);
+      }
+
+      function renderTimeAttack() {
+        const q = questions[AppState.timeAttack.current];
+        document.getElementById("ta-current").textContent = AppState.timeAttack.current + 1;
+        document.getElementById("ta-progress").style.width = ((AppState.timeAttack.current + 1) / questions.length * 100) + "%";
+        document.getElementById("ta-question").textContent = q.q;
+        const od = document.getElementById("ta-options");
+        od.innerHTML = "";
+        q.o.forEach((opt, i) => {
+          const div = document.createElement("div");
+          div.className = "quiz-option";
+          div.innerHTML = '<div class="option-letter">' + String.fromCharCode(65 + i) + "</div><div>" + opt + "</div>";
+          div.onclick = () => selectTimeAttack(i);
+          od.appendChild(div);
+        });
+        document.getElementById("ta-next").disabled = true;
+      }
+
+      function selectTimeAttack(idx) {
+        if (!document.getElementById("ta-next").disabled) return;
+        const q = questions[AppState.timeAttack.current];
+        if (idx === q.a) AppState.timeAttack.score++;
+        AppState.timeAttack.answers[AppState.timeAttack.current] = idx;
+        document.querySelectorAll("#ta-options .quiz-option").forEach((opt, i) => {
+          opt.classList.add("disabled");
+          if (i === q.a) opt.classList.add("correct");
+          else if (i === idx && idx !== q.a) opt.classList.add("wrong");
+        });
+        document.getElementById("ta-next").disabled = false;
+      }
+
+      function nextTimeAttack() {
+        if (AppState.timeAttack.current < questions.length - 1) {
+          AppState.timeAttack.current++;
+          renderTimeAttack();
+        } else {
+          finishTimeAttack();
+        }
+      }
+
+      function finishTimeAttack() {
+        clearInterval(AppState.timeAttack.timer);
+        showResults(
+          AppState.timeAttack.score,
+          questions.length,
+          Math.floor((Date.now() - AppState.timeAttack.startTime) / 1000),
+          "timeattack"
+        );
+      }
+
+      // ── Results ──────────────────────────────────────────────────────────────
+      function showResults(score, total, timeSpent, mode) {
+        document.getElementById("diagnostic-ui").style.display = "none";
+        document.getElementById("timeattack-ui").style.display = "none";
+        document.getElementById("results-ui").style.display = "block";
+        const percent = Math.round(score / total * 100);
+        const m = Math.floor(timeSpent / 60);
+        const s = timeSpent % 60;
+        let mastery = percent >= 90 ? "Эксперт" : percent >= 70 ? "Продвинутый" : percent >= 50 ? "Средний" : "Начальный";
+        let msg = percent >= 90 ? "🏆 Отлично! Мастер поверхностей призм!" : percent >= 70 ? "🥈 Хорошо! Почти отлично." : percent >= 50 ? "🥉 Удовлетворительно. Повторите формулу S = ab + (a+b+c)h." : "💪 Повторите формулы и алгоритм вычисления.";
+        document.getElementById("result-circle").style.setProperty("--score", percent);
+        document.getElementById("result-percent").textContent = percent + "%";
+        document.getElementById("result-message").textContent = msg;
+        document.getElementById("result-correct").textContent = score;
+        document.getElementById("result-wrong").textContent = total - score;
+        document.getElementById("result-time").textContent = mode === "diagnostic" ? "—" : m + ":" + s.toString().padStart(2, "0");
+        document.getElementById("result-mastery").textContent = mastery;
+      }
+
+      function resetAssessment() {
+        document.getElementById("results-ui").style.display = "none";
+        if (AppState.mode === "diagnostic") startDiagnostic();
+        else startTimeAttack();
+      }
+
+      // ── DOMContentLoaded ─────────────────────────────────────────────────────
+      document.addEventListener("DOMContentLoaded", () => {
+        const track = document.getElementById("track-slides");
+        slides.forEach((s, i) => {
+          const div = document.createElement("div");
+          div.className = "widget-slide" + (i === 0 ? " active" : "");
+          div.innerHTML = "<h3>" + s.title + '</h3><div style="color:var(--text-secondary);line-height:1.8;margin-top:12px;">' + s.content + "</div>";
+          track.appendChild(div);
+        });
+        slideEls = track.querySelectorAll(".widget-slide");
+        slideTotal = slideEls.length;
+        document.getElementById("slide-total").textContent = slideTotal;
+        renderSlide();
+
+        const ec = document.getElementById("examples-container");
+        examples.forEach((ex, i) => {
+          const card = document.createElement("div");
+          card.className = "problem-card";
+          card.innerHTML =
+            '<div class="problem-header">' +
+            '<span class="problem-number">№ ' + (i + 1) + '</span>' +
+            '<span class="problem-type">' + ex.title + '</span>' +
+            '</div>' +
+            '<div class="problem-text">' + ex.task + '</div>' +
+            '<button class="solution-btn" onclick="toggleSolution(\'sol-' + i + '\')">Показать решение</button>' +
+            '<div class="solution" id="sol-' + i + '">' + ex.sol + '</div>';
+          ec.appendChild(card);
+        });
+
+        newTrainerProblem();
+      });
+    </script>
+  </body>
+</html>

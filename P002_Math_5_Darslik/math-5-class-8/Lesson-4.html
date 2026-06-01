@@ -1,0 +1,798 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Урок 8.4 — Предварительная проверка</title>
+    <style>
+      :root{--bg-dark:#0f0f1a;--bg-card:rgba(255,255,255,0.05);--bg-glass:rgba(255,255,255,0.08);--border-glass:rgba(255,255,255,0.15);--text-primary:#e8e8f0;--text-secondary:#a0a0b8;--accent:#00d4aa;--accent-dim:rgba(0,212,170,0.2);--accent-warm:#ff6b6b;--accent-warm-dim:rgba(255,107,107,0.2);--accent-blue:#4dabf7;--accent-blue-dim:rgba(77,171,247,0.2);--success:#51cf66;--error:#ff6b6b;--warning:#fcc419;}
+      *{margin:0;padding:0;box-sizing:border-box;}
+      body{font-family:"Segoe UI",system-ui,sans-serif;background:var(--bg-dark);color:var(--text-primary);min-height:100vh;overflow-x:hidden;line-height:1.6;}
+      .bg-animation{position:fixed;top:0;left:0;width:100%;height:100%;z-index:-1;background:radial-gradient(ellipse at 20% 20%,rgba(0,212,170,0.08) 0%,transparent 50%),radial-gradient(ellipse at 80% 80%,rgba(77,171,247,0.08) 0%,transparent 50%);}
+      .bg-animation::before{content:"";position:absolute;width:200%;height:200%;top:-50%;left:-50%;background:repeating-linear-gradient(0deg,transparent,transparent 40px,rgba(255,255,255,0.02) 40px,rgba(255,255,255,0.02) 41px);animation:bgMove 20s linear infinite;}
+      @keyframes bgMove{0%{transform:translateY(0)}100%{transform:translateY(40px)}}
+      nav{position:fixed;top:0;left:0;right:0;background:rgba(15,15,26,0.85);backdrop-filter:blur(20px);border-bottom:1px solid var(--border-glass);z-index:1000;padding:0 20px;}
+      .nav-container{max-width:1200px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;height:60px;}
+      .logo{font-size:1.3rem;font-weight:700;background:linear-gradient(135deg,var(--accent),var(--accent-blue));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;text-decoration:none;}
+      .nav-links{display:flex;gap:8px;list-style:none;}
+      .nav-links a{color:var(--text-secondary);text-decoration:none;padding:8px 16px;border-radius:8px;transition:all 0.3s;font-size:0.9rem;font-weight:500;cursor:pointer;border:none;background:transparent;}
+      .nav-links a:hover,.nav-links a.active{color:var(--text-primary);background:var(--bg-glass);}
+      .nav-links a.active{background:var(--accent-dim);color:var(--accent);}
+      section{display:none;opacity:0;padding:78px 20px 32px;max-width:1000px;margin:0 auto;transition:opacity 0.3s ease;}
+      section.active{display:block;opacity:1;animation:fadeIn 0.5s ease;}
+      @keyframes fadeIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+      .card{background:var(--bg-card);backdrop-filter:blur(20px);border:1px solid var(--border-glass);border-radius:20px;padding:20px;margin-bottom:16px;transition:transform 0.3s,box-shadow 0.3s;}
+      .card:hover{transform:translateY(-2px);box-shadow:0 20px 40px rgba(0,0,0,0.3);}
+      .card-title{font-size:1.5rem;font-weight:700;margin-bottom:16px;display:flex;align-items:center;gap:12px;}
+      .card-title .icon{width:40px;height:40px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.3rem;}
+      .hero{text-align:center;padding:140px 20px 80px;}
+      .hero h1{font-size:3rem;font-weight:800;margin-bottom:20px;background:linear-gradient(135deg,var(--accent),var(--accent-blue),var(--accent-warm));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1.2;}
+      .hero p{font-size:1.2rem;color:var(--text-secondary);max-width:600px;margin:0 auto 40px;}
+      .btn{display:inline-flex;align-items:center;gap:8px;padding:14px 32px;border-radius:12px;border:none;font-size:1rem;font-weight:600;cursor:pointer;transition:all 0.3s;text-decoration:none;}
+      .btn-primary{background:linear-gradient(135deg,var(--accent),var(--accent-blue));color:#000;}
+      .btn-primary:hover{transform:translateY(-2px);box-shadow:0 10px 30px var(--accent-dim);}
+      .btn-secondary{background:var(--bg-glass);color:var(--text-primary);border:1px solid var(--border-glass);}
+      .btn-secondary:hover{background:var(--bg-card);}
+      .btn:disabled{opacity:0.5;cursor:not-allowed;transform:none!important;}
+      .generate-widget{background:var(--bg-card);border:1px solid var(--border-glass);border-radius:20px;padding:14px;width:100%;}
+      .widget-slide{display:none;padding:12px 16px;animation:slideFade 0.3s ease;}
+      .widget-slide.active{display:block;}
+      @keyframes slideFade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+      .widget-slide h3{font-size:1.3rem;color:var(--accent);margin-bottom:16px;}
+      .widget-slide p,.widget-slide li{color:var(--text-secondary);line-height:1.8;margin-bottom:12px;}
+      .widget-slide table{width:100%;border-collapse:collapse;margin:12px 0;color:var(--text-secondary);}
+      .widget-slide table th,.widget-slide table td{border:1px solid var(--border-glass);padding:10px;text-align:left;}
+      .widget-slide table th{background:var(--bg-glass);color:var(--text-primary);}
+      .widget-nav{display:flex;justify-content:space-between;align-items:center;margin-top:16px;}
+      .widget-progress{text-align:center;font-size:0.9rem;color:var(--text-secondary);margin-bottom:12px;}
+      .problem-card{background:var(--bg-card);border:1px solid var(--border-glass);border-radius:16px;padding:24px;margin-bottom:20px;}
+      .problem-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:8px;}
+      .problem-number{background:var(--accent-dim);color:var(--accent);padding:4px 12px;border-radius:20px;font-size:0.85rem;font-weight:600;}
+      .problem-type{color:var(--text-secondary);font-size:0.85rem;}
+      .problem-text{font-size:1.1rem;margin-bottom:16px;line-height:1.8;}
+      .solution-btn{background:var(--accent-dim);color:var(--accent);border:1px solid var(--accent);padding:10px 20px;border-radius:8px;cursor:pointer;font-weight:600;transition:all 0.3s;}
+      .solution-btn:hover{background:var(--accent);color:#000;}
+      .solution{display:none;margin-top:20px;padding:20px;background:rgba(0,212,170,0.05);border-left:3px solid var(--accent);border-radius:0 12px 12px 0;}
+      .solution.active{display:block;animation:slideDown 0.3s ease;}
+      @keyframes slideDown{from{opacity:0;max-height:0}to{opacity:1;max-height:1000px}}
+      .solution p{margin-bottom:8px;color:var(--text-secondary);}
+      .solution strong{color:var(--accent);}
+      .formula-box{background:var(--accent-dim);border:2px solid var(--accent);border-radius:16px;padding:20px;margin:16px 0;text-align:center;}
+      .formula-box .formula{font-size:1.4rem;font-weight:700;color:var(--accent);margin-bottom:8px;}
+      .formula-box .formula-desc{font-size:0.95rem;color:var(--text-secondary);}
+      .quiz-container{background:var(--bg-card);border:1px solid var(--border-glass);border-radius:20px;padding:32px;}
+      .quiz-progress{display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;flex-wrap:wrap;gap:8px;}
+      .progress-bar{flex:1;height:8px;background:var(--bg-glass);border-radius:4px;margin:0 16px;overflow:hidden;min-width:100px;}
+      .progress-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent-blue));border-radius:4px;transition:width 0.5s ease;width:0%;}
+      .quiz-question{font-size:1.2rem;margin-bottom:24px;padding:20px;background:var(--bg-glass);border-radius:12px;border-left:4px solid var(--accent);}
+      .quiz-options{display:grid;gap:12px;}
+      .quiz-option{background:var(--bg-glass);border:2px solid var(--border-glass);border-radius:12px;padding:16px 20px;cursor:pointer;transition:all 0.3s;display:flex;align-items:center;gap:12px;}
+      .quiz-option:hover{border-color:var(--accent);background:var(--accent-dim);}
+      .quiz-option.correct{border-color:var(--success);background:rgba(81,207,102,0.15);}
+      .quiz-option.wrong{border-color:var(--error);background:rgba(255,107,107,0.15);}
+      .quiz-option.disabled{pointer-events:none;opacity:0.7;}
+      .option-letter{width:32px;height:32px;border-radius:8px;background:var(--bg-card);display:flex;align-items:center;justify-content:center;font-weight:700;flex-shrink:0;}
+      .quiz-nav{display:flex;justify-content:space-between;margin-top:24px;}
+      .stat{background:var(--bg-glass);padding:12px 24px;border-radius:12px;text-align:center;min-width:100px;border:1px solid var(--border-glass);}
+      .stat-value{font-size:1.5rem;font-weight:700;color:var(--accent);}
+      .stat-label{font-size:0.85rem;color:var(--text-secondary);}
+      .timer{position:fixed;top:80px;right:20px;background:var(--bg-card);backdrop-filter:blur(20px);border:1px solid var(--border-glass);border-radius:16px;padding:16px 24px;font-size:1.3rem;font-weight:700;font-variant-numeric:tabular-nums;z-index:999;box-shadow:0 10px 30px rgba(0,0,0,0.3);}
+      .timer.warning{border-color:var(--warning);color:var(--warning);animation:pulse 1s infinite;}
+      .timer.danger{border-color:var(--error);color:var(--error);animation:pulse 0.5s infinite;}
+      @keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.05)}}
+      .results-container{text-align:center;padding:40px;}
+      .score-circle{width:200px;height:200px;border-radius:50%;background:conic-gradient(var(--accent) calc(var(--score)*3.6deg),var(--bg-glass) 0);margin:0 auto 32px;display:flex;align-items:center;justify-content:center;position:relative;}
+      .score-circle::before{content:"";position:absolute;width:170px;height:170px;background:var(--bg-dark);border-radius:50%;}
+      .score-value{position:relative;font-size:3rem;font-weight:800;color:var(--accent);}
+      .score-label{font-size:1.2rem;color:var(--text-secondary);margin-bottom:8px;}
+      .score-message{font-size:1.5rem;font-weight:700;margin-bottom:32px;}
+      .results-breakdown{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:16px;max-width:600px;margin:0 auto 32px;}
+      .breakdown-item{background:var(--bg-glass);padding:16px;border-radius:12px;}
+      .breakdown-value{font-size:1.5rem;font-weight:700;color:var(--accent);}
+      .breakdown-label{font-size:0.85rem;color:var(--text-secondary);}
+      .review-tag{display:inline-block;padding:3px 10px;border-radius:20px;font-size:0.75rem;font-weight:700;margin-right:6px;margin-bottom:4px;}
+      .tag-mean{background:rgba(0,212,170,0.2);color:#00d4aa;}
+      .tag-pie{background:rgba(255,107,107,0.2);color:#ff6b6b;}
+      .tag-chart{background:rgba(77,171,247,0.2);color:#4dabf7;}
+      @media(max-width:768px){.hero h1{font-size:2rem;}.nav-links{display:none;}.timer{top:70px;right:10px;font-size:1rem;padding:10px 16px;}.card{padding:14px;}section{padding:70px 12px 24px;}}
+    </style>
+  </head>
+  <body>
+    <div class="bg-animation"></div>
+
+    <nav>
+      <div class="nav-container">
+        <a href="index.html" class="logo">&#x2713; Урок 8.4</a>
+        <ul class="nav-links">
+          <li><a href="#" class="active" data-section="home">Главная</a></li>
+          <li><a href="#" data-section="theory">Обзор тем</a></li>
+          <li><a href="#" data-section="formulas">Формулы</a></li>
+          <li><a href="#" data-section="examples">Примеры</a></li>
+          <li><a href="#" data-section="trainer">Тренажёр</a></li>
+          <li><a href="#" data-section="assessment">Аттестация</a></li>
+        </ul>
+      </div>
+    </nav>
+
+    <!-- HOME -->
+    <section id="home" class="active">
+      <div class="hero">
+        <h1>Предварительная проверка</h1>
+        <p>Урок 8.4. Комплексная проверка знаний по всем темам раздела: среднее арифметическое, круговая диаграмма, представление информации. 30 вопросов.</p>
+        <div style="display:flex;gap:16px;justify-content:center;flex-wrap:wrap;">
+          <button class="btn btn-primary" onclick="showSection('theory')">Повторить теорию</button>
+          <button class="btn btn-secondary" onclick="showSection('assessment')">Пройти проверку</button>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title"><span class="icon" style="background:var(--accent-dim)">&#127919;</span>Что проверяется</div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px;">
+          <div class="card" style="padding:20px;">
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+              <span class="review-tag tag-mean">СА</span>
+              <h3 style="color:var(--accent)">Среднее арифметическое</h3>
+            </div>
+            <p style="color:var(--text-secondary)">Вычисление СА, нахождение суммы и пропущенного числа, средняя скорость.</p>
+          </div>
+          <div class="card" style="padding:20px;">
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+              <span class="review-tag tag-pie">Круговая</span>
+              <h3 style="color:var(--accent-warm)">Круговая диаграмма</h3>
+            </div>
+            <p style="color:var(--text-secondary)">Чтение круговых диаграмм, вычисление процентов и долей от общего.</p>
+          </div>
+          <div class="card" style="padding:20px;">
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+              <span class="review-tag tag-chart">Диаграммы</span>
+              <h3 style="color:var(--accent-blue)">Представление данных</h3>
+            </div>
+            <p style="color:var(--text-secondary)">Линейные диаграммы, столбчатые диаграммы, таблицы и пиктограммы.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- THEORY -->
+    <section id="theory">
+      <div class="card">
+        <div class="card-title"><span class="icon" style="background:var(--accent-dim)">&#128218;</span>Обзор тем раздела 8</div>
+        <p style="color:var(--text-secondary);margin-bottom:20px;">Быстрое повторение ключевых понятий всех трёх тем раздела.</p>
+        <div class="generate-widget">
+          <div class="widget-progress">Слайд <span id="slide-num">1</span> / <span id="slide-total">5</span></div>
+          <div class="widget-track" id="track-slides"></div>
+          <div class="widget-nav">
+            <button type="button" class="btn btn-secondary" onclick="prevSlide()">&#8592; Назад</button>
+            <button type="button" class="btn btn-primary" onclick="nextSlide()">Вперёд &#8594;</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FORMULAS -->
+    <section id="formulas">
+      <div class="card">
+        <div class="card-title"><span class="icon" style="background:var(--accent-blue-dim)">&#128290;</span>Все формулы раздела 8</div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px;">
+          <div class="formula-box">
+            <div class="formula">СА = Сумма ÷ n</div>
+            <div class="formula-desc">Среднее арифметическое</div>
+          </div>
+          <div class="formula-box" style="background:var(--accent-warm-dim);border-color:var(--accent-warm);">
+            <div class="formula" style="color:var(--accent-warm)">Сумма = СА × n</div>
+            <div class="formula-desc">Сумма через среднее и количество</div>
+          </div>
+          <div class="formula-box" style="background:var(--accent-blue-dim);border-color:var(--accent-blue);">
+            <div class="formula" style="color:var(--accent-blue)">Доля = Часть ÷ Целое × 100%</div>
+            <div class="formula-desc">Процент для круговой диаграммы</div>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title"><span class="icon" style="background:var(--accent-warm-dim)">&#128202;</span>Виды диаграмм — когда использовать</div>
+        <div style="overflow-x:auto;">
+          <table style="width:100%;border-collapse:collapse;color:var(--text-secondary);">
+            <thead>
+              <tr>
+                <th style="border:1px solid var(--border-glass);padding:12px;background:var(--bg-glass);color:var(--text-primary);">Вид</th>
+                <th style="border:1px solid var(--border-glass);padding:12px;background:var(--bg-glass);color:var(--text-primary);">Лучше всего подходит</th>
+                <th style="border:1px solid var(--border-glass);padding:12px;background:var(--bg-glass);color:var(--text-primary);">Пример</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td style="border:1px solid var(--border-glass);padding:10px;color:#00d4aa;font-weight:700;">Круговая</td>
+                <td style="border:1px solid var(--border-glass);padding:10px;">Показать доли от целого</td>
+                <td style="border:1px solid var(--border-glass);padding:10px;">Распределение видов фруктов</td>
+              </tr>
+              <tr>
+                <td style="border:1px solid var(--border-glass);padding:10px;color:#4dabf7;font-weight:700;">Линейная</td>
+                <td style="border:1px solid var(--border-glass);padding:10px;">Показать изменение во времени</td>
+                <td style="border:1px solid var(--border-glass);padding:10px;">Температура за неделю</td>
+              </tr>
+              <tr>
+                <td style="border:1px solid var(--border-glass);padding:10px;color:#ff6b6b;font-weight:700;">Столбчатая</td>
+                <td style="border:1px solid var(--border-glass);padding:10px;">Сравнить отдельные значения</td>
+                <td style="border:1px solid var(--border-glass);padding:10px;">Выработка на заводах</td>
+              </tr>
+              <tr>
+                <td style="border:1px solid var(--border-glass);padding:10px;color:#fcc419;font-weight:700;">Пиктограмма</td>
+                <td style="border:1px solid var(--border-glass);padding:10px;">Наглядно показать количество</td>
+                <td style="border:1px solid var(--border-glass);padding:10px;">Сбор урожая по годам</td>
+              </tr>
+              <tr>
+                <td style="border:1px solid var(--border-glass);padding:10px;color:#a78bfa;font-weight:700;">Таблица</td>
+                <td style="border:1px solid var(--border-glass);padding:10px;">Точные числовые данные</td>
+                <td style="border:1px solid var(--border-glass);padding:10px;">Расходы семьи по месяцам</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- EXAMPLES -->
+    <section id="examples">
+      <div class="card">
+        <div class="card-title"><span class="icon" style="background:var(--accent-dim)">&#128221;</span>Разбор задач по всем темам</div>
+        <p style="color:var(--text-secondary);margin-bottom:24px;">Пять задач охватывают все темы раздела 8.</p>
+      </div>
+      <div id="examples-container"></div>
+    </section>
+
+    <!-- TRAINER -->
+    <section id="trainer">
+      <div class="card">
+        <div class="card-title"><span class="icon" style="background:var(--accent-dim)">&#127947;</span>Смешанный тренажёр</div>
+        <p style="color:var(--text-secondary);margin-bottom:24px;">Задачи по всем темам раздела в произвольном порядке.</p>
+        <div class="quiz-container" style="margin-bottom:20px;">
+          <div id="trainer-question" style="font-size:1.3rem;text-align:center;margin-bottom:24px;padding:24px;background:var(--bg-glass);border-radius:12px;">Нажмите «Новая задача» для начала</div>
+          <div style="display:flex;gap:12px;margin-bottom:20px;">
+            <input type="number" id="trainer-answer" placeholder="Введите число" style="flex:1;padding:14px 16px;background:var(--bg-glass);border:2px solid var(--border-glass);border-radius:12px;color:var(--text-primary);font-size:1rem;outline:none;" onkeydown="if(event.key==='Enter')checkTrainer();" />
+            <button class="btn btn-primary" onclick="checkTrainer()" id="trainer-check-btn" disabled>Проверить</button>
+          </div>
+          <div id="trainer-feedback" style="min-height:60px;margin-bottom:16px;"></div>
+          <div style="display:flex;gap:12px;justify-content:center;">
+            <button class="btn btn-secondary" onclick="newTrainerProblem()">Новая задача</button>
+            <button class="btn btn-secondary" onclick="showTrainerHint()">Подсказка</button>
+          </div>
+          <div id="trainer-hint" style="display:none;margin-top:20px;padding:16px;background:var(--accent-blue-dim);border-radius:12px;border-left:4px solid var(--accent-blue);color:var(--text-secondary);"></div>
+        </div>
+        <div style="display:flex;justify-content:center;gap:24px;flex-wrap:wrap;">
+          <div class="stat"><div class="stat-value" id="trainer-correct">0</div><div class="stat-label">Верно</div></div>
+          <div class="stat"><div class="stat-value" id="trainer-total">0</div><div class="stat-label">Всего</div></div>
+          <div class="stat"><div class="stat-value" id="trainer-streak">0</div><div class="stat-label">Серия</div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ASSESSMENT -->
+    <section id="assessment">
+      <div class="card">
+        <div class="card-title"><span class="icon" style="background:var(--accent-blue-dim)">&#129514;</span>Предварительная проверка — 30 вопросов</div>
+        <p style="color:var(--text-secondary);margin-bottom:24px;">Комплексный тест по всем темам раздела «Статистика».</p>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px;">
+          <div class="card" style="padding:24px;text-align:center;">
+            <div style="font-size:3rem;margin-bottom:12px;">&#128269;</div>
+            <h3 style="margin-bottom:8px;">Диагностический тест</h3>
+            <p style="color:var(--text-secondary);margin-bottom:20px;">30 вопросов с объяснениями.</p>
+            <button class="btn btn-primary" onclick="startDiagnostic()">Начать тест</button>
+          </div>
+          <div class="card" style="padding:24px;text-align:center;">
+            <div style="font-size:3rem;margin-bottom:12px;">&#9201;</div>
+            <h3 style="margin-bottom:8px;">Скоростная викторина</h3>
+            <p style="color:var(--text-secondary);margin-bottom:20px;">30 вопросов &bull; 10 минут.</p>
+            <button class="btn btn-primary" onclick="startTimeAttack()">Начать викторину</button>
+          </div>
+        </div>
+      </div>
+      <div id="diagnostic-ui" style="display:none;">
+        <div class="card"><div class="card-title"><span class="icon" style="background:var(--accent-blue-dim)">&#128269;</span>Диагностический тест (30 вопросов)</div></div>
+        <div class="quiz-container">
+          <div class="quiz-progress">
+            <span>Вопрос <span id="diag-current">1</span> / <span id="diag-total">30</span></span>
+            <div class="progress-bar"><div class="progress-fill" id="diag-progress"></div></div>
+            <span id="diag-score">0 правильных</span>
+          </div>
+          <div class="quiz-question" id="diag-question"></div>
+          <div class="quiz-options" id="diag-options"></div>
+          <div class="quiz-nav">
+            <button class="btn btn-secondary" onclick="prevDiagnostic()" id="diag-prev" disabled>&#8592; Назад</button>
+            <button class="btn btn-primary" onclick="nextDiagnostic()" id="diag-next" disabled>Далее &#8594;</button>
+          </div>
+          <div id="diag-explanation" style="display:none;margin-top:20px;padding:16px;background:var(--accent-dim);border-radius:12px;border-left:4px solid var(--accent);color:var(--text-secondary);"></div>
+        </div>
+      </div>
+      <div id="timeattack-ui" style="display:none;">
+        <div class="timer" id="ta-timer">10:00</div>
+        <div class="card"><div class="card-title"><span class="icon" style="background:var(--accent-warm-dim)">&#9201;</span>Скоростная викторина</div></div>
+        <div class="quiz-container">
+          <div class="quiz-progress">
+            <span>Вопрос <span id="ta-current">1</span> / 30</span>
+            <div class="progress-bar"><div class="progress-fill" id="ta-progress"></div></div>
+          </div>
+          <div class="quiz-question" id="ta-question"></div>
+          <div class="quiz-options" id="ta-options"></div>
+          <div style="display:flex;justify-content:flex-end;margin-top:24px;">
+            <button class="btn btn-primary" onclick="nextTimeAttack()" id="ta-next">Ответить &#8594;</button>
+          </div>
+        </div>
+      </div>
+      <div id="results-ui" style="display:none;">
+        <div class="card">
+          <div class="results-container">
+            <div class="score-label">Ваш результат</div>
+            <div class="score-circle" id="result-circle"><div class="score-value" id="result-percent">0%</div></div>
+            <div class="score-message" id="result-message"></div>
+            <div class="results-breakdown">
+              <div class="breakdown-item"><div class="breakdown-value" id="result-correct">0</div><div class="breakdown-label">Верно</div></div>
+              <div class="breakdown-item"><div class="breakdown-value" id="result-wrong">0</div><div class="breakdown-label">Ошибок</div></div>
+              <div class="breakdown-item"><div class="breakdown-value" id="result-time">0:00</div><div class="breakdown-label">Время</div></div>
+              <div class="breakdown-item"><div class="breakdown-value" id="result-mastery">—</div><div class="breakdown-label">Уровень</div></div>
+            </div>
+            <div style="display:flex;gap:16px;justify-content:center;flex-wrap:wrap;">
+              <button class="btn btn-primary" onclick="resetAssessment()">Пройти ещё раз</button>
+              <button class="btn btn-secondary" onclick="showSection('theory')">К обзору</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <script>
+      const AppState = {
+        currentSection:"home", slide:0,
+        trainer:{correct:0,total:0,streak:0,current:null},
+        diagnostic:{current:0,score:0,answers:[]},
+        timeAttack:{current:0,score:0,timer:null,timeLeft:600,startTime:0,answers:[]},
+        mode:null
+      };
+
+      // ===================== SLIDES =====================
+      const slides = [
+        {
+          title:"Среднее арифметическое — краткий обзор",
+          content:`
+            <p style="margin-bottom:12px;"><strong>Среднее арифметическое (СА)</strong> = Сумма всех чисел ÷ Количество чисел.</p>
+            <div style="background:var(--accent-dim);padding:14px 18px;border-radius:10px;margin-bottom:12px;">
+              <p style="margin:0;"><strong>Основные формулы:</strong><br>
+              • СА = (a₁ + a₂ + ... + aₙ) ÷ n<br>
+              • Сумма = СА × n<br>
+              • Пропущенное число = Сумма − (сумма остальных)<br>
+              • Средняя скорость = Путь ÷ Время</p>
+            </div>
+            <p style="color:var(--text-secondary);"><strong>Пример:</strong> Оценки ученика: 4, 5, 3, 5.<br>
+            СА = (4 + 5 + 3 + 5) ÷ 4 = 17 ÷ 4 = <strong style="color:var(--accent)">4,25</strong></p>`
+        },
+        {
+          title:"Круговая диаграмма — краткий обзор",
+          content:`
+            <p style="margin-bottom:12px;"><strong>Круговая диаграмма</strong> показывает доли частей от целого. Сумма всех секторов = 100%.</p>
+            <div style="display:flex;justify-content:center;margin:16px 0;">
+              <svg viewBox="0 0 260 180" width="260" height="180" aria-label="Пример круговой диаграммы с тремя секторами" role="img">
+                <circle cx="90" cy="90" r="70" fill="rgba(0,212,170,0.25)" stroke="#00d4aa" stroke-width="2"/>
+                <path d="M90,90 L90,20 A70,70 0 0,1 150,110 Z" fill="rgba(255,107,107,0.5)" stroke="#ff6b6b" stroke-width="2"/>
+                <path d="M90,90 L150,110 A70,70 0 0,1 20,110 Z" fill="rgba(77,171,247,0.5)" stroke="#4dabf7" stroke-width="2"/>
+                <path d="M90,90 L20,110 A70,70 0 0,1 90,20 Z" fill="rgba(252,196,25,0.5)" stroke="#fcc419" stroke-width="2"/>
+                <text x="120" y="70" fill="#ff6b6b" font-size="12" font-family="sans-serif" font-weight="bold">30%</text>
+                <text x="60" y="130" fill="#4dabf7" font-size="12" font-family="sans-serif" font-weight="bold">40%</text>
+                <text x="50" y="65" fill="#fcc419" font-size="12" font-family="sans-serif" font-weight="bold">30%</text>
+                <rect x="170" y="40" width="14" height="14" rx="3" fill="rgba(255,107,107,0.5)" stroke="#ff6b6b" stroke-width="1"/>
+                <text x="190" y="52" fill="#e8e8f0" font-size="11" font-family="sans-serif">Часть A (30%)</text>
+                <rect x="170" y="65" width="14" height="14" rx="3" fill="rgba(77,171,247,0.5)" stroke="#4dabf7" stroke-width="1"/>
+                <text x="190" y="77" fill="#e8e8f0" font-size="11" font-family="sans-serif">Часть B (40%)</text>
+                <rect x="170" y="90" width="14" height="14" rx="3" fill="rgba(252,196,25,0.5)" stroke="#fcc419" stroke-width="1"/>
+                <text x="190" y="102" fill="#e8e8f0" font-size="11" font-family="sans-serif">Часть C (30%)</text>
+              </svg>
+            </div>
+            <div style="background:var(--accent-warm-dim);padding:14px 18px;border-radius:10px;">
+              <p style="margin:0;"><strong>Формула:</strong> Доля (%) = Часть ÷ Целое × 100%<br>
+              <strong>Обратная:</strong> Часть = Целое × Доля ÷ 100</p>
+            </div>`
+        },
+        {
+          title:"Линейная диаграмма",
+          content:`
+            <p style="margin-bottom:12px;"><strong>Линейная диаграмма</strong> удобна для отображения изменений показателя во времени.</p>
+            <div style="display:flex;justify-content:center;margin:16px 0;">
+              <svg viewBox="0 0 300 160" width="300" height="160" aria-label="Линейная диаграмма: значения 20, 35, 25, 45, 30" role="img">
+                <line x1="30" y1="20" x2="30" y2="140" stroke="#00d4aa" stroke-width="2"/>
+                <line x1="30" y1="140" x2="290" y2="140" stroke="#00d4aa" stroke-width="2"/>
+                <text x="5" y="145" fill="#a0a0b8" font-size="9" font-family="sans-serif">0</text>
+                <text x="5" y="110" fill="#a0a0b8" font-size="9" font-family="sans-serif">20</text>
+                <text x="5" y="75" fill="#a0a0b8" font-size="9" font-family="sans-serif">40</text>
+                <text x="5" y="40" fill="#a0a0b8" font-size="9" font-family="sans-serif">60</text>
+                <line x1="25" y1="110" x2="30" y2="110" stroke="#a0a0b8" stroke-width="1"/>
+                <line x1="25" y1="75" x2="30" y2="75" stroke="#a0a0b8" stroke-width="1"/>
+                <line x1="25" y1="40" x2="30" y2="40" stroke="#a0a0b8" stroke-width="1"/>
+                <polyline points="60,110 110,72 160,95 210,52 260,85" fill="none" stroke="#4dabf7" stroke-width="2.5" stroke-linejoin="round"/>
+                <circle cx="60" cy="110" r="4" fill="#4dabf7"/>
+                <circle cx="110" cy="72" r="4" fill="#4dabf7"/>
+                <circle cx="160" cy="95" r="4" fill="#4dabf7"/>
+                <circle cx="210" cy="52" r="4" fill="#4dabf7"/>
+                <circle cx="260" cy="85" r="4" fill="#4dabf7"/>
+                <text x="55" y="155" fill="#a0a0b8" font-size="9" font-family="sans-serif">Пн</text>
+                <text x="105" y="155" fill="#a0a0b8" font-size="9" font-family="sans-serif">Вт</text>
+                <text x="155" y="155" fill="#a0a0b8" font-size="9" font-family="sans-serif">Ср</text>
+                <text x="205" y="155" fill="#a0a0b8" font-size="9" font-family="sans-serif">Чт</text>
+                <text x="255" y="155" fill="#a0a0b8" font-size="9" font-family="sans-serif">Пт</text>
+              </svg>
+            </div>
+            <p style="color:var(--text-secondary);">По графику можно определить: наибольшее/наименьшее значение, тенденцию роста или убывания, среднее значение.</p>`
+        },
+        {
+          title:"Столбчатая диаграмма и таблица",
+          content:`
+            <p style="margin-bottom:12px;"><strong>Столбчатая диаграмма</strong> удобна для сравнения значений разных категорий.</p>
+            <div style="display:flex;justify-content:center;margin:16px 0;">
+              <svg viewBox="0 0 300 160" width="300" height="160" aria-label="Столбчатая диаграмма с четырьмя столбцами" role="img">
+                <line x1="30" y1="20" x2="30" y2="140" stroke="#00d4aa" stroke-width="2"/>
+                <line x1="30" y1="140" x2="290" y2="140" stroke="#00d4aa" stroke-width="2"/>
+                <rect x="50" y="70" width="40" height="70" rx="4" fill="rgba(0,212,170,0.5)" stroke="#00d4aa" stroke-width="1.5"/>
+                <rect x="110" y="50" width="40" height="90" rx="4" fill="rgba(255,107,107,0.5)" stroke="#ff6b6b" stroke-width="1.5"/>
+                <rect x="170" y="90" width="40" height="50" rx="4" fill="rgba(77,171,247,0.5)" stroke="#4dabf7" stroke-width="1.5"/>
+                <rect x="230" y="40" width="40" height="100" rx="4" fill="rgba(252,196,25,0.5)" stroke="#fcc419" stroke-width="1.5"/>
+                <text x="65" y="155" text-anchor="middle" fill="#a0a0b8" font-size="9" font-family="sans-serif">A</text>
+                <text x="125" y="155" text-anchor="middle" fill="#a0a0b8" font-size="9" font-family="sans-serif">B</text>
+                <text x="185" y="155" text-anchor="middle" fill="#a0a0b8" font-size="9" font-family="sans-serif">C</text>
+                <text x="245" y="155" text-anchor="middle" fill="#a0a0b8" font-size="9" font-family="sans-serif">D</text>
+                <text x="70" y="65" text-anchor="middle" fill="#00d4aa" font-size="10" font-family="sans-serif" font-weight="bold">35</text>
+                <text x="130" y="45" text-anchor="middle" fill="#ff6b6b" font-size="10" font-family="sans-serif" font-weight="bold">45</text>
+                <text x="190" y="85" text-anchor="middle" fill="#4dabf7" font-size="10" font-family="sans-serif" font-weight="bold">25</text>
+                <text x="250" y="35" text-anchor="middle" fill="#fcc419" font-size="10" font-family="sans-serif" font-weight="bold">50</text>
+              </svg>
+            </div>
+            <div style="background:var(--accent-blue-dim);padding:14px 18px;border-radius:10px;">
+              <p style="margin:0;"><strong>Таблица</strong> — самый точный способ представления данных. Удобна для точного вычисления среднего арифметического. Диаграммы — наглядные, таблицы — точные.</p>
+            </div>`
+        },
+        {
+          title:"Алгоритм решения задач на чтение диаграмм",
+          content:`
+            <p style="margin-bottom:12px;">Чтобы правильно прочитать любую диаграмму, следуйте шагам:</p>
+            <div style="display:flex;flex-direction:column;gap:12px;">
+              <div style="background:var(--bg-glass);padding:14px;border-radius:10px;border-left:3px solid var(--accent);">
+                <strong style="color:var(--accent)">Шаг 1.</strong> Прочитайте заголовок — что показывает диаграмма?
+              </div>
+              <div style="background:var(--bg-glass);padding:14px;border-radius:10px;border-left:3px solid var(--accent-blue);">
+                <strong style="color:var(--accent-blue)">Шаг 2.</strong> Определите оси/легенду — что изображено по горизонтали и вертикали?
+              </div>
+              <div style="background:var(--bg-glass);padding:14px;border-radius:10px;border-left:3px solid var(--accent-warm);">
+                <strong style="color:var(--accent-warm)">Шаг 3.</strong> Считайте значения — используйте масштаб или числа на секторах.
+              </div>
+              <div style="background:var(--bg-glass);padding:14px;border-radius:10px;border-left:3px solid var(--warning);">
+                <strong style="color:var(--warning)">Шаг 4.</strong> Выполните вычисление — сумму, разность, среднее, процент.
+              </div>
+            </div>
+            <div style="background:var(--accent-dim);padding:14px 18px;border-radius:10px;margin-top:16px;">
+              <p style="margin:0;"><strong>Совет:</strong> В круговой диаграмме проверьте, что сумма всех процентов = 100%.</p>
+            </div>`
+        }
+      ];
+
+      // ===================== EXAMPLES =====================
+      const examples = [
+        {
+          title:"Чтение круговой диаграммы — квартиры в здании",
+          type:"Круговая диаграмма",
+          task:"В здании 40 квартир. По круговой диаграмме известно, что 1-комнатных квартир 25%, 2-комнатных — 50%, 3-комнатных — 15%, 4-комнатных — 10%. а) Сколько 2-комнатных квартир? б) На сколько 1-комнатных больше, чем 4-комнатных?",
+          sol:`<p><strong>а) 2-комнатные:</strong></p>
+               <p>40 × 50% = 40 × 0,5 = <strong>20 квартир</strong>.</p>
+               <p><strong>б) 1-комнатных:</strong> 40 × 25% = 10 квартир.</p>
+               <p><strong>4-комнатных:</strong> 40 × 10% = 4 квартиры.</p>
+               <p>Разность: 10 − 4 = <strong>6 квартир</strong>.</p>
+               <p><strong>Ответ: а) 20 квартир; б) на 6 больше.</strong></p>`
+        },
+        {
+          title:"Линейная диаграмма — производство обуви",
+          type:"Линейная диаграмма",
+          task:"По линейной диаграмме производства обуви: 2017 г. — 30 тыс. пар, 2018 г. — 25 тыс., 2019 г. — 35 тыс., 2020 г. — 20 тыс., 2021 г. — 40 тыс. а) В каком году наибольшее производство? б) Найдите среднее производство за 5 лет.",
+          sol:`<p><strong>а)</strong> Наибольшее производство — 40 тыс. пар — в <strong>2021 году</strong>.</p>
+               <p><strong>б)</strong> Сумма: 30 + 25 + 35 + 20 + 40 = 150 тыс. пар.</p>
+               <p>Среднее: 150 ÷ 5 = <strong>30 тыс. пар</strong> в год.</p>
+               <p><strong>Ответ: а) 2021 год; б) среднее — 30 тыс. пар.</strong></p>`
+        },
+        {
+          title:"Столбчатая диаграмма — зерновые культуры",
+          type:"Столбчатая диаграмма",
+          task:"Столбчатая диаграмма показывает тонны зерновых: пшеница — 300 т, кукуруза — 200 т, ячмень — 150 т, рис — 100 т. а) Сколько всего тонн зерна? б) Какой процент составляет пшеница от общего объёма?",
+          sol:`<p><strong>а)</strong> Всего: 300 + 200 + 150 + 100 = <strong>750 тонн</strong>.</p>
+               <p><strong>б)</strong> Доля пшеницы: 300 ÷ 750 × 100% = <strong>40%</strong>.</p>
+               <p><strong>Ответ: а) 750 т; б) пшеница составляет 40%.</strong></p>`
+        },
+        {
+          title:"Нахождение наилучшего способа представления",
+          type:"Выбор диаграммы",
+          task:"Нужно показать изменение температуры воздуха за 7 дней недели. Какой вид диаграммы наиболее удобен? Обоснуйте.",
+          sol:`<p><strong>Лучший выбор: линейная диаграмма.</strong></p>
+               <p>Обоснование:</p>
+               <ul style="margin-left:16px;color:var(--text-secondary);">
+                 <li>Показывает изменение показателя во времени (7 дней — временной ряд).</li>
+                 <li>Линия наглядно демонстрирует тенденцию — рост, убывание, колебания.</li>
+                 <li>Столбчатая тоже возможна, но хуже показывает динамику.</li>
+                 <li>Круговая — не подходит, так как данные не являются долями одного целого.</li>
+               </ul>
+               <p><strong>Ответ: линейная диаграмма.</strong></p>`
+        },
+        {
+          title:"Комплексная задача — средние данные из таблицы",
+          type:"Смешанная задача",
+          task:"Ученики 5-го класса собрали яблоки (кг): Самир — 12, Лала — 15, Сабина — 18, Эльшан — 9. а) Найдите среднее количество яблок. б) Кто собрал больше среднего? в) На сколько кг Лала собрала меньше среднего?",
+          sol:`<p><strong>а)</strong> Сумма: 12 + 15 + 18 + 9 = 54 кг.</p>
+               <p>СА = 54 ÷ 4 = <strong>13,5 кг</strong>.</p>
+               <p><strong>б)</strong> Больше среднего (13,5): Лала (15 > 13,5) и Сабина (18 > 13,5).</p>
+               <p><strong>в)</strong> Лала собрала на 15 − 13,5 = <strong>1,5 кг больше</strong> среднего (не меньше).</p>
+               <p><strong>Ответ: а) 13,5 кг; б) Лала и Сабина; в) Лала собрала на 1,5 кг больше среднего.</strong></p>`
+        }
+      ];
+
+      // ===================== TRAINER =====================
+      const trainerQs = [
+        {q:"Среднее арифметическое чисел 12, 16, 20 равно:",a:16,hint:"Сумма: 12+16+20=48. Количество: 3. СА=48÷3=16."},
+        {q:"В круговой диаграмме класс из 30 учеников. Отличников 40%. Сколько отличников?",a:12,hint:"30 × 40% = 30 × 0,4 = 12 учеников."},
+        {q:"Автомобиль проехал 150 км за 3 часа. Средняя скорость (км/ч)?",a:50,hint:"v = S÷t = 150÷3 = 50 км/ч."},
+        {q:"Среднее арифметическое 4 чисел равно 9. Найдите их сумму.",a:36,hint:"Сумма = СА × n = 9 × 4 = 36."},
+        {q:"В круговой диаграмме долей видов транспорта: легковых 55%, грузовых 30%, автобусов 15%. Всего 200 машин. Сколько грузовых?",a:60,hint:"200 × 30% = 200 × 0,3 = 60 машин."},
+        {q:"По линейной диаграмме значения за 5 дней: 10, 20, 15, 25, 30. Найдите среднее значение.",a:20,hint:"Сумма: 10+20+15+25+30=100. Среднее: 100÷5=20."},
+        {q:"Среднее арифметическое трёх чисел равно 8. Два числа: 5 и 7. Найдите третье.",a:12,hint:"Сумма=8×3=24. Третье=24−5−7=12."},
+        {q:"Столбчатая диаграмма: A=40, B=60, C=50, D=50. Найдите среднее значение.",a:50,hint:"Сумма: 40+60+50+50=200. Среднее: 200÷4=50."},
+        {q:"На круговой диаграмме 60 книг. Учебников 25%. Сколько учебников?",a:15,hint:"60 × 25% = 60 × 0,25 = 15 книг."},
+        {q:"Среднее арифметическое пяти чисел равно 10. Найдите их сумму.",a:50,hint:"Сумма = 10 × 5 = 50."}
+      ];
+
+      // ===================== MCQ QUESTIONS (30) =====================
+      const questions = [
+        {q:"Круговая диаграмма удобна для:",o:["Показа изменений во времени","Показа долей от целого","Точного сравнения больших чисел","Составления таблиц"],a:1},
+        {q:"Среднее арифметическое чисел 12, 16 и 20 равно:",o:["15","16","17","18"],a:1},
+        {q:"В классе 40 учеников. По круговой диаграмме отличников 25%. Сколько отличников?",o:["8","10","12","15"],a:1},
+        {q:"Линейная диаграмма лучше всего показывает:",o:["Доли от целого","Изменение показателя во времени","Точные числа","Одно значение"],a:1},
+        {q:"СА трёх чисел равно 9. Их сумма:",o:["9","18","27","36"],a:2},
+        {q:"На круговой диаграмме фруктов 60% составляют яблоки. Всего фруктов 150. Сколько яблок?",o:["60","80","90","100"],a:2},
+        {q:"Среднее арифметическое чисел 4, 8, 12 и 16 равно:",o:["8","9","10","12"],a:2},
+        {q:"Столбчатая диаграмма удобна для:",o:["Показа изменений во времени","Показа долей","Сравнения отдельных значений","Вычисления процентов"],a:2},
+        {q:"Поезд проехал 360 км за 4 часа. Средняя скорость:",o:["80 км/ч","90 км/ч","100 км/ч","720 км/ч"],a:1},
+        {q:"В круговой диаграмме сумма всех секторов равна:",o:["50%","75%","100%","200%"],a:2},
+        {q:"Среднее арифметическое оценок 4, 3, 5, 4, 4 равно:",o:["3","4","5","4,5"],a:1},
+        {q:"По таблице значения: 30, 20, 50, 40. Среднее значение:",o:["30","35","40","50"],a:2},
+        {q:"Из 200 животных на ферме коров 35%. Сколько коров?",o:["50","60","70","80"],a:2},
+        {q:"СА 5 чисел = 7. Сумма всех пяти чисел:",o:["7","12","35","40"],a:2},
+        {q:"Линейная диаграмма показывает значения: пн-10, вт-20, ср-15, чт-25, пт-30. Среднее:",o:["18","20","22","25"],a:1},
+        {q:"Среднее арифметическое пяти чисел = 12. Четыре числа: 10, 11, 13, 14. Пятое:",o:["10","12","12","14"],a:1},
+        {q:"Формула для нахождения доли в процентах:",o:["Часть × Целое","Часть ÷ Целое × 100%","Целое ÷ Часть × 100%","Часть + Целое"],a:1},
+        {q:"Велосипедист едет 2 часа со скоростью 15 км/ч, затем 1 час — 12 км/ч. Средняя скорость:",o:["13,5 км/ч","14 км/ч","15 км/ч","13 км/ч"],a:1},
+        {q:"В 30 книгах на полке учебников 60%, художественных 30%, справочников 10%. Учебников:",o:["12","15","18","20"],a:2},
+        {q:"Среднее арифметическое чисел 100, 200, 300 равно:",o:["100","150","200","600"],a:2},
+        {q:"Пиктограмма используется для:",o:["Точных расчётов","Наглядного показа количества с помощью значков","Показа временных изменений","Вычисления долей"],a:1},
+        {q:"По столбчатой диаграмме: A=30, B=50, C=40, D=80. Найдите сумму.",o:["150","180","200","220"],a:2},
+        {q:"СА четырёх чисел = 15. Три числа: 12, 16, 18. Четвёртое:",o:["12","14","16","18"],a:1},
+        {q:"В круговой диаграмме 5 секторов. Четыре сектора: 20%, 25%, 30%, 15%. Пятый сектор:",o:["5%","10%","15%","20%"],a:1},
+        {q:"Среднее арифметическое чисел 2, 4, 6, 8, 10 равно:",o:["4","5","6","8"],a:2},
+        {q:"Самолёт летит 1200 км за 3 часа. Средняя скорость:",o:["300 км/ч","350 км/ч","400 км/ч","1200 км/ч"],a:2},
+        {q:"Из 120 учеников 45% участвуют в кружках. Сколько участников?",o:["45","54","60","72"],a:1},
+        {q:"По таблице за 6 месяцев расходы: 500, 600, 400, 700, 800, 600. Среднее:",o:["550","600","617","650"],a:1},
+        {q:"СА трёх чисел = 10. Два числа: 8 и 12. Третье число:",o:["8","10","12","14"],a:1},
+        {q:"Какая диаграмма показывает изменения с течением времени лучше всего?",o:["Круговая","Столбчатая","Линейная","Пиктограмма"],a:2}
+      ];
+
+      // ===================== NAVIGATION =====================
+      function showSection(id) {
+        document.querySelectorAll("section").forEach(s=>s.classList.remove("active"));
+        document.querySelectorAll(".nav-links a").forEach(a=>a.classList.remove("active"));
+        const sec = document.getElementById(id);
+        if(sec) sec.classList.add("active");
+        const link = document.querySelector(`.nav-links a[data-section="${id}"]`);
+        if(link) link.classList.add("active");
+        AppState.currentSection = id;
+        if(id==="examples") renderExamples();
+        if(id==="assessment") {
+          document.getElementById("diagnostic-ui").style.display="none";
+          document.getElementById("timeattack-ui").style.display="none";
+          document.getElementById("results-ui").style.display="none";
+        }
+      }
+      document.querySelectorAll(".nav-links a[data-section]").forEach(a=>{
+        a.addEventListener("click",e=>{e.preventDefault();showSection(a.dataset.section);});
+      });
+
+      // ===================== SLIDES =====================
+      function renderSlide() {
+        const track = document.getElementById("track-slides");
+        const total = slides.length;
+        document.getElementById("slide-num").textContent = AppState.slide+1;
+        document.getElementById("slide-total").textContent = total;
+        track.innerHTML="";
+        slides.forEach((s,i)=>{
+          const div=document.createElement("div");
+          div.className="widget-slide"+(i===AppState.slide?" active":"");
+          div.innerHTML=`<h3>${s.title}</h3>${s.content}`;
+          track.appendChild(div);
+        });
+      }
+      function nextSlide(){if(AppState.slide<slides.length-1){AppState.slide++;renderSlide();}else showSection("formulas");}
+      function prevSlide(){if(AppState.slide>0){AppState.slide--;renderSlide();}}
+
+      // ===================== EXAMPLES =====================
+      function renderExamples() {
+        const c = document.getElementById("examples-container");
+        if(c.innerHTML) return;
+        examples.forEach((ex,i)=>{
+          const div = document.createElement("div");
+          div.className="problem-card";
+          div.innerHTML=`
+            <div class="problem-header">
+              <span class="problem-number">Задача ${i+1}</span>
+              <span class="problem-type">${ex.type}</span>
+            </div>
+            <div class="problem-text">${ex.task}</div>
+            <button class="solution-btn" onclick="toggleSolution(${i})">Показать решение</button>
+            <div class="solution" id="sol-${i}">${ex.sol}</div>`;
+          c.appendChild(div);
+        });
+      }
+      function toggleSolution(i) {
+        const s=document.getElementById("sol-"+i);
+        s.classList.toggle("active");
+        s.previousElementSibling.textContent=s.classList.contains("active")?"Скрыть решение":"Показать решение";
+      }
+
+      // ===================== TRAINER =====================
+      function newTrainerProblem() {
+        const idx = Math.floor(Math.random()*trainerQs.length);
+        AppState.trainer.current = trainerQs[idx];
+        document.getElementById("trainer-question").textContent = AppState.trainer.current.q;
+        document.getElementById("trainer-answer").value="";
+        document.getElementById("trainer-feedback").innerHTML="";
+        document.getElementById("trainer-hint").style.display="none";
+        document.getElementById("trainer-check-btn").disabled=false;
+        document.getElementById("trainer-answer").focus();
+      }
+      function checkTrainer() {
+        const t=AppState.trainer;
+        if(!t.current) return;
+        const val=parseFloat(document.getElementById("trainer-answer").value);
+        t.total++;
+        document.getElementById("trainer-total").textContent=t.total;
+        const fb=document.getElementById("trainer-feedback");
+        if(val===t.current.a) {
+          t.correct++; t.streak++;
+          document.getElementById("trainer-correct").textContent=t.correct;
+          document.getElementById("trainer-streak").textContent=t.streak;
+          fb.innerHTML=`<div style="padding:12px;background:rgba(81,207,102,0.15);border-radius:10px;border-left:3px solid var(--success);color:var(--success);">✓ Правильно! ${t.streak>1?`Серия: ${t.streak}!`:""}</div>`;
+        } else {
+          t.streak=0; document.getElementById("trainer-streak").textContent=0;
+          fb.innerHTML=`<div style="padding:12px;background:rgba(255,107,107,0.15);border-radius:10px;border-left:3px solid var(--error);color:var(--error);">✗ Неверно. Правильный ответ: <strong>${t.current.a}</strong></div>`;
+        }
+      }
+      function showTrainerHint() {
+        if(!AppState.trainer.current) return;
+        const h=document.getElementById("trainer-hint");
+        h.style.display="block";
+        h.textContent=AppState.trainer.current.hint;
+      }
+
+      // ===================== DIAGNOSTIC =====================
+      let diagAnswers=[];
+      function startDiagnostic() {
+        diagAnswers=new Array(questions.length).fill(-1);
+        AppState.diagnostic={current:0,score:0,answers:diagAnswers};
+        document.getElementById("diagnostic-ui").style.display="block";
+        document.getElementById("results-ui").style.display="none";
+        AppState.mode="diagnostic";
+        renderDiagnosticQ();
+      }
+      function renderDiagnosticQ() {
+        const d=AppState.diagnostic;
+        const q=questions[d.current];
+        document.getElementById("diag-current").textContent=d.current+1;
+        document.getElementById("diag-total").textContent=questions.length;
+        document.getElementById("diag-score").textContent=d.score+" правильных";
+        document.getElementById("diag-progress").style.width=((d.current/questions.length)*100)+"%";
+        document.getElementById("diag-question").textContent=q.q;
+        document.getElementById("diag-explanation").style.display="none";
+        document.getElementById("diag-next").disabled=true;
+        document.getElementById("diag-prev").disabled=d.current===0;
+        const opts=document.getElementById("diag-options");
+        opts.innerHTML="";
+        q.o.forEach((opt,i)=>{
+          const btn=document.createElement("div");
+          btn.className="quiz-option"+(diagAnswers[d.current]===i?" "+(i===q.a?"correct":"wrong"):"");
+          btn.innerHTML=`<div class="option-letter">${String.fromCharCode(65+i)}</div><span>${opt}</span>`;
+          if(diagAnswers[d.current]===-1) btn.addEventListener("click",()=>selectDiagAnswer(i));
+          else btn.classList.add("disabled");
+          opts.appendChild(btn);
+        });
+        if(diagAnswers[d.current]!==-1) document.getElementById("diag-next").disabled=false;
+      }
+      function selectDiagAnswer(i) {
+        const d=AppState.diagnostic;
+        const q=questions[d.current];
+        diagAnswers[d.current]=i;
+        d.answers=diagAnswers;
+        if(i===q.a) d.score++;
+        document.getElementById("diag-score").textContent=d.score+" правильных";
+        const exp=document.getElementById("diag-explanation");
+        exp.style.display="block";
+        exp.textContent=i===q.a?"✓ Верно! Правильный ответ: "+q.o[q.a]:"✗ Неверно. Правильный ответ: "+q.o[q.a];
+        document.getElementById("diag-next").disabled=false;
+        renderDiagnosticQ();
+      }
+      function nextDiagnostic() {
+        if(AppState.diagnostic.current<questions.length-1) {AppState.diagnostic.current++;renderDiagnosticQ();}
+        else showResults("diagnostic");
+      }
+      function prevDiagnostic() {
+        if(AppState.diagnostic.current>0){AppState.diagnostic.current--;renderDiagnosticQ();}
+      }
+
+      // ===================== TIME ATTACK =====================
+      function startTimeAttack() {
+        AppState.timeAttack={current:0,score:0,timer:null,timeLeft:600,startTime:Date.now(),answers:[]};
+        document.getElementById("timeattack-ui").style.display="block";
+        document.getElementById("results-ui").style.display="none";
+        AppState.mode="timeattack";
+        renderTAQ();
+        AppState.timeAttack.timer=setInterval(tickTimer,1000);
+      }
+      function tickTimer() {
+        const ta=AppState.timeAttack;
+        ta.timeLeft--;
+        const m=Math.floor(ta.timeLeft/60),s=ta.timeLeft%60;
+        const el=document.getElementById("ta-timer");
+        el.textContent=m+":"+(s<10?"0"+s:s);
+        el.className="timer"+(ta.timeLeft<=60?"danger":ta.timeLeft<=120?"warning":"");
+        if(ta.timeLeft<=0){clearInterval(ta.timer);showResults("timeattack");}
+      }
+      function renderTAQ() {
+        const ta=AppState.timeAttack;
+        const q=questions[ta.current];
+        document.getElementById("ta-current").textContent=ta.current+1;
+        document.getElementById("ta-progress").style.width=((ta.current/questions.length)*100)+"%";
+        document.getElementById("ta-question").textContent=q.q;
+        const opts=document.getElementById("ta-options");
+        opts.innerHTML="";
+        q.o.forEach((opt,i)=>{
+          const btn=document.createElement("div");
+          btn.className="quiz-option";
+          btn.innerHTML=`<div class="option-letter">${String.fromCharCode(65+i)}</div><span>${opt}</span>`;
+          btn.addEventListener("click",()=>{
+            opts.querySelectorAll(".quiz-option").forEach(b=>b.classList.add("disabled"));
+            btn.classList.add(i===q.a?"correct":"wrong");
+            if(i===q.a) ta.score++;
+            document.getElementById("ta-next").disabled=false;
+          });
+          opts.appendChild(btn);
+        });
+        document.getElementById("ta-next").disabled=true;
+      }
+      function nextTimeAttack() {
+        const ta=AppState.timeAttack;
+        if(ta.current<questions.length-1){ta.current++;renderTAQ();}
+        else{clearInterval(ta.timer);showResults("timeattack");}
+      }
+
+      // ===================== RESULTS =====================
+      function showResults(mode) {
+        document.getElementById("diagnostic-ui").style.display="none";
+        document.getElementById("timeattack-ui").style.display="none";
+        document.getElementById("results-ui").style.display="block";
+        const correct = mode==="diagnostic"?AppState.diagnostic.score:AppState.timeAttack.score;
+        const total=questions.length;
+        const pct=Math.round(correct/total*100);
+        const elapsed=Math.round((Date.now()-(AppState.timeAttack.startTime||Date.now()))/1000);
+        const m=Math.floor(elapsed/60),s=elapsed%60;
+        const circle=document.getElementById("result-circle");
+        circle.style.setProperty("--score",pct);
+        document.getElementById("result-percent").textContent=pct+"%";
+        document.getElementById("result-correct").textContent=correct;
+        document.getElementById("result-wrong").textContent=total-correct;
+        document.getElementById("result-time").textContent=m+":"+(s<10?"0"+s:s);
+        const mastery=pct>=90?"Эксперт":pct>=75?"Уверенный":pct>=60?"Хорошо":"Нужно повторить";
+        document.getElementById("result-mastery").textContent=mastery;
+        document.getElementById("result-message").textContent=pct>=90?"Отлично! Вы готовы к итоговому тесту!":pct>=75?"Хорошая работа! Повторите слабые места.":pct>=60?"Неплохо. Вернитесь к обзору тем.":"Повторите весь раздел ещё раз.";
+      }
+      function resetAssessment(){document.getElementById("results-ui").style.display="none";}
+
+      // Init
+      renderSlide();
+    </script>
+  </body>
+</html>

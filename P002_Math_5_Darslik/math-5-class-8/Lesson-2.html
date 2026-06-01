@@ -1,0 +1,810 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Урок 8.2 — Круговая диаграмма</title>
+    <style>
+      :root{--bg-dark:#0f0f1a;--bg-card:rgba(255,255,255,0.05);--bg-glass:rgba(255,255,255,0.08);--border-glass:rgba(255,255,255,0.15);--text-primary:#e8e8f0;--text-secondary:#a0a0b8;--accent:#00d4aa;--accent-dim:rgba(0,212,170,0.2);--accent-warm:#ff6b6b;--accent-warm-dim:rgba(255,107,107,0.2);--accent-blue:#4dabf7;--accent-blue-dim:rgba(77,171,247,0.2);--success:#51cf66;--error:#ff6b6b;--warning:#fcc419;}
+      *{margin:0;padding:0;box-sizing:border-box;}
+      body{font-family:"Segoe UI",system-ui,sans-serif;background:var(--bg-dark);color:var(--text-primary);min-height:100vh;overflow-x:hidden;line-height:1.6;}
+      .bg-animation{position:fixed;top:0;left:0;width:100%;height:100%;z-index:-1;background:radial-gradient(ellipse at 20% 20%,rgba(0,212,170,0.08) 0%,transparent 50%),radial-gradient(ellipse at 80% 80%,rgba(77,171,247,0.08) 0%,transparent 50%);}
+      .bg-animation::before{content:"";position:absolute;width:200%;height:200%;top:-50%;left:-50%;background:repeating-linear-gradient(0deg,transparent,transparent 40px,rgba(255,255,255,0.02) 40px,rgba(255,255,255,0.02) 41px);animation:bgMove 20s linear infinite;}
+      @keyframes bgMove{0%{transform:translateY(0)}100%{transform:translateY(40px)}}
+      nav{position:fixed;top:0;left:0;right:0;background:rgba(15,15,26,0.85);backdrop-filter:blur(20px);border-bottom:1px solid var(--border-glass);z-index:1000;padding:0 20px;}
+      .nav-container{max-width:1200px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;height:60px;}
+      .logo{font-size:1.3rem;font-weight:700;background:linear-gradient(135deg,var(--accent),var(--accent-blue));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;text-decoration:none;}
+      .nav-links{display:flex;gap:8px;list-style:none;}
+      .nav-links a{color:var(--text-secondary);text-decoration:none;padding:8px 16px;border-radius:8px;transition:all 0.3s;font-size:0.9rem;font-weight:500;cursor:pointer;border:none;background:transparent;}
+      .nav-links a:hover,.nav-links a.active{color:var(--text-primary);background:var(--bg-glass);}
+      .nav-links a.active{background:var(--accent-dim);color:var(--accent);}
+      section{display:none;opacity:0;padding:78px 20px 32px;max-width:1000px;margin:0 auto;transition:opacity 0.3s ease;}
+      section.active{display:block;opacity:1;animation:fadeIn 0.5s ease;}
+      @keyframes fadeIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+      .card{background:var(--bg-card);backdrop-filter:blur(20px);border:1px solid var(--border-glass);border-radius:20px;padding:20px;margin-bottom:16px;transition:transform 0.3s,box-shadow 0.3s;}
+      .card:hover{transform:translateY(-2px);box-shadow:0 20px 40px rgba(0,0,0,0.3);}
+      .card-title{font-size:1.5rem;font-weight:700;margin-bottom:16px;display:flex;align-items:center;gap:12px;}
+      .card-title .icon{width:40px;height:40px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.3rem;}
+      .hero{text-align:center;padding:140px 20px 80px;}
+      .hero h1{font-size:3rem;font-weight:800;margin-bottom:20px;background:linear-gradient(135deg,var(--accent),var(--accent-blue),var(--accent-warm));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1.2;}
+      .hero p{font-size:1.2rem;color:var(--text-secondary);max-width:600px;margin:0 auto 40px;}
+      .btn{display:inline-flex;align-items:center;gap:8px;padding:14px 32px;border-radius:12px;border:none;font-size:1rem;font-weight:600;cursor:pointer;transition:all 0.3s;text-decoration:none;}
+      .btn-primary{background:linear-gradient(135deg,var(--accent),var(--accent-blue));color:#000;}
+      .btn-primary:hover{transform:translateY(-2px);box-shadow:0 10px 30px var(--accent-dim);}
+      .btn-secondary{background:var(--bg-glass);color:var(--text-primary);border:1px solid var(--border-glass);}
+      .btn-secondary:hover{background:var(--bg-card);}
+      .btn:disabled{opacity:0.5;cursor:not-allowed;transform:none!important;}
+      .generate-widget{background:var(--bg-card);border:1px solid var(--border-glass);border-radius:20px;padding:14px;width:100%;}
+      .widget-slide{display:none;padding:12px 16px;animation:slideFade 0.3s ease;}
+      .widget-slide.active{display:block;}
+      @keyframes slideFade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+      .widget-slide h3{font-size:1.3rem;color:var(--accent);margin-bottom:16px;}
+      .widget-slide p,.widget-slide li{color:var(--text-secondary);line-height:1.8;margin-bottom:12px;}
+      .widget-slide table{width:100%;border-collapse:collapse;margin:12px 0;color:var(--text-secondary);}
+      .widget-slide table th,.widget-slide table td{border:1px solid var(--border-glass);padding:10px;text-align:left;}
+      .widget-slide table th{background:var(--bg-glass);color:var(--text-primary);}
+      .widget-nav{display:flex;justify-content:space-between;align-items:center;margin-top:16px;}
+      .widget-progress{text-align:center;font-size:0.9rem;color:var(--text-secondary);margin-bottom:12px;}
+      .sequence-component{display:flex;flex-direction:column;gap:20px;position:relative;}
+      .sequence-step{background:var(--bg-card);border:1px solid var(--border-glass);border-radius:16px;padding:24px 24px 24px 72px;position:relative;transition:all 0.3s;}
+      .sequence-step:hover{border-color:var(--accent);transform:translateX(4px);}
+      .sequence-number{position:absolute;left:20px;top:20px;width:40px;height:40px;background:var(--accent);color:#000;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:1.1rem;}
+      .sequence-step h4{color:var(--text-primary);margin-bottom:8px;font-size:1.1rem;}
+      .sequence-step p{color:var(--text-secondary);line-height:1.7;}
+      .sequence-connector{position:absolute;left:39px;top:60px;bottom:-30px;width:2px;background:var(--accent-dim);z-index:0;}
+      .sequence-step:last-child .sequence-connector{display:none;}
+      .problem-card{background:var(--bg-card);border:1px solid var(--border-glass);border-radius:16px;padding:24px;margin-bottom:20px;}
+      .problem-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:8px;}
+      .problem-number{background:var(--accent-dim);color:var(--accent);padding:4px 12px;border-radius:20px;font-size:0.85rem;font-weight:600;}
+      .problem-type{color:var(--text-secondary);font-size:0.85rem;}
+      .problem-text{font-size:1.1rem;margin-bottom:16px;line-height:1.8;}
+      .solution-btn{background:var(--accent-dim);color:var(--accent);border:1px solid var(--accent);padding:10px 20px;border-radius:8px;cursor:pointer;font-weight:600;transition:all 0.3s;}
+      .solution-btn:hover{background:var(--accent);color:#000;}
+      .solution{display:none;margin-top:20px;padding:20px;background:rgba(0,212,170,0.05);border-left:3px solid var(--accent);border-radius:0 12px 12px 0;}
+      .solution.active{display:block;animation:slideDown 0.3s ease;}
+      @keyframes slideDown{from{opacity:0;max-height:0}to{opacity:1;max-height:1000px}}
+      .solution p{margin-bottom:8px;color:var(--text-secondary);}
+      .solution strong{color:var(--accent);}
+      .formula-box{background:var(--accent-dim);border:2px solid var(--accent);border-radius:16px;padding:20px;margin:16px 0;text-align:center;}
+      .formula-box .formula{font-size:1.3rem;font-weight:700;color:var(--accent);margin-bottom:8px;}
+      .formula-box .formula-desc{font-size:0.9rem;color:var(--text-secondary);}
+      .quiz-container{background:var(--bg-card);border:1px solid var(--border-glass);border-radius:20px;padding:32px;}
+      .quiz-progress{display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;flex-wrap:wrap;gap:8px;}
+      .progress-bar{flex:1;height:8px;background:var(--bg-glass);border-radius:4px;margin:0 16px;overflow:hidden;min-width:100px;}
+      .progress-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent-blue));border-radius:4px;transition:width 0.5s ease;width:0%;}
+      .quiz-question{font-size:1.2rem;margin-bottom:24px;padding:20px;background:var(--bg-glass);border-radius:12px;border-left:4px solid var(--accent);}
+      .quiz-options{display:grid;gap:12px;}
+      .quiz-option{background:var(--bg-glass);border:2px solid var(--border-glass);border-radius:12px;padding:16px 20px;cursor:pointer;transition:all 0.3s;display:flex;align-items:center;gap:12px;}
+      .quiz-option:hover{border-color:var(--accent);background:var(--accent-dim);}
+      .quiz-option.correct{border-color:var(--success);background:rgba(81,207,102,0.15);}
+      .quiz-option.wrong{border-color:var(--error);background:rgba(255,107,107,0.15);}
+      .quiz-option.disabled{pointer-events:none;opacity:0.7;}
+      .option-letter{width:32px;height:32px;border-radius:8px;background:var(--bg-card);display:flex;align-items:center;justify-content:center;font-weight:700;flex-shrink:0;}
+      .quiz-nav{display:flex;justify-content:space-between;margin-top:24px;}
+      .stat{background:var(--bg-glass);padding:12px 24px;border-radius:12px;text-align:center;min-width:100px;border:1px solid var(--border-glass);}
+      .stat-value{font-size:1.5rem;font-weight:700;color:var(--accent);}
+      .stat-label{font-size:0.85rem;color:var(--text-secondary);}
+      .timer{position:fixed;top:80px;right:20px;background:var(--bg-card);backdrop-filter:blur(20px);border:1px solid var(--border-glass);border-radius:16px;padding:16px 24px;font-size:1.3rem;font-weight:700;font-variant-numeric:tabular-nums;z-index:999;box-shadow:0 10px 30px rgba(0,0,0,0.3);}
+      .timer.warning{border-color:var(--warning);color:var(--warning);animation:pulse 1s infinite;}
+      .timer.danger{border-color:var(--error);color:var(--error);animation:pulse 0.5s infinite;}
+      @keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.05)}}
+      .results-container{text-align:center;padding:40px;}
+      .score-circle{width:200px;height:200px;border-radius:50%;background:conic-gradient(var(--accent) calc(var(--score)*3.6deg),var(--bg-glass) 0);margin:0 auto 32px;display:flex;align-items:center;justify-content:center;position:relative;}
+      .score-circle::before{content:"";position:absolute;width:170px;height:170px;background:var(--bg-dark);border-radius:50%;}
+      .score-value{position:relative;font-size:3rem;font-weight:800;color:var(--accent);}
+      .score-label{font-size:1.2rem;color:var(--text-secondary);margin-bottom:8px;}
+      .score-message{font-size:1.5rem;font-weight:700;margin-bottom:32px;}
+      .results-breakdown{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:16px;max-width:600px;margin:0 auto 32px;}
+      .breakdown-item{background:var(--bg-glass);padding:16px;border-radius:12px;}
+      .breakdown-value{font-size:1.5rem;font-weight:700;color:var(--accent);}
+      .breakdown-label{font-size:0.85rem;color:var(--text-secondary);}
+      @media(max-width:768px){.hero h1{font-size:2rem}.nav-links{display:none}.timer{top:70px;right:10px;font-size:1rem;padding:10px 16px}.card{padding:14px}section{padding:70px 12px 24px}}
+    </style>
+  </head>
+  <body>
+    <div class="bg-animation"></div>
+    <nav>
+      <div class="nav-container">
+        <a href="index.html" class="logo">&#9685; Урок 8.2</a>
+        <ul class="nav-links">
+          <li><a href="#" class="active" data-section="home">Главная</a></li>
+          <li><a href="#" data-section="theory">Теория</a></li>
+          <li><a href="#" data-section="formulas">Формулы</a></li>
+          <li><a href="#" data-section="examples">Примеры</a></li>
+          <li><a href="#" data-section="trainer">Тренажёр</a></li>
+          <li><a href="#" data-section="assessment">Аттестация</a></li>
+        </ul>
+      </div>
+    </nav>
+
+    <!-- HOME -->
+    <section id="home" class="active">
+      <div class="hero">
+        <h1>Круговая диаграмма</h1>
+        <p>Урок 8.2. Как читать и строить круговые диаграммы, вычислять проценты и находить количество по диаграмме. 30 вопросов для полного освоения темы.</p>
+        <div style="display:flex;gap:16px;justify-content:center;flex-wrap:wrap;">
+          <button class="btn btn-primary" onclick="showSection('theory')">Начать обучение</button>
+          <button class="btn btn-secondary" onclick="showSection('assessment')">Проверить знания</button>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title"><span class="icon" style="background:var(--accent-dim)">&#127919;</span>Что вы изучите</div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px;">
+          <div class="card" style="padding:20px;">
+            <h3 style="color:var(--accent);margin-bottom:8px;">Что такое круговая диаграмма</h3>
+            <p style="color:var(--text-secondary);">Круг, разделённый на секторы. Каждый сектор — часть целого. Сумма всех секторов = 100%.</p>
+          </div>
+          <div class="card" style="padding:20px;">
+            <h3 style="color:var(--accent-blue);margin-bottom:8px;">Вычисление процентов</h3>
+            <p style="color:var(--text-secondary);">Процент = Часть ÷ Целое × 100%. По диаграмме определяем долю каждой категории.</p>
+          </div>
+          <div class="card" style="padding:20px;">
+            <h3 style="color:var(--accent-warm);margin-bottom:8px;">Нахождение количества</h3>
+            <p style="color:var(--text-secondary);">Количество = Целое × Процент ÷ 100. По диаграмме и общему числу найдём каждую часть.</p>
+          </div>
+          <div class="card" style="padding:20px;">
+            <h3 style="color:var(--warning);margin-bottom:8px;">Построение диаграммы</h3>
+            <p style="color:var(--text-secondary);">Угол сектора = Процент × 3,6°. Транспортир + циркуль — инструменты построения.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- THEORY -->
+    <section id="theory">
+      <div class="card">
+        <div class="card-title"><span class="icon" style="background:var(--accent-dim)">&#128218;</span>Глава 1. Визуальная теория</div>
+        <p style="color:var(--text-secondary);margin-bottom:20px;">Изучите круговые диаграммы: структуру, чтение и основные формулы.</p>
+        <div class="generate-widget">
+          <div class="widget-progress">Слайд <span id="slide-num">1</span> / <span id="slide-total">5</span></div>
+          <div class="widget-track" id="track-slides"></div>
+          <div class="widget-nav">
+            <button type="button" class="btn btn-secondary" onclick="prevSlide()">&#8592; Назад</button>
+            <button type="button" class="btn btn-primary" onclick="nextSlide()">Вперёд &#8594;</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FORMULAS -->
+    <section id="formulas">
+      <div class="card">
+        <div class="card-title"><span class="icon" style="background:var(--accent-blue-dim)">&#128290;</span>Глава 2. Формулы и алгоритм</div>
+        <p style="color:var(--text-secondary);margin-bottom:20px;">Пошаговый алгоритм работы с круговыми диаграммами.</p>
+        <div class="sequence-component">
+          <div class="sequence-step">
+            <div class="sequence-number">1</div>
+            <div class="sequence-connector"></div>
+            <h4>Найдите общее количество (100%)</h4>
+            <p>Сложите все части вместе — это и есть целое (100%). Например: 63 + 72 + 45 = 180 книг → 180 = 100%.</p>
+          </div>
+          <div class="sequence-step">
+            <div class="sequence-number">2</div>
+            <div class="sequence-connector"></div>
+            <h4>Вычислите процент каждой части</h4>
+            <p>Процент = (Часть ÷ Целое) × 100. Например: 63 ÷ 180 × 100 = 35%. Так для каждой категории.</p>
+          </div>
+          <div class="sequence-step">
+            <div class="sequence-number">3</div>
+            <div class="sequence-connector"></div>
+            <h4>Найдите угол сектора (для построения)</h4>
+            <p>Угол = Процент × 3,6°. Например: 35% → 35 × 3,6 = 126°. Полный круг = 360° = 100%.</p>
+          </div>
+          <div class="sequence-step">
+            <div class="sequence-number">4</div>
+            <div class="sequence-connector"></div>
+            <h4>Нарисуйте диаграмму</h4>
+            <p>Проведите циркулем окружность. Транспортиром отложите углы секторов. Раскрасьте и подпишите каждый сектор.</p>
+          </div>
+          <div class="sequence-step">
+            <div class="sequence-number">5</div>
+            <h4>Проверьте: сумма = 100%</h4>
+            <p>Сложите все проценты: 35% + 40% + 25% = 100%. Сумма углов: 126° + 144° + 90° = 360°. Всё верно! ✓</p>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title"><span class="icon" style="background:var(--accent-warm-dim)">&#128161;</span>Ключевые формулы</div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px;">
+          <div class="formula-box">
+            <div class="formula">Процент = Часть ÷ Целое × 100</div>
+            <div class="formula-desc">Находим долю части от целого в процентах</div>
+          </div>
+          <div class="formula-box" style="background:var(--accent-blue-dim);border-color:var(--accent-blue);">
+            <div class="formula" style="color:var(--accent-blue);">Часть = Целое × Процент ÷ 100</div>
+            <div class="formula-desc">Находим количество по проценту и целому</div>
+          </div>
+          <div class="formula-box" style="background:var(--accent-warm-dim);border-color:var(--accent-warm);">
+            <div class="formula" style="color:var(--accent-warm);">Целое = Часть × 100 ÷ Процент</div>
+            <div class="formula-desc">Находим целое, зная часть и её процент</div>
+          </div>
+          <div class="formula-box" style="background:rgba(252,196,25,0.15);border-color:var(--warning);">
+            <div class="formula" style="color:var(--warning);">Угол = Процент × 3,6°</div>
+            <div class="formula-desc">Угол сектора для построения диаграммы</div>
+          </div>
+        </div>
+        <div style="margin-top:16px;display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px;">
+          <div style="background:var(--bg-glass);border-radius:12px;padding:16px;border-left:3px solid var(--accent);">
+            <strong style="color:var(--accent);">Правило: сумма = 100%</strong>
+            <p style="color:var(--text-secondary);margin-top:8px;">Сумма всех секторов круговой диаграммы всегда равна 100% (или 360° для углов).</p>
+          </div>
+          <div style="background:var(--bg-glass);border-radius:12px;padding:16px;border-left:3px solid var(--accent-blue);">
+            <strong style="color:var(--accent-blue);">Когда использовать?</strong>
+            <p style="color:var(--text-secondary);margin-top:8px;">Круговая диаграмма удобна, когда нужно показать, какую часть целого составляет каждая категория.</p>
+          </div>
+          <div style="background:var(--bg-glass);border-radius:12px;padding:16px;border-left:3px solid var(--accent-warm);">
+            <strong style="color:var(--accent-warm);">Большой сектор = большая доля</strong>
+            <p style="color:var(--text-secondary);margin-top:8px;">Самый большой сектор соответствует наибольшей по количеству категории.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- EXAMPLES -->
+    <section id="examples">
+      <div class="card">
+        <div class="card-title"><span class="icon" style="background:var(--accent-dim)">&#128221;</span>Глава 3. Разбор задач</div>
+        <p style="color:var(--text-secondary);margin-bottom:24px;">Пять задач с подробным решением по теме круговых диаграмм.</p>
+      </div>
+      <div id="examples-container"></div>
+    </section>
+
+    <!-- TRAINER -->
+    <section id="trainer">
+      <div class="card">
+        <div class="card-title"><span class="icon" style="background:var(--accent-dim)">&#127947;</span>Глава 4. Тренажёр</div>
+        <p style="color:var(--text-secondary);margin-bottom:24px;">Введите числовой ответ (количество, процент или угол).</p>
+        <div class="quiz-container" style="margin-bottom:20px;">
+          <div id="trainer-question" style="font-size:1.3rem;text-align:center;margin-bottom:24px;padding:24px;background:var(--bg-glass);border-radius:12px;">Нажмите «Новая задача» для начала</div>
+          <div style="display:flex;gap:12px;margin-bottom:20px;">
+            <input type="number" id="trainer-answer" placeholder="Введите число" style="flex:1;padding:14px 16px;background:var(--bg-glass);border:2px solid var(--border-glass);border-radius:12px;color:var(--text-primary);font-size:1rem;outline:none;" onkeydown="if(event.key==='Enter')checkTrainer();" />
+            <button class="btn btn-primary" onclick="checkTrainer()" id="trainer-check-btn" disabled>Проверить</button>
+          </div>
+          <div id="trainer-feedback" style="min-height:60px;margin-bottom:16px;"></div>
+          <div style="display:flex;gap:12px;justify-content:center;">
+            <button class="btn btn-secondary" onclick="newTrainerProblem()">Новая задача</button>
+            <button class="btn btn-secondary" onclick="showTrainerHint()">Подсказка</button>
+          </div>
+          <div id="trainer-hint" style="display:none;margin-top:20px;padding:16px;background:var(--accent-blue-dim);border-radius:12px;border-left:4px solid var(--accent-blue);color:var(--text-secondary);"></div>
+        </div>
+        <div style="display:flex;justify-content:center;gap:24px;flex-wrap:wrap;">
+          <div class="stat"><div class="stat-value" id="trainer-correct">0</div><div class="stat-label">Верно</div></div>
+          <div class="stat"><div class="stat-value" id="trainer-total">0</div><div class="stat-label">Всего</div></div>
+          <div class="stat"><div class="stat-value" id="trainer-streak">0</div><div class="stat-label">Серия</div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ASSESSMENT -->
+    <section id="assessment">
+      <div class="card">
+        <div class="card-title"><span class="icon" style="background:var(--accent-blue-dim)">&#129514;</span>Глава 5. Аттестация — 30 вопросов</div>
+        <p style="color:var(--text-secondary);margin-bottom:24px;">Диагностика и скоростная викторина по теме круговых диаграмм.</p>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px;">
+          <div class="card" style="padding:24px;text-align:center;">
+            <div style="font-size:3rem;margin-bottom:12px;">&#128269;</div>
+            <h3 style="margin-bottom:8px;">Диагностический тест</h3>
+            <p style="color:var(--text-secondary);margin-bottom:20px;">30 вопросов с объяснениями.</p>
+            <button class="btn btn-primary" onclick="startDiagnostic()">Начать тест</button>
+          </div>
+          <div class="card" style="padding:24px;text-align:center;">
+            <div style="font-size:3rem;margin-bottom:12px;">&#9201;</div>
+            <h3 style="margin-bottom:8px;">Скоростная викторина</h3>
+            <p style="color:var(--text-secondary);margin-bottom:20px;">30 вопросов &#8226; 10 минут.</p>
+            <button class="btn btn-primary" onclick="startTimeAttack()">Начать викторину</button>
+          </div>
+        </div>
+      </div>
+      <div id="diagnostic-ui" style="display:none;">
+        <div class="card"><div class="card-title"><span class="icon" style="background:var(--accent-blue-dim)">&#128269;</span>Диагностический тест (30 вопросов)</div></div>
+        <div class="quiz-container">
+          <div class="quiz-progress">
+            <span>Вопрос <span id="diag-current">1</span> / <span id="diag-total">30</span></span>
+            <div class="progress-bar"><div class="progress-fill" id="diag-progress"></div></div>
+            <span id="diag-score">0 правильных</span>
+          </div>
+          <div class="quiz-question" id="diag-question"></div>
+          <div class="quiz-options" id="diag-options"></div>
+          <div class="quiz-nav">
+            <button class="btn btn-secondary" onclick="prevDiagnostic()" id="diag-prev" disabled>&#8592; Назад</button>
+            <button class="btn btn-primary" onclick="nextDiagnostic()" id="diag-next" disabled>Далее &#8594;</button>
+          </div>
+          <div id="diag-explanation" style="display:none;margin-top:20px;padding:16px;background:var(--accent-dim);border-radius:12px;border-left:4px solid var(--accent);color:var(--text-secondary);"></div>
+        </div>
+      </div>
+      <div id="timeattack-ui" style="display:none;">
+        <div class="timer" id="ta-timer">10:00</div>
+        <div class="card"><div class="card-title"><span class="icon" style="background:var(--accent-warm-dim)">&#9201;</span>Скоростная викторина</div></div>
+        <div class="quiz-container">
+          <div class="quiz-progress">
+            <span>Вопрос <span id="ta-current">1</span> / 30</span>
+            <div class="progress-bar"><div class="progress-fill" id="ta-progress"></div></div>
+          </div>
+          <div class="quiz-question" id="ta-question"></div>
+          <div class="quiz-options" id="ta-options"></div>
+          <div style="display:flex;justify-content:flex-end;margin-top:24px;">
+            <button class="btn btn-primary" onclick="nextTimeAttack()" id="ta-next">Ответить &#8594;</button>
+          </div>
+        </div>
+      </div>
+      <div id="results-ui" style="display:none;">
+        <div class="card">
+          <div class="results-container">
+            <div class="score-label">Ваш результат</div>
+            <div class="score-circle" id="result-circle"><div class="score-value" id="result-percent">0%</div></div>
+            <div class="score-message" id="result-message"></div>
+            <div class="results-breakdown">
+              <div class="breakdown-item"><div class="breakdown-value" id="result-correct">0</div><div class="breakdown-label">Верно</div></div>
+              <div class="breakdown-item"><div class="breakdown-value" id="result-wrong">0</div><div class="breakdown-label">Ошибок</div></div>
+              <div class="breakdown-item"><div class="breakdown-value" id="result-time">0:00</div><div class="breakdown-label">Время</div></div>
+              <div class="breakdown-item"><div class="breakdown-value" id="result-mastery">—</div><div class="breakdown-label">Уровень</div></div>
+            </div>
+            <div style="display:flex;gap:16px;justify-content:center;flex-wrap:wrap;">
+              <button class="btn btn-primary" onclick="resetAssessment()">Пройти ещё раз</button>
+              <button class="btn btn-secondary" onclick="showSection('theory')">К теории</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <script>
+      const AppState = { currentSection:"home", slide:0, trainer:{ correct:0, total:0, streak:0, current:null } };
+
+      // ===================== SLIDES =====================
+      const slides = [
+        {
+          title: "Что такое круговая диаграмма?",
+          content: `
+            <p style="margin-bottom:12px;"><strong>Круговая диаграмма</strong> — это круг, разделённый на секторы. Каждый сектор показывает долю одной части от целого. Сумма всех частей = 100%.</p>
+            <div style="display:flex;align-items:center;gap:24px;flex-wrap:wrap;justify-content:center;margin:16px 0;">
+              <svg viewBox="0 0 180 180" width="160" height="160" aria-label="Круговая диаграмма: книги в шкафу. Художественная 35%, Учебная 40%, История 25%" role="img">
+                <!-- r=45, C≈283. seg1 35%=99, seg2 40%=113, seg3 25%=71 -->
+                <circle cx="90" cy="90" r="45" fill="none" stroke="#00d4aa" stroke-width="90" stroke-dasharray="99 184" transform="rotate(-90 90 90)"/>
+                <circle cx="90" cy="90" r="45" fill="none" stroke="#4dabf7" stroke-width="90" stroke-dasharray="113 170" stroke-dashoffset="-99" transform="rotate(-90 90 90)"/>
+                <circle cx="90" cy="90" r="45" fill="none" stroke="#ff6b6b" stroke-width="90" stroke-dasharray="71 212" stroke-dashoffset="-212" transform="rotate(-90 90 90)"/>
+                <circle cx="90" cy="90" r="10" fill="#0f0f1a"/>
+              </svg>
+              <div style="display:flex;flex-direction:column;gap:8px;">
+                <div style="display:flex;align-items:center;gap:8px;"><div style="width:16px;height:16px;background:#00d4aa;border-radius:3px;"></div><span style="color:var(--text-secondary);">Художественная — 35%</span></div>
+                <div style="display:flex;align-items:center;gap:8px;"><div style="width:16px;height:16px;background:#4dabf7;border-radius:3px;"></div><span style="color:var(--text-secondary);">Учебная — 40%</span></div>
+                <div style="display:flex;align-items:center;gap:8px;"><div style="width:16px;height:16px;background:#ff6b6b;border-radius:3px;"></div><span style="color:var(--text-secondary);">История — 25%</span></div>
+              </div>
+            </div>
+            <div style="background:var(--accent-dim);padding:14px 18px;border-radius:10px;">
+              <p style="margin:0;"><strong>Ключевое правило:</strong> 35% + 40% + 25% = 100%. Сумма всех секторов диаграммы всегда равна 100%.</p>
+            </div>`
+        },
+        {
+          title: "Вычисление процента части",
+          content: `
+            <p style="margin-bottom:12px;">Чтобы узнать, сколько процентов составляет часть от целого:</p>
+            <div style="background:var(--accent-dim);border:2px solid var(--accent);border-radius:12px;padding:16px;text-align:center;margin-bottom:16px;">
+              <div style="font-size:1.3rem;font-weight:700;color:var(--accent);">Процент = Часть ÷ Целое × 100</div>
+            </div>
+            <p style="color:var(--text-secondary);margin-bottom:12px;"><strong>Пример:</strong> В шкафу 180 книг. Из них 63 — художественная литература. Какой процент?</p>
+            <div style="background:var(--bg-glass);border-radius:12px;padding:16px;margin-bottom:12px;">
+              <p style="color:var(--text-secondary);margin:0;">63 ÷ 180 × 100 = 0,35 × 100 = <strong style="color:var(--accent);">35%</strong></p>
+            </div>
+            <table>
+              <tr><th>Категория</th><th>Количество</th><th>Вычисление</th><th>Процент</th></tr>
+              <tr><td>Художественная</td><td>63</td><td>63÷180×100</td><td style="color:#00d4aa">35%</td></tr>
+              <tr><td>Учебная</td><td>72</td><td>72÷180×100</td><td style="color:#4dabf7">40%</td></tr>
+              <tr><td>История</td><td>45</td><td>45÷180×100</td><td style="color:#ff6b6b">25%</td></tr>
+              <tr><td><strong>Итого</strong></td><td><strong>180</strong></td><td>—</td><td><strong>100%</strong></td></tr>
+            </table>`
+        },
+        {
+          title: "Нахождение количества по проценту",
+          content: `
+            <p style="margin-bottom:12px;">Если известны целое и процент — найдём количество:</p>
+            <div style="background:var(--accent-blue-dim);border:2px solid var(--accent-blue);border-radius:12px;padding:16px;text-align:center;margin-bottom:16px;">
+              <div style="font-size:1.3rem;font-weight:700;color:var(--accent-blue);">Часть = Целое × Процент ÷ 100</div>
+            </div>
+            <p style="color:var(--text-secondary);margin-bottom:12px;"><strong>Задача:</strong> На парковке 120 автомобилей. Легковые — 45%, грузовые — 15%, автобусы — 30%, другие — 10%. Найдите количество каждого вида.</p>
+            <div style="display:flex;align-items:center;gap:20px;flex-wrap:wrap;justify-content:center;margin:12px 0;">
+              <svg viewBox="0 0 160 160" width="140" height="140" aria-label="Транспортные средства: 45% легковые, 30% автобусы, 15% грузовые, 10% другие" role="img">
+                <!-- r=45, C≈283. 45%=127, 30%=85, 15%=42, 10%=28 -->
+                <circle cx="80" cy="80" r="45" fill="none" stroke="#00d4aa" stroke-width="90" stroke-dasharray="127 156" transform="rotate(-90 80 80)"/>
+                <circle cx="80" cy="80" r="45" fill="none" stroke="#4dabf7" stroke-width="90" stroke-dasharray="85 198" stroke-dashoffset="-127" transform="rotate(-90 80 80)"/>
+                <circle cx="80" cy="80" r="45" fill="none" stroke="#fcc419" stroke-width="90" stroke-dasharray="42 241" stroke-dashoffset="-212" transform="rotate(-90 80 80)"/>
+                <circle cx="80" cy="80" r="45" fill="none" stroke="#ff6b6b" stroke-width="90" stroke-dasharray="28 255" stroke-dashoffset="-255" transform="rotate(-90 80 80)"/>
+                <circle cx="80" cy="80" r="8" fill="#0f0f1a"/>
+              </svg>
+              <table style="font-size:0.9rem;">
+                <tr><th>Вид</th><th>%</th><th>Количество</th></tr>
+                <tr><td style="color:#00d4aa">Легковые</td><td>45%</td><td>120×45÷100=<strong>54</strong></td></tr>
+                <tr><td style="color:#4dabf7">Автобусы</td><td>30%</td><td>120×30÷100=<strong>36</strong></td></tr>
+                <tr><td style="color:#fcc419">Грузовые</td><td>15%</td><td>120×15÷100=<strong>18</strong></td></tr>
+                <tr><td style="color:#ff6b6b">Другие</td><td>10%</td><td>120×10÷100=<strong>12</strong></td></tr>
+              </table>
+            </div>`
+        },
+        {
+          title: "Нахождение целого по части и проценту",
+          content: `
+            <p style="margin-bottom:12px;">Если известна часть и её процент — найдём целое:</p>
+            <div style="background:var(--accent-warm-dim);border:2px solid var(--accent-warm);border-radius:12px;padding:16px;text-align:center;margin-bottom:16px;">
+              <div style="font-size:1.3rem;font-weight:700;color:var(--accent-warm);">Целое = Часть × 100 ÷ Процент</div>
+            </div>
+            <p style="color:var(--text-secondary);margin-bottom:12px;"><strong>Пример 1:</strong> 63 книги составляют 35% от всех книг. Сколько всего книг?</p>
+            <div style="background:var(--bg-glass);border-radius:12px;padding:14px;margin-bottom:12px;">
+              <p style="color:var(--text-secondary);margin:0;">Целое = 63 × 100 ÷ 35 = 6300 ÷ 35 = <strong style="color:var(--accent-warm);">180 книг</strong></p>
+            </div>
+            <p style="color:var(--text-secondary);margin-bottom:12px;"><strong>Пример 2:</strong> 18 грузовых автомобилей составляют 15% от всех. Сколько всего машин?</p>
+            <div style="background:var(--bg-glass);border-radius:12px;padding:14px;margin-bottom:12px;">
+              <p style="color:var(--text-secondary);margin:0;">Целое = 18 × 100 ÷ 15 = 1800 ÷ 15 = <strong style="color:var(--accent-warm);">120 машин</strong></p>
+            </div>
+            <div style="background:var(--accent-dim);padding:14px;border-radius:10px;">
+              <p style="margin:0;"><strong>Проверка:</strong> Нашли целое? Вычислите другие части и убедитесь, что сумма = целому.</p>
+            </div>`
+        },
+        {
+          title: "Из истории математики",
+          content: `
+            <p style="margin-bottom:12px;">Круговая диаграмма имеет интересную историю!</p>
+            <div style="display:flex;justify-content:center;margin:16px 0;">
+              <svg viewBox="0 0 300 130" width="300" height="130" aria-label="Уильям Плейфер, Шотландия, 1801 год" role="img">
+                <rect x="10" y="10" width="280" height="110" rx="16" fill="rgba(77,171,247,0.1)" stroke="#4dabf7" stroke-width="1.5"/>
+                <text x="150" y="42" text-anchor="middle" fill="#4dabf7" font-size="16" font-family="sans-serif" font-weight="bold">&#128218; Уильям Плейфер (1759–1823)</text>
+                <text x="150" y="65" text-anchor="middle" fill="#a0a0b8" font-size="13" font-family="sans-serif">Шотландский инженер и экономист</text>
+                <text x="150" y="88" text-anchor="middle" fill="#e8e8f0" font-size="13" font-family="sans-serif">Первая круговая диаграмма — 1801 год</text>
+                <text x="150" y="108" text-anchor="middle" fill="#a0a0b8" font-size="12" font-family="sans-serif">Использовал для описания территории Османской империи</text>
+              </svg>
+            </div>
+            <ul style="padding-left:20px;color:var(--text-secondary);">
+              <li style="margin-bottom:8px;">Плейфер также изобрёл <strong style="color:var(--accent);">столбчатую</strong> и <strong style="color:var(--accent-blue);">линейную</strong> диаграммы.</li>
+              <li style="margin-bottom:8px;">Сегодня круговые диаграммы широко используются в статистике, бизнесе, науке.</li>
+              <li style="margin-bottom:8px;">Их можно встретить в газетах, презентациях, научных докладах.</li>
+              <li>В Азербайджане эту тему изучают в 5-м классе в разделе «Статистика».</li>
+            </ul>`
+        }
+      ];
+
+      // ===================== EXAMPLES =====================
+      const examples = [
+        {
+          title: "Нахождение процентов для круговой диаграммы",
+          type: "Вычисление процентов",
+          task: "В шкафу 180 книг: 63 — художественная литература, 72 — учебная, 45 — история. Вычислите процент каждой категории для круговой диаграммы.",
+          sol: `<p><strong>Шаг 1.</strong> Общее: 63 + 72 + 45 = 180 книг = 100%.</p>
+                <p><strong>Шаг 2.</strong> Художественная: 63 ÷ 180 × 100 = <strong>35%</strong>.</p>
+                <p><strong>Шаг 3.</strong> Учебная: 72 ÷ 180 × 100 = <strong>40%</strong>.</p>
+                <p><strong>Шаг 4.</strong> История: 45 ÷ 180 × 100 = <strong>25%</strong>.</p>
+                <p><strong>Проверка:</strong> 35% + 40% + 25% = 100% ✓</p>
+                <p><strong>Ответ:</strong> Художественная — 35%, Учебная — 40%, История — 25%.</p>`
+        },
+        {
+          title: "Количество по процентам круговой диаграммы",
+          type: "Нахождение количества",
+          task: "На парковке 120 транспортных средств. По диаграмме: легковые — 45%, автобусы — 30%, грузовые — 15%, другие — 10%. Найдите количество каждого вида.",
+          sol: `<p><strong>Формула:</strong> Количество = Всего × Процент ÷ 100.</p>
+                <p><strong>Легковые:</strong> 120 × 45 ÷ 100 = <strong>54 автомобиля</strong>.</p>
+                <p><strong>Автобусы:</strong> 120 × 30 ÷ 100 = <strong>36 автобусов</strong>.</p>
+                <p><strong>Грузовые:</strong> 120 × 15 ÷ 100 = <strong>18 грузовиков</strong>.</p>
+                <p><strong>Другие:</strong> 120 × 10 ÷ 100 = <strong>12 единиц</strong>.</p>
+                <p><strong>Проверка:</strong> 54 + 36 + 18 + 12 = 120 ✓</p>`
+        },
+        {
+          title: "Нахождение целого по части и проценту",
+          type: "Обратная задача",
+          task: "На ферме содержатся козы, коровы, буйволы и овцы. По диаграмме буйволы — 20%, и их 120 голов. Сколько всего животных на ферме?",
+          sol: `<p><strong>Дано:</strong> буйволы = 120 голов = 20%.</p>
+                <p><strong>Формула:</strong> Целое = Часть × 100 ÷ Процент.</p>
+                <p>Всего = 120 × 100 ÷ 20 = 12 000 ÷ 20 = <strong>600 животных</strong>.</p>
+                <p><strong>Проверка:</strong> 20% от 600 = 600 × 20 ÷ 100 = 120 ✓</p>
+                <p><strong>Ответ: на ферме 600 животных.</strong></p>`
+        },
+        {
+          title: "Оценки учеников на экзамене",
+          type: "Чтение диаграммы",
+          task: "В 5-м классе 60 учеников сдавали математику. По диаграмме: оценку «5» получили 30%, «4» — 50%, «3» — 20%. Сколько учеников получили каждую оценку?",
+          sol: `<p><strong>Всего учеников:</strong> 60 = 100%.</p>
+                <p><strong>Оценка «5»:</strong> 60 × 30 ÷ 100 = <strong>18 учеников</strong>.</p>
+                <p><strong>Оценка «4»:</strong> 60 × 50 ÷ 100 = <strong>30 учеников</strong>.</p>
+                <p><strong>Оценка «3»:</strong> 60 × 20 ÷ 100 = <strong>12 учеников</strong>.</p>
+                <p><strong>Проверка:</strong> 18 + 30 + 12 = 60 ✓</p>
+                <p><strong>Ответ:</strong> «5» — 18 уч., «4» — 30 уч., «3» — 12 уч.</p>`
+        },
+        {
+          title: "Угол сектора для построения диаграммы",
+          type: "Построение диаграммы",
+          task: "В магазине продали фрукты: яблоки — 40 кг, бананы — 20 кг, вишня — 15 кг, виноград — 25 кг. Вычислите угол каждого сектора для круговой диаграммы.",
+          sol: `<p><strong>Шаг 1.</strong> Всего: 40+20+15+25 = 100 кг = 100%.</p>
+                <p><strong>Шаг 2.</strong> Проценты: яблоки 40%, бананы 20%, вишня 15%, виноград 25%.</p>
+                <p><strong>Шаг 3.</strong> Угол = Процент × 3,6°:</p>
+                <p>Яблоки: 40 × 3,6 = <strong>144°</strong>.</p>
+                <p>Бананы: 20 × 3,6 = <strong>72°</strong>.</p>
+                <p>Вишня: 15 × 3,6 = <strong>54°</strong>.</p>
+                <p>Виноград: 25 × 3,6 = <strong>90°</strong>.</p>
+                <p><strong>Проверка:</strong> 144+72+54+90 = 360° ✓</p>`
+        }
+      ];
+
+      // ===================== TRAINER =====================
+      const trainerQs = [
+        { q: "В классе 40 учеников. 10 из них занимаются спортом. Какой это процент? (%)", a: 25, hint: "Процент = 10÷40×100 = 25%." },
+        { q: "30% от 120 = ? (найдите количество)", a: 36, hint: "Количество = 120×30÷100 = 36." },
+        { q: "40% от 200 = ?", a: 80, hint: "200×40÷100 = 80." },
+        { q: "15 из 60 учеников = ?% (процент)", a: 25, hint: "15÷60×100 = 25%." },
+        { q: "Сектор диаграммы = 25%. Его угол = ?° (градусов)", a: 90, hint: "Угол = 25×3,6 = 90°." },
+        { q: "50% от 80 = ?", a: 40, hint: "80×50÷100 = 40." },
+        { q: "18 автомобилей составляют 15% всех. Сколько всего? (автомобилей)", a: 120, hint: "Целое = 18×100÷15 = 120." },
+        { q: "Сектор диаграммы = 40%. Его угол = ?° (градусов)", a: 144, hint: "Угол = 40×3,6 = 144°." },
+        { q: "75 из 300 учеников = ?% (процент)", a: 25, hint: "75÷300×100 = 25%." },
+        { q: "20% от 350 = ?", a: 70, hint: "350×20÷100 = 70." }
+      ];
+
+      // ===================== MCQ QUESTIONS (30) =====================
+      const questions = [
+        { q:"Круговая диаграмма используется для:", o:["Показа изменения данных во времени","Сравнения частей одного целого","Показа зависимости между переменными","Нахождения суммы чисел"], a:1 },
+        { q:"Сумма всех секторов круговой диаграммы равна:", o:["180°","90°","100%","360"], a:2 },
+        { q:"Формула для вычисления процента части:", o:["Часть × Целое","Часть ÷ Целое × 100","Целое ÷ Часть","Часть + Целое × 100"], a:1 },
+        { q:"40 яблок из 100 фруктов — это:", o:["4%","40%","0,4%","400%"], a:1 },
+        { q:"30% от 120 равно:", o:["36","30","40","3,6"], a:0 },
+        { q:"18 из 60 учеников — это какой процент?", o:["18%","30%","40%","60%"], a:1 },
+        { q:"Если сектор диаграммы = 25%, то его угол равен:", o:["25°","45°","90°","100°"], a:2 },
+        { q:"Формула нахождения части по проценту:", o:["Часть = Целое + Процент","Часть = Целое × Процент ÷ 100","Часть = Целое ÷ Процент","Часть = Процент ÷ 100"], a:1 },
+        { q:"63 книги составляют 35% от всех книг. Сколько всего книг?", o:["63","120","180","200"], a:2 },
+        { q:"45% от 120 равно:", o:["45","54","50","36"], a:1 },
+        { q:"Угол сектора, соответствующего 50%, равен:", o:["50°","100°","180°","360°"], a:2 },
+        { q:"Наибольший сектор круговой диаграммы соответствует:", o:["Наименьшей категории","Наибольшей категории","Средней категории","100% данных"], a:1 },
+        { q:"15 из 60 учеников получили «5». Сколько это процентов?", o:["15%","20%","25%","30%"], a:2 },
+        { q:"Формула нахождения целого по части и проценту:", o:["Целое = Часть × Процент","Целое = Часть + Процент","Целое = Часть × 100 ÷ Процент","Целое = Часть ÷ 100"], a:2 },
+        { q:"18 грузовиков составляют 15% всех автомобилей. Всего автомобилей:", o:["18","100","120","150"], a:2 },
+        { q:"20% от 80 равно:", o:["16","20","8","40"], a:0 },
+        { q:"Угол сектора 40% равен:", o:["40°","100°","144°","160°"], a:2 },
+        { q:"В классе 60 учеников. «4» получили 50%. Сколько учеников?", o:["20","25","30","50"], a:2 },
+        { q:"35% + 40% + 25% =", o:["90%","95%","100%","110%"], a:2 },
+        { q:"Сумма углов всех секторов круговой диаграммы:", o:["100°","180°","270°","360°"], a:3 },
+        { q:"72 книги составляют 40% из 180. Проверьте: 72÷180×100 =", o:["36%","40%","45%","72%"], a:1 },
+        { q:"10% от 200 равно:", o:["10","20","100","200"], a:1 },
+        { q:"Если сектор = 90°, то это какой процент от круга?", o:["10%","20%","25%","30%"], a:2 },
+        { q:"120 из 600 животных — это:", o:["12%","20%","25%","60%"], a:1 },
+        { q:"Какую диаграмму удобнее использовать для показа структуры бюджета семьи?", o:["Линейную","Столбчатую","Круговую","Точечную"], a:2 },
+        { q:"30 участников из 200 предпочитают шоколадное мороженое. Это:", o:["10%","15%","20%","30%"], a:1 },
+        { q:"75% от 360 равно:", o:["240","270","280","300"], a:1 },
+        { q:"Угол сектора 10% равен:", o:["10°","18°","36°","45°"], a:2 },
+        { q:"Если три сектора: 30%, 45% и X%, то X =", o:["15%","20%","25%","30%"], a:2 },
+        { q:"Процент вычисляется как:", o:["Целое ÷ Часть × 100","Часть × 100 ÷ Целое","Часть + Целое × 100","Целое − Часть × 100"], a:1 }
+      ];
+
+      // ===================== NAVIGATION =====================
+      function showSection(id){
+        document.querySelectorAll("section").forEach(s=>s.classList.remove("active"));
+        document.querySelectorAll(".nav-links a").forEach(a=>a.classList.remove("active"));
+        const sec=document.getElementById(id); if(sec) sec.classList.add("active");
+        const lnk=document.querySelector(`.nav-links a[data-section="${id}"]`); if(lnk) lnk.classList.add("active");
+        AppState.currentSection=id;
+        if(id==="examples") renderExamples();
+        if(id==="assessment"){
+          document.getElementById("diagnostic-ui").style.display="none";
+          document.getElementById("timeattack-ui").style.display="none";
+          document.getElementById("results-ui").style.display="none";
+        }
+      }
+      document.querySelectorAll(".nav-links a[data-section]").forEach(a=>{
+        a.addEventListener("click",e=>{e.preventDefault();showSection(a.dataset.section);});
+      });
+
+      // ===================== SLIDES ENGINE =====================
+      function renderSlide(){
+        const track=document.getElementById("track-slides");
+        document.getElementById("slide-num").textContent=AppState.slide+1;
+        document.getElementById("slide-total").textContent=slides.length;
+        track.innerHTML="";
+        slides.forEach((s,i)=>{
+          const div=document.createElement("div");
+          div.className="widget-slide"+(i===AppState.slide?" active":"");
+          div.innerHTML=`<h3>${s.title}</h3>${s.content}`;
+          track.appendChild(div);
+        });
+      }
+      function nextSlide(){ if(AppState.slide<slides.length-1){AppState.slide++;renderSlide();}else showSection("formulas"); }
+      function prevSlide(){ if(AppState.slide>0){AppState.slide--;renderSlide();} }
+      renderSlide();
+
+      // ===================== EXAMPLES =====================
+      function renderExamples(){
+        const c=document.getElementById("examples-container");
+        if(c.dataset.rendered) return; c.dataset.rendered="1";
+        examples.forEach((ex,i)=>{
+          const div=document.createElement("div"); div.className="problem-card";
+          div.innerHTML=`<div class="problem-header"><span class="problem-number">Задача ${i+1}</span><span class="problem-type">${ex.type}</span></div><div class="problem-text"><strong>${ex.title}</strong><br>${ex.task}</div><button class="solution-btn" onclick="toggleSolution(this)">Показать решение</button><div class="solution">${ex.sol}</div>`;
+          c.appendChild(div);
+        });
+      }
+      function toggleSolution(btn){ const s=btn.nextElementSibling; const a=s.classList.toggle("active"); btn.textContent=a?"Скрыть решение":"Показать решение"; }
+
+      // ===================== TRAINER =====================
+      function newTrainerProblem(){
+        const idx=Math.floor(Math.random()*trainerQs.length);
+        AppState.trainer.current=trainerQs[idx];
+        document.getElementById("trainer-question").innerHTML=AppState.trainer.current.q;
+        document.getElementById("trainer-answer").value="";
+        document.getElementById("trainer-feedback").innerHTML="";
+        document.getElementById("trainer-hint").style.display="none";
+        document.getElementById("trainer-check-btn").disabled=false;
+        document.getElementById("trainer-answer").focus();
+      }
+      function checkTrainer(){
+        const cur=AppState.trainer.current; if(!cur) return;
+        const val=parseFloat(document.getElementById("trainer-answer").value);
+        AppState.trainer.total++;
+        document.getElementById("trainer-total").textContent=AppState.trainer.total;
+        const fb=document.getElementById("trainer-feedback");
+        if(!isNaN(val)&&Math.abs(val-cur.a)<0.01){
+          AppState.trainer.correct++; AppState.trainer.streak++;
+          document.getElementById("trainer-correct").textContent=AppState.trainer.correct;
+          document.getElementById("trainer-streak").textContent=AppState.trainer.streak;
+          fb.innerHTML=`<div style="padding:14px;background:rgba(81,207,102,0.15);border-radius:12px;border-left:3px solid var(--success);color:var(--success);font-weight:600;">&#10003; Верно! Ответ: ${cur.a}</div>`;
+        } else {
+          AppState.trainer.streak=0; document.getElementById("trainer-streak").textContent=0;
+          fb.innerHTML=`<div style="padding:14px;background:rgba(255,107,107,0.15);border-radius:12px;border-left:3px solid var(--error);color:var(--error);font-weight:600;">&#10007; Неверно. Правильный ответ: ${cur.a}</div>`;
+        }
+        document.getElementById("trainer-check-btn").disabled=true;
+      }
+      function showTrainerHint(){ const cur=AppState.trainer.current; if(!cur) return; const h=document.getElementById("trainer-hint"); h.style.display="block"; h.textContent=cur.hint; }
+
+      // ===================== DIAGNOSTIC =====================
+      let diagAnswers=[],diagCurrent=0,diagScore=0;
+      function startDiagnostic(){
+        diagAnswers=new Array(questions.length).fill(null); diagCurrent=0; diagScore=0;
+        document.getElementById("diagnostic-ui").style.display="block";
+        document.getElementById("timeattack-ui").style.display="none";
+        document.getElementById("results-ui").style.display="none";
+        renderDiagnosticQ();
+        document.getElementById("diagnostic-ui").scrollIntoView({behavior:"smooth"});
+      }
+      function renderDiagnosticQ(){
+        const q=questions[diagCurrent];
+        document.getElementById("diag-current").textContent=diagCurrent+1;
+        document.getElementById("diag-total").textContent=questions.length;
+        document.getElementById("diag-score").textContent=diagScore+" правильных";
+        document.getElementById("diag-progress").style.width=(diagCurrent/questions.length*100).toFixed(0)+"%";
+        document.getElementById("diag-question").innerHTML=q.q;
+        document.getElementById("diag-explanation").style.display="none";
+        const opts=document.getElementById("diag-options"); opts.innerHTML="";
+        const letters=["А","Б","В","Г"];
+        q.o.forEach((opt,i)=>{
+          const div=document.createElement("div"); div.className="quiz-option";
+          if(diagAnswers[diagCurrent]!==null){ div.classList.add("disabled"); if(i===q.a) div.classList.add("correct"); else if(i===diagAnswers[diagCurrent]) div.classList.add("wrong"); }
+          div.innerHTML=`<span class="option-letter">${letters[i]}</span><span>${opt}</span>`;
+          div.addEventListener("click",()=>selectDiagAnswer(i));
+          opts.appendChild(div);
+        });
+        document.getElementById("diag-prev").disabled=diagCurrent===0;
+        document.getElementById("diag-next").disabled=diagAnswers[diagCurrent]===null;
+      }
+      function selectDiagAnswer(i){
+        if(diagAnswers[diagCurrent]!==null) return;
+        diagAnswers[diagCurrent]=i;
+        if(i===questions[diagCurrent].a) diagScore++;
+        document.getElementById("diag-score").textContent=diagScore+" правильных";
+        document.getElementById("diag-next").disabled=false;
+        const expl=document.getElementById("diag-explanation"); expl.style.display="block";
+        if(i===questions[diagCurrent].a){
+          expl.style.borderLeftColor="var(--success)"; expl.style.background="rgba(81,207,102,0.1)";
+          expl.innerHTML="<strong style='color:var(--success)'>&#10003; Правильно!</strong> "+getExplanation(diagCurrent);
+        } else {
+          expl.style.borderLeftColor="var(--error)"; expl.style.background="rgba(255,107,107,0.1)";
+          expl.innerHTML="<strong style='color:var(--error)'>&#10007; Неверно.</strong> Правильный ответ: <strong>"+questions[diagCurrent].o[questions[diagCurrent].a]+"</strong>. "+getExplanation(diagCurrent);
+        }
+        renderDiagnosticQ();
+      }
+      function getExplanation(idx){
+        const e=[
+          "Круговая диаграмма показывает доли частей одного целого.",
+          "Сумма всех долей = 100% (полный круг).",
+          "Процент = Часть ÷ Целое × 100 — основная формула.",
+          "40 ÷ 100 × 100 = 40%.",
+          "120 × 30 ÷ 100 = 36.",
+          "18 ÷ 60 × 100 = 30%.",
+          "Угол = 25 × 3,6 = 90°.",
+          "Часть = Целое × Процент ÷ 100.",
+          "Целое = 63 × 100 ÷ 35 = 180 книг.",
+          "120 × 45 ÷ 100 = 54.",
+          "Угол 50% = 50 × 3,6 = 180°.",
+          "Больший сектор = большая доля данных.",
+          "15 ÷ 60 × 100 = 25%.",
+          "Целое = Часть × 100 ÷ Процент.",
+          "Целое = 18 × 100 ÷ 15 = 120.",
+          "80 × 20 ÷ 100 = 16.",
+          "Угол 40% = 40 × 3,6 = 144°.",
+          "60 × 50 ÷ 100 = 30 учеников.",
+          "35 + 40 + 25 = 100%.",
+          "Полный круг = 360°.",
+          "72 ÷ 180 × 100 = 40%. Верно.",
+          "200 × 10 ÷ 100 = 20.",
+          "90° ÷ 3,6 = 25%.",
+          "120 ÷ 600 × 100 = 20%.",
+          "Круговая диаграмма показывает структуру (доли).",
+          "30 ÷ 200 × 100 = 15%.",
+          "360 × 75 ÷ 100 = 270.",
+          "Угол 10% = 10 × 3,6 = 36°.",
+          "100 − 30 − 45 = 25%.",
+          "Процент = Часть × 100 ÷ Целое."
+        ];
+        return e[idx]||"";
+      }
+      function nextDiagnostic(){ if(diagCurrent<questions.length-1){diagCurrent++;renderDiagnosticQ();}else showResults(diagScore,questions.length,0); }
+      function prevDiagnostic(){ if(diagCurrent>0){diagCurrent--;renderDiagnosticQ();} }
+
+      // ===================== TIME ATTACK =====================
+      let taAnswers=[],taCurrent=0,taScore=0,taTimerInterval=null,taTimeLeft=600;
+      function startTimeAttack(){
+        taAnswers=new Array(questions.length).fill(null); taCurrent=0; taScore=0; taTimeLeft=600;
+        document.getElementById("timeattack-ui").style.display="block";
+        document.getElementById("diagnostic-ui").style.display="none";
+        document.getElementById("results-ui").style.display="none";
+        if(taTimerInterval) clearInterval(taTimerInterval);
+        taTimerInterval=setInterval(tickTimer,1000);
+        renderTAQuestion();
+        document.getElementById("timeattack-ui").scrollIntoView({behavior:"smooth"});
+      }
+      function tickTimer(){
+        taTimeLeft--;
+        const m=Math.floor(taTimeLeft/60),s=taTimeLeft%60,t=document.getElementById("ta-timer");
+        t.textContent=m+":"+String(s).padStart(2,"0"); t.className="timer";
+        if(taTimeLeft<=60) t.classList.add("warning");
+        if(taTimeLeft<=20) t.classList.add("danger");
+        if(taTimeLeft<=0){clearInterval(taTimerInterval);showResults(taScore,questions.length,600-taTimeLeft);}
+      }
+      function renderTAQuestion(){
+        const q=questions[taCurrent];
+        document.getElementById("ta-current").textContent=taCurrent+1;
+        document.getElementById("ta-progress").style.width=(taCurrent/questions.length*100).toFixed(0)+"%";
+        document.getElementById("ta-question").innerHTML=q.q;
+        document.getElementById("ta-next").disabled=true;
+        const opts=document.getElementById("ta-options"); opts.innerHTML="";
+        const letters=["А","Б","В","Г"];
+        q.o.forEach((opt,i)=>{
+          const div=document.createElement("div"); div.className="quiz-option";
+          div.innerHTML=`<span class="option-letter">${letters[i]}</span><span>${opt}</span>`;
+          div.addEventListener("click",()=>{
+            document.querySelectorAll("#ta-options .quiz-option").forEach(o=>o.classList.remove("correct","wrong"));
+            div.classList.add(i===q.a?"correct":"wrong");
+            if(i===q.a&&taAnswers[taCurrent]===null) taScore++;
+            taAnswers[taCurrent]=i;
+            document.getElementById("ta-next").disabled=false;
+          });
+          opts.appendChild(div);
+        });
+      }
+      function nextTimeAttack(){
+        if(taCurrent<questions.length-1){taCurrent++;renderTAQuestion();}
+        else{clearInterval(taTimerInterval);showResults(taScore,questions.length,600-taTimeLeft);}
+      }
+
+      // ===================== RESULTS =====================
+      function showResults(score,total,elapsed){
+        document.getElementById("diagnostic-ui").style.display="none";
+        document.getElementById("timeattack-ui").style.display="none";
+        document.getElementById("results-ui").style.display="block";
+        const pct=Math.round(score/total*100);
+        document.getElementById("result-circle").style.setProperty("--score",pct);
+        document.getElementById("result-percent").textContent=pct+"%";
+        document.getElementById("result-correct").textContent=score;
+        document.getElementById("result-wrong").textContent=total-score;
+        const mm=Math.floor(elapsed/60),ss=elapsed%60;
+        document.getElementById("result-time").textContent=mm+":"+String(ss).padStart(2,"0");
+        let mastery,msg;
+        if(pct>=90){mastery="Отлично";msg="&#127942; Отличный результат! Вы отлично читаете и строите круговые диаграммы!";}
+        else if(pct>=75){mastery="Хорошо";msg="&#128077; Хорошо! Ещё немного практики — и будет отлично.";}
+        else if(pct>=50){mastery="Удовл.";msg="&#128218; Неплохо, но повторите формулы вычисления процентов.";}
+        else{mastery="Слабо";msg="&#128161; Повторите теорию и решите задачи из тренажёра.";}
+        document.getElementById("result-mastery").textContent=mastery;
+        document.getElementById("result-message").innerHTML=msg;
+        document.getElementById("results-ui").scrollIntoView({behavior:"smooth"});
+      }
+      function resetAssessment(){
+        document.getElementById("diagnostic-ui").style.display="none";
+        document.getElementById("timeattack-ui").style.display="none";
+        document.getElementById("results-ui").style.display="none";
+        if(taTimerInterval){clearInterval(taTimerInterval);taTimerInterval=null;}
+        document.getElementById("ta-timer").textContent="10:00";
+        document.getElementById("ta-timer").className="timer";
+      }
+    </script>
+  </body>
+</html>

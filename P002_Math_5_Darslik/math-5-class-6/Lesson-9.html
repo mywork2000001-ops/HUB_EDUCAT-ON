@@ -1,0 +1,792 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Урок 9 — Построение треугольника по двум сторонам и углу между ними (SAS)</title>
+    <style>
+      :root{--bg-dark:#0f0f1a;--bg-card:rgba(255,255,255,0.05);--bg-glass:rgba(255,255,255,0.08);--border-glass:rgba(255,255,255,0.15);--text-primary:#e8e8f0;--text-secondary:#a0a0b8;--accent:#00d4aa;--accent-dim:rgba(0,212,170,0.2);--accent-warm:#ff6b6b;--accent-warm-dim:rgba(255,107,107,0.2);--accent-blue:#4dabf7;--accent-blue-dim:rgba(77,171,247,0.2);--success:#51cf66;--error:#ff6b6b;--warning:#fcc419;}
+      *{margin:0;padding:0;box-sizing:border-box;}
+      body{font-family:"Segoe UI",system-ui,sans-serif;background:var(--bg-dark);color:var(--text-primary);min-height:100vh;overflow-x:hidden;line-height:1.6;}
+      .bg-animation{position:fixed;top:0;left:0;width:100%;height:100%;z-index:-1;background:radial-gradient(ellipse at 20% 20%,rgba(0,212,170,0.08) 0%,transparent 50%),radial-gradient(ellipse at 80% 80%,rgba(77,171,247,0.08) 0%,transparent 50%);}
+      .bg-animation::before{content:"";position:absolute;width:200%;height:200%;top:-50%;left:-50%;background:repeating-linear-gradient(0deg,transparent,transparent 40px,rgba(255,255,255,0.02) 40px,rgba(255,255,255,0.02) 41px);animation:bgMove 20s linear infinite;}
+      @keyframes bgMove{0%{transform:translateY(0)}100%{transform:translateY(40px)}}
+      nav{position:fixed;top:0;left:0;right:0;background:rgba(15,15,26,0.85);backdrop-filter:blur(20px);border-bottom:1px solid var(--border-glass);z-index:1000;padding:0 20px;}
+      .nav-container{max-width:1200px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;height:60px;}
+      .logo{font-size:1.3rem;font-weight:700;background:linear-gradient(135deg,var(--accent),var(--accent-blue));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;text-decoration:none;}
+      .nav-links{display:flex;gap:8px;list-style:none;}
+      .nav-links a{color:var(--text-secondary);text-decoration:none;padding:8px 16px;border-radius:8px;transition:all 0.3s;font-size:0.9rem;font-weight:500;cursor:pointer;border:none;background:transparent;}
+      .nav-links a:hover,.nav-links a.active{color:var(--text-primary);background:var(--bg-glass);}
+      .nav-links a.active{background:var(--accent-dim);color:var(--accent);}
+      section{display:none;opacity:0;padding:78px 20px 32px;max-width:1000px;margin:0 auto;transition:opacity 0.3s ease;}
+      section.active{display:block;opacity:1;animation:fadeIn 0.5s ease;}
+      @keyframes fadeIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+      .card{background:var(--bg-card);backdrop-filter:blur(20px);border:1px solid var(--border-glass);border-radius:20px;padding:20px;margin-bottom:16px;transition:transform 0.3s,box-shadow 0.3s;}
+      .card:hover{transform:translateY(-2px);box-shadow:0 20px 40px rgba(0,0,0,0.3);}
+      .card-title{font-size:1.5rem;font-weight:700;margin-bottom:16px;display:flex;align-items:center;gap:12px;}
+      .card-title .icon{width:40px;height:40px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.3rem;}
+      .hero{text-align:center;padding:140px 20px 80px;}
+      .hero h1{font-size:3rem;font-weight:800;margin-bottom:20px;background:linear-gradient(135deg,var(--accent),var(--accent-blue),var(--accent-warm));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1.2;}
+      .hero p{font-size:1.2rem;color:var(--text-secondary);max-width:600px;margin:0 auto 40px;}
+      .btn{display:inline-flex;align-items:center;gap:8px;padding:14px 32px;border-radius:12px;border:none;font-size:1rem;font-weight:600;cursor:pointer;transition:all 0.3s;text-decoration:none;}
+      .btn-primary{background:linear-gradient(135deg,var(--accent),var(--accent-blue));color:#000;}
+      .btn-primary:hover{transform:translateY(-2px);box-shadow:0 10px 30px var(--accent-dim);}
+      .btn-secondary{background:var(--bg-glass);color:var(--text-primary);border:1px solid var(--border-glass);}
+      .btn-secondary:hover{background:var(--bg-card);}
+      .btn:disabled{opacity:0.5;cursor:not-allowed;transform:none!important;}
+      .generate-widget{background:var(--bg-card);border:1px solid var(--border-glass);border-radius:20px;padding:14px;width:100%;}
+      .widget-slide{display:none;padding:12px 16px;animation:slideFade 0.3s ease;}
+      .widget-slide.active{display:block;}
+      @keyframes slideFade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+      .widget-slide h3{font-size:1.3rem;color:var(--accent);margin-bottom:16px;}
+      .widget-slide p,.widget-slide li{color:var(--text-secondary);line-height:1.8;margin-bottom:12px;}
+      .widget-slide table{width:100%;border-collapse:collapse;margin:12px 0;color:var(--text-secondary);}
+      .widget-slide table th,.widget-slide table td{border:1px solid var(--border-glass);padding:10px;text-align:left;}
+      .widget-slide table th{background:var(--bg-glass);color:var(--text-primary);}
+      .widget-nav{display:flex;justify-content:space-between;align-items:center;margin-top:16px;}
+      .widget-progress{text-align:center;font-size:0.9rem;color:var(--text-secondary);margin-bottom:12px;}
+      .sequence-component{display:flex;flex-direction:column;gap:20px;position:relative;}
+      .sequence-step{background:var(--bg-card);border:1px solid var(--border-glass);border-radius:16px;padding:24px 24px 24px 72px;position:relative;transition:all 0.3s;}
+      .sequence-step:hover{border-color:var(--accent);transform:translateX(4px);}
+      .sequence-number{position:absolute;left:20px;top:20px;width:40px;height:40px;background:var(--accent);color:#000;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:1.1rem;}
+      .sequence-step h4{color:var(--text-primary);margin-bottom:8px;font-size:1.1rem;}
+      .sequence-step p{color:var(--text-secondary);line-height:1.7;}
+      .sequence-connector{position:absolute;left:39px;top:60px;bottom:-30px;width:2px;background:var(--accent-dim);z-index:0;}
+      .sequence-step:last-child .sequence-connector{display:none;}
+      .problem-card{background:var(--bg-card);border:1px solid var(--border-glass);border-radius:16px;padding:24px;margin-bottom:20px;}
+      .problem-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:8px;}
+      .problem-number{background:var(--accent-dim);color:var(--accent);padding:4px 12px;border-radius:20px;font-size:0.85rem;font-weight:600;}
+      .problem-type{color:var(--text-secondary);font-size:0.85rem;}
+      .problem-text{font-size:1.1rem;margin-bottom:16px;line-height:1.8;}
+      .solution-btn{background:var(--accent-dim);color:var(--accent);border:1px solid var(--accent);padding:10px 20px;border-radius:8px;cursor:pointer;font-weight:600;transition:all 0.3s;}
+      .solution-btn:hover{background:var(--accent);color:#000;}
+      .solution{display:none;margin-top:20px;padding:20px;background:rgba(0,212,170,0.05);border-left:3px solid var(--accent);border-radius:0 12px 12px 0;}
+      .solution.active{display:block;animation:slideDown 0.3s ease;}
+      @keyframes slideDown{from{opacity:0;max-height:0}to{opacity:1;max-height:1000px}}
+      .solution p{margin-bottom:8px;color:var(--text-secondary);}
+      .solution strong{color:var(--accent);}
+      .quiz-container{background:var(--bg-card);border:1px solid var(--border-glass);border-radius:20px;padding:32px;}
+      .quiz-progress{display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;flex-wrap:wrap;gap:8px;}
+      .progress-bar{flex:1;height:8px;background:var(--bg-glass);border-radius:4px;margin:0 16px;overflow:hidden;min-width:100px;}
+      .progress-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent-blue));border-radius:4px;transition:width 0.5s ease;width:0%;}
+      .quiz-question{font-size:1.2rem;margin-bottom:24px;padding:20px;background:var(--bg-glass);border-radius:12px;border-left:4px solid var(--accent);}
+      .quiz-options{display:grid;gap:12px;}
+      .quiz-option{background:var(--bg-glass);border:2px solid var(--border-glass);border-radius:12px;padding:16px 20px;cursor:pointer;transition:all 0.3s;display:flex;align-items:center;gap:12px;}
+      .quiz-option:hover{border-color:var(--accent);background:var(--accent-dim);}
+      .quiz-option.correct{border-color:var(--success);background:rgba(81,207,102,0.15);}
+      .quiz-option.wrong{border-color:var(--error);background:rgba(255,107,107,0.15);}
+      .quiz-option.disabled{pointer-events:none;opacity:0.7;}
+      .option-letter{width:32px;height:32px;border-radius:8px;background:var(--bg-card);display:flex;align-items:center;justify-content:center;font-weight:700;flex-shrink:0;}
+      .quiz-nav{display:flex;justify-content:space-between;margin-top:24px;}
+      .stat{background:var(--bg-glass);padding:12px 24px;border-radius:12px;text-align:center;min-width:100px;border:1px solid var(--border-glass);}
+      .stat-value{font-size:1.5rem;font-weight:700;color:var(--accent);}
+      .stat-label{font-size:0.85rem;color:var(--text-secondary);}
+      .timer{position:fixed;top:80px;right:20px;background:var(--bg-card);backdrop-filter:blur(20px);border:1px solid var(--border-glass);border-radius:16px;padding:16px 24px;font-size:1.3rem;font-weight:700;font-variant-numeric:tabular-nums;z-index:999;box-shadow:0 10px 30px rgba(0,0,0,0.3);}
+      .timer.warning{border-color:var(--warning);color:var(--warning);animation:pulse 1s infinite;}
+      .timer.danger{border-color:var(--error);color:var(--error);animation:pulse 0.5s infinite;}
+      @keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.05)}}
+      .results-container{text-align:center;padding:40px;}
+      .score-circle{width:200px;height:200px;border-radius:50%;background:conic-gradient(var(--accent) calc(var(--score)*3.6deg),var(--bg-glass) 0);margin:0 auto 32px;display:flex;align-items:center;justify-content:center;position:relative;}
+      .score-circle::before{content:"";position:absolute;width:170px;height:170px;background:var(--bg-dark);border-radius:50%;}
+      .score-value{position:relative;font-size:3rem;font-weight:800;color:var(--accent);}
+      .score-label{font-size:1.2rem;color:var(--text-secondary);margin-bottom:8px;}
+      .score-message{font-size:1.5rem;font-weight:700;margin-bottom:32px;}
+      .results-breakdown{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:16px;max-width:600px;margin:0 auto 32px;}
+      .breakdown-item{background:var(--bg-glass);padding:16px;border-radius:12px;}
+      .breakdown-value{font-size:1.5rem;font-weight:700;color:var(--accent);}
+      .breakdown-label{font-size:0.85rem;color:var(--text-secondary);}
+      @media(max-width:768px){.hero h1{font-size:2rem}.nav-links{display:none}.timer{top:70px;right:10px;font-size:1rem;padding:10px 16px}.card{padding:14px}section{padding:70px 12px 24px}}
+    </style>
+  </head>
+  <body>
+    <div class="bg-animation"></div>
+    <nav>
+      <div class="nav-container">
+        <a href="index.html" class="logo" target="_self">📐 Урок 9</a>
+        <ul class="nav-links">
+          <li><a href="#" class="active" data-section="home">Главная</a></li>
+          <li><a href="#" data-section="theory">Теория</a></li>
+          <li><a href="#" data-section="algorithm">Алгоритм</a></li>
+          <li><a href="#" data-section="examples">Примеры</a></li>
+          <li><a href="#" data-section="trainer">Тренажёр</a></li>
+          <li><a href="#" data-section="assessment">Аттестация</a></li>
+        </ul>
+      </div>
+    </nav>
+
+    <!-- HOME -->
+    <section id="home" class="active">
+      <div class="hero">
+        <h1>Построение треугольника по двум сторонам и углу между ними</h1>
+        <p>Урок 9. Признак SAS. Линейка, транспортир, циркуль. Конгруэнтные треугольники. 30 вопросов для полного освоения темы.</p>
+        <div style="display:flex;gap:16px;justify-content:center;flex-wrap:wrap;">
+          <button class="btn btn-primary" onclick="showSection('theory')">Начать обучение</button>
+          <button class="btn btn-secondary" onclick="showSection('assessment')">Проверить знания</button>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title"><span class="icon" style="background:var(--accent-dim)">🎯</span>Что вы изучите</div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px;">
+          <div class="card" style="padding:20px;"><h3 style="color:var(--accent);margin-bottom:8px;">Признак SAS</h3><p style="color:var(--text-secondary);">Side-Angle-Side: две стороны и угол между ними однозначно определяют треугольник.</p></div>
+          <div class="card" style="padding:20px;"><h3 style="color:var(--accent-blue);margin-bottom:8px;">Инструменты</h3><p style="color:var(--text-secondary);">Линейка — для отрезков, транспортир — для углов, циркуль — для точного откладывания длин.</p></div>
+          <div class="card" style="padding:20px;"><h3 style="color:var(--accent-warm);margin-bottom:8px;">Алгоритм (5 шагов)</h3><p style="color:var(--text-secondary);">Провести луч, отложить AB, построить угол α, отложить AC, соединить B и C.</p></div>
+          <div class="card" style="padding:20px;"><h3 style="color:var(--warning);margin-bottom:8px;">Конгруэнтность</h3><p style="color:var(--text-secondary);">Два треугольника конгруэнтны по SAS, если у них равны две стороны и угол между ними.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- THEORY -->
+    <section id="theory">
+      <div class="card">
+        <div class="card-title"><span class="icon" style="background:var(--accent-dim)">📖</span>Глава 1. Визуальная теория</div>
+        <p style="color:var(--text-secondary);margin-bottom:20px;">Изучите признак SAS, инструменты и примеры построений.</p>
+        <div class="generate-widget">
+          <div class="widget-progress">Слайд <span id="slide-num">1</span> / <span id="slide-total">5</span></div>
+          <div class="widget-track" id="track-slides"></div>
+          <div class="widget-nav">
+            <button type="button" class="btn btn-secondary" onclick="prevSlide()">← Назад</button>
+            <button type="button" class="btn btn-primary" onclick="nextSlide()">Вперёд →</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ALGORITHM -->
+    <section id="algorithm">
+      <div class="card">
+        <div class="card-title"><span class="icon" style="background:var(--accent-blue-dim)">🪜</span>Глава 2. Алгоритм построения треугольника (SAS)</div>
+        <p style="color:var(--text-secondary);margin-bottom:20px;">Пошаговый алгоритм построения треугольника по двум сторонам и углу между ними.</p>
+        <div style="display:flex;justify-content:center;margin-bottom:28px;">
+          <svg viewBox="0 0 320 200" width="320" height="200" aria-label="Пошаговое построение треугольника ABC: AB=5 см, AC=6 см, угол A=50 градусов">
+            <!-- Ray from A -->
+            <line x1="40" y1="160" x2="290" y2="160" stroke="rgba(77,171,247,0.3)" stroke-width="1.5" stroke-dasharray="4,3"/>
+            <!-- Angle arc -->
+            <path d="M 90,160 A 50,50 0 0,0 72,117" fill="none" stroke="#fcc419" stroke-width="2"/>
+            <text x="95" y="148" fill="#fcc419" font-size="11" font-family="sans-serif">50°</text>
+            <!-- Side AB on ray -->
+            <line x1="40" y1="160" x2="190" y2="160" stroke="#4dabf7" stroke-width="2.5"/>
+            <text x="108" y="178" fill="#4dabf7" font-size="13" font-family="sans-serif" font-weight="bold">5 см</text>
+            <!-- Side AC at 50 deg -->
+            <line x1="40" y1="160" x2="40" y2="160" stroke="#00d4aa" stroke-width="2.5"/>
+            <line x1="40" y1="160" x2="155" y2="68" stroke="#00d4aa" stroke-width="2.5"/>
+            <text x="72" y="98" fill="#00d4aa" font-size="13" font-family="sans-serif" font-weight="bold">6 см</text>
+            <!-- Side BC -->
+            <line x1="190" y1="160" x2="155" y2="68" stroke="#ff6b6b" stroke-width="2.5"/>
+            <!-- Labels -->
+            <text x="24" y="175" fill="#e8e8f0" font-size="14" font-family="sans-serif" font-weight="bold">A</text>
+            <text x="193" y="175" fill="#e8e8f0" font-size="14" font-family="sans-serif" font-weight="bold">B</text>
+            <text x="150" y="60" fill="#e8e8f0" font-size="14" font-family="sans-serif" font-weight="bold">C</text>
+          </svg>
+        </div>
+        <div class="sequence-component">
+          <div class="sequence-step">
+            <div class="sequence-number">1</div>
+            <div class="sequence-connector"></div>
+            <h4>Провести луч из точки A</h4>
+            <p>Поставьте точку A на бумаге. Проведите от неё луч в произвольном направлении — это будет основа для стороны AB.</p>
+          </div>
+          <div class="sequence-step">
+            <div class="sequence-number">2</div>
+            <div class="sequence-connector"></div>
+            <h4>Отложить сторону AB = 5 см</h4>
+            <p>С помощью линейки отложите на луче отрезок AB = 5 см. Отметьте точку B.</p>
+          </div>
+          <div class="sequence-step">
+            <div class="sequence-number">3</div>
+            <div class="sequence-connector"></div>
+            <h4>Из точки A построить угол α = 50°</h4>
+            <p>Приложите транспортир к точке A, совместив 0° с лучём AB. Отметьте риску на 50°. Проведите второй луч через точку A в направлении 50°.</p>
+          </div>
+          <div class="sequence-step">
+            <div class="sequence-number">4</div>
+            <div class="sequence-connector"></div>
+            <h4>Отложить сторону AC = 6 см</h4>
+            <p>На втором луче (под углом 50°) отложите от точки A отрезок AC = 6 см. Отметьте точку C.</p>
+          </div>
+          <div class="sequence-step">
+            <div class="sequence-number">5</div>
+            <h4>Соединить точки B и C</h4>
+            <p>Проведите линейкой прямой отрезок BC. Треугольник ABC построен. Он однозначно определён признаком SAS.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- EXAMPLES -->
+    <section id="examples">
+      <div class="card">
+        <div class="card-title"><span class="icon" style="background:var(--accent-dim)">📝</span>Глава 3. Разбор задач</div>
+        <p style="color:var(--text-secondary);margin-bottom:24px;">Пять задач с подробным решением по теме построения треугольника (SAS).</p>
+      </div>
+      <div id="examples-container"></div>
+    </section>
+
+    <!-- TRAINER -->
+    <section id="trainer">
+      <div class="card">
+        <div class="card-title"><span class="icon" style="background:var(--accent-dim)">🏋️</span>Глава 4. Тренажёр</div>
+        <p style="color:var(--text-secondary);margin-bottom:24px;">Введите числовой ответ на вопрос по теме SAS-построения.</p>
+        <div class="quiz-container" style="margin-bottom:20px;">
+          <div id="trainer-question" style="font-size:1.3rem;text-align:center;margin-bottom:24px;padding:24px;background:var(--bg-glass);border-radius:12px;">Нажмите «Новая задача» для начала</div>
+          <div style="display:flex;gap:12px;margin-bottom:20px;">
+            <input type="text" id="trainer-answer" placeholder="Введите число" style="flex:1;padding:14px 16px;background:var(--bg-glass);border:2px solid var(--border-glass);border-radius:12px;color:var(--text-primary);font-size:1rem;outline:none;" onkeydown="if(event.key==='Enter')checkTrainer();" />
+            <button class="btn btn-primary" onclick="checkTrainer()" id="trainer-check-btn" disabled>Проверить</button>
+          </div>
+          <div id="trainer-feedback" style="min-height:60px;margin-bottom:16px;"></div>
+          <div style="display:flex;gap:12px;justify-content:center;">
+            <button class="btn btn-secondary" onclick="newTrainerProblem()">Новая задача</button>
+            <button class="btn btn-secondary" onclick="showTrainerHint()">Подсказка</button>
+          </div>
+          <div id="trainer-hint" style="display:none;margin-top:20px;padding:16px;background:var(--accent-blue-dim);border-radius:12px;border-left:4px solid var(--accent-blue);"></div>
+        </div>
+        <div style="display:flex;justify-content:center;gap:24px;flex-wrap:wrap;">
+          <div class="stat"><div class="stat-value" id="trainer-correct">0</div><div class="stat-label">Верно</div></div>
+          <div class="stat"><div class="stat-value" id="trainer-total">0</div><div class="stat-label">Всего</div></div>
+          <div class="stat"><div class="stat-value" id="trainer-streak">0</div><div class="stat-label">Серия</div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ASSESSMENT -->
+    <section id="assessment">
+      <div class="card">
+        <div class="card-title"><span class="icon" style="background:var(--accent-blue-dim)">🧪</span>Глава 5. Аттестация — 30 вопросов</div>
+        <p style="color:var(--text-secondary);margin-bottom:24px;">Диагностика и скоростная викторина по построению треугольника (SAS).</p>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px;">
+          <div class="card" style="padding:24px;text-align:center;"><div style="font-size:3rem;margin-bottom:12px;">🔍</div><h3 style="margin-bottom:8px;">Диагностический тест</h3><p style="color:var(--text-secondary);margin-bottom:20px;">30 вопросов с объяснениями.</p><button class="btn btn-primary" onclick="startDiagnostic()">Начать тест</button></div>
+          <div class="card" style="padding:24px;text-align:center;"><div style="font-size:3rem;margin-bottom:12px;">⏱️</div><h3 style="margin-bottom:8px;">Скоростная викторина</h3><p style="color:var(--text-secondary);margin-bottom:20px;">30 вопросов · 10 минут.</p><button class="btn btn-primary" onclick="startTimeAttack()">Начать викторину</button></div>
+        </div>
+      </div>
+      <div id="diagnostic-ui" style="display:none;">
+        <div class="card"><div class="card-title"><span class="icon" style="background:var(--accent-blue-dim)">🔍</span>Диагностический тест (30 вопросов)</div></div>
+        <div class="quiz-container">
+          <div class="quiz-progress"><span>Вопрос <span id="diag-current">1</span> / <span id="diag-total">30</span></span><div class="progress-bar"><div class="progress-fill" id="diag-progress"></div></div><span id="diag-score">0 правильных</span></div>
+          <div class="quiz-question" id="diag-question"></div>
+          <div class="quiz-options" id="diag-options"></div>
+          <div class="quiz-nav"><button class="btn btn-secondary" onclick="prevDiagnostic()" id="diag-prev" disabled>← Назад</button><button class="btn btn-primary" onclick="nextDiagnostic()" id="diag-next" disabled>Далее →</button></div>
+          <div id="diag-explanation" style="display:none;margin-top:20px;padding:16px;background:var(--accent-dim);border-radius:12px;border-left:4px solid var(--accent);"></div>
+        </div>
+      </div>
+      <div id="timeattack-ui" style="display:none;">
+        <div class="timer" id="ta-timer">10:00</div>
+        <div class="card"><div class="card-title"><span class="icon" style="background:var(--accent-warm-dim)">⏱️</span>Скоростная викторина</div></div>
+        <div class="quiz-container">
+          <div class="quiz-progress"><span>Вопрос <span id="ta-current">1</span> / 30</span><div class="progress-bar"><div class="progress-fill" id="ta-progress"></div></div></div>
+          <div class="quiz-question" id="ta-question"></div>
+          <div class="quiz-options" id="ta-options"></div>
+          <div style="display:flex;justify-content:flex-end;margin-top:24px;"><button class="btn btn-primary" onclick="nextTimeAttack()" id="ta-next" disabled>Ответить →</button></div>
+        </div>
+      </div>
+      <div id="results-ui" style="display:none;">
+        <div class="card">
+          <div class="results-container">
+            <div class="score-label">Ваш результат</div>
+            <div class="score-circle" id="result-circle"><div class="score-value" id="result-percent">0%</div></div>
+            <div class="score-message" id="result-message"></div>
+            <div class="results-breakdown">
+              <div class="breakdown-item"><div class="breakdown-value" id="result-correct">0</div><div class="breakdown-label">Верно</div></div>
+              <div class="breakdown-item"><div class="breakdown-value" id="result-wrong">0</div><div class="breakdown-label">Ошибок</div></div>
+              <div class="breakdown-item"><div class="breakdown-value" id="result-time">0:00</div><div class="breakdown-label">Время</div></div>
+              <div class="breakdown-item"><div class="breakdown-value" id="result-mastery">—</div><div class="breakdown-label">Уровень</div></div>
+            </div>
+            <div style="display:flex;gap:16px;justify-content:center;flex-wrap:wrap;">
+              <button class="btn btn-primary" onclick="resetAssessment()">Пройти ещё раз</button>
+              <button class="btn btn-secondary" onclick="showSection('theory')">К теории</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <script>
+      const AppState = {
+        currentSection: "home",
+        slide: 0,
+        trainer: { correct: 0, total: 0, streak: 0, current: null },
+        diagnostic: { current: 0, score: 0, answers: [] },
+        timeAttack: { current: 0, score: 0, timer: null, timeLeft: 600, startTime: 0, answers: [] },
+        mode: null
+      };
+
+      // ===== SLIDES DATA =====
+      const slides = [
+        {
+          title: "Признак SAS",
+          content: `
+            <p style="margin-bottom:12px;"><strong>Признак SAS</strong> (Side-Angle-Side — Сторона-Угол-Сторона): треугольник <em>однозначно определяется</em>, если известны две его стороны и угол между ними.</p>
+            <div style="display:flex;justify-content:center;margin:16px 0;">
+              <svg viewBox="0 0 280 190" width="280" height="190" aria-label="Треугольник ABC с двумя сторонами AB=5 и AC=6 и углом A=50 градусов">
+                <!-- Triangle -->
+                <polygon points="40,160 190,160 152,64" fill="rgba(0,212,170,0.08)" stroke="#00d4aa" stroke-width="2.5"/>
+                <!-- Angle arc at A -->
+                <path d="M 90,160 A 50,50 0 0,0 73.5,116" fill="none" stroke="#fcc419" stroke-width="2"/>
+                <text x="92" y="148" fill="#fcc419" font-size="12" font-family="sans-serif" font-weight="bold">50°</text>
+                <!-- Side labels -->
+                <text x="100" y="178" fill="#4dabf7" font-size="13" font-family="sans-serif" font-weight="bold">AB = 5 см</text>
+                <text x="50" y="105" fill="#00d4aa" font-size="13" font-family="sans-serif" font-weight="bold">AC = 6 см</text>
+                <text x="178" y="118" fill="#ff6b6b" font-size="12" font-family="sans-serif">BC = ?</text>
+                <!-- Vertex labels -->
+                <text x="24" y="174" fill="#e8e8f0" font-size="14" font-family="sans-serif" font-weight="bold">A</text>
+                <text x="193" y="174" fill="#e8e8f0" font-size="14" font-family="sans-serif" font-weight="bold">B</text>
+                <text x="146" y="58" fill="#e8e8f0" font-size="14" font-family="sans-serif" font-weight="bold">C</text>
+              </svg>
+            </div>
+            <div style="background:var(--accent-dim);padding:14px;border-radius:10px;">
+              <p style="margin:0;"><strong>Нужны:</strong> линейка (для откладывания отрезков) и транспортир (для построения углов).</p>
+              <p style="margin-top:6px;color:var(--text-secondary);">По признаку SAS строится ровно один треугольник (с точностью до конгруэнтности).</p>
+            </div>`
+        },
+        {
+          title: "Инструменты",
+          content: `
+            <p style="margin-bottom:14px;">Для построения треугольника по признаку SAS используются три инструмента:</p>
+            <table>
+              <tr><th>Инструмент</th><th>Назначение</th><th>Единица</th></tr>
+              <tr><td><strong style="color:var(--accent-blue);">Линейка</strong></td><td>Проведение прямых отрезков и откладывание заданных длин</td><td>сантиметры (см)</td></tr>
+              <tr><td><strong style="color:var(--accent);">Транспортир</strong></td><td>Измерение и построение углов заданной величины</td><td>градусы (°)</td></tr>
+              <tr><td><strong style="color:var(--accent-warm);">Циркуль</strong></td><td>Точное отмерение длин (переносить отрезки без погрешности)</td><td>см / делений</td></tr>
+            </table>
+            <div style="background:var(--accent-blue-dim);padding:12px;border-radius:8px;margin-top:12px;">
+              <p style="margin:0;"><strong>Совет:</strong> При построении используйте сначала линейку для луча, затем транспортир для угла, затем снова линейку (или циркуль) для второго отрезка.</p>
+            </div>`
+        },
+        {
+          title: "Алгоритм построения (5 шагов)",
+          content: `
+            <p style="margin-bottom:14px;">Задано: AB = 5 см, AC = 6 см, ∠BAC = 50°. Строим треугольник ABC:</p>
+            <ol style="padding-left:20px;">
+              <li style="margin-bottom:10px;"><strong style="color:var(--accent);">Шаг 1.</strong> Провести луч из точки A в произвольном направлении.</li>
+              <li style="margin-bottom:10px;"><strong style="color:var(--accent);">Шаг 2.</strong> Отложить на луче отрезок <strong>AB = 5 см</strong>, отметить точку B.</li>
+              <li style="margin-bottom:10px;"><strong style="color:var(--accent);">Шаг 3.</strong> Транспортиром из точки A построить <strong>∠BAC = 50°</strong>: приложить 0° к лучу AB, отметить риску 50°, провести второй луч.</li>
+              <li style="margin-bottom:10px;"><strong style="color:var(--accent);">Шаг 4.</strong> На втором луче отложить <strong>AC = 6 см</strong>, отметить точку C.</li>
+              <li style="margin-bottom:10px;"><strong style="color:var(--accent);">Шаг 5.</strong> Соединить точки B и C отрезком. Треугольник <strong>ABC построен</strong>.</li>
+            </ol>
+            <div style="background:var(--accent-warm-dim);padding:12px;border-radius:8px;margin-top:6px;">
+              <p style="margin:0;"><strong>Итог:</strong> Всего 5 шагов, используются линейка и транспортир. Результат — единственный (с точностью до конгруэнтности) треугольник.</p>
+            </div>`
+        },
+        {
+          title: "Примеры построений",
+          content: `
+            <p style="margin-bottom:12px;">Таблица типовых построений треугольника по признаку SAS:</p>
+            <table>
+              <tr><th>Сторона AB</th><th>Сторона AC</th><th>Угол ∠A</th><th>Тип треугольника</th></tr>
+              <tr><td>5 см</td><td>4 см</td><td>30°</td><td>Остроугольный</td></tr>
+              <tr><td>6 см</td><td>6 см</td><td>60°</td><td>Равнобедренный (и правильный)</td></tr>
+              <tr><td>4 см</td><td>7 см</td><td>90°</td><td>Прямоугольный</td></tr>
+            </table>
+            <div style="background:var(--accent-dim);padding:12px;border-radius:8px;margin-top:12px;">
+              <p style="margin:0;"><strong>Обрати внимание:</strong> при ∠A = 90° стороны AB и AC являются катетами, а BC — гипотенузой прямоугольного треугольника.</p>
+            </div>`
+        },
+        {
+          title: "Конгруэнтные треугольники (признак SAS)",
+          content: `
+            <p style="margin-bottom:12px;"><strong>Определение:</strong> Два треугольника называются <em>конгруэнтными</em>, если они равны по всем соответствующим сторонам и углам.</p>
+            <div style="display:flex;justify-content:center;gap:20px;flex-wrap:wrap;margin:16px 0;">
+              <svg viewBox="0 0 130 110" width="130" height="110" aria-label="Треугольник ABC">
+                <polygon points="10,95 115,95 80,15" fill="rgba(0,212,170,0.1)" stroke="#00d4aa" stroke-width="2.5"/>
+                <text x="2" y="108" fill="#e8e8f0" font-size="12" font-family="sans-serif">A</text>
+                <text x="116" y="108" fill="#e8e8f0" font-size="12" font-family="sans-serif">B</text>
+                <text x="74" y="11" fill="#e8e8f0" font-size="12" font-family="sans-serif">C</text>
+                <text x="45" y="58" fill="#4dabf7" font-size="11" font-family="sans-serif">△ABC</text>
+              </svg>
+              <div style="display:flex;align-items:center;font-size:2rem;color:var(--accent);">≅</div>
+              <svg viewBox="0 0 130 110" width="130" height="110" aria-label="Треугольник DEF конгруэнтен треугольнику ABC">
+                <polygon points="10,95 115,95 80,15" fill="rgba(77,171,247,0.1)" stroke="#4dabf7" stroke-width="2.5"/>
+                <text x="2" y="108" fill="#e8e8f0" font-size="12" font-family="sans-serif">D</text>
+                <text x="116" y="108" fill="#e8e8f0" font-size="12" font-family="sans-serif">E</text>
+                <text x="74" y="11" fill="#e8e8f0" font-size="12" font-family="sans-serif">F</text>
+                <text x="45" y="58" fill="#4dabf7" font-size="11" font-family="sans-serif">△DEF</text>
+              </svg>
+            </div>
+            <div style="background:var(--accent-dim);padding:14px;border-radius:10px;">
+              <p style="margin:0;"><strong>Признак SAS:</strong> △ABC ≅ △DEF, если AB = DE, AC = DF и ∠A = ∠D (угол между равными сторонами).</p>
+            </div>
+            <p style="margin-top:12px;color:var(--text-secondary);">Конгруэнтные треугольники совпадают при наложении. SAS — один из трёх основных признаков конгруэнтности.</p>`
+        }
+      ];
+
+      // ===== EXAMPLES DATA =====
+      const examples = [
+        {
+          title: "Построить треугольник по двум сторонам и углу между ними",
+          task: "Построить треугольник MNK: MN = 5 см, MK = 6 см, ∠KMN = 50°. Описать шаги построения.",
+          sol: `<p><strong>Шаг 1.</strong> Провести луч из точки M.</p>
+                <p><strong>Шаг 2.</strong> Отложить на луче MN = 5 см, отметить точку N.</p>
+                <p><strong>Шаг 3.</strong> Транспортиром построить ∠KMN = 50° (совместить 0° с лучом MN, отметить 50°, провести второй луч).</p>
+                <p><strong>Шаг 4.</strong> На втором луче отложить MK = 6 см, отметить точку K.</p>
+                <p><strong>Шаг 5.</strong> Провести отрезок KN. <strong>Треугольник MNK построен.</strong></p>
+                <p>Угол ∠KMN = 50° — угол между данными сторонами. Признак построения: SAS.</p>`
+        },
+        {
+          title: "Прямоугольный треугольник по двум катетам",
+          task: "Построить прямоугольный треугольник ABC: AB = 4 см, BC = 3 см, ∠B = 90°.",
+          sol: `<p><strong>Шаг 1.</strong> Провести луч из точки B.</p>
+                <p><strong>Шаг 2.</strong> Отложить BA = 4 см на луче, отметить точку A.</p>
+                <p><strong>Шаг 3.</strong> Транспортиром построить ∠ABC = 90° (угол при B). Провести второй луч перпендикулярно BA.</p>
+                <p><strong>Шаг 4.</strong> На втором луче отложить BC = 3 см, отметить точку C.</p>
+                <p><strong>Шаг 5.</strong> Провести гипотенузу AC.</p>
+                <p><strong>Результат:</strong> прямоугольный треугольник ABC с катетами 4 и 3 см. Гипотенуза AC = 5 см (по теореме Пифагора).</p>`
+        },
+        {
+          title: "Равнобедренный треугольник. Поиск угла MNK",
+          task: "Дано: MN = MK = 5 см, ∠NMK = 40°. Чему равны углы ∠MNK и ∠MKN?",
+          sol: `<p>Треугольник MNK — равнобедренный (MN = MK = 5 см), поэтому <strong>основание — сторона NK</strong>, а два угла при основании равны: ∠MNK = ∠MKN.</p>
+                <p>Сумма углов треугольника = 180°:</p>
+                <p>∠NMK + ∠MNK + ∠MKN = 180°</p>
+                <p>40° + 2 · ∠MNK = 180°</p>
+                <p>2 · ∠MNK = 140°</p>
+                <p><strong>∠MNK = ∠MKN = 70°</strong></p>`
+        },
+        {
+          title: "Периметр построенного треугольника",
+          task: "В треугольнике ABC: AB = 5 см, AC = 6 см, ∠A = 50°. После построения измерили: BC ≈ 4,6 см. Найдите периметр.",
+          sol: `<p>Периметр = AB + AC + BC</p>
+                <p>P = 5 + 6 + 4,6 = <strong>15,6 см</strong></p>
+                <p>Примечание: длину BC при построении находят путём измерения линейкой полученного отрезка.</p>
+                <p>Для точного нахождения BC используется теорема косинусов (изучается позже):</p>
+                <p>BC² = AB² + AC² − 2·AB·AC·cos(∠A) = 25 + 36 − 60·cos50° ≈ 61 − 38,6 ≈ 22,4</p>
+                <p><strong>BC ≈ 4,73 см</strong></p>`
+        },
+        {
+          title: "Конгруэнтность треугольников по признаку SAS",
+          task: "Определить, конгруэнтны ли треугольники △PQR и △XYZ, если PQ = XY = 7 см, PR = XZ = 5 см, ∠P = ∠X = 65°.",
+          sol: `<p>Проверяем выполнение признака SAS:</p>
+                <p>— PQ = XY = 7 см ✓ (первая сторона)</p>
+                <p>— PR = XZ = 5 см ✓ (вторая сторона)</p>
+                <p>— ∠P = ∠X = 65° ✓ (угол МЕЖДУ этими сторонами)</p>
+                <p>Все три условия выполнены.</p>
+                <p><strong>Вывод: △PQR ≅ △XYZ по признаку SAS.</strong></p>
+                <p>Из конгруэнтности следует: QR = YZ, ∠Q = ∠Y, ∠R = ∠Z.</p>`
+        }
+      ];
+
+      // ===== TRAINER QUESTIONS =====
+      const trainerQs = [
+        { q: "Сколько элементов нужно знать для построения треугольника по признаку SAS? (число)", a: 3, hint: "SAS = Side-Angle-Side: 2 стороны + 1 угол = 3 элемента." },
+        { q: "Треугольник: ∠A = 90°, AB = 3 см, AC = 4 см. Найдите гипотенузу BC (по теореме Пифагора, в см).", a: 5, hint: "BC² = 3² + 4² = 9 + 16 = 25 → BC = 5 см." },
+        { q: "В равнобедренном △MNK: MN = MK = 5 см, ∠NMK = 40°. Чему равен угол ∠MNK (в градусах)?", a: 70, hint: "2∠MNK = 180° − 40° = 140°, ∠MNK = 70°." },
+        { q: "Периметр треугольника: AB = 5 см, BC = 4,6 см, AC = 6 см. Найдите P (в см, только целое число ближайшее).", a: 16, hint: "P = 5 + 4,6 + 6 = 15,6 ≈ 16 (округлить до целых)." },
+        { q: "Сколько признаков конгруэнтности треугольников существует? (введите число)", a: 3, hint: "Три признака: SSS, SAS, ASA." },
+        { q: "В треугольнике ABC: AB = 6 см, AC = 6 см, ∠A = 60°. Это равносторонний треугольник? Введите BC (в см).", a: 6, hint: "При двух равных сторонах и угле 60° треугольник равносторонний: BC = 6 см." },
+        { q: "Угол между сторонами 4 см и 7 см равен 90°. Найдите гипотенузу (в см, целое число).", a: 8, hint: "BC² = 4² + 7² = 16 + 49 = 65 → BC ≈ 8,06 ≈ 8 см." },
+        { q: "Сумма углов любого треугольника (в градусах).", a: 180, hint: "Сумма углов треугольника всегда равна 180°." },
+        { q: "Угол между равными сторонами равнобедренного треугольника = 100°. Найдите угол при основании (в градусах).", a: 40, hint: "2α + 100° = 180°, α = 40°." },
+        { q: "Периметр треугольника со сторонами 5, 5 и 8 см (в см).", a: 18, hint: "P = 5 + 5 + 8 = 18 см." }
+      ];
+
+      // ===== MCQ QUESTIONS (30) =====
+      const questions = [
+        { q: "Признак SAS означает:", o: ["Три стороны треугольника", "Два угла и сторона", "Две стороны и угол между ними", "Сторона, угол, и сумма"], a: 2 },
+        { q: "Какой инструмент используется для построения угла при построении треугольника?", o: ["Линейка", "Циркуль", "Транспортир", "Угольник"], a: 2 },
+        { q: "Первый шаг при построении треугольника по SAS:", o: ["Нарисовать угол", "Провести луч из точки A", "Отложить обе стороны сразу", "Соединить две точки"], a: 1 },
+        { q: "После того как отложена сторона AB и построен угол, следующий шаг:", o: ["Соединить вершины", "Отложить сторону AC на втором луче", "Измерить периметр", "Провести медиану"], a: 1 },
+        { q: "Что такое конгруэнтные треугольники?", o: ["Треугольники с одинаковым периметром", "Треугольники, совпадающие при наложении", "Треугольники с тремя одинаковыми углами", "Прямоугольные треугольники"], a: 1 },
+        { q: "По признаку SAS треугольник построен однозначно. Это значит:", o: ["Таких треугольников бесчисленно много", "Такой треугольник не существует", "Существует ровно один треугольник (с точностью до конгруэнтности)", "Треугольников ровно два"], a: 2 },
+        { q: "Треугольник ABC: AB = 5 см, AC = 6 см, ∠A = 50°. Признак построения:", o: ["SSS", "ASA", "SAS", "AA"], a: 2 },
+        { q: "Сколько элементов нужно знать для применения признака SAS?", o: ["2", "3", "4", "5"], a: 1 },
+        { q: "Для построения угла используется:", o: ["Линейка", "Циркуль", "Транспортир", "Карандаш"], a: 2 },
+        { q: "Треугольник с ∠B = 90°, AB = 3, BC = 4. Чему равна AC (гипотенуза)?", o: ["5 см", "7 см", "12 см", "25 см"], a: 0 },
+        { q: "При построении ∠A = 60° транспортир совмещают с:", o: ["Вершиной B", "Нулём на стороне AB", "Точкой C", "Центром треугольника"], a: 1 },
+        { q: "В равнобедренном треугольнике MNK: MN = MK = 5 см, ∠M = 40°. Угол ∠MNK = ?", o: ["40°", "50°", "70°", "80°"], a: 2 },
+        { q: "Сколько признаков конгруэнтности треугольников?", o: ["1", "2", "3", "4"], a: 2 },
+        { q: "SAS — это аббревиатура от:", o: ["Sum-Angle-Sum", "Side-Angle-Side", "Square-Area-Square", "Similar-Angle-Side"], a: 1 },
+        { q: "Циркуль при построении треугольника нужен для:", o: ["Измерения углов", "Проведения прямых", "Точного отмерения длин", "Построения медиан"], a: 2 },
+        { q: "Сумма углов любого треугольника:", o: ["90°", "180°", "270°", "360°"], a: 1 },
+        { q: "Треугольник ABC ≅ DEF по SAS. Известно AB = DE = 7, ∠A = ∠D = 65°, AC = DF = 5. Тогда BC =", o: ["Не определить", "Равно EF", "Равно 7", "Равно 5"], a: 1 },
+        { q: "Угол, заключённый между двумя данными сторонами треугольника, называется:", o: ["Внешним", "Включённым (включённым) углом", "Противолежащим углом", "Смежным углом"], a: 1 },
+        { q: "Для построения треугольника по SAS достаточно:", o: ["Двух углов и одной стороны", "Трёх сторон", "Двух сторон и угла между ними", "Одной стороны и двух углов"], a: 2 },
+        { q: "Треугольник MNK: MN = MK = 6 см, ∠NMK = 60°. Это треугольник:", o: ["Прямоугольный", "Тупоугольный", "Равносторонний", "Разносторонний"], a: 2 },
+        { q: "Линейка при построении треугольника нужна для:", o: ["Измерения углов", "Проведения прямых и откладывания длин", "Нахождения медиан", "Построения окружностей"], a: 1 },
+        { q: "Если ∠A = 90° в треугольнике ABC, то AB и AC — это:", o: ["Гипотенуза и медиана", "Два катета", "Две гипотенузы", "Медиана и биссектриса"], a: 1 },
+        { q: "По теореме Пифагора: катеты 6 и 8 см, гипотенуза = ?", o: ["10 см", "14 см", "48 см", "100 см"], a: 0 },
+        { q: "Два треугольника конгруэнтны по SAS, если у них равны:", o: ["Три угла", "Три стороны", "Две стороны и угол между ними", "Два угла и сторона"], a: 2 },
+        { q: "∠A = 50°, AB = 5 см, AC = 6 см. Вершина A — это:", o: ["Точка на гипотенузе", "Вершина, из которой строится угол между сторонами AB и AC", "Произвольная точка", "Середина стороны BC"], a: 1 },
+        { q: "Если в треугольнике ∠A = 90°, AB = 4, AC = 3, то периметр = ?", o: ["7 + √7", "12", "4 + 3 + 5 = 12", "3 + 4 = 7"], a: 2 },
+        { q: "Транспортир прикладывают к точке A, совмещая 0° с:", o: ["Вертикальной линией", "Стороной AB", "Стороной BC", "Медианой"], a: 1 },
+        { q: "После построения треугольника по SAS, как найти длину третьей стороны?", o: ["Только по теореме Пифагора", "Только формулой SAS", "Измерить линейкой построенный отрезок BC", "Невозможно"], a: 2 },
+        { q: "Сколько треугольников можно построить по признаку SAS (при фиксированных данных)?", o: ["0", "1 (с точностью до конгруэнтности)", "2", "Бесчисленно много"], a: 1 },
+        { q: "Что означает символ ≅ между треугольниками?", o: ["Подобие", "Конгруэнтность (полное равенство)", "Пересечение", "Параллельность"], a: 1 }
+      ];
+
+      // ===== NAVIGATION =====
+      function showSection(id) {
+        document.querySelectorAll("section").forEach(s => s.classList.remove("active"));
+        document.getElementById(id).classList.add("active");
+        document.querySelectorAll(".nav-links a").forEach(a => a.classList.remove("active"));
+        const link = document.querySelector('.nav-links a[data-section="' + id + '"]');
+        if (link) link.classList.add("active");
+        window.scrollTo(0, 0);
+        AppState.currentSection = id;
+      }
+
+      document.querySelectorAll(".nav-links a").forEach(link => {
+        link.addEventListener("click", e => {
+          e.preventDefault();
+          showSection(link.dataset.section);
+        });
+      });
+
+      // ===== SLIDES ENGINE =====
+      let currentSlide = 0;
+
+      function buildSlides() {
+        const track = document.getElementById("track-slides");
+        document.getElementById("slide-total").textContent = slides.length;
+        slides.forEach((s, i) => {
+          const div = document.createElement("div");
+          div.className = "widget-slide" + (i === 0 ? " active" : "");
+          div.innerHTML = '<h3>' + s.title + '</h3>' + s.content;
+          track.appendChild(div);
+        });
+      }
+
+      function renderSlide() {
+        const els = document.querySelectorAll(".widget-slide");
+        els.forEach((s, i) => s.classList.toggle("active", i === currentSlide));
+        document.getElementById("slide-num").textContent = currentSlide + 1;
+      }
+
+      function nextSlide() {
+        if (currentSlide < slides.length - 1) { currentSlide++; renderSlide(); }
+      }
+
+      function prevSlide() {
+        if (currentSlide > 0) { currentSlide--; renderSlide(); }
+      }
+
+      // ===== EXAMPLES ENGINE =====
+      function buildExamples() {
+        const container = document.getElementById("examples-container");
+        examples.forEach((ex, i) => {
+          const solId = "sol-" + i;
+          const div = document.createElement("div");
+          div.className = "problem-card";
+          div.innerHTML =
+            '<div class="problem-header"><span class="problem-number">Задача ' + (i + 1) + '</span><span class="problem-type">Построение / SAS</span></div>' +
+            '<div class="problem-text"><strong>' + ex.title + '</strong><br>' + ex.task + '</div>' +
+            '<button class="solution-btn" onclick="toggleSolution(\'' + solId + '\')">Показать решение</button>' +
+            '<div class="solution" id="' + solId + '">' + ex.sol + '</div>';
+          container.appendChild(div);
+        });
+      }
+
+      function toggleSolution(id) {
+        const el = document.getElementById(id);
+        el.classList.toggle("active");
+        el.previousElementSibling.textContent = el.classList.contains("active") ? "Скрыть решение" : "Показать решение";
+      }
+
+      // ===== TRAINER ENGINE =====
+      let trainerOrder = 0;
+
+      function newTrainerProblem() {
+        AppState.trainer.current = trainerQs[trainerOrder % trainerQs.length];
+        trainerOrder++;
+        document.getElementById("trainer-question").textContent = AppState.trainer.current.q;
+        document.getElementById("trainer-answer").value = "";
+        document.getElementById("trainer-feedback").innerHTML = "";
+        document.getElementById("trainer-hint").style.display = "none";
+        document.getElementById("trainer-check-btn").disabled = false;
+        document.getElementById("trainer-answer").focus();
+      }
+
+      function showTrainerHint() {
+        if (!AppState.trainer.current) return;
+        const el = document.getElementById("trainer-hint");
+        el.style.display = "block";
+        el.textContent = "Подсказка: " + AppState.trainer.current.hint;
+      }
+
+      function checkTrainer() {
+        if (!AppState.trainer.current) return;
+        const raw = document.getElementById("trainer-answer").value.trim().replace(",", ".");
+        const val = parseFloat(raw);
+        const ok = !isNaN(val) && Math.abs(val - AppState.trainer.current.a) < 0.5;
+        AppState.trainer.total++;
+        if (ok) {
+          AppState.trainer.correct++;
+          AppState.trainer.streak++;
+          document.getElementById("trainer-feedback").innerHTML =
+            '<div style="color:var(--success);font-weight:700;padding:12px;background:rgba(81,207,102,0.1);border-radius:8px;">Верно! Ответ: ' + AppState.trainer.current.a + '</div>';
+        } else {
+          AppState.trainer.streak = 0;
+          document.getElementById("trainer-feedback").innerHTML =
+            '<div style="color:var(--error);font-weight:700;padding:12px;background:rgba(255,107,107,0.1);border-radius:8px;">Неверно. Правильный ответ: ' + AppState.trainer.current.a + '<br><span style="font-size:0.9rem;font-weight:400;">' + AppState.trainer.current.hint + '</span></div>';
+        }
+        document.getElementById("trainer-correct").textContent = AppState.trainer.correct;
+        document.getElementById("trainer-total").textContent = AppState.trainer.total;
+        document.getElementById("trainer-streak").textContent = AppState.trainer.streak;
+        document.getElementById("trainer-check-btn").disabled = true;
+      }
+
+      // ===== DIAGNOSTIC ENGINE =====
+      function startDiagnostic() {
+        AppState.mode = "diagnostic";
+        AppState.diagnostic = { current: 0, score: 0, answers: [] };
+        document.getElementById("diagnostic-ui").style.display = "block";
+        document.getElementById("timeattack-ui").style.display = "none";
+        document.getElementById("results-ui").style.display = "none";
+        document.getElementById("diag-total").textContent = questions.length;
+        renderDiagnostic();
+      }
+
+      function renderDiagnostic() {
+        const q = questions[AppState.diagnostic.current];
+        document.getElementById("diag-current").textContent = AppState.diagnostic.current + 1;
+        document.getElementById("diag-score").textContent = AppState.diagnostic.score + " правильных";
+        document.getElementById("diag-progress").style.width = ((AppState.diagnostic.current + 1) / questions.length * 100) + "%";
+        document.getElementById("diag-question").textContent = q.q;
+        const od = document.getElementById("diag-options");
+        od.innerHTML = "";
+        q.o.forEach((opt, i) => {
+          const div = document.createElement("div");
+          div.className = "quiz-option";
+          div.innerHTML = '<div class="option-letter">' + String.fromCharCode(65 + i) + "</div><div>" + opt + "</div>";
+          div.onclick = () => selectDiagnostic(i);
+          od.appendChild(div);
+        });
+        document.getElementById("diag-explanation").style.display = "none";
+        document.getElementById("diag-prev").disabled = AppState.diagnostic.current === 0;
+        document.getElementById("diag-next").disabled = true;
+      }
+
+      function selectDiagnostic(idx) {
+        if (!document.getElementById("diag-next").disabled) return;
+        const q = questions[AppState.diagnostic.current];
+        const ok = idx === q.a;
+        if (ok) AppState.diagnostic.score++;
+        AppState.diagnostic.answers[AppState.diagnostic.current] = idx;
+        document.querySelectorAll("#diag-options .quiz-option").forEach((opt, i) => {
+          opt.classList.add("disabled");
+          if (i === q.a) opt.classList.add("correct");
+          else if (i === idx && !ok) opt.classList.add("wrong");
+        });
+        const expl = document.getElementById("diag-explanation");
+        expl.innerHTML = "<strong>" + (ok ? "Верно!" : "Неверно.") + "</strong> Правильный ответ: " + q.o[q.a];
+        expl.style.display = "block";
+        document.getElementById("diag-next").disabled = false;
+      }
+
+      function nextDiagnostic() {
+        if (AppState.diagnostic.current < questions.length - 1) {
+          AppState.diagnostic.current++;
+          renderDiagnostic();
+        } else {
+          showResults(AppState.diagnostic.score, questions.length, 0, "diagnostic");
+        }
+      }
+
+      function prevDiagnostic() {
+        if (AppState.diagnostic.current > 0) {
+          AppState.diagnostic.current--;
+          renderDiagnostic();
+        }
+      }
+
+      // ===== TIME ATTACK ENGINE =====
+      function startTimeAttack() {
+        AppState.mode = "timeattack";
+        AppState.timeAttack = { current: 0, score: 0, timer: null, timeLeft: 600, startTime: Date.now(), answers: [] };
+        document.getElementById("diagnostic-ui").style.display = "none";
+        document.getElementById("timeattack-ui").style.display = "block";
+        document.getElementById("results-ui").style.display = "none";
+        document.getElementById("ta-timer").className = "timer";
+        renderTimeAttack();
+        if (AppState.timeAttack.timer) clearInterval(AppState.timeAttack.timer);
+        AppState.timeAttack.timer = setInterval(() => {
+          AppState.timeAttack.timeLeft--;
+          const m = Math.floor(AppState.timeAttack.timeLeft / 60);
+          const s = AppState.timeAttack.timeLeft % 60;
+          const el = document.getElementById("ta-timer");
+          el.textContent = m + ":" + s.toString().padStart(2, "0");
+          if (AppState.timeAttack.timeLeft <= 60) el.className = "timer danger";
+          else if (AppState.timeAttack.timeLeft <= 180) el.className = "timer warning";
+          if (AppState.timeAttack.timeLeft <= 0) finishTimeAttack();
+        }, 1000);
+      }
+
+      function renderTimeAttack() {
+        const q = questions[AppState.timeAttack.current];
+        document.getElementById("ta-current").textContent = AppState.timeAttack.current + 1;
+        document.getElementById("ta-progress").style.width = ((AppState.timeAttack.current + 1) / questions.length * 100) + "%";
+        document.getElementById("ta-question").textContent = q.q;
+        const od = document.getElementById("ta-options");
+        od.innerHTML = "";
+        q.o.forEach((opt, i) => {
+          const div = document.createElement("div");
+          div.className = "quiz-option";
+          div.innerHTML = '<div class="option-letter">' + String.fromCharCode(65 + i) + "</div><div>" + opt + "</div>";
+          div.onclick = () => selectTimeAttack(i);
+          od.appendChild(div);
+        });
+        document.getElementById("ta-next").disabled = true;
+      }
+
+      function selectTimeAttack(idx) {
+        if (!document.getElementById("ta-next").disabled) return;
+        const q = questions[AppState.timeAttack.current];
+        if (idx === q.a) AppState.timeAttack.score++;
+        AppState.timeAttack.answers[AppState.timeAttack.current] = idx;
+        document.querySelectorAll("#ta-options .quiz-option").forEach((opt, i) => {
+          opt.classList.add("disabled");
+          if (i === q.a) opt.classList.add("correct");
+          else if (i === idx && idx !== q.a) opt.classList.add("wrong");
+        });
+        document.getElementById("ta-next").disabled = false;
+      }
+
+      function nextTimeAttack() {
+        if (AppState.timeAttack.current < questions.length - 1) {
+          AppState.timeAttack.current++;
+          renderTimeAttack();
+        } else {
+          finishTimeAttack();
+        }
+      }
+
+      function finishTimeAttack() {
+        clearInterval(AppState.timeAttack.timer);
+        document.getElementById("ta-timer").style.display = "none";
+        showResults(AppState.timeAttack.score, questions.length, Math.floor((Date.now() - AppState.timeAttack.startTime) / 1000), "timeattack");
+      }
+
+      // ===== RESULTS ENGINE =====
+      function showResults(correct, total, timeSeconds, mode) {
+        document.getElementById("diagnostic-ui").style.display = "none";
+        document.getElementById("timeattack-ui").style.display = "none";
+        document.getElementById("results-ui").style.display = "block";
+        const pct = Math.round(correct / total * 100);
+        const circle = document.getElementById("result-circle");
+        circle.style.setProperty("--score", pct);
+        document.getElementById("result-percent").textContent = pct + "%";
+        document.getElementById("result-correct").textContent = correct;
+        document.getElementById("result-wrong").textContent = total - correct;
+        const m = Math.floor(timeSeconds / 60), s = timeSeconds % 60;
+        document.getElementById("result-time").textContent = mode === "diagnostic" ? "—" : (m + ":" + s.toString().padStart(2, "0"));
+        let mastery, msg;
+        if (pct >= 90) { mastery = "Мастер"; msg = "Отлично! Вы отлично знаете признак SAS!"; }
+        else if (pct >= 75) { mastery = "Уверенно"; msg = "Хорошая работа! Небольшое повторение — и вы станете мастером."; }
+        else if (pct >= 50) { mastery = "Учится"; msg = "Неплохо, но стоит повторить теорию и алгоритм."; }
+        else { mastery = "Начинает"; msg = "Изучите теорию заново и пройдите тренажёр."; }
+        document.getElementById("result-mastery").textContent = mastery;
+        document.getElementById("result-message").textContent = msg;
+      }
+
+      function resetAssessment() {
+        document.getElementById("diagnostic-ui").style.display = "none";
+        document.getElementById("timeattack-ui").style.display = "none";
+        document.getElementById("results-ui").style.display = "none";
+        const timerEl = document.getElementById("ta-timer");
+        timerEl.style.display = "";
+        timerEl.className = "timer";
+        if (AppState.timeAttack.timer) clearInterval(AppState.timeAttack.timer);
+      }
+
+      // ===== INIT =====
+      buildSlides();
+      buildExamples();
+    </script>
+  </body>
+</html>

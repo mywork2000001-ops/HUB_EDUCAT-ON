@@ -1,0 +1,1914 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Урок 1 — Углы и их виды</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css"
+    />
+    <script
+      defer
+      src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"
+    ></script>
+    <script
+      defer
+      src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
+    ></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <script>
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            fontFamily: { sans: ["Inter", "system-ui", "sans-serif"] },
+            colors: {
+              brand: {
+                50: "#ecfdf5",
+                100: "#d1fae5",
+                200: "#a7f3d0",
+                300: "#6ee7b7",
+                400: "#34d399",
+                500: "#10b981",
+                600: "#059669",
+                700: "#047857",
+                800: "#065f46",
+                900: "#064e3b",
+              },
+              accent: {
+                50: "#eff6ff",
+                100: "#dbeafe",
+                200: "#bfdbfe",
+                300: "#93c5fd",
+                400: "#60a5fa",
+                500: "#3b82f6",
+                600: "#2563eb",
+                700: "#1d4ed8",
+                800: "#1e40af",
+                900: "#1e3a8a",
+              },
+              warm: {
+                50: "#fff7ed",
+                100: "#ffedd5",
+                200: "#fed7aa",
+                300: "#fdba74",
+                400: "#fb923c",
+                500: "#f97316",
+                600: "#ea580c",
+                700: "#c2410c",
+                800: "#9a3412",
+                900: "#7c2d12",
+              },
+            },
+          },
+        },
+      };
+    </script>
+    <style>
+      :root {
+        --bg-primary: #0b0f19;
+        --bg-card: #111827;
+        --bg-glass: rgba(17, 24, 39, 0.7);
+        --border: rgba(255, 255, 255, 0.08);
+        --text: #e5e7eb;
+        --text-dim: #9ca3af;
+      }
+      body {
+        font-family: "Inter", system-ui, sans-serif;
+        background: var(--bg-primary);
+        color: var(--text);
+      }
+      .glass {
+        background: var(--bg-glass);
+        backdrop-filter: blur(20px);
+        border: 1px solid var(--border);
+      }
+      .katex-display {
+        margin: 0.5em 0;
+      }
+      .slide-enter {
+        animation: slideIn 0.4s ease-out;
+      }
+      @keyframes slideIn {
+        from {
+          opacity: 0;
+          transform: translateY(12px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      .pulse-soft {
+        animation: pulseSoft 2s infinite;
+      }
+      @keyframes pulseSoft {
+        0%,
+        100% {
+          opacity: 1;
+        }
+        50% {
+          opacity: 0.7;
+        }
+      }
+      .matching-line {
+        stroke: #10b981;
+        stroke-width: 3;
+        stroke-linecap: round;
+        transition: all 0.3s;
+      }
+      .matching-line.wrong {
+        stroke: #ef4444;
+      }
+      .option-card {
+        transition: all 0.2s;
+        cursor: pointer;
+      }
+      .option-card:hover {
+        border-color: #10b981;
+        background: rgba(16, 185, 129, 0.08);
+      }
+      .option-card.selected {
+        border-color: #10b981;
+        background: rgba(16, 185, 129, 0.12);
+      }
+      .option-card.correct {
+        border-color: #22c55e;
+        background: rgba(34, 197, 94, 0.15);
+      }
+      .option-card.wrong {
+        border-color: #ef4444;
+        background: rgba(239, 68, 68, 0.15);
+      }
+      .progress-fill {
+        transition: width 0.5s ease;
+      }
+      .timer-box {
+        font-variant-numeric: tabular-nums;
+      }
+      .svg-geo {
+        filter: drop-shadow(0 0 8px rgba(16, 185, 129, 0.2));
+      }
+      .lang-az {
+        display: none;
+      }
+      body.lang-az .lang-ru {
+        display: none;
+      }
+      body.lang-az .lang-az {
+        display: inline;
+      }
+      body.lang-az .lang-az-block {
+        display: block;
+      }
+      body.lang-az .lang-ru-block {
+        display: none;
+      }
+      .connector {
+        position: absolute;
+        left: 28px;
+        top: 48px;
+        bottom: -16px;
+        width: 2px;
+        background: linear-gradient(to bottom, #10b981, transparent);
+      }
+      .step-card:last-child .connector {
+        display: none;
+      }
+      input[type="range"] {
+        accent-color: #10b981;
+      }
+    </style>
+    <base target="_blank" />
+  </head>
+  <body class="antialiased min-h-screen">
+    <!-- Background -->
+    <div class="fixed inset-0 -z-10">
+      <div
+        class="absolute inset-0 bg-[radial-gradient(ellipse_at_20%_20%,rgba(16,185,129,0.08)_0%,transparent_50%),radial-gradient(ellipse_at_80%_80%,rgba(59,130,246,0.06)_0%,transparent_50%)]"
+      ></div>
+      <div
+        class="absolute inset-0 opacity-[0.03]"
+        style="
+          background-image: repeating-linear-gradient(
+            0deg,
+            transparent,
+            transparent 40px,
+            rgba(255, 255, 255, 0.5) 40px,
+            rgba(255, 255, 255, 0.5) 41px
+          );
+        "
+      ></div>
+    </div>
+
+    <!-- Nav -->
+    <nav class="fixed top-0 left-0 right-0 z-50 glass border-b border-white/5">
+      <div
+        class="max-w-6xl mx-auto px-4 h-14 flex items-center justify-between"
+      >
+        <a
+          href="#"
+          onclick="showTab('home')"
+          class="text-lg font-bold bg-gradient-to-r from-emerald-400 to-cyan-400 bg-clip-text text-transparent"
+        >
+          <span class="lang-ru">📐 Урок 1</span
+          ><span class="lang-az">📐 Dərs 1</span>
+        </a>
+        <div class="hidden md:flex items-center gap-1">
+          <a
+            href="#"
+            data-tab="home"
+            class="nav-link px-3 py-1.5 rounded-lg text-sm text-gray-400 hover:text-white hover:bg-white/5 transition active-nav"
+            ><span class="lang-ru">Главная</span
+            ><span class="lang-az">Ana səhifə</span></a
+          >
+          <a
+            href="#"
+            data-tab="theory"
+            class="nav-link px-3 py-1.5 rounded-lg text-sm text-gray-400 hover:text-white hover:bg-white/5 transition"
+            ><span class="lang-ru">Теория</span
+            ><span class="lang-az">Nəzəriyyə</span></a
+          >
+          <a
+            href="#"
+            data-tab="algorithm"
+            class="nav-link px-3 py-1.5 rounded-lg text-sm text-gray-400 hover:text-white hover:bg-white/5 transition"
+            ><span class="lang-ru">Алгоритм</span
+            ><span class="lang-az">Alqoritm</span></a
+          >
+          <a
+            href="#"
+            data-tab="examples"
+            class="nav-link px-3 py-1.5 rounded-lg text-sm text-gray-400 hover:text-white hover:bg-white/5 transition"
+            ><span class="lang-ru">Примеры</span
+            ><span class="lang-az">Nümunələr</span></a
+          >
+          <a
+            href="#"
+            data-tab="trainer"
+            class="nav-link px-3 py-1.5 rounded-lg text-sm text-gray-400 hover:text-white hover:bg-white/5 transition"
+            ><span class="lang-ru">Тренажёр</span
+            ><span class="lang-az">Trenajor</span></a
+          >
+          <a
+            href="#"
+            data-tab="assessment"
+            class="nav-link px-3 py-1.5 rounded-lg text-sm text-gray-400 hover:text-white hover:bg-white/5 transition"
+            ><span class="lang-ru">Аттестация</span
+            ><span class="lang-az">Attestasiya</span></a
+          >
+          <button
+            onclick="toggleLang()"
+            class="ml-2 px-3 py-1.5 rounded-lg text-xs font-semibold border border-white/10 hover:bg-white/5 transition"
+          >
+            🇦🇿 AZ / RU 🇷🇺
+          </button>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Timer (assessment only) -->
+    <div
+      id="timer"
+      class="fixed top-20 right-4 z-40 glass rounded-xl px-4 py-2 text-lg font-bold hidden timer-box border border-emerald-500/20"
+    >
+      <span id="timer-display">10:00</span>
+    </div>
+
+    <main class="max-w-4xl mx-auto px-4 pt-20 pb-12">
+      <!-- HOME -->
+      <section id="home" class="tab-content">
+        <div class="text-center py-16">
+          <h1
+            class="text-4xl md:text-5xl font-extrabold mb-6 bg-gradient-to-r from-emerald-400 via-cyan-400 to-blue-400 bg-clip-text text-transparent"
+          >
+            <span class="lang-ru">Углы и их виды</span
+            ><span class="lang-az">Bucaqlar və onların növləri</span>
+          </h1>
+          <p class="text-lg text-gray-400 max-w-2xl mx-auto mb-8">
+            <span class="lang-ru"
+              >Урок 1. Определение угла, виды углов, смежные и вертикальные
+              углы, измерение углов. 30 вопросов для полной проверки.</span
+            >
+            <span class="lang-az"
+              >Dərs 1. Bucaq anlayışı, bucaq növləri, qonşu və qarşılıqlı
+              bucaqlar, bucaqların ölçülməsi. 30 sual.</span
+            >
+          </p>
+          <div class="flex gap-4 justify-center flex-wrap">
+            <button
+              onclick="showTab('theory')"
+              class="px-6 py-3 rounded-xl bg-gradient-to-r from-emerald-500 to-cyan-500 text-black font-semibold hover:shadow-lg hover:shadow-emerald-500/20 transition transform hover:-translate-y-0.5"
+            >
+              <span class="lang-ru">Начать обучение</span
+              ><span class="lang-az">Öyrənməyə başla</span>
+            </button>
+            <button
+              onclick="showTab('assessment')"
+              class="px-6 py-3 rounded-xl glass text-white font-semibold hover:bg-white/10 transition"
+            >
+              <span class="lang-ru">Проверить знания</span
+              ><span class="lang-az">Bilikləri yoxla</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="grid md:grid-cols-3 gap-4">
+          <div
+            class="glass rounded-2xl p-6 hover:border-emerald-500/30 transition"
+          >
+            <div
+              class="w-10 h-10 rounded-xl bg-emerald-500/20 flex items-center justify-center text-xl mb-4"
+            >
+              📐
+            </div>
+            <h3 class="font-semibold text-white mb-2">
+              <span class="lang-ru">Виды углов</span
+              ><span class="lang-az">Bucaq növləri</span>
+            </h3>
+            <p class="text-sm text-gray-400">
+              <span class="lang-ru"
+                >Острые, прямые, тупые, развёрнутые. Смежные и
+                вертикальные.</span
+              ><span class="lang-az"
+                >İti, düz, küt, açıq. Qonşu və qarşılıqlı.</span
+              >
+            </p>
+          </div>
+          <div
+            class="glass rounded-2xl p-6 hover:border-blue-500/30 transition"
+          >
+            <div
+              class="w-10 h-10 rounded-xl bg-blue-500/20 flex items-center justify-center text-xl mb-4"
+            >
+              📏
+            </div>
+            <h3 class="font-semibold text-white mb-2">
+              <span class="lang-ru">Измерение</span
+              ><span class="lang-az">Ölçmə</span>
+            </h3>
+            <p class="text-sm text-gray-400">
+              <span class="lang-ru"
+                >Градусная мера, транспортир, сумма смежных углов.</span
+              ><span class="lang-az"
+                >Dərəcə ölçüsü, transportir, qonşu bucaqların cəmi.</span
+              >
+            </p>
+          </div>
+          <div
+            class="glass rounded-2xl p-6 hover:border-orange-500/30 transition"
+          >
+            <div
+              class="w-10 h-10 rounded-xl bg-orange-500/20 flex items-center justify-center text-xl mb-4"
+            >
+              🎯
+            </div>
+            <h3 class="font-semibold text-white mb-2">
+              <span class="lang-ru">Практика</span
+              ><span class="lang-az">Praktika</span>
+            </h3>
+            <p class="text-sm text-gray-400">
+              <span class="lang-ru"
+                >Вычисление углов, построение, задачи на смежность.</span
+              ><span class="lang-az"
+                >Bucaqların hesablanması, qurma, qonşuluq məsələləri.</span
+              >
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- THEORY -->
+      <section id="theory" class="tab-content hidden">
+        <div class="glass rounded-2xl p-6 mb-6">
+          <h2 class="text-xl font-bold mb-4 flex items-center gap-3">
+            <span
+              class="w-10 h-10 rounded-xl bg-emerald-500/20 flex items-center justify-center text-lg"
+              >📖</span
+            >
+            <span class="lang-ru">Визуальная теория</span
+            ><span class="lang-az">Vizual nəzəriyyə</span>
+          </h2>
+          <div
+            class="flex items-center justify-between mb-4 text-sm text-gray-400"
+          >
+            <span
+              ><span class="lang-ru">Слайд</span
+              ><span class="lang-az">Slayd</span>
+              <span id="slide-num" class="text-white font-bold">1</span> /
+              <span id="slide-total">8</span></span
+            >
+            <div class="w-32 h-1.5 bg-gray-800 rounded-full overflow-hidden">
+              <div
+                id="slide-progress"
+                class="h-full bg-gradient-to-r from-emerald-400 to-cyan-400 progress-fill"
+                style="width: 12.5%"
+              ></div>
+            </div>
+          </div>
+          <div id="slides-container" class="min-h-[320px]"></div>
+          <div class="flex justify-between mt-6">
+            <button
+              onclick="prevSlide()"
+              class="px-4 py-2 rounded-lg glass hover:bg-white/5 text-sm font-medium transition"
+            >
+              ← <span class="lang-ru">Назад</span
+              ><span class="lang-az">Geri</span>
+            </button>
+            <button
+              onclick="nextSlide()"
+              class="px-4 py-2 rounded-lg bg-gradient-to-r from-emerald-500 to-cyan-500 text-black text-sm font-bold hover:shadow-lg transition"
+            >
+              <span class="lang-ru">Вперёд</span
+              ><span class="lang-az">İrəli</span> →
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ALGORITHM -->
+      <section id="algorithm" class="tab-content hidden">
+        <div class="glass rounded-2xl p-6">
+          <h2 class="text-xl font-bold mb-6 flex items-center gap-3">
+            <span
+              class="w-10 h-10 rounded-xl bg-blue-500/20 flex items-center justify-center text-lg"
+              >🪜</span
+            >
+            <span class="lang-ru">Алгоритм решения задач на углы</span
+            ><span class="lang-az">Bucaq məsələlərinin həlli alqoritmi</span>
+          </h2>
+          <div class="space-y-4 relative">
+            <div class="step-card glass rounded-xl p-5 pl-16 relative">
+              <div class="connector"></div>
+              <div
+                class="absolute left-4 top-5 w-8 h-8 rounded-full bg-emerald-500 text-black flex items-center justify-center font-bold text-sm"
+              >
+                1
+              </div>
+              <h4 class="font-semibold text-white mb-1">
+                <span class="lang-ru">Определите тип угла</span
+                ><span class="lang-az">Bucağın növünü müəyyən edin</span>
+              </h4>
+              <p class="text-sm text-gray-400">
+                <span class="lang-ru"
+                  >Острый (&lt;90°), прямой (90°), тупой (&gt;90°), развёрнутый
+                  (180°).</span
+                ><span class="lang-az"
+                  >İti (&lt;90°), düz (90°), küt (&gt;90°), açıq (180°).</span
+                >
+              </p>
+            </div>
+            <div class="step-card glass rounded-xl p-5 pl-16 relative">
+              <div class="connector"></div>
+              <div
+                class="absolute left-4 top-5 w-8 h-8 rounded-full bg-emerald-500 text-black flex items-center justify-center font-bold text-sm"
+              >
+                2
+              </div>
+              <h4 class="font-semibold text-white mb-1">
+                <span class="lang-ru">Найдите связь между углами</span
+                ><span class="lang-az">Bucaqlar arasındakı əlaqəni tapın</span>
+              </h4>
+              <p class="text-sm text-gray-400">
+                <span class="lang-ru"
+                  >Смежные (сумма 180°), вертикальные (равны), перпендикуляр
+                  (90°).</span
+                ><span class="lang-az"
+                  >Qonşu (cəmi 180°), qarşılıqlı (bərabər), perpendikulyar
+                  (90°).</span
+                >
+              </p>
+            </div>
+            <div class="step-card glass rounded-xl p-5 pl-16 relative">
+              <div class="connector"></div>
+              <div
+                class="absolute left-4 top-5 w-8 h-8 rounded-full bg-emerald-500 text-black flex items-center justify-center font-bold text-sm"
+              >
+                3
+              </div>
+              <h4 class="font-semibold text-white mb-1">
+                <span class="lang-ru">Составьте уравнение</span
+                ><span class="lang-az">Tənlik tərtib edin</span>
+              </h4>
+              <p class="text-sm text-gray-400">
+                <span class="lang-ru"
+                  >Используйте свойства: $x + y = 180°$ или $x = y$.</span
+                ><span class="lang-az"
+                  >Xassələrdən istifadə edin: $x + y = 180°$ və ya $x =
+                  y$.</span
+                >
+              </p>
+            </div>
+            <div class="step-card glass rounded-xl p-5 pl-16 relative">
+              <div class="connector"></div>
+              <div
+                class="absolute left-4 top-5 w-8 h-8 rounded-full bg-emerald-500 text-black flex items-center justify-center font-bold text-sm"
+              >
+                4
+              </div>
+              <h4 class="font-semibold text-white mb-1">
+                <span class="lang-ru">Решите и проверьте</span
+                ><span class="lang-az">Həll edin və yoxlayın</span>
+              </h4>
+              <p class="text-sm text-gray-400">
+                <span class="lang-ru"
+                  >Подставьте ответ в условие, убедитесь в логичности.</span
+                ><span class="lang-az"
+                  >Cavabı şərtə qoyun, məntiqiliyini yoxlayın.</span
+                >
+              </p>
+            </div>
+            <div class="step-card glass rounded-xl p-5 pl-16 relative">
+              <div
+                class="absolute left-4 top-5 w-8 h-8 rounded-full bg-emerald-500 text-black flex items-center justify-center font-bold text-sm"
+              >
+                5
+              </div>
+              <h4 class="font-semibold text-white mb-1">
+                <span class="lang-ru">Запишите ответ с единицами</span
+                ><span class="lang-az">Cavabı vahidlərlə yazın</span>
+              </h4>
+              <p class="text-sm text-gray-400">
+                <span class="lang-ru">Не забудьте градусы (°).</span
+                ><span class="lang-az">Dərəcələri (°) unutmayın.</span>
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- EXAMPLES -->
+      <section id="examples" class="tab-content hidden">
+        <div class="glass rounded-2xl p-6 mb-4">
+          <h2 class="text-xl font-bold mb-2 flex items-center gap-3">
+            <span
+              class="w-10 h-10 rounded-xl bg-emerald-500/20 flex items-center justify-center text-lg"
+              >📝</span
+            >
+            <span class="lang-ru">Разбор задач</span
+            ><span class="lang-az">Məsələlərin təhlili</span>
+          </h2>
+          <p class="text-sm text-gray-400">
+            <span class="lang-ru">Шесть типовых задач на углы.</span
+            ><span class="lang-az">Bucaqlar üzrə altı tipik məsələ.</span>
+          </p>
+        </div>
+        <div id="examples-list" class="space-y-4"></div>
+      </section>
+
+      <!-- TRAINER -->
+      <section id="trainer" class="tab-content hidden">
+        <div class="glass rounded-2xl p-6">
+          <h2 class="text-xl font-bold mb-4 flex items-center gap-3">
+            <span
+              class="w-10 h-10 rounded-xl bg-emerald-500/20 flex items-center justify-center text-lg"
+              >🏋️</span
+            >
+            <span class="lang-ru">Тренажёр</span
+            ><span class="lang-az">Trenajor</span>
+          </h2>
+          <div class="glass rounded-xl p-6 mb-4 text-center" id="trainer-task">
+            <span class="lang-ru text-gray-400"
+              >Нажмите «Новая задача» для начала</span
+            >
+            <span class="lang-az text-gray-400"
+              >Başlamaq üçün «Yeni məsələ» düyməsini basın</span
+            >
+          </div>
+          <div class="flex gap-3 mb-4">
+            <input
+              id="trainer-input"
+              type="text"
+              placeholder="Ответ / Cavab"
+              class="flex-1 bg-gray-900 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-emerald-500 transition"
+            />
+            <button
+              onclick="checkTrainer()"
+              id="trainer-check"
+              class="px-5 py-3 rounded-xl bg-gradient-to-r from-emerald-500 to-cyan-500 text-black font-bold hover:shadow-lg transition"
+              disabled
+            >
+              <span class="lang-ru">Проверить</span
+              ><span class="lang-az">Yoxla</span>
+            </button>
+          </div>
+          <div id="trainer-feedback" class="mb-4 min-h-[3rem]"></div>
+          <div class="flex gap-3 justify-center">
+            <button
+              onclick="newTrainer()"
+              class="px-4 py-2 rounded-lg glass hover:bg-white/5 text-sm font-medium transition"
+            >
+              <span class="lang-ru">Новая задача</span
+              ><span class="lang-az">Yeni məsələ</span>
+            </button>
+            <button
+              onclick="showHint()"
+              class="px-4 py-2 rounded-lg glass hover:bg-white/5 text-sm font-medium transition"
+            >
+              <span class="lang-ru">Подсказка</span
+              ><span class="lang-az">İpucu</span>
+            </button>
+          </div>
+          <div
+            id="trainer-hint"
+            class="mt-4 p-4 rounded-xl bg-blue-500/10 border-l-4 border-blue-400 hidden text-sm text-gray-300"
+          ></div>
+          <div class="flex justify-center gap-6 mt-6">
+            <div class="text-center">
+              <div
+                class="text-2xl font-bold text-emerald-400"
+                id="stat-correct"
+              >
+                0
+              </div>
+              <div class="text-xs text-gray-500">
+                <span class="lang-ru">Верно</span
+                ><span class="lang-az">Düzgün</span>
+              </div>
+            </div>
+            <div class="text-center">
+              <div class="text-2xl font-bold text-white" id="stat-total">0</div>
+              <div class="text-xs text-gray-500">
+                <span class="lang-ru">Всего</span
+                ><span class="lang-az">Cəmi</span>
+              </div>
+            </div>
+            <div class="text-center">
+              <div class="text-2xl font-bold text-yellow-400" id="stat-streak">
+                0
+              </div>
+              <div class="text-xs text-gray-500">
+                <span class="lang-ru">Серия</span
+                ><span class="lang-az">Seriya</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ASSESSMENT -->
+      <section id="assessment" class="tab-content hidden">
+        <div id="assessment-menu" class="grid md:grid-cols-2 gap-4">
+          <div class="glass rounded-2xl p-6 text-center">
+            <div class="text-4xl mb-3">🔍</div>
+            <h3 class="font-bold text-lg mb-2">
+              <span class="lang-ru">Диагностический тест</span
+              ><span class="lang-az">Diaqnostik test</span>
+            </h3>
+            <p class="text-sm text-gray-400 mb-4">
+              <span class="lang-ru"
+                >30 вопросов с мгновенной обратной связью.</span
+              ><span class="lang-az">30 ani əks əlaqəli sual.</span>
+            </p>
+            <button
+              onclick="startDiagnostic()"
+              class="px-5 py-2.5 rounded-xl bg-gradient-to-r from-emerald-500 to-cyan-500 text-black font-bold hover:shadow-lg transition"
+            >
+              <span class="lang-ru">Начать</span
+              ><span class="lang-az">Başla</span>
+            </button>
+          </div>
+          <div class="glass rounded-2xl p-6 text-center">
+            <div class="text-4xl mb-3">⏱️</div>
+            <h3 class="font-bold text-lg mb-2">
+              <span class="lang-ru">Скоростная викторина</span
+              ><span class="lang-az">Sürətli viktorina</span>
+            </h3>
+            <p class="text-sm text-gray-400 mb-4">
+              <span class="lang-ru"
+                >30 вопросов • 10 минут • Итоговый дашборд.</span
+              ><span class="lang-az">30 sual • 10 dəqiqə • Yekun panel.</span>
+            </p>
+            <button
+              onclick="startTimeAttack()"
+              class="px-5 py-2.5 rounded-xl bg-gradient-to-r from-orange-500 to-red-500 text-black font-bold hover:shadow-lg transition"
+            >
+              <span class="lang-ru">Начать</span
+              ><span class="lang-az">Başla</span>
+            </button>
+          </div>
+        </div>
+
+        <div id="quiz-ui" class="hidden">
+          <div class="glass rounded-2xl p-6 mb-4">
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-sm text-gray-400"
+                ><span class="lang-ru">Вопрос</span
+                ><span class="lang-az">Sual</span>
+                <span id="q-current" class="text-white font-bold">1</span> /
+                30</span
+              >
+              <span id="q-score" class="text-sm text-emerald-400 font-bold"
+                >0 <span class="lang-ru">правильных</span
+                ><span class="lang-az">düzgün</span></span
+              >
+            </div>
+            <div class="w-full h-2 bg-gray-800 rounded-full overflow-hidden">
+              <div
+                id="q-progress"
+                class="h-full bg-gradient-to-r from-emerald-400 to-cyan-400 progress-fill"
+                style="width: 3.33%"
+              ></div>
+            </div>
+          </div>
+          <div class="glass rounded-2xl p-6 mb-4">
+            <div
+              id="q-text"
+              class="text-lg font-medium mb-6 leading-relaxed"
+            ></div>
+            <div id="q-options" class="grid gap-3"></div>
+          </div>
+          <div class="flex justify-between">
+            <button
+              onclick="prevQuestion()"
+              id="btn-prev"
+              class="px-4 py-2 rounded-lg glass hover:bg-white/5 text-sm font-medium transition"
+              disabled
+            >
+              ← <span class="lang-ru">Назад</span
+              ><span class="lang-az">Geri</span>
+            </button>
+            <button
+              onclick="nextQuestion()"
+              id="btn-next"
+              class="px-4 py-2 rounded-lg bg-gradient-to-r from-emerald-500 to-cyan-500 text-black text-sm font-bold hover:shadow-lg transition"
+              disabled
+            >
+              <span class="lang-ru">Далее</span
+              ><span class="lang-az">İrəli</span> →
+            </button>
+          </div>
+          <div
+            id="q-explain"
+            class="hidden mt-4 p-4 rounded-xl bg-emerald-500/10 border-l-4 border-emerald-400 text-sm"
+          ></div>
+        </div>
+
+        <div id="results-ui" class="hidden">
+          <div class="glass rounded-2xl p-8 text-center">
+            <div class="mb-2 text-gray-400">
+              <span class="lang-ru">Ваш результат</span
+              ><span class="lang-az">Sizin nəticəniz</span>
+            </div>
+            <div class="relative w-48 h-48 mx-auto mb-6">
+              <svg class="w-full h-full -rotate-90" viewBox="0 0 100 100">
+                <circle
+                  cx="50"
+                  cy="50"
+                  r="45"
+                  fill="none"
+                  stroke="#1f2937"
+                  stroke-width="8"
+                />
+                <circle
+                  id="result-circle"
+                  cx="50"
+                  cy="50"
+                  r="45"
+                  fill="none"
+                  stroke="url(#grad)"
+                  stroke-width="8"
+                  stroke-dasharray="283"
+                  stroke-dashoffset="283"
+                  stroke-linecap="round"
+                  class="transition-all duration-1000"
+                />
+                <defs>
+                  <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" stop-color="#10b981" />
+                    <stop offset="100%" stop-color="#06b6d4" />
+                  </linearGradient>
+                </defs>
+              </svg>
+              <div class="absolute inset-0 flex items-center justify-center">
+                <div
+                  class="text-4xl font-extrabold text-white"
+                  id="result-percent"
+                >
+                  0%
+                </div>
+              </div>
+            </div>
+            <div class="text-xl font-bold mb-6" id="result-message"></div>
+            <div
+              class="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-lg mx-auto mb-6"
+            >
+              <div class="glass rounded-xl p-3">
+                <div
+                  class="text-2xl font-bold text-emerald-400"
+                  id="res-correct"
+                >
+                  0
+                </div>
+                <div class="text-xs text-gray-500">
+                  <span class="lang-ru">Верно</span
+                  ><span class="lang-az">Düzgün</span>
+                </div>
+              </div>
+              <div class="glass rounded-xl p-3">
+                <div class="text-2xl font-bold text-red-400" id="res-wrong">
+                  0
+                </div>
+                <div class="text-xs text-gray-500">
+                  <span class="lang-ru">Ошибок</span
+                  ><span class="lang-az">Səhvlər</span>
+                </div>
+              </div>
+              <div class="glass rounded-xl p-3">
+                <div class="text-2xl font-bold text-white" id="res-time">
+                  0:00
+                </div>
+                <div class="text-xs text-gray-500">
+                  <span class="lang-ru">Время</span
+                  ><span class="lang-az">Vaxt</span>
+                </div>
+              </div>
+              <div class="glass rounded-xl p-3">
+                <div class="text-2xl font-bold text-blue-400" id="res-level">
+                  —
+                </div>
+                <div class="text-xs text-gray-500">
+                  <span class="lang-ru">Уровень</span
+                  ><span class="lang-az">Səviyyə</span>
+                </div>
+              </div>
+            </div>
+            <div class="flex gap-3 justify-center">
+              <button
+                onclick="resetAssessment()"
+                class="px-5 py-2.5 rounded-xl bg-gradient-to-r from-emerald-500 to-cyan-500 text-black font-bold hover:shadow-lg transition"
+              >
+                <span class="lang-ru">Пройти ещё раз</span
+                ><span class="lang-az">Təkrar keç</span>
+              </button>
+              <button
+                onclick="showTab('theory')"
+                class="px-5 py-2.5 rounded-xl glass hover:bg-white/5 font-medium transition"
+              >
+                <span class="lang-ru">К теории</span
+                ><span class="lang-az">Nəzəriyyəyə</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <script>
+      // ================== STATE ==================
+      const State = {
+        lang: "ru",
+        slide: 0,
+        trainer: { current: null, correct: 0, total: 0, streak: 0 },
+        quiz: {
+          mode: null,
+          current: 0,
+          score: 0,
+          answers: [],
+          timer: null,
+          timeLeft: 600,
+          startTime: 0,
+        },
+      };
+
+      // ================== SVG GEOMETRY ==================
+      const SVG = {
+        angle: (type) => {
+          const colors = {
+            acute: "#10b981",
+            right: "#3b82f6",
+            obtuse: "#f97316",
+            straight: "#a855f7",
+          };
+          const c = colors[type] || "#10b981";
+          const paths = {
+            acute:
+              '<line x1="20" y1="80" x2="80" y2="80" stroke="white" stroke-width="2"/><line x1="20" y1="80" x2="70" y2="30" stroke="white" stroke-width="2"/><path d="M 30 80 A 15 15 0 0 0 45 65" fill="none" stroke="' +
+              c +
+              '" stroke-width="3"/>',
+            right:
+              '<line x1="20" y1="80" x2="80" y2="80" stroke="white" stroke-width="2"/><line x1="20" y1="80" x2="20" y2="20" stroke="white" stroke-width="2"/><rect x="20" y="65" width="15" height="15" fill="none" stroke="' +
+              c +
+              '" stroke-width="2"/><path d="M 20 65 L 35 65 L 35 80" fill="none" stroke="' +
+              c +
+              '" stroke-width="2"/>',
+            obtuse:
+              '<line x1="10" y1="80" x2="90" y2="80" stroke="white" stroke-width="2"/><line x1="10" y1="80" x2="30" y2="20" stroke="white" stroke-width="2"/><path d="M 20 80 A 25 25 0 0 0 35 60" fill="none" stroke="' +
+              c +
+              '" stroke-width="3"/>',
+            straight:
+              '<line x1="10" y1="50" x2="90" y2="50" stroke="white" stroke-width="2"/><line x1="10" y1="50" x2="50" y2="50" stroke="' +
+              c +
+              '" stroke-width="3"/><circle cx="50" cy="50" r="3" fill="' +
+              c +
+              '"/>',
+          };
+          return (
+            '<svg class="svg-geo mx-auto" width="200" height="120" viewBox="0 0 100 100">' +
+            paths[type] +
+            "</svg>"
+          );
+        },
+        adjacent: () =>
+          '<svg class="svg-geo mx-auto" width="200" height="120" viewBox="0 0 100 100"><line x1="10" y1="80" x2="90" y2="80" stroke="white" stroke-width="2"/><line x1="50" y1="80" x2="20" y2="20" stroke="#10b981" stroke-width="2"/><line x1="50" y1="80" x2="80" y2="20" stroke="#3b82f6" stroke-width="2"/><path d="M 40 80 A 12 12 0 0 0 35 70" fill="none" stroke="#10b981" stroke-width="2"/><path d="M 60 80 A 12 12 0 0 1 65 70" fill="none" stroke="#3b82f6" stroke-width="2"/><text x="25" y="18" fill="#10b981" font-size="8">α</text><text x="70" y="18" fill="#3b82f6" font-size="8">β</text></svg>',
+        vertical: () =>
+          '<svg class="svg-geo mx-auto" width="200" height="140" viewBox="0 0 100 100"><line x1="10" y1="50" x2="90" y2="50" stroke="white" stroke-width="2"/><line x1="50" y1="10" x2="50" y2="90" stroke="white" stroke-width="2"/><path d="M 50 50 A 10 10 0 0 1 45 42" fill="none" stroke="#10b981" stroke-width="2"/><path d="M 50 50 A 10 10 0 0 0 55 58" fill="none" stroke="#10b981" stroke-width="2"/><path d="M 50 50 A 10 10 0 0 0 45 58" fill="none" stroke="#f97316" stroke-width="2"/><path d="M 50 50 A 10 10 0 0 1 55 42" fill="none" stroke="#f97316" stroke-width="2"/><text x="35" y="38" fill="#10b981" font-size="7">1</text><text x="58" y="62" fill="#10b981" font-size="7">1</text><text x="35" y="62" fill="#f97316" font-size="7">2</text><text x="58" y="38" fill="#f97316" font-size="7">2</text></svg>',
+        protractor: () =>
+          '<svg class="svg-geo mx-auto" width="220" height="120" viewBox="0 0 120 60"><path d="M 10 50 A 40 40 0 0 1 110 50" fill="none" stroke="white" stroke-width="2"/><line x1="10" y1="50" x2="110" y2="50" stroke="white" stroke-width="2"/><line x1="60" y1="50" x2="30" y2="20" stroke="#10b981" stroke-width="2"/><path d="M 50 50 A 10 10 0 0 0 45 42" fill="none" stroke="#10b981" stroke-width="2"/><text x="25" y="18" fill="#10b981" font-size="8">60°</text><text x="55" y="58" fill="white" font-size="8">O</text></svg>',
+      };
+
+      // ================== SLIDES ==================
+      const slides = [
+        {
+          ru: {
+            t: "📐 Что такое угол?",
+            b: "Угол — это геометрическая фигура, образованная двумя лучами (сторонами угла), выходящими из одной точки (вершины).<br><br>Обозначение: $\angle AOB$ или просто $\angle O$.<br><br>Углы измеряются в <b>градусах</b> (°).",
+          },
+          az: {
+            t: "📐 Bucaq nədir?",
+            b: "Bucaq — bir nöqtədən (təpə) çıxan iki şüa (tərəf) ilə əmələ gələn həndəsi fiqurdur.<br><br>İşarəsi: $\angle AOB$ və ya sadəcə $\angle O$.<br><br>Bucaqlar <b>dərəcə</b> (°) ilə ölçülür.",
+          },
+        },
+        {
+          ru: {
+            t: "📐 Острый угол",
+            b:
+              "<b>Острый угол</b> — меньше $90°$.<br><br>Пример: $30°, 45°, 60°$.<br><br>Напоминает острие ножа." +
+              SVG.angle("acute"),
+          },
+          az: {
+            t: "📐 İti bucaq",
+            b:
+              "<b>İti bucaq</b> — $90°$-dən kiçik.<br><br>Nümunə: $30°, 45°, 60°$.<br><br>Bıçağın ucu kimi təsəvvür edin." +
+              SVG.angle("acute"),
+          },
+        },
+        {
+          ru: {
+            t: "📐 Прямой угол",
+            b:
+              "<b>Прямой угол</b> — ровно $90°$.<br><br>Обозначается квадратиком на чертеже.<br><br>Пример: углы прямоугольника, углы квадрата." +
+              SVG.angle("right"),
+          },
+          az: {
+            t: "📐 Düz bucaq",
+            b:
+              "<b>Düz bucaq</b> — tam $90°$.<br><br>Çertyojda kvadrat işarəsi ilə göstərilir.<br><br>Nümunə: düzbucaqlının, kvadratın bucaqları." +
+              SVG.angle("right"),
+          },
+        },
+        {
+          ru: {
+            t: "📐 Тупой угол",
+            b:
+              "<b>Тупой угол</b> — больше $90°$, но меньше $180°$.<br><br>Пример: $100°, 135°, 170°$.<br><br>Шире прямого, но уже развёрнутого." +
+              SVG.angle("obtuse"),
+          },
+          az: {
+            t: "📐 Küt bucaq",
+            b:
+              "<b>Küt bucaq</b> — $90°$-dən böyük, $180°$-dən kiçik.<br><br>Nümunə: $100°, 135°, 170°$.<br><br>Düz bucaqdan geniş, açıq bucaqdan dar." +
+              SVG.angle("obtuse"),
+          },
+        },
+        {
+          ru: {
+            t: "📐 Развёрнутый угол",
+            b:
+              "<b>Развёрнутый угол</b> — ровно $180°$.<br><br>Стороны лежат на одной прямой, образуя полупрямую." +
+              SVG.angle("straight"),
+          },
+          az: {
+            t: "📐 Açıq bucaq",
+            b:
+              "<b>Açıq bucaq</b> — tam $180°$.<br><br>Tərəflər bir düz xətt üzərindədir və yarımdüz xətt əmələ gətirir." +
+              SVG.angle("straight"),
+          },
+        },
+        {
+          ru: {
+            t: "📐 Смежные углы",
+            b:
+              "<b>Смежные углы</b> — углы, у которых одна сторона общая, а две другие являются продолжениями друг друга.<br><br><b>Свойство:</b> сумма смежных углов равна $180°$.<br>$$ \alpha + \beta = 180° $$" +
+              SVG.adjacent(),
+          },
+          az: {
+            t: "📐 Qonşu bucaqlar",
+            b:
+              "<b>Qonşu bucaqlar</b> — bir tərəfi ortaq, digər iki tərəfi bir-birinin davamı olan bucaqlar.<br><br><b>Xassə:</b> qonşu bucaqların cəmi $180°$-dir.<br>$$ \alpha + \beta = 180° $$" +
+              SVG.adjacent(),
+          },
+        },
+        {
+          ru: {
+            t: "📐 Вертикальные углы",
+            b:
+              "<b>Вертикальные углы</b> — углы, образованные пересечением двух прямых; стороны одного угла являются продолжениями сторон другого.<br><br><b>Свойство:</b> вертикальные углы <b>равны</b>.<br>$$ \angle 1 = \angle 1, \quad \angle 2 = \angle 2 $$" +
+              SVG.vertical(),
+          },
+          az: {
+            t: "📐 Qarşılıqlı bucaqlar",
+            b:
+              "<b>Qarşılıqlı bucaqlar</b> — iki düz xəttin kəsişməsi ilə əmələ gələn bucaqlar; bir bucağın tərəfləri digər bucağın tərəflərinin davamıdır.<br><br><b>Xassə:</b> qarşılıqlı bucaqlar <b>bərabərdir</b>.<br>$$ \angle 1 = \angle 1, \quad \angle 2 = \angle 2 $$" +
+              SVG.vertical(),
+          },
+        },
+        {
+          ru: {
+            t: "📐 Измерение углов",
+            b:
+              "Для измерения углов используют <b>транспортир</b>.<br><br>Центр транспортира совмещают с вершиной, а луч $0°$ — с одной из сторон.<br><br>Угол $60°$ показан на рисунке." +
+              SVG.protractor(),
+          },
+          az: {
+            t: "📐 Bucaqların ölçülməsi",
+            b:
+              "Bucaqları ölçmək üçün <b>transportir</b> istifadə olunur.<br><br>Transportirin mərkəzi təpə ilə, $0°$ şüası isə tərəflərdən biri ilə üst-üstə düşdürülür.<br><br>Şəkildə $60°$ bucaq göstərilib." +
+              SVG.protractor(),
+          },
+        },
+      ];
+
+      // ================== EXAMPLES DATA ==================
+      const examples = [
+        {
+          ru: {
+            t: "№ 1 Смежные углы",
+            d: "Углы",
+            p: "Один из смежных углов на $30°$ больше другого. Найдите эти углы.",
+            s: "Пусть $x$ — меньший угол, тогда $(x + 30°)$ — больший.\nСумма смежных углов: $x + (x + 30°) = 180°$\n$2x = 150° \rightarrow x = 75°$\n<b>Ответ:</b> $75°$ и $105°$",
+          },
+          az: {
+            t: "№ 1 Qonşu bucaqlar",
+            d: "Bucaqlar",
+            p: "Qonşu bucaqlardan biri digərindən $30°$ böyükdür. Bu bucaqları tapın.",
+            s: "Kiçik bucaq $x$ olsun, onda böyük bucaq $(x + 30°)$ olar.\nQonşu bucaqların cəmi: $x + (x + 30°) = 180°$\n$2x = 150° \rightarrow x = 75°$\n<b>Cavab:</b> $75°$ və $105°$",
+          },
+        },
+        {
+          ru: {
+            t: "№ 2 Вертикальные углы",
+            d: "Углы",
+            p: "Две прямые пересекаются. Один угол равен $40°$. Найдите остальные три.",
+            s: "Вертикальный угол = $40°$ (вертикальные равны).\nСмежные углы: $180° - 40° = 140°$\n<b>Ответ:</b> $40°, 140°, 140°$",
+          },
+          az: {
+            t: "№ 2 Qarşılıqlı bucaqlar",
+            d: "Bucaqlar",
+            p: "İki düz xətt kəsişir. Bucaqlarından biri $40°$-dir. Digər üç bucağı tapın.",
+            s: "Qarşılıqlı bucaq = $40°$ (qarşılıqlı bucaqlar bərabərdir).\nQonşu bucaqlar: $180° - 40° = 140°$\n<b>Cavab:</b> $40°, 140°, 140°$",
+          },
+        },
+        {
+          ru: {
+            t: "№ 3 Прямой угол",
+            d: "Углы",
+            p: "Один из смежных углов прямой. Чему равен другой?",
+            s: "Смежные углы в сумме дают $180°$.\nЕсли один $90°$, то другой: $180° - 90° = 90°$\n<b>Ответ:</b> $90°$ (тоже прямой)",
+          },
+          az: {
+            t: "№ 3 Düz bucaq",
+            d: "Bucaqlar",
+            p: "Qonşu bucaqlardan biri düz bucaqdır. Digəri neçə dərəcədir?",
+            s: "Qonşu bucaqların cəmi $180°$-dir.\nBiri $90°$-dirsə, digəri: $180° - 90° = 90°$\n<b>Cavab:</b> $90°$ (həmçinin düz bucaq)",
+          },
+        },
+        {
+          ru: {
+            t: "№ 4 Тупой угол",
+            d: "Углы",
+            p: "Сумма двух углов $200°$. Может ли один из них быть тупым, а другой — прямым?",
+            s: "Тупой угол $> 90°$, прямой $= 90°$.\nМинимальная сумма: $91° + 90° = 181°$.\nМаксимальная: $179° + 90° = 269°$.\n$200°$ попадает в диапазон $[181°, 269°]$.\n<b>Ответ:</b> Да, может.",
+          },
+          az: {
+            t: "№ 4 Küt bucaq",
+            d: "Bucaqlar",
+            p: "İki bucağın cəmi $200°$-dir. Biri küt, digəri düz bucaq ola bilərmi?",
+            s: "Küt bucaq $> 90°$, düz bucaq $= 90°$.\nMinimal cəmi: $91° + 90° = 181°$.\nMaksimal: $179° + 90° = 269°$.\n$200°$ bu aralığa düşür.\n<b>Cavab:</b> Bəli, ola bilər.",
+          },
+        },
+        {
+          ru: {
+            t: "№ 5 Смежные углы",
+            d: "Углы",
+            p: "Смежные углы относятся как $2:3$. Найдите эти углы.",
+            s: "Пусть углы $2x$ и $3x$.\n$2x + 3x = 180° \rightarrow 5x = 180° \rightarrow x = 36°$\nУглы: $2 \cdot 36° = 72°$ и $3 \cdot 36° = 108°$\n<b>Ответ:</b> $72°$ и $108°$",
+          },
+          az: {
+            t: "№ 5 Qonşu bucaqlar",
+            d: "Bucaqlar",
+            p: "Qonşu bucaqlar $2:3$ nisbətindədir. Bucaqları tapın.",
+            s: "Bucaqlar $2x$ və $3x$ olsun.\n$2x + 3x = 180° \rightarrow 5x = 180° \rightarrow x = 36°$\nBucaqlar: $2 \cdot 36° = 72°$ və $3 \cdot 36° = 108°$\n<b>Cavab:</b> $72°$ və $108°$",
+          },
+        },
+        {
+          ru: {
+            t: "№ 6 Вертикальные углы",
+            d: "Углы",
+            p: "Вертикальные углы $\angle AOC$ и $\angle BOD$ равны $35°$. Найдите $\angle AOD$.",
+            s: "$\angle AOC$ и $\angle AOD$ — смежные.\n$\angle AOD = 180° - 35° = 145°$\n<b>Ответ:</b> $145°$",
+          },
+          az: {
+            t: "№ 6 Qarşılıqlı bucaqlar",
+            d: "Bucaqlar",
+            p: "Qarşılıqlı $\angle AOC$ və $\angle BOD$ bucaqları $35°$-dir. $\angle AOD$ bucağını tapın.",
+            s: "$\angle AOC$ və $\angle AOD$ — qonşu bucaqlardır.\n$\angle AOD = 180° - 35° = 145°$\n<b>Cavab:</b> $145°$",
+          },
+        },
+      ];
+
+      // ================== QUESTIONS ==================
+      const questions = [
+        {
+          ru: {
+            q: "Чему равен развёрнутый угол?",
+            o: ["90°", "180°", "360°", "45°"],
+          },
+          az: {
+            q: "Açıq bucaq neçə dərəcədir?",
+            o: ["90°", "180°", "360°", "45°"],
+          },
+          a: 1,
+        },
+        {
+          ru: {
+            q: "Сколько градусов в прямом угле?",
+            o: ["45°", "90°", "180°", "60°"],
+          },
+          az: {
+            q: "Düz bucaq neçə dərəcədir?",
+            o: ["45°", "90°", "180°", "60°"],
+          },
+          a: 1,
+        },
+        {
+          ru: {
+            q: "Сумма смежных углов равна:",
+            o: ["90°", "180°", "360°", "120°"],
+          },
+          az: {
+            q: "Qonşu bucaqların cəmi nəyə bərabərdir?",
+            o: ["90°", "180°", "360°", "120°"],
+          },
+          a: 1,
+        },
+        {
+          ru: {
+            q: "Вертикальные углы:",
+            o: ["В сумме 180°", "Равны", "В сумме 90°", "Смежные"],
+          },
+          az: {
+            q: "Qarşılıqlı bucaqlar:",
+            o: ["Cəmi 180°", "Bərabərdir", "Cəmi 90°", "Qonşudur"],
+          },
+          a: 1,
+        },
+        {
+          ru: { q: "Острый угол:", o: ["< 90°", "= 90°", "> 90°", "= 180°"] },
+          az: { q: "İti bucaq:", o: ["< 90°", "= 90°", "> 90°", "= 180°"] },
+          a: 0,
+        },
+        {
+          ru: {
+            q: "Тупой угол:",
+            o: ["< 90°", "= 90°", "> 90° и < 180°", "= 180°"],
+          },
+          az: {
+            q: "Küt bucaq:",
+            o: ["< 90°", "= 90°", "> 90° və < 180°", "= 180°"],
+          },
+          a: 2,
+        },
+        {
+          ru: {
+            q: "Если один из смежных углов 70°, то другой:",
+            o: ["70°", "110°", "180°", "90°"],
+          },
+          az: {
+            q: "Qonşu bucaqlardan biri 70°-dirsə, digəri:",
+            o: ["70°", "110°", "180°", "90°"],
+          },
+          a: 1,
+        },
+        {
+          ru: {
+            q: "Два вертикальных угла: 40° и x. x = ?",
+            o: ["40°", "140°", "180°", "90°"],
+          },
+          az: {
+            q: "İki qarşılıqlı bucaq: 40° və x. x = ?",
+            o: ["40°", "140°", "180°", "90°"],
+          },
+          a: 0,
+        },
+        {
+          ru: {
+            q: "Смежные углы: 110° и x. x = ?",
+            o: ["110°", "70°", "180°", "90°"],
+          },
+          az: {
+            q: "Qonşu bucaqlar: 110° və x. x = ?",
+            o: ["110°", "70°", "180°", "90°"],
+          },
+          a: 1,
+        },
+        {
+          ru: {
+            q: "Перпендикулярные прямые пересекаются под углом:",
+            o: ["45°", "90°", "180°", "60°"],
+          },
+          az: {
+            q: "Perpendikulyar düz xətlər hansı bucaq altında kəsişir?",
+            o: ["45°", "90°", "180°", "60°"],
+          },
+          a: 1,
+        },
+        {
+          ru: {
+            q: "Острый угол может быть равен:",
+            o: ["95°", "89°", "90°", "180°"],
+          },
+          az: { q: "İti bucaq ola bilər:", o: ["95°", "89°", "90°", "180°"] },
+          a: 1,
+        },
+        {
+          ru: {
+            q: "Тупой угол может быть равен:",
+            o: ["80°", "90°", "100°", "45°"],
+          },
+          az: { q: "Küt bucaq ola bilər:", o: ["80°", "90°", "100°", "45°"] },
+          a: 2,
+        },
+        {
+          ru: {
+            q: "Сумма двух острых углов может быть:",
+            o: [
+              "Только острым",
+              "Только прямым",
+              "Острым, прямым или тупым",
+              "Только тупым",
+            ],
+          },
+          az: {
+            q: "İki iti bucağın cəmi ola bilər:",
+            o: ["Yalnız iti", "Yalnız düz", "İti, düz və ya küt", "Yalnız küt"],
+          },
+          a: 2,
+        },
+        {
+          ru: {
+            q: "Угол $45°$ является:",
+            o: ["Острым", "Прямым", "Тупым", "Развёрнутым"],
+          },
+          az: { q: "$45°$ bucağı:", o: ["İti", "Düz", "Küt", "Açıq"] },
+          a: 0,
+        },
+        {
+          ru: {
+            q: "Угол $135°$ является:",
+            o: ["Острым", "Прямым", "Тупым", "Развёрнутым"],
+          },
+          az: { q: "$135°$ bucağı:", o: ["İti", "Düz", "Küt", "Açıq"] },
+          a: 2,
+        },
+        {
+          ru: {
+            q: "Через точку вне прямой можно провести параллельных прямых:",
+            o: ["Одну", "Две", "Бесконечно много", "Ни одной"],
+          },
+          az: {
+            q: "Düz xətt xaricindəki nöqtədən neçə paralel düz xətt keçirmək olar?",
+            o: ["Bir", "İki", "Sonsuz sayda", "Heç bir"],
+          },
+          a: 0,
+        },
+        {
+          ru: {
+            q: "Параллельные прямые обозначаются:",
+            o: ["$\perp$", "$\parallel$", "$\angle$", "$\triangle$"],
+          },
+          az: {
+            q: "Paralel düz xətlər necə işarə olunur?",
+            o: ["$\perp$", "$\parallel$", "$\angle$", "$\triangle$"],
+          },
+          a: 1,
+        },
+        {
+          ru: {
+            q: "Перпендикулярные прямые обозначаются:",
+            o: ["$\parallel$", "$\perp$", "$\angle$", "$=$"],
+          },
+          az: {
+            q: "Perpendikulyar düz xətlər necə işarə olunur?",
+            o: ["$\parallel$", "$\perp$", "$\angle$", "$=$"],
+          },
+          a: 1,
+        },
+        {
+          ru: {
+            q: "Если два угла вертикальны и один $35°$, то другой:",
+            o: ["55°", "35°", "145°", "70°"],
+          },
+          az: {
+            q: "İki bucaq qarşılıqlıdırsa və biri $35°$-dirsə, digəri:",
+            o: ["55°", "35°", "145°", "70°"],
+          },
+          a: 1,
+        },
+        {
+          ru: {
+            q: "Один из смежных углов в 2 раза больше другого. Найдите меньший:",
+            o: ["30°", "60°", "90°", "120°"],
+          },
+          az: {
+            q: "Qonşu bucaqlardan biri digərindən 2 dəfə böyükdür. Kiçiyini tapın:",
+            o: ["30°", "60°", "90°", "120°"],
+          },
+          a: 1,
+        },
+        {
+          ru: {
+            q: "Смежные углы относятся как $1:2$. Найдите больший угол:",
+            o: ["60°", "90°", "120°", "150°"],
+          },
+          az: {
+            q: "Qonşu bucaqlar $1:2$ nisbətindədir. Böyüyünü tapın:",
+            o: ["60°", "90°", "120°", "150°"],
+          },
+          a: 2,
+        },
+        {
+          ru: {
+            q: "Развёрнутый угол равен:",
+            o: ["90°", "180°", "270°", "360°"],
+          },
+          az: {
+            q: "Açıq bucaq nəyə bərabərdir?",
+            o: ["90°", "180°", "270°", "360°"],
+          },
+          a: 1,
+        },
+        {
+          ru: { q: "Прямой угол равен:", o: ["45°", "90°", "180°", "100°"] },
+          az: {
+            q: "Düz bucaq nəyə bərabərdir?",
+            o: ["45°", "90°", "180°", "100°"],
+          },
+          a: 1,
+        },
+        {
+          ru: {
+            q: "Сумма углов треугольника равна:",
+            o: ["90°", "180°", "270°", "360°"],
+          },
+          az: {
+            q: "Üçbucağın bucaqlarının cəmi:",
+            o: ["90°", "180°", "270°", "360°"],
+          },
+          a: 1,
+        },
+        {
+          ru: {
+            q: "В прямоугольном треугольнике один угол $90°$, другой $30°$. Третий угол:",
+            o: ["30°", "60°", "90°", "45°"],
+          },
+          az: {
+            q: "Düzbucaqlı üçbucağın bir bucağı $90°$, digəri $30°$. Üçüncü bucaq:",
+            o: ["30°", "60°", "90°", "45°"],
+          },
+          a: 1,
+        },
+        {
+          ru: {
+            q: "Вертикальный угол к $75°$ равен:",
+            o: ["75°", "105°", "15°", "180°"],
+          },
+          az: {
+            q: "$75°$-nin qarşılıqlı bucağı:",
+            o: ["75°", "105°", "15°", "180°"],
+          },
+          a: 0,
+        },
+        {
+          ru: {
+            q: "Смежный угол к $25°$ равен:",
+            o: ["25°", "155°", "65°", "180°"],
+          },
+          az: {
+            q: "$25°$-nin qonşu bucağı:",
+            o: ["25°", "155°", "65°", "180°"],
+          },
+          a: 1,
+        },
+        {
+          ru: {
+            q: "Угол, смежный с прямым углом, равен:",
+            o: ["45°", "90°", "180°", "0°"],
+          },
+          az: {
+            q: "Düz bucağın qonşu bucağı:",
+            o: ["45°", "90°", "180°", "0°"],
+          },
+          a: 1,
+        },
+        {
+          ru: {
+            q: "Может ли угол быть одновременно острым и тупым?",
+            o: [
+              "Да",
+              "Нет",
+              "Только в треугольнике",
+              "Только при параллельных прямых",
+            ],
+          },
+          az: {
+            q: "Bucaq eyni zamanda həm iti, həm küt ola bilərmi?",
+            o: [
+              "Bəli",
+              "Xeyr",
+              "Yalnız üçbucaqda",
+              "Yalnız paralel düz xətlərdə",
+            ],
+          },
+          a: 1,
+        },
+        {
+          ru: {
+            q: "Угол $0°$ — это:",
+            o: [
+              "Острый угол",
+              "Нулевой угол",
+              "Развёрнутый угол",
+              "Прямой угол",
+            ],
+          },
+          az: {
+            q: "$0°$ bucağı — budur:",
+            o: ["İti bucaq", "Sıfır bucaq", "Açıq bucaq", "Düz bucaq"],
+          },
+          a: 1,
+        },
+      ];
+
+      // ================== RENDER ==================
+      function renderSlide() {
+        const s = slides[State.slide];
+        const d = State.lang === "ru" ? s.ru : s.az;
+        const container = document.getElementById("slides-container");
+        container.innerHTML =
+          '<div class="slide-enter"><h3 class="text-lg font-bold text-emerald-400 mb-3">' +
+          d.t +
+          '</h3><div class="text-gray-300 leading-relaxed">' +
+          d.b +
+          "</div></div>";
+        document.getElementById("slide-num").textContent = State.slide + 1;
+        document.getElementById("slide-progress").style.width =
+          ((State.slide + 1) / slides.length) * 100 + "%";
+        if (window.renderMathInElement)
+          renderMathInElement(container, {
+            delimiters: [
+              { left: "$$", right: "$$", display: true },
+              { left: "$", right: "$", display: false },
+            ],
+          });
+      }
+      function nextSlide() {
+        if (State.slide < slides.length - 1) {
+          State.slide++;
+          renderSlide();
+        }
+      }
+      function prevSlide() {
+        if (State.slide > 0) {
+          State.slide--;
+          renderSlide();
+        }
+      }
+
+      function renderExamples() {
+        const container = document.getElementById("examples-list");
+        container.innerHTML = "";
+        examples.forEach((ex, i) => {
+          const d = State.lang === "ru" ? ex.ru : ex.az;
+          const div = document.createElement("div");
+          div.className = "glass rounded-xl p-5";
+          div.innerHTML =
+            '<div class="flex items-center justify-between mb-3"><span class="px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-400 text-xs font-bold">' +
+            d.t +
+            '</span><span class="text-xs text-gray-500">' +
+            d.d +
+            '</span></div><div class="text-gray-200 mb-3">' +
+            d.p +
+            '</div><button onclick="toggleEx(' +
+            i +
+            ')" class="px-4 py-2 rounded-lg bg-emerald-500/20 text-emerald-400 text-sm font-semibold hover:bg-emerald-500/30 transition"><span class="lang-ru">Решение</span><span class="lang-az">Həll</span></button><div id="ex-' +
+            i +
+            '" class="hidden mt-4 p-4 rounded-lg bg-emerald-500/5 border-l-4 border-emerald-500 text-sm text-gray-300 whitespace-pre-line"></div>';
+          container.appendChild(div);
+        });
+      }
+      function toggleEx(i) {
+        const el = document.getElementById("ex-" + i);
+        const d = State.lang === "ru" ? examples[i].ru : examples[i].az;
+        el.innerHTML = d.s;
+        el.classList.toggle("hidden");
+        if (window.renderMathInElement)
+          renderMathInElement(el, {
+            delimiters: [
+              { left: "$$", right: "$$", display: true },
+              { left: "$", right: "$", display: false },
+            ],
+          });
+      }
+
+      // ================== TRAINER ==================
+      function rand(a, b) {
+        return Math.floor(Math.random() * (b - a + 1)) + a;
+      }
+      function genTrainer() {
+        const types = ["adjacent", "vertical", "type", "complement", "ratio"];
+        const t = types[rand(0, types.length - 1)];
+        let text, ans, hint;
+        if (t === "adjacent") {
+          const diff = rand(10, 80);
+          const x = (180 - diff) / 2;
+          if (x !== Math.floor(x)) return genTrainer();
+          text =
+            State.lang === "ru"
+              ? `Один из смежных углов больше другого на ${diff}°. Найдите меньший угол.`
+              : `Qonşu bucaqlardan biri digərindən ${diff}° böyükdür. Kiçik bucağı tapın.`;
+          ans = x.toString();
+          hint = `x + (x + ${diff}) = 180 → x = ${ans}`;
+        } else if (t === "vertical") {
+          const x = rand(20, 70);
+          text =
+            State.lang === "ru"
+              ? `Две прямые пересекаются. Вертикальный угол равен ${x}°. Найдите другой вертикальный угол.`
+              : `İki düz xətt kəsişir. Qarşılıqlı bucaq ${x}°-dir. Digər qarşılıqlı bucağı tapın.`;
+          ans = x.toString();
+          hint =
+            State.lang === "ru"
+              ? `Вертикальные углы равны. Ответ: ${ans}°`
+              : `Qarşılıqlı bucaqlar bərabərdir. Cavab: ${ans}°`;
+        } else if (t === "type") {
+          const types = [
+            { n: " acute", d: "острый/iti", check: (v) => v < 90 },
+            { n: "right", d: "прямой/düz", check: (v) => v === 90 },
+            { n: "obtuse", d: "тупой/küt", check: (v) => v > 90 && v < 180 },
+          ];
+          const tp = types[rand(0, 2)];
+          const vals = [rand(30, 80), 90, rand(100, 170)];
+          const v = vals[rand(0, 2)];
+          text =
+            State.lang === "ru"
+              ? `Угол ${v}° является ${tp.d.split("/")[0]}? (да/нет)`
+              : `${v}° bucağı ${tp.d.split("/")[1]}dir? (bəli/xeyr)`;
+          ans = tp.check(v)
+            ? State.lang === "ru"
+              ? "да"
+              : "bəli"
+            : State.lang === "ru"
+              ? "нет"
+              : "xeyr";
+          hint =
+            State.lang === "ru"
+              ? `Проверьте условие для ${tp.d.split("/")[0]} угла.`
+              : `${tp.d.split("/")[1]} bucaq üçün şərti yoxlayın.`;
+        } else if (t === "complement") {
+          const x = rand(20, 160);
+          text =
+            State.lang === "ru"
+              ? `Найдите угол, смежный с углом ${x}°.`
+              : `${x}° bucağın qonşu bucağını tapın.`;
+          ans = (180 - x).toString();
+          hint = `180 - ${x} = ${ans}`;
+        } else {
+          const r1 = rand(1, 5),
+            r2 = rand(1, 5);
+          const sum = 180;
+          const x = sum / (r1 + r2);
+          if (x !== Math.floor(x)) return genTrainer();
+          text =
+            State.lang === "ru"
+              ? `Смежные углы относятся как ${r1}:${r2}. Найдите больший угол.`
+              : `Qonşu bucaqlar ${r1}:${r2} nisbətindədir. Böyüyünü tapın.`;
+          ans = (x * Math.max(r1, r2)).toString();
+          hint = `${r1}x + ${r2}x = 180 → x = ${x} → ${Math.max(r1, r2)}x = ${ans}`;
+        }
+        return { text, ans, hint };
+      }
+      function newTrainer() {
+        State.trainer.current = genTrainer();
+        document.getElementById("trainer-task").innerHTML =
+          '<div class="text-lg font-medium text-white mb-2">' +
+          State.trainer.current.text +
+          "</div>";
+        document.getElementById("trainer-input").value = "";
+        document.getElementById("trainer-feedback").innerHTML = "";
+        document.getElementById("trainer-hint").classList.add("hidden");
+        document.getElementById("trainer-check").disabled = false;
+      }
+      function showHint() {
+        if (!State.trainer.current) return;
+        document.getElementById("trainer-hint").textContent =
+          "💡 " + State.trainer.current.hint;
+        document.getElementById("trainer-hint").classList.remove("hidden");
+      }
+      function checkTrainer() {
+        if (!State.trainer.current) return;
+        const val = document
+          .getElementById("trainer-input")
+          .value.trim()
+          .toLowerCase()
+          .replace("°", "")
+          .replace("см", "")
+          .replace("m", "");
+        const correct = State.trainer.current.ans.toLowerCase();
+        const isCorrect =
+          val === correct || parseFloat(val) === parseFloat(correct);
+        State.trainer.total++;
+        const fb = document.getElementById("trainer-feedback");
+        if (isCorrect) {
+          State.trainer.correct++;
+          State.trainer.streak++;
+          fb.innerHTML =
+            '<div class="text-emerald-400 font-bold text-lg">✓ ' +
+            (State.lang === "ru" ? "Верно!" : "Düzgün!") +
+            " " +
+            State.trainer.current.ans +
+            "</div>";
+        } else {
+          State.trainer.streak = 0;
+          fb.innerHTML =
+            '<div class="text-red-400 font-bold text-lg">✗ ' +
+            (State.lang === "ru"
+              ? "Неверно. Правильный ответ: "
+              : "Səhv. Düzgün cavab: ") +
+            State.trainer.current.ans +
+            "</div>";
+        }
+        document.getElementById("stat-correct").textContent =
+          State.trainer.correct;
+        document.getElementById("stat-total").textContent = State.trainer.total;
+        document.getElementById("stat-streak").textContent =
+          State.trainer.streak;
+        document.getElementById("trainer-check").disabled = true;
+      }
+
+      // ================== QUIZ ==================
+      function startDiagnostic() {
+        State.quiz.mode = "diag";
+        State.quiz.current = 0;
+        State.quiz.score = 0;
+        State.quiz.answers = [];
+        showQuiz();
+        renderQuestion();
+      }
+      function startTimeAttack() {
+        State.quiz.mode = "time";
+        State.quiz.current = 0;
+        State.quiz.score = 0;
+        State.quiz.answers = [];
+        State.quiz.timeLeft = 600;
+        State.quiz.startTime = Date.now();
+        showQuiz();
+        renderQuestion();
+        startTimer();
+      }
+      function showQuiz() {
+        document.getElementById("assessment-menu").classList.add("hidden");
+        document.getElementById("quiz-ui").classList.remove("hidden");
+        document.getElementById("results-ui").classList.add("hidden");
+      }
+      function startTimer() {
+        document.getElementById("timer").classList.remove("hidden");
+        State.quiz.timer = setInterval(() => {
+          State.quiz.timeLeft--;
+          updateTimer();
+          if (State.quiz.timeLeft <= 0) finishQuiz();
+        }, 1000);
+      }
+      function updateTimer() {
+        const m = Math.floor(State.quiz.timeLeft / 60);
+        const s = State.quiz.timeLeft % 60;
+        document.getElementById("timer-display").textContent =
+          m + ":" + s.toString().padStart(2, "0");
+        const el = document.getElementById("timer");
+        el.classList.toggle("text-red-400", State.quiz.timeLeft <= 60);
+        el.classList.toggle("border-red-500/50", State.quiz.timeLeft <= 60);
+      }
+      function renderQuestion() {
+        const q = questions[State.quiz.current];
+        const d = State.lang === "ru" ? q.ru : q.az;
+        document.getElementById("q-current").textContent =
+          State.quiz.current + 1;
+        document.getElementById("q-score").innerHTML =
+          State.quiz.score +
+          ' <span class="lang-ru">правильных</span><span class="lang-az">düzgün</span>';
+        document.getElementById("q-progress").style.width =
+          ((State.quiz.current + 1) / questions.length) * 100 + "%";
+        document.getElementById("q-text").innerHTML = d.q;
+        const opts = document.getElementById("q-options");
+        opts.innerHTML = "";
+        d.o.forEach((opt, i) => {
+          const div = document.createElement("div");
+          div.className =
+            "option-card glass rounded-xl p-4 flex items-center gap-3";
+          div.innerHTML =
+            '<div class="w-8 h-8 rounded-lg bg-gray-800 flex items-center justify-center font-bold text-sm">' +
+            String.fromCharCode(65 + i) +
+            "</div><div>" +
+            opt +
+            "</div>";
+          div.onclick = () => selectOption(i, div);
+          opts.appendChild(div);
+        });
+        document.getElementById("btn-prev").disabled = State.quiz.current === 0;
+        document.getElementById("btn-next").disabled = true;
+        document.getElementById("q-explain").classList.add("hidden");
+        if (window.renderMathInElement)
+          renderMathInElement(document.getElementById("q-text"), {
+            delimiters: [
+              { left: "$$", right: "$$", display: true },
+              { left: "$", right: "$", display: false },
+            ],
+          });
+      }
+      function selectOption(idx, el) {
+        if (document.getElementById("btn-next").disabled === false) return;
+        const q = questions[State.quiz.current];
+        const correct = idx === q.a;
+        if (correct) State.quiz.score++;
+        State.quiz.answers[State.quiz.current] = idx;
+        document
+          .querySelectorAll("#q-options .option-card")
+          .forEach((opt, i) => {
+            opt.classList.add("pointer-events-none", "opacity-80");
+            if (i === q.a) opt.classList.add("correct");
+            else if (i === idx && !correct) opt.classList.add("wrong");
+          });
+        if (State.quiz.mode === "diag") {
+          const d = State.lang === "ru" ? q.ru : q.az;
+          document.getElementById("q-explain").innerHTML =
+            '<strong class="' +
+            (correct ? "text-emerald-400" : "text-red-400") +
+            '">' +
+            (correct
+              ? State.lang === "ru"
+                ? "✓ Верно!"
+                : "✓ Düzgün!"
+              : State.lang === "ru"
+                ? "✗ Неверно."
+                : "✗ Səhv.") +
+            "</strong> " +
+            (State.lang === "ru" ? "Правильный ответ: " : "Düzgün cavab: ") +
+            d.o[q.a];
+          document.getElementById("q-explain").classList.remove("hidden");
+        }
+        document.getElementById("btn-next").disabled = false;
+      }
+      function nextQuestion() {
+        if (State.quiz.current < questions.length - 1) {
+          State.quiz.current++;
+          renderQuestion();
+        } else {
+          finishQuiz();
+        }
+      }
+      function prevQuestion() {
+        if (State.quiz.current > 0) {
+          State.quiz.current--;
+          renderQuestion();
+        }
+      }
+      function finishQuiz() {
+        if (State.quiz.timer) clearInterval(State.quiz.timer);
+        document.getElementById("timer").classList.add("hidden");
+        document.getElementById("quiz-ui").classList.add("hidden");
+        document.getElementById("results-ui").classList.remove("hidden");
+        const pct = Math.round((State.quiz.score / questions.length) * 100);
+        const timeSpent =
+          State.quiz.mode === "time"
+            ? Math.floor((Date.now() - State.quiz.startTime) / 1000)
+            : 0;
+        const m = Math.floor(timeSpent / 60);
+        const s = timeSpent % 60;
+        document.getElementById("result-percent").textContent = pct + "%";
+        document.getElementById("result-circle").style.strokeDashoffset =
+          283 - (283 * pct) / 100;
+        document.getElementById("res-correct").textContent = State.quiz.score;
+        document.getElementById("res-wrong").textContent =
+          questions.length - State.quiz.score;
+        document.getElementById("res-time").textContent =
+          State.quiz.mode === "time"
+            ? m + ":" + s.toString().padStart(2, "0")
+            : "—";
+        let level = State.lang === "ru" ? "Начальный" : "Başlanğıc";
+        if (pct >= 90) level = State.lang === "ru" ? "Эксперт" : "Ekspert";
+        else if (pct >= 70)
+          level = State.lang === "ru" ? "Продвинутый" : "İrəli";
+        else if (pct >= 50) level = State.lang === "ru" ? "Средний" : "Orta";
+        document.getElementById("res-level").textContent = level;
+        let msg = "";
+        if (pct >= 90)
+          msg =
+            State.quiz.mode === "time"
+              ? State.lang === "ru"
+                ? "🏆 Превосходно!"
+                : "🏆 Əla!"
+              : State.lang === "ru"
+                ? "Отлично!"
+                : "Əla!";
+        else if (pct >= 70)
+          msg =
+            State.lang === "ru" ? "🥈 Хороший результат!" : "🥈 Yaxşı nəticə!";
+        else if (pct >= 50)
+          msg = State.lang === "ru" ? "🥉 Удовлетворительно." : "🥉 Qaneedici.";
+        else
+          msg =
+            State.lang === "ru"
+              ? "💪 Нужно больше практики."
+              : "💪 Daha çox praktika lazımdır.";
+        document.getElementById("result-message").textContent = msg;
+      }
+      function resetAssessment() {
+        document.getElementById("results-ui").classList.add("hidden");
+        document.getElementById("assessment-menu").classList.remove("hidden");
+      }
+
+      // ================== NAVIGATION ==================
+      function showTab(id) {
+        document
+          .querySelectorAll(".tab-content")
+          .forEach((s) => s.classList.add("hidden"));
+        document.getElementById(id).classList.remove("hidden");
+        document
+          .querySelectorAll(".nav-link")
+          .forEach((a) =>
+            a.classList.remove("active-nav", "text-white", "bg-white/5"),
+          );
+        const active = document.querySelector(
+          '.nav-link[data-tab="' + id + '"]',
+        );
+        if (active)
+          active.classList.add("active-nav", "text-white", "bg-white/5");
+        window.scrollTo(0, 0);
+      }
+      document.querySelectorAll(".nav-link").forEach((link) => {
+        link.addEventListener("click", (e) => {
+          e.preventDefault();
+          showTab(link.dataset.tab);
+        });
+      });
+
+      function toggleLang() {
+        State.lang = State.lang === "ru" ? "az" : "ru";
+        document.body.classList.toggle("lang-az", State.lang === "az");
+        renderSlide();
+        renderExamples();
+        if (State.trainer.current) {
+          document.getElementById("trainer-task").innerHTML =
+            '<div class="text-lg font-medium text-white">' +
+            State.trainer.current.text +
+            "</div>";
+        }
+      }
+
+      // ================== INIT ==================
+      document.addEventListener("DOMContentLoaded", () => {
+        renderSlide();
+        renderExamples();
+        newTrainer();
+        document
+          .getElementById("trainer-input")
+          .addEventListener("keypress", (e) => {
+            if (e.key === "Enter") checkTrainer();
+          });
+        // KaTeX render
+        if (window.renderMathInElement) {
+          renderMathInElement(document.body, {
+            delimiters: [
+              { left: "$$", right: "$$", display: true },
+              { left: "$", right: "$", display: false },
+            ],
+          });
+        } else {
+          setTimeout(() => {
+            if (window.renderMathInElement)
+              renderMathInElement(document.body, {
+                delimiters: [
+                  { left: "$$", right: "$$", display: true },
+                  { left: "$", right: "$", display: false },
+                ],
+              });
+          }, 500);
+        }
+      });
+    </script>
+  </body>
+</html>

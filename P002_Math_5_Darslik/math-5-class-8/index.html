@@ -1,0 +1,436 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Математика 5 класс — Статистика и представление информации</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet" />
+    <style>
+      :root {
+        --bg: #0f172a; --surface: #1e293b; --surface2: #273348; --border: #334155;
+        --text: #f1f5f9; --muted: #94a3b8; --xp: #facc15; --streak: #fb923c;
+        --heart: #f43f5e; --success: #22c55e;
+        --accent: #06b6d4; --accent2: #22d3ee; --radius: 20px; --shadow: 0 8px 32px rgba(0,0,0,0.4);
+      }
+      *{box-sizing:border-box;margin:0;padding:0;}
+      html{scroll-behavior:smooth;}
+      body{font-family:"Nunito",sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;}
+      body::before{content:"";position:fixed;inset:0;background:radial-gradient(ellipse at 20% 20%,rgba(6,182,212,0.09) 0%,transparent 50%),radial-gradient(ellipse at 80% 80%,rgba(34,211,238,0.08) 0%,transparent 50%);pointer-events:none;z-index:0;}
+      .top-bar{position:sticky;top:0;z-index:200;background:rgba(15,23,42,0.95);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);padding:0 1rem;}
+      .top-bar-inner{max-width:680px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;padding:0.75rem 0;gap:1rem;}
+      .course-title{font-size:1rem;font-weight:900;background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;white-space:nowrap;}
+      .stats-row{display:flex;gap:1rem;align-items:center;flex-shrink:0;}
+      .stat-pill{display:flex;align-items:center;gap:0.35rem;padding:0.35rem 0.75rem;background:var(--surface);border-radius:999px;border:1px solid var(--border);font-weight:800;font-size:0.95rem;cursor:default;transition:transform 0.2s;}
+      .stat-pill:hover{transform:scale(1.05);}
+      .stat-pill .icon{font-size:1.1rem;}
+      .stat-pill.xp{color:var(--xp);}
+      .stat-pill.streak{color:var(--streak);}
+      .stat-pill.hearts{color:var(--heart);}
+      .level-banner{background:var(--surface);border-bottom:1px solid var(--border);padding:0.6rem 1rem;}
+      .level-inner{max-width:680px;margin:0 auto;display:flex;align-items:center;gap:0.75rem;}
+      .level-badge{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#000;font-weight:900;width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.85rem;flex-shrink:0;box-shadow:0 0 12px rgba(6,182,212,0.5);}
+      .level-info{flex:1;}
+      .level-label{font-size:0.75rem;color:var(--muted);margin-bottom:0.25rem;}
+      .level-bar-track{height:8px;background:var(--border);border-radius:4px;overflow:hidden;}
+      .level-bar-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:4px;transition:width 0.6s cubic-bezier(0.4,0,0.2,1);}
+      .level-xp-text{font-size:0.75rem;color:var(--muted);white-space:nowrap;}
+      .course-progress{max-width:680px;margin:1.5rem auto 0.5rem;padding:0 1rem;}
+      .cp-row{display:flex;justify-content:space-between;font-size:0.8rem;color:var(--muted);margin-bottom:0.4rem;}
+      .cp-track{height:10px;background:var(--surface);border-radius:5px;overflow:hidden;border:1px solid var(--border);}
+      .cp-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:5px;transition:width 0.7s ease;}
+      .section-header{max-width:680px;margin:2rem auto 0.75rem;padding:0 1rem;display:flex;align-items:center;gap:0.75rem;}
+      .section-icon{width:40px;height:40px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0;}
+      .section-title-text h2{font-size:1rem;font-weight:800;margin-bottom:0.1rem;}
+      .section-title-text p{font-size:0.8rem;color:var(--muted);}
+      .path-container{max-width:680px;margin:0 auto;padding:0 1rem 6rem;position:relative;z-index:1;}
+      .connector{width:3px;height:40px;background:repeating-linear-gradient(to bottom,var(--border) 0,var(--border) 6px,transparent 6px,transparent 12px);margin:0 auto;transition:background 0.4s;}
+      .connector.done{background:repeating-linear-gradient(to bottom,var(--accent) 0,var(--accent) 6px,transparent 6px,transparent 12px);}
+      .lesson-node{display:flex;justify-content:center;position:relative;}
+      .lesson-node:nth-child(4n+1) .lesson-card{margin-left:-80px;}
+      .lesson-node:nth-child(4n+3) .lesson-card{margin-right:-80px;}
+      .lesson-card{width:100%;max-width:360px;background:var(--surface);border:2px solid var(--border);border-radius:var(--radius);padding:1.25rem;cursor:pointer;transition:all 0.25s cubic-bezier(0.4,0,0.2,1);position:relative;overflow:hidden;user-select:none;}
+      .lesson-card::before{content:"";position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,0.04),transparent);pointer-events:none;}
+      .lesson-card:hover:not(.locked){transform:translateY(-4px) scale(1.02);box-shadow:var(--shadow);}
+      .lesson-card.locked{opacity:0.55;cursor:not-allowed;filter:grayscale(0.4);}
+      .lesson-card.completed{border-color:rgba(6,182,212,0.4);}
+      .lesson-card.current{border-color:var(--accent-color,var(--accent));box-shadow:0 0 0 3px color-mix(in srgb,var(--accent-color,var(--accent)) 30%,transparent);animation:pulse-border 2s ease-in-out infinite;}
+      @keyframes pulse-border{0%,100%{box-shadow:0 0 0 3px color-mix(in srgb,var(--accent-color,var(--accent)) 30%,transparent)}50%{box-shadow:0 0 0 6px color-mix(in srgb,var(--accent-color,var(--accent)) 15%,transparent)}}
+      .card-accent{position:absolute;top:0;left:0;right:0;height:3px;background:var(--accent-color,var(--accent));border-radius:var(--radius) var(--radius) 0 0;}
+      .card-top{display:flex;align-items:center;gap:0.9rem;margin-bottom:0.9rem;}
+      .card-icon{width:52px;height:52px;border-radius:16px;background:color-mix(in srgb,var(--accent-color,var(--accent)) 20%,var(--surface));border:2px solid color-mix(in srgb,var(--accent-color,var(--accent)) 40%,transparent);display:flex;align-items:center;justify-content:center;font-size:1.6rem;flex-shrink:0;transition:transform 0.3s;}
+      .lesson-card:hover:not(.locked) .card-icon{transform:scale(1.1) rotate(-5deg);}
+      .card-meta{flex:1;}
+      .card-num{font-size:0.7rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.07em;margin-bottom:0.2rem;}
+      .card-name{font-size:1rem;font-weight:800;line-height:1.3;color:var(--text);}
+      .card-sub{font-size:0.8rem;color:var(--muted);margin-top:0.15rem;}
+      .card-bottom{display:flex;align-items:center;justify-content:space-between;gap:0.5rem;}
+      .stars-row{display:flex;gap:3px;}
+      .star{font-size:1.2rem;transition:transform 0.2s;}
+      .star.lit{filter:drop-shadow(0 0 4px #facc15);}
+      .xp-chip{display:flex;align-items:center;gap:0.3rem;padding:0.3rem 0.7rem;background:color-mix(in srgb,var(--xp) 15%,transparent);border:1px solid color-mix(in srgb,var(--xp) 40%,transparent);border-radius:999px;font-size:0.8rem;font-weight:800;color:var(--xp);}
+      .lock-icon{font-size:1.3rem;opacity:0.6;}
+      .progress-mini{height:4px;background:var(--border);border-radius:2px;overflow:hidden;margin-top:0.75rem;}
+      .progress-mini-fill{height:100%;background:linear-gradient(90deg,var(--accent-color,var(--accent)),color-mix(in srgb,var(--accent-color,var(--accent)) 60%,white));border-radius:2px;transition:width 0.5s ease;}
+      .card-action{margin-top:0.9rem;width:100%;padding:0.65rem;border:none;border-radius:12px;background:var(--accent-color,var(--accent));color:#000;font-family:"Nunito",sans-serif;font-weight:800;font-size:0.95rem;cursor:pointer;transition:all 0.2s;}
+      .card-action:hover{filter:brightness(1.1);transform:translateY(-1px);}
+      .card-action:active{transform:scale(0.98);}
+      .lesson-card.locked .card-action{background:var(--border);color:var(--muted);cursor:not-allowed;pointer-events:none;}
+      .achievement-banner{max-width:680px;margin:2rem auto;padding:0 1rem;}
+      .achievements-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:0.75rem;}
+      .achievement{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:0.9rem 0.75rem;text-align:center;transition:all 0.25s;}
+      .achievement.earned{border-color:var(--xp);background:color-mix(in srgb,var(--xp) 8%,var(--surface));box-shadow:0 0 16px color-mix(in srgb,var(--xp) 20%,transparent);}
+      .achievement .ach-icon{font-size:1.6rem;margin-bottom:0.4rem;}
+      .achievement .ach-name{font-size:0.75rem;font-weight:700;color:var(--muted);}
+      .achievement.earned .ach-name{color:var(--xp);}
+      .modal-overlay{position:fixed;inset:0;z-index:500;background:rgba(0,0,0,0.85);backdrop-filter:blur(8px);display:none;align-items:center;justify-content:center;padding:1rem;}
+      .modal-overlay.open{display:flex;}
+      .modal-box{background:var(--surface);border:1px solid var(--border);border-radius:24px;width:100%;max-width:1000px;height:90vh;display:flex;flex-direction:column;box-shadow:var(--shadow);overflow:hidden;animation:modal-in 0.3s cubic-bezier(0.34,1.56,0.64,1);}
+      @keyframes modal-in{from{transform:scale(0.92);opacity:0}to{transform:scale(1);opacity:1}}
+      .modal-header{padding:0.9rem 1.25rem;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-shrink:0;}
+      .modal-lesson-info{display:flex;align-items:center;gap:0.75rem;}
+      .modal-icon{font-size:1.5rem;}
+      .modal-title{font-weight:800;font-size:1rem;}
+      .modal-sub{font-size:0.8rem;color:var(--muted);}
+      .modal-close{width:36px;height:36px;border-radius:50%;background:var(--surface2);border:1px solid var(--border);color:var(--text);font-size:1.2rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.2s;flex-shrink:0;}
+      .modal-close:hover{background:var(--heart);border-color:var(--heart);}
+      .modal-iframe-wrap{flex:1;overflow:hidden;position:relative;}
+      .modal-iframe-wrap iframe{width:100%;height:100%;border:none;}
+      .modal-footer{padding:0.9rem 1.25rem;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-shrink:0;flex-wrap:wrap;}
+      .complete-label{font-size:0.85rem;font-weight:700;color:var(--muted);}
+      .star-rate{display:flex;gap:0.4rem;align-items:center;}
+      .star-btn{font-size:1.5rem;background:none;border:none;cursor:pointer;padding:0.2rem;transition:transform 0.2s;filter:grayscale(1) opacity(0.5);}
+      .star-btn:hover{transform:scale(1.3);filter:none;}
+      .star-btn.active{filter:none;}
+      .confirm-btn{padding:0.65rem 1.5rem;border:none;border-radius:12px;background:var(--success);color:#fff;font-family:"Nunito",sans-serif;font-weight:800;font-size:0.95rem;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;gap:0.4rem;}
+      .confirm-btn:hover{filter:brightness(1.1);transform:translateY(-1px);}
+      .confirm-btn:disabled{background:var(--border);color:var(--muted);cursor:not-allowed;transform:none;}
+      .open-new-tab{padding:0.65rem 1rem;border:1px solid var(--border);border-radius:12px;background:transparent;color:var(--muted);font-family:"Nunito",sans-serif;font-weight:700;font-size:0.85rem;cursor:pointer;transition:all 0.2s;}
+      .open-new-tab:hover{border-color:var(--text);color:var(--text);}
+      .xp-popup{position:fixed;top:80px;left:50%;transform:translateX(-50%);background:var(--xp);color:#000;font-family:"Nunito",sans-serif;font-weight:900;font-size:1.1rem;padding:0.6rem 1.5rem;border-radius:999px;z-index:600;pointer-events:none;opacity:0;transition:opacity 0.3s;box-shadow:0 4px 20px rgba(250,204,21,0.5);}
+      .xp-popup.show{opacity:1;animation:float-up 1.5s ease forwards;}
+      @keyframes float-up{0%{opacity:1;transform:translateX(-50%) translateY(0)}80%{opacity:1}100%{opacity:0;transform:translateX(-50%) translateY(-40px)}}
+      .confetti-piece{position:fixed;width:10px;height:10px;border-radius:2px;pointer-events:none;z-index:700;animation:confetti-fall 1.2s ease-in forwards;}
+      @keyframes confetti-fall{0%{transform:translateY(-20px) rotate(0deg);opacity:1}100%{transform:translateY(100vh) rotate(720deg);opacity:0}}
+      .back-link{display:flex;align-items:center;gap:0.3rem;padding:0.3rem 0.7rem;border-radius:999px;border:1px solid var(--border);background:var(--surface2);color:var(--muted);font-size:0.75rem;font-weight:700;text-decoration:none;transition:all 0.2s;white-space:nowrap;flex-shrink:0;}
+      .back-link:hover{border-color:var(--accent2);color:var(--accent2);}
+      ::-webkit-scrollbar{width:6px;}
+      ::-webkit-scrollbar-track{background:var(--surface);}
+      ::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px;}
+      .bottom-bar{position:fixed;bottom:0;left:0;right:0;z-index:100;background:rgba(15,23,42,0.97);border-top:1px solid var(--border);padding:0.6rem 1rem;display:flex;justify-content:space-around;align-items:center;}
+      .bottom-btn{display:flex;flex-direction:column;align-items:center;gap:0.2rem;background:none;border:none;cursor:pointer;color:var(--muted);font-family:"Nunito",sans-serif;font-size:0.7rem;font-weight:700;padding:0.4rem 0.8rem;border-radius:12px;transition:all 0.2s;}
+      .bottom-btn:hover,.bottom-btn.active{color:var(--text);background:var(--surface);}
+      .bottom-btn .b-icon{font-size:1.3rem;}
+      .teacher-overlay{position:fixed;inset:0;z-index:800;background:rgba(0,0,0,0.9);backdrop-filter:blur(12px);display:none;align-items:center;justify-content:center;padding:1rem;}
+      .teacher-overlay.open{display:flex;}
+      .teacher-box{background:#0f172a;border:1px solid #334155;border-radius:24px;width:100%;max-width:680px;max-height:90vh;overflow-y:auto;box-shadow:0 0 60px rgba(6,182,212,0.2);animation:modal-in 0.35s cubic-bezier(0.34,1.56,0.64,1);}
+      .teacher-login{padding:2.5rem;text-align:center;}
+      .teacher-login .t-icon{font-size:3rem;margin-bottom:0.75rem;}
+      .teacher-login h2{font-size:1.5rem;font-weight:900;margin-bottom:0.4rem;background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+      .teacher-login p{color:#64748b;font-size:0.9rem;margin-bottom:1.5rem;}
+      .pass-wrap{position:relative;margin-bottom:1rem;}
+      .pass-wrap input{width:100%;padding:0.9rem 3rem 0.9rem 1.1rem;background:#1e293b;border:2px solid #334155;border-radius:14px;color:#f1f5f9;font-family:"Nunito",sans-serif;font-size:1rem;font-weight:700;outline:none;transition:border 0.2s;}
+      .pass-wrap input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(6,182,212,0.2);}
+      .pass-wrap input.error{border-color:#f43f5e;animation:shake 0.3s ease;}
+      @keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
+      .pass-toggle{position:absolute;right:0.9rem;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:1.1rem;color:#64748b;}
+      .t-login-btn{width:100%;padding:0.9rem;border:none;border-radius:14px;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#000;font-family:"Nunito",sans-serif;font-weight:900;font-size:1rem;cursor:pointer;transition:all 0.2s;}
+      .t-login-btn:hover{filter:brightness(1.1);transform:translateY(-1px);}
+      .t-err{color:#f87171;font-size:0.85rem;margin-top:0.5rem;display:none;}
+      .t-hint{margin-top:1rem;font-size:0.8rem;color:#475569;}
+      .t-dashboard{display:none;}
+      .t-dash-header{padding:1.25rem 1.5rem;border-bottom:1px solid #1e293b;display:flex;align-items:center;justify-content:space-between;gap:1rem;background:linear-gradient(135deg,rgba(6,182,212,0.15),rgba(34,211,238,0.1));border-radius:24px 24px 0 0;}
+      .t-dash-title{font-weight:900;font-size:1.1rem;color:var(--accent2);}
+      .t-dash-actions{display:flex;gap:0.5rem;align-items:center;}
+      .t-btn{padding:0.5rem 1rem;border:1px solid #334155;border-radius:10px;background:#1e293b;color:#94a3b8;font-family:"Nunito",sans-serif;font-weight:700;font-size:0.8rem;cursor:pointer;transition:all 0.2s;}
+      .t-btn:hover{background:#273348;color:#f1f5f9;}
+      .t-btn.danger{border-color:#7f1d1d;color:#f87171;}
+      .t-btn.danger:hover{background:#450a0a;}
+      .t-btn.success{border-color:#14532d;color:#86efac;}
+      .t-btn.success:hover{background:#052e16;}
+      .t-btn.accent{border-color:rgba(6,182,212,0.4);color:var(--accent2);}
+      .t-btn.accent:hover{background:rgba(6,182,212,0.1);}
+      .t-close-btn{width:32px;height:32px;border-radius:50%;background:#1e293b;border:1px solid #334155;color:#f1f5f9;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:1rem;transition:all 0.2s;}
+      .t-close-btn:hover{background:#f43f5e;border-color:#f43f5e;}
+      .t-dash-body{padding:1.25rem 1.5rem;}
+      .t-section{margin-bottom:1.5rem;}
+      .t-section-label{font-size:0.7rem;font-weight:800;color:var(--accent2);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:0.75rem;padding-bottom:0.4rem;border-bottom:1px solid #1e293b;}
+      .t-xp-row{display:flex;gap:0.6rem;align-items:center;flex-wrap:wrap;}
+      .t-xp-input{padding:0.55rem 0.9rem;background:#1e293b;border:1px solid #334155;border-radius:10px;color:#facc15;font-family:"Nunito",sans-serif;font-weight:700;font-size:0.95rem;width:110px;outline:none;}
+      .t-lesson-row{display:grid;grid-template-columns:1fr auto auto;align-items:center;gap:0.75rem;padding:0.7rem 0.9rem;background:#1e293b;border-radius:12px;margin-bottom:0.5rem;border:1px solid #273348;}
+      .t-lesson-row:hover{border-color:#334155;}
+      .t-lesson-name{font-size:0.85rem;font-weight:700;color:#cbd5e1;}
+      .t-lesson-num{font-size:0.7rem;color:#475569;margin-top:0.1rem;}
+      .t-star-set{display:flex;gap:3px;}
+      .t-star-btn{width:28px;height:28px;border-radius:8px;border:1px solid #334155;background:#0f172a;cursor:pointer;font-size:0.9rem;display:flex;align-items:center;justify-content:center;transition:all 0.15s;}
+      .t-star-btn:hover{border-color:#facc15;background:#1e1b00;}
+      .t-star-btn.active{background:#1e1b00;border-color:#facc15;}
+      .t-lock-btn{width:28px;height:28px;border-radius:8px;border:1px solid #334155;background:#0f172a;cursor:pointer;font-size:0.85rem;display:flex;align-items:center;justify-content:center;transition:all 0.15s;}
+      .t-lock-btn:hover{border-color:#f87171;}
+      .t-pass-change{display:flex;gap:0.6rem;flex-wrap:wrap;align-items:center;}
+      .t-pass-change input{flex:1;min-width:140px;padding:0.55rem 0.9rem;background:#1e293b;border:1px solid #334155;border-radius:10px;color:#f1f5f9;font-family:"Nunito",sans-serif;font-size:0.9rem;font-weight:700;outline:none;}
+      .t-pass-change input:focus{border-color:var(--accent);}
+      .t-toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:#1e293b;border:1px solid var(--accent);color:var(--accent2);padding:0.6rem 1.4rem;border-radius:999px;font-weight:700;font-size:0.85rem;z-index:900;opacity:0;transition:opacity 0.3s;pointer-events:none;white-space:nowrap;}
+      .t-toast.show{opacity:1;}
+      @media(max-width:600px){.lesson-node:nth-child(4n+1) .lesson-card,.lesson-node:nth-child(4n+3) .lesson-card{margin:0;}.lesson-card{max-width:100%;}.course-title{font-size:0.85rem;}.stat-pill{padding:0.3rem 0.55rem;font-size:0.85rem;}.modal-box{height:95vh;border-radius:16px;}}
+    </style>
+  </head>
+  <body>
+    <div class="top-bar">
+      <div class="top-bar-inner">
+        <div style="display:flex;align-items:center;gap:0.6rem">
+          <a href="../index.html" class="back-link">← Все главы</a>
+          <div class="course-title">📊 Глава 8 · Статистика</div>
+        </div>
+        <div class="stats-row">
+          <div class="stat-pill xp"><span class="icon">⚡</span><span id="xpDisplay">0</span></div>
+          <div class="stat-pill streak"><span class="icon">🔥</span><span id="streakDisplay">0</span></div>
+          <div class="stat-pill hearts"><span class="icon">❤️</span><span id="heartsDisplay">5</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="level-banner">
+      <div class="level-inner">
+        <div class="level-badge" id="levelBadge">1</div>
+        <div class="level-info">
+          <div class="level-label" id="levelLabel">Новичок • до следующего уровня: 100 XP</div>
+          <div class="level-bar-track"><div class="level-bar-fill" id="levelBarFill" style="width:0%"></div></div>
+        </div>
+        <div class="level-xp-text" id="levelXpText">0 / 100</div>
+      </div>
+    </div>
+
+    <div class="course-progress">
+      <div class="cp-row"><span>Прогресс курса</span><span id="cpText">0 из 5 уроков</span></div>
+      <div class="cp-track"><div class="cp-fill" id="cpFill" style="width:0%"></div></div>
+    </div>
+
+    <div class="section-header">
+      <div class="section-icon" style="background:rgba(6,182,212,.15)">📊</div>
+      <div class="section-title-text"><h2>Статистика и представление информации</h2><p>Среднее арифметическое, круговая диаграмма, виды диаграмм</p></div>
+    </div>
+
+    <div class="path-container" id="pathContainer"></div>
+
+    <div class="achievement-banner" id="achievementBanner">
+      <div class="section-header" style="margin:0 0 1rem">
+        <div class="section-icon" style="background:rgba(250,204,21,0.15)">🏅</div>
+        <div class="section-title-text"><h2>Достижения</h2><p>Собери все награды</p></div>
+      </div>
+      <div class="achievements-grid" id="achievementsGrid"></div>
+    </div>
+
+    <div class="bottom-bar">
+      <button class="bottom-btn active" onclick="scrollToTop()"><span class="b-icon">🗺️</span>Курс</button>
+      <button class="bottom-btn" onclick="showStats()"><span class="b-icon">📊</span>Статистика</button>
+      <button class="bottom-btn" onclick="resetProgress()"><span class="b-icon">🔄</span>Сброс</button>
+      <button class="bottom-btn" onclick="openTeacher()"><span class="b-icon">🗝️</span>Учитель</button>
+    </div>
+
+    <!-- Teacher overlay -->
+    <div class="teacher-overlay" id="teacherOverlay">
+      <div class="teacher-box" id="teacherBox">
+        <div class="teacher-login" id="teacherLogin">
+          <div class="t-icon">👨‍🏫</div>
+          <h2>Вход для учителя</h2>
+          <p>Введите пароль для доступа к панели управления</p>
+          <div class="pass-wrap">
+            <input type="password" id="teacherPassInput" placeholder="Пароль учителя" onkeydown="if(event.key==='Enter')doTeacherLogin();" />
+            <button class="pass-toggle" onclick="togglePassVis()" title="Показать/скрыть">👁</button>
+          </div>
+          <div class="t-err" id="teacherErr">❌ Неверный пароль. Попробуйте ещё раз.</div>
+          <button class="t-login-btn" onclick="doTeacherLogin()">🔓 Войти</button>
+          <div class="t-hint">Пароль по умолчанию: <strong>Math5Teach</strong></div>
+          <button class="t-btn" style="margin-top:1rem;width:100%" onclick="closeTeacher()">Отмена</button>
+        </div>
+        <div class="t-dashboard" id="teacherDash">
+          <div class="t-dash-header">
+            <div><div class="t-dash-title">👨‍🏫 Панель учителя</div><div style="font-size:0.75rem;color:#475569;margin-top:0.2rem">Управление прогрессом ученика</div></div>
+            <div class="t-dash-actions">
+              <button class="t-btn accent" onclick="teacherUnlockAll()">🔓 Открыть всё</button>
+              <button class="t-btn danger" onclick="teacherResetAll()">🗑 Сброс</button>
+              <button class="t-btn" onclick="teacherLogout()">Выйти</button>
+              <button class="t-close-btn" onclick="closeTeacher()">✕</button>
+            </div>
+          </div>
+          <div class="t-dash-body">
+            <div class="t-section">
+              <div class="t-section-label">⚡ Управление XP</div>
+              <div class="t-xp-row">
+                <span style="font-size:0.85rem;color:#94a3b8">Текущий XP:</span>
+                <strong id="tCurrentXP" style="color:#facc15">0</strong>
+                <input class="t-xp-input" type="number" id="tXpVal" placeholder="Кол-во" min="0" />
+                <button class="t-btn success" onclick="teacherAddXP(1)">+ Добавить</button>
+                <button class="t-btn danger" onclick="teacherAddXP(-1)">− Убрать</button>
+              </div>
+            </div>
+            <div class="t-section">
+              <div class="t-section-label">📚 Уроки — звёзды и блокировка</div>
+              <div id="tLessonsControl"></div>
+            </div>
+            <div class="t-section">
+              <div class="t-section-label">🔑 Сменить пароль учителя</div>
+              <div class="t-pass-change">
+                <input type="password" id="tNewPass1" placeholder="Новый пароль" />
+                <input type="password" id="tNewPass2" placeholder="Повторите пароль" />
+                <button class="t-btn accent" onclick="teacherChangePassword()">💾 Сохранить</button>
+              </div>
+              <div id="tPassMsg" style="font-size:0.8rem;margin-top:0.5rem"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="t-toast" id="tToast"></div>
+
+    <!-- Modal -->
+    <div class="modal-overlay" id="modalOverlay">
+      <div class="modal-box">
+        <div class="modal-header">
+          <div class="modal-lesson-info">
+            <div class="modal-icon" id="modalIcon">📊</div>
+            <div><div class="modal-title" id="modalTitle">Урок</div><div class="modal-sub" id="modalSub">Изучи материал и оцени себя</div></div>
+          </div>
+          <button class="modal-close" onclick="closeModal()">✕</button>
+        </div>
+        <div class="modal-iframe-wrap"><iframe id="lessonFrame" title="Урок"></iframe></div>
+        <div class="modal-footer">
+          <div>
+            <div class="complete-label">Как прошёл урок?</div>
+            <div class="star-rate" id="starRateRow">
+              <button class="star-btn" data-val="1" onclick="selectStars(1)" title="Понял с трудом">⭐</button>
+              <button class="star-btn" data-val="2" onclick="selectStars(2)" title="Хорошо понял">⭐</button>
+              <button class="star-btn" data-val="3" onclick="selectStars(3)" title="Отлично! Всё знаю">⭐</button>
+            </div>
+          </div>
+          <div style="display:flex;gap:0.6rem;align-items:center;flex-wrap:wrap">
+            <button class="open-new-tab" id="openTabBtn" onclick="openInTab()">↗ Открыть в новой вкладке</button>
+            <button class="confirm-btn" id="confirmBtn" onclick="confirmLesson()" disabled>✓ Завершить урок</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="xp-popup" id="xpPopup">+0 XP ⚡</div>
+
+    <script>
+      const LESSONS = [
+        { id:1, num:"§ 8.1", title:"Среднее арифметическое", sub:"Формула СА, нахождение суммы и пропущенного числа, средняя скорость", icon:"∑", file:"Lesson-1.html", xp:25, color:"#06b6d4" },
+        { id:2, num:"§ 8.2", title:"Круговая диаграмма", sub:"Секторы, доли, проценты; чтение и составление круговых диаграмм", icon:"🥧", file:"Lesson-2.html", xp:25, color:"#0891b2" },
+        { id:3, num:"§ 8.3", title:"Представление информации", sub:"Таблица, столбчатая, линейная диаграммы, пиктограмма — выбор формы", icon:"📈", file:"Lesson-3.html", xp:25, color:"#22d3ee" },
+        { id:4, num:"§ 8.4", title:"Предварительная проверка", sub:"Комплексное повторение всех тем раздела с задачами", icon:"✅", file:"Lesson-4.html", xp:35, color:"#67e8f9" },
+        { id:5, num:"§ 8.5", title:"Заключение. Обобщающие задания", sub:"Итоговое обобщение, словарь терминов, финальный тест", icon:"🏆", file:"Lesson-5.html", xp:45, color:"#a5f3fc" },
+      ];
+
+      const TOTAL = LESSONS.length;
+
+      const LEVELS = [
+        { name:"Новичок", req:0 }, { name:"Ученик", req:100 }, { name:"Знаток", req:250 },
+        { name:"Мастер", req:450 }, { name:"Эксперт", req:700 }, { name:"Чемпион", req:1000 },
+        { name:"Мэтр", req:1400 },
+      ];
+
+      const ACHIEVEMENTS = [
+        { id:"first",   icon:"🌟", name:"Первый шаг",     cond:s=>s.completed>=1 },
+        { id:"streak3", icon:"🔥", name:"3 дня подряд",   cond:s=>s.streak>=3 },
+        { id:"half",    icon:"🎯", name:"Половина пути",  cond:s=>s.completed>=3 },
+        { id:"perfect", icon:"💎", name:"Три звезды",     cond:s=>s.stars.filter(x=>x===3).length>=2 },
+        { id:"full",    icon:"🏆", name:"Курс пройден",   cond:s=>s.completed>=5 },
+        { id:"xp100",   icon:"⚡", name:"100 XP",         cond:s=>s.xp>=100 },
+        { id:"all3",    icon:"🌈", name:"Все на 3 звезды",cond:s=>s.stars.filter(x=>x===3).length>=5 },
+        { id:"speed",   icon:"🚀", name:"Быстрый старт",  cond:s=>s.completed>=2 },
+      ];
+
+      const STORAGE_KEY = "statistics5_state";
+
+      function loadState(){ try{ const r=localStorage.getItem(STORAGE_KEY); if(r) return JSON.parse(r); }catch(e){} return{ xp:0, stars:new Array(TOTAL).fill(0), streak:0, hearts:5, lastDate:null, earnedAch:[] }; }
+      function saveState(s){ try{ localStorage.setItem(STORAGE_KEY,JSON.stringify(s)); }catch(e){} }
+
+      let state=loadState();
+      if(!Array.isArray(state.stars)||state.stars.length<TOTAL) state.stars=new Array(TOTAL).fill(0);
+
+      function updateStreak(){ const today=new Date().toDateString(); if(state.lastDate===today) return; const yesterday=new Date(Date.now()-86400000).toDateString(); state.streak=(state.lastDate===yesterday)?(state.streak||0)+1:1; state.lastDate=today; saveState(state); }
+      updateStreak();
+
+      function getLevel(xp){ let l=0; for(let i=0;i<LEVELS.length-1;i++) if(xp>=LEVELS[i].req) l=i; if(xp>=LEVELS[LEVELS.length-1].req) l=LEVELS.length-1; return l; }
+      function getLevelProgress(xp){ const l=getLevel(xp),cur=LEVELS[l].req,next=LEVELS[l+1]?LEVELS[l+1].req:cur+500; return{lvl:l+1,name:LEVELS[l].name,pct:Math.min(100,Math.round((xp-cur)/(next-cur)*100)),cur,next}; }
+
+      function renderUI(){
+        document.getElementById("xpDisplay").textContent=state.xp;
+        document.getElementById("streakDisplay").textContent=state.streak||0;
+        document.getElementById("heartsDisplay").textContent=state.hearts??5;
+        const lp=getLevelProgress(state.xp);
+        document.getElementById("levelBadge").textContent=lp.lvl;
+        document.getElementById("levelLabel").textContent=`${lp.name} • до следующего: ${lp.next-state.xp} XP`;
+        document.getElementById("levelBarFill").style.width=lp.pct+"%";
+        document.getElementById("levelXpText").textContent=`${state.xp-lp.cur} / ${lp.next-lp.cur}`;
+        const completed=state.stars.filter(s=>s>0).length;
+        document.getElementById("cpText").textContent=`${completed} из ${TOTAL} уроков`;
+        document.getElementById("cpFill").style.width=Math.round(completed/TOTAL*100)+"%";
+        renderAchievements();
+      }
+
+      function renderPath(){
+        const container=document.getElementById("pathContainer"); container.innerHTML="";
+        const sections=[
+          { after:0, icon:"∑", color:"rgba(6,182,212,.15)", title:"Основные понятия", sub:"Уроки 1–3" },
+          { after:3, icon:"🏆", color:"rgba(34,211,238,.15)", title:"Проверка и итог", sub:"Уроки 4–5" },
+        ];
+        LESSONS.forEach((lesson,idx)=>{
+          const sec=sections.find(s=>s.after===idx);
+          if(sec){ const sh=document.createElement("div"); sh.className="section-header"; sh.innerHTML=`<div class="section-icon" style="background:${sec.color}">${sec.icon}</div><div class="section-title-text"><h2>${sec.title}</h2><p>${sec.sub}</p></div>`; container.appendChild(sh); }
+          if(idx>0){ const conn=document.createElement("div"); conn.className="connector"+(state.stars[idx-1]>0?" done":""); container.appendChild(conn); }
+          const node=document.createElement("div"); node.className="lesson-node";
+          const stars=state.stars[idx]||0;
+          const isLocked=idx>0&&state.stars[idx-1]===0;
+          const isCurrent=!isLocked&&stars===0&&(idx===0||state.stars[idx-1]>0);
+          const isCompleted=stars>0;
+          const starsHTML=[1,2,3].map(n=>`<span class="star${n<=stars?" lit":""}">${n<=stars?"⭐":"☆"}</span>`).join("");
+          const barPct=stars>0?Math.round(stars/3*100):0;
+          let cardClass="lesson-card"; if(isLocked) cardClass+=" locked"; else if(isCompleted) cardClass+=" completed"; else if(isCurrent) cardClass+=" current";
+          const btnText=isLocked?"🔒 Заблокировано":isCompleted?"🔁 Повторить":"▶ Начать урок";
+          node.innerHTML=`<div class="${cardClass}" style="--accent-color:${lesson.color}" onclick="${isLocked?"":"openLesson("+idx+")"}"><div class="card-accent"></div><div class="card-top"><div class="card-icon">${lesson.icon}</div><div class="card-meta"><div class="card-num">${lesson.num}</div><div class="card-name">${lesson.title}</div><div class="card-sub">${lesson.sub}</div></div>${isLocked?'<div class="lock-icon">🔒</div>':""}</div><div class="card-bottom"><div class="stars-row">${starsHTML}</div><div class="xp-chip">⚡ ${isCompleted?"+"+lesson.xp*stars:lesson.xp} XP</div></div>${isCompleted?`<div class="progress-mini"><div class="progress-mini-fill" style="width:${barPct}%"></div></div>`:""}<button class="card-action" ${isLocked?"disabled":""}>${btnText}</button></div>`;
+          container.appendChild(node);
+        });
+      }
+
+      function renderAchievements(){ const grid=document.getElementById("achievementsGrid"); grid.innerHTML=""; const s={ xp:state.xp, completed:state.stars.filter(x=>x>0).length, streak:state.streak||0, stars:state.stars }; ACHIEVEMENTS.forEach(ach=>{ const earned=ach.cond(s); const div=document.createElement("div"); div.className="achievement"+(earned?" earned":""); div.innerHTML=`<div class="ach-icon">${ach.icon}</div><div class="ach-name">${ach.name}</div>`; grid.appendChild(div); }); }
+
+      let currentLessonIdx=-1, selectedStars=0;
+
+      function openLesson(idx){ const lesson=LESSONS[idx]; currentLessonIdx=idx; selectedStars=0; document.getElementById("modalIcon").textContent=lesson.icon; document.getElementById("modalTitle").textContent=`${lesson.num} — ${lesson.title}`; document.getElementById("modalSub").textContent=lesson.sub; document.querySelectorAll(".star-btn").forEach(b=>b.classList.remove("active")); document.getElementById("lessonFrame").src=lesson.file; document.getElementById("confirmBtn").disabled=true; document.getElementById("modalOverlay").classList.add("open"); document.body.style.overflow="hidden"; }
+      function closeModal(){ document.getElementById("modalOverlay").classList.remove("open"); document.getElementById("lessonFrame").src=""; document.body.style.overflow=""; currentLessonIdx=-1; selectedStars=0; }
+      function openInTab(){ if(currentLessonIdx<0) return; window.open(LESSONS[currentLessonIdx].file,"_blank"); }
+      function selectStars(n){ selectedStars=n; document.querySelectorAll(".star-btn").forEach(b=>b.classList.toggle("active",parseInt(b.dataset.val)<=n)); document.getElementById("confirmBtn").disabled=false; }
+      function confirmLesson(){ if(currentLessonIdx<0||selectedStars===0) return; const lesson=LESSONS[currentLessonIdx],prevStars=state.stars[currentLessonIdx]||0; const xpDelta=Math.max(0,lesson.xp*selectedStars-lesson.xp*prevStars); state.stars[currentLessonIdx]=Math.max(selectedStars,prevStars); state.xp+=xpDelta; state.lastDate=new Date().toDateString(); saveState(state); closeModal(); if(xpDelta>0){ showXpPopup(xpDelta); showConfetti(); } renderPath(); renderUI(); }
+      function showXpPopup(xp){ const el=document.getElementById("xpPopup"); el.textContent=`+${xp} XP ⚡`; el.classList.remove("show"); void el.offsetWidth; el.classList.add("show"); setTimeout(()=>el.classList.remove("show"),1600); }
+      function showConfetti(){ const colors=["#facc15","#06b6d4","#22d3ee","#a5f3fc","#0891b2","#67e8f9"]; for(let i=0;i<24;i++){ const el=document.createElement("div"); el.className="confetti-piece"; el.style.cssText=`left:${Math.random()*100}vw;top:-10px;background:${colors[Math.floor(Math.random()*colors.length)]};width:${6+Math.random()*8}px;height:${6+Math.random()*8}px;animation-delay:${Math.random()*0.4}s;animation-duration:${0.9+Math.random()*0.6}s;border-radius:${Math.random()>0.5?"50%":"2px"};`; document.body.appendChild(el); setTimeout(()=>el.remove(),1600); } }
+      function scrollToTop(){ window.scrollTo({top:0,behavior:"smooth"}); }
+      function showStats(){ const completed=state.stars.filter(s=>s>0).length,totalStars=state.stars.reduce((a,b)=>a+b,0); alert(`📊 Статистика\n\n⚡ XP: ${state.xp}\n🔥 Стрик: ${state.streak||0} дней\n📚 Уроков пройдено: ${completed}/${TOTAL}\n⭐ Звёзд собрано: ${totalStars}/${TOTAL*3}\n🏅 Уровень: ${getLevelProgress(state.xp).lvl} — ${getLevelProgress(state.xp).name}`); }
+      function resetProgress(){ if(confirm("Сбросить весь прогресс? Это действие нельзя отменить.")){ state={ xp:0, stars:new Array(TOTAL).fill(0), streak:0, hearts:5, lastDate:new Date().toDateString(), earnedAch:[] }; saveState(state); renderPath(); renderUI(); } }
+
+      document.getElementById("modalOverlay").addEventListener("click",e=>{ if(e.target===document.getElementById("modalOverlay")) closeModal(); });
+
+      const DEFAULT_PASS="@12345";
+      function getTeacherPass(){ return localStorage.getItem("math5_teacher_pass")||DEFAULT_PASS; }
+      function openTeacher(){ document.getElementById("teacherOverlay").classList.add("open"); document.getElementById("teacherLogin").style.display=""; document.getElementById("teacherDash").style.display="none"; document.getElementById("teacherPassInput").value=""; document.getElementById("teacherErr").style.display="none"; document.body.style.overflow="hidden"; setTimeout(()=>document.getElementById("teacherPassInput").focus(),300); }
+      function closeTeacher(){ document.getElementById("teacherOverlay").classList.remove("open"); document.body.style.overflow=""; }
+      function teacherLogout(){ document.getElementById("teacherDash").style.display="none"; document.getElementById("teacherLogin").style.display=""; document.getElementById("teacherPassInput").value=""; }
+      function togglePassVis(){ const inp=document.getElementById("teacherPassInput"); inp.type=inp.type==="password"?"text":"password"; }
+      function doTeacherLogin(){ const val=document.getElementById("teacherPassInput").value,err=document.getElementById("teacherErr"); if(val===getTeacherPass()){ err.style.display="none"; document.getElementById("teacherLogin").style.display="none"; document.getElementById("teacherDash").style.display="block"; renderTeacherDash(); } else{ err.style.display="block"; const inp=document.getElementById("teacherPassInput"); inp.classList.add("error"); setTimeout(()=>inp.classList.remove("error"),400); } }
+      function renderTeacherDash(){ document.getElementById("tCurrentXP").textContent=state.xp; const ctrl=document.getElementById("tLessonsControl"); ctrl.innerHTML=""; LESSONS.forEach((lesson,idx)=>{ const stars=state.stars[idx]||0; const starsHTML=[1,2,3].map(n=>`<button class="t-star-btn${n<=stars?" active":""}" onclick="tSetStars(${idx},${n})" title="${n} звезда">⭐</button>`).join(""); const row=document.createElement("div"); row.className="t-lesson-row"; row.innerHTML=`<div><div class="t-lesson-name">${lesson.icon} ${lesson.title}</div><div class="t-lesson-num">${lesson.num} • XP: ${lesson.xp}</div></div><div class="t-star-set"><button class="t-star-btn${stars===0?" active":""}" style="font-size:.7rem;color:#64748b" onclick="tSetStars(${idx},0)" title="Сбросить">0</button>${starsHTML}</div><button class="t-lock-btn" onclick="tToggleLock(${idx})" title="${stars>0?"Заблокировать":"Разблокировать"}">${stars>0?"🔓":"🔒"}</button>`; ctrl.appendChild(row); }); }
+      function tSetStars(idx,stars){ const prev=state.stars[idx]||0,lesson=LESSONS[idx]; state.xp=Math.max(0,state.xp-lesson.xp*prev+lesson.xp*stars); state.stars[idx]=stars; saveState(state); renderTeacherDash(); renderPath(); renderUI(); tShowToast("⭐ "+lesson.title+": "+stars+" звезды сохранено"); }
+      function tToggleLock(idx){ state.stars[idx]>0?tSetStars(idx,0):tSetStars(idx,1); }
+      function teacherUnlockAll(){ LESSONS.forEach((l,i)=>{ if(state.stars[i]===0){ state.stars[i]=1; state.xp+=l.xp; } }); saveState(state); renderTeacherDash(); renderPath(); renderUI(); tShowToast("🔓 Все уроки разблокированы!"); }
+      function teacherResetAll(){ if(!confirm("Сбросить весь прогресс ученика?")) return; state={ xp:0, stars:new Array(TOTAL).fill(0), streak:0, hearts:5, lastDate:new Date().toDateString(), earnedAch:[] }; saveState(state); renderTeacherDash(); renderPath(); renderUI(); tShowToast("🗑 Прогресс сброшен"); }
+      function teacherAddXP(sign){ const val=parseInt(document.getElementById("tXpVal").value)||0; if(val<=0) return; state.xp=Math.max(0,state.xp+sign*val); saveState(state); renderTeacherDash(); renderUI(); tShowToast((sign>0?"+":"-")+val+" XP"); }
+      function teacherChangePassword(){ const p1=document.getElementById("tNewPass1").value.trim(),p2=document.getElementById("tNewPass2").value.trim(),msg=document.getElementById("tPassMsg"); if(!p1||p1.length<4){ msg.style.color="#f87171"; msg.textContent="❌ Пароль слишком короткий"; return; } if(p1!==p2){ msg.style.color="#f87171"; msg.textContent="❌ Пароли не совпадают"; return; } localStorage.setItem("math5_teacher_pass",p1); msg.style.color="#86efac"; msg.textContent="✅ Пароль успешно изменён!"; document.getElementById("tNewPass1").value=""; document.getElementById("tNewPass2").value=""; tShowToast("🔑 Пароль изменён"); }
+      function tShowToast(msg){ const t=document.getElementById("tToast"); t.innerHTML=msg; t.classList.add("show"); setTimeout(()=>t.classList.remove("show"),2200); }
+
+      document.getElementById("teacherOverlay").addEventListener("click",e=>{ if(e.target===document.getElementById("teacherOverlay")) closeTeacher(); });
+      document.addEventListener("keydown",e=>{ if(e.key==="Escape"){ closeModal(); closeTeacher(); } });
+
+      renderPath();
+      renderUI();
+    </script>
+  </body>
+</html>

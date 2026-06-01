@@ -1,0 +1,541 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Урок 3 — Единицы объёма</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css" />
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+    <script>tailwind.config={darkMode:"class",theme:{extend:{fontFamily:{sans:["Inter","system-ui","sans-serif"]},colors:{brand:{500:"#8b5cf6"}}}}};</script>
+    <style>
+      :root{--bg-primary:#0b0f19;--bg-card:#111827;--bg-glass:rgba(17,24,39,0.7);--border:rgba(255,255,255,0.08);--text:#e5e7eb;--text-dim:#9ca3af;}
+      body{font-family:"Inter",system-ui,sans-serif;background:var(--bg-primary);color:var(--text);}
+      .glass{background:var(--bg-glass);backdrop-filter:blur(20px);border:1px solid var(--border);}
+      .katex-display{margin:0.5em 0;}
+      .slide-enter{animation:slideIn 0.4s ease-out;}
+      @keyframes slideIn{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:translateY(0);}}
+      .option-card{transition:all 0.2s;cursor:pointer;}
+      .option-card:hover{border-color:#8b5cf6;background:rgba(139,92,246,0.08);}
+      .option-card.correct{border-color:#22c55e;background:rgba(34,197,94,0.15);}
+      .option-card.wrong{border-color:#ef4444;background:rgba(239,68,68,0.15);}
+      .progress-fill{transition:width 0.5s ease;}
+      .timer-box{font-variant-numeric:tabular-nums;}
+      .lang-az{display:none;}
+      body.lang-az .lang-ru{display:none;}
+      body.lang-az .lang-az{display:inline;}
+      body.lang-az .lang-az-block{display:block;}
+      body.lang-az .lang-ru-block{display:none;}
+      .connector{position:absolute;left:28px;top:48px;bottom:-16px;width:2px;background:linear-gradient(to bottom,#8b5cf6,transparent);}
+      .step-card:last-child .connector{display:none;}
+      .svg-geo{filter:drop-shadow(0 0 8px rgba(139,92,246,0.2));}
+    </style>
+    <base target="_blank" />
+  </head>
+  <body class="antialiased min-h-screen">
+    <div class="fixed inset-0 -z-10">
+      <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_25%_25%,rgba(139,92,246,0.09)_0%,transparent_50%),radial-gradient(ellipse_at_75%_75%,rgba(99,102,241,0.07)_0%,transparent_50%)]"></div>
+    </div>
+
+    <nav class="fixed top-0 left-0 right-0 z-50 glass border-b border-white/5">
+      <div class="max-w-6xl mx-auto px-4 h-14 flex items-center justify-between">
+        <a href="#" onclick="showTab('home')" class="text-lg font-bold bg-gradient-to-r from-violet-400 via-purple-400 to-indigo-400 bg-clip-text text-transparent">
+          <span class="lang-ru">📏 Урок 3</span><span class="lang-az">📏 Dərs 3</span>
+        </a>
+        <div class="hidden md:flex items-center gap-1">
+          <a href="#" data-tab="home" class="nav-link px-3 py-1.5 rounded-lg text-sm text-gray-400 hover:text-white hover:bg-white/5 transition active-nav"><span class="lang-ru">Главная</span><span class="lang-az">Ana səhifə</span></a>
+          <a href="#" data-tab="theory" class="nav-link px-3 py-1.5 rounded-lg text-sm text-gray-400 hover:text-white hover:bg-white/5 transition"><span class="lang-ru">Теория</span><span class="lang-az">Nəzəriyyə</span></a>
+          <a href="#" data-tab="algorithm" class="nav-link px-3 py-1.5 rounded-lg text-sm text-gray-400 hover:text-white hover:bg-white/5 transition"><span class="lang-ru">Алгоритм</span><span class="lang-az">Alqoritm</span></a>
+          <a href="#" data-tab="examples" class="nav-link px-3 py-1.5 rounded-lg text-sm text-gray-400 hover:text-white hover:bg-white/5 transition"><span class="lang-ru">Примеры</span><span class="lang-az">Nümunələr</span></a>
+          <a href="#" data-tab="trainer" class="nav-link px-3 py-1.5 rounded-lg text-sm text-gray-400 hover:text-white hover:bg-white/5 transition"><span class="lang-ru">Тренажёр</span><span class="lang-az">Trenajor</span></a>
+          <a href="#" data-tab="assessment" class="nav-link px-3 py-1.5 rounded-lg text-sm text-gray-400 hover:text-white hover:bg-white/5 transition"><span class="lang-ru">Аттестация</span><span class="lang-az">Attestasiya</span></a>
+          <button onclick="toggleLang()" class="ml-2 px-3 py-1.5 rounded-lg text-xs font-semibold border border-white/10 hover:bg-white/5 transition">🇦🇿 AZ / RU 🇷🇺</button>
+        </div>
+      </div>
+    </nav>
+
+    <div id="timer" class="fixed top-20 right-4 z-40 glass rounded-xl px-4 py-2 text-lg font-bold hidden timer-box border border-violet-500/20"><span id="timer-display">10:00</span></div>
+
+    <main class="max-w-4xl mx-auto px-4 pt-20 pb-12">
+      <!-- HOME -->
+      <section id="home" class="tab-content">
+        <div class="text-center py-16">
+          <div class="text-6xl mb-4">📏</div>
+          <h1 class="text-4xl md:text-5xl font-extrabold mb-6 bg-gradient-to-r from-violet-400 via-purple-400 to-indigo-400 bg-clip-text text-transparent">
+            <span class="lang-ru">Единицы объёма</span><span class="lang-az">Həcm vahidləri</span>
+          </h1>
+          <p class="text-lg text-gray-400 max-w-2xl mx-auto mb-8">
+            <span class="lang-ru">§7.3. мм³, см³, дм³, м³; литр и миллилитр; перевод единиц. 30 вопросов.</span>
+            <span class="lang-az">§7.3. mm³, sm³, dm³, m³; litr və millilitr; vahid çevirmə. 30 sual.</span>
+          </p>
+          <div class="flex gap-4 justify-center flex-wrap">
+            <button onclick="showTab('theory')" class="px-6 py-3 rounded-xl bg-gradient-to-r from-violet-500 to-purple-500 text-white font-semibold hover:shadow-lg hover:shadow-violet-500/20 transition transform hover:-translate-y-0.5"><span class="lang-ru">Начать обучение</span><span class="lang-az">Öyrənməyə başla</span></button>
+            <button onclick="showTab('assessment')" class="px-6 py-3 rounded-xl glass text-white font-semibold hover:bg-white/10 transition"><span class="lang-ru">Проверить знания</span><span class="lang-az">Bilikləri yoxla</span></button>
+          </div>
+        </div>
+        <div class="grid md:grid-cols-3 gap-4">
+          <div class="glass rounded-2xl p-6 hover:border-violet-500/30 transition">
+            <div class="w-10 h-10 rounded-xl bg-violet-500/20 flex items-center justify-center text-xl mb-4">📦</div>
+            <h3 class="font-semibold text-white mb-2"><span class="lang-ru">Основные единицы</span><span class="lang-az">Əsas vahidlər</span></h3>
+            <p class="text-sm text-gray-400"><span class="lang-ru">мм³, см³, дм³, м³, км³ — кубические единицы длины.</span><span class="lang-az">mm³, sm³, dm³, m³, km³ — uzunluğun kub vahidləri.</span></p>
+          </div>
+          <div class="glass rounded-2xl p-6 hover:border-purple-500/30 transition">
+            <div class="w-10 h-10 rounded-xl bg-purple-500/20 flex items-center justify-center text-xl mb-4">🫗</div>
+            <h3 class="font-semibold text-white mb-2"><span class="lang-ru">Литр и миллилитр</span><span class="lang-az">Litr və millilitr</span></h3>
+            <p class="text-sm text-gray-400"><span class="lang-ru">1 л = 1 дм³ = 1000 мл = 1000 см³.</span><span class="lang-az">1 l = 1 dm³ = 1000 ml = 1000 sm³.</span></p>
+          </div>
+          <div class="glass rounded-2xl p-6 hover:border-indigo-500/30 transition">
+            <div class="w-10 h-10 rounded-xl bg-indigo-500/20 flex items-center justify-center text-xl mb-4">🔄</div>
+            <h3 class="font-semibold text-white mb-2"><span class="lang-ru">Перевод единиц</span><span class="lang-az">Vahidləri çevirmə</span></h3>
+            <p class="text-sm text-gray-400"><span class="lang-ru">1 м³ = 1000 дм³ = 1 000 000 см³ = 10⁹ мм³.</span><span class="lang-az">1 m³ = 1000 dm³ = 1 000 000 sm³ = 10⁹ mm³.</span></p>
+          </div>
+        </div>
+      </section>
+
+      <!-- THEORY -->
+      <section id="theory" class="tab-content hidden">
+        <div class="glass rounded-2xl p-6 mb-6">
+          <h2 class="text-xl font-bold mb-4 flex items-center gap-3">
+            <span class="w-10 h-10 rounded-xl bg-violet-500/20 flex items-center justify-center text-lg">📖</span>
+            <span class="lang-ru">Визуальная теория</span><span class="lang-az">Vizual nəzəriyyə</span>
+          </h2>
+          <div class="flex items-center justify-between mb-4 text-sm text-gray-400">
+            <span><span class="lang-ru">Слайд</span><span class="lang-az">Slayd</span> <span id="slide-num" class="text-white font-bold">1</span> / <span id="slide-total">8</span></span>
+            <div class="w-32 h-1.5 bg-gray-800 rounded-full overflow-hidden"><div id="slide-progress" class="h-full bg-gradient-to-r from-violet-400 to-purple-400 progress-fill" style="width:12.5%"></div></div>
+          </div>
+          <div id="slides-container" class="min-h-[320px]"></div>
+          <div class="flex justify-between mt-6">
+            <button onclick="prevSlide()" class="px-4 py-2 rounded-lg glass hover:bg-white/5 text-sm font-medium transition">← <span class="lang-ru">Назад</span><span class="lang-az">Geri</span></button>
+            <button onclick="nextSlide()" class="px-4 py-2 rounded-lg bg-gradient-to-r from-violet-500 to-purple-500 text-white text-sm font-bold hover:shadow-lg transition"><span class="lang-ru">Вперёд</span><span class="lang-az">İrəli</span> →</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ALGORITHM -->
+      <section id="algorithm" class="tab-content hidden">
+        <div class="glass rounded-2xl p-6">
+          <h2 class="text-xl font-bold mb-6 flex items-center gap-3">
+            <span class="w-10 h-10 rounded-xl bg-violet-500/20 flex items-center justify-center text-lg">🪜</span>
+            <span class="lang-ru">Алгоритм перевода единиц объёма</span><span class="lang-az">Həcm vahidlərini çevirmə alqoritmi</span>
+          </h2>
+          <div class="space-y-4 relative">
+            <div class="step-card glass rounded-xl p-5 pl-16 relative">
+              <div class="connector"></div>
+              <div class="absolute left-4 top-5 w-8 h-8 rounded-full bg-violet-500 text-white flex items-center justify-center font-bold text-sm">1</div>
+              <h4 class="font-semibold text-white mb-1"><span class="lang-ru">Определите направление перевода</span><span class="lang-az">Çevirmə istiqamətini müəyyən edin</span></h4>
+              <p class="text-sm text-gray-400"><span class="lang-ru">Из больших в меньшие → умножаем. Из меньших в большие → делим.</span><span class="lang-az">Böyükdən kiçiyə → vururuq. Kiçikdən böyüyə → bölürük.</span></p>
+            </div>
+            <div class="step-card glass rounded-xl p-5 pl-16 relative">
+              <div class="connector"></div>
+              <div class="absolute left-4 top-5 w-8 h-8 rounded-full bg-violet-500 text-white flex items-center justify-center font-bold text-sm">2</div>
+              <h4 class="font-semibold text-white mb-1"><span class="lang-ru">Запомните коэффициенты</span><span class="lang-az">Əmsalları yadda saxlayın</span></h4>
+              <p class="text-sm text-gray-400"><span class="lang-ru">× 1000 при переходе к следующей меньшей единице (м³→дм³→см³→мм³).</span><span class="lang-az">Hər növbəti kiçik vahidə keçdikdə × 1000 (m³→dm³→sm³→mm³).</span></p>
+            </div>
+            <div class="step-card glass rounded-xl p-5 pl-16 relative">
+              <div class="connector"></div>
+              <div class="absolute left-4 top-5 w-8 h-8 rounded-full bg-violet-500 text-white flex items-center justify-center font-bold text-sm">3</div>
+              <h4 class="font-semibold text-white mb-1"><span class="lang-ru">Особый случай: литры</span><span class="lang-az">Xüsusi hal: litrlər</span></h4>
+              <p class="text-sm text-gray-400"><span class="lang-ru">1 дм³ = 1 л; 1 см³ = 1 мл = 0,001 л.</span><span class="lang-az">1 dm³ = 1 l; 1 sm³ = 1 ml = 0,001 l.</span></p>
+            </div>
+            <div class="step-card glass rounded-xl p-5 pl-16 relative">
+              <div class="connector"></div>
+              <div class="absolute left-4 top-5 w-8 h-8 rounded-full bg-violet-500 text-white flex items-center justify-center font-bold text-sm">4</div>
+              <h4 class="font-semibold text-white mb-1"><span class="lang-ru">Выполните вычисление</span><span class="lang-az">Hesablamanı aparın</span></h4>
+              <p class="text-sm text-gray-400"><span class="lang-ru">Умножьте или разделите число на нужный коэффициент.</span><span class="lang-az">Ədədi lazımi əmsala vurun və ya bölün.</span></p>
+            </div>
+            <div class="step-card glass rounded-xl p-5 pl-16 relative">
+              <div class="absolute left-4 top-5 w-8 h-8 rounded-full bg-violet-500 text-white flex items-center justify-center font-bold text-sm">5</div>
+              <h4 class="font-semibold text-white mb-1"><span class="lang-ru">Запишите ответ с новыми единицами</span><span class="lang-az">Yeni vahidlərlə cavabı yazın</span></h4>
+              <p class="text-sm text-gray-400"><span class="lang-ru">Укажите единицы измерения: см³, дм³, м³, л.</span><span class="lang-az">Ölçü vahidlərini göstərin: sm³, dm³, m³, l.</span></p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- EXAMPLES -->
+      <section id="examples" class="tab-content hidden">
+        <div class="glass rounded-2xl p-6 mb-4">
+          <h2 class="text-xl font-bold mb-2 flex items-center gap-3">
+            <span class="w-10 h-10 rounded-xl bg-violet-500/20 flex items-center justify-center text-lg">📝</span>
+            <span class="lang-ru">Разбор задач</span><span class="lang-az">Məsələlərin təhlili</span>
+          </h2>
+          <p class="text-sm text-gray-400"><span class="lang-ru">Шесть типовых задач на перевод единиц объёма.</span><span class="lang-az">Həcm vahidlərinin çevrilməsi üzrə altı tipik məsələ.</span></p>
+        </div>
+        <div id="examples-list" class="space-y-4"></div>
+      </section>
+
+      <!-- TRAINER -->
+      <section id="trainer" class="tab-content hidden">
+        <div class="glass rounded-2xl p-6">
+          <h2 class="text-xl font-bold mb-4 flex items-center gap-3">
+            <span class="w-10 h-10 rounded-xl bg-violet-500/20 flex items-center justify-center text-lg">🏋️</span>
+            <span class="lang-ru">Тренажёр</span><span class="lang-az">Trenajor</span>
+          </h2>
+          <div class="glass rounded-xl p-6 mb-4 text-center" id="trainer-task">
+            <span class="lang-ru text-gray-400">Нажмите «Новая задача» для начала</span>
+            <span class="lang-az text-gray-400">Başlamaq üçün «Yeni məsələ» düyməsini basın</span>
+          </div>
+          <div class="flex gap-3 mb-4">
+            <input id="trainer-input" type="text" placeholder="Ответ / Cavab" class="flex-1 bg-gray-900 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-violet-500 transition" />
+            <button onclick="checkTrainer()" id="trainer-check" class="px-5 py-3 rounded-xl bg-gradient-to-r from-violet-500 to-purple-500 text-white font-bold hover:shadow-lg transition" disabled><span class="lang-ru">Проверить</span><span class="lang-az">Yoxla</span></button>
+          </div>
+          <div id="trainer-feedback" class="mb-4 min-h-[3rem]"></div>
+          <div class="flex gap-3 justify-center">
+            <button onclick="newTrainer()" class="px-4 py-2 rounded-lg glass hover:bg-white/5 text-sm font-medium transition"><span class="lang-ru">Новая задача</span><span class="lang-az">Yeni məsələ</span></button>
+            <button onclick="showHint()" class="px-4 py-2 rounded-lg glass hover:bg-white/5 text-sm font-medium transition"><span class="lang-ru">Подсказка</span><span class="lang-az">İpucu</span></button>
+          </div>
+          <div id="trainer-hint" class="mt-4 p-4 rounded-xl bg-violet-500/10 border-l-4 border-violet-400 hidden text-sm text-gray-300"></div>
+          <div class="flex justify-center gap-6 mt-6">
+            <div class="text-center"><div class="text-2xl font-bold text-violet-400" id="stat-correct">0</div><div class="text-xs text-gray-500"><span class="lang-ru">Верно</span><span class="lang-az">Düzgün</span></div></div>
+            <div class="text-center"><div class="text-2xl font-bold text-white" id="stat-total">0</div><div class="text-xs text-gray-500"><span class="lang-ru">Всего</span><span class="lang-az">Cəmi</span></div></div>
+            <div class="text-center"><div class="text-2xl font-bold text-yellow-400" id="stat-streak">0</div><div class="text-xs text-gray-500"><span class="lang-ru">Серия</span><span class="lang-az">Seriya</span></div></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ASSESSMENT -->
+      <section id="assessment" class="tab-content hidden">
+        <div id="assessment-menu" class="grid md:grid-cols-2 gap-4">
+          <div class="glass rounded-2xl p-6 text-center">
+            <div class="text-4xl mb-3">🔍</div>
+            <h3 class="font-bold text-lg mb-2"><span class="lang-ru">Диагностический тест</span><span class="lang-az">Diaqnostik test</span></h3>
+            <p class="text-sm text-gray-400 mb-4"><span class="lang-ru">30 вопросов с мгновенной обратной связью.</span><span class="lang-az">30 ani əks əlaqəli sual.</span></p>
+            <button onclick="startDiagnostic()" class="px-5 py-2.5 rounded-xl bg-gradient-to-r from-violet-500 to-purple-500 text-white font-bold hover:shadow-lg transition"><span class="lang-ru">Начать</span><span class="lang-az">Başla</span></button>
+          </div>
+          <div class="glass rounded-2xl p-6 text-center">
+            <div class="text-4xl mb-3">⏱️</div>
+            <h3 class="font-bold text-lg mb-2"><span class="lang-ru">Скоростная викторина</span><span class="lang-az">Sürətli viktorina</span></h3>
+            <p class="text-sm text-gray-400 mb-4"><span class="lang-ru">30 вопросов • 10 минут • Итоговый дашборд.</span><span class="lang-az">30 sual • 10 dəqiqə • Yekun panel.</span></p>
+            <button onclick="startTimeAttack()" class="px-5 py-2.5 rounded-xl bg-gradient-to-r from-orange-500 to-red-500 text-white font-bold hover:shadow-lg transition"><span class="lang-ru">Начать</span><span class="lang-az">Başla</span></button>
+          </div>
+        </div>
+        <div id="quiz-ui" class="hidden">
+          <div class="glass rounded-2xl p-6 mb-4">
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-sm text-gray-400"><span class="lang-ru">Вопрос</span><span class="lang-az">Sual</span> <span id="q-current" class="text-white font-bold">1</span> / 30</span>
+              <span id="q-score" class="text-sm text-violet-400 font-bold">0 <span class="lang-ru">правильных</span><span class="lang-az">düzgün</span></span>
+            </div>
+            <div class="w-full h-2 bg-gray-800 rounded-full overflow-hidden"><div id="q-progress" class="h-full bg-gradient-to-r from-violet-400 to-purple-400 progress-fill" style="width:3.33%"></div></div>
+          </div>
+          <div class="glass rounded-2xl p-6 mb-4">
+            <div id="q-text" class="text-lg font-medium mb-6 leading-relaxed"></div>
+            <div id="q-options" class="grid gap-3"></div>
+          </div>
+          <div class="flex justify-between">
+            <button onclick="prevQuestion()" id="btn-prev" class="px-4 py-2 rounded-lg glass hover:bg-white/5 text-sm font-medium transition" disabled>← <span class="lang-ru">Назад</span><span class="lang-az">Geri</span></button>
+            <button onclick="nextQuestion()" id="btn-next" class="px-4 py-2 rounded-lg bg-gradient-to-r from-violet-500 to-purple-500 text-white text-sm font-bold hover:shadow-lg transition" disabled><span class="lang-ru">Далее</span><span class="lang-az">İrəli</span> →</button>
+          </div>
+          <div id="q-explain" class="hidden mt-4 p-4 rounded-xl bg-violet-500/10 border-l-4 border-violet-400 text-sm"></div>
+        </div>
+        <div id="results-ui" class="hidden">
+          <div class="glass rounded-2xl p-8 text-center">
+            <div class="mb-2 text-gray-400"><span class="lang-ru">Ваш результат</span><span class="lang-az">Sizin nəticəniz</span></div>
+            <div class="relative w-48 h-48 mx-auto mb-6">
+              <svg class="w-full h-full -rotate-90" viewBox="0 0 100 100">
+                <circle cx="50" cy="50" r="45" fill="none" stroke="#1f2937" stroke-width="8"/>
+                <circle id="result-circle" cx="50" cy="50" r="45" fill="none" stroke="url(#grad3)" stroke-width="8" stroke-dasharray="283" stroke-dashoffset="283" stroke-linecap="round" class="transition-all duration-1000"/>
+                <defs><linearGradient id="grad3" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#8b5cf6"/><stop offset="100%" stop-color="#a78bfa"/></linearGradient></defs>
+              </svg>
+              <div class="absolute inset-0 flex items-center justify-center"><div class="text-4xl font-extrabold text-white" id="result-percent">0%</div></div>
+            </div>
+            <div class="text-xl font-bold mb-6" id="result-message"></div>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-lg mx-auto mb-6">
+              <div class="glass rounded-xl p-3"><div class="text-2xl font-bold text-violet-400" id="res-correct">0</div><div class="text-xs text-gray-500"><span class="lang-ru">Верно</span><span class="lang-az">Düzgün</span></div></div>
+              <div class="glass rounded-xl p-3"><div class="text-2xl font-bold text-red-400" id="res-wrong">0</div><div class="text-xs text-gray-500"><span class="lang-ru">Ошибок</span><span class="lang-az">Səhvlər</span></div></div>
+              <div class="glass rounded-xl p-3"><div class="text-2xl font-bold text-white" id="res-time">0:00</div><div class="text-xs text-gray-500"><span class="lang-ru">Время</span><span class="lang-az">Vaxt</span></div></div>
+              <div class="glass rounded-xl p-3"><div class="text-2xl font-bold text-blue-400" id="res-level">—</div><div class="text-xs text-gray-500"><span class="lang-ru">Уровень</span><span class="lang-az">Səviyyə</span></div></div>
+            </div>
+            <div class="flex gap-3 justify-center">
+              <button onclick="resetAssessment()" class="px-5 py-2.5 rounded-xl bg-gradient-to-r from-violet-500 to-purple-500 text-white font-bold hover:shadow-lg transition"><span class="lang-ru">Пройти ещё раз</span><span class="lang-az">Təkrar keç</span></button>
+              <button onclick="showTab('theory')" class="px-5 py-2.5 rounded-xl glass hover:bg-white/5 font-medium transition"><span class="lang-ru">К теории</span><span class="lang-az">Nəzəriyyəyə</span></button>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <script>
+      const State={lang:"ru",slide:0,trainer:{current:null,correct:0,total:0,streak:0},quiz:{mode:null,current:0,score:0,answers:[],timer:null,timeLeft:600,startTime:0}};
+
+      // Conversion chain SVG
+      const chainSVG =
+        '<svg class="svg-geo mx-auto" viewBox="0 0 360 80" width="360" height="80" aria-label="Цепочка единиц объёма">' +
+        '<rect x="5" y="20" width="60" height="30" rx="8" fill="rgba(139,92,246,0.25)" stroke="#8b5cf6" stroke-width="2"/>' +
+        '<text x="35" y="40" fill="#e5e7eb" font-size="12" text-anchor="middle" font-weight="bold">мм³</text>' +
+        '<text x="73" y="38" fill="#a78bfa" font-size="10" text-anchor="middle">×1000</text>' +
+        '<text x="73" y="50" fill="#6d28d9" font-size="10" text-anchor="middle">÷1000</text>' +
+        '<rect x="85" y="20" width="60" height="30" rx="8" fill="rgba(139,92,246,0.2)" stroke="#8b5cf6" stroke-width="2"/>' +
+        '<text x="115" y="40" fill="#e5e7eb" font-size="12" text-anchor="middle" font-weight="bold">см³</text>' +
+        '<text x="153" y="38" fill="#a78bfa" font-size="10" text-anchor="middle">×1000</text>' +
+        '<text x="153" y="50" fill="#6d28d9" font-size="10" text-anchor="middle">÷1000</text>' +
+        '<rect x="165" y="20" width="60" height="30" rx="8" fill="rgba(139,92,246,0.3)" stroke="#8b5cf6" stroke-width="2.5"/>' +
+        '<text x="195" y="40" fill="#e5e7eb" font-size="12" text-anchor="middle" font-weight="bold">дм³=л</text>' +
+        '<text x="233" y="38" fill="#a78bfa" font-size="10" text-anchor="middle">×1000</text>' +
+        '<text x="233" y="50" fill="#6d28d9" font-size="10" text-anchor="middle">÷1000</text>' +
+        '<rect x="245" y="20" width="50" height="30" rx="8" fill="rgba(139,92,246,0.2)" stroke="#8b5cf6" stroke-width="2"/>' +
+        '<text x="270" y="40" fill="#e5e7eb" font-size="12" text-anchor="middle" font-weight="bold">м³</text>' +
+        '<text x="303" y="38" fill="#a78bfa" font-size="10" text-anchor="middle">×10⁹</text>' +
+        '<text x="303" y="50" fill="#6d28d9" font-size="10" text-anchor="middle">÷10⁹</text>' +
+        '<rect x="315" y="20" width="40" height="30" rx="8" fill="rgba(139,92,246,0.15)" stroke="#8b5cf6" stroke-width="2"/>' +
+        '<text x="335" y="40" fill="#e5e7eb" font-size="11" text-anchor="middle" font-weight="bold">км³</text>' +
+        '</svg>';
+
+      const literSVG =
+        '<svg class="svg-geo mx-auto" viewBox="0 0 200 140" width="200" height="140" aria-label="Литр">' +
+        '<rect x="60" y="20" width="80" height="100" rx="5" fill="rgba(139,92,246,0.1)" stroke="#8b5cf6" stroke-width="2"/>' +
+        '<rect x="60" y="80" width="80" height="40" rx="5" fill="rgba(99,179,237,0.3)" stroke="#63b3ed" stroke-width="1.5"/>' +
+        '<text x="100" y="60" fill="#a78bfa" font-size="13" text-anchor="middle">1 дм³</text>' +
+        '<text x="100" y="108" fill="#93c5fd" font-size="12" text-anchor="middle">1 л</text>' +
+        '<text x="152" y="42" fill="#c4b5fd" font-size="10">10 см</text>' +
+        '<text x="152" y="58" fill="#c4b5fd" font-size="10">= 1 дм</text>' +
+        '<line x1="140" y1="20" x2="148" y2="20" stroke="#6d28d9" stroke-width="1"/>' +
+        '<line x1="140" y1="120" x2="148" y2="120" stroke="#6d28d9" stroke-width="1"/>' +
+        '<line x1="144" y1="20" x2="144" y2="120" stroke="#6d28d9" stroke-width="1"/>' +
+        '</svg>';
+
+      const slides = [
+        {
+          ru:{t:"📏 Зачем нужны единицы объёма?",b:"Объём измеряется в <b>кубических</b> единицах, потому что он трёхмерный.<br><br>Точно как:<br>• Длина → см (1 измерение)<br>• Площадь → см² (2 измерения)<br>• Объём → см³ (3 измерения)<br><br>"+chainSVG},
+          az:{t:"📏 Həcm vahidləri niyə lazımdır?",b:"Həcm <b>kub</b> vahidlərlə ölçülür, çünki o üçölçülüdür.<br><br>Necə ki:<br>• Uzunluq → sm (1 ölçü)<br>• Sahə → sm² (2 ölçü)<br>• Həcm → sm³ (3 ölçü)<br><br>"+chainSVG},
+        },
+        {
+          ru:{t:"📏 Кубический сантиметр (см³)",b:"<b>1 см³</b> — это объём куба со стороной 1 см.<br><br>Примеры:<br>• Кубик сахара ≈ 1 см³<br>• Напёрсток ≈ 3–5 см³<br>• Чайная ложка ≈ 5 см³<br><br>1 см³ = 1 мл (миллилитр)"},
+          az:{t:"📏 Kub santimetr (sm³)",b:"<b>1 sm³</b> — 1 sm tərəfli kubun həcmidir.<br><br>Nümunələr:<br>• Şəkər kubu ≈ 1 sm³<br>• Naləl ≈ 3–5 sm³<br>• Çay qaşığı ≈ 5 sm³<br><br>1 sm³ = 1 ml (millilitr)"},
+        },
+        {
+          ru:{t:"📏 Дециметр кубический (дм³) = Литр",b:"<b>1 дм³ = 1 литр</b><br><br>1 дм³ — объём куба со стороной 1 дм = 10 см.<br><br>$$1\\text{ дм}^3 = 10 \\cdot 10 \\cdot 10 = 1000\\text{ см}^3$$<br><br>"+literSVG+"<br>1 литр воды = 1 кг"},
+          az:{t:"📏 Kub desimetr (dm³) = Litr",b:"<b>1 dm³ = 1 litr</b><br><br>1 dm³ — 1 dm = 10 sm tərəfli kubun həcmidir.<br><br>$$1\\text{ dm}^3 = 10 \\cdot 10 \\cdot 10 = 1000\\text{ sm}^3$$<br><br>"+literSVG+"<br>1 litr su = 1 kq"},
+        },
+        {
+          ru:{t:"📏 Кубический метр (м³)",b:"<b>1 м³</b> — объём куба со стороной 1 м.<br><br>$$1\\text{ м}^3 = 100 \\cdot 100 \\cdot 100 = 1{,}000{,}000\\text{ см}^3$$<br>$$1\\text{ м}^3 = 10 \\cdot 10 \\cdot 10 = 1{,}000\\text{ дм}^3 = 1{,}000\\text{ л}$$<br><br>Пример: объём комнаты $5 \\times 4 \\times 3 = 60$ м³."},
+          az:{t:"📏 Kub metr (m³)",b:"<b>1 m³</b> — 1 m tərəfli kubun həcmidir.<br><br>$$1\\text{ m}^3 = 100 \\cdot 100 \\cdot 100 = 1{,}000{,}000\\text{ sm}^3$$<br>$$1\\text{ m}^3 = 10 \\cdot 10 \\cdot 10 = 1{,}000\\text{ dm}^3 = 1{,}000\\text{ l}$$<br><br>Nümunə: otağın həcmi $5 \\times 4 \\times 3 = 60$ m³."},
+        },
+        {
+          ru:{t:"📏 Таблица перевода единиц",b:'<table style="width:100%;border-collapse:collapse;font-size:13px;color:#e5e7eb"><tr style="background:rgba(139,92,246,0.2)"><th style="padding:7px;border:1px solid rgba(139,92,246,0.3);text-align:left">Откуда</th><th style="padding:7px;border:1px solid rgba(139,92,246,0.3)">Куда</th><th style="padding:7px;border:1px solid rgba(139,92,246,0.3)">Действие</th></tr><tr><td style="padding:7px;border:1px solid rgba(255,255,255,0.08)">м³</td><td style="padding:7px;border:1px solid rgba(255,255,255,0.08);text-align:center">дм³</td><td style="padding:7px;border:1px solid rgba(255,255,255,0.08);color:#a78bfa">× 1 000</td></tr><tr style="background:rgba(139,92,246,0.05)"><td style="padding:7px;border:1px solid rgba(255,255,255,0.08)">дм³</td><td style="padding:7px;border:1px solid rgba(255,255,255,0.08);text-align:center">см³</td><td style="padding:7px;border:1px solid rgba(255,255,255,0.08);color:#a78bfa">× 1 000</td></tr><tr><td style="padding:7px;border:1px solid rgba(255,255,255,0.08)">см³</td><td style="padding:7px;border:1px solid rgba(255,255,255,0.08);text-align:center">мм³</td><td style="padding:7px;border:1px solid rgba(255,255,255,0.08);color:#a78bfa">× 1 000</td></tr><tr style="background:rgba(139,92,246,0.05)"><td style="padding:7px;border:1px solid rgba(255,255,255,0.08)">м³</td><td style="padding:7px;border:1px solid rgba(255,255,255,0.08);text-align:center">см³</td><td style="padding:7px;border:1px solid rgba(255,255,255,0.08);color:#c4b5fd">× 1 000 000</td></tr><tr><td style="padding:7px;border:1px solid rgba(255,255,255,0.08)">дм³</td><td style="padding:7px;border:1px solid rgba(255,255,255,0.08);text-align:center">л</td><td style="padding:7px;border:1px solid rgba(255,255,255,0.08);color:#86efac">= (равно)</td></tr></table>'},
+          az:{t:"📏 Vahid çevirmə cədvəli",b:'<table style="width:100%;border-collapse:collapse;font-size:13px;color:#e5e7eb"><tr style="background:rgba(139,92,246,0.2)"><th style="padding:7px;border:1px solid rgba(139,92,246,0.3);text-align:left">Haradan</th><th style="padding:7px;border:1px solid rgba(139,92,246,0.3)">Hara</th><th style="padding:7px;border:1px solid rgba(139,92,246,0.3)">Əməliyyat</th></tr><tr><td style="padding:7px;border:1px solid rgba(255,255,255,0.08)">m³</td><td style="padding:7px;border:1px solid rgba(255,255,255,0.08);text-align:center">dm³</td><td style="padding:7px;border:1px solid rgba(255,255,255,0.08);color:#a78bfa">× 1 000</td></tr><tr style="background:rgba(139,92,246,0.05)"><td style="padding:7px;border:1px solid rgba(255,255,255,0.08)">dm³</td><td style="padding:7px;border:1px solid rgba(255,255,255,0.08);text-align:center">sm³</td><td style="padding:7px;border:1px solid rgba(255,255,255,0.08);color:#a78bfa">× 1 000</td></tr><tr><td style="padding:7px;border:1px solid rgba(255,255,255,0.08)">sm³</td><td style="padding:7px;border:1px solid rgba(255,255,255,0.08);text-align:center">mm³</td><td style="padding:7px;border:1px solid rgba(255,255,255,0.08);color:#a78bfa">× 1 000</td></tr><tr style="background:rgba(139,92,246,0.05)"><td style="padding:7px;border:1px solid rgba(255,255,255,0.08)">m³</td><td style="padding:7px;border:1px solid rgba(255,255,255,0.08);text-align:center">sm³</td><td style="padding:7px;border:1px solid rgba(255,255,255,0.08);color:#c4b5fd">× 1 000 000</td></tr><tr><td style="padding:7px;border:1px solid rgba(255,255,255,0.08)">dm³</td><td style="padding:7px;border:1px solid rgba(255,255,255,0.08);text-align:center">l</td><td style="padding:7px;border:1px solid rgba(255,255,255,0.08);color:#86efac">= (bərabər)</td></tr></table>'},
+        },
+        {
+          ru:{t:"📏 Литр и его кратные",b:"<b>Литр</b> — внесистемная единица объёма.<br><br>$$1\\text{ л} = 1\\text{ дм}^3 = 1000\\text{ см}^3 = 1000\\text{ мл}$$<br><br>• 1 мл = 1 см³<br>• 500 мл = 0,5 л (полулитровая бутылка)<br>• 2 л = 2000 мл = 2000 см³<br>• 1 л воды ≈ 1 кг"},
+          az:{t:"📏 Litr və onun qatları",b:"<b>Litr</b> — həcmin sistem xarici vahididir.<br><br>$$1\\text{ l} = 1\\text{ dm}^3 = 1000\\text{ sm}^3 = 1000\\text{ ml}$$<br><br>• 1 ml = 1 sm³<br>• 500 ml = 0,5 l (yarım litrlik şüşə)<br>• 2 l = 2000 ml = 2000 sm³<br>• 1 l su ≈ 1 kq"},
+        },
+        {
+          ru:{t:"📏 Практические примеры",b:"Реальные объёмы:<br><br>• Стакан воды ≈ 200–250 мл = 0,2–0,25 л<br>• Ведро = 10–12 л = 10–12 дм³<br>• Аквариум (малый) ≈ 30–50 л<br>• Комната $4\\times5\\times3$ м = 60 м³<br>• Бассейн 25 м ≈ 600–900 м³<br>• Олимпийский бассейн = 2500 м³"},
+          az:{t:"📏 Praktiki nümunələr",b:"Real həcmlər:<br><br>• Bir stəkan su ≈ 200–250 ml = 0,2–0,25 l<br>• Vedrə = 10–12 l = 10–12 dm³<br>• Kiçik akvarium ≈ 30–50 l<br>• $4\\times5\\times3$ m otaq = 60 m³<br>• 25 m-lik hovuz ≈ 600–900 m³<br>• Olimpik hovuz = 2500 m³"},
+        },
+        {
+          ru:{t:"📏 Итоговая шпаргалка",b:'<div style="background:rgba(139,92,246,0.1);border:1px solid rgba(139,92,246,0.3);border-radius:12px;padding:16px;font-size:14px;line-height:2;color:#e5e7eb">• 1 мм³ = 0,001 см³<br>• 1 <b>см³</b> = 1 мл<br>• 1 <b>дм³</b> = 1 000 см³ = <b>1 литр</b><br>• 1 <b>м³</b> = 1 000 дм³ = 1 000 000 см³<br>• 1 <b>км³</b> = 10⁹ м³<br><br>При переходе → меньше: <b>× 1000</b><br>При переходе → больше: <b>÷ 1000</b></div>'},
+          az:{t:"📏 Yekun yaddaş qeydi",b:'<div style="background:rgba(139,92,246,0.1);border:1px solid rgba(139,92,246,0.3);border-radius:12px;padding:16px;font-size:14px;line-height:2;color:#e5e7eb">• 1 mm³ = 0,001 sm³<br>• 1 <b>sm³</b> = 1 ml<br>• 1 <b>dm³</b> = 1 000 sm³ = <b>1 litr</b><br>• 1 <b>m³</b> = 1 000 dm³ = 1 000 000 sm³<br>• 1 <b>km³</b> = 10⁹ m³<br><br>→ kiçiyə keçdikdə: <b>× 1000</b><br>→ böyüyə keçdikdə: <b>÷ 1000</b></div>'},
+        },
+      ];
+
+      const examples = [
+        {
+          ru:{t:"№1 м³ в дм³",d:"Перевод",p:"Переведите $5$ м³ в дм³.",s:"$1$ м³ $= 1000$ дм³\n$5$ м³ $= 5 \\times 1000 = 5000$ дм³\n<b>Ответ: 5000 дм³</b>"},
+          az:{t:"№1 m³-u dm³-ə",d:"Çevirmə",p:"$5$ m³-u dm³-ə çevirin.",s:"$1$ m³ $= 1000$ dm³\n$5$ m³ $= 5 \\times 1000 = 5000$ dm³\n<b>Cavab: 5000 dm³</b>"},
+        },
+        {
+          ru:{t:"№2 дм³ в см³",d:"Перевод",p:"Переведите $3,5$ дм³ в см³.",s:"$1$ дм³ $= 1000$ см³\n$3,5$ дм³ $= 3,5 \\times 1000 = 3500$ см³\n<b>Ответ: 3500 см³</b>"},
+          az:{t:"№2 dm³-u sm³-ə",d:"Çevirmə",p:"$3,5$ dm³-u sm³-ə çevirin.",s:"$1$ dm³ $= 1000$ sm³\n$3,5$ dm³ $= 3,5 \\times 1000 = 3500$ sm³\n<b>Cavab: 3500 sm³</b>"},
+        },
+        {
+          ru:{t:"№3 см³ в м³",d:"Перевод",p:"Переведите $4500000$ см³ в м³.",s:"$1$ м³ $= 1000000$ см³\n$4500000 \\div 1000000 = 4,5$ м³\n<b>Ответ: 4,5 м³</b>"},
+          az:{t:"№3 sm³-u m³-ə",d:"Çevirmə",p:"$4500000$ sm³-u m³-ə çevirin.",s:"$1$ m³ $= 1000000$ sm³\n$4500000 \\div 1000000 = 4,5$ m³\n<b>Cavab: 4,5 m³</b>"},
+        },
+        {
+          ru:{t:"№4 Литры и дм³",d:"Литры",p:"Бочка вмещает 200 л. Сколько это дм³ и см³?",s:"$200$ л $= 200$ дм³\n$200$ дм³ $= 200 \\times 1000 = 200000$ см³\n<b>Ответ: 200 дм³ = 200 000 см³</b>"},
+          az:{t:"№4 Litrlər və dm³",d:"Litrlər",p:"Çəllək 200 l tutumludur. Bu neçə dm³ və sm³-dir?",s:"$200$ l $= 200$ dm³\n$200$ dm³ $= 200 \\times 1000 = 200000$ sm³\n<b>Cavab: 200 dm³ = 200 000 sm³</b>"},
+        },
+        {
+          ru:{t:"№5 Задача с аквариумом",d:"Практика",p:"Аквариум $60 \\times 30 \\times 40$ см. Сколько литров воды в нём поместится?",s:"$V = 60 \\times 30 \\times 40 = 72000$ см³\n$72000$ см³ $= 72000$ мл $= 72$ л\n<b>Ответ: 72 литра</b>"},
+          az:{t:"№5 Akvarium məsələsi",d:"Praktika",p:"$60 \\times 30 \\times 40$ sm akvarium. Onun içinə neçə litr su sığar?",s:"$V = 60 \\times 30 \\times 40 = 72000$ sm³\n$72000$ sm³ $= 72000$ ml $= 72$ l\n<b>Cavab: 72 litr</b>"},
+        },
+        {
+          ru:{t:"№6 Смешанные единицы",d:"Смешанные",p:"Выразите $2$ м³ $500$ дм³ в дм³.",s:"$2$ м³ $= 2 \\times 1000 = 2000$ дм³\n$2000 + 500 = 2500$ дм³\n<b>Ответ: 2500 дм³</b>"},
+          az:{t:"№6 Qarışıq vahidlər",d:"Qarışıq",p:"$2$ m³ $500$ dm³-u dm³ ilə ifadə edin.",s:"$2$ m³ $= 2 \\times 1000 = 2000$ dm³\n$2000 + 500 = 2500$ dm³\n<b>Cavab: 2500 dm³</b>"},
+        },
+      ];
+
+      const questions = [
+        {ru:{q:"1 дм³ = ? см³",o:["10","100","1000","10000"]},az:{q:"1 dm³ = ? sm³",o:["10","100","1000","10000"]},a:2},
+        {ru:{q:"1 м³ = ? дм³",o:["10","100","1000","1000000"]},az:{q:"1 m³ = ? dm³",o:["10","100","1000","1000000"]},a:2},
+        {ru:{q:"1 дм³ = ? литрам",o:["0,1","1","10","100"]},az:{q:"1 dm³ = ? litrə",o:["0,1","1","10","100"]},a:1},
+        {ru:{q:"1 м³ = ? см³",o:["1000","10000","100000","1000000"]},az:{q:"1 m³ = ? sm³",o:["1000","10000","100000","1000000"]},a:3},
+        {ru:{q:"1 см³ = ? мл",o:["0,1","1","10","100"]},az:{q:"1 sm³ = ? ml",o:["0,1","1","10","100"]},a:1},
+        {ru:{q:"5 м³ = ? дм³",o:["50","500","5000","50000"]},az:{q:"5 m³ = ? dm³",o:["50","500","5000","50000"]},a:2},
+        {ru:{q:"3000 см³ = ? дм³",o:["0,3","3","30","300"]},az:{q:"3000 sm³ = ? dm³",o:["0,3","3","30","300"]},a:1},
+        {ru:{q:"2,5 дм³ = ? л",o:["0,25","2,5","25","250"]},az:{q:"2,5 dm³ = ? l",o:["0,25","2,5","25","250"]},a:1},
+        {ru:{q:"4 л = ? см³",o:["4","400","4000","40000"]},az:{q:"4 l = ? sm³",o:["4","400","4000","40000"]},a:2},
+        {ru:{q:"1 см³ = ? дм³",o:["0,001","0,01","0,1","1"]},az:{q:"1 sm³ = ? dm³",o:["0,001","0,01","0,1","1"]},a:0},
+        {ru:{q:"500 дм³ = ? м³",o:["0,05","0,5","5","50"]},az:{q:"500 dm³ = ? m³",o:["0,05","0,5","5","50"]},a:1},
+        {ru:{q:"1 литр воды весит примерно:",o:["100 г","500 г","1 кг","10 кг"]},az:{q:"1 litr su təxminən nə qədər çəkir?",o:["100 q","500 q","1 kq","10 kq"]},a:2},
+        {ru:{q:"2000 мл = ? л",o:["0,2","2","20","200"]},az:{q:"2000 ml = ? l",o:["0,2","2","20","200"]},a:1},
+        {ru:{q:"0,5 м³ = ? дм³",o:["5","50","500","5000"]},az:{q:"0,5 m³ = ? dm³",o:["5","50","500","5000"]},a:2},
+        {ru:{q:"При переводе из дм³ в см³ нужно:",o:["Умножить на 10","Умножить на 100","Умножить на 1000","Разделить на 1000"]},az:{q:"dm³-dən sm³-ə çevirərkən:",o:["10-a vurmaq","100-ə vurmaq","1000-ə vurmaq","1000-ə bölmək"]},a:2},
+        {ru:{q:"Аквариум содержит 50 л воды. Это равно:",o:["50 дм³","5 м³","50000 мл","5000 см³"]},az:{q:"Akvarium 50 l su saxlayır. Bu bərabərdir:",o:["50 dm³","5 m³","50000 ml","5000 sm³"]},a:0},
+        {ru:{q:"1 мм³ = ? см³",o:["0,001","0,01","0,1","1"]},az:{q:"1 mm³ = ? sm³",o:["0,001","0,01","0,1","1"]},a:0},
+        {ru:{q:"7,2 л = ? мл",o:["72","720","7200","72000"]},az:{q:"7,2 l = ? ml",o:["72","720","7200","72000"]},a:2},
+        {ru:{q:"3 000 000 см³ = ? м³",o:["0,3","3","30","300"]},az:{q:"3 000 000 sm³ = ? m³",o:["0,3","3","30","300"]},a:1},
+        {ru:{q:"1 дм³ = ? мм³",o:["1000","100000","1000000","1000000000"]},az:{q:"1 dm³ = ? mm³",o:["1000","100000","1000000","1000000000"]},a:2},
+        {ru:{q:"250 мл = ? л",o:["2,5","0,25","0,025","25"]},az:{q:"250 ml = ? l",o:["2,5","0,25","0,025","25"]},a:1},
+        {ru:{q:"Из дм³ в м³ нужно:",o:["Умножить на 1000","Разделить на 1000","Умножить на 100","Разделить на 100"]},az:{q:"dm³-dən m³-ə çevirərkən:",o:["1000-ə vurmaq","1000-ə bölmək","100-ə vurmaq","100-ə bölmək"]},a:1},
+        {ru:{q:"Полулитровая бутылка = ? см³",o:["50","500","5000","50000"]},az:{q:"Yarım litrlik şüşə = ? sm³",o:["50","500","5000","50000"]},a:1},
+        {ru:{q:"1,5 м³ = ? л (1 м³ = 1000 л)",o:["150","1500","15000","150000"]},az:{q:"1,5 m³ = ? l (1 m³ = 1000 l)",o:["150","1500","15000","150000"]},a:1},
+        {ru:{q:"8000 дм³ = ? м³",o:["0,8","8","80","800"]},az:{q:"8000 dm³ = ? m³",o:["0,8","8","80","800"]},a:1},
+        {ru:{q:"1 стакан воды ≈ 250 мл = ? л",o:["0,025","0,25","2,5","25"]},az:{q:"1 stəkan su ≈ 250 ml = ? l",o:["0,025","0,25","2,5","25"]},a:1},
+        {ru:{q:"4500 дм³ = ? м³",o:["0,45","4,5","45","450"]},az:{q:"4500 dm³ = ? m³",o:["0,45","4,5","45","450"]},a:1},
+        {ru:{q:"1 м³ = ? мл",o:["1000","1000000","1000000000","100000"]},az:{q:"1 m³ = ? ml",o:["1000","1000000","1000000000","100000"]},a:1},
+        {ru:{q:"Ведро 12 л = ? дм³",o:["1,2","12","120","1200"]},az:{q:"12 l-lik vedrə = ? dm³",o:["1,2","12","120","1200"]},a:1},
+        {ru:{q:"0,003 м³ = ? дм³",o:["0,3","3","30","300"]},az:{q:"0,003 m³ = ? dm³",o:["0,3","3","30","300"]},a:1},
+      ];
+
+      function renderSlide(){
+        const s=slides[State.slide],d=State.lang==="ru"?s.ru:s.az;
+        const c=document.getElementById("slides-container");
+        c.innerHTML='<div class="slide-enter"><h3 class="text-lg font-bold text-violet-400 mb-3">'+d.t+'</h3><div class="text-gray-300 leading-relaxed">'+d.b+'</div></div>';
+        document.getElementById("slide-num").textContent=State.slide+1;
+        document.getElementById("slide-progress").style.width=((State.slide+1)/slides.length)*100+"%";
+        if(window.renderMathInElement)renderMathInElement(c,{delimiters:[{left:"$$",right:"$$",display:true},{left:"$",right:"$",display:false}]});
+      }
+      function nextSlide(){if(State.slide<slides.length-1){State.slide++;renderSlide();}}
+      function prevSlide(){if(State.slide>0){State.slide--;renderSlide();}}
+
+      function renderExamples(){
+        const c=document.getElementById("examples-list");c.innerHTML="";
+        examples.forEach((ex,i)=>{
+          const d=State.lang==="ru"?ex.ru:ex.az;
+          const div=document.createElement("div");div.className="glass rounded-xl p-5";
+          div.innerHTML='<div class="flex items-center justify-between mb-3"><span class="px-3 py-1 rounded-full bg-violet-500/20 text-violet-400 text-xs font-bold">'+d.t+'</span><span class="text-xs text-gray-500">'+d.d+'</span></div><div class="text-gray-200 mb-3">'+d.p+'</div><button onclick="toggleEx('+i+')" class="px-4 py-2 rounded-lg bg-violet-500/20 text-violet-400 text-sm font-semibold hover:bg-violet-500/30 transition"><span class="lang-ru">Решение</span><span class="lang-az">Həll</span></button><div id="ex-'+i+'" class="hidden mt-4 p-4 rounded-lg bg-violet-500/5 border-l-4 border-violet-500 text-sm text-gray-300 whitespace-pre-line"></div>';
+          c.appendChild(div);
+        });
+      }
+      function toggleEx(i){
+        const el=document.getElementById("ex-"+i),d=State.lang==="ru"?examples[i].ru:examples[i].az;
+        el.innerHTML=d.s;el.classList.toggle("hidden");
+        if(window.renderMathInElement)renderMathInElement(el,{delimiters:[{left:"$$",right:"$$",display:true},{left:"$",right:"$",display:false}]});
+      }
+
+      function rand(a,b){return Math.floor(Math.random()*(b-a+1))+a;}
+      function genTrainer(){
+        // conversions: m3_to_dm3, dm3_to_cm3, cm3_to_dm3, l_to_cm3, dm3_to_l
+        const types=["m3dm3","dm3cm3","cm3dm3","l_cm3","dm3l","cm3ml"];
+        const t=types[rand(0,types.length-1)];
+        let text,ans,hint;
+        if(t==="m3dm3"){
+          const n=rand(1,20);
+          text=State.lang==="ru"?`Переведите ${n} м³ в дм³.`:`${n} m³-u dm³-ə çevirin.`;
+          ans=(n*1000).toString(); hint=`${n} × 1000 = ${ans}`;
+        } else if(t==="dm3cm3"){
+          const n=rand(1,15);
+          text=State.lang==="ru"?`${n} дм³ = ? см³`:`${n} dm³ = ? sm³`;
+          ans=(n*1000).toString(); hint=`${n} × 1000 = ${ans}`;
+        } else if(t==="cm3dm3"){
+          const n=rand(1,20)*1000;
+          text=State.lang==="ru"?`${n} см³ = ? дм³`:`${n} sm³ = ? dm³`;
+          ans=(n/1000).toString(); hint=`${n} ÷ 1000 = ${ans}`;
+        } else if(t==="l_cm3"){
+          const n=rand(1,10);
+          text=State.lang==="ru"?`${n} л = ? см³`:`${n} l = ? sm³`;
+          ans=(n*1000).toString(); hint=`1 л = 1000 см³, ${n} × 1000 = ${ans}`;
+        } else if(t==="dm3l"){
+          const n=rand(1,20);
+          text=State.lang==="ru"?`${n} дм³ = ? литров`:`${n} dm³ = ? litr`;
+          ans=n.toString(); hint=`1 дм³ = 1 л, ответ ${ans}`;
+        } else {
+          const n=rand(1,50);
+          text=State.lang==="ru"?`${n} см³ = ? мл`:`${n} sm³ = ? ml`;
+          ans=n.toString(); hint=`1 см³ = 1 мл, ответ ${ans}`;
+        }
+        return {text,ans,hint};
+      }
+      function newTrainer(){
+        State.trainer.current=genTrainer();
+        document.getElementById("trainer-task").innerHTML='<div class="text-lg font-medium text-white mb-2">'+State.trainer.current.text+"</div>";
+        document.getElementById("trainer-input").value="";
+        document.getElementById("trainer-feedback").innerHTML="";
+        document.getElementById("trainer-hint").classList.add("hidden");
+        document.getElementById("trainer-check").disabled=false;
+      }
+      function showHint(){if(!State.trainer.current)return;document.getElementById("trainer-hint").textContent="💡 "+State.trainer.current.hint;document.getElementById("trainer-hint").classList.remove("hidden");}
+      function checkTrainer(){
+        if(!State.trainer.current)return;
+        const val=document.getElementById("trainer-input").value.trim().replace(",",".");
+        const correct=State.trainer.current.ans;
+        const isCorrect=parseFloat(val)===parseFloat(correct)||val===correct;
+        State.trainer.total++;
+        const fb=document.getElementById("trainer-feedback");
+        if(isCorrect){State.trainer.correct++;State.trainer.streak++;fb.innerHTML='<div class="text-violet-400 font-bold text-lg">✓ '+(State.lang==="ru"?"Верно!":"Düzgün!")+" "+State.trainer.current.ans+"</div>";}
+        else{State.trainer.streak=0;fb.innerHTML='<div class="text-red-400 font-bold text-lg">✗ '+(State.lang==="ru"?"Неверно. Правильный ответ: ":"Səhv. Düzgün cavab: ")+State.trainer.current.ans+"</div>";}
+        document.getElementById("stat-correct").textContent=State.trainer.correct;
+        document.getElementById("stat-total").textContent=State.trainer.total;
+        document.getElementById("stat-streak").textContent=State.trainer.streak;
+        document.getElementById("trainer-check").disabled=true;
+      }
+
+      function startDiagnostic(){State.quiz.mode="diag";State.quiz.current=0;State.quiz.score=0;State.quiz.answers=[];showQuiz();renderQuestion();}
+      function startTimeAttack(){State.quiz.mode="time";State.quiz.current=0;State.quiz.score=0;State.quiz.answers=[];State.quiz.timeLeft=600;State.quiz.startTime=Date.now();showQuiz();renderQuestion();startTimer();}
+      function showQuiz(){document.getElementById("assessment-menu").classList.add("hidden");document.getElementById("quiz-ui").classList.remove("hidden");document.getElementById("results-ui").classList.add("hidden");}
+      function startTimer(){document.getElementById("timer").classList.remove("hidden");State.quiz.timer=setInterval(()=>{State.quiz.timeLeft--;updateTimer();if(State.quiz.timeLeft<=0)finishQuiz();},1000);}
+      function updateTimer(){const m=Math.floor(State.quiz.timeLeft/60),s=State.quiz.timeLeft%60;document.getElementById("timer-display").textContent=m+":"+s.toString().padStart(2,"0");document.getElementById("timer").classList.toggle("text-red-400",State.quiz.timeLeft<=60);}
+      function renderQuestion(){
+        const q=questions[State.quiz.current],d=State.lang==="ru"?q.ru:q.az;
+        document.getElementById("q-current").textContent=State.quiz.current+1;
+        document.getElementById("q-score").innerHTML=State.quiz.score+' <span class="lang-ru">правильных</span><span class="lang-az">düzgün</span>';
+        document.getElementById("q-progress").style.width=((State.quiz.current+1)/questions.length)*100+"%";
+        document.getElementById("q-text").innerHTML=d.q;
+        const opts=document.getElementById("q-options");opts.innerHTML="";
+        d.o.forEach((opt,i)=>{const div=document.createElement("div");div.className="option-card glass rounded-xl p-4 flex items-center gap-3";div.innerHTML='<div class="w-8 h-8 rounded-lg bg-gray-800 flex items-center justify-center font-bold text-sm">'+String.fromCharCode(65+i)+"</div><div>"+opt+"</div>";div.onclick=()=>selectOption(i,div);opts.appendChild(div);});
+        document.getElementById("btn-prev").disabled=State.quiz.current===0;
+        document.getElementById("btn-next").disabled=true;
+        document.getElementById("q-explain").classList.add("hidden");
+        if(window.renderMathInElement)renderMathInElement(document.getElementById("quiz-ui"),{delimiters:[{left:"$$",right:"$$",display:true},{left:"$",right:"$",display:false}]});
+      }
+      function selectOption(idx,el){
+        if(!document.getElementById("btn-next").disabled)return;
+        const q=questions[State.quiz.current],correct=idx===q.a;
+        if(correct)State.quiz.score++;
+        State.quiz.answers[State.quiz.current]=idx;
+        document.querySelectorAll("#q-options .option-card").forEach((opt,i)=>{opt.classList.add("pointer-events-none","opacity-80");if(i===q.a)opt.classList.add("correct");else if(i===idx&&!correct)opt.classList.add("wrong");});
+        if(State.quiz.mode==="diag"){const d=State.lang==="ru"?q.ru:q.az;document.getElementById("q-explain").innerHTML='<strong class="'+(correct?"text-violet-400":"text-red-400")+'">'+(correct?(State.lang==="ru"?"✓ Верно!":"✓ Düzgün!"):(State.lang==="ru"?"✗ Неверно.":"✗ Səhv."))+"</strong> "+(State.lang==="ru"?"Правильный ответ: ":"Düzgün cavab: ")+d.o[q.a];document.getElementById("q-explain").classList.remove("hidden");}
+        document.getElementById("btn-next").disabled=false;
+      }
+      function nextQuestion(){if(State.quiz.current<questions.length-1){State.quiz.current++;renderQuestion();}else{finishQuiz();}}
+      function prevQuestion(){if(State.quiz.current>0){State.quiz.current--;renderQuestion();}}
+      function finishQuiz(){
+        if(State.quiz.timer)clearInterval(State.quiz.timer);
+        document.getElementById("timer").classList.add("hidden");
+        document.getElementById("quiz-ui").classList.add("hidden");
+        document.getElementById("results-ui").classList.remove("hidden");
+        const pct=Math.round((State.quiz.score/questions.length)*100);
+        const timeSpent=State.quiz.mode==="time"?Math.floor((Date.now()-State.quiz.startTime)/1000):0;
+        const m=Math.floor(timeSpent/60),s=timeSpent%60;
+        document.getElementById("result-percent").textContent=pct+"%";
+        document.getElementById("result-circle").style.strokeDashoffset=283-(283*pct/100);
+        document.getElementById("res-correct").textContent=State.quiz.score;
+        document.getElementById("res-wrong").textContent=questions.length-State.quiz.score;
+        document.getElementById("res-time").textContent=State.quiz.mode==="time"?m+":"+s.toString().padStart(2,"0"):"—";
+        let level=State.lang==="ru"?"Начальный":"Başlanğıc";
+        if(pct>=90)level=State.lang==="ru"?"Эксперт":"Ekspert";
+        else if(pct>=70)level=State.lang==="ru"?"Продвинутый":"İrəli";
+        else if(pct>=50)level=State.lang==="ru"?"Средний":"Orta";
+        document.getElementById("res-level").textContent=level;
+        let msg=pct>=90?"🏆 "+(State.lang==="ru"?"Превосходно!":"Əla!"):pct>=70?"🥈 "+(State.lang==="ru"?"Хорошо!":"Yaxşı!"):pct>=50?"🥉 "+(State.lang==="ru"?"Удовлетворительно.":"Qaneedici."):"💪 "+(State.lang==="ru"?"Нужно больше практики.":"Daha çox praktika lazımdır.");
+        document.getElementById("result-message").textContent=msg;
+      }
+      function resetAssessment(){document.getElementById("results-ui").classList.add("hidden");document.getElementById("assessment-menu").classList.remove("hidden");}
+
+      function showTab(id){document.querySelectorAll(".tab-content").forEach(s=>s.classList.add("hidden"));document.getElementById(id).classList.remove("hidden");document.querySelectorAll(".nav-link").forEach(a=>a.classList.remove("active-nav","text-white","bg-white/5"));const active=document.querySelector('.nav-link[data-tab="'+id+'"]');if(active)active.classList.add("active-nav","text-white","bg-white/5");window.scrollTo(0,0);}
+      document.querySelectorAll(".nav-link").forEach(link=>{link.addEventListener("click",e=>{e.preventDefault();showTab(link.dataset.tab);});});
+      function toggleLang(){State.lang=State.lang==="ru"?"az":"ru";document.body.classList.toggle("lang-az",State.lang==="az");renderSlide();renderExamples();if(State.trainer.current)document.getElementById("trainer-task").innerHTML='<div class="text-lg font-medium text-white">'+State.trainer.current.text+"</div>";}
+
+      document.addEventListener("DOMContentLoaded",()=>{
+        document.getElementById("slide-total").textContent=slides.length;
+        renderSlide();renderExamples();newTrainer();
+        document.getElementById("trainer-input").addEventListener("keypress",e=>{if(e.key==="Enter")checkTrainer();});
+        const tryRender=()=>{if(window.renderMathInElement)renderMathInElement(document.body,{delimiters:[{left:"$$",right:"$$",display:true},{left:"$",right:"$",display:false}]});else setTimeout(tryRender,300);};
+        tryRender();
+      });
+    </script>
+  </body>
+</html>

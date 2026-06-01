@@ -1,0 +1,730 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Урок 5 — Площадь поверхности прямоугольного параллелепипеда</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css"/>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
+  <style>
+    :root{--bg:#0b0f19;--card:#111827;--glass:rgba(17,24,39,0.7);--border:rgba(255,255,255,0.08);--text:#e2e8f0;--muted:#94a3b8;--primary:#8b5cf6;--primary-dim:rgba(139,92,246,0.2);--secondary:#7c3aed;--success:#22c55e;--error:#ef4444;--warn:#f59e0b;}
+    *{margin:0;padding:0;box-sizing:border-box;}
+    body{font-family:"Inter",system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;line-height:1.6;}
+    .lang-az{display:none;}
+    body.lang-az .lang-ru{display:none;}
+    body.lang-az .lang-az{display:inline;}
+    .bg-glow{position:fixed;top:0;left:0;width:100%;height:100%;z-index:-1;background:radial-gradient(ellipse at 20% 20%,rgba(139,92,246,0.07) 0%,transparent 50%),radial-gradient(ellipse at 80% 80%,rgba(124,58,237,0.07) 0%,transparent 50%);}
+    nav{position:fixed;top:0;left:0;right:0;background:rgba(11,15,25,0.85);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);z-index:1000;padding:0 20px;}
+    .nav-inner{max-width:1100px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;height:58px;}
+    .logo{font-size:1.1rem;font-weight:700;color:var(--primary);text-decoration:none;}
+    .nav-links{display:flex;gap:4px;list-style:none;}
+    .nav-links a{color:var(--muted);text-decoration:none;padding:7px 13px;border-radius:8px;transition:all .25s;font-size:.85rem;font-weight:500;cursor:pointer;border:none;background:transparent;}
+    .nav-links a:hover,.nav-links a.active{color:var(--text);background:var(--primary-dim);}
+    .nav-links a.active{color:var(--primary);}
+    .lang-btn{background:var(--primary-dim);color:var(--primary);border:1px solid var(--primary);padding:5px 12px;border-radius:8px;cursor:pointer;font-size:.8rem;font-weight:600;}
+    section{display:none;opacity:0;padding:76px 20px 40px;max-width:1050px;margin:0 auto;transition:opacity .3s;}
+    section.active{display:block;opacity:1;animation:fadeUp .4s ease;}
+    @keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+    .glass{background:var(--glass);backdrop-filter:blur(20px);border:1px solid var(--border);border-radius:20px;padding:24px;margin-bottom:18px;}
+    .glass:hover{box-shadow:0 16px 40px rgba(0,0,0,.35);}
+    .card-title{font-size:1.4rem;font-weight:700;margin-bottom:14px;display:flex;align-items:center;gap:10px;}
+    .icon-box{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.2rem;background:var(--primary-dim);}
+    .hero{text-align:center;padding:120px 20px 60px;}
+    .hero h1{font-size:2.6rem;font-weight:800;margin-bottom:16px;background:linear-gradient(135deg,var(--primary),#a78bfa);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1.2;}
+    .hero p{font-size:1.1rem;color:var(--muted);max-width:580px;margin:0 auto 32px;}
+    .btn{display:inline-flex;align-items:center;gap:8px;padding:12px 28px;border-radius:11px;border:none;font-size:.95rem;font-weight:600;cursor:pointer;transition:all .25s;text-decoration:none;}
+    .btn-primary{background:linear-gradient(135deg,var(--primary),var(--secondary));color:#fff;}
+    .btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(139,92,246,.4);}
+    .btn-secondary{background:var(--glass);color:var(--text);border:1px solid var(--border);}
+    .btn-secondary:hover{background:rgba(255,255,255,.07);}
+    .btn:disabled{opacity:.45;cursor:not-allowed;transform:none!important;}
+    /* Slides */
+    .slide{display:none;animation:fadeUp .3s ease;}
+    .slide.active{display:block;}
+    .slide h3{font-size:1.25rem;color:var(--primary);margin-bottom:14px;}
+    .slide p,.slide li{color:var(--muted);line-height:1.85;margin-bottom:10px;}
+    .slide table{width:100%;border-collapse:collapse;margin:12px 0;color:var(--muted);}
+    .slide table th,.slide table td{border:1px solid var(--border);padding:9px 12px;text-align:left;}
+    .slide table th{background:rgba(139,92,246,.12);color:var(--text);}
+    .slide-nav{display:flex;justify-content:space-between;align-items:center;margin-top:18px;}
+    .slide-counter{font-size:.85rem;color:var(--muted);}
+    /* Algorithm */
+    .step{background:var(--glass);border:1px solid var(--border);border-radius:14px;padding:20px 20px 20px 66px;position:relative;margin-bottom:14px;transition:all .25s;}
+    .step:hover{border-color:var(--primary);transform:translateX(4px);}
+    .step-num{position:absolute;left:16px;top:18px;width:36px;height:36px;background:var(--primary);color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;}
+    .step h4{color:var(--text);margin-bottom:6px;font-size:1rem;}
+    .step p{color:var(--muted);font-size:.9rem;}
+    /* Examples */
+    .example-card{background:var(--glass);border:1px solid var(--border);border-radius:16px;padding:22px;margin-bottom:18px;}
+    .ex-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:8px;}
+    .ex-tag{background:var(--primary-dim);color:var(--primary);padding:3px 11px;border-radius:16px;font-size:.8rem;font-weight:600;}
+    .ex-topic{color:var(--muted);font-size:.82rem;}
+    .ex-problem{font-size:1.05rem;margin-bottom:14px;line-height:1.75;}
+    .sol-btn{background:var(--primary-dim);color:var(--primary);border:1px solid var(--primary);padding:9px 18px;border-radius:8px;cursor:pointer;font-weight:600;transition:all .25s;}
+    .sol-btn:hover{background:var(--primary);color:#fff;}
+    .solution{display:none;margin-top:16px;padding:16px;background:rgba(139,92,246,.06);border-left:3px solid var(--primary);border-radius:0 10px 10px 0;}
+    .solution.open{display:block;animation:fadeUp .3s ease;}
+    .solution p{margin-bottom:7px;color:var(--muted);}
+    .solution strong{color:var(--primary);}
+    /* Trainer */
+    .quiz-box{background:var(--glass);border:1px solid var(--border);border-radius:18px;padding:28px;}
+    .trainer-q{font-size:1.2rem;text-align:center;padding:22px;background:rgba(255,255,255,.04);border-radius:12px;margin-bottom:20px;min-height:70px;display:flex;align-items:center;justify-content:center;}
+    .trainer-input-row{display:flex;gap:10px;margin-bottom:16px;}
+    .trainer-input{flex:1;padding:12px 16px;background:rgba(255,255,255,.05);border:2px solid var(--border);border-radius:11px;color:var(--text);font-size:1rem;outline:none;transition:border-color .2s;}
+    .trainer-input:focus{border-color:var(--primary);}
+    .trainer-feedback{min-height:52px;margin-bottom:14px;padding:0 4px;}
+    .feedback-ok{color:var(--success);font-weight:600;}
+    .feedback-err{color:var(--error);font-weight:600;}
+    .hint-box{display:none;margin-top:14px;padding:14px 16px;background:rgba(139,92,246,.1);border-radius:11px;border-left:3px solid var(--primary);color:var(--muted);}
+    .stat{background:rgba(255,255,255,.05);padding:11px 22px;border-radius:11px;text-align:center;border:1px solid var(--border);}
+    .stat-val{font-size:1.4rem;font-weight:700;color:var(--primary);}
+    .stat-lbl{font-size:.8rem;color:var(--muted);}
+    /* Assessment */
+    .mode-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:18px;}
+    .mode-card{background:var(--glass);border:1px solid var(--border);border-radius:16px;padding:24px;text-align:center;}
+    .mode-card h3{margin:10px 0 8px;font-size:1.1rem;}
+    .mode-card p{color:var(--muted);font-size:.9rem;margin-bottom:18px;}
+    .quiz-progress{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap;gap:8px;}
+    .prog-bar{flex:1;height:7px;background:rgba(255,255,255,.08);border-radius:4px;margin:0 14px;overflow:hidden;min-width:80px;}
+    .prog-fill{height:100%;background:linear-gradient(90deg,var(--primary),#a78bfa);border-radius:4px;transition:width .4s ease;}
+    .q-box{font-size:1.1rem;margin-bottom:20px;padding:18px;background:rgba(255,255,255,.04);border-radius:12px;border-left:4px solid var(--primary);line-height:1.75;}
+    .options{display:grid;gap:10px;}
+    .option-card{background:rgba(255,255,255,.04);border:2px solid var(--border);border-radius:11px;padding:14px 18px;cursor:pointer;transition:all .25s;display:flex;align-items:center;gap:11px;}
+    .option-card:hover{border-color:var(--primary);background:var(--primary-dim);}
+    .option-card.correct{border-color:#22c55e;background:rgba(34,197,94,.15);}
+    .option-card.wrong{border-color:#ef4444;background:rgba(239,68,68,.15);}
+    .option-card.disabled{pointer-events:none;}
+    .opt-letter{width:30px;height:30px;border-radius:7px;background:rgba(255,255,255,.07);display:flex;align-items:center;justify-content:center;font-weight:700;flex-shrink:0;font-size:.9rem;}
+    .q-nav{display:flex;justify-content:space-between;margin-top:20px;}
+    .timer-badge{position:fixed;top:68px;right:18px;background:var(--card);backdrop-filter:blur(20px);border:1px solid var(--border);border-radius:14px;padding:13px 20px;font-size:1.2rem;font-weight:700;z-index:998;}
+    .timer-badge.warn{border-color:var(--warn);color:var(--warn);}
+    .timer-badge.danger{border-color:var(--error);color:var(--error);animation:pulse .5s infinite;}
+    @keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.04)}}
+    .results-wrap{text-align:center;padding:36px 20px;}
+    .score-ring{width:180px;height:180px;border-radius:50%;background:conic-gradient(var(--primary) calc(var(--pct)*3.6deg),rgba(255,255,255,.07) 0);margin:0 auto 28px;display:flex;align-items:center;justify-content:center;position:relative;}
+    .score-ring::before{content:"";position:absolute;width:150px;height:150px;background:var(--bg);border-radius:50%;}
+    .score-num{position:relative;font-size:2.6rem;font-weight:800;color:var(--primary);}
+    .breakdown{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:14px;max-width:560px;margin:0 auto 28px;}
+    .bd-item{background:rgba(255,255,255,.05);padding:14px;border-radius:11px;}
+    .bd-val{font-size:1.35rem;font-weight:700;color:var(--primary);}
+    .bd-lbl{font-size:.8rem;color:var(--muted);}
+    .expl-box{display:none;margin-top:16px;padding:14px 16px;background:var(--primary-dim);border-radius:11px;border-left:3px solid var(--primary);color:var(--muted);}
+    @media(max-width:720px){.hero h1{font-size:1.9rem}.nav-links{display:none}section{padding:68px 12px 30px}.glass{padding:16px}}
+  </style>
+</head>
+<body>
+<div class="bg-glow"></div>
+<nav>
+  <div class="nav-inner">
+    <a href="index.html" class="logo">📊 §7.5</a>
+    <ul class="nav-links">
+      <li><a href="#" class="active" onclick="showSection('home',this)"><span class="lang-ru">Главная</span><span class="lang-az">Ana səhifə</span></a></li>
+      <li><a href="#" onclick="showSection('theory',this)"><span class="lang-ru">Теория</span><span class="lang-az">Nəzəriyyə</span></a></li>
+      <li><a href="#" onclick="showSection('algorithm',this)"><span class="lang-ru">Алгоритм</span><span class="lang-az">Alqoritm</span></a></li>
+      <li><a href="#" onclick="showSection('examples',this)"><span class="lang-ru">Примеры</span><span class="lang-az">Nümunələr</span></a></li>
+      <li><a href="#" onclick="showSection('trainer',this)"><span class="lang-ru">Тренажёр</span><span class="lang-az">Məşq</span></a></li>
+      <li><a href="#" onclick="showSection('assessment',this)"><span class="lang-ru">Аттестация</span><span class="lang-az">Qiymətləndirmə</span></a></li>
+    </ul>
+    <button class="lang-btn" onclick="toggleLang()">AZ / RU</button>
+  </div>
+</nav>
+
+<!-- HOME -->
+<section id="home" class="active">
+  <div class="hero">
+    <h1><span class="lang-ru">Площадь поверхности параллелепипеда</span><span class="lang-az">Paralelipipedin səthi sahəsi</span></h1>
+    <p><span class="lang-ru">§7.5 · Формула S = 2(ab + bc + ac), развёртка, задачи на упаковку и обшивку. 30 вопросов.</span><span class="lang-az">§7.5 · S = 2(ab + bc + ac) düsturu, açılma, qablaşdırma məsələləri. 30 sual.</span></p>
+    <div style="display:flex;gap:14px;justify-content:center;flex-wrap:wrap;">
+      <button class="btn btn-primary" onclick="showSection('theory')"><span class="lang-ru">Начать обучение</span><span class="lang-az">Öyrənməyə başla</span></button>
+      <button class="btn btn-secondary" onclick="showSection('assessment')"><span class="lang-ru">Проверить знания</span><span class="lang-az">Bilikləri yoxla</span></button>
+    </div>
+  </div>
+  <div class="glass">
+    <div class="card-title"><span class="icon-box">📊</span><span class="lang-ru">Ключевые понятия</span><span class="lang-az">Əsas anlayışlar</span></div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:16px;">
+      <div class="glass" style="padding:18px;"><h3 style="color:var(--primary);margin-bottom:6px;font-size:1rem;"><span class="lang-ru">Формула площади</span><span class="lang-az">Sahə düsturu</span></h3><p style="color:var(--muted);font-size:.9rem;"><span class="lang-ru">S = 2(ab + bc + ac) — сумма трёх пар прямоугольных граней.</span><span class="lang-az">S = 2(ab + bc + ac) — üç cüt düzbucaqlı üzün cəmi.</span></p></div>
+      <div class="glass" style="padding:18px;"><h3 style="color:#a78bfa;margin-bottom:6px;font-size:1rem;"><span class="lang-ru">Развёртка</span><span class="lang-az">Açılma</span></h3><p style="color:var(--muted);font-size:.9rem;"><span class="lang-ru">Куб или параллелепипед раскладывается в 6 прямоугольников.</span><span class="lang-az">Kub və ya paralelipipedin 6 düzbucaqlıya açılması.</span></p></div>
+      <div class="glass" style="padding:18px;"><h3 style="color:#34d399;margin-bottom:6px;font-size:1rem;"><span class="lang-ru">Куб</span><span class="lang-az">Kub</span></h3><p style="color:var(--muted);font-size:.9rem;"><span class="lang-ru">Для куба: S = 6a² (все 6 граней — квадраты).</span><span class="lang-az">Kub üçün: S = 6a² (bütün 6 üz kvadratdır).</span></p></div>
+      <div class="glass" style="padding:18px;"><h3 style="color:#f59e0b;margin-bottom:6px;font-size:1rem;"><span class="lang-ru">Применение</span><span class="lang-az">Tətbiq</span></h3><p style="color:var(--muted);font-size:.9rem;"><span class="lang-ru">Упаковка подарков, покраска стен комнаты, обшивка ящиков.</span><span class="lang-az">Hədiyyə qablaşdırması, otaq divarlarının rənglənməsi.</span></p></div>
+    </div>
+  </div>
+</section>
+
+<!-- THEORY -->
+<section id="theory">
+  <div class="glass">
+    <div class="card-title"><span class="icon-box">📖</span><span class="lang-ru">Теория: Площадь поверхности</span><span class="lang-az">Nəzəriyyə: Səthi sahəsi</span></div>
+    <p style="color:var(--muted);margin-bottom:18px;"><span class="lang-ru">Изучите ключевые формулы и понятия по слайдам.</span><span class="lang-az">Əsas düstur və anlayışları slaydlarla öyrənin.</span></p>
+    <div style="text-align:right;margin-bottom:8px;"><span class="slide-counter" id="slide-ctr">1 / 8</span></div>
+    <div id="slides-track"></div>
+    <div class="slide-nav" style="margin-top:14px;">
+      <button class="btn btn-secondary" onclick="prevSlide()">← <span class="lang-ru">Назад</span><span class="lang-az">Geri</span></button>
+      <button class="btn btn-primary" onclick="nextSlide()"><span class="lang-ru">Вперёд</span><span class="lang-az">İrəli</span> →</button>
+    </div>
+  </div>
+</section>
+
+<!-- ALGORITHM -->
+<section id="algorithm">
+  <div class="glass">
+    <div class="card-title"><span class="icon-box">🪜</span><span class="lang-ru">Алгоритм вычисления площади поверхности</span><span class="lang-az">Səthi sahəsinin hesablanması alqoritmi</span></div>
+    <p style="color:var(--muted);margin-bottom:22px;"><span class="lang-ru">Следуй этим шагам для безошибочного решения любой задачи.</span><span class="lang-az">Hər hansı bir məsələni səhvsiz həll etmək üçün bu addımları izlə.</span></p>
+    <div id="algo-steps"></div>
+  </div>
+</section>
+
+<!-- EXAMPLES -->
+<section id="examples">
+  <div class="glass">
+    <div class="card-title"><span class="icon-box">📝</span><span class="lang-ru">Разбор примеров (6 задач)</span><span class="lang-az">Nümunələrin təhlili (6 məsələ)</span></div>
+    <p style="color:var(--muted);margin-bottom:20px;"><span class="lang-ru">Нажмите «Показать решение» для пошагового разбора.</span><span class="lang-az">Addım-addım təhlil üçün «Həlli göstər» düyməsini basın.</span></p>
+  </div>
+  <div id="examples-list"></div>
+</section>
+
+<!-- TRAINER -->
+<section id="trainer">
+  <div class="glass">
+    <div class="card-title"><span class="icon-box">🏋️</span><span class="lang-ru">Тренажёр</span><span class="lang-az">Məşq</span></div>
+    <p style="color:var(--muted);margin-bottom:20px;"><span class="lang-ru">Введите ответ числом (в кв. единицах).</span><span class="lang-az">Cavabı rəqəmlə daxil edin (kvadrat vahidlə).</span></p>
+    <div class="quiz-box">
+      <div class="trainer-q" id="tr-q"><span class="lang-ru">Нажмите «Новая задача»</span><span class="lang-az">«Yeni məsələ» düyməsini basın</span></div>
+      <div class="trainer-input-row">
+        <input type="number" class="trainer-input" id="tr-ans" placeholder="Ответ" onkeydown="if(event.key==='Enter')checkTrainer()"/>
+        <button class="btn btn-primary" onclick="checkTrainer()" id="tr-btn" disabled><span class="lang-ru">Проверить</span><span class="lang-az">Yoxla</span></button>
+      </div>
+      <div class="trainer-feedback" id="tr-fb"></div>
+      <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;">
+        <button class="btn btn-secondary" onclick="newTrainer()"><span class="lang-ru">Новая задача</span><span class="lang-az">Yeni məsələ</span></button>
+        <button class="btn btn-secondary" onclick="showHint()"><span class="lang-ru">Подсказка</span><span class="lang-az">İpucu</span></button>
+      </div>
+      <div class="hint-box" id="tr-hint"></div>
+    </div>
+    <div style="display:flex;justify-content:center;gap:20px;flex-wrap:wrap;margin-top:18px;">
+      <div class="stat"><div class="stat-val" id="tr-correct">0</div><div class="stat-lbl"><span class="lang-ru">Верно</span><span class="lang-az">Düzgün</span></div></div>
+      <div class="stat"><div class="stat-val" id="tr-total">0</div><div class="stat-lbl"><span class="lang-ru">Всего</span><span class="lang-az">Cəmi</span></div></div>
+      <div class="stat"><div class="stat-val" id="tr-streak">0</div><div class="stat-lbl"><span class="lang-ru">Серия</span><span class="lang-az">Seriya</span></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ASSESSMENT -->
+<section id="assessment">
+  <div id="assess-home">
+    <div class="glass">
+      <div class="card-title"><span class="icon-box">🧪</span><span class="lang-ru">Аттестация — 30 вопросов</span><span class="lang-az">Qiymətləndirmə — 30 sual</span></div>
+      <p style="color:var(--muted);margin-bottom:20px;"><span class="lang-ru">Выберите режим тестирования.</span><span class="lang-az">Test rejimini seçin.</span></p>
+      <div class="mode-cards">
+        <div class="mode-card"><div style="font-size:2.5rem;">🔍</div><h3><span class="lang-ru">Диагностический тест</span><span class="lang-az">Diaqnostik test</span></h3><p><span class="lang-ru">30 вопросов с объяснениями. Без ограничения времени.</span><span class="lang-az">Açıqlamalarla 30 sual. Vaxt məhdudiyyəti yoxdur.</span></p><button class="btn btn-primary" onclick="startDiag()"><span class="lang-ru">Начать</span><span class="lang-az">Başla</span></button></div>
+        <div class="mode-card"><div style="font-size:2.5rem;">⏱️</div><h3><span class="lang-ru">Скоростная викторина</span><span class="lang-az">Sürət viktorinası</span></h3><p><span class="lang-ru">30 вопросов · 10 минут. На скорость!</span><span class="lang-az">30 sual · 10 dəqiqə. Sürətlə!</span></p><button class="btn btn-primary" onclick="startTA()"><span class="lang-ru">Начать</span><span class="lang-az">Başla</span></button></div>
+      </div>
+    </div>
+  </div>
+  <div id="assess-diag" style="display:none;">
+    <div class="glass">
+      <div class="quiz-progress">
+        <span><span class="lang-ru">Вопрос</span><span class="lang-az">Sual</span> <span id="d-cur">1</span>/30</span>
+        <div class="prog-bar"><div class="prog-fill" id="d-prog"></div></div>
+        <span id="d-score-lbl">0 <span class="lang-ru">правильных</span><span class="lang-az">düzgün</span></span>
+      </div>
+      <div class="q-box" id="d-q"></div>
+      <div class="options" id="d-opts"></div>
+      <div class="expl-box" id="d-expl"></div>
+      <div class="q-nav">
+        <button class="btn btn-secondary" onclick="diagPrev()" id="d-prev" disabled>←</button>
+        <button class="btn btn-primary" onclick="diagNext()" id="d-next" disabled><span class="lang-ru">Далее</span><span class="lang-az">Növbəti</span> →</button>
+      </div>
+    </div>
+  </div>
+  <div id="assess-ta" style="display:none;">
+    <div class="timer-badge" id="ta-timer">10:00</div>
+    <div class="glass">
+      <div class="quiz-progress">
+        <span><span class="lang-ru">Вопрос</span><span class="lang-az">Sual</span> <span id="t-cur">1</span>/30</span>
+        <div class="prog-bar"><div class="prog-fill" id="t-prog"></div></div>
+      </div>
+      <div class="q-box" id="t-q"></div>
+      <div class="options" id="t-opts"></div>
+      <div style="display:flex;justify-content:flex-end;margin-top:18px;">
+        <button class="btn btn-primary" onclick="taNext()" id="t-next"><span class="lang-ru">Ответить →</span><span class="lang-az">Cavabla →</span></button>
+      </div>
+    </div>
+  </div>
+  <div id="assess-results" style="display:none;">
+    <div class="glass">
+      <div class="results-wrap">
+        <div style="color:var(--muted);margin-bottom:10px;"><span class="lang-ru">Ваш результат</span><span class="lang-az">Nəticəniz</span></div>
+        <div class="score-ring" id="res-ring"><div class="score-num" id="res-pct">0%</div></div>
+        <div style="font-size:1.4rem;font-weight:700;margin-bottom:26px;" id="res-msg"></div>
+        <div class="breakdown">
+          <div class="bd-item"><div class="bd-val" id="res-ok">0</div><div class="bd-lbl"><span class="lang-ru">Верно</span><span class="lang-az">Düzgün</span></div></div>
+          <div class="bd-item"><div class="bd-val" id="res-err">0</div><div class="bd-lbl"><span class="lang-ru">Ошибок</span><span class="lang-az">Səhv</span></div></div>
+          <div class="bd-item"><div class="bd-val" id="res-time">—</div><div class="bd-lbl"><span class="lang-ru">Время</span><span class="lang-az">Vaxt</span></div></div>
+          <div class="bd-item"><div class="bd-val" id="res-lvl">—</div><div class="bd-lbl"><span class="lang-ru">Уровень</span><span class="lang-az">Səviyyə</span></div></div>
+        </div>
+        <div style="display:flex;gap:14px;justify-content:center;flex-wrap:wrap;">
+          <button class="btn btn-primary" onclick="resetAssess()"><span class="lang-ru">Ещё раз</span><span class="lang-az">Yenidən</span></button>
+          <button class="btn btn-secondary" onclick="showSection('theory')"><span class="lang-ru">К теории</span><span class="lang-az">Nəzəriyyəyə</span></button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+const St = {
+  lang:"ru", slide:0,
+  trainer:{correct:0,total:0,streak:0,current:null},
+  diag:{cur:0,score:0,answers:[]},
+  ta:{cur:0,score:0,timer:null,timeLeft:600,start:0,answers:[]}
+};
+
+const slides = [
+  { ru:{t:"Что такое площадь поверхности?",b:`<p>Площадь поверхности прямоугольного параллелепипеда — это <strong style="color:var(--primary)">сумма площадей всех шести прямоугольных граней</strong>.</p>
+<p>Параллелепипед имеет <strong>три пары</strong> одинаковых (параллельных) граней:</p>
+<table><tr><th>Пара</th><th>Грани</th><th>Площадь одной</th></tr>
+<tr><td>Основания</td><td>Верх и низ</td><td>a · b</td></tr>
+<tr><td>Боковые (фронт/зад)</td><td>Перед и зад</td><td>a · c</td></tr>
+<tr><td>Боковые (лево/право)</td><td>Левая и правая</td><td>b · c</td></tr></table>
+<div style="background:var(--primary-dim);padding:12px;border-radius:8px;margin-top:10px;"><strong>Итого:</strong> S = 2·(ab + ac + bc)</div>`},
+    az:{t:"Səthi sahəsi nədir?",b:`<p>Düzbucaqlı paralelipipedin səthi sahəsi — <strong style="color:var(--primary)">altı düzbucaqlı üzün sahələrinin cəmidir</strong>.</p>
+<p>Paralelipipedin <strong>üç cüt</strong> eyni (paralel) üzü var:</p>
+<table><tr><th>Cüt</th><th>Üzlər</th><th>Bir üzün sahəsi</th></tr>
+<tr><td>Əsaslar</td><td>Üst və alt</td><td>a · b</td></tr>
+<tr><td>Yan (ön/arxa)</td><td>Ön və arxa</td><td>a · c</td></tr>
+<tr><td>Yan (sol/sağ)</td><td>Sol və sağ</td><td>b · c</td></tr></table>
+<div style="background:var(--primary-dim);padding:12px;border-radius:8px;margin-top:10px;"><strong>Cəmi:</strong> S = 2·(ab + ac + bc)</div>`}
+  },
+  { ru:{t:"Формула площади поверхности",b:`<p style="font-size:1.1rem;text-align:center;padding:16px;background:var(--primary-dim);border-radius:10px;margin-bottom:14px;">$$S = 2(ab + bc + ac)$$</p>
+<p>где: <strong>a</strong> — длина, <strong>b</strong> — ширина, <strong>c</strong> — высота параллелепипеда.</p>
+<p><strong>Пример:</strong> a = 5 см, b = 3 см, c = 4 см:</p>
+<p>S = 2·(5·3 + 3·4 + 5·4) = 2·(15 + 12 + 20) = 2·47 = <strong style="color:var(--primary)">94 см²</strong></p>
+<div style="background:rgba(34,197,94,0.1);border:1px solid #22c55e;padding:12px;border-radius:8px;"><strong>Порядок действий:</strong> умножаем каждую пару → складываем три произведения → умножаем на 2.</div>`},
+    az:{t:"Səthi sahəsi düsturu",b:`<p style="font-size:1.1rem;text-align:center;padding:16px;background:var(--primary-dim);border-radius:10px;margin-bottom:14px;">$$S = 2(ab + bc + ac)$$</p>
+<p>burada: <strong>a</strong> — uzunluq, <strong>b</strong> — en, <strong>c</strong> — hündürlük.</p>
+<p><strong>Misal:</strong> a = 5 sm, b = 3 sm, c = 4 sm:</p>
+<p>S = 2·(5·3 + 3·4 + 5·4) = 2·(15 + 12 + 20) = 2·47 = <strong style="color:var(--primary)">94 sm²</strong></p>
+<div style="background:rgba(34,197,94,0.1);border:1px solid #22c55e;padding:12px;border-radius:8px;"><strong>Hərəkətin sırası:</strong> hər cütü vururuq → üç hasili toplayırıq → 2-yə vururuq.</div>`}
+  },
+  { ru:{t:"Развёртка параллелепипеда",b:`<p>Развёртка — это фигура, которую можно сложить в параллелепипед. Она состоит из <strong>6 прямоугольников</strong>.</p>
+<svg viewBox="0 0 340 200" style="width:100%;max-width:340px;display:block;margin:12px auto;" aria-label="Развёртка прямоугольного параллелепипеда">
+  <rect x="10" y="70" width="60" height="80" fill="none" stroke="#8b5cf6" stroke-width="2"/>
+  <text x="40" y="115" text-anchor="middle" fill="#94a3b8" font-size="11">b×c</text>
+  <rect x="70" y="10" width="100" height="60" fill="none" stroke="#8b5cf6" stroke-width="2"/>
+  <text x="120" y="45" text-anchor="middle" fill="#94a3b8" font-size="11">a×b</text>
+  <rect x="70" y="70" width="100" height="80" fill="rgba(139,92,246,0.15)" stroke="#8b5cf6" stroke-width="2"/>
+  <text x="120" y="115" text-anchor="middle" fill="#e2e8f0" font-size="11">a×c</text>
+  <rect x="70" y="150" width="100" height="40" fill="none" stroke="#8b5cf6" stroke-width="2"/>
+  <text x="120" y="175" text-anchor="middle" fill="#94a3b8" font-size="11">a×b</text>
+  <rect x="170" y="70" width="60" height="80" fill="none" stroke="#8b5cf6" stroke-width="2"/>
+  <text x="200" y="115" text-anchor="middle" fill="#94a3b8" font-size="11">b×c</text>
+  <rect x="230" y="70" width="100" height="80" fill="none" stroke="#8b5cf6" stroke-width="2"/>
+  <text x="280" y="115" text-anchor="middle" fill="#94a3b8" font-size="11">a×c</text>
+</svg>
+<p>Площадь развёртки = Площадь поверхности параллелепипеда.</p>`},
+    az:{t:"Paralelipipedin açılması",b:`<p>Açılma — paralelipipedə qatlana bilən fiqurdur. O, <strong>6 düzbucaqlıdan</strong> ibarətdir.</p>
+<svg viewBox="0 0 340 200" style="width:100%;max-width:340px;display:block;margin:12px auto;" aria-label="Düzbucaqlı paralelipipedin açılması">
+  <rect x="10" y="70" width="60" height="80" fill="none" stroke="#8b5cf6" stroke-width="2"/>
+  <text x="40" y="115" text-anchor="middle" fill="#94a3b8" font-size="11">b×c</text>
+  <rect x="70" y="10" width="100" height="60" fill="none" stroke="#8b5cf6" stroke-width="2"/>
+  <text x="120" y="45" text-anchor="middle" fill="#94a3b8" font-size="11">a×b</text>
+  <rect x="70" y="70" width="100" height="80" fill="rgba(139,92,246,0.15)" stroke="#8b5cf6" stroke-width="2"/>
+  <text x="120" y="115" text-anchor="middle" fill="#e2e8f0" font-size="11">a×c</text>
+  <rect x="70" y="150" width="100" height="40" fill="none" stroke="#8b5cf6" stroke-width="2"/>
+  <text x="120" y="175" text-anchor="middle" fill="#94a3b8" font-size="11">a×b</text>
+  <rect x="170" y="70" width="60" height="80" fill="none" stroke="#8b5cf6" stroke-width="2"/>
+  <text x="200" y="115" text-anchor="middle" fill="#94a3b8" font-size="11">b×c</text>
+  <rect x="230" y="70" width="100" height="80" fill="none" stroke="#8b5cf6" stroke-width="2"/>
+  <text x="280" y="115" text-anchor="middle" fill="#94a3b8" font-size="11">a×c</text>
+</svg>
+<p>Açılmanın sahəsi = Paralelipipedin səthi sahəsidir.</p>`}
+  },
+  { ru:{t:"Куб — частный случай",b:`<p>Куб — прямоугольный параллелепипед, у которого все три размера равны: <strong>a = b = c</strong>.</p>
+<p style="text-align:center;font-size:1.15rem;padding:14px;background:var(--primary-dim);border-radius:10px;margin:12px 0;">$$S_{\text{куба}} = 6a^2$$</p>
+<table><tr><th>Ребро куба (a)</th><th>Площадь поверхности (6a²)</th></tr>
+<tr><td>1 см</td><td>6 см²</td></tr>
+<tr><td>2 см</td><td>24 см²</td></tr>
+<tr><td>3 см</td><td>54 см²</td></tr>
+<tr><td>5 см</td><td>150 см²</td></tr>
+<tr><td>10 см</td><td>600 см²</td></tr></table>`},
+    az:{t:"Kub — xüsusi hal",b:`<p>Kub — bütün üç ölçüsü bərabər olan düzbucaqlı paraleliped: <strong>a = b = c</strong>.</p>
+<p style="text-align:center;font-size:1.15rem;padding:14px;background:var(--primary-dim);border-radius:10px;margin:12px 0;">$$S_{\text{kub}} = 6a^2$$</p>
+<table><tr><th>Kubun tili (a)</th><th>Səthi sahəsi (6a²)</th></tr>
+<tr><td>1 sm</td><td>6 sm²</td></tr>
+<tr><td>2 sm</td><td>24 sm²</td></tr>
+<tr><td>3 sm</td><td>54 sm²</td></tr>
+<tr><td>5 sm</td><td>150 sm²</td></tr>
+<tr><td>10 sm</td><td>600 sm²</td></tr></table>`}
+  },
+  { ru:{t:"Нахождение неизвестного размера",b:`<p>Иногда известна площадь поверхности и два из трёх размеров. Нужно найти третий.</p>
+<p><strong>Задача:</strong> S = 148 см², a = 6 см, b = 4 см. Найти c.</p>
+<p>148 = 2(6·4 + 4·c + 6·c)</p>
+<p>74 = 24 + 4c + 6c</p>
+<p>74 − 24 = 10c</p>
+<p>50 = 10c → <strong style="color:var(--primary)">c = 5 см</strong></p>
+<div style="background:rgba(245,158,11,0.1);border:1px solid var(--warn);padding:12px;border-radius:8px;margin-top:10px;"><strong>Метод:</strong> S/2 → вычти известные произведения → раздели на сумму коэффициентов c.</div>`},
+    az:{t:"Naməlum ölçünün tapılması",b:`<p>Bəzən səthi sahəsi və üç ölçüdən ikisi məlumdur. Üçüncünü tapmaq lazımdır.</p>
+<p><strong>Məsələ:</strong> S = 148 sm², a = 6 sm, b = 4 sm. c tapın.</p>
+<p>148 = 2(6·4 + 4·c + 6·c)</p>
+<p>74 = 24 + 4c + 6c</p>
+<p>74 − 24 = 10c</p>
+<p>50 = 10c → <strong style="color:var(--primary)">c = 5 sm</strong></p>
+<div style="background:rgba(245,158,11,0.1);border:1px solid var(--warn);padding:12px;border-radius:8px;margin-top:10px;"><strong>Metod:</strong> S/2 → məlum hasillər çıxılır → c əmsallarının cəminə bölünür.</div>`}
+  },
+  { ru:{t:"Единицы измерения площади",b:`<p>Площадь измеряется в <strong>квадратных единицах</strong>.</p>
+<table><tr><th>Единица</th><th>Равна</th></tr>
+<tr><td>1 мм²</td><td>0,01 см²</td></tr>
+<tr><td>1 см²</td><td>100 мм²</td></tr>
+<tr><td>1 дм²</td><td>100 см²</td></tr>
+<tr><td>1 м²</td><td>100 дм² = 10 000 см²</td></tr></table>
+<p>При вычислении площади поверхности все размеры должны быть в <strong>одних и тех же единицах</strong>!</p>
+<div style="background:rgba(239,68,68,0.1);border:1px solid #ef4444;padding:10px;border-radius:8px;margin-top:10px;"><strong>Ошибка:</strong> нельзя смешивать см и дм в одной формуле без перевода.</div>`},
+    az:{t:"Sahə ölçmə vahidləri",b:`<p>Sahə <strong>kvadrat vahidlərlə</strong> ölçülür.</p>
+<table><tr><th>Vahid</th><th>Bərabərdir</th></tr>
+<tr><td>1 mm²</td><td>0,01 sm²</td></tr>
+<tr><td>1 sm²</td><td>100 mm²</td></tr>
+<tr><td>1 dm²</td><td>100 sm²</td></tr>
+<tr><td>1 m²</td><td>100 dm² = 10 000 sm²</td></tr></table>
+<p>Səthi sahəsi hesablanarkən bütün ölçülər <strong>eyni vahiddə</strong> olmalıdır!</p>
+<div style="background:rgba(239,68,68,0.1);border:1px solid #ef4444;padding:10px;border-radius:8px;margin-top:10px;"><strong>Səhv:</strong> çevirmədən sm və dm eyni düsturda qarışdırıla bilməz.</div>`}
+  },
+  { ru:{t:"Практическое применение: обёртка",b:`<p>Задача: Нужно обернуть подарок. Коробка: 20 × 15 × 10 см. Сколько бумаги нужно?</p>
+<p>S = 2(20·15 + 15·10 + 20·10) = 2(300 + 150 + 200) = 2·650 = <strong style="color:var(--primary)">1300 см²</strong></p>
+<p>На практике берут с запасом (+10–15%) = около 1430–1495 см².</p>
+<div style="background:var(--primary-dim);padding:12px;border-radius:8px;margin-top:10px;">
+<strong>Правило запаса:</strong> для реальных задач на обёртку и покраску всегда добавляй 10–15% к вычисленной площади поверхности.</div>`},
+    az:{t:"Praktik tətbiq: qablaşdırma",b:`<p>Məsələ: Hədiyyəni bükməlisən. Qutu: 20 × 15 × 10 sm. Nə qədər kağız lazımdır?</p>
+<p>S = 2(20·15 + 15·10 + 20·10) = 2(300 + 150 + 200) = 2·650 = <strong style="color:var(--primary)">1300 sm²</strong></p>
+<p>Praktikada ehtiyat payı (+10–15%) əlavə edilir = təxminən 1430–1495 sm².</p>
+<div style="background:var(--primary-dim);padding:12px;border-radius:8px;margin-top:10px;">
+<strong>Ehtiyat qaydası:</strong> qablaşdırma və rəngləmə məsələlərindəki hesablanmış səthi sahəyə həmişə 10–15% əlavə et.</div>`}
+  },
+  { ru:{t:"Поверхность комнаты (стены+пол+потолок)",b:`<p>Комната: длина = 6 м, ширина = 4 м, высота = 3 м.</p>
+<p>Полная поверхность: S = 2(6·4 + 4·3 + 6·3) = 2(24+12+18) = 2·54 = <strong style="color:var(--primary)">108 м²</strong></p>
+<p>Только стены (без пола и потолка): S = 2(4·3 + 6·3) = 2(12+18) = 2·30 = <strong style="color:var(--primary)">60 м²</strong></p>
+<table><tr><th>Часть комнаты</th><th>Формула</th><th>Площадь</th></tr>
+<tr><td>Пол (и потолок)</td><td>2 × (l × w)</td><td>2×24=48 м²</td></tr>
+<tr><td>Стены (4 стены)</td><td>2(lh + wh)</td><td>60 м²</td></tr>
+<tr><td>Всего</td><td>S = 2(lw+lh+wh)</td><td>108 м²</td></tr></table>`},
+    az:{t:"Otağın səthi (divarlar+döşəmə+tavan)",b:`<p>Otaq: uzunluq = 6 m, en = 4 m, hündürlük = 3 m.</p>
+<p>Tam səthi: S = 2(6·4 + 4·3 + 6·3) = 2(24+12+18) = 2·54 = <strong style="color:var(--primary)">108 m²</strong></p>
+<p>Yalnız divarlar (döşəmə və tavansız): S = 2(4·3 + 6·3) = 2(12+18) = 2·30 = <strong style="color:var(--primary)">60 m²</strong></p>
+<table><tr><th>Otağın hissəsi</th><th>Düstur</th><th>Sahə</th></tr>
+<tr><td>Döşəmə (və tavan)</td><td>2 × (l × w)</td><td>2×24=48 m²</td></tr>
+<tr><td>Divarlar (4 divar)</td><td>2(lh + wh)</td><td>60 m²</td></tr>
+<tr><td>Cəmi</td><td>S = 2(lw+lh+wh)</td><td>108 m²</td></tr></table>`}
+  }
+];
+
+const algoSteps = [
+  {ru:{h:"Запиши данные",p:"Определи длину (a), ширину (b) и высоту (c) параллелепипеда из условия задачи."},az:{h:"Məlumatları yaz",p:"Məsələnin şərtindən uzunluğu (a), eni (b) və hündürlüyü (c) müəyyən et."}},
+  {ru:{h:"Вычисли три пары граней",p:"ab = длина × ширина; bc = ширина × высота; ac = длина × высота."},az:{h:"Üç cüt üzü hesabla",p:"ab = uzunluq × en; bc = en × hündürlük; ac = uzunluq × hündürlük."}},
+  {ru:{h:"Применяй формулу",p:"S = 2(ab + bc + ac). Сложи три произведения и умножь на 2."},az:{h:"Düsturu tətbiq et",p:"S = 2(ab + bc + ac). Üç hasili toplayıb 2-yə vur."}},
+  {ru:{h:"Укажи единицы измерения",p:"Если стороны в см, то площадь в см². Если в м — в м². Не забывай квадрат!"},az:{h:"Ölçmə vahidini göstər",p:"Əgər tərəflər sm-dirsə, sahə sm²-dir. Əgər m-dirsə — m². Kvadratı unutma!"}},
+  {ru:{h:"Проверь ответ",p:"Убедись, что учёл все 6 граней. Можно проверить по развёртке: 2ab + 2bc + 2ac."},az:{h:"Cavabı yoxla",p:"Bütün 6 üzü nəzərə aldığından əmin ol. Açılma ilə yoxlaya bilərsən: 2ab + 2bc + 2ac."}}
+];
+
+const examples = [
+  {ru:{t:"№1 · Базовая формула",d:"Вычисление по трём размерам",p:"Найдите площадь поверхности параллелепипеда с длиной 8 см, шириной 5 см и высотой 3 см.",s:`<p><strong>Дано:</strong> a = 8 см, b = 5 см, c = 3 см</p>
+<p>ab = 8·5 = 40 см²</p><p>bc = 5·3 = 15 см²</p><p>ac = 8·3 = 24 см²</p>
+<p>S = 2(40 + 15 + 24) = 2·79 = <strong style="color:var(--primary)">158 см²</strong></p>`},
+   az:{t:"№1 · Əsas düstur",d:"Üç ölçüyə görə hesablama",p:"Uzunluğu 8 sm, eni 5 sm, hündürlüyü 3 sm olan paralelipipedin səthi sahəsini tapın.",s:`<p><strong>Verilmiş:</strong> a = 8 sm, b = 5 sm, c = 3 sm</p>
+<p>ab = 8·5 = 40 sm²</p><p>bc = 5·3 = 15 sm²</p><p>ac = 8·3 = 24 sm²</p>
+<p>S = 2(40 + 15 + 24) = 2·79 = <strong style="color:var(--primary)">158 sm²</strong></p>`}},
+  {ru:{t:"№2 · Куб",d:"Площадь поверхности куба",p:"Найдите площадь поверхности куба с ребром 7 см.",s:`<p><strong>Дано:</strong> a = 7 см</p>
+<p>S = 6a² = 6·7² = 6·49 = <strong style="color:var(--primary)">294 см²</strong></p>
+<p>Можно и по общей формуле: S = 2(7·7 + 7·7 + 7·7) = 2·3·49 = 6·49 = 294 см²</p>`},
+   az:{t:"№2 · Kub",d:"Kubun səthi sahəsi",p:"Tili 7 sm olan kubun səthi sahəsini tapın.",s:`<p><strong>Verilmiş:</strong> a = 7 sm</p>
+<p>S = 6a² = 6·7² = 6·49 = <strong style="color:var(--primary)">294 sm²</strong></p>
+<p>Ümumi düsturla da: S = 2(7·7 + 7·7 + 7·7) = 2·3·49 = 6·49 = 294 sm²</p>`}},
+  {ru:{t:"№3 · Нахождение высоты",d:"Обратная задача",p:"Площадь поверхности параллелепипеда равна 188 см². Длина 8 см, ширина 5 см. Найдите высоту.",s:`<p><strong>Дано:</strong> S = 188, a = 8, b = 5, c = ?</p>
+<p>188 = 2(8·5 + 5·c + 8·c)</p>
+<p>94 = 40 + 5c + 8c = 40 + 13c</p>
+<p>13c = 54 → <strong style="color:var(--primary)">c = 54/13 ≈ 4,15 см</strong></p>
+<p>Проверка: S = 2(40+20,75+33,2) = 2·93,95 ≈ 188 ✓</p>`},
+   az:{t:"№3 · Hündürlüyün tapılması",d:"Əks məsələ",p:"Paralelipipedin səthi sahəsi 188 sm²-dir. Uzunluq 8 sm, en 5 sm. Hündürlüyü tapın.",s:`<p><strong>Verilmiş:</strong> S = 188, a = 8, b = 5, c = ?</p>
+<p>188 = 2(8·5 + 5·c + 8·c)</p>
+<p>94 = 40 + 5c + 8c = 40 + 13c</p>
+<p>13c = 54 → <strong style="color:var(--primary)">c = 54/13 ≈ 4,15 sm</strong></p>
+<p>Yoxlama: S = 2(40+20,75+33,2) = 2·93,95 ≈ 188 ✓</p>`}},
+  {ru:{t:"№4 · Задача на обёртку",d:"Практическое применение",p:"Нужно обернуть книгу в подарочную бумагу. Книга: 22 × 16 × 3 см. Сколько бумаги нужно?",s:`<p><strong>Дано:</strong> a = 22, b = 16, c = 3</p>
+<p>S = 2(22·16 + 16·3 + 22·3) = 2(352 + 48 + 66) = 2·466 = <strong style="color:var(--primary)">932 см²</strong></p>
+<p>С запасом 15%: 932 × 1,15 ≈ 1072 см²</p>`},
+   az:{t:"№4 · Qablaşdırma məsələsi",d:"Praktik tətbiq",p:"Kitabı hədiyyə kağızına bükmək lazımdır. Kitab: 22 × 16 × 3 sm. Nə qədər kağız lazımdır?",s:`<p><strong>Verilmiş:</strong> a = 22, b = 16, c = 3</p>
+<p>S = 2(22·16 + 16·3 + 22·3) = 2(352 + 48 + 66) = 2·466 = <strong style="color:var(--primary)">932 sm²</strong></p>
+<p>15% ehtiyatla: 932 × 1,15 ≈ 1072 sm²</p>`}},
+  {ru:{t:"№5 · Покраска ящика",d:"Только внешняя поверхность",p:"Деревянный ящик 120 × 80 × 60 см нужно покрасить снаружи. 1 л краски на 2 м². Сколько литров нужно?",s:`<p><strong>Дано:</strong> a = 120 см = 1,2 м, b = 80 см = 0,8 м, c = 60 см = 0,6 м</p>
+<p>S = 2(1,2·0,8 + 0,8·0,6 + 1,2·0,6) = 2(0,96 + 0,48 + 0,72) = 2·2,16 = <strong style="color:var(--primary)">4,32 м²</strong></p>
+<p>Краска: 4,32 / 2 = <strong style="color:var(--primary)">2,16 л</strong> (берём 3 л с запасом)</p>`},
+   az:{t:"№5 · Sandığın rənglənməsi",d:"Yalnız xarici səthi",p:"120 × 80 × 60 sm ölçülü taxta sandıq xaricdən rənglənməlidir. 1 l boya 2 m²-ə aiddir. Nə qədər litr lazımdır?",s:`<p><strong>Verilmiş:</strong> a = 1,2 m, b = 0,8 m, c = 0,6 m</p>
+<p>S = 2(1,2·0,8 + 0,8·0,6 + 1,2·0,6) = 2(0,96 + 0,48 + 0,72) = 2·2,16 = <strong style="color:var(--primary)">4,32 m²</strong></p>
+<p>Boya: 4,32 / 2 = <strong style="color:var(--primary)">2,16 l</strong> (ehtiyatla 3 l alırıq)</p>`}},
+  {ru:{t:"№6 · Сравнение поверхностей",d:"Что больше?",p:"Два куба: ребро первого 4 см, второго 8 см. Во сколько раз площадь поверхности второго больше первого?",s:`<p>S₁ = 6·4² = 6·16 = 96 см²</p>
+<p>S₂ = 6·8² = 6·64 = 384 см²</p>
+<p>S₂/S₁ = 384/96 = <strong style="color:var(--primary)">4</strong></p>
+<p>При удвоении ребра площадь поверхности увеличивается в 4 раза (2² = 4).</p>`},
+   az:{t:"№6 · Səthlərin müqayisəsi",d:"Hansı daha böyükdür?",p:"İki kub: birincinin tili 4 sm, ikincinin 8 sm. İkincinin səthi sahəsi birincidən neçə dəfə böyükdür?",s:`<p>S₁ = 6·4² = 6·16 = 96 sm²</p>
+<p>S₂ = 6·8² = 6·64 = 384 sm²</p>
+<p>S₂/S₁ = 384/96 = <strong style="color:var(--primary)">4</strong></p>
+<p>Til iki dəfə böyüdükdə səthi sahəsi 4 dəfə artır (2² = 4).</p>`}}
+];
+
+const questions = [
+  {ru:{q:"Найдите площадь поверхности параллелепипеда: a=2, b=3, c=4 (см).",o:["52 см²","26 см²","48 см²","60 см²"]},az:{q:"Paralelipipedin səthi sahəsini tapın: a=2, b=3, c=4 (sm).",o:["52 sm²","26 sm²","48 sm²","60 sm²"]},a:0},
+  {ru:{q:"Площадь поверхности куба с ребром 5 см:",o:["100 см²","25 см²","150 см²","125 см²"]},az:{q:"Tili 5 sm olan kubun səthi sahəsi:",o:["100 sm²","25 sm²","150 sm²","125 sm²"]},a:2},
+  {ru:{q:"Параллелепипед: a=10, b=5, c=2 см. S = ?",o:["70 см²","140 см²","100 см²","200 см²"]},az:{q:"Paraleliped: a=10, b=5, c=2 sm. S = ?",o:["70 sm²","140 sm²","100 sm²","200 sm²"]},a:1},
+  {ru:{q:"Сколько граней у прямоугольного параллелепипеда?",o:["4","6","8","12"]},az:{q:"Düzbucaqlı paralelipipedin neçə üzü var?",o:["4","6","8","12"]},a:1},
+  {ru:{q:"Развёртка параллелепипеда состоит из:",o:["4 прямоугольников","5 прямоугольников","6 прямоугольников","8 прямоугольников"]},az:{q:"Paralelipipedin açılması neçə düzbucaqlıdan ibarətdir?",o:["4 düzbucaqlı","5 düzbucaqlı","6 düzbucaqlı","8 düzbucaqlı"]},a:2},
+  {ru:{q:"Куб со стороной 3 см. S = ?",o:["18 см²","27 см²","54 см²","36 см²"]},az:{q:"Tərəfi 3 sm olan kub. S = ?",o:["18 sm²","27 sm²","54 sm²","36 sm²"]},a:2},
+  {ru:{q:"Параллелепипед 6×4×2 см. S = ?",o:["48 см²","96 см²","88 см²","76 см²"]},az:{q:"Paraleliped 6×4×2 sm. S = ?",o:["48 sm²","96 sm²","88 sm²","76 sm²"]},a:2},
+  {ru:{q:"S = 2(ab+bc+ac). При a=b=c=1: S = ?",o:["3","4","5","6"]},az:{q:"S = 2(ab+bc+ac). a=b=c=1 olduqda: S = ?",o:["3","4","5","6"]},a:3},
+  {ru:{q:"S = 94 см², a=5, b=3 см. Найти c.",o:["4 см","5 см","6 см","7 см"]},az:{q:"S = 94 sm², a=5, b=3 sm. c tapın.",o:["4 sm","5 sm","6 sm","7 sm"]},a:0},
+  {ru:{q:"При удвоении всех сторон площадь поверхности увеличивается в:",o:["2 раза","4 раза","6 раз","8 раз"]},az:{q:"Bütün tərəflər iki dəfə artdıqda səthi sahəsi neçə dəfə artır?",o:["2 dəfə","4 dəfə","6 dəfə","8 dəfə"]},a:1},
+  {ru:{q:"Параллелепипед 7×3×3 см. S = ?",o:["105 см²","114 см²","120 см²","126 см²"]},az:{q:"Paraleliped 7×3×3 sm. S = ?",o:["105 sm²","114 sm²","120 sm²","126 sm²"]},a:1},
+  {ru:{q:"Коробка 30×20×10 см. Площадь поверхности (сколько нужно упаковочной бумаги)?",o:["1200 см²","2200 см²","1100 см²","2400 см²"]},az:{q:"Qutu 30×20×10 sm. Səthi sahəsi (qablaşdırma kağızı)?",o:["1200 sm²","2200 sm²","1100 sm²","2400 sm²"]},a:1},
+  {ru:{q:"Куб: площадь поверхности 96 см². Чему равно ребро?",o:["3 см","4 см","5 см","6 см"]},az:{q:"Kub: səthi sahəsi 96 sm². Til nəyə bərabərdir?",o:["3 sm","4 sm","5 sm","6 sm"]},a:1},
+  {ru:{q:"Параллелепипед 1×1×5 см. S = ?",o:["22 см²","12 см²","10 см²","24 см²"]},az:{q:"Paraleliped 1×1×5 sm. S = ?",o:["22 sm²","12 sm²","10 sm²","24 sm²"]},a:0},
+  {ru:{q:"Сколько квадратных сантиметров в площади поверхности куба с ребром 10 см?",o:["100 см²","400 см²","600 см²","1000 см²"]},az:{q:"Tili 10 sm olan kubun səthi sahəsi neçə sm²-dir?",o:["100 sm²","400 sm²","600 sm²","1000 sm²"]},a:2},
+  {ru:{q:"Параллелепипед 4×4×6 см. S = ?",o:["120 см²","128 см²","144 см²","96 см²"]},az:{q:"Paraleliped 4×4×6 sm. S = ?",o:["120 sm²","128 sm²","144 sm²","96 sm²"]},a:1},
+  {ru:{q:"Комната 5×4×3 м. Площадь всей поверхности (пол+потолок+стены)?",o:["94 м²","74 м²","60 м²","120 м²"]},az:{q:"Otaq 5×4×3 m. Tam səthi sahəsi (döşəmə+tavan+divarlar)?",o:["94 m²","74 m²","60 m²","120 m²"]},a:0},
+  {ru:{q:"Только стены комнаты 5×4×3 м (без пола и потолка). S = ?",o:["54 м²","60 м²","40 м²","74 м²"]},az:{q:"Yalnız otağın divarları 5×4×3 m (döşəmə və tavansız). S = ?",o:["54 m²","60 m²","40 m²","74 m²"]},a:0},
+  {ru:{q:"Два куба: ребро 2 см и ребро 4 см. Отношение их площадей поверхности:",o:["1:2","1:4","1:8","2:4"]},az:{q:"İki kub: tili 2 sm və 4 sm. Onların səthi sahələrinin nisbəti:",o:["1:2","1:4","1:8","2:4"]},a:1},
+  {ru:{q:"Параллелепипед 9×6×3 см. S = ?",o:["198 см²","162 cm²","216 см²","180 см²"]},az:{q:"Paraleliped 9×6×3 sm. S = ?",o:["198 sm²","162 sm²","216 sm²","180 sm²"]},a:0},
+  {ru:{q:"S = 150 см², a = b = c. Чему равно ребро куба?",o:["3 см","4 см","5 см","6 см"]},az:{q:"S = 150 sm², a = b = c. Kubun tili nəyə bərabərdir?",o:["3 sm","4 sm","5 sm","6 sm"]},a:2},
+  {ru:{q:"Параллелепипед с квадратным основанием: a=b=4 см, c=7 см. S = ?",o:["144 см²","128 см²","136 см²","152 см²"]},az:{q:"Kvadrat əsaslı paraleliped: a=b=4 sm, c=7 sm. S = ?",o:["144 sm²","128 sm²","136 sm²","152 sm²"]},a:0},
+  {ru:{q:"Какова площадь одной грани куба, если S_полная = 216 см²?",o:["36 см²","54 см²","24 см²","18 см²"]},az:{q:"Tam səthi sahəsi 216 sm² olan kubun bir üzünün sahəsi nədir?",o:["36 sm²","54 sm²","24 sm²","18 sm²"]},a:0},
+  {ru:{q:"S параллелепипеда 12×8×5 = ?",o:["272 см²","352 см²","450 см²","232 см²"]},az:{q:"12×8×5 paralelipipedin S = ?",o:["272 sm²","352 sm²","450 sm²","232 sm²"]},a:1},
+  {ru:{q:"Сколько пар одинаковых граней у параллелепипеда?",o:["1","2","3","4"]},az:{q:"Paralelipipedin neçə cüt eyni üzü var?",o:["1","2","3","4"]},a:2},
+  {ru:{q:"Параллелепипед: S = 136 см², a=8, c=3 см. Найти b.",o:["2 см","3 см","4 см","5 см"]},az:{q:"Paraleliped: S = 136 sm², a=8, c=3 sm. b tapın.",o:["2 sm","3 sm","4 sm","5 sm"]},a:2},
+  {ru:{q:"Открытая коробка (без крышки) 10×8×5 см. Площадь внутренней поверхности?",o:["240 см²","260 см²","340 см²","220 см²"]},az:{q:"Açıq qutu (qapaqsız) 10×8×5 sm. Daxili səthin sahəsi?",o:["240 sm²","260 sm²","340 sm²","220 sm²"]},a:0},
+  {ru:{q:"Три куба с рёбрами 1, 2, 3 см. Сумма их площадей поверхности:",o:["84 см²","94 см²","74 см²","56 см²"]},az:{q:"Tilləri 1, 2, 3 sm olan üç kubun səthi sahələrinin cəmi:",o:["84 sm²","94 sm²","74 sm²","56 sm²"]},a:0},
+  {ru:{q:"Параллелепипед 15×10×4 см. S = ?",o:["500 см²","460 см²","520 см²","440 см²"]},az:{q:"Paraleliped 15×10×4 sm. S = ?",o:["500 sm²","460 sm²","520 sm²","440 sm²"]},a:0},
+  {ru:{q:"Куб, у которого площадь одной грани 25 см². S_полная = ?",o:["100 см²","125 см²","150 см²","175 см²"]},az:{q:"Bir üzünün sahəsi 25 sm² olan kub. Tam səthi sahəsi?",o:["100 sm²","125 sm²","150 sm²","175 sm²"]},a:2},
+  {ru:{q:"Параллелепипед 20×15×8 см. S = ?",o:["1270 см²","1160 см²","1080 см²","940 см²"]},az:{q:"Paraleliped 20×15×8 sm. S = ?",o:["1270 sm²","1160 sm²","1080 sm²","940 sm²"]},a:1}
+];
+
+const trainerPool = [
+  {ru:{q:"S = ? Параллелепипед a=3, b=4, c=2 см",hint:"S = 2(3·4 + 4·2 + 3·2) = 2(12+8+6)"},az:{q:"S = ? Paraleliped a=3, b=4, c=2 sm",hint:"S = 2(3·4 + 4·2 + 3·2) = 2(12+8+6)"},a:52},
+  {ru:{q:"S = ? Куб a=4 см",hint:"S = 6·4² = 6·16"},az:{q:"S = ? Kub a=4 sm",hint:"S = 6·4² = 6·16"},a:96},
+  {ru:{q:"S = ? Параллелепипед 5×5×5 см",hint:"Куб: S = 6a² = 6·25"},az:{q:"S = ? Paraleliped 5×5×5 sm",hint:"Kub: S = 6a² = 6·25"},a:150},
+  {ru:{q:"S = ? a=10, b=6, c=4 см",hint:"S = 2(10·6 + 6·4 + 10·4) = 2(60+24+40)"},az:{q:"S = ? a=10, b=6, c=4 sm",hint:"S = 2(10·6 + 6·4 + 10·4) = 2(60+24+40)"},a:248},
+  {ru:{q:"S = ? a=1, b=2, c=3 см",hint:"S = 2(1·2 + 2·3 + 1·3) = 2(2+6+3)"},az:{q:"S = ? a=1, b=2, c=3 sm",hint:"S = 2(1·2 + 2·3 + 1·3) = 2(2+6+3)"},a:22},
+  {ru:{q:"S = ? Куб a=6 см",hint:"S = 6·36"},az:{q:"S = ? Kub a=6 sm",hint:"S = 6·36"},a:216},
+  {ru:{q:"S = ? a=8, b=3, c=5 см",hint:"S = 2(8·3 + 3·5 + 8·5) = 2(24+15+40)"},az:{q:"S = ? a=8, b=3, c=5 sm",hint:"S = 2(8·3 + 3·5 + 8·5) = 2(24+15+40)"},a:158},
+  {ru:{q:"S = ? a=12, b=8, c=3 см",hint:"S = 2(12·8 + 8·3 + 12·3) = 2(96+24+36)"},az:{q:"S = ? a=12, b=8, c=3 sm",hint:"S = 2(12·8 + 8·3 + 12·3) = 2(96+24+36)"},a:312},
+];
+
+function toggleLang(){
+  St.lang = St.lang==="ru"?"az":"ru";
+  document.body.classList.toggle("lang-az", St.lang==="az");
+}
+function showSection(id, el){
+  document.querySelectorAll("section").forEach(s=>{s.classList.remove("active");});
+  document.getElementById(id).classList.add("active");
+  document.querySelectorAll(".nav-links a").forEach(a=>a.classList.remove("active"));
+  if(el) el.classList.add("active");
+  else { document.querySelectorAll(".nav-links a").forEach(a=>{ if(a.getAttribute("onclick")&&a.getAttribute("onclick").includes("'"+id+"'")) a.classList.add("active"); }); }
+}
+function renderSlides(){
+  const track = document.getElementById("slides-track");
+  track.innerHTML = slides.map((s,i)=>{
+    const d = St.lang==="ru"?s.ru:s.az;
+    return `<div class="slide${i===0?" active":""}" id="slide-${i}"><h3>${d.t}</h3>${d.b}</div>`;
+  }).join("");
+  updateSlideCounter();
+  if(window.renderMathInElement) renderMathInElement(track,{delimiters:[{left:"$$",right:"$$",display:true},{left:"$",right:"$",display:false}]});
+}
+function updateSlideCounter(){ document.getElementById("slide-ctr").textContent=`${St.slide+1} / ${slides.length}`; }
+function showSlide(n){
+  document.getElementById("slide-"+St.slide).classList.remove("active");
+  St.slide=Math.max(0,Math.min(n,slides.length-1));
+  document.getElementById("slide-"+St.slide).classList.add("active");
+  updateSlideCounter();
+}
+function prevSlide(){ showSlide(St.slide-1); }
+function nextSlide(){ showSlide(St.slide+1); }
+
+function renderAlgo(){
+  const c = document.getElementById("algo-steps");
+  c.innerHTML = algoSteps.map((s,i)=>{
+    const d = St.lang==="ru"?s.ru:s.az;
+    return `<div class="step"><div class="step-num">${i+1}</div><h4>${d.h}</h4><p>${d.p}</p></div>`;
+  }).join("");
+}
+function renderExamples(){
+  const c = document.getElementById("examples-list");
+  c.innerHTML = examples.map((ex,i)=>{
+    const d = St.lang==="ru"?ex.ru:ex.az;
+    return `<div class="example-card">
+      <div class="ex-header"><span class="ex-tag">${d.t}</span><span class="ex-topic">${d.d}</span></div>
+      <div class="ex-problem">${d.p}</div>
+      <button class="sol-btn" onclick="toggleSol(${i})">${St.lang==="ru"?"Показать решение":"Həlli göstər"}</button>
+      <div class="solution" id="sol-${i}">${d.s}</div>
+    </div>`;
+  }).join("");
+}
+function toggleSol(i){
+  const s=document.getElementById("sol-"+i);
+  s.classList.toggle("open");
+}
+
+function newTrainer(){
+  const p = trainerPool[Math.floor(Math.random()*trainerPool.length)];
+  St.trainer.current = p;
+  const d = St.lang==="ru"?p.ru:p.az;
+  document.getElementById("tr-q").textContent = d.q;
+  document.getElementById("tr-ans").value="";
+  document.getElementById("tr-fb").innerHTML="";
+  document.getElementById("tr-hint").style.display="none";
+  document.getElementById("tr-btn").disabled=false;
+  document.getElementById("tr-ans").focus();
+}
+function checkTrainer(){
+  if(!St.trainer.current) return;
+  const val = parseFloat(document.getElementById("tr-ans").value);
+  const correct = St.trainer.current.a;
+  St.trainer.total++;
+  const fb = document.getElementById("tr-fb");
+  if(Math.abs(val-correct)<0.01){
+    St.trainer.correct++; St.trainer.streak++;
+    fb.innerHTML=`<span class="feedback-ok">✓ ${St.lang==="ru"?"Верно!":"Düzgün!"} = ${correct}</span>`;
+  } else {
+    St.trainer.streak=0;
+    fb.innerHTML=`<span class="feedback-err">✗ ${St.lang==="ru"?"Ошибка. Правильный ответ:":"Səhv. Düzgün cavab:"} ${correct}</span>`;
+  }
+  document.getElementById("tr-correct").textContent=St.trainer.correct;
+  document.getElementById("tr-total").textContent=St.trainer.total;
+  document.getElementById("tr-streak").textContent=St.trainer.streak;
+  document.getElementById("tr-btn").disabled=true;
+}
+function showHint(){
+  if(!St.trainer.current) return;
+  const d = St.lang==="ru"?St.trainer.current.ru:St.trainer.current.az;
+  const h = document.getElementById("tr-hint");
+  h.textContent = d.hint||"";
+  h.style.display="block";
+}
+
+// Assessment
+function startDiag(){
+  St.diag={cur:0,score:0,answers:[]};
+  document.getElementById("assess-home").style.display="none";
+  document.getElementById("assess-diag").style.display="block";
+  document.getElementById("assess-ta").style.display="none";
+  document.getElementById("assess-results").style.display="none";
+  renderDiagQ();
+}
+function renderDiagQ(){
+  const q=questions[St.diag.cur];
+  const d=St.lang==="ru"?q.ru:q.az;
+  document.getElementById("d-cur").textContent=St.diag.cur+1;
+  document.getElementById("d-prog").style.width=((St.diag.cur+1)/30*100)+"%";
+  document.getElementById("d-q").innerHTML=d.q;
+  document.getElementById("d-expl").style.display="none";
+  document.getElementById("d-next").disabled=true;
+  document.getElementById("d-prev").disabled=St.diag.cur===0;
+  const opts=document.getElementById("d-opts");
+  opts.innerHTML=d.o.map((o,i)=>`<div class="option-card" onclick="selectDiag(${i})" id="dopt-${i}">
+    <span class="opt-letter">${["A","B","C","D"][i]}</span>${o}</div>`).join("");
+  if(St.diag.answers[St.diag.cur]!==undefined) restoreDiag();
+  if(window.renderMathInElement){renderMathInElement(document.getElementById("d-q"),{delimiters:[{left:"$$",right:"$$",display:true},{left:"$",right:"$",display:false}]});}
+}
+function restoreDiag(){
+  const ans=St.diag.answers[St.diag.cur];
+  const q=questions[St.diag.cur];
+  document.querySelectorAll("#d-opts .option-card").forEach((el,i)=>{
+    el.classList.add("disabled");
+    if(i===q.a) el.classList.add("correct");
+    else if(i===ans) el.classList.add("wrong");
+  });
+  document.getElementById("d-next").disabled=false;
+}
+function selectDiag(i){
+  const q=questions[St.diag.cur];
+  St.diag.answers[St.diag.cur]=i;
+  if(i===q.a) St.diag.score++;
+  document.getElementById("d-score-lbl").textContent=St.diag.score+" "+(St.lang==="ru"?"правильных":"düzgün");
+  document.querySelectorAll("#d-opts .option-card").forEach((el,j)=>{
+    el.classList.add("disabled");
+    if(j===q.a) el.classList.add("correct");
+    else if(j===i) el.classList.add("wrong");
+  });
+  document.getElementById("d-next").disabled=false;
+}
+function diagNext(){
+  if(St.diag.cur<29){St.diag.cur++;renderDiagQ();}
+  else showResults(St.diag.score,"diag",0);
+}
+function diagPrev(){if(St.diag.cur>0){St.diag.cur--;renderDiagQ();}}
+
+function startTA(){
+  St.ta={cur:0,score:0,timer:null,timeLeft:600,start:Date.now(),answers:[]};
+  document.getElementById("assess-home").style.display="none";
+  document.getElementById("assess-diag").style.display="none";
+  document.getElementById("assess-ta").style.display="block";
+  document.getElementById("assess-results").style.display="none";
+  renderTAQ();
+  St.ta.timer=setInterval(tickTA,1000);
+}
+function tickTA(){
+  St.ta.timeLeft--;
+  const m=Math.floor(St.ta.timeLeft/60),s=St.ta.timeLeft%60;
+  const el=document.getElementById("ta-timer");
+  el.textContent=`${m}:${s.toString().padStart(2,"0")}`;
+  if(St.ta.timeLeft<=60) el.className="timer-badge warn";
+  if(St.ta.timeLeft<=10) el.className="timer-badge danger";
+  if(St.ta.timeLeft<=0){clearInterval(St.ta.timer);showResults(St.ta.score,"ta",600-St.ta.timeLeft);}
+}
+function renderTAQ(){
+  const q=questions[St.ta.cur];
+  const d=St.lang==="ru"?q.ru:q.az;
+  document.getElementById("t-cur").textContent=St.ta.cur+1;
+  document.getElementById("t-prog").style.width=((St.ta.cur+1)/30*100)+"%";
+  document.getElementById("t-q").innerHTML=d.q;
+  const opts=document.getElementById("t-opts");
+  opts.innerHTML=d.o.map((o,i)=>`<div class="option-card" onclick="selectTA(${i})" id="topt-${i}">
+    <span class="opt-letter">${["A","B","C","D"][i]}</span>${o}</div>`).join("");
+  if(window.renderMathInElement){renderMathInElement(document.getElementById("t-q"),{delimiters:[{left:"$$",right:"$$",display:true},{left:"$",right:"$",display:false}]});}
+}
+function selectTA(i){
+  document.querySelectorAll("#t-opts .option-card").forEach(el=>el.classList.remove("correct","wrong"));
+  document.querySelectorAll("#t-opts .option-card").forEach(el=>el.classList.add("disabled"));
+  document.getElementById("topt-"+i).classList.add(i===questions[St.ta.cur].a?"correct":"wrong");
+  St.ta.answers[St.ta.cur]=i;
+  if(i===questions[St.ta.cur].a) St.ta.score++;
+}
+function taNext(){
+  if(St.ta.cur<29){St.ta.cur++;renderTAQ();}
+  else{clearInterval(St.ta.timer);showResults(St.ta.score,"ta",600-St.ta.timeLeft);}
+}
+function showResults(score,mode,elapsed){
+  document.getElementById("assess-home").style.display="none";
+  document.getElementById("assess-diag").style.display="none";
+  document.getElementById("assess-ta").style.display="none";
+  document.getElementById("assess-results").style.display="block";
+  const pct=Math.round(score/30*100);
+  document.getElementById("res-ring").style.setProperty("--pct",pct);
+  document.getElementById("res-pct").textContent=pct+"%";
+  document.getElementById("res-ok").textContent=score;
+  document.getElementById("res-err").textContent=30-score;
+  const t=mode==="ta"?elapsed:0;
+  document.getElementById("res-time").textContent=t?`${Math.floor(t/60)}:${(t%60).toString().padStart(2,"0")}`:"—";
+  const lvl=pct>=90?"Отлично!":pct>=70?"Хорошо":"Нужна практика";
+  document.getElementById("res-lvl").textContent=lvl;
+  document.getElementById("res-msg").textContent=lvl+" "+score+"/30";
+}
+function resetAssess(){
+  document.getElementById("assess-results").style.display="none";
+  document.getElementById("assess-home").style.display="block";
+}
+
+document.addEventListener("DOMContentLoaded",()=>{
+  renderSlides(); renderAlgo(); renderExamples();
+  if(window.renderMathInElement) renderMathInElement(document.body,{delimiters:[{left:"$$",right:"$$",display:true},{left:"$",right:"$",display:false}]});
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,854 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Урок 3 — Биссектриса угла</title>
+    <style>
+      :root {
+        --bg-dark: #0f0f1a;
+        --bg-card: rgba(255, 255, 255, 0.05);
+        --bg-glass: rgba(255, 255, 255, 0.08);
+        --border-glass: rgba(255, 255, 255, 0.15);
+        --text-primary: #e8e8f0;
+        --text-secondary: #a0a0b8;
+        --accent: #00d4aa;
+        --accent-dim: rgba(0, 212, 170, 0.2);
+        --accent-warm: #ff6b6b;
+        --accent-warm-dim: rgba(255, 107, 107, 0.2);
+        --accent-blue: #4dabf7;
+        --accent-blue-dim: rgba(77, 171, 247, 0.2);
+        --success: #51cf66;
+        --error: #ff6b6b;
+        --warning: #fcc419;
+      }
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      body {
+        font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+        background: var(--bg-dark);
+        color: var(--text-primary);
+        min-height: 100vh;
+        overflow-x: hidden;
+        line-height: 1.6;
+      }
+      .bg-animation {
+        position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;
+        background:
+          radial-gradient(ellipse at 20% 20%, rgba(0, 212, 170, 0.08) 0%, transparent 50%),
+          radial-gradient(ellipse at 80% 80%, rgba(77, 171, 247, 0.08) 0%, transparent 50%),
+          radial-gradient(ellipse at 50% 50%, rgba(255, 107, 107, 0.05) 0%, transparent 60%);
+      }
+      .bg-animation::before {
+        content: "";
+        position: absolute; width: 200%; height: 200%; top: -50%; left: -50%;
+        background: repeating-linear-gradient(0deg, transparent, transparent 40px, rgba(255,255,255,0.02) 40px, rgba(255,255,255,0.02) 41px);
+        animation: bgMove 20s linear infinite;
+      }
+      @keyframes bgMove { 0% { transform: translateY(0); } 100% { transform: translateY(40px); } }
+
+      nav {
+        position: fixed; top: 0; left: 0; right: 0;
+        background: rgba(15, 15, 26, 0.85);
+        backdrop-filter: blur(20px);
+        border-bottom: 1px solid var(--border-glass);
+        z-index: 1000; padding: 0 20px;
+      }
+      .nav-container {
+        max-width: 1200px; margin: 0 auto;
+        display: flex; justify-content: space-between; align-items: center; height: 60px;
+      }
+      .logo {
+        font-size: 1.3rem; font-weight: 700;
+        background: linear-gradient(135deg, var(--accent), var(--accent-blue));
+        -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+        text-decoration: none;
+      }
+      .nav-links { display: flex; gap: 8px; list-style: none; }
+      .nav-links a {
+        color: var(--text-secondary); text-decoration: none;
+        padding: 8px 16px; border-radius: 8px;
+        transition: all 0.3s; font-size: 0.9rem; font-weight: 500;
+        cursor: pointer; border: none; background: transparent;
+      }
+      .nav-links a:hover, .nav-links a.active { color: var(--text-primary); background: var(--bg-glass); }
+      .nav-links a.active { background: var(--accent-dim); color: var(--accent); }
+
+      section {
+        display: none; opacity: 0;
+        padding: 78px 20px 32px;
+        max-width: 1000px; margin: 0 auto;
+        transition: opacity 0.3s ease;
+      }
+      section.active { display: block; opacity: 1; animation: fadeIn 0.5s ease; }
+      @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+      .card {
+        background: var(--bg-card); backdrop-filter: blur(20px);
+        border: 1px solid var(--border-glass); border-radius: 20px;
+        padding: 20px; margin-bottom: 16px;
+        transition: transform 0.3s, box-shadow 0.3s;
+      }
+      .card:hover { transform: translateY(-2px); box-shadow: 0 20px 40px rgba(0,0,0,0.3); }
+      .card-title {
+        font-size: 1.5rem; font-weight: 700; margin-bottom: 16px;
+        display: flex; align-items: center; gap: 12px;
+      }
+      .card-title .icon { width: 40px; height: 40px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.3rem; }
+
+      .hero { text-align: center; padding: 140px 20px 80px; }
+      .hero h1 {
+        font-size: 3rem; font-weight: 800; margin-bottom: 20px;
+        background: linear-gradient(135deg, var(--accent), var(--accent-blue), var(--accent-warm));
+        -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+        line-height: 1.2;
+      }
+      .hero p { font-size: 1.2rem; color: var(--text-secondary); max-width: 600px; margin: 0 auto 40px; }
+
+      .btn {
+        display: inline-flex; align-items: center; gap: 8px;
+        padding: 14px 32px; border-radius: 12px; border: none;
+        font-size: 1rem; font-weight: 600; cursor: pointer; transition: all 0.3s; text-decoration: none;
+      }
+      .btn-primary { background: linear-gradient(135deg, var(--accent), var(--accent-blue)); color: #000; }
+      .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 10px 30px var(--accent-dim); }
+      .btn-secondary { background: var(--bg-glass); color: var(--text-primary); border: 1px solid var(--border-glass); }
+      .btn-secondary:hover { background: var(--bg-card); }
+      .btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none !important; }
+
+      .generate-widget {
+        background: var(--bg-card); border: 1px solid var(--border-glass);
+        border-radius: 20px; padding: 14px; width: 100%;
+      }
+      .widget-slide { display: none; padding: 12px 16px; animation: slideFade 0.3s ease; }
+      .widget-slide.active { display: block; }
+      @keyframes slideFade { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+      .widget-slide h3 { font-size: 1.3rem; color: var(--accent); margin-bottom: 16px; }
+      .widget-slide p, .widget-slide li { color: var(--text-secondary); line-height: 1.8; margin-bottom: 12px; }
+      .widget-slide table { width: 100%; border-collapse: collapse; margin: 12px 0; color: var(--text-secondary); }
+      .widget-slide table th, .widget-slide table td { border: 1px solid var(--border-glass); padding: 10px; text-align: left; }
+      .widget-slide table th { background: var(--bg-glass); color: var(--text-primary); }
+      .widget-nav { display: flex; justify-content: space-between; align-items: center; margin-top: 16px; }
+      .widget-progress { text-align: center; font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 12px; }
+
+      .sequence-component { display: flex; flex-direction: column; gap: 20px; position: relative; }
+      .sequence-step {
+        background: var(--bg-card); border: 1px solid var(--border-glass);
+        border-radius: 16px; padding: 24px 24px 24px 72px;
+        position: relative; transition: all 0.3s;
+      }
+      .sequence-step:hover { border-color: var(--accent); transform: translateX(4px); }
+      .sequence-number {
+        position: absolute; left: 20px; top: 20px;
+        width: 40px; height: 40px; background: var(--accent); color: #000;
+        border-radius: 50%; display: flex; align-items: center; justify-content: center;
+        font-weight: 800; font-size: 1.1rem;
+      }
+      .sequence-step h4 { color: var(--text-primary); margin-bottom: 8px; font-size: 1.1rem; }
+      .sequence-step p { color: var(--text-secondary); line-height: 1.7; }
+      .sequence-connector {
+        position: absolute; left: 39px; top: 60px; bottom: -30px;
+        width: 2px; background: var(--accent-dim); z-index: 0;
+      }
+      .sequence-step:last-child .sequence-connector { display: none; }
+
+      .problem-card {
+        background: var(--bg-card); border: 1px solid var(--border-glass);
+        border-radius: 16px; padding: 24px; margin-bottom: 20px;
+      }
+      .problem-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 8px; }
+      .problem-number { background: var(--accent-dim); color: var(--accent); padding: 4px 12px; border-radius: 20px; font-size: 0.85rem; font-weight: 600; }
+      .problem-type { color: var(--text-secondary); font-size: 0.85rem; }
+      .problem-text { font-size: 1.1rem; margin-bottom: 16px; line-height: 1.8; }
+      .solution-btn {
+        background: var(--accent-dim); color: var(--accent);
+        border: 1px solid var(--accent); padding: 10px 20px;
+        border-radius: 8px; cursor: pointer; font-weight: 600; transition: all 0.3s;
+      }
+      .solution-btn:hover { background: var(--accent); color: #000; }
+      .solution {
+        display: none; margin-top: 20px; padding: 20px;
+        background: rgba(0, 212, 170, 0.05);
+        border-left: 3px solid var(--accent); border-radius: 0 12px 12px 0;
+      }
+      .solution.active { display: block; animation: slideDown 0.3s ease; }
+      @keyframes slideDown { from { opacity: 0; max-height: 0; } to { opacity: 1; max-height: 1000px; } }
+      .solution p { margin-bottom: 8px; color: var(--text-secondary); }
+      .solution strong { color: var(--accent); }
+
+      .quiz-container {
+        background: var(--bg-card); border: 1px solid var(--border-glass);
+        border-radius: 20px; padding: 32px;
+      }
+      .quiz-progress { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; flex-wrap: wrap; gap: 8px; }
+      .progress-bar { flex: 1; height: 8px; background: var(--bg-glass); border-radius: 4px; margin: 0 16px; overflow: hidden; min-width: 100px; }
+      .progress-fill { height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent-blue)); border-radius: 4px; transition: width 0.5s ease; width: 0%; }
+      .quiz-question { font-size: 1.2rem; margin-bottom: 24px; padding: 20px; background: var(--bg-glass); border-radius: 12px; border-left: 4px solid var(--accent); }
+      .quiz-options { display: grid; gap: 12px; }
+      .quiz-option {
+        background: var(--bg-glass); border: 2px solid var(--border-glass);
+        border-radius: 12px; padding: 16px 20px; cursor: pointer; transition: all 0.3s;
+        display: flex; align-items: center; gap: 12px;
+      }
+      .quiz-option:hover { border-color: var(--accent); background: var(--accent-dim); }
+      .quiz-option.correct { border-color: var(--success); background: rgba(81, 207, 102, 0.15); }
+      .quiz-option.wrong { border-color: var(--error); background: rgba(255, 107, 107, 0.15); }
+      .quiz-option.disabled { pointer-events: none; opacity: 0.7; }
+      .option-letter { width: 32px; height: 32px; border-radius: 8px; background: var(--bg-card); display: flex; align-items: center; justify-content: center; font-weight: 700; flex-shrink: 0; }
+      .quiz-nav { display: flex; justify-content: space-between; margin-top: 24px; }
+
+      .stat { background: var(--bg-glass); padding: 12px 24px; border-radius: 12px; text-align: center; min-width: 100px; border: 1px solid var(--border-glass); }
+      .stat-value { font-size: 1.5rem; font-weight: 700; color: var(--accent); }
+      .stat-label { font-size: 0.85rem; color: var(--text-secondary); }
+
+      .timer {
+        position: fixed; top: 80px; right: 20px;
+        background: var(--bg-card); backdrop-filter: blur(20px);
+        border: 1px solid var(--border-glass); border-radius: 16px;
+        padding: 16px 24px; font-size: 1.3rem; font-weight: 700;
+        font-variant-numeric: tabular-nums; z-index: 999;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+      }
+      .timer.warning { border-color: var(--warning); color: var(--warning); animation: pulse 1s infinite; }
+      .timer.danger { border-color: var(--error); color: var(--error); animation: pulse 0.5s infinite; }
+      @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
+
+      .results-container { text-align: center; padding: 40px; }
+      .score-circle {
+        width: 200px; height: 200px; border-radius: 50%;
+        background: conic-gradient(var(--accent) calc(var(--score) * 3.6deg), var(--bg-glass) 0);
+        margin: 0 auto 32px; display: flex; align-items: center; justify-content: center; position: relative;
+      }
+      .score-circle::before { content: ""; position: absolute; width: 170px; height: 170px; background: var(--bg-dark); border-radius: 50%; }
+      .score-value { position: relative; font-size: 3rem; font-weight: 800; color: var(--accent); }
+      .score-label { font-size: 1.2rem; color: var(--text-secondary); margin-bottom: 8px; }
+      .score-message { font-size: 1.5rem; font-weight: 700; margin-bottom: 32px; }
+      .results-breakdown { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 16px; max-width: 600px; margin: 0 auto 32px; }
+      .breakdown-item { background: var(--bg-glass); padding: 16px; border-radius: 12px; }
+      .breakdown-value { font-size: 1.5rem; font-weight: 700; color: var(--accent); }
+      .breakdown-label { font-size: 0.85rem; color: var(--text-secondary); }
+
+      .svg-diagram { display: flex; justify-content: center; margin: 16px 0; }
+      .hidden { display: none !important; }
+
+      @media (max-width: 768px) {
+        .hero h1 { font-size: 2rem; }
+        .nav-links { display: none; }
+        .timer { top: 70px; right: 10px; font-size: 1rem; padding: 10px 16px; }
+        .card { padding: 14px; }
+        section { padding: 70px 12px 24px; }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="bg-animation"></div>
+
+    <nav>
+      <div class="nav-container">
+        <a href="index.html" class="logo" target="_self">📐 Урок 3</a>
+        <ul class="nav-links">
+          <li><a href="#" class="active" data-section="home">Главная</a></li>
+          <li><a href="#" data-section="theory">Теория</a></li>
+          <li><a href="#" data-section="algorithm">Алгоритм</a></li>
+          <li><a href="#" data-section="examples">Примеры</a></li>
+          <li><a href="#" data-section="trainer">Тренажёр</a></li>
+          <li><a href="#" data-section="assessment">Аттестация</a></li>
+        </ul>
+      </div>
+    </nav>
+
+    <!-- HOME -->
+    <section id="home" class="active">
+      <div class="hero">
+        <h1>Биссектриса угла</h1>
+        <p>Урок 3. Луч, делящий угол на два конгруэнтных угла. Свойства и построение биссектрисы. 30 вопросов для полной проверки знаний.</p>
+        <div style="display:flex;gap:16px;justify-content:center;flex-wrap:wrap;">
+          <button class="btn btn-primary" onclick="showSection('theory')">Начать обучение</button>
+          <button class="btn btn-secondary" onclick="showSection('assessment')">Проверить знания</button>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title"><span class="icon" style="background:var(--accent-dim)">🎯</span>Что вы изучите</div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px;">
+          <div class="card" style="padding:20px;">
+            <h3 style="color:var(--accent);margin-bottom:8px;">Определение</h3>
+            <p style="color:var(--text-secondary);">Биссектриса угла — луч, выходящий из вершины и делящий угол на два конгруэнтных угла.</p>
+          </div>
+          <div class="card" style="padding:20px;">
+            <h3 style="color:var(--accent-blue);margin-bottom:8px;">Конгруэнтные углы</h3>
+            <p style="color:var(--text-secondary);">Два угла конгруэнтны, если их градусные меры равны: ∠AOC ≅ ∠BOC.</p>
+          </div>
+          <div class="card" style="padding:20px;">
+            <h3 style="color:var(--accent-warm);margin-bottom:8px;">Свойство</h3>
+            <p style="color:var(--text-secondary);">Биссектриса делит угол ровно пополам: каждый из двух углов равен половине исходного.</p>
+          </div>
+          <div class="card" style="padding:20px;">
+            <h3 style="color:var(--warning);margin-bottom:8px;">Применение</h3>
+            <p style="color:var(--text-secondary);">Нахождение неизвестных углов по данной биссектрисе и вычисление смежных углов.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- THEORY -->
+    <section id="theory">
+      <div class="card">
+        <div class="card-title"><span class="icon" style="background:var(--accent-dim)">📖</span>Глава 1. Визуальная теория</div>
+        <p style="color:var(--text-secondary);margin-bottom:20px;">Листайте слайды. Каждый слайд — ключевой блок по теме биссектрисы.</p>
+        <div class="generate-widget">
+          <div class="widget-progress">Слайд <span id="slide-num">1</span> / <span id="slide-total">5</span></div>
+          <div class="widget-viewport">
+            <div class="widget-track" id="track-slides"></div>
+          </div>
+          <div class="widget-nav">
+            <button type="button" class="btn btn-secondary" onclick="prevSlide()">← Назад</button>
+            <button type="button" class="btn btn-primary" onclick="nextSlide()">Вперёд →</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ALGORITHM -->
+    <section id="algorithm">
+      <div class="card">
+        <div class="card-title"><span class="icon" style="background:var(--accent-blue-dim)">🪜</span>Глава 2. Алгоритм нахождения биссектрисы</div>
+        <p style="color:var(--text-secondary);margin-bottom:20px;">Пошаговый алгоритм определения и вычисления углов с биссектрисой.</p>
+        <div class="sequence-component">
+          <div class="sequence-step">
+            <div class="sequence-number">1</div>
+            <div class="sequence-connector"></div>
+            <h4>Определи вершину угла</h4>
+            <p>Найди точку O — вершину угла AOB. Из неё выходят два луча OA и OB.</p>
+          </div>
+          <div class="sequence-step">
+            <div class="sequence-number">2</div>
+            <div class="sequence-connector"></div>
+            <h4>Найди биссектрису</h4>
+            <p>Биссектриса — луч OC, выходящий из O и расположенный между OA и OB так, что ∠AOC = ∠COB.</p>
+          </div>
+          <div class="sequence-step">
+            <div class="sequence-number">3</div>
+            <div class="sequence-connector"></div>
+            <h4>Запиши равенство углов</h4>
+            <p>Если OC — биссектриса ∠AOB, то ∠AOC ≅ ∠COB, то есть ∠AOC = ∠COB.</p>
+          </div>
+          <div class="sequence-step">
+            <div class="sequence-number">4</div>
+            <div class="sequence-connector"></div>
+            <h4>Вычисли половину угла</h4>
+            <p>Каждый из двух углов = ½ × ∠AOB. Например, если ∠AOB = 80°, то ∠AOC = ∠COB = 40°.</p>
+          </div>
+          <div class="sequence-step">
+            <div class="sequence-number">5</div>
+            <h4>Проверь ответ</h4>
+            <p>Убедись: ∠AOC + ∠COB = ∠AOB. Сумма двух равных частей должна давать исходный угол.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- EXAMPLES -->
+    <section id="examples">
+      <div class="card">
+        <div class="card-title"><span class="icon" style="background:var(--accent-dim)">📝</span>Глава 3. Разбор задач</div>
+        <p style="color:var(--text-secondary);margin-bottom:24px;">Пять типовых задач по теме биссектрисы угла с подробным решением.</p>
+      </div>
+      <div id="examples-container"></div>
+    </section>
+
+    <!-- TRAINER -->
+    <section id="trainer">
+      <div class="card">
+        <div class="card-title"><span class="icon" style="background:var(--accent-dim)">🏋️</span>Глава 4. Тренажёр</div>
+        <p style="color:var(--text-secondary);margin-bottom:24px;">Задачи на нахождение углов с биссектрисой. Введите ответ в градусах.</p>
+        <div class="quiz-container" style="margin-bottom:20px;">
+          <div id="trainer-question" style="font-size:1.4rem;text-align:center;margin-bottom:24px;padding:24px;background:var(--bg-glass);border-radius:12px;">
+            Нажмите «Новая задача» для начала
+          </div>
+          <div style="display:flex;gap:12px;margin-bottom:20px;">
+            <input type="text" id="trainer-answer" placeholder="Введите градусы" style="flex:1;padding:14px 16px;background:var(--bg-glass);border:2px solid var(--border-glass);border-radius:12px;color:var(--text-primary);font-size:1rem;outline:none;" />
+            <button class="btn btn-primary" onclick="checkTrainer()" id="trainer-check-btn" disabled>Проверить</button>
+          </div>
+          <div id="trainer-feedback" style="min-height:60px;margin-bottom:16px;"></div>
+          <div style="display:flex;gap:12px;justify-content:center;">
+            <button class="btn btn-secondary" onclick="newTrainerProblem()">Новая задача</button>
+            <button class="btn btn-secondary" onclick="showTrainerHint()">Подсказка</button>
+          </div>
+          <div id="trainer-hint" style="display:none;margin-top:20px;padding:16px;background:var(--accent-blue-dim);border-radius:12px;border-left:4px solid var(--accent-blue);"></div>
+        </div>
+        <div style="display:flex;justify-content:center;gap:24px;flex-wrap:wrap;">
+          <div class="stat"><div class="stat-value" id="trainer-correct">0</div><div class="stat-label">Верно</div></div>
+          <div class="stat"><div class="stat-value" id="trainer-total">0</div><div class="stat-label">Всего</div></div>
+          <div class="stat"><div class="stat-value" id="trainer-streak">0</div><div class="stat-label">Серия</div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ASSESSMENT -->
+    <section id="assessment">
+      <div class="card">
+        <div class="card-title"><span class="icon" style="background:var(--accent-blue-dim)">🧪</span>Глава 5. Аттестация — 30 вопросов</div>
+        <p style="color:var(--text-secondary);margin-bottom:24px;">Два режима: диагностический тест с объяснениями и скоростная викторина на 10 минут.</p>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px;">
+          <div class="card" style="padding:24px;text-align:center;">
+            <div style="font-size:3rem;margin-bottom:12px;">🔍</div>
+            <h3 style="margin-bottom:8px;">Диагностический тест</h3>
+            <p style="color:var(--text-secondary);margin-bottom:20px;">30 вопросов с мгновенной обратной связью и объяснениями.</p>
+            <button class="btn btn-primary" onclick="startDiagnostic()">Начать тест</button>
+          </div>
+          <div class="card" style="padding:24px;text-align:center;">
+            <div style="font-size:3rem;margin-bottom:12px;">⏱️</div>
+            <h3 style="margin-bottom:8px;">Скоростная викторина</h3>
+            <p style="color:var(--text-secondary);margin-bottom:20px;">30 вопросов • 10 минут • Итоговый дашборд.</p>
+            <button class="btn btn-primary" onclick="startTimeAttack()">Начать викторину</button>
+          </div>
+        </div>
+      </div>
+
+      <div id="diagnostic-ui" style="display:none;">
+        <div class="card">
+          <div class="card-title"><span class="icon" style="background:var(--accent-blue-dim)">🔍</span>Диагностический тест (30 вопросов)</div>
+        </div>
+        <div class="quiz-container">
+          <div class="quiz-progress">
+            <span>Вопрос <span id="diag-current">1</span> / <span id="diag-total">30</span></span>
+            <div class="progress-bar"><div class="progress-fill" id="diag-progress"></div></div>
+            <span id="diag-score">0 правильных</span>
+          </div>
+          <div class="quiz-question" id="diag-question"></div>
+          <div class="quiz-options" id="diag-options"></div>
+          <div class="quiz-nav">
+            <button class="btn btn-secondary" onclick="prevDiagnostic()" id="diag-prev" disabled>← Назад</button>
+            <button class="btn btn-primary" onclick="nextDiagnostic()" id="diag-next" disabled>Далее →</button>
+          </div>
+          <div id="diag-explanation" style="display:none;margin-top:20px;padding:16px;background:var(--accent-dim);border-radius:12px;border-left:4px solid var(--accent);"></div>
+        </div>
+      </div>
+
+      <div id="timeattack-ui" style="display:none;">
+        <div class="timer" id="ta-timer">10:00</div>
+        <div class="card">
+          <div class="card-title"><span class="icon" style="background:var(--accent-warm-dim)">⏱️</span>Скоростная викторина (30 вопросов)</div>
+        </div>
+        <div class="quiz-container">
+          <div class="quiz-progress">
+            <span>Вопрос <span id="ta-current">1</span> / 30</span>
+            <div class="progress-bar"><div class="progress-fill" id="ta-progress"></div></div>
+          </div>
+          <div class="quiz-question" id="ta-question"></div>
+          <div class="quiz-options" id="ta-options"></div>
+          <div style="display:flex;justify-content:flex-end;margin-top:24px;">
+            <button class="btn btn-primary" onclick="nextTimeAttack()" id="ta-next">Ответить →</button>
+          </div>
+        </div>
+      </div>
+
+      <div id="results-ui" style="display:none;">
+        <div class="card">
+          <div class="results-container">
+            <div class="score-label">Ваш результат</div>
+            <div class="score-circle" id="result-circle"><div class="score-value" id="result-percent">0%</div></div>
+            <div class="score-message" id="result-message"></div>
+            <div class="results-breakdown">
+              <div class="breakdown-item"><div class="breakdown-value" id="result-correct">0</div><div class="breakdown-label">Верно</div></div>
+              <div class="breakdown-item"><div class="breakdown-value" id="result-wrong">0</div><div class="breakdown-label">Ошибок</div></div>
+              <div class="breakdown-item"><div class="breakdown-value" id="result-time">0:00</div><div class="breakdown-label">Время</div></div>
+              <div class="breakdown-item"><div class="breakdown-value" id="result-mastery">—</div><div class="breakdown-label">Уровень</div></div>
+            </div>
+            <div style="display:flex;gap:16px;justify-content:center;flex-wrap:wrap;">
+              <button class="btn btn-primary" onclick="resetAssessment()">Пройти ещё раз</button>
+              <button class="btn btn-secondary" onclick="showSection('theory')">Вернуться к теории</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <script>
+      const AppState = {
+        currentSection: "home", slide: 0,
+        trainer: { correct: 0, total: 0, streak: 0, current: null },
+        diagnostic: { current: 0, score: 0, answers: [] },
+        timeAttack: { current: 0, score: 0, timer: null, timeLeft: 600, startTime: 0, answers: [] },
+        mode: null,
+      };
+
+      const slides = [
+        {
+          title: "Что такое биссектриса угла?",
+          content: `<p style="margin-bottom:16px;"><strong>Биссектриса угла</strong> — это луч, который выходит из вершины угла и делит его на два <em>конгруэнтных</em> (равных) угла.</p>
+          <div style="background:var(--accent-blue-dim);padding:16px;border-radius:10px;border-left:4px solid var(--accent-blue);margin-bottom:16px;">
+            <p style="margin:0;"><strong>Обозначение:</strong> Если луч OC — биссектриса ∠AOB, то ∠AOC ≅ ∠COB (оба угла равны).</p>
+          </div>
+          <div class="svg-diagram">
+            <svg viewBox="0 0 220 160" width="220" height="160" aria-label="Биссектриса OC угла AOB">
+              <line x1="110" y1="130" x2="20" y2="20" stroke="#4dabf7" stroke-width="2.5"/>
+              <line x1="110" y1="130" x2="200" y2="20" stroke="#4dabf7" stroke-width="2.5"/>
+              <line x1="110" y1="130" x2="110" y2="15" stroke="#00d4aa" stroke-width="2.5" stroke-dasharray="6,3"/>
+              <circle cx="110" cy="130" r="4" fill="#00d4aa"/>
+              <text x="10" y="15" fill="#4dabf7" font-size="14" font-family="sans-serif">A</text>
+              <text x="198" y="15" fill="#4dabf7" font-size="14" font-family="sans-serif">B</text>
+              <text x="105" y="10" fill="#00d4aa" font-size="14" font-family="sans-serif">C</text>
+              <text x="108" y="145" fill="#e8e8f0" font-size="14" font-family="sans-serif">O</text>
+              <path d="M110,130 Q90,110 88,95" fill="none" stroke="#fcc419" stroke-width="1.5"/>
+              <path d="M110,130 Q130,110 132,95" fill="none" stroke="#fcc419" stroke-width="1.5"/>
+              <text x="75" y="105" fill="#fcc419" font-size="11" font-family="sans-serif">α</text>
+              <text x="128" y="105" fill="#fcc419" font-size="11" font-family="sans-serif">α</text>
+            </svg>
+          </div>
+          <p style="text-align:center;color:var(--text-secondary);font-size:0.9rem;">Луч OC — биссектриса ∠AOB, углы α равны</p>`
+        },
+        {
+          title: "Конгруэнтные углы",
+          content: `<p style="margin-bottom:12px;"><strong>Конгруэнтные углы</strong> — это углы с одинаковой градусной мерой.</p>
+          <table>
+            <tr><th>Запись</th><th>Смысл</th></tr>
+            <tr><td>∠AOC ≅ ∠COB</td><td>Углы AOC и COB равны по величине</td></tr>
+            <tr><td>∠AOC = ∠COB = x°</td><td>Каждый угол равен x градусов</td></tr>
+            <tr><td>∠AOB = 2x°</td><td>Полный угол равен двойному x</td></tr>
+          </table>
+          <div style="background:var(--accent-dim);padding:16px;border-radius:10px;margin-top:16px;">
+            <p style="margin:0;"><strong>Ключевое свойство:</strong> ∠AOC = ∠COB = ½ × ∠AOB</p>
+          </div>`
+        },
+        {
+          title: "Нахождение углов по биссектрисе",
+          content: `<p style="margin-bottom:12px;"><strong>Задача типа 1:</strong> Дан угол AOB = 80°. Луч OC — биссектриса. Найти ∠AOC.</p>
+          <div style="background:var(--accent-warm-dim);padding:16px;border-radius:10px;margin-bottom:16px;">
+            <p style="margin:0;"><strong>Решение:</strong> ∠AOC = ½ × 80° = <strong>40°</strong></p>
+          </div>
+          <p style="margin-bottom:12px;"><strong>Задача типа 2:</strong> Луч OC — биссектриса ∠MOT. ∠MOP = ∠POT = 22°. Найти ∠MOT.</p>
+          <div style="background:var(--accent-dim);padding:16px;border-radius:10px;">
+            <p style="margin:0;"><strong>Решение:</strong> ∠MOT = 2 × 22° = <strong>44°</strong></p>
+          </div>`
+        },
+        {
+          title: "Биссектриса тупого угла",
+          content: `<p style="margin-bottom:12px;">Биссектриса делит <strong>любой</strong> угол (острый, прямой, тупой, развёрнутый) ровно пополам.</p>
+          <div style="background:var(--accent-blue-dim);padding:16px;border-radius:10px;margin-bottom:16px;">
+            <p style="margin:0;"><strong>Важно:</strong> Биссектриса тупого угла делит его на два <em>острых</em> угла.</p>
+          </div>
+          <table>
+            <tr><th>Тип угла</th><th>Угол</th><th>Каждая половина</th></tr>
+            <tr><td>Острый</td><td>60°</td><td>30°</td></tr>
+            <tr><td>Прямой</td><td>90°</td><td>45°</td></tr>
+            <tr><td>Тупой</td><td>120°</td><td>60°</td></tr>
+            <tr><td>Развёрнутый</td><td>180°</td><td>90°</td></tr>
+          </table>`
+        },
+        {
+          title: "Несколько биссектрис",
+          content: `<p style="margin-bottom:12px;">Если луч OC делит ∠AOB на два конгруэнтных угла, то OC является биссектрисой ∠AOB.</p>
+          <div style="background:var(--accent-warm-dim);padding:16px;border-radius:10px;margin-bottom:16px;">
+            <p style="margin:0;"><strong>Пример:</strong> ∠AOM = ∠MOC = ∠CON = ∠NOB = 20°. Какие лучи являются биссектрисами?</p>
+          </div>
+          <p><strong>Ответ:</strong></p>
+          <p style="color:var(--text-secondary);">• OM — биссектриса ∠AOC (делит 40° на 20° + 20°)</p>
+          <p style="color:var(--text-secondary);">• OC — биссектриса ∠MON (делит 40° на 20° + 20°)</p>
+          <p style="color:var(--text-secondary);">• ON — биссектриса ∠COB (делит 40° на 20° + 20°)</p>
+          <p style="color:var(--text-secondary);">• OC — биссектриса ∠AOB (делит 80° на 40° + 40°)</p>`
+        }
+      ];
+
+      const examples = [
+        {
+          title: "Нахождение по биссектрисе",
+          task: "Луч OC — биссектриса угла MOT. ∠MOP = ∠POT = 28°. Найдите ∠MOT.",
+          sol: "<p>По условию OC — биссектриса ∠MOT, значит ∠MOP = ∠POT.</p><p>∠MOT = ∠MOP + ∠POT = 28° + 28° = <strong>56°</strong></p><p>Или по формуле: ∠MOT = 2 × 28° = 56°.</p><p><strong>Ответ: ∠MOT = 56°.</strong></p>"
+        },
+        {
+          title: "Нахождение половины угла",
+          task: "Луч OM — биссектриса угла AOC. ∠AOC = 74°. Найдите ∠AOM и ∠MOC.",
+          sol: "<p>Биссектриса делит угол на два конгруэнтных угла.</p><p>∠AOM = ∠MOC = ½ × ∠AOC = ½ × 74° = <strong>37°</strong></p><p>Проверка: 37° + 37° = 74° ✓</p><p><strong>Ответ: ∠AOM = ∠MOC = 37°.</strong></p>"
+        },
+        {
+          title: "Определение биссектрисы по рисунку",
+          task: "На рисунке ∠AOM = ∠MOC = ∠CON = ∠NOB = 25°. Биссектрисой какого угла является луч OC?",
+          sol: "<p>∠AOC = ∠AOM + ∠MOC = 25° + 25° = 50°</p><p>∠COB = ∠CON + ∠NOB = 25° + 25° = 50°</p><p>OC делит ∠AOB = 100° на два равных угла по 50°.</p><p><strong>Ответ: луч OC — биссектриса ∠AOB.</strong></p>"
+        },
+        {
+          title: "Задача с развёрнутым углом",
+          task: "Луч OD — биссектриса угла COK, а луч OK — биссектриса угла DOL. Найдите градусную меру угла KOL, если ∠COL = 100°.",
+          sol: "<p>Пусть ∠COD = x. Так как OD — биссектриса ∠COK, то ∠COD = ∠DOK = x, значит ∠COK = 2x.</p><p>Так как OK — биссектриса ∠DOL, то ∠DOK = ∠KOL = x.</p><p>∠COL = ∠COD + ∠DOK + ∠KOL = x + x + x = 3x = 100°</p><p>x = 100° ÷ 3 ≈ 33,3° (или точно: 33⅓°)</p><p><strong>Ответ: ∠KOL ≈ 33,3°.</strong></p>"
+        },
+        {
+          title: "Вычисление неизвестного угла",
+          task: "Луч OD — биссектриса угла COK, луч OC — биссектриса угла AOB. ∠COD = 35°. Найдите ∠AOB.",
+          sol: "<p>OC — биссектриса ∠AOB, значит ∠AOC = ∠COB.</p><p>OD — биссектриса ∠COK, и ∠COD = 35°, значит ∠COK = 70°.</p><p>Но ∠COB = ∠COD = 35° (OD между OC и OB).</p><p>∠AOB = 2 × ∠COB = 2 × 35° = <strong>70°</strong></p><p><strong>Ответ: ∠AOB = 70°.</strong></p>"
+        }
+      ];
+
+      const trainerQs = [
+        { q: "Луч OC — биссектриса ∠AOB = 60°. Найдите ∠AOC (в градусах).", a: 30, hint: "∠AOC = ½ × ∠AOB = ½ × 60°." },
+        { q: "∠MOP = ∠POT = 35°. Луч OP — биссектриса ∠MOT. Найдите ∠MOT.", a: 70, hint: "∠MOT = ∠MOP + ∠POT = 35° + 35°." },
+        { q: "Биссектриса делит угол 110° на два равных угла. Найдите каждый (в °).", a: 55, hint: "Каждый угол = 110° ÷ 2." },
+        { q: "∠AOC = 48°. OC — биссектриса ∠AOB. Найдите ∠AOB.", a: 96, hint: "∠AOB = 2 × ∠AOC = 2 × 48°." },
+        { q: "Биссектриса прямого угла (90°) делит его на два угла. Найдите каждый.", a: 45, hint: "90° ÷ 2 = 45°." },
+        { q: "∠COB = 27°. OC — биссектриса ∠AOB. Найдите ∠AOB.", a: 54, hint: "∠AOB = 2 × ∠COB = 2 × 27°." },
+        { q: "Биссектриса тупого угла 130°. Найдите каждый из двух образованных углов.", a: 65, hint: "130° ÷ 2 = 65°." },
+        { q: "∠AOC = ∠COB. ∠AOB = 76°. Найдите ∠AOC.", a: 38, hint: "∠AOC = ∠AOB ÷ 2 = 76° ÷ 2." },
+        { q: "Биссектриса развёрнутого угла (180°). Найдите каждый из двух углов.", a: 90, hint: "180° ÷ 2 = 90°." },
+        { q: "∠MOP = 42°, OC — биссектриса и ∠MOC = ∠MOP. Найдите ∠MOC.", a: 42, hint: "Биссектриса создаёт два конгруэнтных угла, каждый = 42°." }
+      ];
+
+      const questions = [
+        { q: "Биссектриса угла — это:", o: ["Сторона угла", "Луч из вершины, делящий угол пополам", "Середина дуги", "Высота треугольника"], a: 1 },
+        { q: "Луч OC — биссектриса ∠AOB = 80°. Чему равен ∠AOC?", o: ["80°", "40°", "160°", "20°"], a: 1 },
+        { q: "∠MOP = ∠POT = 30°. Чему равен ∠MOT?", o: ["30°", "15°", "60°", "90°"], a: 2 },
+        { q: "Биссектриса прямого угла образует два угла по:", o: ["30°", "60°", "45°", "90°"], a: 2 },
+        { q: "∠AOC = 55°. OC — биссектриса ∠AOB. Чему равен ∠AOB?", o: ["55°", "27,5°", "110°", "165°"], a: 2 },
+        { q: "Два угла конгруэнтны, если:", o: ["Они смежные", "Их меры равны", "Они вертикальные", "Один — биссектриса другого"], a: 1 },
+        { q: "Биссектриса угла 90° делит его на два угла по:", o: ["30°", "60°", "45°", "90°"], a: 2 },
+        { q: "Луч OC — биссектриса ∠AOB. ∠COB = 38°. Чему равен ∠AOC?", o: ["76°", "19°", "38°", "42°"], a: 2 },
+        { q: "Биссектриса тупого угла 120° делит его на два угла по:", o: ["30°", "60°", "40°", "90°"], a: 1 },
+        { q: "∠AOC = ∠COB = x°. Тогда ∠AOB =", o: ["x", "x/2", "2x", "3x"], a: 2 },
+        { q: "Луч OC — биссектриса ∠AOB = 140°. Найдите ∠COB.", o: ["140°", "70°", "280°", "35°"], a: 1 },
+        { q: "Сколько биссектрис имеет угол?", o: ["Одну", "Две", "Три", "Бесконечно много"], a: 0 },
+        { q: "∠MOP = ∠POT = 45°. Луч OP — биссектриса ∠MOT. ∠MOT =", o: ["45°", "90°", "135°", "22,5°"], a: 1 },
+        { q: "Биссектриса развёрнутого угла (180°) образует два угла по:", o: ["45°", "60°", "90°", "120°"], a: 2 },
+        { q: "∠AOB = 72°. OC — биссектриса. ∠AOC + ∠COB =", o: ["36°", "72°", "144°", "18°"], a: 1 },
+        { q: "Луч OC — биссектриса ∠AOB. Если ∠AOB = 56°, то ∠COB =", o: ["56°", "112°", "28°", "14°"], a: 2 },
+        { q: "На рисунке ∠AOM = ∠MOC = 20°. Луч OM — биссектриса какого угла?", o: ["∠AOM", "∠AOC", "∠MOC", "∠ACO"], a: 1 },
+        { q: "Биссектриса угла 50° образует угол:", o: ["100°", "50°", "25°", "12,5°"], a: 2 },
+        { q: "∠AOC = 63°, OC — биссектриса ∠AOB. Найдите ∠AOB.", o: ["63°", "31,5°", "126°", "189°"], a: 2 },
+        { q: "Луч OM — биссектриса ∠AOC. ∠AOM = 33°. Найдите ∠AOC.", o: ["33°", "66°", "16,5°", "99°"], a: 1 },
+        { q: "∠COB = 41°, OC — биссектриса ∠AOB. ∠AOB =", o: ["41°", "82°", "20,5°", "123°"], a: 1 },
+        { q: "Биссектриса угла 160° делит его на два угла по:", o: ["40°", "80°", "160°", "320°"], a: 1 },
+        { q: "∠MOP = ∠POT = 22°. ∠MOT =", o: ["22°", "11°", "44°", "66°"], a: 2 },
+        { q: "Луч OC — биссектриса ∠AOB. Если ∠AOC = 47°, то ∠AOB =", o: ["47°", "94°", "23,5°", "141°"], a: 1 },
+        { q: "Биссектриса делит угол на два конгруэнтных угла. Конгруэнтные углы —", o: ["Смежные", "Равные", "Вертикальные", "Прямые"], a: 1 },
+        { q: "∠AOB = 100°. Биссектриса OC. ∠AOC =", o: ["100°", "200°", "50°", "25°"], a: 2 },
+        { q: "∠AOM = ∠MOC = ∠CON = ∠NOB = 15°. ∠AOB =", o: ["15°", "30°", "45°", "60°"], a: 3 },
+        { q: "Луч OD — биссектриса ∠COK. ∠COD = 40°. Найдите ∠COK.", o: ["20°", "40°", "80°", "120°"], a: 2 },
+        { q: "∠AOC = 75°. Биссектриса OC ∠AOB. Найдите ∠COB.", o: ["150°", "37,5°", "75°", "25°"], a: 2 },
+        { q: "Биссектриса угла 54° делит его на углы по:", o: ["108°", "27°", "54°", "18°"], a: 1 }
+      ];
+
+      // Navigation
+      function showSection(id) {
+        document.querySelectorAll("section").forEach(s => s.classList.remove("active"));
+        document.getElementById(id).classList.add("active");
+        document.querySelectorAll(".nav-links a").forEach(a => a.classList.remove("active"));
+        document.querySelector('.nav-links a[data-section="' + id + '"]')?.classList.add("active");
+        window.scrollTo(0, 0);
+        AppState.currentSection = id;
+      }
+      document.querySelectorAll(".nav-links a").forEach(link => {
+        link.addEventListener("click", e => { e.preventDefault(); showSection(link.dataset.section); });
+      });
+
+      // Slider
+      let currentSlide = 0, slideEls = [], slideTotal = 0;
+      function renderSlide() {
+        slideEls.forEach((s, i) => s.classList.toggle("active", i === currentSlide));
+        document.getElementById("slide-num").innerText = currentSlide + 1;
+      }
+      function nextSlide() { if (currentSlide < slideTotal - 1) { currentSlide++; renderSlide(); } }
+      function prevSlide() { if (currentSlide > 0) { currentSlide--; renderSlide(); } }
+
+      // Solutions
+      function toggleSolution(id) {
+        const el = document.getElementById(id);
+        el.classList.toggle("active");
+        el.previousElementSibling.textContent = el.classList.contains("active") ? "Скрыть решение" : "Показать решение";
+      }
+
+      // Trainer
+      let trainerOrder = 0;
+      function newTrainerProblem() {
+        AppState.trainer.current = trainerQs[trainerOrder % trainerQs.length];
+        trainerOrder++;
+        document.getElementById("trainer-question").textContent = AppState.trainer.current.q;
+        document.getElementById("trainer-answer").value = "";
+        document.getElementById("trainer-feedback").innerHTML = "";
+        document.getElementById("trainer-hint").style.display = "none";
+        document.getElementById("trainer-check-btn").disabled = false;
+      }
+      function showTrainerHint() {
+        if (!AppState.trainer.current) return;
+        document.getElementById("trainer-hint").style.display = "block";
+        document.getElementById("trainer-hint").textContent = "💡 " + AppState.trainer.current.hint;
+      }
+      function checkTrainer() {
+        if (!AppState.trainer.current) return;
+        const val = parseFloat(document.getElementById("trainer-answer").value.trim().replace(",", "."));
+        const isCorrect = !isNaN(val) && Math.abs(val - AppState.trainer.current.a) < 0.1;
+        AppState.trainer.total++;
+        if (isCorrect) {
+          AppState.trainer.correct++;
+          AppState.trainer.streak++;
+          document.getElementById("trainer-feedback").innerHTML = '<div style="color:var(--success);font-weight:700;font-size:1.1rem;">✓ Верно! Ответ: ' + AppState.trainer.current.a + '°</div>';
+        } else {
+          AppState.trainer.streak = 0;
+          document.getElementById("trainer-feedback").innerHTML = '<div style="color:var(--error);font-weight:700;font-size:1.1rem;">✗ Неверно. Правильный ответ: ' + AppState.trainer.current.a + '°</div>';
+        }
+        document.getElementById("trainer-correct").textContent = AppState.trainer.correct;
+        document.getElementById("trainer-total").textContent = AppState.trainer.total;
+        document.getElementById("trainer-streak").textContent = AppState.trainer.streak;
+        document.getElementById("trainer-check-btn").disabled = true;
+      }
+
+      // Diagnostic
+      function startDiagnostic() {
+        AppState.mode = "diagnostic";
+        AppState.diagnostic = { current: 0, score: 0, answers: [] };
+        document.getElementById("diagnostic-ui").style.display = "block";
+        document.getElementById("timeattack-ui").style.display = "none";
+        document.getElementById("results-ui").style.display = "none";
+        document.getElementById("diag-total").textContent = questions.length;
+        renderDiagnostic();
+      }
+      function renderDiagnostic() {
+        const q = questions[AppState.diagnostic.current];
+        document.getElementById("diag-current").textContent = AppState.diagnostic.current + 1;
+        document.getElementById("diag-score").textContent = AppState.diagnostic.score + " правильных";
+        document.getElementById("diag-progress").style.width = ((AppState.diagnostic.current + 1) / questions.length * 100) + "%";
+        document.getElementById("diag-question").textContent = q.q;
+        const optsDiv = document.getElementById("diag-options");
+        optsDiv.innerHTML = "";
+        q.o.forEach((opt, i) => {
+          const div = document.createElement("div");
+          div.className = "quiz-option";
+          div.innerHTML = '<div class="option-letter">' + String.fromCharCode(65 + i) + "</div><div>" + opt + "</div>";
+          div.onclick = () => selectDiagnostic(i, div);
+          optsDiv.appendChild(div);
+        });
+        document.getElementById("diag-explanation").style.display = "none";
+        document.getElementById("diag-prev").disabled = AppState.diagnostic.current === 0;
+        document.getElementById("diag-next").disabled = true;
+      }
+      function selectDiagnostic(idx) {
+        if (!document.getElementById("diag-next").disabled) return;
+        const q = questions[AppState.diagnostic.current];
+        const isCorrect = idx === q.a;
+        if (isCorrect) AppState.diagnostic.score++;
+        AppState.diagnostic.answers[AppState.diagnostic.current] = idx;
+        document.querySelectorAll("#diag-options .quiz-option").forEach((opt, i) => {
+          opt.classList.add("disabled");
+          if (i === q.a) opt.classList.add("correct");
+          else if (i === idx && !isCorrect) opt.classList.add("wrong");
+        });
+        document.getElementById("diag-explanation").innerHTML = "<strong>" + (isCorrect ? "✓ Верно!" : "✗ Неверно.") + "</strong> Правильный ответ: " + q.o[q.a];
+        document.getElementById("diag-explanation").style.display = "block";
+        document.getElementById("diag-next").disabled = false;
+      }
+      function nextDiagnostic() {
+        if (AppState.diagnostic.current < questions.length - 1) { AppState.diagnostic.current++; renderDiagnostic(); }
+        else showResults(AppState.diagnostic.score, questions.length, 0, "diagnostic");
+      }
+      function prevDiagnostic() {
+        if (AppState.diagnostic.current > 0) { AppState.diagnostic.current--; renderDiagnostic(); }
+      }
+
+      // Time Attack
+      function startTimeAttack() {
+        AppState.mode = "timeattack";
+        AppState.timeAttack = { current: 0, score: 0, timer: null, timeLeft: 600, startTime: Date.now(), answers: [] };
+        document.getElementById("diagnostic-ui").style.display = "none";
+        document.getElementById("timeattack-ui").style.display = "block";
+        document.getElementById("results-ui").style.display = "none";
+        document.getElementById("ta-timer").className = "timer";
+        renderTimeAttack();
+        if (AppState.timeAttack.timer) clearInterval(AppState.timeAttack.timer);
+        AppState.timeAttack.timer = setInterval(() => {
+          AppState.timeAttack.timeLeft--;
+          const m = Math.floor(AppState.timeAttack.timeLeft / 60);
+          const s = AppState.timeAttack.timeLeft % 60;
+          const timerEl = document.getElementById("ta-timer");
+          timerEl.textContent = m + ":" + s.toString().padStart(2, "0");
+          if (AppState.timeAttack.timeLeft <= 60) timerEl.className = "timer danger";
+          else if (AppState.timeAttack.timeLeft <= 180) timerEl.className = "timer warning";
+          if (AppState.timeAttack.timeLeft <= 0) finishTimeAttack();
+        }, 1000);
+      }
+      function renderTimeAttack() {
+        const q = questions[AppState.timeAttack.current];
+        document.getElementById("ta-current").textContent = AppState.timeAttack.current + 1;
+        document.getElementById("ta-progress").style.width = ((AppState.timeAttack.current + 1) / questions.length * 100) + "%";
+        document.getElementById("ta-question").textContent = q.q;
+        const optsDiv = document.getElementById("ta-options");
+        optsDiv.innerHTML = "";
+        q.o.forEach((opt, i) => {
+          const div = document.createElement("div");
+          div.className = "quiz-option";
+          div.innerHTML = '<div class="option-letter">' + String.fromCharCode(65 + i) + "</div><div>" + opt + "</div>";
+          div.onclick = () => selectTimeAttack(i, div);
+          optsDiv.appendChild(div);
+        });
+        document.getElementById("ta-next").disabled = true;
+      }
+      function selectTimeAttack(idx) {
+        if (!document.getElementById("ta-next").disabled) return;
+        const q = questions[AppState.timeAttack.current];
+        if (idx === q.a) AppState.timeAttack.score++;
+        AppState.timeAttack.answers[AppState.timeAttack.current] = idx;
+        document.querySelectorAll("#ta-options .quiz-option").forEach((opt, i) => {
+          opt.classList.add("disabled");
+          if (i === q.a) opt.classList.add("correct");
+          else if (i === idx && idx !== q.a) opt.classList.add("wrong");
+        });
+        document.getElementById("ta-next").disabled = false;
+      }
+      function nextTimeAttack() {
+        if (AppState.timeAttack.current < questions.length - 1) { AppState.timeAttack.current++; renderTimeAttack(); }
+        else finishTimeAttack();
+      }
+      function finishTimeAttack() {
+        clearInterval(AppState.timeAttack.timer);
+        showResults(AppState.timeAttack.score, questions.length, Math.floor((Date.now() - AppState.timeAttack.startTime) / 1000), "timeattack");
+      }
+
+      // Results
+      function showResults(score, total, timeSpent, mode) {
+        document.getElementById("diagnostic-ui").style.display = "none";
+        document.getElementById("timeattack-ui").style.display = "none";
+        document.getElementById("results-ui").style.display = "block";
+        const percent = Math.round(score / total * 100);
+        const m = Math.floor(timeSpent / 60), s = timeSpent % 60;
+        let mastery = "Начальный";
+        if (percent >= 90) mastery = "Эксперт";
+        else if (percent >= 70) mastery = "Продвинутый";
+        else if (percent >= 50) mastery = "Средний";
+        let message = percent >= 90 ? "🏆 Превосходно! Вы мастер геометрии!" :
+          percent >= 70 ? "🥈 Хорошо! Есть куда расти." :
+          percent >= 50 ? "🥉 Удовлетворительно. Повторите теорию." :
+          "💪 Нужно больше практики. Вернитесь к теории.";
+        document.getElementById("result-circle").style.setProperty("--score", percent);
+        document.getElementById("result-percent").textContent = percent + "%";
+        document.getElementById("result-message").textContent = message;
+        document.getElementById("result-correct").textContent = score;
+        document.getElementById("result-wrong").textContent = total - score;
+        document.getElementById("result-time").textContent = mode === "diagnostic" ? "—" : m + ":" + s.toString().padStart(2, "0");
+        document.getElementById("result-mastery").textContent = mastery;
+      }
+      function resetAssessment() {
+        document.getElementById("results-ui").style.display = "none";
+        if (AppState.mode === "diagnostic") startDiagnostic(); else startTimeAttack();
+      }
+
+      // Init
+      document.addEventListener("DOMContentLoaded", () => {
+        const track = document.getElementById("track-slides");
+        slides.forEach((s, i) => {
+          const div = document.createElement("div");
+          div.className = "widget-slide" + (i === 0 ? " active" : "");
+          div.innerHTML = "<h3>" + s.title + '</h3><div style="color:var(--text-secondary);line-height:1.8;margin-top:12px;">' + s.content + "</div>";
+          track.appendChild(div);
+        });
+        slideEls = track.querySelectorAll(".widget-slide");
+        slideTotal = slideEls.length;
+        document.getElementById("slide-total").textContent = slideTotal;
+        renderSlide();
+
+        const exContainer = document.getElementById("examples-container");
+        examples.forEach((ex, i) => {
+          const card = document.createElement("div");
+          card.className = "problem-card";
+          card.innerHTML = '<div class="problem-header"><span class="problem-number">№ ' + (i + 1) + '</span><span class="problem-type">' + ex.title + '</span></div><div class="problem-text">' + ex.task + '</div><button class="solution-btn" onclick="toggleSolution(\'sol-' + i + '\')">Показать решение</button><div class="solution" id="sol-' + i + '">' + ex.sol + '</div>';
+          exContainer.appendChild(card);
+        });
+
+        newTrainerProblem();
+      });
+    </script>
+  </body>
+</html>

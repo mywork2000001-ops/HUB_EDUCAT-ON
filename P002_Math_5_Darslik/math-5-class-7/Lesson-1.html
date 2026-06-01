@@ -1,0 +1,644 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Урок 1 — Прямоугольный параллелепипед. Куб</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css" />
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+    <script>
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            fontFamily: { sans: ["Inter", "system-ui", "sans-serif"] },
+            colors: { brand: { 500: "#8b5cf6" } },
+          },
+        },
+      };
+    </script>
+    <style>
+      :root {
+        --bg-primary: #0b0f19;
+        --bg-card: #111827;
+        --bg-glass: rgba(17, 24, 39, 0.7);
+        --border: rgba(255, 255, 255, 0.08);
+        --text: #e5e7eb;
+        --text-dim: #9ca3af;
+      }
+      body { font-family: "Inter", system-ui, sans-serif; background: var(--bg-primary); color: var(--text); }
+      .glass { background: var(--bg-glass); backdrop-filter: blur(20px); border: 1px solid var(--border); }
+      .katex-display { margin: 0.5em 0; }
+      .slide-enter { animation: slideIn 0.4s ease-out; }
+      @keyframes slideIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+      .option-card { transition: all 0.2s; cursor: pointer; }
+      .option-card:hover { border-color: #8b5cf6; background: rgba(139,92,246,0.08); }
+      .option-card.selected { border-color: #8b5cf6; background: rgba(139,92,246,0.12); }
+      .option-card.correct { border-color: #22c55e; background: rgba(34,197,94,0.15); }
+      .option-card.wrong { border-color: #ef4444; background: rgba(239,68,68,0.15); }
+      .progress-fill { transition: width 0.5s ease; }
+      .timer-box { font-variant-numeric: tabular-nums; }
+      .lang-az { display: none; }
+      body.lang-az .lang-ru { display: none; }
+      body.lang-az .lang-az { display: inline; }
+      body.lang-az .lang-az-block { display: block; }
+      body.lang-az .lang-ru-block { display: none; }
+      .connector { position: absolute; left: 28px; top: 48px; bottom: -16px; width: 2px; background: linear-gradient(to bottom, #8b5cf6, transparent); }
+      .step-card:last-child .connector { display: none; }
+      .svg-geo { filter: drop-shadow(0 0 8px rgba(139,92,246,0.2)); }
+    </style>
+    <base target="_blank" />
+  </head>
+  <body class="antialiased min-h-screen">
+    <!-- Background -->
+    <div class="fixed inset-0 -z-10">
+      <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_20%_20%,rgba(139,92,246,0.08)_0%,transparent_50%),radial-gradient(ellipse_at_80%_80%,rgba(124,58,237,0.06)_0%,transparent_50%)]"></div>
+      <div class="absolute inset-0 opacity-[0.03]" style="background-image:repeating-linear-gradient(0deg,transparent,transparent 40px,rgba(255,255,255,0.5) 40px,rgba(255,255,255,0.5) 41px);"></div>
+    </div>
+
+    <!-- Nav -->
+    <nav class="fixed top-0 left-0 right-0 z-50 glass border-b border-white/5">
+      <div class="max-w-6xl mx-auto px-4 h-14 flex items-center justify-between">
+        <a href="#" onclick="showTab('home')" class="text-lg font-bold bg-gradient-to-r from-violet-400 via-purple-400 to-indigo-400 bg-clip-text text-transparent">
+          <span class="lang-ru">📦 Урок 1</span><span class="lang-az">📦 Dərs 1</span>
+        </a>
+        <div class="hidden md:flex items-center gap-1">
+          <a href="#" data-tab="home" class="nav-link px-3 py-1.5 rounded-lg text-sm text-gray-400 hover:text-white hover:bg-white/5 transition active-nav"><span class="lang-ru">Главная</span><span class="lang-az">Ana səhifə</span></a>
+          <a href="#" data-tab="theory" class="nav-link px-3 py-1.5 rounded-lg text-sm text-gray-400 hover:text-white hover:bg-white/5 transition"><span class="lang-ru">Теория</span><span class="lang-az">Nəzəriyyə</span></a>
+          <a href="#" data-tab="algorithm" class="nav-link px-3 py-1.5 rounded-lg text-sm text-gray-400 hover:text-white hover:bg-white/5 transition"><span class="lang-ru">Алгоритм</span><span class="lang-az">Alqoritm</span></a>
+          <a href="#" data-tab="examples" class="nav-link px-3 py-1.5 rounded-lg text-sm text-gray-400 hover:text-white hover:bg-white/5 transition"><span class="lang-ru">Примеры</span><span class="lang-az">Nümunələr</span></a>
+          <a href="#" data-tab="trainer" class="nav-link px-3 py-1.5 rounded-lg text-sm text-gray-400 hover:text-white hover:bg-white/5 transition"><span class="lang-ru">Тренажёр</span><span class="lang-az">Trenajor</span></a>
+          <a href="#" data-tab="assessment" class="nav-link px-3 py-1.5 rounded-lg text-sm text-gray-400 hover:text-white hover:bg-white/5 transition"><span class="lang-ru">Аттестация</span><span class="lang-az">Attestasiya</span></a>
+          <button onclick="toggleLang()" class="ml-2 px-3 py-1.5 rounded-lg text-xs font-semibold border border-white/10 hover:bg-white/5 transition">🇦🇿 AZ / RU 🇷🇺</button>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Timer -->
+    <div id="timer" class="fixed top-20 right-4 z-40 glass rounded-xl px-4 py-2 text-lg font-bold hidden timer-box border border-violet-500/20">
+      <span id="timer-display">10:00</span>
+    </div>
+
+    <main class="max-w-4xl mx-auto px-4 pt-20 pb-12">
+      <!-- HOME -->
+      <section id="home" class="tab-content">
+        <div class="text-center py-16">
+          <div class="text-6xl mb-4">📦</div>
+          <h1 class="text-4xl md:text-5xl font-extrabold mb-6 bg-gradient-to-r from-violet-400 via-purple-400 to-indigo-400 bg-clip-text text-transparent">
+            <span class="lang-ru">Прямоугольный параллелепипед. Куб</span><span class="lang-az">Düzbucaqlı paralelepiped. Kub</span>
+          </h1>
+          <p class="text-lg text-gray-400 max-w-2xl mx-auto mb-8">
+            <span class="lang-ru">§7.1. Основные понятия: рёбра, грани, вершины, развёртка. 30 вопросов для полной проверки знаний.</span>
+            <span class="lang-az">§7.1. Əsas anlayışlar: qabırğalar, üzlər, köşəliklər, açılma. 30 sual.</span>
+          </p>
+          <div class="flex gap-4 justify-center flex-wrap">
+            <button onclick="showTab('theory')" class="px-6 py-3 rounded-xl bg-gradient-to-r from-violet-500 to-purple-500 text-white font-semibold hover:shadow-lg hover:shadow-violet-500/20 transition transform hover:-translate-y-0.5">
+              <span class="lang-ru">Начать обучение</span><span class="lang-az">Öyrənməyə başla</span>
+            </button>
+            <button onclick="showTab('assessment')" class="px-6 py-3 rounded-xl glass text-white font-semibold hover:bg-white/10 transition">
+              <span class="lang-ru">Проверить знания</span><span class="lang-az">Bilikləri yoxla</span>
+            </button>
+          </div>
+        </div>
+        <div class="grid md:grid-cols-3 gap-4">
+          <div class="glass rounded-2xl p-6 hover:border-violet-500/30 transition">
+            <div class="w-10 h-10 rounded-xl bg-violet-500/20 flex items-center justify-center text-xl mb-4">📐</div>
+            <h3 class="font-semibold text-white mb-2"><span class="lang-ru">Грани и рёбра</span><span class="lang-az">Üzlər və qabırğalar</span></h3>
+            <p class="text-sm text-gray-400"><span class="lang-ru">6 граней, 12 рёбер, 8 вершин у прямоугольного параллелепипеда.</span><span class="lang-az">Düzbucaqlı paralelipipedin 6 üzü, 12 qabırğası, 8 köşəyi var.</span></p>
+          </div>
+          <div class="glass rounded-2xl p-6 hover:border-purple-500/30 transition">
+            <div class="w-10 h-10 rounded-xl bg-purple-500/20 flex items-center justify-center text-xl mb-4">🔷</div>
+            <h3 class="font-semibold text-white mb-2"><span class="lang-ru">Куб</span><span class="lang-az">Kub</span></h3>
+            <p class="text-sm text-gray-400"><span class="lang-ru">Частный случай: все рёбра равны $a = b = c$. Все грани — квадраты.</span><span class="lang-az">Xüsusi hal: bütün qabırğalar bərabərdir $a = b = c$. Bütün üzlər kvadratdır.</span></p>
+          </div>
+          <div class="glass rounded-2xl p-6 hover:border-indigo-500/30 transition">
+            <div class="w-10 h-10 rounded-xl bg-indigo-500/20 flex items-center justify-center text-xl mb-4">🗺️</div>
+            <h3 class="font-semibold text-white mb-2"><span class="lang-ru">Развёртка и диагональ</span><span class="lang-az">Açılma və diaqonal</span></h3>
+            <p class="text-sm text-gray-400"><span class="lang-ru">Развёртка — 6 прямоугольников. Диагональ: $d = \sqrt{a^2+b^2+c^2}$.</span><span class="lang-az">Açılma — 6 düzbucaqlı. Diaqonal: $d = \sqrt{a^2+b^2+c^2}$.</span></p>
+          </div>
+        </div>
+      </section>
+
+      <!-- THEORY -->
+      <section id="theory" class="tab-content hidden">
+        <div class="glass rounded-2xl p-6 mb-6">
+          <h2 class="text-xl font-bold mb-4 flex items-center gap-3">
+            <span class="w-10 h-10 rounded-xl bg-violet-500/20 flex items-center justify-center text-lg">📖</span>
+            <span class="lang-ru">Визуальная теория</span><span class="lang-az">Vizual nəzəriyyə</span>
+          </h2>
+          <div class="flex items-center justify-between mb-4 text-sm text-gray-400">
+            <span><span class="lang-ru">Слайд</span><span class="lang-az">Slayd</span> <span id="slide-num" class="text-white font-bold">1</span> / <span id="slide-total">8</span></span>
+            <div class="w-32 h-1.5 bg-gray-800 rounded-full overflow-hidden">
+              <div id="slide-progress" class="h-full bg-gradient-to-r from-violet-400 to-purple-400 progress-fill" style="width:12.5%"></div>
+            </div>
+          </div>
+          <div id="slides-container" class="min-h-[320px]"></div>
+          <div class="flex justify-between mt-6">
+            <button onclick="prevSlide()" class="px-4 py-2 rounded-lg glass hover:bg-white/5 text-sm font-medium transition">← <span class="lang-ru">Назад</span><span class="lang-az">Geri</span></button>
+            <button onclick="nextSlide()" class="px-4 py-2 rounded-lg bg-gradient-to-r from-violet-500 to-purple-500 text-white text-sm font-bold hover:shadow-lg transition"><span class="lang-ru">Вперёд</span><span class="lang-az">İrəli</span> →</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ALGORITHM -->
+      <section id="algorithm" class="tab-content hidden">
+        <div class="glass rounded-2xl p-6">
+          <h2 class="text-xl font-bold mb-6 flex items-center gap-3">
+            <span class="w-10 h-10 rounded-xl bg-violet-500/20 flex items-center justify-center text-lg">🪜</span>
+            <span class="lang-ru">Алгоритм работы с параллелепипедом</span><span class="lang-az">Paralelepiped ilə iş alqoritmi</span>
+          </h2>
+          <div class="space-y-4 relative">
+            <div class="step-card glass rounded-xl p-5 pl-16 relative">
+              <div class="connector"></div>
+              <div class="absolute left-4 top-5 w-8 h-8 rounded-full bg-violet-500 text-white flex items-center justify-center font-bold text-sm">1</div>
+              <h4 class="font-semibold text-white mb-1"><span class="lang-ru">Определите размеры</span><span class="lang-az">Ölçüləri müəyyən edin</span></h4>
+              <p class="text-sm text-gray-400"><span class="lang-ru">Найдите длину $a$, ширину $b$, высоту $c$ из условия задачи.</span><span class="lang-az">Məsələnin şərtindən uzunluq $a$, en $b$, hündürlük $c$ tapın.</span></p>
+            </div>
+            <div class="step-card glass rounded-xl p-5 pl-16 relative">
+              <div class="connector"></div>
+              <div class="absolute left-4 top-5 w-8 h-8 rounded-full bg-violet-500 text-white flex items-center justify-center font-bold text-sm">2</div>
+              <h4 class="font-semibold text-white mb-1"><span class="lang-ru">Назовите элементы</span><span class="lang-az">Elementləri adlandırın</span></h4>
+              <p class="text-sm text-gray-400"><span class="lang-ru">Вершины (8), рёбра (12: 4+4+4), грани (6: 2+2+2 пары).</span><span class="lang-az">Köşəliklər (8), qabırğalar (12: 4+4+4), üzlər (6: 2+2+2 cüt).</span></p>
+            </div>
+            <div class="step-card glass rounded-xl p-5 pl-16 relative">
+              <div class="connector"></div>
+              <div class="absolute left-4 top-5 w-8 h-8 rounded-full bg-violet-500 text-white flex items-center justify-center font-bold text-sm">3</div>
+              <h4 class="font-semibold text-white mb-1"><span class="lang-ru">Проверьте: куб или нет?</span><span class="lang-az">Yoxlayın: kub yoxsa yox?</span></h4>
+              <p class="text-sm text-gray-400"><span class="lang-ru">Куб: все три размера равны $a = b = c$.</span><span class="lang-az">Kub: üç ölçü bərabərdir $a = b = c$.</span></p>
+            </div>
+            <div class="step-card glass rounded-xl p-5 pl-16 relative">
+              <div class="connector"></div>
+              <div class="absolute left-4 top-5 w-8 h-8 rounded-full bg-violet-500 text-white flex items-center justify-center font-bold text-sm">4</div>
+              <h4 class="font-semibold text-white mb-1"><span class="lang-ru">Найдите диагональ (если нужно)</span><span class="lang-az">Diaqonalı tapın (lazım olsa)</span></h4>
+              <p class="text-sm text-gray-400"><span class="lang-ru">$d = \sqrt{a^2 + b^2 + c^2}$ — формула пространственной диагонали.</span><span class="lang-az">$d = \sqrt{a^2 + b^2 + c^2}$ — fəza diaqonalının düsturu.</span></p>
+            </div>
+            <div class="step-card glass rounded-xl p-5 pl-16 relative">
+              <div class="absolute left-4 top-5 w-8 h-8 rounded-full bg-violet-500 text-white flex items-center justify-center font-bold text-sm">5</div>
+              <h4 class="font-semibold text-white mb-1"><span class="lang-ru">Постройте развёртку</span><span class="lang-az">Açılmanı qurun</span></h4>
+              <p class="text-sm text-gray-400"><span class="lang-ru">6 прямоугольников: 2 грани $a \times b$, 2 грани $a \times c$, 2 грани $b \times c$.</span><span class="lang-az">6 düzbucaqlı: 2 üz $a \times b$, 2 üz $a \times c$, 2 üz $b \times c$.</span></p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- EXAMPLES -->
+      <section id="examples" class="tab-content hidden">
+        <div class="glass rounded-2xl p-6 mb-4">
+          <h2 class="text-xl font-bold mb-2 flex items-center gap-3">
+            <span class="w-10 h-10 rounded-xl bg-violet-500/20 flex items-center justify-center text-lg">📝</span>
+            <span class="lang-ru">Разбор задач</span><span class="lang-az">Məsələlərin təhlili</span>
+          </h2>
+          <p class="text-sm text-gray-400"><span class="lang-ru">Шесть типовых задач на параллелепипед и куб.</span><span class="lang-az">Paralelepiped və kub üzrə altı tipik məsələ.</span></p>
+        </div>
+        <div id="examples-list" class="space-y-4"></div>
+      </section>
+
+      <!-- TRAINER -->
+      <section id="trainer" class="tab-content hidden">
+        <div class="glass rounded-2xl p-6">
+          <h2 class="text-xl font-bold mb-4 flex items-center gap-3">
+            <span class="w-10 h-10 rounded-xl bg-violet-500/20 flex items-center justify-center text-lg">🏋️</span>
+            <span class="lang-ru">Тренажёр</span><span class="lang-az">Trenajor</span>
+          </h2>
+          <div class="glass rounded-xl p-6 mb-4 text-center" id="trainer-task">
+            <span class="lang-ru text-gray-400">Нажмите «Новая задача» для начала</span>
+            <span class="lang-az text-gray-400">Başlamaq üçün «Yeni məsələ» düyməsini basın</span>
+          </div>
+          <div class="flex gap-3 mb-4">
+            <input id="trainer-input" type="text" placeholder="Ответ / Cavab" class="flex-1 bg-gray-900 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-violet-500 transition" />
+            <button onclick="checkTrainer()" id="trainer-check" class="px-5 py-3 rounded-xl bg-gradient-to-r from-violet-500 to-purple-500 text-white font-bold hover:shadow-lg transition" disabled>
+              <span class="lang-ru">Проверить</span><span class="lang-az">Yoxla</span>
+            </button>
+          </div>
+          <div id="trainer-feedback" class="mb-4 min-h-[3rem]"></div>
+          <div class="flex gap-3 justify-center">
+            <button onclick="newTrainer()" class="px-4 py-2 rounded-lg glass hover:bg-white/5 text-sm font-medium transition"><span class="lang-ru">Новая задача</span><span class="lang-az">Yeni məsələ</span></button>
+            <button onclick="showHint()" class="px-4 py-2 rounded-lg glass hover:bg-white/5 text-sm font-medium transition"><span class="lang-ru">Подсказка</span><span class="lang-az">İpucu</span></button>
+          </div>
+          <div id="trainer-hint" class="mt-4 p-4 rounded-xl bg-violet-500/10 border-l-4 border-violet-400 hidden text-sm text-gray-300"></div>
+          <div class="flex justify-center gap-6 mt-6">
+            <div class="text-center"><div class="text-2xl font-bold text-violet-400" id="stat-correct">0</div><div class="text-xs text-gray-500"><span class="lang-ru">Верно</span><span class="lang-az">Düzgün</span></div></div>
+            <div class="text-center"><div class="text-2xl font-bold text-white" id="stat-total">0</div><div class="text-xs text-gray-500"><span class="lang-ru">Всего</span><span class="lang-az">Cəmi</span></div></div>
+            <div class="text-center"><div class="text-2xl font-bold text-yellow-400" id="stat-streak">0</div><div class="text-xs text-gray-500"><span class="lang-ru">Серия</span><span class="lang-az">Seriya</span></div></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ASSESSMENT -->
+      <section id="assessment" class="tab-content hidden">
+        <div id="assessment-menu" class="grid md:grid-cols-2 gap-4">
+          <div class="glass rounded-2xl p-6 text-center">
+            <div class="text-4xl mb-3">🔍</div>
+            <h3 class="font-bold text-lg mb-2"><span class="lang-ru">Диагностический тест</span><span class="lang-az">Diaqnostik test</span></h3>
+            <p class="text-sm text-gray-400 mb-4"><span class="lang-ru">30 вопросов с мгновенной обратной связью.</span><span class="lang-az">30 ani əks əlaqəli sual.</span></p>
+            <button onclick="startDiagnostic()" class="px-5 py-2.5 rounded-xl bg-gradient-to-r from-violet-500 to-purple-500 text-white font-bold hover:shadow-lg transition"><span class="lang-ru">Начать</span><span class="lang-az">Başla</span></button>
+          </div>
+          <div class="glass rounded-2xl p-6 text-center">
+            <div class="text-4xl mb-3">⏱️</div>
+            <h3 class="font-bold text-lg mb-2"><span class="lang-ru">Скоростная викторина</span><span class="lang-az">Sürətli viktorina</span></h3>
+            <p class="text-sm text-gray-400 mb-4"><span class="lang-ru">30 вопросов • 10 минут • Итоговый дашборд.</span><span class="lang-az">30 sual • 10 dəqiqə • Yekun panel.</span></p>
+            <button onclick="startTimeAttack()" class="px-5 py-2.5 rounded-xl bg-gradient-to-r from-orange-500 to-red-500 text-white font-bold hover:shadow-lg transition"><span class="lang-ru">Начать</span><span class="lang-az">Başla</span></button>
+          </div>
+        </div>
+        <div id="quiz-ui" class="hidden">
+          <div class="glass rounded-2xl p-6 mb-4">
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-sm text-gray-400"><span class="lang-ru">Вопрос</span><span class="lang-az">Sual</span> <span id="q-current" class="text-white font-bold">1</span> / 30</span>
+              <span id="q-score" class="text-sm text-violet-400 font-bold">0 <span class="lang-ru">правильных</span><span class="lang-az">düzgün</span></span>
+            </div>
+            <div class="w-full h-2 bg-gray-800 rounded-full overflow-hidden">
+              <div id="q-progress" class="h-full bg-gradient-to-r from-violet-400 to-purple-400 progress-fill" style="width:3.33%"></div>
+            </div>
+          </div>
+          <div class="glass rounded-2xl p-6 mb-4">
+            <div id="q-text" class="text-lg font-medium mb-6 leading-relaxed"></div>
+            <div id="q-options" class="grid gap-3"></div>
+          </div>
+          <div class="flex justify-between">
+            <button onclick="prevQuestion()" id="btn-prev" class="px-4 py-2 rounded-lg glass hover:bg-white/5 text-sm font-medium transition" disabled>← <span class="lang-ru">Назад</span><span class="lang-az">Geri</span></button>
+            <button onclick="nextQuestion()" id="btn-next" class="px-4 py-2 rounded-lg bg-gradient-to-r from-violet-500 to-purple-500 text-white text-sm font-bold hover:shadow-lg transition" disabled><span class="lang-ru">Далее</span><span class="lang-az">İrəli</span> →</button>
+          </div>
+          <div id="q-explain" class="hidden mt-4 p-4 rounded-xl bg-violet-500/10 border-l-4 border-violet-400 text-sm"></div>
+        </div>
+        <div id="results-ui" class="hidden">
+          <div class="glass rounded-2xl p-8 text-center">
+            <div class="mb-2 text-gray-400"><span class="lang-ru">Ваш результат</span><span class="lang-az">Sizin nəticəniz</span></div>
+            <div class="relative w-48 h-48 mx-auto mb-6">
+              <svg class="w-full h-full -rotate-90" viewBox="0 0 100 100">
+                <circle cx="50" cy="50" r="45" fill="none" stroke="#1f2937" stroke-width="8"/>
+                <circle id="result-circle" cx="50" cy="50" r="45" fill="none" stroke="url(#grad1)" stroke-width="8" stroke-dasharray="283" stroke-dashoffset="283" stroke-linecap="round" class="transition-all duration-1000"/>
+                <defs><linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#8b5cf6"/><stop offset="100%" stop-color="#a78bfa"/></linearGradient></defs>
+              </svg>
+              <div class="absolute inset-0 flex items-center justify-center"><div class="text-4xl font-extrabold text-white" id="result-percent">0%</div></div>
+            </div>
+            <div class="text-xl font-bold mb-6" id="result-message"></div>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-lg mx-auto mb-6">
+              <div class="glass rounded-xl p-3"><div class="text-2xl font-bold text-violet-400" id="res-correct">0</div><div class="text-xs text-gray-500"><span class="lang-ru">Верно</span><span class="lang-az">Düzgün</span></div></div>
+              <div class="glass rounded-xl p-3"><div class="text-2xl font-bold text-red-400" id="res-wrong">0</div><div class="text-xs text-gray-500"><span class="lang-ru">Ошибок</span><span class="lang-az">Səhvlər</span></div></div>
+              <div class="glass rounded-xl p-3"><div class="text-2xl font-bold text-white" id="res-time">0:00</div><div class="text-xs text-gray-500"><span class="lang-ru">Время</span><span class="lang-az">Vaxt</span></div></div>
+              <div class="glass rounded-xl p-3"><div class="text-2xl font-bold text-blue-400" id="res-level">—</div><div class="text-xs text-gray-500"><span class="lang-ru">Уровень</span><span class="lang-az">Səviyyə</span></div></div>
+            </div>
+            <div class="flex gap-3 justify-center">
+              <button onclick="resetAssessment()" class="px-5 py-2.5 rounded-xl bg-gradient-to-r from-violet-500 to-purple-500 text-white font-bold hover:shadow-lg transition"><span class="lang-ru">Пройти ещё раз</span><span class="lang-az">Təkrar keç</span></button>
+              <button onclick="showTab('theory')" class="px-5 py-2.5 rounded-xl glass hover:bg-white/5 font-medium transition"><span class="lang-ru">К теории</span><span class="lang-az">Nəzəriyyəyə</span></button>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <script>
+      const State = {
+        lang: "ru",
+        slide: 0,
+        trainer: { current: null, correct: 0, total: 0, streak: 0 },
+        quiz: { mode: null, current: 0, score: 0, answers: [], timer: null, timeLeft: 600, startTime: 0 },
+      };
+
+      // SVG helpers
+      const box3D = (a, b, c, label) =>
+        '<svg class="svg-geo mx-auto" viewBox="0 0 220 160" width="220" height="160" aria-label="' + label + '">' +
+        '<polygon points="30,130 130,130 130,60 30,60" fill="rgba(139,92,246,0.05)" stroke="#a78bfa" stroke-width="2"/>' +
+        '<polygon points="130,60 170,30 170,100 130,130" fill="rgba(139,92,246,0.1)" stroke="#8b5cf6" stroke-width="2"/>' +
+        '<polygon points="30,60 70,30 170,30 130,60" fill="rgba(139,92,246,0.15)" stroke="#8b5cf6" stroke-width="2"/>' +
+        '<line x1="30" y1="130" x2="70" y2="100" stroke="#6d28d9" stroke-width="1.5" stroke-dasharray="4,3"/>' +
+        '<line x1="70" y1="100" x2="170" y2="100" stroke="#6d28d9" stroke-width="1.5" stroke-dasharray="4,3"/>' +
+        '<line x1="70" y1="100" x2="70" y2="30" stroke="#6d28d9" stroke-width="1.5" stroke-dasharray="4,3"/>' +
+        '<text x="80" y="148" fill="#e5e7eb" font-size="13" text-anchor="middle">' + a + '</text>' +
+        '<text x="158" y="75" fill="#a78bfa" font-size="13">' + b + '</text>' +
+        '<text x="18" y="98" fill="#c4b5fd" font-size="13">' + c + '</text>' +
+        '</svg>';
+
+      const cube3D =
+        '<svg class="svg-geo mx-auto" viewBox="0 0 200 180" width="200" height="180" aria-label="Куб со стороной a">' +
+        '<polygon points="30,140 120,140 120,60 30,60" fill="rgba(139,92,246,0.07)" stroke="#a78bfa" stroke-width="2"/>' +
+        '<polygon points="120,60 160,25 160,105 120,140" fill="rgba(139,92,246,0.12)" stroke="#8b5cf6" stroke-width="2"/>' +
+        '<polygon points="30,60 70,25 160,25 120,60" fill="rgba(139,92,246,0.18)" stroke="#8b5cf6" stroke-width="2"/>' +
+        '<line x1="30" y1="140" x2="70" y2="105" stroke="#6d28d9" stroke-width="1.5" stroke-dasharray="4,3"/>' +
+        '<line x1="70" y1="105" x2="160" y2="105" stroke="#6d28d9" stroke-width="1.5" stroke-dasharray="4,3"/>' +
+        '<line x1="70" y1="105" x2="70" y2="25" stroke="#6d28d9" stroke-width="1.5" stroke-dasharray="4,3"/>' +
+        '<text x="75" y="158" fill="#e5e7eb" font-size="13" text-anchor="middle">a</text>' +
+        '<text x="148" y="68" fill="#a78bfa" font-size="13">a</text>' +
+        '<text x="15" y="103" fill="#c4b5fd" font-size="13">a</text>' +
+        '</svg>';
+
+      const net =
+        '<svg class="svg-geo mx-auto" viewBox="0 0 260 200" width="260" height="200" aria-label="Развёртка параллелепипеда">' +
+        '<rect x="80" y="10" width="60" height="40" fill="rgba(139,92,246,0.15)" stroke="#8b5cf6" stroke-width="1.5"/>' +
+        '<text x="110" y="35" fill="#a78bfa" font-size="11" text-anchor="middle">a×c</text>' +
+        '<rect x="20" y="50" width="40" height="60" fill="rgba(139,92,246,0.1)" stroke="#8b5cf6" stroke-width="1.5"/>' +
+        '<text x="40" y="85" fill="#a78bfa" font-size="11" text-anchor="middle">b×c</text>' +
+        '<rect x="60" y="50" width="60" height="60" fill="rgba(139,92,246,0.2)" stroke="#8b5cf6" stroke-width="2"/>' +
+        '<text x="90" y="85" fill="#c4b5fd" font-size="12" text-anchor="middle" font-weight="bold">a×b</text>' +
+        '<rect x="120" y="50" width="40" height="60" fill="rgba(139,92,246,0.1)" stroke="#8b5cf6" stroke-width="1.5"/>' +
+        '<text x="140" y="85" fill="#a78bfa" font-size="11" text-anchor="middle">b×c</text>' +
+        '<rect x="160" y="50" width="60" height="60" fill="rgba(139,92,246,0.15)" stroke="#8b5cf6" stroke-width="1.5"/>' +
+        '<text x="190" y="85" fill="#a78bfa" font-size="11" text-anchor="middle">a×b</text>' +
+        '<rect x="80" y="110" width="60" height="40" fill="rgba(139,92,246,0.15)" stroke="#8b5cf6" stroke-width="1.5"/>' +
+        '<text x="110" y="135" fill="#a78bfa" font-size="11" text-anchor="middle">a×c</text>' +
+        '</svg>';
+
+      // ================== SLIDES ==================
+      const slides = [
+        {
+          ru: { t: "📦 Что такое прямоугольный параллелепипед?", b: "Прямоугольный параллелепипед — это трёхмерная геометрическая фигура, все грани которой являются <b>прямоугольниками</b>.<br><br>Примеры из жизни: книга, кирпич, холодильник, комната.<br><br>" + box3D("a","b","c","Прямоугольный параллелепипед") },
+          az: { t: "📦 Düzbucaqlı paralelepiped nədir?", b: "Düzbucaqlı paralelepiped — bütün üzləri <b>düzbucaqlı</b> olan üçölçülü həndəsi fiqurdur.<br><br>Həyatdan nümunələr: kitab, kərpic, soyuducu, otaq.<br><br>" + box3D("a","b","c","Düzbucaqlı paralelepiped") },
+        },
+        {
+          ru: { t: "📦 Размеры параллелепипеда", b: "Параллелепипед задаётся тремя размерами:<br><br>• <b>Длина</b> $a$ — самый длинный размер<br>• <b>Ширина</b> $b$ — поперечный размер<br>• <b>Высота</b> $c$ — вертикальный размер<br><br>На чертеже они обозначаются латинскими буквами $a$, $b$, $c$." },
+          az: { t: "📦 Paralelipipedin ölçüləri", b: "Paralelepiped üç ölçü ilə verilir:<br><br>• <b>Uzunluq</b> $a$ — ən uzun ölçü<br>• <b>En</b> $b$ — eninə ölçü<br>• <b>Hündürlük</b> $c$ — şaquli ölçü<br><br>Çertyojda latın hərfləri $a$, $b$, $c$ ilə işarə olunur." },
+        },
+        {
+          ru: { t: "📦 Грани, рёбра, вершины", b: "Прямоугольный параллелепипед имеет:<br><br>• <b>6 граней</b> — прямоугольные плоские поверхности<br>• <b>12 рёбер</b> — отрезки на пересечении граней (4 длины + 4 ширины + 4 высоты)<br>• <b>8 вершин</b> — точки, где сходятся рёбра<br><br>Запомните: $6-12-8$!" },
+          az: { t: "📦 Üzlər, qabırğalar, köşəliklər", b: "Düzbucaqlı paralelipipedin:<br><br>• <b>6 üzü</b> var — düzbucaqlı düz səthlər<br>• <b>12 qabırğası</b> var — üzlərin kəsişməsindəki parçalar (4 uzunluq + 4 en + 4 hündürlük)<br>• <b>8 köşəyi</b> var — qabırğaların birləşdiyi nöqtələr<br><br>Yadda saxlayın: $6-12-8$!" },
+        },
+        {
+          ru: { t: "📦 Куб — особый параллелепипед", b: "Куб — это прямоугольный параллелепипед, у которого <b>все рёбра равны</b>:<br>$$a = b = c$$<br>Все 6 граней куба — квадраты!<br><br>Примеры: кубик Рубика, кости, кубический декор.<br><br>" + cube3D },
+          az: { t: "📦 Kub — xüsusi paralelepiped", b: "Kub — <b>bütün qabırğaları bərabər</b> olan düzbucaqlı paralelipeddir:<br>$$a = b = c$$<br>Kubun 6 üzünün hamısı kvadratdır!<br><br>Nümunələr: Rubik kubu, zər, kub dekor.<br><br>" + cube3D },
+        },
+        {
+          ru: { t: "📦 Развёртка параллелепипеда", b: "Развёртка — это 6 граней, «развёрнутых» на плоскость.<br><br>Для параллелепипеда с размерами $a$, $b$, $c$:<br>• 2 грани размером $a \\times b$ (верх и низ)<br>• 2 грани размером $a \\times c$ (перед и зад)<br>• 2 грани размером $b \\times c$ (лево и право)<br><br>" + net },
+          az: { t: "📦 Paralelipipedin açılması", b: "Açılma — düzlük üzərindəki 6 üzdür.<br><br>$a$, $b$, $c$ ölçülü paralelepiped üçün:<br>• 2 üz $a \\times b$ ölçülü (üst və alt)<br>• 2 üz $a \\times c$ ölçülü (ön və arxa)<br>• 2 üz $b \\times c$ ölçülü (sol və sağ)<br><br>" + net },
+        },
+        {
+          ru: { t: "📦 Диагональ параллелепипеда", b: "Диагональ параллелепипеда соединяет две <b>противоположные вершины</b>.<br><br>Формула диагонали:<br>$$d = \\sqrt{a^2 + b^2 + c^2}$$<br><br>Пример: $a=3, b=4, c=0$ → $d = \\sqrt{9+16+0} = 5$ (это теорема Пифагора!)<br>При $a=1, b=1, c=1$: $d = \\sqrt{3} \\approx 1{,}73$" },
+          az: { t: "📦 Paralelipipedin diaqonalı", b: "Paralelipipedin diaqonalı iki <b>qarşı-qarşıya duran köşəyi</b> birləşdirir.<br><br>Diaqonal düsturu:<br>$$d = \\sqrt{a^2 + b^2 + c^2}$$<br><br>Nümunə: $a=3, b=4, c=0$ → $d = \\sqrt{9+16+0} = 5$ (bu Pifaqor teoremidir!)<br>$a=1, b=1, c=1$ olduqda: $d = \\sqrt{3} \\approx 1{,}73$" },
+        },
+        {
+          ru: { t: "📦 Свойства куба", b: "Куб обладает особыми свойствами:<br><br>• Все 6 граней — <b>равные квадраты</b> со стороной $a$<br>• Все 12 рёбер <b>равны</b> (длина $a$)<br>• Диагональ куба: $d = a\\sqrt{3}$<br>• Диагональ грани: $d_{\\text{гр}} = a\\sqrt{2}$<br><br>Куб обладает наибольшей симметрией среди параллелепипедов." },
+          az: { t: "📦 Kubun xassələri", b: "Kubun xüsusi xassələri var:<br><br>• Bütün 6 üz — $a$ tərəfli <b>bərabər kvadratlar</b><br>• Bütün 12 qabırğa <b>bərabərdir</b> (uzunluq $a$)<br>• Kubun diaqonalı: $d = a\\sqrt{3}$<br>• Üzün diaqonalı: $d_{\\text{üz}} = a\\sqrt{2}$<br><br>Kub paralelepipdlər arasında ən böyük simmetriyaya malikdir." },
+        },
+        {
+          ru: { t: "📦 Итоговая таблица", b: '<table style="width:100%;border-collapse:collapse;font-size:14px;color:#e5e7eb"><tr style="background:rgba(139,92,246,0.2)"><th style="padding:8px;border:1px solid rgba(139,92,246,0.3)">Фигура</th><th style="padding:8px;border:1px solid rgba(139,92,246,0.3)">Грани</th><th style="padding:8px;border:1px solid rgba(139,92,246,0.3)">Рёбра</th><th style="padding:8px;border:1px solid rgba(139,92,246,0.3)">Вершины</th></tr><tr><td style="padding:8px;border:1px solid rgba(255,255,255,0.08)">Прямоуг. параллел.</td><td style="padding:8px;border:1px solid rgba(255,255,255,0.08);text-align:center;color:#a78bfa">6</td><td style="padding:8px;border:1px solid rgba(255,255,255,0.08);text-align:center;color:#a78bfa">12</td><td style="padding:8px;border:1px solid rgba(255,255,255,0.08);text-align:center;color:#a78bfa">8</td></tr><tr style="background:rgba(139,92,246,0.05)"><td style="padding:8px;border:1px solid rgba(255,255,255,0.08)">Куб</td><td style="padding:8px;border:1px solid rgba(255,255,255,0.08);text-align:center;color:#c4b5fd">6</td><td style="padding:8px;border:1px solid rgba(255,255,255,0.08);text-align:center;color:#c4b5fd">12</td><td style="padding:8px;border:1px solid rgba(255,255,255,0.08);text-align:center;color:#c4b5fd">8</td></tr></table><br>Оба имеют одинаковое количество граней, рёбер и вершин!' },
+          az: { t: "📦 Yekun cədvəl", b: '<table style="width:100%;border-collapse:collapse;font-size:14px;color:#e5e7eb"><tr style="background:rgba(139,92,246,0.2)"><th style="padding:8px;border:1px solid rgba(139,92,246,0.3)">Fiqur</th><th style="padding:8px;border:1px solid rgba(139,92,246,0.3)">Üzlər</th><th style="padding:8px;border:1px solid rgba(139,92,246,0.3)">Qabırğalar</th><th style="padding:8px;border:1px solid rgba(139,92,246,0.3)">Köşəliklər</th></tr><tr><td style="padding:8px;border:1px solid rgba(255,255,255,0.08)">Düzbucaqlı paralel.</td><td style="padding:8px;border:1px solid rgba(255,255,255,0.08);text-align:center;color:#a78bfa">6</td><td style="padding:8px;border:1px solid rgba(255,255,255,0.08);text-align:center;color:#a78bfa">12</td><td style="padding:8px;border:1px solid rgba(255,255,255,0.08);text-align:center;color:#a78bfa">8</td></tr><tr style="background:rgba(139,92,246,0.05)"><td style="padding:8px;border:1px solid rgba(255,255,255,0.08)">Kub</td><td style="padding:8px;border:1px solid rgba(255,255,255,0.08);text-align:center;color:#c4b5fd">6</td><td style="padding:8px;border:1px solid rgba(255,255,255,0.08);text-align:center;color:#c4b5fd">12</td><td style="padding:8px;border:1px solid rgba(255,255,255,0.08);text-align:center;color:#c4b5fd">8</td></tr></table><br>Hər ikisinin üz, qabırğa və köşəlik sayı eynidir!' },
+        },
+      ];
+
+      // ================== EXAMPLES ==================
+      const examples = [
+        {
+          ru: { t: "№1 Подсчёт рёбер", d: "Элементы", p: "Прямоугольный параллелепипед с размерами 5×3×4 см. Сколько рёбер равны 5 см?", s: "У параллелепипеда 12 рёбер: 4 рёбра длиной $a$, 4 рёбра длиной $b$, 4 рёбра высотой $c$.\nДлина $a = 5$ см → 4 ребра равны 5 см.\n<b>Ответ: 4 ребра</b>" },
+          az: { t: "№1 Qabırğaları saymaq", d: "Elementlər", p: "5×3×4 sm ölçülü düzbucaqlı paralelepiped. Neçə qabırğası 5 sm-dir?", s: "Paralelipipedin 12 qabırğası var: 4 qabırğa $a$ uzunluqlu, 4 qabırğa $b$ uzunluqlu, 4 qabırğa $c$ hündürlüklü.\nUzunluq $a = 5$ sm → 4 qabırğa 5 sm-dir.\n<b>Cavab: 4 qabırğa</b>" },
+        },
+        {
+          ru: { t: "№2 Куб или нет?", d: "Определение", p: "Является ли фигура кубом, если её длина = 6 см, ширина = 6 см, высота = 7 см?", s: "Куб: $a = b = c$.\nПроверяем: $a = 6$, $b = 6$, $c = 7$.\n$a = b$, но $c \\neq a$.\n<b>Ответ: нет, это не куб (обычный параллелепипед)</b>" },
+          az: { t: "№2 Kub yoxsa yox?", d: "Tərif", p: "Uzunluğu = 6 sm, eni = 6 sm, hündürlüyü = 7 sm olan fiqur kubdurmu?", s: "Kub: $a = b = c$.\nYoxlayırıq: $a = 6$, $b = 6$, $c = 7$.\n$a = b$, lakin $c \\neq a$.\n<b>Cavab: xeyr, bu kub deyil (adi paralelipeddir)</b>" },
+        },
+        {
+          ru: { t: "№3 Диагональ параллелепипеда", d: "Диагональ", p: "Найдите диагональ параллелепипеда с размерами $a=3$, $b=4$, $c=12$ см.", s: "$d = \\sqrt{a^2 + b^2 + c^2} = \\sqrt{9 + 16 + 144} = \\sqrt{169} = 13$ см\n<b>Ответ: $d = 13$ см</b>" },
+          az: { t: "№3 Paralelipipedin diaqonalı", d: "Diaqonal", p: "$a=3$, $b=4$, $c=12$ sm ölçülü paralelipipedin diaqonalını tapın.", s: "$d = \\sqrt{a^2 + b^2 + c^2} = \\sqrt{9 + 16 + 144} = \\sqrt{169} = 13$ sm\n<b>Cavab: $d = 13$ sm</b>" },
+        },
+        {
+          ru: { t: "№4 Диагональ куба", d: "Куб", p: "Ребро куба равно 5 см. Найдите диагональ куба.", s: "$d = a\\sqrt{3} = 5\\sqrt{3} \\approx 5 \\cdot 1{,}732 \\approx 8{,}66$ см\n<b>Ответ: $d = 5\\sqrt{3}$ см $\\approx 8{,}66$ см</b>" },
+          az: { t: "№4 Kubun diaqonalı", d: "Kub", p: "Kubun qabırğası 5 sm-dir. Kubun diaqonalını tapın.", s: "$d = a\\sqrt{3} = 5\\sqrt{3} \\approx 5 \\cdot 1{,}732 \\approx 8{,}66$ sm\n<b>Cavab: $d = 5\\sqrt{3}$ sm $\\approx 8{,}66$ sm</b>" },
+        },
+        {
+          ru: { t: "№5 Число рёбер определённой длины", d: "Рёбра", p: "У параллелепипеда $a \\neq b \\neq c$. Сколько различных длин имеют рёбра?", s: "12 рёбер делятся на 3 группы по 4:\n• 4 ребра длиной $a$\n• 4 ребра длиной $b$\n• 4 ребра длиной $c$\n<b>Ответ: 3 различные длины</b>" },
+          az: { t: "№5 Müəyyən uzunluqlu qabırğalar", d: "Qabırğalar", p: "Paralelipipedin $a \\neq b \\neq c$. Qabırğaların neçə müxtəlif uzunluğu var?", s: "12 qabırğa hərəsindən 4-ü olmaqla 3 qrupa bölünür:\n• 4 qabırğa $a$ uzunluqlu\n• 4 qabırğa $b$ uzunluqlu\n• 4 qabırğa $c$ uzunluqlu\n<b>Cavab: 3 müxtəlif uzunluq</b>" },
+        },
+        {
+          ru: { t: "№6 Нахождение ребра по диагонали", d: "Диагональ", p: "Диагональ куба равна $\\sqrt{75}$ см. Найдите ребро куба.", s: "$d = a\\sqrt{3} \\Rightarrow a = \\frac{d}{\\sqrt{3}} = \\frac{\\sqrt{75}}{\\sqrt{3}} = \\sqrt{\\frac{75}{3}} = \\sqrt{25} = 5$ см\n<b>Ответ: $a = 5$ см</b>" },
+          az: { t: "№6 Diaqonala görə qabırğanı tapmaq", d: "Diaqonal", p: "Kubun diaqonalı $\\sqrt{75}$ sm-dir. Kubun qabırğasını tapın.", s: "$d = a\\sqrt{3} \\Rightarrow a = \\frac{d}{\\sqrt{3}} = \\frac{\\sqrt{75}}{\\sqrt{3}} = \\sqrt{\\frac{75}{3}} = \\sqrt{25} = 5$ sm\n<b>Cavab: $a = 5$ sm</b>" },
+        },
+      ];
+
+      // ================== QUESTIONS ==================
+      const questions = [
+        { ru: { q: "Сколько граней у прямоугольного параллелепипеда?", o: ["4","6","8","12"] }, az: { q: "Düzbucaqlı paralelipipedin neçə üzü var?", o: ["4","6","8","12"] }, a: 1 },
+        { ru: { q: "Сколько рёбер у прямоугольного параллелепипеда?", o: ["6","8","10","12"] }, az: { q: "Düzbucaqlı paralelipipedin neçə qabırğası var?", o: ["6","8","10","12"] }, a: 3 },
+        { ru: { q: "Сколько вершин у прямоугольного параллелепипеда?", o: ["4","6","8","10"] }, az: { q: "Düzbucaqlı paralelipipedin neçə köşəyi var?", o: ["4","6","8","10"] }, a: 2 },
+        { ru: { q: "Куб — это параллелепипед, у которого:", o: ["Все грани — прямоугольники","Все рёбра равны","Только 2 грани — квадраты","Нет вершин"] }, az: { q: "Kub — bu paralelipeddir, onun:", o: ["Bütün üzləri düzbucaqlıdır","Bütün qabırğaları bərabərdir","Yalnız 2 üzü kvadratdır","Köşəyi yoxdur"] }, a: 1 },
+        { ru: { q: "Какова формула диагонали параллелепипеда?", o: ["$d = a+b+c$","$d = \\sqrt{a+b+c}$","$d = \\sqrt{a^2+b^2+c^2}$","$d = a \\cdot b \\cdot c$"] }, az: { q: "Paralelipipedin diaqonal düsturu nədir?", o: ["$d = a+b+c$","$d = \\sqrt{a+b+c}$","$d = \\sqrt{a^2+b^2+c^2}$","$d = a \\cdot b \\cdot c$"] }, a: 2 },
+        { ru: { q: "Сколько рёбер куба равны стороне $a$?", o: ["4","6","8","12"] }, az: { q: "Kubun neçə qabırğası $a$ tərəfinə bərabərdir?", o: ["4","6","8","12"] }, a: 3 },
+        { ru: { q: "Грани прямоугольного параллелепипеда — это:", o: ["Треугольники","Прямоугольники","Квадраты","Пятиугольники"] }, az: { q: "Düzbucaqlı paralelipipedin üzləri:", o: ["Üçbucaqlar","Düzbucaqlılar","Kvadratlar","Beşbucaqlar"] }, a: 1 },
+        { ru: { q: "Диагональ куба со стороной $a$ равна:", o: ["$a\\sqrt{2}$","$a\\sqrt{3}$","$2a$","$3a$"] }, az: { q: "$a$ tərəfli kubun diaqonalı:", o: ["$a\\sqrt{2}$","$a\\sqrt{3}$","$2a$","$3a$"] }, a: 1 },
+        { ru: { q: "Сколько пар параллельных граней у параллелепипеда?", o: ["2","3","4","6"] }, az: { q: "Paralelipipedin neçə cüt paralel üzü var?", o: ["2","3","4","6"] }, a: 1 },
+        { ru: { q: "У куба все грани являются:", o: ["Прямоугольниками","Ромбами","Квадратами","Трапециями"] }, az: { q: "Kubun bütün üzləri:", o: ["Düzbucaqlılardır","Rombdur","Kvadratlardır","Trapeсiyalardır"] }, a: 2 },
+        { ru: { q: "Развёртка параллелепипеда состоит из:", o: ["4 прямоугольников","5 прямоугольников","6 прямоугольников","8 прямоугольников"] }, az: { q: "Paralelipipedin açılması neçə düzbucaqlıdan ibarətdir?", o: ["4 düzbucaqlı","5 düzbucaqlı","6 düzbucaqlı","8 düzbucaqlı"] }, a: 2 },
+        { ru: { q: "Диагональ параллелепипеда $3\\times4\\times12$ равна:", o: ["13","15","17","19"] }, az: { q: "$3\\times4\\times12$ paralelipipedin diaqonalı:", o: ["13","15","17","19"] }, a: 0 },
+        { ru: { q: "Сколько рёбер у параллелепипеда длиной $a$ (из 12)?", o: ["2","3","4","6"] }, az: { q: "Paralelipipedin 12 qabırğasından neçəsi $a$ uzunluqludur?", o: ["2","3","4","6"] }, a: 2 },
+        { ru: { q: "Куб является частным случаем:", o: ["Пирамиды","Цилиндра","Прямоугольного параллелепипеда","Шара"] }, az: { q: "Kub hansının xüsusi halıdır?", o: ["Ehram","Silindr","Düzbucaqlı paralelepiped","Kürə"] }, a: 2 },
+        { ru: { q: "Верно ли: у куба все 12 рёбер равны?", o: ["Да","Нет","Только 8","Только 4"] }, az: { q: "Doğrudurmu: kubun 12 qabırğasının hamısı bərabərdir?", o: ["Bəli","Xeyr","Yalnız 8","Yalnız 4"] }, a: 0 },
+        { ru: { q: "Диагональ грани куба со стороной $a$:", o: ["$a$","$a\\sqrt{2}$","$a\\sqrt{3}$","$2a$"] }, az: { q: "$a$ tərəfli kubun üzünün diaqonalı:", o: ["$a$","$a\\sqrt{2}$","$a\\sqrt{3}$","$2a$"] }, a: 1 },
+        { ru: { q: "У параллелепипеда противоположные грани:", o: ["Перпендикулярны","Равны и параллельны","Всегда квадраты","Не связаны"] }, az: { q: "Paralelipipedin qarşı üzləri:", o: ["Perpendikulyardır","Bərabər və paraleldır","Həmişə kvadratdır","Əlaqəsizdir"] }, a: 1 },
+        { ru: { q: "Ребро куба $a = 4$ см. Диагональ куба равна:", o: ["$4\\sqrt{2}$ см","$4\\sqrt{3}$ см","$8$ см","$12$ см"] }, az: { q: "Kubun qabırğası $a = 4$ sm. Kubun diaqonalı:", o: ["$4\\sqrt{2}$ sm","$4\\sqrt{3}$ sm","$8$ sm","$12$ sm"] }, a: 1 },
+        { ru: { q: "Сколько видов рёбер (по длине) у параллелепипеда с $a\\neq b\\neq c$?", o: ["1","2","3","4"] }, az: { q: "$a\\neq b\\neq c$ olan paralelipipedin neçə növ (uzunluqca) qabırğası var?", o: ["1","2","3","4"] }, a: 2 },
+        { ru: { q: "Развёртка куба состоит из:", o: ["6 равных квадратов","4 квадрата","8 квадратов","6 прямоугольников"] }, az: { q: "Kubun açılması nədən ibarətdir?", o: ["6 bərabər kvadrat","4 kvadrat","8 kvadrat","6 düzbucaqlı"] }, a: 0 },
+        { ru: { q: "Сколько пространственных диагоналей у параллелепипеда?", o: ["2","4","6","8"] }, az: { q: "Paralelipipedin neçə fəza diaqonalı var?", o: ["2","4","6","8"] }, a: 1 },
+        { ru: { q: "Параллелепипед с $a=5$, $b=5$, $c=5$ является:", o: ["Пирамидой","Кубом","Призмой","Цилиндром"] }, az: { q: "$a=5$, $b=5$, $c=5$ olan paralelepiped:", o: ["Ehramdır","Kubdur","Prizmadır","Silindirdir"] }, a: 1 },
+        { ru: { q: "Верно: в кубе диагональ грани < диагонали куба?", o: ["Да, всегда","Нет","Только при $a>1$","Равны"] }, az: { q: "Doğrudurmu: kubda üzün diaqonalı < kubun diaqonalından kiçikdir?", o: ["Bəli, həmişə","Xeyr","Yalnız $a>1$ olduqda","Bərabərdir"] }, a: 0 },
+        { ru: { q: "Смежные рёбра параллелепипеда:", o: ["Параллельны","Перпендикулярны","Равны","Пересекаются"] }, az: { q: "Paralelipipedin qonşu qabırğaları:", o: ["Paraleldır","Perpendikulyardır","Bərabərdir","Kəsişir"] }, a: 1 },
+        { ru: { q: "Параллельные рёбра параллелепипеда:", o: ["Пересекаются","Равны по длине","Перпендикулярны","Не связаны"] }, az: { q: "Paralelipipedin paralel qabırğaları:", o: ["Kəsişir","Uzunluqca bərabərdir","Perpendikulyardır","Əlaqəsizdir"] }, a: 1 },
+        { ru: { q: "Ребро куба $a = 6$ см. Диагональ грани равна:", o: ["$6$ см","$6\\sqrt{2}$ см","$6\\sqrt{3}$ см","$12$ см"] }, az: { q: "Kubun qabırğası $a = 6$ sm. Üzün diaqonalı:", o: ["$6$ sm","$6\\sqrt{2}$ sm","$6\\sqrt{3}$ sm","$12$ sm"] }, a: 1 },
+        { ru: { q: "Сколько прямых углов у каждой вершины параллелепипеда?", o: ["1","2","3","4"] }, az: { q: "Paralelipipedin hər köşəyindəki düz bucaqların sayı:", o: ["1","2","3","4"] }, a: 2 },
+        { ru: { q: "Если диагональ куба $d = \\sqrt{3}$ см, то ребро куба:", o: ["$\\sqrt{3}$ см","$3$ см","$1$ см","$\\frac{1}{\\sqrt{3}}$ см"] }, az: { q: "Kubun diaqonalı $d = \\sqrt{3}$ sm olduqda, qabırğası:", o: ["$\\sqrt{3}$ sm","$3$ sm","$1$ sm","$\\frac{1}{\\sqrt{3}}$ sm"] }, a: 2 },
+        { ru: { q: "Параллелепипед имеет ... пар противоположных рёбер:", o: ["4","6","8","12"] }, az: { q: "Paralelipipedin ... cüt qarşı-qarşıya duran qabırğası var:", o: ["4","6","8","12"] }, a: 1 },
+        { ru: { q: "Количество диагоналей у каждой грани параллелепипеда:", o: ["1","2","3","4"] }, az: { q: "Paralelipipedin hər üzünün diaqonal sayı:", o: ["1","2","3","4"] }, a: 1 },
+        { ru: { q: "Диагональ параллелепипеда $1\\times2\\times2$ равна:", o: ["$2$","$3$","$\\sqrt{5}$","$\\sqrt{9}=3$"] }, az: { q: "$1\\times2\\times2$ paralelipipedin diaqonalı:", o: ["$2$","$3$","$\\sqrt{5}$","$\\sqrt{9}=3$"] }, a: 1 },
+      ];
+
+      // ================== RENDER SLIDES ==================
+      function renderSlide() {
+        const s = slides[State.slide];
+        const d = State.lang === "ru" ? s.ru : s.az;
+        const container = document.getElementById("slides-container");
+        container.innerHTML = '<div class="slide-enter"><h3 class="text-lg font-bold text-violet-400 mb-3">' + d.t + '</h3><div class="text-gray-300 leading-relaxed">' + d.b + "</div></div>";
+        document.getElementById("slide-num").textContent = State.slide + 1;
+        document.getElementById("slide-progress").style.width = ((State.slide + 1) / slides.length) * 100 + "%";
+        if (window.renderMathInElement) renderMathInElement(container, { delimiters: [{ left: "$$", right: "$$", display: true }, { left: "$", right: "$", display: false }] });
+      }
+      function nextSlide() { if (State.slide < slides.length - 1) { State.slide++; renderSlide(); } }
+      function prevSlide() { if (State.slide > 0) { State.slide--; renderSlide(); } }
+
+      function renderExamples() {
+        const container = document.getElementById("examples-list");
+        container.innerHTML = "";
+        examples.forEach((ex, i) => {
+          const d = State.lang === "ru" ? ex.ru : ex.az;
+          const div = document.createElement("div");
+          div.className = "glass rounded-xl p-5";
+          div.innerHTML = '<div class="flex items-center justify-between mb-3"><span class="px-3 py-1 rounded-full bg-violet-500/20 text-violet-400 text-xs font-bold">' + d.t + '</span><span class="text-xs text-gray-500">' + d.d + '</span></div><div class="text-gray-200 mb-3">' + d.p + '</div><button onclick="toggleEx(' + i + ')" class="px-4 py-2 rounded-lg bg-violet-500/20 text-violet-400 text-sm font-semibold hover:bg-violet-500/30 transition"><span class="lang-ru">Решение</span><span class="lang-az">Həll</span></button><div id="ex-' + i + '" class="hidden mt-4 p-4 rounded-lg bg-violet-500/5 border-l-4 border-violet-500 text-sm text-gray-300 whitespace-pre-line"></div>';
+          container.appendChild(div);
+        });
+      }
+      function toggleEx(i) {
+        const el = document.getElementById("ex-" + i);
+        const d = State.lang === "ru" ? examples[i].ru : examples[i].az;
+        el.innerHTML = d.s; el.classList.toggle("hidden");
+        if (window.renderMathInElement) renderMathInElement(el, { delimiters: [{ left: "$$", right: "$$", display: true }, { left: "$", right: "$", display: false }] });
+      }
+
+      // ================== TRAINER ==================
+      function rand(a, b) { return Math.floor(Math.random() * (b - a + 1)) + a; }
+      function genTrainer() {
+        const t = ["edges", "vertices", "faces", "diagonal", "cube"][rand(0, 4)];
+        let text, ans, hint;
+        if (t === "edges") {
+          text = State.lang === "ru" ? "Сколько рёбер у прямоугольного параллелепипеда?" : "Düzbucaqlı paralelipipedin neçə qabırğası var?";
+          ans = "12"; hint = "4 + 4 + 4 = 12";
+        } else if (t === "vertices") {
+          text = State.lang === "ru" ? "Сколько вершин у прямоугольного параллелепипеда?" : "Düzbucaqlı paralelipipedin neçə köşəyi var?";
+          ans = "8"; hint = State.lang === "ru" ? "8 вершин" : "8 köşə";
+        } else if (t === "faces") {
+          text = State.lang === "ru" ? "Сколько граней у куба?" : "Kubun neçə üzü var?";
+          ans = "6"; hint = State.lang === "ru" ? "6 граней" : "6 üz";
+        } else if (t === "diagonal") {
+          const a = rand(1, 6), b = rand(1, 6), c = rand(1, 6);
+          const d2 = a*a + b*b + c*c;
+          const d = Math.round(Math.sqrt(d2) * 100) / 100;
+          if (Math.sqrt(d2) !== Math.floor(Math.sqrt(d2))) return genTrainer();
+          text = State.lang === "ru"
+            ? `Найдите диагональ параллелепипеда: a=${a}, b=${b}, c=${c}.`
+            : `Paralelepiped diaqonalını tapın: a=${a}, b=${b}, c=${c}.`;
+          ans = Math.floor(Math.sqrt(d2)).toString();
+          hint = `√(${a}²+${b}²+${c}²) = √${d2} = ${ans}`;
+        } else {
+          const a = rand(2, 10);
+          text = State.lang === "ru"
+            ? `Куб со стороной ${a} см. Сколько рёбер у куба?`
+            : `${a} sm tərəfli kub. Kubun neçə qabırğası var?`;
+          ans = "12"; hint = State.lang === "ru" ? "У куба всегда 12 рёбер" : "Kubun həmişə 12 qabırğası var";
+        }
+        return { text, ans, hint };
+      }
+      function newTrainer() {
+        State.trainer.current = genTrainer();
+        document.getElementById("trainer-task").innerHTML = '<div class="text-lg font-medium text-white mb-2">' + State.trainer.current.text + "</div>";
+        document.getElementById("trainer-input").value = "";
+        document.getElementById("trainer-feedback").innerHTML = "";
+        document.getElementById("trainer-hint").classList.add("hidden");
+        document.getElementById("trainer-check").disabled = false;
+      }
+      function showHint() {
+        if (!State.trainer.current) return;
+        document.getElementById("trainer-hint").textContent = "💡 " + State.trainer.current.hint;
+        document.getElementById("trainer-hint").classList.remove("hidden");
+      }
+      function checkTrainer() {
+        if (!State.trainer.current) return;
+        const val = document.getElementById("trainer-input").value.trim().toLowerCase().replace("°","").replace("см","").replace("cm","");
+        const correct = State.trainer.current.ans.toLowerCase();
+        const isCorrect = val === correct || parseFloat(val) === parseFloat(correct);
+        State.trainer.total++;
+        const fb = document.getElementById("trainer-feedback");
+        if (isCorrect) {
+          State.trainer.correct++; State.trainer.streak++;
+          fb.innerHTML = '<div class="text-violet-400 font-bold text-lg">✓ ' + (State.lang === "ru" ? "Верно!" : "Düzgün!") + " " + State.trainer.current.ans + "</div>";
+        } else {
+          State.trainer.streak = 0;
+          fb.innerHTML = '<div class="text-red-400 font-bold text-lg">✗ ' + (State.lang === "ru" ? "Неверно. Правильный ответ: " : "Səhv. Düzgün cavab: ") + State.trainer.current.ans + "</div>";
+        }
+        document.getElementById("stat-correct").textContent = State.trainer.correct;
+        document.getElementById("stat-total").textContent = State.trainer.total;
+        document.getElementById("stat-streak").textContent = State.trainer.streak;
+        document.getElementById("trainer-check").disabled = true;
+      }
+
+      // ================== QUIZ ==================
+      function startDiagnostic() { State.quiz.mode="diag"; State.quiz.current=0; State.quiz.score=0; State.quiz.answers=[]; showQuiz(); renderQuestion(); }
+      function startTimeAttack() { State.quiz.mode="time"; State.quiz.current=0; State.quiz.score=0; State.quiz.answers=[]; State.quiz.timeLeft=600; State.quiz.startTime=Date.now(); showQuiz(); renderQuestion(); startTimer(); }
+      function showQuiz() { document.getElementById("assessment-menu").classList.add("hidden"); document.getElementById("quiz-ui").classList.remove("hidden"); document.getElementById("results-ui").classList.add("hidden"); }
+      function startTimer() {
+        document.getElementById("timer").classList.remove("hidden");
+        State.quiz.timer = setInterval(() => { State.quiz.timeLeft--; updateTimer(); if (State.quiz.timeLeft <= 0) finishQuiz(); }, 1000);
+      }
+      function updateTimer() {
+        const m = Math.floor(State.quiz.timeLeft/60), s = State.quiz.timeLeft%60;
+        document.getElementById("timer-display").textContent = m + ":" + s.toString().padStart(2,"0");
+        document.getElementById("timer").classList.toggle("text-red-400", State.quiz.timeLeft <= 60);
+      }
+      function renderQuestion() {
+        const q = questions[State.quiz.current];
+        const d = State.lang === "ru" ? q.ru : q.az;
+        document.getElementById("q-current").textContent = State.quiz.current + 1;
+        document.getElementById("q-score").innerHTML = State.quiz.score + ' <span class="lang-ru">правильных</span><span class="lang-az">düzgün</span>';
+        document.getElementById("q-progress").style.width = ((State.quiz.current + 1) / questions.length) * 100 + "%";
+        document.getElementById("q-text").innerHTML = d.q;
+        const opts = document.getElementById("q-options");
+        opts.innerHTML = "";
+        d.o.forEach((opt, i) => {
+          const div = document.createElement("div");
+          div.className = "option-card glass rounded-xl p-4 flex items-center gap-3";
+          div.innerHTML = '<div class="w-8 h-8 rounded-lg bg-gray-800 flex items-center justify-center font-bold text-sm">' + String.fromCharCode(65+i) + "</div><div>" + opt + "</div>";
+          div.onclick = () => selectOption(i, div);
+          opts.appendChild(div);
+        });
+        document.getElementById("btn-prev").disabled = State.quiz.current === 0;
+        document.getElementById("btn-next").disabled = true;
+        document.getElementById("q-explain").classList.add("hidden");
+        if (window.renderMathInElement) renderMathInElement(document.getElementById("quiz-ui"), { delimiters: [{ left: "$$", right: "$$", display: true }, { left: "$", right: "$", display: false }] });
+      }
+      function selectOption(idx, el) {
+        if (!document.getElementById("btn-next").disabled) return;
+        const q = questions[State.quiz.current];
+        const correct = idx === q.a;
+        if (correct) State.quiz.score++;
+        State.quiz.answers[State.quiz.current] = idx;
+        document.querySelectorAll("#q-options .option-card").forEach((opt, i) => {
+          opt.classList.add("pointer-events-none","opacity-80");
+          if (i === q.a) opt.classList.add("correct");
+          else if (i === idx && !correct) opt.classList.add("wrong");
+        });
+        if (State.quiz.mode === "diag") {
+          const d = State.lang === "ru" ? q.ru : q.az;
+          document.getElementById("q-explain").innerHTML = '<strong class="' + (correct ? "text-violet-400" : "text-red-400") + '">' + (correct ? (State.lang==="ru" ? "✓ Верно!" : "✓ Düzgün!") : (State.lang==="ru" ? "✗ Неверно." : "✗ Səhv.")) + "</strong> " + (State.lang==="ru" ? "Правильный ответ: " : "Düzgün cavab: ") + d.o[q.a];
+          document.getElementById("q-explain").classList.remove("hidden");
+        }
+        document.getElementById("btn-next").disabled = false;
+      }
+      function nextQuestion() { if (State.quiz.current < questions.length-1) { State.quiz.current++; renderQuestion(); } else { finishQuiz(); } }
+      function prevQuestion() { if (State.quiz.current > 0) { State.quiz.current--; renderQuestion(); } }
+      function finishQuiz() {
+        if (State.quiz.timer) clearInterval(State.quiz.timer);
+        document.getElementById("timer").classList.add("hidden");
+        document.getElementById("quiz-ui").classList.add("hidden");
+        document.getElementById("results-ui").classList.remove("hidden");
+        const pct = Math.round((State.quiz.score / questions.length) * 100);
+        const timeSpent = State.quiz.mode==="time" ? Math.floor((Date.now()-State.quiz.startTime)/1000) : 0;
+        const m = Math.floor(timeSpent/60), s = timeSpent%60;
+        document.getElementById("result-percent").textContent = pct + "%";
+        document.getElementById("result-circle").style.strokeDashoffset = 283 - (283*pct/100);
+        document.getElementById("res-correct").textContent = State.quiz.score;
+        document.getElementById("res-wrong").textContent = questions.length - State.quiz.score;
+        document.getElementById("res-time").textContent = State.quiz.mode==="time" ? m+":"+s.toString().padStart(2,"0") : "—";
+        let level = State.lang==="ru" ? "Начальный" : "Başlanğıc";
+        if (pct>=90) level = State.lang==="ru" ? "Эксперт" : "Ekspert";
+        else if (pct>=70) level = State.lang==="ru" ? "Продвинутый" : "İrəli";
+        else if (pct>=50) level = State.lang==="ru" ? "Средний" : "Orta";
+        document.getElementById("res-level").textContent = level;
+        let msg = pct>=90 ? "🏆 "+(State.lang==="ru"?"Превосходно!":"Əla!") : pct>=70 ? "🥈 "+(State.lang==="ru"?"Хорошо!":"Yaxşı!") : pct>=50 ? "🥉 "+(State.lang==="ru"?"Удовлетворительно.":"Qaneedici.") : "💪 "+(State.lang==="ru"?"Нужно больше практики.":"Daha çox praktika lazımdır.");
+        document.getElementById("result-message").textContent = msg;
+      }
+      function resetAssessment() { document.getElementById("results-ui").classList.add("hidden"); document.getElementById("assessment-menu").classList.remove("hidden"); }
+
+      // ================== NAVIGATION ==================
+      function showTab(id) {
+        document.querySelectorAll(".tab-content").forEach(s => s.classList.add("hidden"));
+        document.getElementById(id).classList.remove("hidden");
+        document.querySelectorAll(".nav-link").forEach(a => a.classList.remove("active-nav","text-white","bg-white/5"));
+        const active = document.querySelector('.nav-link[data-tab="' + id + '"]');
+        if (active) active.classList.add("active-nav","text-white","bg-white/5");
+        window.scrollTo(0, 0);
+      }
+      document.querySelectorAll(".nav-link").forEach(link => { link.addEventListener("click", e => { e.preventDefault(); showTab(link.dataset.tab); }); });
+      function toggleLang() {
+        State.lang = State.lang === "ru" ? "az" : "ru";
+        document.body.classList.toggle("lang-az", State.lang === "az");
+        renderSlide(); renderExamples();
+        if (State.trainer.current) document.getElementById("trainer-task").innerHTML = '<div class="text-lg font-medium text-white">' + State.trainer.current.text + "</div>";
+      }
+
+      // ================== INIT ==================
+      document.addEventListener("DOMContentLoaded", () => {
+        document.getElementById("slide-total").textContent = slides.length;
+        renderSlide(); renderExamples(); newTrainer();
+        document.getElementById("trainer-input").addEventListener("keypress", e => { if (e.key === "Enter") checkTrainer(); });
+        const tryRender = () => { if (window.renderMathInElement) renderMathInElement(document.body, { delimiters: [{ left:"$$",right:"$$",display:true },{ left:"$",right:"$",display:false }] }); else setTimeout(tryRender, 300); };
+        tryRender();
+      });
+    </script>
+  </body>
+</html>

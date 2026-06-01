@@ -1,0 +1,537 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Урок 2 — Объём прямоугольного параллелепипеда</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css" />
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+    <script>
+      tailwind.config = { darkMode:"class", theme:{ extend:{ fontFamily:{ sans:["Inter","system-ui","sans-serif"] }, colors:{ brand:{ 500:"#8b5cf6" } } } } };
+    </script>
+    <style>
+      :root { --bg-primary:#0b0f19; --bg-card:#111827; --bg-glass:rgba(17,24,39,0.7); --border:rgba(255,255,255,0.08); --text:#e5e7eb; --text-dim:#9ca3af; }
+      body { font-family:"Inter",system-ui,sans-serif; background:var(--bg-primary); color:var(--text); }
+      .glass { background:var(--bg-glass); backdrop-filter:blur(20px); border:1px solid var(--border); }
+      .katex-display { margin:0.5em 0; }
+      .slide-enter { animation:slideIn 0.4s ease-out; }
+      @keyframes slideIn { from { opacity:0; transform:translateY(12px); } to { opacity:1; transform:translateY(0); } }
+      .option-card { transition:all 0.2s; cursor:pointer; }
+      .option-card:hover { border-color:#8b5cf6; background:rgba(139,92,246,0.08); }
+      .option-card.correct { border-color:#22c55e; background:rgba(34,197,94,0.15); }
+      .option-card.wrong { border-color:#ef4444; background:rgba(239,68,68,0.15); }
+      .progress-fill { transition:width 0.5s ease; }
+      .timer-box { font-variant-numeric:tabular-nums; }
+      .lang-az { display:none; }
+      body.lang-az .lang-ru { display:none; }
+      body.lang-az .lang-az { display:inline; }
+      body.lang-az .lang-az-block { display:block; }
+      body.lang-az .lang-ru-block { display:none; }
+      .connector { position:absolute; left:28px; top:48px; bottom:-16px; width:2px; background:linear-gradient(to bottom,#8b5cf6,transparent); }
+      .step-card:last-child .connector { display:none; }
+      .svg-geo { filter:drop-shadow(0 0 8px rgba(139,92,246,0.2)); }
+    </style>
+    <base target="_blank" />
+  </head>
+  <body class="antialiased min-h-screen">
+    <div class="fixed inset-0 -z-10">
+      <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_30%_20%,rgba(139,92,246,0.09)_0%,transparent_50%),radial-gradient(ellipse_at_70%_80%,rgba(124,58,237,0.07)_0%,transparent_50%)]"></div>
+    </div>
+
+    <nav class="fixed top-0 left-0 right-0 z-50 glass border-b border-white/5">
+      <div class="max-w-6xl mx-auto px-4 h-14 flex items-center justify-between">
+        <a href="#" onclick="showTab('home')" class="text-lg font-bold bg-gradient-to-r from-violet-400 via-purple-400 to-indigo-400 bg-clip-text text-transparent">
+          <span class="lang-ru">🔢 Урок 2</span><span class="lang-az">🔢 Dərs 2</span>
+        </a>
+        <div class="hidden md:flex items-center gap-1">
+          <a href="#" data-tab="home" class="nav-link px-3 py-1.5 rounded-lg text-sm text-gray-400 hover:text-white hover:bg-white/5 transition active-nav"><span class="lang-ru">Главная</span><span class="lang-az">Ana səhifə</span></a>
+          <a href="#" data-tab="theory" class="nav-link px-3 py-1.5 rounded-lg text-sm text-gray-400 hover:text-white hover:bg-white/5 transition"><span class="lang-ru">Теория</span><span class="lang-az">Nəzəriyyə</span></a>
+          <a href="#" data-tab="algorithm" class="nav-link px-3 py-1.5 rounded-lg text-sm text-gray-400 hover:text-white hover:bg-white/5 transition"><span class="lang-ru">Алгоритм</span><span class="lang-az">Alqoritm</span></a>
+          <a href="#" data-tab="examples" class="nav-link px-3 py-1.5 rounded-lg text-sm text-gray-400 hover:text-white hover:bg-white/5 transition"><span class="lang-ru">Примеры</span><span class="lang-az">Nümunələr</span></a>
+          <a href="#" data-tab="trainer" class="nav-link px-3 py-1.5 rounded-lg text-sm text-gray-400 hover:text-white hover:bg-white/5 transition"><span class="lang-ru">Тренажёр</span><span class="lang-az">Trenajor</span></a>
+          <a href="#" data-tab="assessment" class="nav-link px-3 py-1.5 rounded-lg text-sm text-gray-400 hover:text-white hover:bg-white/5 transition"><span class="lang-ru">Аттестация</span><span class="lang-az">Attestasiya</span></a>
+          <button onclick="toggleLang()" class="ml-2 px-3 py-1.5 rounded-lg text-xs font-semibold border border-white/10 hover:bg-white/5 transition">🇦🇿 AZ / RU 🇷🇺</button>
+        </div>
+      </div>
+    </nav>
+
+    <div id="timer" class="fixed top-20 right-4 z-40 glass rounded-xl px-4 py-2 text-lg font-bold hidden timer-box border border-violet-500/20"><span id="timer-display">10:00</span></div>
+
+    <main class="max-w-4xl mx-auto px-4 pt-20 pb-12">
+      <!-- HOME -->
+      <section id="home" class="tab-content">
+        <div class="text-center py-16">
+          <div class="text-6xl mb-4">🔢</div>
+          <h1 class="text-4xl md:text-5xl font-extrabold mb-6 bg-gradient-to-r from-violet-400 via-purple-400 to-indigo-400 bg-clip-text text-transparent">
+            <span class="lang-ru">Объём прямоугольного параллелепипеда</span><span class="lang-az">Düzbucaqlı paralelipipedin həcmi</span>
+          </h1>
+          <p class="text-lg text-gray-400 max-w-2xl mx-auto mb-8">
+            <span class="lang-ru">§7.2. Формула $V = a \cdot b \cdot c$, свойства объёма, практические задачи. 30 вопросов.</span>
+            <span class="lang-az">§7.2. $V = a \cdot b \cdot c$ düsturu, həcm xassələri, praktiki məsələlər. 30 sual.</span>
+          </p>
+          <div class="flex gap-4 justify-center flex-wrap">
+            <button onclick="showTab('theory')" class="px-6 py-3 rounded-xl bg-gradient-to-r from-violet-500 to-purple-500 text-white font-semibold hover:shadow-lg hover:shadow-violet-500/20 transition transform hover:-translate-y-0.5"><span class="lang-ru">Начать обучение</span><span class="lang-az">Öyrənməyə başla</span></button>
+            <button onclick="showTab('assessment')" class="px-6 py-3 rounded-xl glass text-white font-semibold hover:bg-white/10 transition"><span class="lang-ru">Проверить знания</span><span class="lang-az">Bilikləri yoxla</span></button>
+          </div>
+        </div>
+        <div class="grid md:grid-cols-3 gap-4">
+          <div class="glass rounded-2xl p-6 hover:border-violet-500/30 transition">
+            <div class="w-10 h-10 rounded-xl bg-violet-500/20 flex items-center justify-center text-xl mb-4">📐</div>
+            <h3 class="font-semibold text-white mb-2"><span class="lang-ru">Формула объёма</span><span class="lang-az">Həcm düsturu</span></h3>
+            <p class="text-sm text-gray-400"><span class="lang-ru">$V = a \cdot b \cdot c$ — длина × ширина × высота.</span><span class="lang-az">$V = a \cdot b \cdot c$ — uzunluq × en × hündürlük.</span></p>
+          </div>
+          <div class="glass rounded-2xl p-6 hover:border-purple-500/30 transition">
+            <div class="w-10 h-10 rounded-xl bg-purple-500/20 flex items-center justify-center text-xl mb-4">📦</div>
+            <h3 class="font-semibold text-white mb-2"><span class="lang-ru">Единицы измерения</span><span class="lang-az">Ölçü vahidləri</span></h3>
+            <p class="text-sm text-gray-400"><span class="lang-ru">мм³, см³, дм³, м³. Физический смысл: количество единичных кубиков.</span><span class="lang-az">mm³, sm³, dm³, m³. Fiziki məna: vahid kubların sayı.</span></p>
+          </div>
+          <div class="glass rounded-2xl p-6 hover:border-indigo-500/30 transition">
+            <div class="w-10 h-10 rounded-xl bg-indigo-500/20 flex items-center justify-center text-xl mb-4">🔍</div>
+            <h3 class="font-semibold text-white mb-2"><span class="lang-ru">Нахождение стороны</span><span class="lang-az">Tərəfi tapmaq</span></h3>
+            <p class="text-sm text-gray-400"><span class="lang-ru">Если известны $V$, $b$, $c$ → $a = V \div (b \cdot c)$.</span><span class="lang-az">$V$, $b$, $c$ bilindiyi halda → $a = V \div (b \cdot c)$.</span></p>
+          </div>
+        </div>
+      </section>
+
+      <!-- THEORY -->
+      <section id="theory" class="tab-content hidden">
+        <div class="glass rounded-2xl p-6 mb-6">
+          <h2 class="text-xl font-bold mb-4 flex items-center gap-3">
+            <span class="w-10 h-10 rounded-xl bg-violet-500/20 flex items-center justify-center text-lg">📖</span>
+            <span class="lang-ru">Визуальная теория</span><span class="lang-az">Vizual nəzəriyyə</span>
+          </h2>
+          <div class="flex items-center justify-between mb-4 text-sm text-gray-400">
+            <span><span class="lang-ru">Слайд</span><span class="lang-az">Slayd</span> <span id="slide-num" class="text-white font-bold">1</span> / <span id="slide-total">8</span></span>
+            <div class="w-32 h-1.5 bg-gray-800 rounded-full overflow-hidden"><div id="slide-progress" class="h-full bg-gradient-to-r from-violet-400 to-purple-400 progress-fill" style="width:12.5%"></div></div>
+          </div>
+          <div id="slides-container" class="min-h-[320px]"></div>
+          <div class="flex justify-between mt-6">
+            <button onclick="prevSlide()" class="px-4 py-2 rounded-lg glass hover:bg-white/5 text-sm font-medium transition">← <span class="lang-ru">Назад</span><span class="lang-az">Geri</span></button>
+            <button onclick="nextSlide()" class="px-4 py-2 rounded-lg bg-gradient-to-r from-violet-500 to-purple-500 text-white text-sm font-bold hover:shadow-lg transition"><span class="lang-ru">Вперёд</span><span class="lang-az">İrəli</span> →</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ALGORITHM -->
+      <section id="algorithm" class="tab-content hidden">
+        <div class="glass rounded-2xl p-6">
+          <h2 class="text-xl font-bold mb-6 flex items-center gap-3">
+            <span class="w-10 h-10 rounded-xl bg-violet-500/20 flex items-center justify-center text-lg">🪜</span>
+            <span class="lang-ru">Алгоритм вычисления объёма</span><span class="lang-az">Həcmin hesablanması alqoritmi</span>
+          </h2>
+          <div class="space-y-4 relative">
+            <div class="step-card glass rounded-xl p-5 pl-16 relative">
+              <div class="connector"></div>
+              <div class="absolute left-4 top-5 w-8 h-8 rounded-full bg-violet-500 text-white flex items-center justify-center font-bold text-sm">1</div>
+              <h4 class="font-semibold text-white mb-1"><span class="lang-ru">Выпишите данные</span><span class="lang-az">Verilənləri yazın</span></h4>
+              <p class="text-sm text-gray-400"><span class="lang-ru">Определите длину $a$, ширину $b$, высоту $c$ из задачи.</span><span class="lang-az">Məsələdən uzunluq $a$, en $b$, hündürlük $c$-ni müəyyən edin.</span></p>
+            </div>
+            <div class="step-card glass rounded-xl p-5 pl-16 relative">
+              <div class="connector"></div>
+              <div class="absolute left-4 top-5 w-8 h-8 rounded-full bg-violet-500 text-white flex items-center justify-center font-bold text-sm">2</div>
+              <h4 class="font-semibold text-white mb-1"><span class="lang-ru">Проверьте единицы</span><span class="lang-az">Vahidləri yoxlayın</span></h4>
+              <p class="text-sm text-gray-400"><span class="lang-ru">Все размеры должны быть в <b>одних единицах</b> (все в см или все в м).</span><span class="lang-az">Bütün ölçülər <b>eyni vahiddə</b> olmalıdır (hamısı sm və ya hamısı m).</span></p>
+            </div>
+            <div class="step-card glass rounded-xl p-5 pl-16 relative">
+              <div class="connector"></div>
+              <div class="absolute left-4 top-5 w-8 h-8 rounded-full bg-violet-500 text-white flex items-center justify-center font-bold text-sm">3</div>
+              <h4 class="font-semibold text-white mb-1"><span class="lang-ru">Примените формулу</span><span class="lang-az">Düsturu tətbiq edin</span></h4>
+              <p class="text-sm text-gray-400"><span class="lang-ru">$V = a \cdot b \cdot c$ — перемножьте три числа.</span><span class="lang-az">$V = a \cdot b \cdot c$ — üç ədədi vurun.</span></p>
+            </div>
+            <div class="step-card glass rounded-xl p-5 pl-16 relative">
+              <div class="connector"></div>
+              <div class="absolute left-4 top-5 w-8 h-8 rounded-full bg-violet-500 text-white flex items-center justify-center font-bold text-sm">4</div>
+              <h4 class="font-semibold text-white mb-1"><span class="lang-ru">Запишите единицы объёма</span><span class="lang-az">Həcm vahidini yazın</span></h4>
+              <p class="text-sm text-gray-400"><span class="lang-ru">см × см × см = см³, м × м × м = м³.</span><span class="lang-az">sm × sm × sm = sm³, m × m × m = m³.</span></p>
+            </div>
+            <div class="step-card glass rounded-xl p-5 pl-16 relative">
+              <div class="absolute left-4 top-5 w-8 h-8 rounded-full bg-violet-500 text-white flex items-center justify-center font-bold text-sm">5</div>
+              <h4 class="font-semibold text-white mb-1"><span class="lang-ru">Обратная задача: найти сторону</span><span class="lang-az">Əks məsələ: tərəfi tapın</span></h4>
+              <p class="text-sm text-gray-400"><span class="lang-ru">$a = V \div (b \cdot c)$, $b = V \div (a \cdot c)$, $c = V \div (a \cdot b)$.</span><span class="lang-az">$a = V \div (b \cdot c)$, $b = V \div (a \cdot c)$, $c = V \div (a \cdot b)$.</span></p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- EXAMPLES -->
+      <section id="examples" class="tab-content hidden">
+        <div class="glass rounded-2xl p-6 mb-4">
+          <h2 class="text-xl font-bold mb-2 flex items-center gap-3">
+            <span class="w-10 h-10 rounded-xl bg-violet-500/20 flex items-center justify-center text-lg">📝</span>
+            <span class="lang-ru">Разбор задач</span><span class="lang-az">Məsələlərin təhlili</span>
+          </h2>
+          <p class="text-sm text-gray-400"><span class="lang-ru">Шесть типовых задач на объём параллелепипеда.</span><span class="lang-az">Paralelepiped həcmi üzrə altı tipik məsələ.</span></p>
+        </div>
+        <div id="examples-list" class="space-y-4"></div>
+      </section>
+
+      <!-- TRAINER -->
+      <section id="trainer" class="tab-content hidden">
+        <div class="glass rounded-2xl p-6">
+          <h2 class="text-xl font-bold mb-4 flex items-center gap-3">
+            <span class="w-10 h-10 rounded-xl bg-violet-500/20 flex items-center justify-center text-lg">🏋️</span>
+            <span class="lang-ru">Тренажёр</span><span class="lang-az">Trenajor</span>
+          </h2>
+          <div class="glass rounded-xl p-6 mb-4 text-center" id="trainer-task">
+            <span class="lang-ru text-gray-400">Нажмите «Новая задача» для начала</span>
+            <span class="lang-az text-gray-400">Başlamaq üçün «Yeni məsələ» düyməsini basın</span>
+          </div>
+          <div class="flex gap-3 mb-4">
+            <input id="trainer-input" type="text" placeholder="Ответ / Cavab" class="flex-1 bg-gray-900 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-violet-500 transition" />
+            <button onclick="checkTrainer()" id="trainer-check" class="px-5 py-3 rounded-xl bg-gradient-to-r from-violet-500 to-purple-500 text-white font-bold hover:shadow-lg transition" disabled><span class="lang-ru">Проверить</span><span class="lang-az">Yoxla</span></button>
+          </div>
+          <div id="trainer-feedback" class="mb-4 min-h-[3rem]"></div>
+          <div class="flex gap-3 justify-center">
+            <button onclick="newTrainer()" class="px-4 py-2 rounded-lg glass hover:bg-white/5 text-sm font-medium transition"><span class="lang-ru">Новая задача</span><span class="lang-az">Yeni məsələ</span></button>
+            <button onclick="showHint()" class="px-4 py-2 rounded-lg glass hover:bg-white/5 text-sm font-medium transition"><span class="lang-ru">Подсказка</span><span class="lang-az">İpucu</span></button>
+          </div>
+          <div id="trainer-hint" class="mt-4 p-4 rounded-xl bg-violet-500/10 border-l-4 border-violet-400 hidden text-sm text-gray-300"></div>
+          <div class="flex justify-center gap-6 mt-6">
+            <div class="text-center"><div class="text-2xl font-bold text-violet-400" id="stat-correct">0</div><div class="text-xs text-gray-500"><span class="lang-ru">Верно</span><span class="lang-az">Düzgün</span></div></div>
+            <div class="text-center"><div class="text-2xl font-bold text-white" id="stat-total">0</div><div class="text-xs text-gray-500"><span class="lang-ru">Всего</span><span class="lang-az">Cəmi</span></div></div>
+            <div class="text-center"><div class="text-2xl font-bold text-yellow-400" id="stat-streak">0</div><div class="text-xs text-gray-500"><span class="lang-ru">Серия</span><span class="lang-az">Seriya</span></div></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ASSESSMENT -->
+      <section id="assessment" class="tab-content hidden">
+        <div id="assessment-menu" class="grid md:grid-cols-2 gap-4">
+          <div class="glass rounded-2xl p-6 text-center">
+            <div class="text-4xl mb-3">🔍</div>
+            <h3 class="font-bold text-lg mb-2"><span class="lang-ru">Диагностический тест</span><span class="lang-az">Diaqnostik test</span></h3>
+            <p class="text-sm text-gray-400 mb-4"><span class="lang-ru">30 вопросов с мгновенной обратной связью.</span><span class="lang-az">30 ani əks əlaqəli sual.</span></p>
+            <button onclick="startDiagnostic()" class="px-5 py-2.5 rounded-xl bg-gradient-to-r from-violet-500 to-purple-500 text-white font-bold hover:shadow-lg transition"><span class="lang-ru">Начать</span><span class="lang-az">Başla</span></button>
+          </div>
+          <div class="glass rounded-2xl p-6 text-center">
+            <div class="text-4xl mb-3">⏱️</div>
+            <h3 class="font-bold text-lg mb-2"><span class="lang-ru">Скоростная викторина</span><span class="lang-az">Sürətli viktorina</span></h3>
+            <p class="text-sm text-gray-400 mb-4"><span class="lang-ru">30 вопросов • 10 минут • Итоговый дашборд.</span><span class="lang-az">30 sual • 10 dəqiqə • Yekun panel.</span></p>
+            <button onclick="startTimeAttack()" class="px-5 py-2.5 rounded-xl bg-gradient-to-r from-orange-500 to-red-500 text-white font-bold hover:shadow-lg transition"><span class="lang-ru">Начать</span><span class="lang-az">Başla</span></button>
+          </div>
+        </div>
+        <div id="quiz-ui" class="hidden">
+          <div class="glass rounded-2xl p-6 mb-4">
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-sm text-gray-400"><span class="lang-ru">Вопрос</span><span class="lang-az">Sual</span> <span id="q-current" class="text-white font-bold">1</span> / 30</span>
+              <span id="q-score" class="text-sm text-violet-400 font-bold">0 <span class="lang-ru">правильных</span><span class="lang-az">düzgün</span></span>
+            </div>
+            <div class="w-full h-2 bg-gray-800 rounded-full overflow-hidden"><div id="q-progress" class="h-full bg-gradient-to-r from-violet-400 to-purple-400 progress-fill" style="width:3.33%"></div></div>
+          </div>
+          <div class="glass rounded-2xl p-6 mb-4">
+            <div id="q-text" class="text-lg font-medium mb-6 leading-relaxed"></div>
+            <div id="q-options" class="grid gap-3"></div>
+          </div>
+          <div class="flex justify-between">
+            <button onclick="prevQuestion()" id="btn-prev" class="px-4 py-2 rounded-lg glass hover:bg-white/5 text-sm font-medium transition" disabled>← <span class="lang-ru">Назад</span><span class="lang-az">Geri</span></button>
+            <button onclick="nextQuestion()" id="btn-next" class="px-4 py-2 rounded-lg bg-gradient-to-r from-violet-500 to-purple-500 text-white text-sm font-bold hover:shadow-lg transition" disabled><span class="lang-ru">Далее</span><span class="lang-az">İrəli</span> →</button>
+          </div>
+          <div id="q-explain" class="hidden mt-4 p-4 rounded-xl bg-violet-500/10 border-l-4 border-violet-400 text-sm"></div>
+        </div>
+        <div id="results-ui" class="hidden">
+          <div class="glass rounded-2xl p-8 text-center">
+            <div class="mb-2 text-gray-400"><span class="lang-ru">Ваш результат</span><span class="lang-az">Sizin nəticəniz</span></div>
+            <div class="relative w-48 h-48 mx-auto mb-6">
+              <svg class="w-full h-full -rotate-90" viewBox="0 0 100 100">
+                <circle cx="50" cy="50" r="45" fill="none" stroke="#1f2937" stroke-width="8"/>
+                <circle id="result-circle" cx="50" cy="50" r="45" fill="none" stroke="url(#grad2)" stroke-width="8" stroke-dasharray="283" stroke-dashoffset="283" stroke-linecap="round" class="transition-all duration-1000"/>
+                <defs><linearGradient id="grad2" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#8b5cf6"/><stop offset="100%" stop-color="#a78bfa"/></linearGradient></defs>
+              </svg>
+              <div class="absolute inset-0 flex items-center justify-center"><div class="text-4xl font-extrabold text-white" id="result-percent">0%</div></div>
+            </div>
+            <div class="text-xl font-bold mb-6" id="result-message"></div>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-lg mx-auto mb-6">
+              <div class="glass rounded-xl p-3"><div class="text-2xl font-bold text-violet-400" id="res-correct">0</div><div class="text-xs text-gray-500"><span class="lang-ru">Верно</span><span class="lang-az">Düzgün</span></div></div>
+              <div class="glass rounded-xl p-3"><div class="text-2xl font-bold text-red-400" id="res-wrong">0</div><div class="text-xs text-gray-500"><span class="lang-ru">Ошибок</span><span class="lang-az">Səhvlər</span></div></div>
+              <div class="glass rounded-xl p-3"><div class="text-2xl font-bold text-white" id="res-time">0:00</div><div class="text-xs text-gray-500"><span class="lang-ru">Время</span><span class="lang-az">Vaxt</span></div></div>
+              <div class="glass rounded-xl p-3"><div class="text-2xl font-bold text-blue-400" id="res-level">—</div><div class="text-xs text-gray-500"><span class="lang-ru">Уровень</span><span class="lang-az">Səviyyə</span></div></div>
+            </div>
+            <div class="flex gap-3 justify-center">
+              <button onclick="resetAssessment()" class="px-5 py-2.5 rounded-xl bg-gradient-to-r from-violet-500 to-purple-500 text-white font-bold hover:shadow-lg transition"><span class="lang-ru">Пройти ещё раз</span><span class="lang-az">Təkrar keç</span></button>
+              <button onclick="showTab('theory')" class="px-5 py-2.5 rounded-xl glass hover:bg-white/5 font-medium transition"><span class="lang-ru">К теории</span><span class="lang-az">Nəzəriyyəyə</span></button>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <script>
+      const State = {
+        lang:"ru", slide:0,
+        trainer:{ current:null, correct:0, total:0, streak:0 },
+        quiz:{ mode:null, current:0, score:0, answers:[], timer:null, timeLeft:600, startTime:0 },
+      };
+
+      // SVG: layered box to show volume
+      const volBox = (a,b,c) =>
+        '<svg class="svg-geo mx-auto" viewBox="0 0 240 180" width="240" height="180" aria-label="Параллелепипед объём">' +
+        '<polygon points="30,140 140,140 140,65 30,65" fill="rgba(139,92,246,0.08)" stroke="#a78bfa" stroke-width="2"/>' +
+        '<polygon points="140,65 185,30 185,105 140,140" fill="rgba(139,92,246,0.14)" stroke="#8b5cf6" stroke-width="2"/>' +
+        '<polygon points="30,65 75,30 185,30 140,65" fill="rgba(139,92,246,0.20)" stroke="#8b5cf6" stroke-width="2"/>' +
+        '<line x1="30" y1="140" x2="75" y2="105" stroke="#6d28d9" stroke-width="1.5" stroke-dasharray="4,3"/>' +
+        '<line x1="75" y1="105" x2="185" y2="105" stroke="#6d28d9" stroke-width="1.5" stroke-dasharray="4,3"/>' +
+        '<line x1="75" y1="105" x2="75" y2="30" stroke="#6d28d9" stroke-width="1.5" stroke-dasharray="4,3"/>' +
+        '<text x="85" y="158" fill="#e5e7eb" font-size="14" text-anchor="middle">a='+a+'</text>' +
+        '<text x="172" y="78" fill="#a78bfa" font-size="12">b='+b+'</text>' +
+        '<text x="18" y="105" fill="#c4b5fd" font-size="12">c='+c+'</text>' +
+        '<text x="107" y="105" fill="#f0abfc" font-size="13" text-anchor="middle" font-weight="bold">V='+(a*b*c)+'</text>' +
+        '</svg>';
+
+      const unitCubes =
+        '<svg class="svg-geo mx-auto" viewBox="0 0 200 150" width="200" height="150" aria-label="Единичные кубики">' +
+        // row of unit cubes
+        '<rect x="10" y="90" width="30" height="30" fill="rgba(139,92,246,0.2)" stroke="#8b5cf6" stroke-width="1.5"/>' +
+        '<rect x="42" y="90" width="30" height="30" fill="rgba(139,92,246,0.2)" stroke="#8b5cf6" stroke-width="1.5"/>' +
+        '<rect x="74" y="90" width="30" height="30" fill="rgba(139,92,246,0.2)" stroke="#8b5cf6" stroke-width="1.5"/>' +
+        '<rect x="10" y="58" width="30" height="30" fill="rgba(139,92,246,0.25)" stroke="#8b5cf6" stroke-width="1.5"/>' +
+        '<rect x="42" y="58" width="30" height="30" fill="rgba(139,92,246,0.25)" stroke="#8b5cf6" stroke-width="1.5"/>' +
+        '<rect x="74" y="58" width="30" height="30" fill="rgba(139,92,246,0.25)" stroke="#8b5cf6" stroke-width="1.5"/>' +
+        '<text x="100" y="80" fill="#a78bfa" font-size="13">← 3×2 = 6 кубиков</text>' +
+        '<text x="100" y="100" fill="#c4b5fd" font-size="12">в одном слое</text>' +
+        '<text x="100" y="118" fill="#e5e7eb" font-size="11">× высота = V</text>' +
+        '</svg>';
+
+      const slides = [
+        {
+          ru:{ t:"🔢 Что такое объём?", b:"<b>Объём</b> — это количество пространства, которое занимает трёхмерное тело.<br><br>Физический смысл: сколько единичных кубиков $1\\times1\\times1$ поместится внутри фигуры.<br><br>Единица измерения: кубические единицы (см³, м³, дм³).<br><br>" + unitCubes },
+          az:{ t:"🔢 Həcm nədir?", b:"<b>Həcm</b> — üçölçülü cismin tutduğu fəza miqdarıdır.<br><br>Fiziki məna: fiqurun içinə neçə vahid kub $1\\times1\\times1$ sığır.<br><br>Ölçü vahidi: kub vahidlər (sm³, m³, dm³).<br><br>" + unitCubes },
+        },
+        {
+          ru:{ t:"🔢 Формула объёма параллелепипеда", b:"Для прямоугольного параллелепипеда с размерами $a$, $b$, $c$:<br><br>$$V = a \\cdot b \\cdot c$$<br><br><b>Длина × Ширина × Высота</b><br><br>Порядок умножения не важен: $V = abc = bca = cab$." },
+          az:{ t:"🔢 Paralelipipedin həcm düsturu", b:"$a$, $b$, $c$ ölçülü düzbucaqlı paralelepiped üçün:<br><br>$$V = a \\cdot b \\cdot c$$<br><br><b>Uzunluq × En × Hündürlük</b><br><br>Vurma sırası önəmli deyil: $V = abc = bca = cab$." },
+        },
+        {
+          ru:{ t:"🔢 Пример вычисления", b:"Параллелепипед: $a = 5$ см, $b = 3$ см, $c = 4$ см.<br><br>$V = 5 \\cdot 3 \\cdot 4 = 60$ см³<br><br>" + volBox(5,3,4) + "<br>В него поместится 60 единичных кубиков!" },
+          az:{ t:"🔢 Hesablama nümunəsi", b:"Paralelepiped: $a = 5$ sm, $b = 3$ sm, $c = 4$ sm.<br><br>$V = 5 \\cdot 3 \\cdot 4 = 60$ sm³<br><br>" + volBox(5,3,4) + "<br>Onun içinə 60 vahid kub sığar!" },
+        },
+        {
+          ru:{ t:"🔢 Единицы объёма", b:"Объём измеряется в <b>кубических единицах</b>:<br><br>• см × см × см = <b>см³</b> (кубический сантиметр)<br>• м × м × м = <b>м³</b> (кубический метр)<br>• дм × дм × дм = <b>дм³</b> (кубический дециметр)<br>• мм × мм × мм = <b>мм³</b><br><br>Важно: все три размера в ОДНИХ единицах!" },
+          az:{ t:"🔢 Həcm vahidləri", b:"Həcm <b>kub vahidlərlə</b> ölçülür:<br><br>• sm × sm × sm = <b>sm³</b> (kub santimetr)<br>• m × m × m = <b>m³</b> (kub metr)<br>• dm × dm × dm = <b>dm³</b> (kub desimetr)<br>• mm × mm × mm = <b>mm³</b><br><br>Vacib: üç ölçü EYNİ vahiddə olmalıdır!" },
+        },
+        {
+          ru:{ t:"🔢 Свойства объёма", b:"Объём обладает свойством <b>аддитивности</b>:<br><br>Если тело разбить на части, объём целого = сумма объёмов частей.<br><br>Пример: коробка делится на 2 секции:<br>$V_1 = 3 \\cdot 4 \\cdot 5 = 60$ см³<br>$V_2 = 2 \\cdot 4 \\cdot 5 = 40$ см³<br>$V = V_1 + V_2 = 100$ см³" },
+          az:{ t:"🔢 Həcmin xassələri", b:"Həcm <b>additivlik</b> xassəsinə malikdir:<br><br>Cisim hissələrə bölünərsə, tam cismin həcmi = hissələrin həcminin cəmidir.<br><br>Nümunə: qutu 2 bölməyə bölünür:<br>$V_1 = 3 \\cdot 4 \\cdot 5 = 60$ sm³<br>$V_2 = 2 \\cdot 4 \\cdot 5 = 40$ sm³<br>$V = V_1 + V_2 = 100$ sm³" },
+        },
+        {
+          ru:{ t:"🔢 Нахождение неизвестной стороны", b:"Если известны объём и две стороны, находим третью:<br><br>$$a = \\frac{V}{b \\cdot c}$$<br><br>Пример: $V = 120$ см³, $b = 4$ см, $c = 5$ см.<br>$$a = \\frac{120}{4 \\cdot 5} = \\frac{120}{20} = 6 \\text{ см}$$" },
+          az:{ t:"🔢 Naməlum tərəfi tapmaq", b:"Həcm və iki tərəf bilinərsə, üçüncünü tapırıq:<br><br>$$a = \\frac{V}{b \\cdot c}$$<br><br>Nümunə: $V = 120$ sm³, $b = 4$ sm, $c = 5$ sm.<br>$$a = \\frac{120}{4 \\cdot 5} = \\frac{120}{20} = 6 \\text{ sm}$$" },
+        },
+        {
+          ru:{ t:"🔢 Практические задачи", b:"Пример: Сколько кирпичей размером $25 \\times 12 \\times 7$ см поместится в ящик $1$ м $\\times$ $60$ см $\\times$ $35$ см?<br><br>Переводим ящик: $100 \\times 60 \\times 35$ см<br>$V_{\\text{ящик}} = 100 \\cdot 60 \\cdot 35 = 210{,}000$ см³<br>$V_{\\text{кирпич}} = 25 \\cdot 12 \\cdot 7 = 2{,}100$ см³<br>$N = 210{,}000 \\div 2{,}100 = 100$ кирпичей" },
+          az:{ t:"🔢 Praktiki məsələlər", b:"Nümunə: $25 \\times 12 \\times 7$ sm ölçülü neçə kərpic $1$ m $\\times$ $60$ sm $\\times$ $35$ sm-lik qutuna sığar?<br><br>Qutuya çeviririk: $100 \\times 60 \\times 35$ sm<br>$V_{\\text{qutu}} = 100 \\cdot 60 \\cdot 35 = 210{,}000$ sm³<br>$V_{\\text{kərpic}} = 25 \\cdot 12 \\cdot 7 = 2{,}100$ sm³<br>$N = 210{,}000 \\div 2{,}100 = 100$ kərpic" },
+        },
+        {
+          ru:{ t:"🔢 Сравнение объёмов", b:"Объёмы можно сравнивать, только если они в <b>одних единицах</b>.<br><br>Пример: Какой больше?<br>Коробка A: $3 \\times 5 \\times 4 = 60$ см³<br>Коробка B: $2 \\times 6 \\times 6 = 72$ см³<br><br>$V_B > V_A$, хотя у коробки B все стороны короче 3 или длиннее 5 первого. <b>Всегда вычисляй!</b>" },
+          az:{ t:"🔢 Həcmlərin müqayisəsi", b:"Həcmlər yalnız <b>eyni vahiddə</b> olduqda müqayisə edilə bilər.<br><br>Nümunə: Hansı böyükdür?<br>Qutu A: $3 \\times 5 \\times 4 = 60$ sm³<br>Qutu B: $2 \\times 6 \\times 6 = 72$ sm³<br><br>$V_B > V_A$ — <b>həmişə hesabla!</b>" },
+        },
+      ];
+
+      const examples = [
+        {
+          ru:{ t:"№1 Объём параллелепипеда", d:"Объём", p:"Найдите объём параллелепипеда с размерами $a = 7$ см, $b = 4$ см, $c = 3$ см.", s:"$V = a \\cdot b \\cdot c = 7 \\cdot 4 \\cdot 3 = 84$ см³\n<b>Ответ: $V = 84$ см³</b>" },
+          az:{ t:"№1 Paralelipipedin həcmi", d:"Həcm", p:"$a = 7$ sm, $b = 4$ sm, $c = 3$ sm ölçülü paralelipipedin həcmini tapın.", s:"$V = a \\cdot b \\cdot c = 7 \\cdot 4 \\cdot 3 = 84$ sm³\n<b>Cavab: $V = 84$ sm³</b>" },
+        },
+        {
+          ru:{ t:"№2 Найти сторону", d:"Обратная задача", p:"Объём параллелепипеда $V = 180$ см³, $b = 5$ см, $c = 6$ см. Найдите $a$.", s:"$a = \\frac{V}{b \\cdot c} = \\frac{180}{5 \\cdot 6} = \\frac{180}{30} = 6$ см\n<b>Ответ: $a = 6$ см</b>" },
+          az:{ t:"№2 Tərəfi tapın", d:"Əks məsələ", p:"Paralelipipedin həcmi $V = 180$ sm³, $b = 5$ sm, $c = 6$ sm. $a$-nı tapın.", s:"$a = \\frac{V}{b \\cdot c} = \\frac{180}{5 \\cdot 6} = \\frac{180}{30} = 6$ sm\n<b>Cavab: $a = 6$ sm</b>" },
+        },
+        {
+          ru:{ t:"№3 Разные единицы", d:"Единицы", p:"Параллелепипед: $a = 2$ м, $b = 50$ см, $c = 30$ см. Найдите объём в см³.", s:"Переводим: $a = 200$ см, $b = 50$ см, $c = 30$ см.\n$V = 200 \\cdot 50 \\cdot 30 = 300{,}000$ см³\n<b>Ответ: $V = 300{,}000$ см³</b>" },
+          az:{ t:"№3 Müxtəlif vahidlər", d:"Vahidlər", p:"Paralelepiped: $a = 2$ m, $b = 50$ sm, $c = 30$ sm. Həcmi sm³-də tapın.", s:"Çeviririk: $a = 200$ sm, $b = 50$ sm, $c = 30$ sm.\n$V = 200 \\cdot 50 \\cdot 30 = 300{,}000$ sm³\n<b>Cavab: $V = 300{,}000$ sm³</b>" },
+        },
+        {
+          ru:{ t:"№4 Сравнение объёмов", d:"Сравнение", p:"Два параллелепипеда: A($4\\times5\\times6$) и B($3\\times7\\times6$). Какой больше?", s:"$V_A = 4 \\cdot 5 \\cdot 6 = 120$ см³\n$V_B = 3 \\cdot 7 \\cdot 6 = 126$ см³\n$V_B > V_A$ на $6$ см³\n<b>Ответ: параллелепипед B больше</b>" },
+          az:{ t:"№4 Həcmlərin müqayisəsi", d:"Müqayisə", p:"İki paralelepiped: A($4\\times5\\times6$) və B($3\\times7\\times6$). Hansı böyükdür?", s:"$V_A = 4 \\cdot 5 \\cdot 6 = 120$ sm³\n$V_B = 3 \\cdot 7 \\cdot 6 = 126$ sm³\n$V_B > V_A$ — $6$ sm³ artıqdır\n<b>Cavab: B paralelipipedi böyükdür</b>" },
+        },
+        {
+          ru:{ t:"№5 Количество кубиков", d:"Практика", p:"Сколько кубиков со стороной 2 см поместится в коробку $8\\times6\\times4$ см?", s:"$V_{\\text{коробки}} = 8 \\cdot 6 \\cdot 4 = 192$ см³\n$V_{\\text{кубика}} = 2 \\cdot 2 \\cdot 2 = 8$ см³\n$N = 192 \\div 8 = 24$ кубика\n<b>Ответ: 24 кубика</b>" },
+          az:{ t:"№5 Kubların sayı", d:"Praktika", p:"$8\\times6\\times4$ sm qutuya 2 sm tərəfli neçə kub sığar?", s:"$V_{\\text{qutu}} = 8 \\cdot 6 \\cdot 4 = 192$ sm³\n$V_{\\text{kub}} = 2 \\cdot 2 \\cdot 2 = 8$ sm³\n$N = 192 \\div 8 = 24$ kub\n<b>Cavab: 24 kub</b>" },
+        },
+        {
+          ru:{ t:"№6 Сложная задача", d:"Составная", p:"Бассейн длиной 10 м, шириной 5 м. Вода налита до высоты 2 м. Найдите объём воды в литрах. (1 дм³ = 1 л)", s:"Переводим в дм: $100$ дм, $50$ дм, $20$ дм.\n$V = 100 \\cdot 50 \\cdot 20 = 100{,}000$ дм³ $= 100{,}000$ л\n<b>Ответ: 100 000 литров</b>" },
+          az:{ t:"№6 Mürəkkəb məsələ", d:"Mürəkkəb", p:"Uzunluğu 10 m, eni 5 m olan hovuz. Su 2 m hündürlüyündə var. Suyun həcmini litrlərlə tapın. (1 dm³ = 1 l)", s:"dm-ə çeviririk: $100$ dm, $50$ dm, $20$ dm.\n$V = 100 \\cdot 50 \\cdot 20 = 100{,}000$ dm³ $= 100{,}000$ l\n<b>Cavab: 100 000 litr</b>" },
+        },
+      ];
+
+      const questions = [
+        { ru:{q:"Формула объёма прямоугольного параллелепипеда:",o:["$V=a+b+c$","$V=2(ab+bc+ca)$","$V=a\\cdot b\\cdot c$","$V=a^3$"]},az:{q:"Düzbucaqlı paralelipipedin həcm düsturu:",o:["$V=a+b+c$","$V=2(ab+bc+ca)$","$V=a\\cdot b\\cdot c$","$V=a^3$"]},a:2 },
+        { ru:{q:"Параллелепипед $2\\times3\\times4$ см. Объём равен:",o:["9 см³","14 см³","24 см³","36 см³"]},az:{q:"$2\\times3\\times4$ sm paralelepiped. Həcmi:",o:["9 sm³","14 sm³","24 sm³","36 sm³"]},a:2 },
+        { ru:{q:"$V=60$ см³, $a=3$, $b=4$. Чему равно $c$?",o:["5","7","10","15"]},az:{q:"$V=60$ sm³, $a=3$, $b=4$. $c$ nəyə bərabərdir?",o:["5","7","10","15"]},a:0 },
+        { ru:{q:"Единицы объёма:",o:["см","см²","см³","м"]},az:{q:"Həcm vahidləri:",o:["sm","sm²","sm³","m"]},a:2 },
+        { ru:{q:"Параллелепипед $5\\times5\\times5$ имеет объём:",o:["15 см³","25 см³","75 см³","125 см³"]},az:{q:"$5\\times5\\times5$ paralelipipedin həcmi:",o:["15 sm³","25 sm³","75 sm³","125 sm³"]},a:3 },
+        { ru:{q:"Если все стороны удвоить, объём:",o:["удвоится","утроится","увеличится в 4 раза","увеличится в 8 раз"]},az:{q:"Bütün tərəflər iki dəfə artırılsa, həcm:",o:["2 dəfə artar","3 dəfə artar","4 dəfə artar","8 dəfə artar"]},a:3 },
+        { ru:{q:"$V=120$ м³, $b=4$ м, $c=5$ м. Найдите $a$:",o:["4","5","6","8"]},az:{q:"$V=120$ m³, $b=4$ m, $c=5$ m. $a$-nı tapın:",o:["4","5","6","8"]},a:2 },
+        { ru:{q:"Параллелепипед $10\\times2\\times3$ см имеет объём:",o:["15 см³","30 см³","60 см³","120 см³"]},az:{q:"$10\\times2\\times3$ sm paralelipipedin həcmi:",o:["15 sm³","30 sm³","60 sm³","120 sm³"]},a:2 },
+        { ru:{q:"При вычислении объёма размеры должны быть:",o:["В разных единицах","В одних единицах","В квадрате","В кубе"]},az:{q:"Həcm hesablanarkən ölçülər olmalıdır:",o:["Müxtəlif vahiddə","Eyni vahiddə","Kvadratda","Kubda"]},a:1 },
+        { ru:{q:"1 м × 1 м × 1 м = ?",o:["1 м","1 м²","1 м³","3 м"]},az:{q:"1 m × 1 m × 1 m = ?",o:["1 m","1 m²","1 m³","3 m"]},a:2 },
+        { ru:{q:"Параллелепипед $6\\times5\\times4$ > параллелепипеда $5\\times5\\times5$?",o:["Да, 120 > 125","Нет, 120 < 125","Да, 120 = 125","Нельзя сравнить"]},az:{q:"$6\\times5\\times4$ > $5\\times5\\times5$?",o:["Bəli, 120 > 125","Xeyr, 120 < 125","Bəli, 120 = 125","Müqayisə edilmir"]},a:1 },
+        { ru:{q:"$V=a\\cdot b\\cdot c$. Если $a=1$, $b=1$, $c=1$, то $V=$",o:["0","1","3","6"]},az:{q:"$V=a\\cdot b\\cdot c$. $a=1$, $b=1$, $c=1$ olduqda $V=$",o:["0","1","3","6"]},a:1 },
+        { ru:{q:"Аквариум $40\\times20\\times25$ см. Объём воды (полный):",o:["20 000 см³","25 000 см³","30 000 см³","40 000 см³"]},az:{q:"$40\\times20\\times25$ sm akvarium. Suyun həcmi (dolu):",o:["20 000 sm³","25 000 sm³","30 000 sm³","40 000 sm³"]},a:0 },
+        { ru:{q:"Объём параллелепипеда со сторонами $3,4,5$:",o:["12","20","60","120"]},az:{q:"$3,4,5$ tərəfli paralelipipedin həcmi:",o:["12","20","60","120"]},a:2 },
+        { ru:{q:"Если одну сторону утроить, остальные не менять, объём:",o:["Утроится","Удвоится","Учетверится","Не изменится"]},az:{q:"Bir tərəf üç qat artırılıb, qalanlar dəyişməyib, həcm:",o:["Üç qat artar","İki qat artar","Dörd qat artar","Dəyişməz"]},a:0 },
+        { ru:{q:"$V=72$ см³, $a=b=c$? Каждая сторона:",o:["$\\sqrt{72}$","Нельзя определить без доп. данных","Должна делить 72","Должна быть одинаковой, только куб"]},az:{q:"$V=72$ sm³, $a=b=c$? Hər tərəf:",o:["$\\sqrt{72}$","Əlavə məlumat olmadan müəyyən edilmir","72-yi bölməlidir","Eyni olmalıdır, yalnız kub"]},a:1 },
+        { ru:{q:"Объём параллелепипеда $1\\times1\\times100$ см:",o:["10","100","1000","10000"]},az:{q:"$1\\times1\\times100$ sm paralelipipedin həcmi:",o:["10","100","1000","10000"]},a:1 },
+        { ru:{q:"Коробка $10\\times10\\times10$ см. Объём в дм³:",o:["0,001","0,01","0,1","1"]},az:{q:"$10\\times10\\times10$ sm qutu. dm³-lə həcmi:",o:["0,001","0,01","0,1","1"]},a:3 },
+        { ru:{q:"$V=210$, $a=7$, $b=5$. $c=?$",o:["3","4","5","6"]},az:{q:"$V=210$, $a=7$, $b=5$. $c=?$",o:["3","4","5","6"]},a:3 },
+        { ru:{q:"Параллелепипед $2\\times3\\times5$ и $3\\times2\\times5$ — объёмы:",o:["Разные","Равны","Первый больше","Второй больше"]},az:{q:"$2\\times3\\times5$ və $3\\times2\\times5$ — həcmlər:",o:["Müxtəlifdir","Bərabərdir","Birincisi böyükdür","İkincisi böyükdür"]},a:1 },
+        { ru:{q:"Сколько кубиков 1×1×1 в параллелепипеде 4×3×2?",o:["9","12","16","24"]},az:{q:"$4\\times3\\times2$ paralelipipedə neçə $1\\times1\\times1$ kub sığar?",o:["9","12","16","24"]},a:3 },
+        { ru:{q:"Объём комнаты $5\\times4\\times3$ м:",o:["12 м³","20 м³","60 м³","120 м³"]},az:{q:"$5\\times4\\times3$ m otağın həcmi:",o:["12 m³","20 m³","60 m³","120 m³"]},a:2 },
+        { ru:{q:"Параллелепипед $8\\times3\\times5$. Объём:",o:["16 см³","24 см³","100 см³","120 см³"]},az:{q:"$8\\times3\\times5$ paralelepiped. Həcmi:",o:["16 sm³","24 sm³","100 sm³","120 sm³"]},a:3 },
+        { ru:{q:"Объём нельзя измерить в:",o:["см³","м³","дм³","см²"]},az:{q:"Həcmi bu vahidlə ölçmək olmaz:",o:["sm³","m³","dm³","sm²"]},a:3 },
+        { ru:{q:"$V=504$, $a=9$, $b=7$. Найдите $c$:",o:["7","8","9","10"]},az:{q:"$V=504$, $a=9$, $b=7$. $c$-ni tapın:",o:["7","8","9","10"]},a:1 },
+        { ru:{q:"Две коробки с одинаковым объёмом могут иметь:",o:["Одинаковые стороны","Разные стороны","Только одно решение","Нет решений"]},az:{q:"Eyni həcmli iki qutu ola bilər:",o:["Eyni tərəfli","Müxtəlif tərəfli","Yalnız bir həll","Həll yoxdur"]},a:1 },
+        { ru:{q:"Параллелепипед $12\\times1\\times1$. Объём:",o:["3","12","24","144"]},az:{q:"$12\\times1\\times1$ paralelepiped. Həcmi:",o:["3","12","24","144"]},a:1 },
+        { ru:{q:"$V = a \\cdot b \\cdot c$. При $a=0$ объём:",o:["$bc$","$0$","$a+b+c$","Неопределён"]},az:{q:"$V = a \\cdot b \\cdot c$. $a=0$ olduqda həcm:",o:["$bc$","$0$","$a+b+c$","Müəyyən edilmir"]},a:1 },
+        { ru:{q:"Параллелепипед $4\\times9\\times5$. Объём:",o:["18","45","80","180"]},az:{q:"$4\\times9\\times5$ paralelepiped. Həcmi:",o:["18","45","80","180"]},a:3 },
+        { ru:{q:"Куб или параллелепипед: у кого объём $a^3$?",o:["Только у куба","У обоих при $a=b=c$","Только у параллелепипеда","Ни у кого"]},az:{q:"Kub yoxsa paralelepiped: kiminin həcmi $a^3$-dir?",o:["Yalnız kubun","$a=b=c$ olduqda ikisinin də","Yalnız paralelipipedin","Heç birinin"]},a:1 },
+      ];
+
+      function renderSlide() {
+        const s = slides[State.slide], d = State.lang==="ru" ? s.ru : s.az;
+        const c = document.getElementById("slides-container");
+        c.innerHTML = '<div class="slide-enter"><h3 class="text-lg font-bold text-violet-400 mb-3">'+d.t+'</h3><div class="text-gray-300 leading-relaxed">'+d.b+'</div></div>';
+        document.getElementById("slide-num").textContent = State.slide+1;
+        document.getElementById("slide-progress").style.width = ((State.slide+1)/slides.length)*100+"%";
+        if (window.renderMathInElement) renderMathInElement(c,{delimiters:[{left:"$$",right:"$$",display:true},{left:"$",right:"$",display:false}]});
+      }
+      function nextSlide() { if(State.slide<slides.length-1){State.slide++;renderSlide();} }
+      function prevSlide() { if(State.slide>0){State.slide--;renderSlide();} }
+
+      function renderExamples() {
+        const c = document.getElementById("examples-list"); c.innerHTML="";
+        examples.forEach((ex,i) => {
+          const d = State.lang==="ru" ? ex.ru : ex.az;
+          const div = document.createElement("div"); div.className="glass rounded-xl p-5";
+          div.innerHTML='<div class="flex items-center justify-between mb-3"><span class="px-3 py-1 rounded-full bg-violet-500/20 text-violet-400 text-xs font-bold">'+d.t+'</span><span class="text-xs text-gray-500">'+d.d+'</span></div><div class="text-gray-200 mb-3">'+d.p+'</div><button onclick="toggleEx('+i+')" class="px-4 py-2 rounded-lg bg-violet-500/20 text-violet-400 text-sm font-semibold hover:bg-violet-500/30 transition"><span class="lang-ru">Решение</span><span class="lang-az">Həll</span></button><div id="ex-'+i+'" class="hidden mt-4 p-4 rounded-lg bg-violet-500/5 border-l-4 border-violet-500 text-sm text-gray-300 whitespace-pre-line"></div>';
+          c.appendChild(div);
+        });
+      }
+      function toggleEx(i) {
+        const el=document.getElementById("ex-"+i), d=State.lang==="ru"?examples[i].ru:examples[i].az;
+        el.innerHTML=d.s; el.classList.toggle("hidden");
+        if(window.renderMathInElement) renderMathInElement(el,{delimiters:[{left:"$$",right:"$$",display:true},{left:"$",right:"$",display:false}]});
+      }
+
+      function rand(a,b){return Math.floor(Math.random()*(b-a+1))+a;}
+      function genTrainer() {
+        const t=["calc","reverse","compare","fill"][rand(0,3)];
+        let text,ans,hint;
+        if(t==="calc") {
+          const a=rand(2,9),b=rand(2,9),c=rand(2,9),v=a*b*c;
+          text=State.lang==="ru"?`Найдите объём параллелепипеда: a=${a}, b=${b}, c=${c}.`:`Paralelipipedin həcmini tapın: a=${a}, b=${b}, c=${c}.`;
+          ans=v.toString(); hint=`V = ${a} × ${b} × ${c} = ${v}`;
+        } else if(t==="reverse") {
+          const b=rand(2,8),c=rand(2,8),a=rand(2,8),v=a*b*c;
+          text=State.lang==="ru"?`V=${v} см³, b=${b}, c=${c}. Найдите a.`:`V=${v} sm³, b=${b}, c=${c}. a-nı tapın.`;
+          ans=a.toString(); hint=`a = ${v} ÷ (${b}×${c}) = ${v}÷${b*c} = ${a}`;
+        } else if(t==="compare") {
+          const a1=rand(2,6),b1=rand(2,6),c1=rand(2,6);
+          const a2=rand(2,6),b2=rand(2,6),c2=rand(2,6);
+          const v1=a1*b1*c1, v2=a2*b2*c2;
+          text=State.lang==="ru"
+            ?`Объём A(${a1}×${b1}×${c1}) > Объёма B(${a2}×${b2}×${c2})? (да/нет)`
+            :`A(${a1}×${b1}×${c1}) həcmi > B(${a2}×${b2}×${c2}) həcmindən? (bəli/xeyr)`;
+          ans=v1>v2?(State.lang==="ru"?"да":"bəli"):(State.lang==="ru"?"нет":"xeyr");
+          hint=`V_A=${v1}, V_B=${v2}`;
+        } else {
+          const a=rand(2,8),b=rand(2,8),v=a*b*rand(2,8);
+          const c=v/(a*b);
+          if(c!==Math.floor(c)) return genTrainer();
+          text=State.lang==="ru"?`V=${v}, a=${a}, b=${b}. Найдите c.`:`V=${v}, a=${a}, b=${b}. c-ni tapın.`;
+          ans=c.toString(); hint=`c = ${v}÷(${a}×${b}) = ${v}÷${a*b} = ${c}`;
+        }
+        return {text,ans,hint};
+      }
+      function newTrainer() {
+        State.trainer.current=genTrainer();
+        document.getElementById("trainer-task").innerHTML='<div class="text-lg font-medium text-white mb-2">'+State.trainer.current.text+"</div>";
+        document.getElementById("trainer-input").value="";
+        document.getElementById("trainer-feedback").innerHTML="";
+        document.getElementById("trainer-hint").classList.add("hidden");
+        document.getElementById("trainer-check").disabled=false;
+      }
+      function showHint() { if(!State.trainer.current)return; document.getElementById("trainer-hint").textContent="💡 "+State.trainer.current.hint; document.getElementById("trainer-hint").classList.remove("hidden"); }
+      function checkTrainer() {
+        if(!State.trainer.current)return;
+        const val=document.getElementById("trainer-input").value.trim().toLowerCase().replace(/[^a-zа-яёbəli0-9.,]/g,"");
+        const correct=State.trainer.current.ans.toLowerCase();
+        const isCorrect=val===correct||parseFloat(val)===parseFloat(correct);
+        State.trainer.total++;
+        const fb=document.getElementById("trainer-feedback");
+        if(isCorrect){State.trainer.correct++;State.trainer.streak++;fb.innerHTML='<div class="text-violet-400 font-bold text-lg">✓ '+(State.lang==="ru"?"Верно!":"Düzgün!")+" "+State.trainer.current.ans+"</div>";}
+        else{State.trainer.streak=0;fb.innerHTML='<div class="text-red-400 font-bold text-lg">✗ '+(State.lang==="ru"?"Неверно. Правильный ответ: ":"Səhv. Düzgün cavab: ")+State.trainer.current.ans+"</div>";}
+        document.getElementById("stat-correct").textContent=State.trainer.correct;
+        document.getElementById("stat-total").textContent=State.trainer.total;
+        document.getElementById("stat-streak").textContent=State.trainer.streak;
+        document.getElementById("trainer-check").disabled=true;
+      }
+
+      function startDiagnostic(){State.quiz.mode="diag";State.quiz.current=0;State.quiz.score=0;State.quiz.answers=[];showQuiz();renderQuestion();}
+      function startTimeAttack(){State.quiz.mode="time";State.quiz.current=0;State.quiz.score=0;State.quiz.answers=[];State.quiz.timeLeft=600;State.quiz.startTime=Date.now();showQuiz();renderQuestion();startTimer();}
+      function showQuiz(){document.getElementById("assessment-menu").classList.add("hidden");document.getElementById("quiz-ui").classList.remove("hidden");document.getElementById("results-ui").classList.add("hidden");}
+      function startTimer(){document.getElementById("timer").classList.remove("hidden");State.quiz.timer=setInterval(()=>{State.quiz.timeLeft--;updateTimer();if(State.quiz.timeLeft<=0)finishQuiz();},1000);}
+      function updateTimer(){const m=Math.floor(State.quiz.timeLeft/60),s=State.quiz.timeLeft%60;document.getElementById("timer-display").textContent=m+":"+s.toString().padStart(2,"0");document.getElementById("timer").classList.toggle("text-red-400",State.quiz.timeLeft<=60);}
+      function renderQuestion(){
+        const q=questions[State.quiz.current],d=State.lang==="ru"?q.ru:q.az;
+        document.getElementById("q-current").textContent=State.quiz.current+1;
+        document.getElementById("q-score").innerHTML=State.quiz.score+' <span class="lang-ru">правильных</span><span class="lang-az">düzgün</span>';
+        document.getElementById("q-progress").style.width=((State.quiz.current+1)/questions.length)*100+"%";
+        document.getElementById("q-text").innerHTML=d.q;
+        const opts=document.getElementById("q-options");opts.innerHTML="";
+        d.o.forEach((opt,i)=>{const div=document.createElement("div");div.className="option-card glass rounded-xl p-4 flex items-center gap-3";div.innerHTML='<div class="w-8 h-8 rounded-lg bg-gray-800 flex items-center justify-center font-bold text-sm">'+String.fromCharCode(65+i)+"</div><div>"+opt+"</div>";div.onclick=()=>selectOption(i,div);opts.appendChild(div);});
+        document.getElementById("btn-prev").disabled=State.quiz.current===0;
+        document.getElementById("btn-next").disabled=true;
+        document.getElementById("q-explain").classList.add("hidden");
+        if(window.renderMathInElement)renderMathInElement(document.getElementById("quiz-ui"),{delimiters:[{left:"$$",right:"$$",display:true},{left:"$",right:"$",display:false}]});
+      }
+      function selectOption(idx,el){
+        if(!document.getElementById("btn-next").disabled)return;
+        const q=questions[State.quiz.current],correct=idx===q.a;
+        if(correct)State.quiz.score++;
+        State.quiz.answers[State.quiz.current]=idx;
+        document.querySelectorAll("#q-options .option-card").forEach((opt,i)=>{opt.classList.add("pointer-events-none","opacity-80");if(i===q.a)opt.classList.add("correct");else if(i===idx&&!correct)opt.classList.add("wrong");});
+        if(State.quiz.mode==="diag"){const d=State.lang==="ru"?q.ru:q.az;document.getElementById("q-explain").innerHTML='<strong class="'+(correct?"text-violet-400":"text-red-400")+'">'+(correct?(State.lang==="ru"?"✓ Верно!":"✓ Düzgün!"):(State.lang==="ru"?"✗ Неверно.":"✗ Səhv."))+"</strong> "+(State.lang==="ru"?"Правильный ответ: ":"Düzgün cavab: ")+d.o[q.a];document.getElementById("q-explain").classList.remove("hidden");}
+        document.getElementById("btn-next").disabled=false;
+      }
+      function nextQuestion(){if(State.quiz.current<questions.length-1){State.quiz.current++;renderQuestion();}else{finishQuiz();}}
+      function prevQuestion(){if(State.quiz.current>0){State.quiz.current--;renderQuestion();}}
+      function finishQuiz(){
+        if(State.quiz.timer)clearInterval(State.quiz.timer);
+        document.getElementById("timer").classList.add("hidden");
+        document.getElementById("quiz-ui").classList.add("hidden");
+        document.getElementById("results-ui").classList.remove("hidden");
+        const pct=Math.round((State.quiz.score/questions.length)*100);
+        const timeSpent=State.quiz.mode==="time"?Math.floor((Date.now()-State.quiz.startTime)/1000):0;
+        const m=Math.floor(timeSpent/60),s=timeSpent%60;
+        document.getElementById("result-percent").textContent=pct+"%";
+        document.getElementById("result-circle").style.strokeDashoffset=283-(283*pct/100);
+        document.getElementById("res-correct").textContent=State.quiz.score;
+        document.getElementById("res-wrong").textContent=questions.length-State.quiz.score;
+        document.getElementById("res-time").textContent=State.quiz.mode==="time"?m+":"+s.toString().padStart(2,"0"):"—";
+        let level=State.lang==="ru"?"Начальный":"Başlanğıc";
+        if(pct>=90)level=State.lang==="ru"?"Эксперт":"Ekspert";
+        else if(pct>=70)level=State.lang==="ru"?"Продвинутый":"İrəli";
+        else if(pct>=50)level=State.lang==="ru"?"Средний":"Orta";
+        document.getElementById("res-level").textContent=level;
+        let msg=pct>=90?"🏆 "+(State.lang==="ru"?"Превосходно!":"Əla!"):pct>=70?"🥈 "+(State.lang==="ru"?"Хорошо!":"Yaxşı!"):pct>=50?"🥉 "+(State.lang==="ru"?"Удовлетворительно.":"Qaneedici."):"💪 "+(State.lang==="ru"?"Нужно больше практики.":"Daha çox praktika lazımdır.");
+        document.getElementById("result-message").textContent=msg;
+      }
+      function resetAssessment(){document.getElementById("results-ui").classList.add("hidden");document.getElementById("assessment-menu").classList.remove("hidden");}
+
+      function showTab(id){document.querySelectorAll(".tab-content").forEach(s=>s.classList.add("hidden"));document.getElementById(id).classList.remove("hidden");document.querySelectorAll(".nav-link").forEach(a=>a.classList.remove("active-nav","text-white","bg-white/5"));const active=document.querySelector('.nav-link[data-tab="'+id+'"]');if(active)active.classList.add("active-nav","text-white","bg-white/5");window.scrollTo(0,0);}
+      document.querySelectorAll(".nav-link").forEach(link=>{link.addEventListener("click",e=>{e.preventDefault();showTab(link.dataset.tab);});});
+      function toggleLang(){State.lang=State.lang==="ru"?"az":"ru";document.body.classList.toggle("lang-az",State.lang==="az");renderSlide();renderExamples();if(State.trainer.current)document.getElementById("trainer-task").innerHTML='<div class="text-lg font-medium text-white">'+State.trainer.current.text+"</div>";}
+
+      document.addEventListener("DOMContentLoaded",()=>{
+        document.getElementById("slide-total").textContent=slides.length;
+        renderSlide();renderExamples();newTrainer();
+        document.getElementById("trainer-input").addEventListener("keypress",e=>{if(e.key==="Enter")checkTrainer();});
+        const tryRender=()=>{if(window.renderMathInElement)renderMathInElement(document.body,{delimiters:[{left:"$$",right:"$$",display:true},{left:"$",right:"$",display:false}]});else setTimeout(tryRender,300);};
+        tryRender();
+      });
+    </script>
+  </body>
+</html>

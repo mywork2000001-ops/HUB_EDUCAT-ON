@@ -1,308 +1,43 @@
-import os, json
+import os
+import sys
+from pathlib import Path
 
-BASE = r"C:\Users\Administrator\Documents\Claude\Projects\P002_Math_5_Darslik\math-5-class-2"
-
-CSS = """      :root {
-        --bg-dark: #0f0f1a; --bg-card: rgba(255,255,255,0.05); --bg-glass: rgba(255,255,255,0.08);
-        --border-glass: rgba(255,255,255,0.15); --text-primary: #e8e8f0; --text-secondary: #a0a0b8;
-        --accent: #00d4aa; --accent-dim: rgba(0,212,170,0.2); --accent-warm: #ff6b6b;
-        --accent-warm-dim: rgba(255,107,107,0.2); --accent-blue: #4dabf7;
-        --accent-blue-dim: rgba(77,171,247,0.2); --success: #51cf66; --error: #ff6b6b; --warning: #fcc419;
-      }
-      * { margin: 0; padding: 0; box-sizing: border-box; }
-      body { font-family: "Segoe UI", system-ui, sans-serif; background: var(--bg-dark); color: var(--text-primary); min-height: 100vh; overflow-x: hidden; line-height: 1.6; }
-      .bg-animation { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; background: radial-gradient(ellipse at 20% 20%, rgba(0,212,170,0.08) 0%, transparent 50%), radial-gradient(ellipse at 80% 80%, rgba(77,171,247,0.08) 0%, transparent 50%); }
-      .bg-animation::before { content: ""; position: absolute; width: 200%; height: 200%; top: -50%; left: -50%; background: repeating-linear-gradient(0deg, transparent, transparent 40px, rgba(255,255,255,0.02) 40px, rgba(255,255,255,0.02) 41px); animation: bgMove 20s linear infinite; }
-      @keyframes bgMove { 0% { transform: translateY(0); } 100% { transform: translateY(40px); } }
-      nav { position: fixed; top: 0; left: 0; right: 0; background: rgba(15,15,26,0.85); backdrop-filter: blur(20px); border-bottom: 1px solid var(--border-glass); z-index: 1000; padding: 0 20px; }
-      .nav-container { max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; height: 60px; }
-      .logo { font-size: 1.3rem; font-weight: 700; background: linear-gradient(135deg, var(--accent), var(--accent-blue)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
-      .nav-links { display: flex; gap: 8px; list-style: none; }
-      .nav-links a { color: var(--text-secondary); text-decoration: none; padding: 8px 16px; border-radius: 8px; transition: all 0.3s; font-size: 0.9rem; font-weight: 500; cursor: pointer; border: none; background: transparent; }
-      .nav-links a:hover, .nav-links a.active { color: var(--text-primary); background: var(--bg-glass); }
-      .nav-links a.active { background: var(--accent-dim); color: var(--accent); }
-      section { display: none; opacity: 0; padding: 100px 20px 60px; max-width: 1000px; margin: 0 auto; transition: opacity 0.3s ease; }
-      section.active { display: block; opacity: 1; animation: fadeIn 0.5s ease; }
-      @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-      .card { background: var(--bg-card); backdrop-filter: blur(20px); border: 1px solid var(--border-glass); border-radius: 20px; padding: 32px; margin-bottom: 24px; transition: transform 0.3s, box-shadow 0.3s; }
-      .card:hover { transform: translateY(-2px); box-shadow: 0 20px 40px rgba(0,0,0,0.3); }
-      .card-title { font-size: 1.5rem; font-weight: 700; margin-bottom: 16px; display: flex; align-items: center; gap: 12px; }
-      .hero { text-align: center; padding: 140px 20px 80px; }
-      .hero h1 { font-size: 3rem; font-weight: 800; margin-bottom: 20px; background: linear-gradient(135deg, var(--accent), var(--accent-blue), var(--accent-warm)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; line-height: 1.2; }
-      .hero p { font-size: 1.2rem; color: var(--text-secondary); max-width: 600px; margin: 0 auto 40px; }
-      .btn { display: inline-flex; align-items: center; gap: 8px; padding: 14px 32px; border-radius: 12px; border: none; font-size: 1rem; font-weight: 600; cursor: pointer; transition: all 0.3s; }
-      .btn-primary { background: linear-gradient(135deg, var(--accent), var(--accent-blue)); color: #000; }
-      .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 10px 30px var(--accent-dim); }
-      .btn-secondary { background: var(--bg-glass); color: var(--text-primary); border: 1px solid var(--border-glass); }
-      .btn-secondary:hover { background: var(--bg-card); }
-      .btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none !important; }
-      .generate-widget { background: var(--bg-card); border: 1px solid var(--border-glass); border-radius: 20px; padding: 24px; width: 100%; }
-      .widget-viewport { overflow: hidden; position: relative; min-height: 480px; width: 100%; }
-      .widget-track { display: flex; transition: transform 0.5s cubic-bezier(0.4,0,0.2,1); width: 100%; }
-      .widget-slide { flex: 0 0 100%; width: 100%; min-width: 100%; padding: 20px; box-sizing: border-box; overflow-x: hidden; }
-      .widget-slide h3 { font-size: 1.3rem; color: var(--accent); margin-bottom: 16px; }
-      .widget-slide p, .widget-slide li { color: var(--text-secondary); line-height: 1.8; margin-bottom: 12px; }
-      .widget-slide .big-math { font-size: 1.5rem; text-align: center; margin: 20px 0; background: var(--bg-glass); padding: 20px; border-radius: 12px; font-weight: 600; color: var(--text-primary); }
-      .widget-nav { display: flex; justify-content: space-between; align-items: center; margin-top: 16px; }
-      .widget-progress { text-align: center; font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 12px; }
-      .sequence-component { display: flex; flex-direction: column; gap: 20px; }
-      .sequence-step { background: var(--bg-card); border: 1px solid var(--border-glass); border-radius: 16px; padding: 24px 24px 24px 72px; position: relative; transition: all 0.3s; }
-      .sequence-step:hover { border-color: var(--accent); transform: translateX(4px); }
-      .sequence-number { position: absolute; left: 20px; top: 20px; width: 40px; height: 40px; background: var(--accent); color: #000; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 1.1rem; }
-      .sequence-step h4 { color: var(--text-primary); margin-bottom: 8px; font-size: 1.1rem; }
-      .sequence-step p { color: var(--text-secondary); line-height: 1.7; }
-      .sequence-connector { position: absolute; left: 39px; top: 60px; bottom: -30px; width: 2px; background: var(--accent-dim); z-index: 0; }
-      .formula-box { background: var(--bg-glass); border: 1px solid var(--border-glass); border-radius: 12px; padding: 20px; margin: 16px 0; text-align: center; font-size: 1.2rem; }
-      .tip-box { background: var(--accent-blue-dim); border-left: 4px solid var(--accent-blue); padding: 16px 20px; border-radius: 0 12px 12px 0; margin: 16px 0; }
-      .tip-box::before { content: "Подсказка: "; font-weight: 600; }
-      .warning-box { background: var(--accent-warm-dim); border-left: 4px solid var(--accent-warm); padding: 16px 20px; border-radius: 0 12px 12px 0; margin: 16px 0; }
-      .warning-box::before { content: "Важно: "; font-weight: 600; }
-      .highlight { background: var(--accent-dim); padding: 2px 6px; border-radius: 4px; color: var(--accent); font-weight: 600; }
-      .problem-card { background: var(--bg-card); border: 1px solid var(--border-glass); border-radius: 16px; padding: 24px; margin-bottom: 20px; }
-      .problem-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
-      .problem-number { background: var(--accent-dim); color: var(--accent); padding: 4px 12px; border-radius: 20px; font-size: 0.85rem; font-weight: 600; }
-      .problem-type { color: var(--text-secondary); font-size: 0.85rem; }
-      .problem-text { font-size: 1.1rem; margin-bottom: 16px; line-height: 1.8; }
-      .solution-btn { background: var(--accent-dim); color: var(--accent); border: 1px solid var(--accent); padding: 10px 20px; border-radius: 8px; cursor: pointer; font-weight: 600; transition: all 0.3s; }
-      .solution-btn:hover { background: var(--accent); color: #000; }
-      .solution { display: none; margin-top: 20px; padding: 20px; background: rgba(0,212,170,0.05); border-left: 3px solid var(--accent); border-radius: 0 12px 12px 0; }
-      .solution.active { display: block; }
-      .solution-step { margin-bottom: 12px; padding: 8px 0; border-bottom: 1px solid var(--border-glass); }
-      .solution-step:last-child { border-bottom: none; }
-      .step-num { display: inline-block; width: 24px; height: 24px; background: var(--accent); color: #000; border-radius: 50%; text-align: center; line-height: 24px; font-size: 0.8rem; font-weight: 700; margin-right: 8px; }
-      .quiz-container { background: var(--bg-card); border: 1px solid var(--border-glass); border-radius: 20px; padding: 32px; }
-      .quiz-progress { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; flex-wrap: wrap; gap: 8px; }
-      .progress-bar { flex: 1; height: 8px; background: var(--bg-glass); border-radius: 4px; margin: 0 16px; overflow: hidden; min-width: 100px; }
-      .progress-fill { height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent-blue)); border-radius: 4px; transition: width 0.5s ease; width: 0%; }
-      .quiz-question { font-size: 1.2rem; margin-bottom: 24px; padding: 20px; background: var(--bg-glass); border-radius: 12px; border-left: 4px solid var(--accent); }
-      .quiz-options { display: grid; gap: 12px; }
-      .quiz-option { background: var(--bg-glass); border: 2px solid var(--border-glass); border-radius: 12px; padding: 16px 20px; cursor: pointer; transition: all 0.3s; display: flex; align-items: center; gap: 12px; }
-      .quiz-option:hover { border-color: var(--accent); background: var(--accent-dim); }
-      .quiz-option.correct { border-color: var(--success); background: rgba(81,207,102,0.15); }
-      .quiz-option.wrong { border-color: var(--error); background: rgba(255,107,107,0.15); }
-      .quiz-option.disabled { pointer-events: none; opacity: 0.7; }
-      .option-letter { width: 32px; height: 32px; border-radius: 8px; background: var(--bg-card); display: flex; align-items: center; justify-content: center; font-weight: 700; flex-shrink: 0; }
-      .quiz-nav { display: flex; justify-content: space-between; margin-top: 24px; }
-      .stat { background: var(--bg-glass); padding: 12px 24px; border-radius: 12px; text-align: center; min-width: 100px; border: 1px solid var(--border-glass); }
-      .stat-value { font-size: 1.5rem; font-weight: 700; color: var(--accent); }
-      .stat-label { font-size: 0.85rem; color: var(--text-secondary); }
-      .timer { position: fixed; top: 80px; right: 20px; background: var(--bg-card); backdrop-filter: blur(20px); border: 1px solid var(--border-glass); border-radius: 16px; padding: 16px 24px; font-size: 1.3rem; font-weight: 700; z-index: 999; }
-      .timer.warning { border-color: var(--warning); color: var(--warning); animation: pulse 1s infinite; }
-      .timer.danger { border-color: var(--error); color: var(--error); animation: pulse 0.5s infinite; }
-      @keyframes pulse { 0%,100% { transform: scale(1); } 50% { transform: scale(1.05); } }
-      .results-container { text-align: center; padding: 40px; }
-      .score-circle { width: 200px; height: 200px; border-radius: 50%; background: conic-gradient(var(--accent) calc(var(--score) * 3.6deg), var(--bg-glass) 0); margin: 0 auto 32px; display: flex; align-items: center; justify-content: center; position: relative; }
-      .score-circle::before { content: ""; position: absolute; width: 170px; height: 170px; background: var(--bg-dark); border-radius: 50%; }
-      .score-value { position: relative; font-size: 3rem; font-weight: 800; color: var(--accent); }
-      .score-label { font-size: 1.2rem; color: var(--text-secondary); margin-bottom: 8px; }
-      .score-message { font-size: 1.5rem; font-weight: 700; margin-bottom: 32px; }
-      .results-breakdown { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px,1fr)); gap: 16px; max-width: 600px; margin: 0 auto 32px; }
-      .breakdown-item { background: var(--bg-glass); padding: 16px; border-radius: 12px; }
-      .breakdown-value { font-size: 1.5rem; font-weight: 700; color: var(--accent); }
-      .breakdown-label { font-size: 0.85rem; color: var(--text-secondary); }
-      .hidden { display: none !important; }
-      @media (max-width: 768px) { .hero h1 { font-size: 2rem; } .nav-links { display: none; } .card { padding: 20px; } section { padding: 80px 16px 40px; } }"""
-
-JS_TEMPLATE = r"""      const AppState={currentSection:'home',slide:0,trainer:{correct:0,total:0,streak:0,current:null},diagnostic:{current:0,score:0,answers:[]},timeAttack:{current:0,score:0,timer:null,timeLeft:600,startTime:0,answers:[]},mode:null};
-      function showSection(id){document.querySelectorAll('section').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');document.querySelectorAll('.nav-links a').forEach(a=>a.classList.remove('active'));document.querySelector('.nav-links a[data-section="'+id+'"]')?.classList.add('active');window.scrollTo(0,0);AppState.currentSection=id;}
-      document.querySelectorAll('.nav-links a').forEach(link=>{link.addEventListener('click',e=>{e.preventDefault();showSection(link.dataset.section);});});
-      const totalSlides=12,track=document.getElementById('track-slides'),slideNumEl=document.getElementById('slide-num'),slideTotalEl=document.getElementById('slide-total');
-      if(slideTotalEl)slideTotalEl.textContent=totalSlides;
-      function renderSlide(){if(track)track.style.transform='translateX(-'+AppState.slide*100+'%)';if(slideNumEl)slideNumEl.textContent=AppState.slide+1;}
-      function nextSlide(){if(AppState.slide<totalSlides-1){AppState.slide++;renderSlide();}}
-      function prevSlide(){if(AppState.slide>0){AppState.slide--;renderSlide();}}
-      function toggleSolution(id){const el=document.getElementById(id);el.classList.toggle('active');const btn=el.previousElementSibling;btn.textContent=el.classList.contains('active')?'Скрыть решение':'Показать решение';}
-      const diagnosticQuestions=QPLACEHOLDER;
-      function newTrainerProblem(){const p=diagnosticQuestions[Math.floor(Math.random()*diagnosticQuestions.length)];AppState.trainer.current=p;let txt=p.q+'\n';p.options.forEach((o,i)=>{txt+=i+': '+o+'  ';});document.getElementById('trainer-question').textContent=txt;document.getElementById('trainer-answer').value='';document.getElementById('trainer-feedback').innerHTML='';document.getElementById('trainer-hint').style.display='none';document.getElementById('trainer-check-btn').disabled=false;}
-      function showTrainerHint(){if(!AppState.trainer.current)return;document.getElementById('trainer-hint').style.display='block';document.getElementById('trainer-hint').textContent='Подсказка: '+AppState.trainer.current.expl;}
-      function checkTrainer(){if(!AppState.trainer.current)return;const u=document.getElementById('trainer-answer').value.trim();if(!u)return;AppState.trainer.total++;const ok=parseInt(u)===AppState.trainer.current.correct;if(ok){AppState.trainer.correct++;AppState.trainer.streak++;document.getElementById('trainer-feedback').innerHTML='<div style="color:var(--success);font-weight:700">Верно!</div>';}else{AppState.trainer.streak=0;document.getElementById('trainer-feedback').innerHTML='<div style="color:var(--error);font-weight:700">Неверно. Правильный ответ: '+AppState.trainer.current.correct+'</div>';}document.getElementById('trainer-correct').textContent=AppState.trainer.correct;document.getElementById('trainer-total').textContent=AppState.trainer.total;document.getElementById('trainer-streak').textContent=AppState.trainer.streak;document.getElementById('trainer-check-btn').disabled=true;}
-      document.getElementById('trainer-answer')?.addEventListener('keypress',e=>{if(e.key==='Enter')checkTrainer();});
-      function startDiagnostic(){AppState.mode='diagnostic';AppState.diagnostic={current:0,score:0,answers:[]};document.getElementById('diagnostic-ui').style.display='block';document.getElementById('timeattack-ui').style.display='none';document.getElementById('results-ui').style.display='none';document.getElementById('diag-total').textContent=diagnosticQuestions.length;renderDiagnostic();}
-      function renderDiagnostic(){const q=diagnosticQuestions[AppState.diagnostic.current];document.getElementById('diag-current').textContent=AppState.diagnostic.current+1;document.getElementById('diag-score').textContent=AppState.diagnostic.score+' правильных';document.getElementById('diag-progress').style.width=((AppState.diagnostic.current+1)/diagnosticQuestions.length*100)+'%';document.getElementById('diag-question').textContent=q.q;document.getElementById('diag-explanation').style.display='none';document.getElementById('diag-next').disabled=true;document.getElementById('diag-prev').disabled=AppState.diagnostic.current===0;const od=document.getElementById('diag-options');od.innerHTML='';q.options.forEach((opt,i)=>{const d=document.createElement('div');d.className='quiz-option';d.innerHTML='<div class="option-letter">'+String.fromCharCode(65+i)+'</div><div>'+opt+'</div>';d.onclick=()=>selDiag(i,d,q);od.appendChild(d);});}
-      function selDiag(i,div,q){document.querySelectorAll('#diag-options .quiz-option').forEach(o=>o.classList.add('disabled'));const ok=i===q.correct;div.classList.add(ok?'correct':'wrong');if(!ok)document.querySelectorAll('#diag-options .quiz-option')[q.correct].classList.add('correct');if(ok)AppState.diagnostic.score++;AppState.diagnostic.answers.push(i);document.getElementById('diag-explanation').textContent=(ok?'Верно! ':'Неверно. ')+q.expl;document.getElementById('diag-explanation').style.display='block';document.getElementById('diag-next').disabled=false;}
-      function nextDiagnostic(){if(AppState.diagnostic.current<diagnosticQuestions.length-1){AppState.diagnostic.current++;renderDiagnostic();}else showResults(AppState.diagnostic.score,diagnosticQuestions.length,0);}
-      function prevDiagnostic(){if(AppState.diagnostic.current>0){AppState.diagnostic.current--;renderDiagnostic();}}
-      function startTimeAttack(){AppState.mode='timeattack';AppState.timeAttack={current:0,score:0,timer:null,timeLeft:600,startTime:Date.now(),answers:[]};document.getElementById('diagnostic-ui').style.display='none';document.getElementById('timeattack-ui').style.display='block';document.getElementById('results-ui').style.display='none';const te=document.getElementById('ta-timer');te.classList.remove('hidden');AppState.timeAttack.timer=setInterval(()=>{AppState.timeAttack.timeLeft--;const m=Math.floor(AppState.timeAttack.timeLeft/60),s=AppState.timeAttack.timeLeft%60;te.textContent=m+':'+(s<10?'0':'')+s;te.className='timer'+(AppState.timeAttack.timeLeft<=60?' danger':AppState.timeAttack.timeLeft<=120?' warning':'');if(AppState.timeAttack.timeLeft<=0){clearInterval(AppState.timeAttack.timer);showResults(AppState.timeAttack.score,diagnosticQuestions.length,0);}},1000);renderTA();}
-      function renderTA(){const q=diagnosticQuestions[AppState.timeAttack.current];document.getElementById('ta-current').textContent=AppState.timeAttack.current+1;document.getElementById('ta-progress').style.width=((AppState.timeAttack.current+1)/diagnosticQuestions.length*100)+'%';document.getElementById('ta-question').textContent=q.q;const od=document.getElementById('ta-options');od.innerHTML='';q.options.forEach((opt,i)=>{const d=document.createElement('div');d.className='quiz-option';d.innerHTML='<div class="option-letter">'+String.fromCharCode(65+i)+'</div><div>'+opt+'</div>';d.onclick=()=>{if(i===q.correct)AppState.timeAttack.score++;AppState.timeAttack.answers.push(i);nextTA();};od.appendChild(d);});document.getElementById('ta-next').style.display='none';}
-      function nextTA(){if(AppState.timeAttack.current<diagnosticQuestions.length-1){AppState.timeAttack.current++;renderTA();}else{clearInterval(AppState.timeAttack.timer);const el=Math.round((Date.now()-AppState.timeAttack.startTime)/1000);showResults(AppState.timeAttack.score,diagnosticQuestions.length,el);}}
-      function nextTimeAttack(){nextTA();}
-      function showResults(correct,total,elapsed){document.getElementById('diagnostic-ui').style.display='none';document.getElementById('timeattack-ui').style.display='none';document.getElementById('results-ui').style.display='block';const pct=Math.round(correct/total*100);document.getElementById('result-circle').style.setProperty('--score',pct);document.getElementById('result-percent').textContent=pct+'%';document.getElementById('result-correct').textContent=correct;document.getElementById('result-wrong').textContent=total-correct;const m=Math.floor(elapsed/60),s=elapsed%60;document.getElementById('result-time').textContent=m+':'+(s<10?'0':'')+s;document.getElementById('result-mastery').textContent=pct>=90?'Отлично':pct>=70?'Хорошо':pct>=50?'Удовл.':'Слабо';document.getElementById('result-message').textContent=pct>=90?'Отличный результат!':pct>=70?'Хороший результат!':'Повторите теорию';}
-      function resetAssessment(){document.getElementById('diagnostic-ui').style.display='none';document.getElementById('timeattack-ui').style.display='none';document.getElementById('results-ui').style.display='none';document.getElementById('ta-timer').classList.add('hidden');}"""
-
-def make_slide(content, active=False):
-    cls = 'widget-slide active' if active else 'widget-slide'
-    return f'<div class="{cls}">{content}</div>'
-
-def make_example(num, etype, text, steps):
-    sh = "".join([f'<div class="solution-step"><span class="step-num">{i+1}</span>{s}</div>' for i,s in enumerate(steps)])
-    return f'<div class="problem-card"><div class="problem-header"><span class="problem-number">No {num}</span><span class="problem-type">{etype}</span></div><div class="problem-text">{text}</div><button class="solution-btn" onclick="toggleSolution(\'sol-{num}\')">Показать решение</button><div class="solution" id="sol-{num}">{sh}</div></div>'
-
-def make_algo(steps):
-    parts = []
-    for i,(title,desc) in enumerate(steps):
-        conn = "<div class='sequence-connector'></div>" if i < len(steps)-1 else ""
-        parts.append(f'<div class="sequence-step"><div class="sequence-number">{i+1}</div>{conn}<h4>{title}</h4><p>{desc}</p></div>')
-    return "\n".join(parts)
-
-def make_learn_cards(items):
-    cs = ['var(--accent)','var(--accent-blue)','var(--accent-warm)','var(--warning)']
-    return "\n".join([f'<div class="card" style="padding:20px"><h3 style="color:{cs[i%4]};margin-bottom:8px">{t}</h3><p style="color:var(--text-secondary)">{d}</p></div>' for i,(t,d) in enumerate(items)])
-
-def build_html(lesson_num, title, subtitle, learn_items, slides, algo_steps, examples, questions):
-    slides_html = "".join([make_slide(s, i==0) for i,s in enumerate(slides)])
-    learn_html = make_learn_cards(learn_items)
-    algo_html = make_algo(algo_steps)
-    ex_html = "\n".join(examples)
-    q_json = json.dumps(questions, ensure_ascii=False)
-    js = JS_TEMPLATE.replace("QPLACEHOLDER", q_json)
-    return f"""<!doctype html>
-<html lang="ru">
-<head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>Урок {lesson_num} — {title}</title>
-<style>{CSS}</style></head>
-<body>
-<div class="bg-animation"></div>
-<nav><div class="nav-container">
-  <div class="logo">Урок {lesson_num}</div>
-  <ul class="nav-links">
-    <li><a href="#" class="active" data-section="home">Главная</a></li>
-    <li><a href="#" data-section="theory">Теория</a></li>
-    <li><a href="#" data-section="algorithm">Алгоритм</a></li>
-    <li><a href="#" data-section="examples">Примеры</a></li>
-    <li><a href="#" data-section="trainer">Тренажёр</a></li>
-    <li><a href="#" data-section="assessment">Аттестация</a></li>
-  </ul>
-</div></nav>
-
-<section id="home" class="active">
-  <div class="hero"><h1>{title}</h1><p>Урок {lesson_num}. {subtitle}</p>
-    <div style="display:flex;gap:16px;justify-content:center;flex-wrap:wrap">
-      <button class="btn btn-primary" onclick="showSection('theory')">Начать обучение</button>
-      <button class="btn btn-secondary" onclick="showSection('assessment')">Проверить знания</button>
-    </div>
-  </div>
-  <div class="card"><div class="card-title">Что вы изучите</div>
-    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px">{learn_html}</div>
-  </div>
-</section>
-
-<section id="theory">
-  <div class="card"><div class="card-title">Визуальная теория — 12 слайдов</div>
-    <p style="color:var(--text-secondary);margin-bottom:20px">Листайте слайды. Каждый блок — ключевой элемент темы.</p>
-    <div class="generate-widget">
-      <div class="widget-progress">Слайд <span id="slide-num">1</span> из <span id="slide-total">12</span></div>
-      <div class="widget-viewport"><div class="widget-track" id="track-slides">{slides_html}</div></div>
-      <div class="widget-nav">
-        <button class="btn btn-secondary" onclick="prevSlide()">Назад</button>
-        <button class="btn btn-primary" onclick="nextSlide()">Вперёд</button>
-      </div>
-    </div>
-  </div>
-</section>
-
-<section id="algorithm">
-  <div class="card"><div class="card-title">Пошаговый алгоритм</div>
-    <div class="sequence-component">{algo_html}</div>
-  </div>
-</section>
-
-<section id="examples">
-  <div class="card"><div class="card-title">Разбор задач</div></div>
-  {ex_html}
-</section>
-
-<section id="trainer">
-  <div class="card"><div class="card-title">Тренажёр</div>
-    <p style="color:var(--text-secondary);margin-bottom:24px">Введите номер ответа (0–3) и нажмите «Проверить».</p>
-    <div class="quiz-container" style="margin-bottom:20px">
-      <div id="trainer-question" style="font-size:1.1rem;margin-bottom:24px;padding:24px;background:var(--bg-glass);border-radius:12px;white-space:pre-wrap">Нажмите «Новая задача» для начала</div>
-      <div style="display:flex;gap:12px;margin-bottom:20px">
-        <input type="text" id="trainer-answer" placeholder="0, 1, 2 или 3" style="flex:1;padding:14px 16px;background:var(--bg-glass);border:2px solid var(--border-glass);border-radius:12px;color:var(--text-primary);font-size:1rem;outline:none;"/>
-        <button class="btn btn-primary" onclick="checkTrainer()" id="trainer-check-btn" disabled>Проверить</button>
-      </div>
-      <div id="trainer-feedback" style="min-height:40px;margin-bottom:16px"></div>
-      <div style="display:flex;gap:12px;justify-content:center">
-        <button class="btn btn-secondary" onclick="newTrainerProblem()">Новая задача</button>
-        <button class="btn btn-secondary" onclick="showTrainerHint()">Подсказка</button>
-      </div>
-      <div id="trainer-hint" style="display:none;margin-top:20px;padding:16px;background:var(--accent-blue-dim);border-radius:12px;border-left:4px solid var(--accent-blue)"></div>
-    </div>
-    <div style="display:flex;justify-content:center;gap:24px;flex-wrap:wrap">
-      <div class="stat"><div class="stat-value" id="trainer-correct">0</div><div class="stat-label">Верно</div></div>
-      <div class="stat"><div class="stat-value" id="trainer-total">0</div><div class="stat-label">Всего</div></div>
-      <div class="stat"><div class="stat-value" id="trainer-streak">0</div><div class="stat-label">Серия</div></div>
-    </div>
-  </div>
-</section>
-
-<section id="assessment">
-  <div class="card"><div class="card-title">Аттестация — 20 вопросов</div>
-    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px">
-      <div class="card" style="padding:24px;text-align:center"><div style="font-size:3rem;margin-bottom:12px">🔍</div><h3 style="margin-bottom:8px">Диагностический тест</h3><p style="color:var(--text-secondary);margin-bottom:20px">20 вопросов с обратной связью.</p><button class="btn btn-primary" onclick="startDiagnostic()">Начать тест</button></div>
-      <div class="card" style="padding:24px;text-align:center"><div style="font-size:3rem;margin-bottom:12px">⏱️</div><h3 style="margin-bottom:8px">Скоростная викторина</h3><p style="color:var(--text-secondary);margin-bottom:20px">20 вопросов · 10 минут.</p><button class="btn btn-primary" onclick="startTimeAttack()">Начать</button></div>
-    </div>
-  </div>
-  <div id="diagnostic-ui" style="display:none">
-    <div class="card"><div class="card-title">Диагностический тест</div></div>
-    <div class="quiz-container">
-      <div class="quiz-progress"><span>Вопрос <span id="diag-current">1</span> / <span id="diag-total">20</span></span><div class="progress-bar"><div class="progress-fill" id="diag-progress"></div></div><span id="diag-score">0 правильных</span></div>
-      <div class="quiz-question" id="diag-question"></div>
-      <div class="quiz-options" id="diag-options"></div>
-      <div class="quiz-nav"><button class="btn btn-secondary" onclick="prevDiagnostic()" id="diag-prev" disabled>Назад</button><button class="btn btn-primary" onclick="nextDiagnostic()" id="diag-next" disabled>Далее</button></div>
-      <div id="diag-explanation" style="display:none;margin-top:20px;padding:16px;background:var(--accent-dim);border-radius:12px;border-left:4px solid var(--accent)"></div>
-    </div>
-  </div>
-  <div id="timeattack-ui" style="display:none">
-    <div class="timer hidden" id="ta-timer">10:00</div>
-    <div class="card"><div class="card-title">Скоростная викторина</div></div>
-    <div class="quiz-container">
-      <div class="quiz-progress"><span>Вопрос <span id="ta-current">1</span> / 20</span><div class="progress-bar"><div class="progress-fill" id="ta-progress"></div></div></div>
-      <div class="quiz-question" id="ta-question"></div>
-      <div class="quiz-options" id="ta-options"></div>
-      <div style="display:flex;justify-content:flex-end;margin-top:24px"><button class="btn btn-primary" id="ta-next" onclick="nextTimeAttack()" style="display:none">Далее</button></div>
-    </div>
-  </div>
-  <div id="results-ui" style="display:none">
-    <div class="card"><div class="results-container">
-      <div class="score-label">Ваш результат</div>
-      <div class="score-circle" id="result-circle"><div class="score-value" id="result-percent">0%</div></div>
-      <div class="score-message" id="result-message"></div>
-      <div class="results-breakdown">
-        <div class="breakdown-item"><div class="breakdown-value" id="result-correct">0</div><div class="breakdown-label">Верно</div></div>
-        <div class="breakdown-item"><div class="breakdown-value" id="result-wrong">0</div><div class="breakdown-label">Ошибок</div></div>
-        <div class="breakdown-item"><div class="breakdown-value" id="result-time">0:00</div><div class="breakdown-label">Время</div></div>
-        <div class="breakdown-item"><div class="breakdown-value" id="result-mastery">—</div><div class="breakdown-label">Уровень</div></div>
-      </div>
-      <div style="display:flex;gap:16px;justify-content:center;flex-wrap:wrap">
-        <button class="btn btn-primary" onclick="resetAssessment()">Пройти ещё раз</button>
-        <button class="btn btn-secondary" onclick="showSection('theory')">К теории</button>
-      </div>
-    </div></div>
-  </div>
-</section>
-
-<script>{js}</script>
-</body></html>"""
+BASE = Path(__file__).resolve().parent / "P002_Math_5_Darslik" / "math-5-class-2"
+ROOT = Path(__file__).resolve().parent
+sys.path.insert(0, str(ROOT / "_Shared_Core"))
+from lesson_builder import (  # noqa: E402
+    LessonBuilder,
+    LessonSpec,
+    example,
+    ilist,
+    slide,
+    summary_slide,
+)
 
 def write_lesson(filename, **kwargs):
-    html = build_html(**kwargs)
-    path = os.path.join(BASE, filename)
-    with open(path, 'w', encoding='utf-8') as f:
-        f.write(html)
+    spec = LessonSpec(
+        lesson_num=kwargs["lesson_num"],
+        title=kwargs["title"],
+        subtitle=kwargs["subtitle"],
+        questions=kwargs["questions"],
+        algorithm=kwargs["algo_steps"],
+        examples=kwargs["examples"],
+        learn_items=kwargs["learn_items"],
+        slides=kwargs["slides"],
+        ui="class2",
+        trainer_mode="index",
+        logo_emoji=False,
+        track_id="track-slides",
+    )
+    html = LessonBuilder.assemble(spec)
+    path = BASE / filename
+    LessonBuilder.write(path, html)
     print(f"Written: {filename} ({len(html)} chars)")
-
-def summary_slide(items):
-    rows = "".join([f'<div style="background:var(--bg-glass);border-radius:10px;padding:12px 16px;display:flex;gap:12px;align-items:flex-start"><span style="color:var(--accent);font-weight:700;font-size:1.2rem">{i+1}</span><span>{t}</span></div>' for i,t in enumerate(items)])
-    return f'<h3>Итог урока</h3><div style="display:flex;flex-direction:column;gap:10px;margin:16px 0">{rows}</div><div style="text-align:center;margin-top:20px;padding:16px;background:var(--accent-dim);border-radius:12px;color:var(--accent);font-weight:700">Отлично! Переходите к тренажёру.</div>'
-
-def ilist(title, items, color="var(--bg-glass)"):
-    rows = "".join([f'<div style="background:{color};border-radius:10px;padding:12px 16px">{t}</div>' for t in items])
-    return f'<p><strong>{title}</strong></p><div style="display:flex;flex-direction:column;gap:8px;margin:12px 0">{rows}</div>'
 
 Q20_COMPARE = [
     {"q":"Сравните 3/5 и 7/10:","options":["3/5 > 7/10","3/5 < 7/10","3/5 = 7/10","нельзя"],"correct":1,"expl":"НОК(5,10)=10. 3/5=6/10; 7/10. 6<7 → 3/5 < 7/10."},
     {"q":"Сравните 4/7 и 4/9:","options":["4/7 < 4/9","4/7 = 4/9","4/7 > 4/9","нельзя"],"correct":2,"expl":"Одинаковые числители. Меньший знаменатель → больше. 7<9 → 4/7 > 4/9."},
-    {"q":"НОК(6, 8) = ?","options":["2","24","16","12"],"correct":3,"expl":"Кратные 6: 6,12,18,24... Кратные 8: 8,16,24... НОК=24. Нет! Кратные 6: 6,12,18,24; 8: 8,16,24. НОК=24. Но среди вариантов 24 — верно."},
+    {"q":"НОК(6, 8) = ?","options":["2","24","16","12"],"correct":1,"expl":"Кратные 6: 6,12,18,24... Кратные 8: 8,16,24... НОК(6,8)=24."},
     {"q":"Какая дробь больше: 5/6 или 4/5?","options":["5/6","4/5","равны","нельзя"],"correct":0,"expl":"НОК(6,5)=30. 5/6=25/30; 4/5=24/30. 25>24 → 5/6 > 4/5."},
     {"q":"Упорядочите по возрастанию: 1/2, 1/3, 1/4","options":["1/4 < 1/3 < 1/2","1/2 < 1/3 < 1/4","1/3 < 1/4 < 1/2","равны"],"correct":0,"expl":"Одинаковые числители. Больший знаменатель → меньше. 1/4 < 1/3 < 1/2."},
     {"q":"Сравните: 2/3 и 3/4","options":["2/3 > 3/4","2/3 = 3/4","2/3 < 3/4","нельзя"],"correct":2,"expl":"НОК(3,4)=12. 2/3=8/12; 3/4=9/12. 8<9 → 2/3 < 3/4."},
@@ -312,10 +47,10 @@ Q20_COMPARE = [
     {"q":"Дробь 0.5 = ?","options":["1/3","1/4","1/2","2/3"],"correct":2,"expl":"0.5 = 5/10 = 1/2."},
     {"q":"Сравните: 11/12 и 12/13","options":["11/12 > 12/13","11/12 = 12/13","11/12 < 12/13","нельзя"],"correct":2,"expl":"Оба близки к 1: 11/12=1-1/12; 12/13=1-1/13. 1/13 < 1/12 → 12/13 ближе к 1 → 12/13 > 11/12."},
     {"q":"Что меньше: 3/7 или 4/9?","options":["3/7","4/9","равны","нельзя"],"correct":1,"expl":"НОК(7,9)=63. 3/7=27/63; 4/9=28/63. 27<28 → 3/7 < 4/9."},
-    {"q":"Упорядочьте по убыванию: 2/3, 3/5, 7/10","options":["7/10>3/5>2/3","2/3>7/10>3/5","7/10>2/3>3/5","2/3>3/5>7/10"],"correct":1,"expl":"НОК=30: 2/3=20/30; 3/5=18/30; 7/10=21/30. Убывание: 21>20>18 → 7/10>2/3>3/5. Нет, вариант 1 правильный."},
+    {"q":"Упорядочьте по убыванию: 2/3, 3/5, 7/10","options":["7/10>3/5>2/3","2/3>7/10>3/5","7/10>2/3>3/5","2/3>3/5>7/10"],"correct":2,"expl":"НОК=30: 2/3=20/30; 3/5=18/30; 7/10=21/30. Убывание: 21>20>18 → 7/10>2/3>3/5."},
     {"q":"Сравните: 5/9 и 6/11","options":["5/9 > 6/11","5/9 = 6/11","5/9 < 6/11","нельзя"],"correct":0,"expl":"НОК(9,11)=99. 5/9=55/99; 6/11=54/99. 55>54 → 5/9 > 6/11."},
     {"q":"Какая дробь ближе к 1: 7/8 или 9/11?","options":["7/8","9/11","равноудалены","нельзя"],"correct":0,"expl":"7/8=0.875; 9/11≈0.818. 7/8 ближе к 1."},
-    {"q":"Сравните через НОК: 1/4 и 2/7","options":["1/4 < 2/7","1/4 = 2/7","1/4 > 2/7","нельзя"],"correct":2,"expl":"НОК(4,7)=28. 1/4=7/28; 2/7=8/28. 7<8 → 1/4 < 2/7. Нет, 7<8 значит 1/4 < 2/7."},
+    {"q":"Сравните через НОК: 1/4 и 2/7","options":["1/4 < 2/7","1/4 = 2/7","1/4 > 2/7","нельзя"],"correct":0,"expl":"НОК(4,7)=28. 1/4=7/28; 2/7=8/28. 7<8 → 1/4 < 2/7."},
     {"q":"Расположите на числовой прямой: 0, 1/3, 2/3, 1. Что идёт после 1/3?","options":["0","1","2/3","1/3"],"correct":2,"expl":"0 < 1/3 < 2/3 < 1. После 1/3 идёт 2/3."},
     {"q":"Сравните: 4/5 и 0,8","options":["4/5 > 0,8","4/5 = 0,8","4/5 < 0,8","нельзя"],"correct":1,"expl":"4/5 = 0,8. Они равны."},
     {"q":"Найдите наибольшую из дробей: 2/5, 3/8, 7/20","options":["2/5","3/8","7/20","равны"],"correct":0,"expl":"НОК(5,8,20)=40. 16/40; 15/40; 14/40. 16>15>14 → 2/5 наибольшая."},
@@ -391,6 +126,29 @@ Q20_DIV = [
     {"q":"6 ÷ 1½ = ?","options":["9","4","3","6"],"correct":1,"expl":"6 ÷ 3/2 = 6 × 2/3 = 12/3 = 4."},
 ]
 
+Q20_MIXED_ADD = [
+    {"q":"1½ + 2½ = ?","options":["3","4","3½","4½"],"correct":1,"expl":"Целые: 1+2=3. Дроби: 1/2+1/2=1. Итог: 4."},
+    {"q":"2⅓ + 1⅓ = ?","options":["3⅔","3⅓","4","4⅓"],"correct":0,"expl":"Целые: 2+1=3. Дроби: 1/3+1/3=2/3. Итог: 3⅔."},
+    {"q":"1¾ + 2¾ = ?","options":["3½","4","4½","3¾"],"correct":2,"expl":"Целые: 1+2=3. Дроби: 3/4+3/4=6/4=1½. 3+1½=4½."},
+    {"q":"3⅖ + 1⅗ = ?","options":["4","5","4⅘","5½"],"correct":1,"expl":"Целые: 3+1=4. Дроби: 2/5+3/5=1. Итог: 5."},
+    {"q":"2½ + 1⅓ = ?","options":["3⅚","3⅔","3½","4⅙"],"correct":0,"expl":"НОК(2,3)=6. 2 3/6 + 1 2/6 = 3 5/6 = 3⅚."},
+    {"q":"1¼ + 2⅓ = ?","options":["3 7/12","3½","3¼","4 1/12"],"correct":0,"expl":"НОК(4,3)=12. 3/12+4/12=7/12. Итог: 3 7/12."},
+    {"q":"4⅔ − 2⅓ = ?","options":["2⅓","2","2⅔","3⅓"],"correct":0,"expl":"Целые: 4−2=2. Дроби: 2/3−1/3=1/3. Итог: 2⅓."},
+    {"q":"5½ − 2⅓ = ?","options":["3⅙","3½","3⅔","2⅚"],"correct":0,"expl":"НОК(2,3)=6. 5 3/6 − 2 2/6 = 3 1/6 = 3⅙."},
+    {"q":"3¼ − 1¾ = ?","options":["2","1½","2½","1¼"],"correct":1,"expl":"3¼ = 2 5/4. 2 5/4 − 1 3/4 = 1 2/4 = 1½."},
+    {"q":"2⅓ + 3⅔ = ?","options":["5","6","5⅓","5⅔"],"correct":1,"expl":"Целые: 2+3=5. Дроби: 1/3+2/3=1. Итог: 6."},
+    {"q":"1½ + 2¼ + 1¼ = ?","options":["4","5","4½","5½"],"correct":1,"expl":"НОК=4. Дроби: 2/4+1/4+1/4=1. Целые: 4. Итог: 5."},
+    {"q":"Найдите x: x + 1½ = 3","options":["1½","2","2½","1"],"correct":0,"expl":"x = 3 − 1½ = 1½."},
+    {"q":"Найдите x: 2⅔ + x = 5","options":["2⅓","2","3⅓","3"],"correct":0,"expl":"x = 5 − 2⅔ = 4 3/3 − 2 2/3 = 2 1/3 = 2⅓."},
+    {"q":"Путь: 1¾ км + 2½ км = ?","options":["3¾ км","4¼ км","4 км","3½ км"],"correct":1,"expl":"НОК(4,2)=4. 1 3/4 + 2 2/4 = 3 5/4 = 4¼ км."},
+    {"q":"Лента: 5 м − 2¼ м = ?","options":["2¾ м","3¼ м","3¾ м","2½ м"],"correct":0,"expl":"5 = 4 4/4. 4 4/4 − 2 1/4 = 2 3/4 = 2¾ м."},
+    {"q":"2⅙ + 1⅚ = ?","options":["3","4","3½","4½"],"correct":1,"expl":"Дроби: 1/6+5/6=1. Целые: 2+1=3. Итог: 4."},
+    {"q":"3 5/12 + 2 7/12 = ?","options":["5","6","5½","6⅓"],"correct":1,"expl":"Дроби: 5/12+7/12=1. Целые: 3+2=5. Итог: 6."},
+    {"q":"4⅓ − 1⅔ = ?","options":["2","2⅓","2⅔","3"],"correct":2,"expl":"4⅓ = 3 4/3. 3 4/3 − 1 2/3 = 2 2/3 = 2⅔."},
+    {"q":"1⅖ + 2⅗ + 1⅕ = ?","options":["4⅕","5","5⅕","4⅘"],"correct":2,"expl":"Дроби: 2/5+3/5+1/5=6/5=1⅕. Целые: 4. Итог: 4+1⅕=5⅕."},
+    {"q":"Сколько нужно добавить к 2¾, чтобы получить 5?","options":["2","2¼","2½","3¼"],"correct":1,"expl":"5 − 2¾ = 4 4/4 − 2 3/4 = 2 1/4 = 2¼."},
+]
+
 Q20_PARTS = [
     {"q":"Нахождение части от числа: 3/4 от 40 = ?","options":["10","20","30","40"],"correct":2,"expl":"40÷4×3=10×3=30."},
     {"q":"Нахождение числа по его части: 3/4 числа = 15. Число = ?","options":["11","15","20","25"],"correct":2,"expl":"15÷3×4=5×4=20."},
@@ -418,8 +176,8 @@ Q20_GENERAL = [
     {"q":"Сократите 18/24:","options":["3/4","6/8","9/12","все равны"],"correct":3,"expl":"НОД(18,24)=6. 18/24=3/4. Все три варианта равны 3/4."},
     {"q":"НОК(4, 6, 8) = ?","options":["24","48","12","96"],"correct":0,"expl":"НОК(4,6,8)=24."},
     {"q":"Переведите 5⅗ в неправильную дробь:","options":["28/5","29/5","30/5","25/5"],"correct":0,"expl":"5×5+3=28. Ответ: 28/5."},
-    {"q":"Переведите 19/6 в смешанное:","options":["3⅙","2⅚","3⅚","4⅙"],"correct":1,"expl":"19÷6=3 (ост.1). Ответ: 3⅙. Нет: 3 с остатком 1 → 3⅙. Значит ответ — вариант 0: 3⅙."},
-    {"q":"1/3 + 1/4 + 1/12 = ?","options":["3/19","1/2","7/12","2/3"],"correct":1,"expl":"НОК=12. 4/12+3/12+1/12=8/12=2/3. Нет, 2/3=8/12. Вариант 3 верен."},
+    {"q":"Переведите 19/6 в смешанное:","options":["3⅙","2⅚","3⅚","4⅙"],"correct":0,"expl":"19÷6=3 (ост.1). 3 с остатком 1 → 3⅙."},
+    {"q":"1/3 + 1/4 + 1/12 = ?","options":["3/19","1/2","7/12","2/3"],"correct":3,"expl":"НОК=12. 4/12+3/12+1/12=8/12=2/3."},
     {"q":"2½ × 2½ = ?","options":["4","6¼","5","4½"],"correct":1,"expl":"5/2×5/2=25/4=6¼."},
     {"q":"3/4 ÷ 3/8 = ?","options":["9/32","2","1/2","8/9"],"correct":1,"expl":"3/4 × 8/3 = 24/12 = 2."},
     {"q":"Найдите 40% от 80 (40%=2/5):","options":["16","24","32","40"],"correct":2,"expl":"80×2/5=160/5=32."},
@@ -471,12 +229,12 @@ LESSONS = [
             ("Упорядочить","Расставить дроби в нужном порядке (возрастание/убывание)."),
         ],
         "examples": [
-            make_example(1,"Одинаковые знаменатели","Сравните 5/9 и 7/9.",["Знаменатели равны: 9","5 < 7 → <strong>5/9 < 7/9</strong>"]),
-            make_example(2,"Одинаковые числители","Сравните 3/5 и 3/8.",["Числители равны: 3","5 < 8 → 3/5 > 3/8 → <strong>3/5 > 3/8</strong>"]),
-            make_example(3,"Через НОК","Сравните 5/6 и 7/9.",["НОК(6,9)=18","5/6=15/18; 7/9=14/18","15 > 14 → <strong>5/6 > 7/9</strong>"]),
-            make_example(4,"Упорядочивание","Расставьте по возрастанию: 1/2, 2/3, 3/8.",["НОК(2,3,8)=24","12/24; 16/24; 9/24","9<12<16 → <strong>3/8 < 1/2 < 2/3</strong>"]),
-            make_example(5,"Числовая прямая","Отметьте на числовой прямой дроби 1/4, 1/2, 3/4.",["1/4=0,25; 1/2=0,5; 3/4=0,75","<strong>Порядок: 1/4 < 1/2 < 3/4</strong>"]),
-            make_example(6,"Дробь между дробями","Найдите дробь между 2/5 и 3/5.",["2/5 = 4/10; 3/5 = 6/10","5/10 = 1/2 лежит между ними → <strong>1/2</strong>"]),
+            example(1,"Одинаковые знаменатели","Сравните 5/9 и 7/9.",["Знаменатели равны: 9","5 < 7 → <strong>5/9 < 7/9</strong>"]),
+            example(2,"Одинаковые числители","Сравните 3/5 и 3/8.",["Числители равны: 3","5 < 8 → 3/5 > 3/8 → <strong>3/5 > 3/8</strong>"]),
+            example(3,"Через НОК","Сравните 5/6 и 7/9.",["НОК(6,9)=18","5/6=15/18; 7/9=14/18","15 > 14 → <strong>5/6 > 7/9</strong>"]),
+            example(4,"Упорядочивание","Расставьте по возрастанию: 1/2, 2/3, 3/8.",["НОК(2,3,8)=24","12/24; 16/24; 9/24","9<12<16 → <strong>3/8 < 1/2 < 2/3</strong>"]),
+            example(5,"Числовая прямая","Отметьте на числовой прямой дроби 1/4, 1/2, 3/4.",["1/4=0,25; 1/2=0,5; 3/4=0,75","<strong>Порядок: 1/4 < 1/2 < 3/4</strong>"]),
+            example(6,"Дробь между дробями","Найдите дробь между 2/5 и 3/5.",["2/5 = 4/10; 3/5 = 6/10","5/10 = 1/2 лежит между ними → <strong>1/2</strong>"]),
         ],
         "questions": Q20_COMPARE,
     }),
@@ -512,12 +270,12 @@ LESSONS = [
             ("Сократить и упростить","НОД(числитель, знаменатель). При неправильной дроби — перевести в смешанное."),
         ],
         "examples": [
-            make_example(1,"Одинаковые знаменатели","Вычислите: 4/7 + 2/7.",["4+2=6; знаменатель 7","Ответ: <strong>6/7</strong>"]),
-            make_example(2,"Разные знаменатели","Вычислите: 1/3 + 1/4.",["НОК(3,4)=12","4/12+3/12=7/12","Ответ: <strong>7/12</strong>"]),
-            make_example(3,"Вычитание","Вычислите: 5/6 - 1/4.",["НОК(6,4)=12","10/12-3/12=7/12","Ответ: <strong>7/12</strong>"]),
-            make_example(4,"Три дроби","Вычислите: 1/2 + 1/3 - 1/6.",["НОК(2,3,6)=6","3/6+2/6-1/6=4/6=2/3","Ответ: <strong>2/3</strong>"]),
-            make_example(5,"С целым","Вычислите: 3 - 5/4.",["3=12/4","12/4-5/4=7/4=1¾","Ответ: <strong>1¾</strong>"]),
-            make_example(6,"Задача","В бидоне было 3/4 л молока. Выпили 1/6 л. Сколько осталось?",["НОК(4,6)=12","9/12-2/12=7/12","Ответ: <strong>7/12 л</strong>"]),
+            example(1,"Одинаковые знаменатели","Вычислите: 4/7 + 2/7.",["4+2=6; знаменатель 7","Ответ: <strong>6/7</strong>"]),
+            example(2,"Разные знаменатели","Вычислите: 1/3 + 1/4.",["НОК(3,4)=12","4/12+3/12=7/12","Ответ: <strong>7/12</strong>"]),
+            example(3,"Вычитание","Вычислите: 5/6 - 1/4.",["НОК(6,4)=12","10/12-3/12=7/12","Ответ: <strong>7/12</strong>"]),
+            example(4,"Три дроби","Вычислите: 1/2 + 1/3 - 1/6.",["НОК(2,3,6)=6","3/6+2/6-1/6=4/6=2/3","Ответ: <strong>2/3</strong>"]),
+            example(5,"С целым","Вычислите: 3 - 5/4.",["3=12/4","12/4-5/4=7/4=1¾","Ответ: <strong>1¾</strong>"]),
+            example(6,"Задача","В бидоне было 3/4 л молока. Выпили 1/6 л. Сколько осталось?",["НОК(4,6)=12","9/12-2/12=7/12","Ответ: <strong>7/12 л</strong>"]),
         ],
         "questions": Q20_ADD_SUB,
     }),
@@ -553,14 +311,14 @@ LESSONS = [
             ("Упростить результат","Если дробная часть ≥ 1: выделить целую. Сократить дробную часть."),
         ],
         "examples": [
-            make_example(1,"Одинаковые знаменатели","Вычислите: 3⅖ + 2⅕.",["Целые: 3+2=5","Дроби: 2/5+1/5=3/5","Ответ: <strong>5⅗</strong>"]),
-            make_example(2,"Перенос","Вычислите: 1¾ + 2¾.",["Целые: 1+2=3","Дроби: 3/4+3/4=6/4=1½","3+1½ = <strong>4½</strong>"]),
-            make_example(3,"Разные знаменатели","Вычислите: 2½ + 1⅓.",["НОК(2,3)=6","2 3/6 + 1 2/6 = 3 5/6","Ответ: <strong>3⅚</strong>"]),
-            make_example(4,"Три числа","Вычислите: 1¼ + 1½ + 1¾.",["НОК(4,2,4)=4","1 1/4 + 1 2/4 + 1 3/4 = 3 6/4","3+1½ = <strong>4½</strong>"]),
-            make_example(5,"Задача","В одном кувшине 2⅓ л, в другом 1⅔ л воды. Сколько всего?",["НОК(3)=3: 2⅓+1⅔=3 3/3=3+1=<strong>4 л</strong>"]),
-            make_example(6,"Через неправильные","Вычислите: 3¾ + 2⅔.",["15/4+8/3=45/12+32/12=77/12=6 5/12","Ответ: <strong>6 5/12</strong>"]),
+            example(1,"Одинаковые знаменатели","Вычислите: 3⅖ + 2⅕.",["Целые: 3+2=5","Дроби: 2/5+1/5=3/5","Ответ: <strong>5⅗</strong>"]),
+            example(2,"Перенос","Вычислите: 1¾ + 2¾.",["Целые: 1+2=3","Дроби: 3/4+3/4=6/4=1½","3+1½ = <strong>4½</strong>"]),
+            example(3,"Разные знаменатели","Вычислите: 2½ + 1⅓.",["НОК(2,3)=6","2 3/6 + 1 2/6 = 3 5/6","Ответ: <strong>3⅚</strong>"]),
+            example(4,"Три числа","Вычислите: 1¼ + 1½ + 1¾.",["НОК(4,2,4)=4","1 1/4 + 1 2/4 + 1 3/4 = 3 6/4","3+1½ = <strong>4½</strong>"]),
+            example(5,"Задача","В одном кувшине 2⅓ л, в другом 1⅔ л воды. Сколько всего?",["НОК(3)=3: 2⅓+1⅔=3 3/3=3+1=<strong>4 л</strong>"]),
+            example(6,"Через неправильные","Вычислите: 3¾ + 2⅔.",["15/4+8/3=45/12+32/12=77/12=6 5/12","Ответ: <strong>6 5/12</strong>"]),
         ],
-        "questions": Q20_ADD_SUB,
+        "questions": Q20_MIXED_ADD,
     }),
 ]
 

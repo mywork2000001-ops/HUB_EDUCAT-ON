@@ -1,0 +1,778 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Урок 7 — Площадь составных фигур</title>
+    <style>
+      :root{--bg-dark:#0f0f1a;--bg-card:rgba(255,255,255,0.05);--bg-glass:rgba(255,255,255,0.08);--border-glass:rgba(255,255,255,0.15);--text-primary:#e8e8f0;--text-secondary:#a0a0b8;--accent:#00d4aa;--accent-dim:rgba(0,212,170,0.2);--accent-warm:#ff6b6b;--accent-warm-dim:rgba(255,107,107,0.2);--accent-blue:#4dabf7;--accent-blue-dim:rgba(77,171,247,0.2);--success:#51cf66;--error:#ff6b6b;--warning:#fcc419;}
+      *{margin:0;padding:0;box-sizing:border-box;}
+      body{font-family:"Segoe UI",system-ui,sans-serif;background:var(--bg-dark);color:var(--text-primary);min-height:100vh;overflow-x:hidden;line-height:1.6;}
+      .bg-animation{position:fixed;top:0;left:0;width:100%;height:100%;z-index:-1;background:radial-gradient(ellipse at 20% 20%,rgba(0,212,170,0.08) 0%,transparent 50%),radial-gradient(ellipse at 80% 80%,rgba(77,171,247,0.08) 0%,transparent 50%);}
+      .bg-animation::before{content:"";position:absolute;width:200%;height:200%;top:-50%;left:-50%;background:repeating-linear-gradient(0deg,transparent,transparent 40px,rgba(255,255,255,0.02) 40px,rgba(255,255,255,0.02) 41px);animation:bgMove 20s linear infinite;}
+      @keyframes bgMove{0%{transform:translateY(0)}100%{transform:translateY(40px)}}
+      nav{position:fixed;top:0;left:0;right:0;background:rgba(15,15,26,0.85);backdrop-filter:blur(20px);border-bottom:1px solid var(--border-glass);z-index:1000;padding:0 20px;}
+      .nav-container{max-width:1200px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;height:60px;}
+      .logo{font-size:1.3rem;font-weight:700;background:linear-gradient(135deg,var(--accent),var(--accent-blue));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;text-decoration:none;}
+      .nav-links{display:flex;gap:8px;list-style:none;}
+      .nav-links a{color:var(--text-secondary);text-decoration:none;padding:8px 16px;border-radius:8px;transition:all 0.3s;font-size:0.9rem;font-weight:500;cursor:pointer;border:none;background:transparent;}
+      .nav-links a:hover,.nav-links a.active{color:var(--text-primary);background:var(--bg-glass);}
+      .nav-links a.active{background:var(--accent-dim);color:var(--accent);}
+      section{display:none;opacity:0;padding:78px 20px 32px;max-width:1000px;margin:0 auto;transition:opacity 0.3s ease;}
+      section.active{display:block;opacity:1;animation:fadeIn 0.5s ease;}
+      @keyframes fadeIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+      .card{background:var(--bg-card);backdrop-filter:blur(20px);border:1px solid var(--border-glass);border-radius:20px;padding:20px;margin-bottom:16px;transition:transform 0.3s,box-shadow 0.3s;}
+      .card:hover{transform:translateY(-2px);box-shadow:0 20px 40px rgba(0,0,0,0.3);}
+      .card-title{font-size:1.5rem;font-weight:700;margin-bottom:16px;display:flex;align-items:center;gap:12px;}
+      .card-title .icon{width:40px;height:40px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.3rem;}
+      .hero{text-align:center;padding:140px 20px 80px;}
+      .hero h1{font-size:3rem;font-weight:800;margin-bottom:20px;background:linear-gradient(135deg,var(--accent),var(--accent-blue),var(--accent-warm));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1.2;}
+      .hero p{font-size:1.2rem;color:var(--text-secondary);max-width:600px;margin:0 auto 40px;}
+      .btn{display:inline-flex;align-items:center;gap:8px;padding:14px 32px;border-radius:12px;border:none;font-size:1rem;font-weight:600;cursor:pointer;transition:all 0.3s;text-decoration:none;}
+      .btn-primary{background:linear-gradient(135deg,var(--accent),var(--accent-blue));color:#000;}
+      .btn-primary:hover{transform:translateY(-2px);box-shadow:0 10px 30px var(--accent-dim);}
+      .btn-secondary{background:var(--bg-glass);color:var(--text-primary);border:1px solid var(--border-glass);}
+      .btn-secondary:hover{background:var(--bg-card);}
+      .btn:disabled{opacity:0.5;cursor:not-allowed;transform:none!important;}
+      .generate-widget{background:var(--bg-card);border:1px solid var(--border-glass);border-radius:20px;padding:14px;width:100%;}
+      .widget-slide{display:none;padding:12px 16px;animation:slideFade 0.3s ease;}
+      .widget-slide.active{display:block;}
+      @keyframes slideFade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+      .widget-slide h3{font-size:1.3rem;color:var(--accent);margin-bottom:16px;}
+      .widget-slide p,.widget-slide li{color:var(--text-secondary);line-height:1.8;margin-bottom:12px;}
+      .widget-slide table{width:100%;border-collapse:collapse;margin:12px 0;color:var(--text-secondary);}
+      .widget-slide table th,.widget-slide table td{border:1px solid var(--border-glass);padding:10px;text-align:left;}
+      .widget-slide table th{background:var(--bg-glass);color:var(--text-primary);}
+      .widget-nav{display:flex;justify-content:space-between;align-items:center;margin-top:16px;}
+      .widget-progress{text-align:center;font-size:0.9rem;color:var(--text-secondary);margin-bottom:12px;}
+      .sequence-component{display:flex;flex-direction:column;gap:20px;position:relative;}
+      .sequence-step{background:var(--bg-card);border:1px solid var(--border-glass);border-radius:16px;padding:24px 24px 24px 72px;position:relative;transition:all 0.3s;}
+      .sequence-step:hover{border-color:var(--accent);transform:translateX(4px);}
+      .sequence-number{position:absolute;left:20px;top:20px;width:40px;height:40px;background:var(--accent);color:#000;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:1.1rem;}
+      .sequence-step h4{color:var(--text-primary);margin-bottom:8px;font-size:1.1rem;}
+      .sequence-step p{color:var(--text-secondary);line-height:1.7;}
+      .sequence-connector{position:absolute;left:39px;top:60px;bottom:-30px;width:2px;background:var(--accent-dim);z-index:0;}
+      .sequence-step:last-child .sequence-connector{display:none;}
+      .problem-card{background:var(--bg-card);border:1px solid var(--border-glass);border-radius:16px;padding:24px;margin-bottom:20px;}
+      .problem-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:8px;}
+      .problem-number{background:var(--accent-dim);color:var(--accent);padding:4px 12px;border-radius:20px;font-size:0.85rem;font-weight:600;}
+      .problem-type{color:var(--text-secondary);font-size:0.85rem;}
+      .problem-text{font-size:1.1rem;margin-bottom:16px;line-height:1.8;}
+      .solution-btn{background:var(--accent-dim);color:var(--accent);border:1px solid var(--accent);padding:10px 20px;border-radius:8px;cursor:pointer;font-weight:600;transition:all 0.3s;}
+      .solution-btn:hover{background:var(--accent);color:#000;}
+      .solution{display:none;margin-top:20px;padding:20px;background:rgba(0,212,170,0.05);border-left:3px solid var(--accent);border-radius:0 12px 12px 0;}
+      .solution.active{display:block;animation:slideDown 0.3s ease;}
+      @keyframes slideDown{from{opacity:0;max-height:0}to{opacity:1;max-height:1000px}}
+      .solution p{margin-bottom:8px;color:var(--text-secondary);}
+      .solution strong{color:var(--accent);}
+      .quiz-container{background:var(--bg-card);border:1px solid var(--border-glass);border-radius:20px;padding:32px;}
+      .quiz-progress{display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;flex-wrap:wrap;gap:8px;}
+      .progress-bar{flex:1;height:8px;background:var(--bg-glass);border-radius:4px;margin:0 16px;overflow:hidden;min-width:100px;}
+      .progress-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent-blue));border-radius:4px;transition:width 0.5s ease;width:0%;}
+      .quiz-question{font-size:1.2rem;margin-bottom:24px;padding:20px;background:var(--bg-glass);border-radius:12px;border-left:4px solid var(--accent);}
+      .quiz-options{display:grid;gap:12px;}
+      .quiz-option{background:var(--bg-glass);border:2px solid var(--border-glass);border-radius:12px;padding:16px 20px;cursor:pointer;transition:all 0.3s;display:flex;align-items:center;gap:12px;}
+      .quiz-option:hover{border-color:var(--accent);background:var(--accent-dim);}
+      .quiz-option.correct{border-color:var(--success);background:rgba(81,207,102,0.15);}
+      .quiz-option.wrong{border-color:var(--error);background:rgba(255,107,107,0.15);}
+      .quiz-option.disabled{pointer-events:none;opacity:0.7;}
+      .option-letter{width:32px;height:32px;border-radius:8px;background:var(--bg-card);display:flex;align-items:center;justify-content:center;font-weight:700;flex-shrink:0;}
+      .quiz-nav{display:flex;justify-content:space-between;margin-top:24px;}
+      .stat{background:var(--bg-glass);padding:12px 24px;border-radius:12px;text-align:center;min-width:100px;border:1px solid var(--border-glass);}
+      .stat-value{font-size:1.5rem;font-weight:700;color:var(--accent);}
+      .stat-label{font-size:0.85rem;color:var(--text-secondary);}
+      .timer{position:fixed;top:80px;right:20px;background:var(--bg-card);backdrop-filter:blur(20px);border:1px solid var(--border-glass);border-radius:16px;padding:16px 24px;font-size:1.3rem;font-weight:700;font-variant-numeric:tabular-nums;z-index:999;box-shadow:0 10px 30px rgba(0,0,0,0.3);}
+      .timer.warning{border-color:var(--warning);color:var(--warning);animation:pulse 1s infinite;}
+      .timer.danger{border-color:var(--error);color:var(--error);animation:pulse 0.5s infinite;}
+      @keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.05)}}
+      .results-container{text-align:center;padding:40px;}
+      .score-circle{width:200px;height:200px;border-radius:50%;background:conic-gradient(var(--accent) calc(var(--score)*3.6deg),var(--bg-glass) 0);margin:0 auto 32px;display:flex;align-items:center;justify-content:center;position:relative;}
+      .score-circle::before{content:"";position:absolute;width:170px;height:170px;background:var(--bg-dark);border-radius:50%;}
+      .score-value{position:relative;font-size:3rem;font-weight:800;color:var(--accent);}
+      .score-label{font-size:1.2rem;color:var(--text-secondary);margin-bottom:8px;}
+      .score-message{font-size:1.5rem;font-weight:700;margin-bottom:32px;}
+      .results-breakdown{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:16px;max-width:600px;margin:0 auto 32px;}
+      .breakdown-item{background:var(--bg-glass);padding:16px;border-radius:12px;}
+      .breakdown-value{font-size:1.5rem;font-weight:700;color:var(--accent);}
+      .breakdown-label{font-size:0.85rem;color:var(--text-secondary);}
+      @media(max-width:768px){.hero h1{font-size:2rem}.nav-links{display:none}.timer{top:70px;right:10px;font-size:1rem;padding:10px 16px}.card{padding:14px}section{padding:70px 12px 24px}}
+    </style>
+  </head>
+  <body>
+    <div class="bg-animation"></div>
+    <nav>
+      <div class="nav-container">
+        <a href="index.html" class="logo" target="_self">📐 Урок 7</a>
+        <ul class="nav-links">
+          <li><a href="#" class="active" data-section="home">Главная</a></li>
+          <li><a href="#" data-section="theory">Теория</a></li>
+          <li><a href="#" data-section="algorithm">Алгоритм</a></li>
+          <li><a href="#" data-section="examples">Примеры</a></li>
+          <li><a href="#" data-section="trainer">Тренажёр</a></li>
+          <li><a href="#" data-section="assessment">Аттестация</a></li>
+        </ul>
+      </div>
+    </nav>
+
+    <!-- HOME -->
+    <section id="home" class="active">
+      <div class="hero">
+        <h1>Площадь составных фигур</h1>
+        <p>Урок 7. Фигуры из прямоугольников и прямоугольных треугольников. Метод разбивки на части. 30 вопросов для полного освоения темы.</p>
+        <div style="display:flex;gap:16px;justify-content:center;flex-wrap:wrap;">
+          <button class="btn btn-primary" onclick="showSection('theory')">Начать обучение</button>
+          <button class="btn btn-secondary" onclick="showSection('assessment')">Проверить знания</button>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title"><span class="icon" style="background:var(--accent-dim)">🎯</span>Что вы изучите</div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px;">
+          <div class="card" style="padding:20px;"><h3 style="color:var(--accent);margin-bottom:8px;">Составная фигура</h3><p style="color:var(--text-secondary);">Фигура, которую можно разбить на прямоугольники и прямоугольные треугольники.</p></div>
+          <div class="card" style="padding:20px;"><h3 style="color:var(--accent-blue);margin-bottom:8px;">Метод сложения</h3><p style="color:var(--text-secondary);">S = S₁ + S₂ + ... Площадь составной фигуры равна сумме площадей её частей.</p></div>
+          <div class="card" style="padding:20px;"><h3 style="color:var(--accent-warm);margin-bottom:8px;">Формулы частей</h3><p style="color:var(--text-secondary);">Прямоугольник: S = a × b. Прямоугольный треугольник: S = ½ × a × b.</p></div>
+          <div class="card" style="padding:20px;"><h3 style="color:var(--warning);margin-bottom:8px;">Визуальная разбивка</h3><p style="color:var(--text-secondary);">Научитесь проводить вспомогательные линии и разбивать любую Г-образную фигуру.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- THEORY -->
+    <section id="theory">
+      <div class="card">
+        <div class="card-title"><span class="icon" style="background:var(--accent-dim)">📖</span>Глава 1. Визуальная теория</div>
+        <p style="color:var(--text-secondary);margin-bottom:20px;">Изучите понятие составной фигуры, формулы и метод разбивки.</p>
+        <div class="generate-widget">
+          <div class="widget-progress">Слайд <span id="slide-num">1</span> / <span id="slide-total">5</span></div>
+          <div class="widget-track" id="track-slides"></div>
+          <div class="widget-nav">
+            <button type="button" class="btn btn-secondary" onclick="prevSlide()">← Назад</button>
+            <button type="button" class="btn btn-primary" onclick="nextSlide()">Вперёд →</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ALGORITHM -->
+    <section id="algorithm">
+      <div class="card">
+        <div class="card-title"><span class="icon" style="background:var(--accent-blue-dim)">🪜</span>Глава 2. Алгоритм вычисления площади составной фигуры</div>
+        <p style="color:var(--text-secondary);margin-bottom:20px;">Пошаговый алгоритм для нахождения площади любой составной фигуры.</p>
+        <div class="sequence-component">
+          <div class="sequence-step">
+            <div class="sequence-number">1</div>
+            <div class="sequence-connector"></div>
+            <h4>Изучи фигуру и определи её части</h4>
+            <p>Рассмотри фигуру: найди прямые углы, прямые стороны. Мысленно раздели фигуру на знакомые части — прямоугольники и прямоугольные треугольники.</p>
+          </div>
+          <div class="sequence-step">
+            <div class="sequence-number">2</div>
+            <div class="sequence-connector"></div>
+            <h4>Проведи вспомогательные линии</h4>
+            <p>Нарисуй линию раздела, которая делит фигуру на отдельные прямоугольники и треугольники. Убедись, что каждая часть — простая фигура с известными сторонами.</p>
+          </div>
+          <div class="sequence-step">
+            <div class="sequence-number">3</div>
+            <div class="sequence-connector"></div>
+            <h4>Запиши размеры каждой части</h4>
+            <p>Определи длины сторон каждой части: для прямоугольника — длину и ширину (a, b); для треугольника — два катета (a, b).</p>
+          </div>
+          <div class="sequence-step">
+            <div class="sequence-number">4</div>
+            <div class="sequence-connector"></div>
+            <h4>Вычисли площадь каждой части</h4>
+            <p>Прямоугольник: S₁ = a × b. Прямоугольный треугольник: S₂ = ½ × a × b. Используй нужную формулу для каждой части.</p>
+          </div>
+          <div class="sequence-step">
+            <div class="sequence-number">5</div>
+            <h4>Сложи площади всех частей</h4>
+            <p>S = S₁ + S₂ + ... Сложи все полученные значения. Запиши ответ в квадратных единицах (см², м², кв. ед.).</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- EXAMPLES -->
+    <section id="examples">
+      <div class="card">
+        <div class="card-title"><span class="icon" style="background:var(--accent-dim)">📝</span>Глава 3. Разбор задач</div>
+        <p style="color:var(--text-secondary);margin-bottom:24px;">Пять задач с подробным решением по теме площади составных фигур.</p>
+      </div>
+      <div id="examples-container"></div>
+    </section>
+
+    <!-- TRAINER -->
+    <section id="trainer">
+      <div class="card">
+        <div class="card-title"><span class="icon" style="background:var(--accent-dim)">🏋️</span>Глава 4. Тренажёр</div>
+        <p style="color:var(--text-secondary);margin-bottom:24px;">Введите площадь составной фигуры в см².</p>
+        <div class="quiz-container" style="margin-bottom:20px;">
+          <div id="trainer-question" style="font-size:1.3rem;text-align:center;margin-bottom:24px;padding:24px;background:var(--bg-glass);border-radius:12px;">Нажмите «Новая задача» для начала</div>
+          <div style="display:flex;gap:12px;margin-bottom:20px;">
+            <input type="text" id="trainer-answer" placeholder="Введите число (в см²)" style="flex:1;padding:14px 16px;background:var(--bg-glass);border:2px solid var(--border-glass);border-radius:12px;color:var(--text-primary);font-size:1rem;outline:none;" />
+            <button class="btn btn-primary" onclick="checkTrainer()" id="trainer-check-btn" disabled>Проверить</button>
+          </div>
+          <div id="trainer-feedback" style="min-height:60px;margin-bottom:16px;"></div>
+          <div style="display:flex;gap:12px;justify-content:center;">
+            <button class="btn btn-secondary" onclick="newTrainerProblem()">Новая задача</button>
+            <button class="btn btn-secondary" onclick="showTrainerHint()">Подсказка</button>
+          </div>
+          <div id="trainer-hint" style="display:none;margin-top:20px;padding:16px;background:var(--accent-blue-dim);border-radius:12px;border-left:4px solid var(--accent-blue);"></div>
+        </div>
+        <div style="display:flex;justify-content:center;gap:24px;flex-wrap:wrap;">
+          <div class="stat"><div class="stat-value" id="trainer-correct">0</div><div class="stat-label">Верно</div></div>
+          <div class="stat"><div class="stat-value" id="trainer-total">0</div><div class="stat-label">Всего</div></div>
+          <div class="stat"><div class="stat-value" id="trainer-streak">0</div><div class="stat-label">Серия</div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ASSESSMENT -->
+    <section id="assessment">
+      <div class="card">
+        <div class="card-title"><span class="icon" style="background:var(--accent-blue-dim)">🧪</span>Глава 5. Аттестация — 30 вопросов</div>
+        <p style="color:var(--text-secondary);margin-bottom:24px;">Диагностика и скоростная викторина по площади составных фигур.</p>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px;">
+          <div class="card" style="padding:24px;text-align:center;">
+            <div style="font-size:3rem;margin-bottom:12px;">🔍</div>
+            <h3 style="margin-bottom:8px;">Диагностический тест</h3>
+            <p style="color:var(--text-secondary);margin-bottom:20px;">30 вопросов с объяснениями.</p>
+            <button class="btn btn-primary" onclick="startDiagnostic()">Начать тест</button>
+          </div>
+          <div class="card" style="padding:24px;text-align:center;">
+            <div style="font-size:3rem;margin-bottom:12px;">⏱️</div>
+            <h3 style="margin-bottom:8px;">Скоростная викторина</h3>
+            <p style="color:var(--text-secondary);margin-bottom:20px;">30 вопросов • 10 минут.</p>
+            <button class="btn btn-primary" onclick="startTimeAttack()">Начать викторину</button>
+          </div>
+        </div>
+      </div>
+
+      <div id="diagnostic-ui" style="display:none;">
+        <div class="card">
+          <div class="card-title"><span class="icon" style="background:var(--accent-blue-dim)">🔍</span>Диагностический тест (30 вопросов)</div>
+        </div>
+        <div class="quiz-container">
+          <div class="quiz-progress">
+            <span>Вопрос <span id="diag-current">1</span> / <span id="diag-total">30</span></span>
+            <div class="progress-bar"><div class="progress-fill" id="diag-progress"></div></div>
+            <span id="diag-score">0 правильных</span>
+          </div>
+          <div class="quiz-question" id="diag-question"></div>
+          <div class="quiz-options" id="diag-options"></div>
+          <div class="quiz-nav">
+            <button class="btn btn-secondary" onclick="prevDiagnostic()" id="diag-prev" disabled>← Назад</button>
+            <button class="btn btn-primary" onclick="nextDiagnostic()" id="diag-next" disabled>Далее →</button>
+          </div>
+          <div id="diag-explanation" style="display:none;margin-top:20px;padding:16px;background:var(--accent-dim);border-radius:12px;border-left:4px solid var(--accent);"></div>
+        </div>
+      </div>
+
+      <div id="timeattack-ui" style="display:none;">
+        <div class="timer" id="ta-timer">10:00</div>
+        <div class="card">
+          <div class="card-title"><span class="icon" style="background:var(--accent-warm-dim)">⏱️</span>Скоростная викторина</div>
+        </div>
+        <div class="quiz-container">
+          <div class="quiz-progress">
+            <span>Вопрос <span id="ta-current">1</span> / 30</span>
+            <div class="progress-bar"><div class="progress-fill" id="ta-progress"></div></div>
+          </div>
+          <div class="quiz-question" id="ta-question"></div>
+          <div class="quiz-options" id="ta-options"></div>
+          <div style="display:flex;justify-content:flex-end;margin-top:24px;">
+            <button class="btn btn-primary" onclick="nextTimeAttack()" id="ta-next">Ответить →</button>
+          </div>
+        </div>
+      </div>
+
+      <div id="results-ui" style="display:none;">
+        <div class="card">
+          <div class="results-container">
+            <div class="score-label">Ваш результат</div>
+            <div class="score-circle" id="result-circle"><div class="score-value" id="result-percent">0%</div></div>
+            <div class="score-message" id="result-message"></div>
+            <div class="results-breakdown">
+              <div class="breakdown-item"><div class="breakdown-value" id="result-correct">0</div><div class="breakdown-label">Верно</div></div>
+              <div class="breakdown-item"><div class="breakdown-value" id="result-wrong">0</div><div class="breakdown-label">Ошибок</div></div>
+              <div class="breakdown-item"><div class="breakdown-value" id="result-time">0:00</div><div class="breakdown-label">Время</div></div>
+              <div class="breakdown-item"><div class="breakdown-value" id="result-mastery">—</div><div class="breakdown-label">Уровень</div></div>
+            </div>
+            <div style="display:flex;gap:16px;justify-content:center;flex-wrap:wrap;">
+              <button class="btn btn-primary" onclick="resetAssessment()">Пройти ещё раз</button>
+              <button class="btn btn-secondary" onclick="showSection('theory')">К теории</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <script>
+      const AppState = {
+        currentSection: "home",
+        slide: 0,
+        trainer: { correct: 0, total: 0, streak: 0, current: null },
+        diagnostic: { current: 0, score: 0, answers: [] },
+        timeAttack: { current: 0, score: 0, timer: null, timeLeft: 600, startTime: 0, answers: [] },
+        mode: null
+      };
+
+      const slides = [
+        {
+          title: "Составная фигура — что это такое?",
+          content: `
+            <p style="margin-bottom:12px;"><strong>Составная фигура</strong> — фигура, которую можно разбить на прямоугольники и прямоугольные треугольники. Метод: найди площади частей и сложи.</p>
+            <div style="background:var(--accent-dim);padding:16px;border-radius:10px;margin-bottom:12px;text-align:center;">
+              <p style="font-size:1.2rem;margin:0;"><strong>S = S₁ + S₂ + ...</strong></p>
+              <p style="margin-top:8px;color:var(--text-secondary);">Площадь составной фигуры = сумма площадей всех частей</p>
+            </div>
+            <p>Например: Г-образная фигура = прямоугольник 1 + прямоугольник 2. Находим S₁ и S₂, затем складываем.</p>
+            <ul style="margin-left:16px;">
+              <li>Части могут быть любыми прямоугольниками.</li>
+              <li>Разбивка не единственная — результат одинаков.</li>
+              <li>Важно правильно определить размеры каждой части.</li>
+            </ul>`
+        },
+        {
+          title: "Формулы площадей частей",
+          content: `
+            <p style="margin-bottom:12px;">Для вычисления площади составной фигуры нужно знать формулы для каждой части:</p>
+            <table>
+              <tr><th>Фигура</th><th>Формула</th><th>Обозначения</th></tr>
+              <tr><td>Прямоугольник</td><td><strong>S = a × b</strong></td><td>a, b — стороны</td></tr>
+              <tr><td>Прямоугольный треугольник</td><td><strong>S = ½ × a × b</strong></td><td>a, b — катеты</td></tr>
+              <tr><td>Составная фигура</td><td><strong>S = S₁ + S₂ + ...</strong></td><td>сумма частей</td></tr>
+            </table>
+            <div style="background:var(--accent-blue-dim);padding:12px;border-radius:8px;margin-top:12px;">
+              <p style="margin:0;"><strong>Запомни:</strong> Всегда записывай единицы измерения: см², м², кв. ед.</p>
+            </div>`
+        },
+        {
+          title: "Г-образная фигура — разбивка на два прямоугольника",
+          content: `
+            <p style="margin-bottom:12px;">Рассмотрим Г-образную фигуру: она делится вертикальной линией на два прямоугольника.</p>
+            <div style="display:flex;justify-content:center;margin:16px 0;">
+              <svg viewBox="0 0 280 200" width="280" height="200" aria-label="Г-образная фигура, разделённая на два прямоугольника: верхний 4x3 и нижний 8x3">
+                <!-- Outer L-shape outline -->
+                <polygon points="20,20 100,20 100,100 220,100 220,180 20,180" fill="rgba(0,212,170,0.08)" stroke="#00d4aa" stroke-width="2.5"/>
+                <!-- Dividing line -->
+                <line x1="100" y1="20" x2="100" y2="100" stroke="#fcc419" stroke-width="2" stroke-dasharray="6,3"/>
+                <!-- Left rectangle label -->
+                <text x="36" y="110" fill="#00d4aa" font-size="13" font-family="sans-serif" font-weight="bold">S₁</text>
+                <!-- Right rectangle label -->
+                <text x="148" y="148" fill="#4dabf7" font-size="13" font-family="sans-serif" font-weight="bold">S₂</text>
+                <!-- Dimension: top width -->
+                <text x="44" y="14" fill="#e8e8f0" font-size="11" font-family="sans-serif">4 см</text>
+                <!-- Dimension: full width -->
+                <text x="100" y="194" fill="#e8e8f0" font-size="11" font-family="sans-serif">8 см</text>
+                <!-- Dimension: left height -->
+                <text x="1" y="105" fill="#e8e8f0" font-size="11" font-family="sans-serif">8 см</text>
+                <!-- Dimension: bottom height -->
+                <text x="222" y="140" fill="#e8e8f0" font-size="11" font-family="sans-serif">3 см</text>
+                <!-- Right angle markers -->
+                <polyline points="20,32 32,32 32,20" fill="none" stroke="#00d4aa" stroke-width="1.5"/>
+                <polyline points="20,168 32,168 32,180" fill="none" stroke="#00d4aa" stroke-width="1.5"/>
+                <polyline points="208,180 208,168 220,168" fill="none" stroke="#00d4aa" stroke-width="1.5"/>
+              </svg>
+            </div>
+            <p style="color:var(--text-secondary);">Жёлтая пунктирная линия — вспомогательная. Она разбивает фигуру на <strong style="color:var(--accent);">S₁</strong> (левый прямоугольник) и <strong style="color:var(--accent-blue);">S₂</strong> (нижний прямоугольник). S = S₁ + S₂.</p>`
+        },
+        {
+          title: "Пример вычисления составной фигуры",
+          content: `
+            <p style="margin-bottom:12px;"><strong>Задача:</strong> Фигура = прямоугольник 6 × 4 см + прямоугольный треугольник с катетами 2 см и 4 см.</p>
+            <div style="display:flex;justify-content:center;margin:12px 0;">
+              <svg viewBox="0 0 260 160" width="260" height="160" aria-label="Составная фигура: прямоугольник 6x4 и треугольник с катетами 2x4 справа">
+                <!-- Rectangle 6x4 -->
+                <rect x="20" y="30" width="150" height="100" fill="rgba(0,212,170,0.12)" stroke="#00d4aa" stroke-width="2.5"/>
+                <!-- Triangle with legs 2x4 attached at right -->
+                <polygon points="170,30 220,30 170,130" fill="rgba(77,171,247,0.15)" stroke="#4dabf7" stroke-width="2.5"/>
+                <!-- Right angle marker at triangle -->
+                <polyline points="170,44 184,44 184,30" fill="none" stroke="#4dabf7" stroke-width="1.5"/>
+                <!-- Labels -->
+                <text x="82" y="84" fill="#00d4aa" font-size="14" font-family="sans-serif" font-weight="bold">S₁</text>
+                <text x="183" y="84" fill="#4dabf7" font-size="14" font-family="sans-serif" font-weight="bold">S₂</text>
+                <!-- Dimensions -->
+                <text x="75" y="24" fill="#e8e8f0" font-size="11" font-family="sans-serif">6 см</text>
+                <text x="1" y="84" fill="#e8e8f0" font-size="11" font-family="sans-serif">4 см</text>
+                <text x="192" y="24" fill="#e8e8f0" font-size="11" font-family="sans-serif">2 см</text>
+              </svg>
+            </div>
+            <div style="background:var(--accent-dim);padding:14px;border-radius:10px;">
+              <p style="margin-bottom:6px;"><strong>S₁</strong> = 6 × 4 = <strong>24 см²</strong></p>
+              <p style="margin-bottom:6px;"><strong>S₂</strong> = ½ × 2 × 4 = <strong>4 см²</strong></p>
+              <p style="margin:0;font-size:1.1rem;"><strong>S = 24 + 4 = 28 см²</strong></p>
+            </div>`
+        },
+        {
+          title: "Разбивка на части — алгоритм визуального разбиения фигуры",
+          content: `
+            <p style="margin-bottom:12px;"><strong>Три способа разбивки</strong> составной фигуры на части:</p>
+            <ul style="margin-left:16px;margin-bottom:16px;">
+              <li><strong style="color:var(--accent);">Метод 1 — Дополнение:</strong> Добавь прямоугольник до полного прямоугольника, потом вычти лишнее. S = S_полный − S_лишний.</li>
+              <li><strong style="color:var(--accent-blue);">Метод 2 — Разбивка:</strong> Проведи вспомогательную линию и раздели фигуру на части. S = S₁ + S₂.</li>
+              <li><strong style="color:var(--accent-warm);">Метод 3 — Клетки:</strong> Посчитай квадратные клетки внутри фигуры. Каждая клетка 1×1 = 1 кв. ед.</li>
+            </ul>
+            <div style="background:var(--accent-warm-dim);padding:14px;border-radius:10px;">
+              <p style="margin:0;"><strong>Совет:</strong> При разбивке всегда проверяй: сумма частей должна равняться полной фигуре. Никаких перекрытий и пропущенных зон!</p>
+            </div>
+            <table style="margin-top:14px;">
+              <tr><th>Фигура</th><th>Рекомендуемый метод</th></tr>
+              <tr><td>Г-образная</td><td>Разбивка на 2 прямоугольника</td></tr>
+              <tr><td>Т-образная</td><td>Разбивка на 2–3 прямоугольника</td></tr>
+              <tr><td>С треугольником</td><td>Прямоугольник + треугольник</td></tr>
+              <tr><td>Клеточная</td><td>Подсчёт квадратов</td></tr>
+            </table>`
+        }
+      ];
+
+      const examples = [
+        {
+          title: "Прямоугольник + прямоугольный треугольник",
+          task: "Составная фигура: прямоугольник 6 × 4 см и прямоугольный треугольник с катетами 2 см и 4 см. Найдите общую площадь.",
+          sol: "<p>Разбиваем на части:</p><p>S₁ (прямоугольник) = 6 × 4 = <strong>24 см²</strong></p><p>S₂ (треугольник) = ½ × 2 × 4 = ½ × 8 = <strong>4 см²</strong></p><p>S = S₁ + S₂ = 24 + 4 = <strong>28 см²</strong></p>"
+        },
+        {
+          title: "Два прямоугольника",
+          task: "Составная фигура состоит из двух прямоугольников: первый 5 × 3 см, второй 4 × 2 см. Найдите общую площадь.",
+          sol: "<p>S₁ = 5 × 3 = <strong>15 см²</strong></p><p>S₂ = 4 × 2 = <strong>8 см²</strong></p><p>S = 15 + 8 = <strong>23 см²</strong></p><p>Проверка: оба прямоугольника не перекрываются. ✓</p>"
+        },
+        {
+          title: "Прямоугольник и два треугольника",
+          task: "Фигура: прямоугольник 8 × 3 см и два одинаковых прямоугольных треугольника, каждый с катетами 2 см и 3 см. Найдите общую площадь.",
+          sol: "<p>S₁ (прямоугольник) = 8 × 3 = <strong>24 см²</strong></p><p>S₂ (один треугольник) = ½ × 2 × 3 = <strong>3 см²</strong></p><p>S = 24 + 3 + 3 = 24 + 6 = <strong>30 см²</strong></p>"
+        },
+        {
+          title: "Площадь составной фигуры из учебника",
+          task: "Составная фигура: прямоугольник 4 × 6 см и прямоугольный треугольник с катетами 4 см и 6 см. Найдите общую площадь.",
+          sol: "<p>S₁ = 4 × 6 = <strong>24 см²</strong></p><p>S₂ = ½ × 4 × 6 = ½ × 24 = <strong>12 см²</strong></p><p>S = 24 + 12 = <strong>36 см²</strong></p><p><strong>Ответ: S = 36 см²</strong></p>"
+        },
+        {
+          title: "Клеточная фигура — подсчёт квадратов",
+          task: "На клетчатой бумаге (1 клетка = 1 кв. ед.) нарисована фигура: прямоугольник 5 × 3 клеток и прямоугольный треугольник с катетами 2 × 3 клетки. Найдите площадь.",
+          sol: "<p>Метод подсчёта: считаем полные клетки + треугольные половинки.</p><p>S₁ (прямоугольник) = 5 × 3 = <strong>15 кв. ед.</strong></p><p>S₂ (треугольник) = ½ × 2 × 3 = <strong>3 кв. ед.</strong></p><p>S = 15 + 3 = <strong>18 кв. ед.</strong></p><p><strong>Ответ: 18 квадратных единиц.</strong></p>"
+        }
+      ];
+
+      const trainerQs = [
+        { q: "Прямоугольник 5 × 3 см + треугольник с катетами 2 см и 3 см. S = ? (в см²)", a: 18, hint: "S₁ = 5×3 = 15; S₂ = ½×2×3 = 3; S = 15+3 = 18." },
+        { q: "Два прямоугольника: 4 × 3 см и 2 × 3 см. S = ? (в см²)", a: 18, hint: "S₁ = 4×3 = 12; S₂ = 2×3 = 6; S = 12+6 = 18." },
+        { q: "Прямоугольник 6 × 2 см + треугольник с катетами 4 см и 2 см. S = ? (в см²)", a: 16, hint: "S₁ = 6×2 = 12; S₂ = ½×4×2 = 4; S = 12+4 = 16." },
+        { q: "Прямоугольник 7 × 4 см + треугольник с катетами 2 см и 4 см. S = ? (в см²)", a: 32, hint: "S₁ = 7×4 = 28; S₂ = ½×2×4 = 4; S = 28+4 = 32." },
+        { q: "Два прямоугольника: 6 × 3 см и 4 × 2 см. S = ? (в см²)", a: 26, hint: "S₁ = 6×3 = 18; S₂ = 4×2 = 8; S = 18+8 = 26." },
+        { q: "Прямоугольник 5 × 5 см + треугольник с катетами 5 см и 4 см. S = ? (в см²)", a: 35, hint: "S₁ = 5×5 = 25; S₂ = ½×5×4 = 10; S = 25+10 = 35." },
+        { q: "Три прямоугольника: 2×3, 2×3, 2×3. S = ? (в см²)", a: 18, hint: "S = 3 × (2×3) = 3×6 = 18." },
+        { q: "Прямоугольник 8 × 2 см + треугольник с катетами 3 см и 2 см. S = ? (в см²)", a: 19, hint: "S₁ = 8×2 = 16; S₂ = ½×3×2 = 3; S = 16+3 = 19." },
+        { q: "Два прямоугольника: 5 × 4 см и 3 × 4 см. S = ? (в см²)", a: 32, hint: "S₁ = 5×4 = 20; S₂ = 3×4 = 12; S = 20+12 = 32." },
+        { q: "Прямоугольник 4 × 6 см + треугольник с катетами 4 см и 6 см. S = ? (в см²)", a: 36, hint: "S₁ = 4×6 = 24; S₂ = ½×4×6 = 12; S = 24+12 = 36." }
+      ];
+
+      const questions = [
+        { q: "Составная фигура — это фигура, которую можно разбить на:", o: ["Только круги", "Прямоугольники и прямоугольные треугольники", "Любые произвольные формы", "Только треугольники"], a: 1 },
+        { q: "Формула площади составной фигуры из двух частей:", o: ["S = S₁ × S₂", "S = S₁ − S₂", "S = S₁ + S₂", "S = (S₁ + S₂) ÷ 2"], a: 2 },
+        { q: "Прямоугольник 6×4 + треугольник с катетами 2×4. S = ?", o: ["32 см²", "28 см²", "24 см²", "16 см²"], a: 1 },
+        { q: "Два прямоугольника: 5×3 и 4×2. S = ?", o: ["23 см²", "26 см²", "19 см²", "14 см²"], a: 0 },
+        { q: "Площадь прямоугольника 7×5 =", o: ["35 см²", "24 см²", "70 см²", "12 см²"], a: 0 },
+        { q: "Площадь прямоугольного треугольника с катетами 6 и 4:", o: ["24 см²", "12 см²", "10 см²", "48 см²"], a: 1 },
+        { q: "Г-образную фигуру можно разбить на:", o: ["3 треугольника", "2 прямоугольника", "1 ромб", "4 квадрата"], a: 1 },
+        { q: "Прямоугольник 8×3 + два треугольника по ½×2×3. S = ?", o: ["28 см²", "34 см²", "30 см²", "36 см²"], a: 2 },
+        { q: "Чему равна площадь части фигуры — прямоугольника 10×4?", o: ["40 см²", "28 см²", "14 см²", "80 см²"], a: 0 },
+        { q: "Прямоугольник 4×6 + треугольник с катетами 4×6. S = ?", o: ["48 см²", "24 см²", "36 см²", "60 см²"], a: 2 },
+        { q: "Что такое вспомогательная линия разбивки?", o: ["Линия симметрии", "Линия, разделяющая фигуру на простые части", "Гипотенуза треугольника", "Периметр фигуры"], a: 1 },
+        { q: "Три прямоугольника 2×3, 2×3, 2×3. S = ?", o: ["18 см²", "12 см²", "24 см²", "6 см²"], a: 0 },
+        { q: "Метод подсчёта площади на клеточной бумаге называется:", o: ["Аналитическим", "Клеточным методом", "Методом Пифагора", "Интегральным"], a: 1 },
+        { q: "Прямоугольник 9×2 + треугольник с катетами 3×2. S = ?", o: ["21 см²", "18 см²", "24 см²", "15 см²"], a: 0 },
+        { q: "Площадь Г-образной фигуры находят методом:", o: ["Умножения всех сторон", "Разбивки на два прямоугольника", "Деления на 2", "Суммирования периметров"], a: 1 },
+        { q: "Два прямоугольника: 6×3 и 4×2. S = ?", o: ["26 см²", "20 см²", "30 см²", "10 см²"], a: 0 },
+        { q: "Прямоугольник 5×5 + треугольник с катетами 5×4. S = ?", o: ["45 см²", "35 см²", "25 см²", "50 см²"], a: 1 },
+        { q: "Клеточная фигура: прямоугольник 5×3 + треугольник ½×2×3. S = ?", o: ["21 кв. ед.", "18 кв. ед.", "15 кв. ед.", "12 кв. ед."], a: 1 },
+        { q: "Площадь квадрата 6×6 + треугольника с катетами 3×4:", o: ["36 см²", "42 см²", "40 см²", "30 см²"], a: 1 },
+        { q: "При разбивке на части важно, чтобы части:", o: ["Перекрывались", "Не перекрывались и покрывали всю фигуру", "Имели одинаковую площадь", "Были одинакового цвета"], a: 1 },
+        { q: "Составная фигура: S₁ = 20 см², S₂ = 8 см². S = ?", o: ["12 см²", "160 см²", "28 см²", "14 см²"], a: 2 },
+        { q: "Составная фигура: S₁ = 15 см², S₂ = 12 см², S₃ = 6 см². S = ?", o: ["33 см²", "27 см²", "36 см²", "90 см²"], a: 0 },
+        { q: "Прямоугольник 3×7 + треугольник с катетами 3×4. S = ?", o: ["21 см²", "27 см²", "33 см²", "30 см²"], a: 1 },
+        { q: "Если разбить составную фигуру иначе (другой вспомогательной линией), площадь:", o: ["Изменится", "Не изменится", "Увеличится вдвое", "Уменьшится"], a: 1 },
+        { q: "Два прямоугольника: 8×2 и 3×4. S = ?", o: ["28 см²", "36 см²", "24 см²", "40 см²"], a: 0 },
+        { q: "Прямоугольник 10×4 + треугольник с катетами 4×4. S = ?", o: ["40 см²", "48 см²", "56 см²", "44 см²"], a: 1 },
+        { q: "Площадь составной фигуры = площадь полного прямоугольника − лишняя площадь. Это метод:", o: ["Разбивки", "Дополнения (вычитания)", "Клеточный", "Сложения"], a: 1 },
+        { q: "Прямоугольник 6×6 + два треугольника по ½×3×6. S = ?", o: ["54 см²", "45 см²", "36 см²", "72 см²"], a: 0 },
+        { q: "Составная фигура из трёх частей: 12 + 9 + 6. S = ?", o: ["27 см²", "18 см²", "15 см²", "108 см²"], a: 0 },
+        { q: "Прямоугольник 7×3 + треугольник с катетами 2×3. S = ?", o: ["24 см²", "21 см²", "27 см²", "18 см²"], a: 0 }
+      ];
+
+      // ── Navigation ──────────────────────────────────────────────────────────
+      function showSection(id) {
+        document.querySelectorAll("section").forEach(s => s.classList.remove("active"));
+        document.getElementById(id).classList.add("active");
+        document.querySelectorAll(".nav-links a").forEach(a => a.classList.remove("active"));
+        const link = document.querySelector('.nav-links a[data-section="' + id + '"]');
+        if (link) link.classList.add("active");
+        window.scrollTo(0, 0);
+        AppState.currentSection = id;
+      }
+
+      document.querySelectorAll(".nav-links a").forEach(link => {
+        link.addEventListener("click", e => {
+          e.preventDefault();
+          showSection(link.dataset.section);
+        });
+      });
+
+      // ── Slides ───────────────────────────────────────────────────────────────
+      let currentSlide = 0, slideEls = [], slideTotal = 0;
+
+      function renderSlide() {
+        slideEls.forEach((s, i) => s.classList.toggle("active", i === currentSlide));
+        document.getElementById("slide-num").innerText = currentSlide + 1;
+      }
+
+      function nextSlide() {
+        if (currentSlide < slideTotal - 1) { currentSlide++; renderSlide(); }
+      }
+
+      function prevSlide() {
+        if (currentSlide > 0) { currentSlide--; renderSlide(); }
+      }
+
+      // ── Examples ─────────────────────────────────────────────────────────────
+      function toggleSolution(id) {
+        const el = document.getElementById(id);
+        el.classList.toggle("active");
+        el.previousElementSibling.textContent = el.classList.contains("active") ? "Скрыть решение" : "Показать решение";
+      }
+
+      // ── Trainer ──────────────────────────────────────────────────────────────
+      let trainerOrder = 0;
+
+      function newTrainerProblem() {
+        AppState.trainer.current = trainerQs[trainerOrder % trainerQs.length];
+        trainerOrder++;
+        document.getElementById("trainer-question").textContent = AppState.trainer.current.q;
+        document.getElementById("trainer-answer").value = "";
+        document.getElementById("trainer-feedback").innerHTML = "";
+        document.getElementById("trainer-hint").style.display = "none";
+        document.getElementById("trainer-check-btn").disabled = false;
+      }
+
+      function showTrainerHint() {
+        if (!AppState.trainer.current) return;
+        const hintEl = document.getElementById("trainer-hint");
+        hintEl.style.display = "block";
+        hintEl.textContent = "💡 " + AppState.trainer.current.hint;
+      }
+
+      function checkTrainer() {
+        if (!AppState.trainer.current) return;
+        const raw = document.getElementById("trainer-answer").value.trim().replace(",", ".");
+        const val = parseFloat(raw);
+        const ok = !isNaN(val) && Math.abs(val - AppState.trainer.current.a) < 0.1;
+        AppState.trainer.total++;
+        if (ok) {
+          AppState.trainer.correct++;
+          AppState.trainer.streak++;
+          document.getElementById("trainer-feedback").innerHTML = '<div style="color:var(--success);font-weight:700;">✓ Верно! Ответ: ' + AppState.trainer.current.a + ' см²</div>';
+        } else {
+          AppState.trainer.streak = 0;
+          document.getElementById("trainer-feedback").innerHTML = '<div style="color:var(--error);font-weight:700;">✗ Правильный ответ: ' + AppState.trainer.current.a + ' см²</div>';
+        }
+        document.getElementById("trainer-correct").textContent = AppState.trainer.correct;
+        document.getElementById("trainer-total").textContent = AppState.trainer.total;
+        document.getElementById("trainer-streak").textContent = AppState.trainer.streak;
+        document.getElementById("trainer-check-btn").disabled = true;
+      }
+
+      // ── Diagnostic ───────────────────────────────────────────────────────────
+      function startDiagnostic() {
+        AppState.mode = "diagnostic";
+        AppState.diagnostic = { current: 0, score: 0, answers: [] };
+        document.getElementById("diagnostic-ui").style.display = "block";
+        document.getElementById("timeattack-ui").style.display = "none";
+        document.getElementById("results-ui").style.display = "none";
+        document.getElementById("diag-total").textContent = questions.length;
+        renderDiagnostic();
+      }
+
+      function renderDiagnostic() {
+        const q = questions[AppState.diagnostic.current];
+        document.getElementById("diag-current").textContent = AppState.diagnostic.current + 1;
+        document.getElementById("diag-score").textContent = AppState.diagnostic.score + " правильных";
+        document.getElementById("diag-progress").style.width = ((AppState.diagnostic.current + 1) / questions.length * 100) + "%";
+        document.getElementById("diag-question").textContent = q.q;
+        const od = document.getElementById("diag-options");
+        od.innerHTML = "";
+        q.o.forEach((opt, i) => {
+          const div = document.createElement("div");
+          div.className = "quiz-option";
+          div.innerHTML = '<div class="option-letter">' + String.fromCharCode(65 + i) + "</div><div>" + opt + "</div>";
+          div.onclick = () => selectDiagnostic(i);
+          od.appendChild(div);
+        });
+        document.getElementById("diag-explanation").style.display = "none";
+        document.getElementById("diag-prev").disabled = AppState.diagnostic.current === 0;
+        document.getElementById("diag-next").disabled = true;
+      }
+
+      function selectDiagnostic(idx) {
+        if (!document.getElementById("diag-next").disabled) return;
+        const q = questions[AppState.diagnostic.current];
+        const ok = idx === q.a;
+        if (ok) AppState.diagnostic.score++;
+        AppState.diagnostic.answers[AppState.diagnostic.current] = idx;
+        document.querySelectorAll("#diag-options .quiz-option").forEach((opt, i) => {
+          opt.classList.add("disabled");
+          if (i === q.a) opt.classList.add("correct");
+          else if (i === idx && !ok) opt.classList.add("wrong");
+        });
+        const expEl = document.getElementById("diag-explanation");
+        expEl.innerHTML = "<strong>" + (ok ? "✓ Верно!" : "✗ Неверно.") + "</strong> Правильный ответ: " + q.o[q.a];
+        expEl.style.display = "block";
+        document.getElementById("diag-next").disabled = false;
+      }
+
+      function nextDiagnostic() {
+        if (AppState.diagnostic.current < questions.length - 1) {
+          AppState.diagnostic.current++;
+          renderDiagnostic();
+        } else {
+          showResults(AppState.diagnostic.score, questions.length, 0, "diagnostic");
+        }
+      }
+
+      function prevDiagnostic() {
+        if (AppState.diagnostic.current > 0) {
+          AppState.diagnostic.current--;
+          renderDiagnostic();
+        }
+      }
+
+      // ── Time Attack ──────────────────────────────────────────────────────────
+      function startTimeAttack() {
+        AppState.mode = "timeattack";
+        AppState.timeAttack = { current: 0, score: 0, timer: null, timeLeft: 600, startTime: Date.now(), answers: [] };
+        document.getElementById("diagnostic-ui").style.display = "none";
+        document.getElementById("timeattack-ui").style.display = "block";
+        document.getElementById("results-ui").style.display = "none";
+        document.getElementById("ta-timer").className = "timer";
+        renderTimeAttack();
+        if (AppState.timeAttack.timer) clearInterval(AppState.timeAttack.timer);
+        AppState.timeAttack.timer = setInterval(() => {
+          AppState.timeAttack.timeLeft--;
+          const m = Math.floor(AppState.timeAttack.timeLeft / 60);
+          const s = AppState.timeAttack.timeLeft % 60;
+          const el = document.getElementById("ta-timer");
+          el.textContent = m + ":" + s.toString().padStart(2, "0");
+          if (AppState.timeAttack.timeLeft <= 60) el.className = "timer danger";
+          else if (AppState.timeAttack.timeLeft <= 180) el.className = "timer warning";
+          if (AppState.timeAttack.timeLeft <= 0) finishTimeAttack();
+        }, 1000);
+      }
+
+      function renderTimeAttack() {
+        const q = questions[AppState.timeAttack.current];
+        document.getElementById("ta-current").textContent = AppState.timeAttack.current + 1;
+        document.getElementById("ta-progress").style.width = ((AppState.timeAttack.current + 1) / questions.length * 100) + "%";
+        document.getElementById("ta-question").textContent = q.q;
+        const od = document.getElementById("ta-options");
+        od.innerHTML = "";
+        q.o.forEach((opt, i) => {
+          const div = document.createElement("div");
+          div.className = "quiz-option";
+          div.innerHTML = '<div class="option-letter">' + String.fromCharCode(65 + i) + "</div><div>" + opt + "</div>";
+          div.onclick = () => selectTimeAttack(i);
+          od.appendChild(div);
+        });
+        document.getElementById("ta-next").disabled = true;
+      }
+
+      function selectTimeAttack(idx) {
+        if (!document.getElementById("ta-next").disabled) return;
+        const q = questions[AppState.timeAttack.current];
+        if (idx === q.a) AppState.timeAttack.score++;
+        AppState.timeAttack.answers[AppState.timeAttack.current] = idx;
+        document.querySelectorAll("#ta-options .quiz-option").forEach((opt, i) => {
+          opt.classList.add("disabled");
+          if (i === q.a) opt.classList.add("correct");
+          else if (i === idx && idx !== q.a) opt.classList.add("wrong");
+        });
+        document.getElementById("ta-next").disabled = false;
+      }
+
+      function nextTimeAttack() {
+        if (AppState.timeAttack.current < questions.length - 1) {
+          AppState.timeAttack.current++;
+          renderTimeAttack();
+        } else {
+          finishTimeAttack();
+        }
+      }
+
+      function finishTimeAttack() {
+        clearInterval(AppState.timeAttack.timer);
+        showResults(
+          AppState.timeAttack.score,
+          questions.length,
+          Math.floor((Date.now() - AppState.timeAttack.startTime) / 1000),
+          "timeattack"
+        );
+      }
+
+      // ── Results ──────────────────────────────────────────────────────────────
+      function showResults(score, total, timeSpent, mode) {
+        document.getElementById("diagnostic-ui").style.display = "none";
+        document.getElementById("timeattack-ui").style.display = "none";
+        document.getElementById("results-ui").style.display = "block";
+        const percent = Math.round(score / total * 100);
+        const m = Math.floor(timeSpent / 60);
+        const s = timeSpent % 60;
+        let mastery = percent >= 90 ? "Эксперт" : percent >= 70 ? "Продвинутый" : percent >= 50 ? "Средний" : "Начальный";
+        let msg = percent >= 90 ? "🏆 Отлично! Мастер составных фигур!" : percent >= 70 ? "🥈 Хорошо! Почти отлично." : percent >= 50 ? "🥉 Удовлетворительно. Повторите метод разбивки." : "💪 Повторите формулы и метод разбивки на части.";
+        document.getElementById("result-circle").style.setProperty("--score", percent);
+        document.getElementById("result-percent").textContent = percent + "%";
+        document.getElementById("result-message").textContent = msg;
+        document.getElementById("result-correct").textContent = score;
+        document.getElementById("result-wrong").textContent = total - score;
+        document.getElementById("result-time").textContent = mode === "diagnostic" ? "—" : m + ":" + s.toString().padStart(2, "0");
+        document.getElementById("result-mastery").textContent = mastery;
+      }
+
+      function resetAssessment() {
+        document.getElementById("results-ui").style.display = "none";
+        if (AppState.mode === "diagnostic") startDiagnostic();
+        else startTimeAttack();
+      }
+
+      // ── DOMContentLoaded ─────────────────────────────────────────────────────
+      document.addEventListener("DOMContentLoaded", () => {
+        // Build theory slides
+        const track = document.getElementById("track-slides");
+        slides.forEach((s, i) => {
+          const div = document.createElement("div");
+          div.className = "widget-slide" + (i === 0 ? " active" : "");
+          div.innerHTML = "<h3>" + s.title + '</h3><div style="color:var(--text-secondary);line-height:1.8;margin-top:12px;">' + s.content + "</div>";
+          track.appendChild(div);
+        });
+        slideEls = track.querySelectorAll(".widget-slide");
+        slideTotal = slideEls.length;
+        document.getElementById("slide-total").textContent = slideTotal;
+        renderSlide();
+
+        // Build examples
+        const ec = document.getElementById("examples-container");
+        examples.forEach((ex, i) => {
+          const card = document.createElement("div");
+          card.className = "problem-card";
+          card.innerHTML =
+            '<div class="problem-header">' +
+            '<span class="problem-number">№ ' + (i + 1) + '</span>' +
+            '<span class="problem-type">' + ex.title + '</span>' +
+            '</div>' +
+            '<div class="problem-text">' + ex.task + '</div>' +
+            '<button class="solution-btn" onclick="toggleSolution(\'sol-' + i + '\')">Показать решение</button>' +
+            '<div class="solution" id="sol-' + i + '">' + ex.sol + '</div>';
+          ec.appendChild(card);
+        });
+
+        // Kick off trainer
+        newTrainerProblem();
+      });
+    </script>
+  </body>
+</html>
