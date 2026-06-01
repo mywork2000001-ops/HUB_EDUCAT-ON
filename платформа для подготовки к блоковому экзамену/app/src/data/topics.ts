@@ -84,7 +84,17 @@ export const TOPICS: Topic[] = [
       ru: 'Операции с дробями, преобразования',
       en: 'Operations with fractions, conversions',
     },
-    lessons: [],
+    lessons: [
+      {
+        id: 'topic-03-main',
+        topicId: 'topic-03',
+        type: 'theory',
+        title: { az: 'Adi və onluq kəsirlər — tam dərs', ru: 'Дроби — полный урок', en: 'Fractions — full lesson' },
+        url_path: '/lessons/topics/topic-03.html',
+        estimatedMinutes: 45,
+        questionCount: 20,
+      },
+    ],
   },
 
   {
