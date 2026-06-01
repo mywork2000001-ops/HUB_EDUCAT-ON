@@ -1,1127 +1,702 @@
 <!doctype html>
 <html lang="az">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
-    <title>Mövzu 2 — Çoxluqlar</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css" />
-    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
-    <script
-      defer
-      src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
-      onload="
-        renderMathInElement(document.body, {
-          delimiters: [
-            { left: '$$', right: '$$', display: true },
-            { left: '$', right: '$', display: false },
-            { left: '\\(', right: '\\)', display: false },
-          ],
-        })
-      "
-    ></script>
-    <style>
-      :root {
-        --bg: #0d1117;
-        --surface: #161b22;
-        --surface2: #1c2333;
-        --border: #30363d;
-        --text: #e6edf3;
-        --muted: #8b949e;
-        --accent: #58a6ff;
-        --green: #3fb950;
-        --yellow: #d29922;
-        --red: #f85149;
-        --purple: #bc8cff;
-        --orange: #ffa657;
-        --radius: 10px;
-      }
-      * { box-sizing: border-box; margin: 0; padding: 0; }
-      html { scroll-behavior: smooth; }
-      body {
-        font-family: "Segoe UI", system-ui, sans-serif;
-        background: var(--bg);
-        color: var(--text);
-        min-height: 100vh;
-        font-size: 15px;
-        line-height: 1.6;
-      }
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Mövzu 2 — Çoxluqlar</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css"/>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
+    onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}]})"></script>
+  <style>
+    :root{--bg-dark:#0f0f1a;--bg-card:rgba(255,255,255,0.05);--bg-glass:rgba(255,255,255,0.08);--border-glass:rgba(255,255,255,0.15);--text-primary:#e8e8f0;--text-secondary:#a0a0b8;--accent:#bc8cff;--accent-dim:rgba(188,140,255,0.2);--accent-warm:#ff6b6b;--accent-warm-dim:rgba(255,107,107,0.2);--accent-blue:#4dabf7;--accent-blue-dim:rgba(77,171,247,0.2);--success:#51cf66;--error:#ff6b6b;--warning:#fcc419;}
+    *{margin:0;padding:0;box-sizing:border-box;}
+    body{font-family:"Segoe UI",system-ui,sans-serif;background:var(--bg-dark);color:var(--text-primary);min-height:100vh;overflow-x:hidden;line-height:1.6;}
+    .bg-animation{position:fixed;top:0;left:0;width:100%;height:100%;z-index:-1;background:radial-gradient(ellipse at 25% 25%,rgba(188,140,255,0.08) 0%,transparent 50%),radial-gradient(ellipse at 75% 75%,rgba(77,171,247,0.08) 0%,transparent 50%);}
+    .bg-animation::before{content:"";position:absolute;width:200%;height:200%;top:-50%;left:-50%;background:repeating-linear-gradient(0deg,transparent,transparent 40px,rgba(255,255,255,0.02) 40px,rgba(255,255,255,0.02) 41px);animation:bgMove 20s linear infinite;}
+    @keyframes bgMove{0%{transform:translateY(0)}100%{transform:translateY(40px)}}
+    nav{position:fixed;top:0;left:0;right:0;background:rgba(15,15,26,0.85);backdrop-filter:blur(20px);border-bottom:1px solid var(--border-glass);z-index:1000;padding:0 20px;}
+    .nav-container{max-width:1100px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;height:60px;}
+    .logo{font-size:1.1rem;font-weight:700;background:linear-gradient(135deg,var(--accent),var(--accent-blue));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;text-decoration:none;cursor:pointer;}
+    .nav-links{display:flex;gap:4px;list-style:none;}
+    .nav-links a{color:var(--text-secondary);text-decoration:none;padding:7px 13px;border-radius:8px;transition:all .3s;font-size:0.85rem;font-weight:500;cursor:pointer;border:none;background:transparent;}
+    .nav-links a:hover,.nav-links a.active{color:var(--text-primary);background:var(--bg-glass);}
+    .nav-links a.active{background:var(--accent-dim);color:var(--accent);}
+    section{display:none;opacity:0;padding:78px 20px 40px;max-width:980px;margin:0 auto;transition:opacity .3s ease;}
+    section.active{display:block;opacity:1;animation:fadeIn .4s ease;}
+    @keyframes fadeIn{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+    .card{background:var(--bg-card);backdrop-filter:blur(20px);border:1px solid var(--border-glass);border-radius:18px;padding:20px;margin-bottom:16px;transition:transform .3s,box-shadow .3s;}
+    .card:hover{transform:translateY(-2px);box-shadow:0 16px 36px rgba(0,0,0,.3);}
+    .card-title{font-size:1.3rem;font-weight:700;margin-bottom:14px;display:flex;align-items:center;gap:10px;}
+    .card-title .icon{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0;}
+    .hero{text-align:center;padding:130px 20px 70px;}
+    .hero h1{font-size:2.8rem;font-weight:800;margin-bottom:18px;background:linear-gradient(135deg,var(--accent),var(--accent-blue),var(--accent-warm));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1.2;}
+    .hero p{font-size:1.1rem;color:var(--text-secondary);max-width:580px;margin:0 auto 36px;}
+    .btn{display:inline-flex;align-items:center;gap:8px;padding:12px 28px;border-radius:10px;border:none;font-size:.95rem;font-weight:600;cursor:pointer;transition:all .3s;text-decoration:none;}
+    .btn-primary{background:linear-gradient(135deg,var(--accent),var(--accent-blue));color:#000;}
+    .btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 24px var(--accent-dim);}
+    .btn-secondary{background:var(--bg-glass);color:var(--text-primary);border:1px solid var(--border-glass);}
+    .btn-secondary:hover{background:var(--bg-card);}
+    .btn:disabled{opacity:.5;cursor:not-allowed;transform:none!important;}
+    /* ── SLIDES ── */
+    .slide-widget{background:var(--bg-card);border:1px solid var(--border-glass);border-radius:18px;padding:16px;}
+    .slide-progress{text-align:center;font-size:.88rem;color:var(--text-secondary);margin-bottom:10px;}
+    .slide-track{position:relative;min-height:200px;}
+    .slide{display:none;padding:14px 16px;animation:slideFade .3s ease;}
+    .slide.active{display:block;}
+    @keyframes slideFade{from{opacity:0;transform:translateX(10px)}to{opacity:1;transform:translateX(0)}}
+    .slide h3{font-size:1.2rem;color:var(--accent);margin-bottom:14px;display:flex;align-items:center;gap:8px;}
+    .slide p,.slide li{color:var(--text-secondary);line-height:1.8;margin-bottom:10px;}
+    .slide-nav{display:flex;justify-content:space-between;align-items:center;margin-top:14px;}
+    .slide-dots{display:flex;gap:6px;}
+    .slide-dot{width:8px;height:8px;border-radius:50%;background:var(--border-glass);cursor:pointer;transition:background .2s;}
+    .slide-dot.active{background:var(--accent);}
+    /* ── THEORY COMPONENTS ── */
+    .def-box{background:rgba(188,140,255,0.08);border-left:3px solid var(--accent);border-radius:0 10px 10px 0;padding:12px 14px;margin:10px 0;font-size:.9rem;color:var(--text-secondary);}
+    .warn-box{background:rgba(252,196,25,0.08);border-left:3px solid var(--warning);border-radius:0 10px 10px 0;padding:11px 14px;margin:10px 0;font-size:.88rem;color:var(--text-secondary);}
+    .warn-box strong{color:var(--warning);}
+    .formula-box{background:var(--bg-glass);border:1px solid var(--border-glass);border-radius:10px;padding:14px;margin:12px 0;text-align:center;overflow-x:auto;}
+    .rule-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin:10px 0;}
+    @media(max-width:520px){.rule-grid{grid-template-columns:1fr}}
+    .rule-item{background:var(--bg-glass);border:1px solid var(--border-glass);border-radius:8px;padding:8px 11px;font-size:.84rem;color:var(--text-secondary);}
+    .set-row{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:9px;margin-bottom:6px;font-size:.88rem;}
+    .set-badge{font-weight:800;font-size:1.1rem;width:30px;text-align:center;flex-shrink:0;}
+    /* ── EXAMPLES ── */
+    .problem-card{background:var(--bg-card);border:1px solid var(--border-glass);border-radius:16px;padding:22px;margin-bottom:18px;}
+    .problem-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:8px;}
+    .problem-number{background:var(--accent-dim);color:var(--accent);padding:4px 12px;border-radius:16px;font-size:.82rem;font-weight:600;}
+    .problem-type{color:var(--text-secondary);font-size:.82rem;}
+    .problem-text{font-size:1rem;margin-bottom:14px;line-height:1.8;color:var(--text-primary);}
+    .solution-btn{background:var(--accent-dim);color:var(--accent);border:1px solid var(--accent);padding:9px 18px;border-radius:8px;cursor:pointer;font-weight:600;transition:all .3s;font-size:.88rem;}
+    .solution-btn:hover{background:var(--accent);color:#000;}
+    .solution{display:none;margin-top:18px;padding:18px;background:rgba(188,140,255,.05);border-left:3px solid var(--accent);border-radius:0 12px 12px 0;}
+    .solution.active{display:block;animation:slideDown .3s ease;}
+    @keyframes slideDown{from{opacity:0;max-height:0}to{opacity:1;max-height:2000px}}
+    .solution p{margin-bottom:8px;color:var(--text-secondary);}
+    .solution strong{color:var(--accent);}
+    /* ── QUIZ ── */
+    .quiz-container{background:var(--bg-card);border:1px solid var(--border-glass);border-radius:18px;padding:28px;}
+    .quiz-progress{display:flex;justify-content:space-between;align-items:center;margin-bottom:22px;flex-wrap:wrap;gap:8px;}
+    .progress-bar{flex:1;height:7px;background:var(--bg-glass);border-radius:4px;margin:0 14px;overflow:hidden;min-width:80px;}
+    .progress-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent-blue));border-radius:4px;transition:width .5s ease;width:0%;}
+    .quiz-question{font-size:1.1rem;margin-bottom:22px;padding:18px;background:var(--bg-glass);border-radius:12px;border-left:4px solid var(--accent);line-height:1.7;}
+    .quiz-options{display:grid;gap:10px;}
+    .quiz-option{background:var(--bg-glass);border:2px solid var(--border-glass);border-radius:11px;padding:14px 18px;cursor:pointer;transition:all .3s;display:flex;align-items:center;gap:10px;font-size:.92rem;}
+    .quiz-option:hover{border-color:var(--accent);background:var(--accent-dim);}
+    .quiz-option.correct{border-color:var(--success);background:rgba(81,207,102,.15);}
+    .quiz-option.wrong{border-color:var(--error);background:rgba(255,107,107,.15);}
+    .quiz-option.disabled{pointer-events:none;opacity:.7;}
+    .option-letter{width:30px;height:30px;border-radius:7px;background:var(--bg-card);display:flex;align-items:center;justify-content:center;font-weight:700;flex-shrink:0;font-size:.85rem;}
+    .quiz-nav{display:flex;justify-content:space-between;margin-top:22px;}
+    .results-container{text-align:center;padding:36px;}
+    .score-circle{width:180px;height:180px;border-radius:50%;background:conic-gradient(var(--accent) calc(var(--score)*3.6deg),var(--bg-glass) 0);margin:0 auto 28px;display:flex;align-items:center;justify-content:center;position:relative;}
+    .score-circle::before{content:"";position:absolute;width:152px;height:152px;background:var(--bg-dark);border-radius:50%;}
+    .score-value{position:relative;font-size:2.6rem;font-weight:800;color:var(--accent);}
+    .score-message{font-size:1.4rem;font-weight:700;margin-bottom:28px;}
+    .results-breakdown{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:12px;max-width:500px;margin:0 auto 28px;}
+    .breakdown-item{background:var(--bg-glass);padding:14px;border-radius:10px;}
+    .breakdown-value{font-size:1.4rem;font-weight:700;color:var(--accent);}
+    .breakdown-label{font-size:.82rem;color:var(--text-secondary);}
+    .diag-explanation{display:none;margin-top:18px;padding:14px;background:var(--accent-dim);border-radius:10px;border-left:4px solid var(--accent);color:var(--text-secondary);font-size:.9rem;}
+    @media(max-width:768px){.hero h1{font-size:2rem}.nav-links{display:none}section{padding:68px 12px 28px}}
+  </style>
+</head>
+<body>
+<div class="bg-animation"></div>
+<nav>
+  <div class="nav-container">
+    <span class="logo" onclick="showSection('home')">🔵 Mövzu 2</span>
+    <ul class="nav-links">
+      <li><a class="active" data-sec="home">Ana səhifə</a></li>
+      <li><a data-sec="theory">Nəzəriyyə</a></li>
+      <li><a data-sec="examples">Misallar</a></li>
+      <li><a data-sec="assessment">Qiymətləndirmə</a></li>
+    </ul>
+  </div>
+</nav>
 
-      /* ── HEADER ── */
-      .lesson-header {
-        background: linear-gradient(135deg, #1a2332 0%, #0d1117 100%);
-        border-bottom: 1px solid var(--border);
-        padding: 16px 20px;
-        display: flex;
-        align-items: center;
-        gap: 12px;
-      }
-      .lesson-icon {
-        width: 44px; height: 44px; border-radius: 10px;
-        background: linear-gradient(135deg, #bc8cff, #58a6ff);
-        display: flex; align-items: center; justify-content: center;
-        font-size: 22px; flex-shrink: 0;
-      }
-      .lesson-meta h1 { font-size: 1.1rem; font-weight: 700; color: var(--text); }
-      .lesson-meta p { font-size: 0.78rem; color: var(--muted); margin-top: 2px; }
-
-      /* ── TABS ── */
-      .tabs {
-        display: flex; gap: 2px; padding: 10px 16px 0;
-        border-bottom: 1px solid var(--border);
-        background: var(--surface); overflow-x: auto;
-      }
-      .tab-btn {
-        padding: 9px 14px; border: none; background: none;
-        color: var(--muted); font-size: 0.82rem; font-weight: 600;
-        cursor: pointer; border-radius: 8px 8px 0 0;
-        white-space: nowrap; transition: all 0.2s;
-        border-bottom: 2px solid transparent;
-      }
-      .tab-btn:hover { color: var(--text); background: var(--surface2); }
-      .tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); background: var(--surface2); }
-      .tab-panel { display: none; padding: 20px; max-width: 900px; margin: 0 auto; }
-      .tab-panel.active { display: block; }
-
-      /* ── THEORY ── */
-      .section-block {
-        background: var(--surface); border: 1px solid var(--border);
-        border-radius: var(--radius); margin-bottom: 16px; overflow: hidden;
-      }
-      .section-head {
-        padding: 12px 16px; background: var(--surface2);
-        display: flex; align-items: center; gap: 10px;
-        cursor: pointer; user-select: none;
-      }
-      .section-head h3 { font-size: 0.95rem; font-weight: 700; flex: 1; }
-      .section-head .toggle { color: var(--muted); transition: transform 0.2s; font-size: 0.8rem; }
-      .section-head.open .toggle { transform: rotate(180deg); }
-      .section-body { padding: 16px; display: none; }
-      .section-body.open { display: block; }
-      .def-box {
-        background: rgba(88,166,255,0.08); border-left: 3px solid var(--accent);
-        border-radius: 0 8px 8px 0; padding: 12px 14px; margin: 10px 0; font-size: 0.9rem;
-      }
-      .qeyd-box {
-        background: rgba(210,153,34,0.09); border-left: 3px solid var(--yellow);
-        border-radius: 0 8px 8px 0; padding: 11px 14px; margin: 10px 0; font-size: 0.88rem;
-      }
-      .qeyd-box strong { color: var(--yellow); }
-      .formula-box {
-        background: var(--surface2); border: 1px solid var(--border);
-        border-radius: 8px; padding: 14px 18px; margin: 12px 0;
-        text-align: center; overflow-x: auto;
-      }
-      .rule-row {
-        display: flex; gap: 8px; align-items: flex-start;
-        padding: 6px 0; border-bottom: 1px solid var(--border);
-      }
-      .rule-row:last-child { border-bottom: none; }
-      .rule-num {
-        background: var(--accent); color: #fff; border-radius: 50%;
-        width: 22px; height: 22px; display: flex; align-items: center;
-        justify-content: center; font-size: 0.72rem; font-weight: 700;
-        flex-shrink: 0; margin-top: 2px;
-      }
-      .rule-txt { font-size: 0.88rem; line-height: 1.5; }
-      .law-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin: 10px 0; }
-      @media (max-width: 520px) { .law-grid { grid-template-columns: 1fr; } }
-      .law-item {
-        background: var(--surface2); border: 1px solid var(--border);
-        border-radius: 6px; padding: 8px 12px; font-size: 0.84rem;
-      }
-      .svg-wrap { overflow-x: auto; padding: 8px 0; display: flex; justify-content: center; }
-
-      /* number-set hierarchy */
-      .set-hierarchy {
-        display: flex; flex-direction: column; gap: 6px;
-        margin: 12px 0;
-      }
-      .set-row {
-        display: flex; align-items: center; gap: 8px;
-        padding: 8px 12px; border-radius: 8px; font-size: 0.88rem;
-      }
-      .set-badge {
-        font-weight: 800; font-size: 1rem; width: 28px;
-        text-align: center; flex-shrink: 0;
-      }
-
-      /* ── EXAMPLES ── */
-      .example-card {
-        background: var(--surface); border: 1px solid var(--border);
-        border-radius: var(--radius); margin-bottom: 14px; overflow: hidden;
-      }
-      .example-head {
-        padding: 11px 15px; background: var(--surface2);
-        display: flex; align-items: center; gap: 10px;
-      }
-      .example-num {
-        background: linear-gradient(135deg, #bc8cff, #58a6ff);
-        color: #fff; border-radius: 7px; padding: 2px 9px;
-        font-size: 0.75rem; font-weight: 700;
-      }
-      .example-q { font-size: 0.9rem; font-weight: 600; flex: 1; }
-      .example-body { padding: 14px 16px; }
-      .step { display: flex; gap: 10px; margin-bottom: 8px; align-items: flex-start; }
-      .step-n { color: var(--accent); font-weight: 700; font-size: 0.8rem; min-width: 20px; margin-top: 2px; }
-      .step-t { font-size: 0.88rem; line-height: 1.55; }
-      .answer-box {
-        background: rgba(63,185,80,0.1); border: 1px solid rgba(63,185,80,0.3);
-        border-radius: 8px; padding: 8px 12px; margin-top: 10px; font-size: 0.88rem;
-      }
-
-      /* ── DIAGNOSTIC TEST ── */
-      .diag-q-block {
-        background: var(--surface); border: 1px solid var(--border);
-        border-radius: var(--radius); padding: 16px; margin-bottom: 14px;
-      }
-      .diag-q-num {
-        font-size: 0.72rem; color: var(--muted); font-weight: 600;
-        margin-bottom: 6px; display: flex; align-items: center; gap: 6px;
-      }
-      .diag-tag {
-        background: rgba(88,166,255,0.12); color: var(--accent);
-        border-radius: 20px; padding: 2px 8px; font-size: 0.68rem;
-      }
-      .diag-q-text { font-size: 0.92rem; font-weight: 600; margin-bottom: 12px; line-height: 1.5; }
-      .diag-opts { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-      @media (max-width: 480px) { .diag-opts { grid-template-columns: 1fr; } }
-      .diag-opt {
-        padding: 9px 12px; border: 1.5px solid var(--border);
-        border-radius: 8px; background: var(--surface2);
-        color: var(--text); font-size: 0.86rem; cursor: pointer; transition: all 0.15s;
-        text-align: left;
-      }
-      .diag-opt:hover:not(:disabled) { border-color: var(--accent); }
-      .diag-opt.selected { border-color: var(--accent); background: rgba(88,166,255,0.1); }
-      .diag-opt.correct { border-color: var(--green); background: rgba(63,185,80,0.1); color: var(--green); }
-      .diag-opt.wrong { border-color: var(--red); background: rgba(248,81,73,0.08); color: var(--red); }
-      .diag-next {
-        margin-top: 14px; padding: 10px 24px; border: none; border-radius: 8px;
-        background: var(--accent); color: #fff; font-weight: 700; cursor: pointer; display: none;
-      }
-      .diag-next.show { display: inline-block; }
-      .result-wrap { display: none; }
-      .result-wrap.show { display: block; }
-      .result-header { text-align: center; padding: 24px 0 16px; }
-      .result-score {
-        font-size: 2.8rem; font-weight: 900;
-        background: linear-gradient(135deg, var(--accent), var(--green));
-        -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
-      }
-      .topic-bars { display: flex; flex-direction: column; gap: 8px; margin-top: 16px; }
-      .topic-bar-row { display: flex; align-items: center; gap: 10px; }
-      .topic-bar-label { font-size: 0.78rem; color: var(--muted); width: 180px; flex-shrink: 0; }
-      .topic-bar-track { flex: 1; height: 8px; background: var(--surface2); border-radius: 4px; overflow: hidden; }
-      .topic-bar-fill { height: 100%; border-radius: 4px; transition: width 0.6s; }
-      .topic-bar-pct { font-size: 0.75rem; font-weight: 700; width: 32px; text-align: right; }
-      .retry-btn {
-        margin-top: 20px; padding: 11px 28px; border: none; border-radius: 8px;
-        background: var(--accent); color: #fff; font-weight: 700; cursor: pointer; font-size: 0.9rem;
-      }
-
-      /* ── VIKTORINA ── */
-      .quiz-wrap { max-width: 600px; margin: 0 auto; }
-      .quiz-timer {
-        font-size: 1.8rem; font-weight: 900; text-align: center;
-        color: var(--yellow); margin-bottom: 6px;
-      }
-      .quiz-timer.danger { color: var(--red); animation: pulse 0.5s ease-in-out infinite; }
-      @keyframes pulse { 0%,100%{opacity:1}50%{opacity:0.5} }
-      .quiz-progress { display: flex; gap: 4px; margin-bottom: 16px; }
-      .quiz-dot { flex: 1; height: 5px; border-radius: 3px; background: var(--surface2); }
-      .quiz-dot.done-correct { background: var(--green); }
-      .quiz-dot.done-wrong { background: var(--red); }
-      .quiz-dot.current { background: var(--accent); }
-      .quiz-q { font-size: 1rem; font-weight: 700; margin-bottom: 14px; line-height: 1.5; }
-      .quiz-opts { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-      .quiz-opt {
-        padding: 11px 13px; border: 1.5px solid var(--border);
-        border-radius: 8px; background: var(--surface2); color: var(--text);
-        font-size: 0.88rem; cursor: pointer; transition: all 0.15s; text-align: left;
-      }
-      .quiz-opt:hover:not(:disabled) { border-color: var(--purple); }
-      .quiz-opt.correct { border-color: var(--green); background: rgba(63,185,80,0.12); color: var(--green); }
-      .quiz-opt.wrong { border-color: var(--red); background: rgba(248,81,73,0.1); color: var(--red); }
-      .quiz-finish { display: none; text-align: center; padding: 30px 20px; }
-      .quiz-finish.show { display: block; }
-      .quiz-finish .big-score { font-size: 3rem; font-weight: 900; }
-      .quiz-finish .stars { font-size: 2rem; letter-spacing: 4px; margin: 8px 0; }
-      .start-screen { text-align: center; padding: 40px 20px; }
-      .start-screen .big-icon { font-size: 4rem; }
-      .start-btn {
-        margin-top: 16px; padding: 12px 32px; border: none; border-radius: 10px;
-        background: linear-gradient(135deg, #bc8cff, #58a6ff); color: #fff;
-        font-size: 1rem; font-weight: 700; cursor: pointer;
-      }
-      .quiz-subtitle { font-size: 0.82rem; color: var(--muted); margin-top: 8px; }
-      .quiz-tag-label {
-        display: inline-block; background: rgba(188,140,255,0.15); color: var(--purple);
-        border-radius: 20px; padding: 2px 9px; font-size: 0.7rem; font-weight: 700; margin-bottom: 10px;
-      }
-    </style>
-  </head>
-  <body>
-    <!-- ═══════════ HEADER ═══════════ -->
-    <div class="lesson-header">
-      <div class="lesson-icon">🔵</div>
-      <div class="lesson-meta">
-        <h1>Mövzu 2 — Çoxluqlar</h1>
-        <p>DR.Math · I Hissə · §1–§9 · Kitab 1</p>
+<!-- ══════════════════ HOME ══════════════════ -->
+<section id="home" class="active">
+  <div class="hero">
+    <h1>Çoxluqlar</h1>
+    <p>DR.Math · I Hissə · §1–§9. Çoxluq anlayışı, ədəd çoxluqları, əməllər, Euler-Venn diaqramı, sayma düsturları.</p>
+    <div style="display:flex;gap:14px;justify-content:center;flex-wrap:wrap;">
+      <button class="btn btn-primary" onclick="showSection('theory')">Dərsi Başla →</button>
+      <button class="btn btn-secondary" onclick="showSection('assessment')">Bilikləri Yoxla</button>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title"><span class="icon" style="background:var(--accent-dim)">🎯</span>Bu mövzuda öyrənəcəksiniz</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px;">
+      <div class="card" style="padding:14px;text-align:center;margin:0;">
+        <div style="font-size:1.8rem;margin-bottom:6px;">📦</div>
+        <h3 style="color:var(--accent);margin-bottom:4px;font-size:.95rem;">Çoxluq anlayışı</h3>
+        <p style="color:var(--text-secondary);font-size:.82rem;">Element, mənsubluq, yazılış üsulları</p>
+      </div>
+      <div class="card" style="padding:14px;text-align:center;margin:0;">
+        <div style="font-size:1.8rem;margin-bottom:6px;">🔢</div>
+        <h3 style="color:var(--accent-blue);margin-bottom:4px;font-size:.95rem;">Ədəd çoxluqları</h3>
+        <p style="color:var(--text-secondary);font-size:.82rem;">ℕ ⊂ ℤ ⊂ ℚ ⊂ ℝ zənciri</p>
+      </div>
+      <div class="card" style="padding:14px;text-align:center;margin:0;">
+        <div style="font-size:1.8rem;margin-bottom:6px;">∪∩</div>
+        <h3 style="color:var(--accent-warm);margin-bottom:4px;font-size:.95rem;">Əməllər</h3>
+        <p style="color:var(--text-secondary);font-size:.82rem;">Birləşmə, kəsişmə, fərq, tamamlayıcı</p>
+      </div>
+      <div class="card" style="padding:14px;text-align:center;margin:0;">
+        <div style="font-size:1.8rem;margin-bottom:6px;">⭕</div>
+        <h3 style="color:var(--warning);margin-bottom:4px;font-size:.95rem;">Euler-Venn</h3>
+        <p style="color:var(--text-secondary);font-size:.82rem;">Diaqram, bölgələr, sayma düsturu</p>
+      </div>
+      <div class="card" style="padding:14px;text-align:center;margin:0;">
+        <div style="font-size:1.8rem;margin-bottom:6px;">⚡</div>
+        <h3 style="color:var(--success);margin-bottom:4px;font-size:.95rem;">De Morgan</h3>
+        <p style="color:var(--text-secondary);font-size:.82rem;">Tamamlayıcı, qanunlar, tətbiqlər</p>
       </div>
     </div>
+  </div>
+</section>
 
-    <!-- ═══════════ TABS ═══════════ -->
-    <div class="tabs">
-      <button class="tab-btn active" onclick="switchTab('theory', this)">📖 Nəzəriyyə</button>
-      <button class="tab-btn" onclick="switchTab('examples', this)">✏️ Misallar</button>
-      <button class="tab-btn" onclick="switchTab('test', this)">📋 Testlər</button>
-      <button class="tab-btn" onclick="switchTab('quiz', this)">⚡ Viktorina</button>
+<!-- ══════════════════ THEORY ══════════════════ -->
+<section id="theory">
+  <div class="card">
+    <div class="card-title"><span class="icon" style="background:var(--accent-dim)">📖</span>Çoxluqlar — §1–§9</div>
+    <p style="color:var(--text-secondary);margin-bottom:16px;">DR.Math kitabının bütün bölmələrini ardıcıl keçin.</p>
+    <div class="slide-widget">
+      <div class="slide-progress">Bölmə <span id="snum">1</span> / <span id="stotal">9</span></div>
+      <div class="slide-dots" id="sdots" style="justify-content:center;margin-bottom:10px;"></div>
+      <div class="slide-track" id="strack"></div>
+      <div class="slide-nav">
+        <button class="btn btn-secondary" onclick="prevSlide()">← Geri</button>
+        <button class="btn btn-primary" onclick="nextSlide()">İrəli →</button>
+      </div>
     </div>
+  </div>
+</section>
 
-    <!-- ═══════════════════ THEORY ═══════════════════ -->
-    <div id="tab-theory" class="tab-panel active">
+<!-- ══════════════════ EXAMPLES ══════════════════ -->
+<section id="examples">
+  <div class="card">
+    <div class="card-title"><span class="icon" style="background:var(--accent-blue-dim)">✏️</span>Həll edilmiş misallar</div>
+    <p style="color:var(--text-secondary);margin-bottom:20px;">DİM tipli məsələlər — addım-addım həll ilə.</p>
+  </div>
+  <div id="examples-container"></div>
+</section>
 
-      <!-- §1 Çoxluq anlayışı -->
-      <div class="section-block">
-        <div class="section-head open" onclick="toggleSection(this)">
-          <h3>§1. Çoxluq anlayışı</h3>
-          <span class="toggle">▾</span>
+<!-- ══════════════════ ASSESSMENT ══════════════════ -->
+<section id="assessment">
+  <div class="card">
+    <div class="card-title"><span class="icon" style="background:var(--accent-blue-dim)">📋</span>Qiymətləndirmə</div>
+    <p style="color:var(--text-secondary);margin-bottom:20px;">20 sual — diaqnostik test və ya sürət viktorinası.</p>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;">
+      <div class="card" style="padding:22px;text-align:center;margin:0;">
+        <div style="font-size:2.8rem;margin-bottom:10px;">🔍</div>
+        <h3 style="margin-bottom:8px;">Diaqnostik Test</h3>
+        <p style="color:var(--text-secondary);margin-bottom:18px;font-size:.88rem;">20 sual · izahatla</p>
+        <button class="btn btn-primary" onclick="startDiag()">Testi Başla</button>
+      </div>
+      <div class="card" style="padding:22px;text-align:center;margin:0;">
+        <div style="font-size:2.8rem;margin-bottom:10px;">⏱️</div>
+        <h3 style="margin-bottom:8px;">Sürət Viktorinası</h3>
+        <p style="color:var(--text-secondary);margin-bottom:18px;font-size:.88rem;">20 sual · sual başına 30 san</p>
+        <button class="btn btn-primary" onclick="startViktorina()">Viktorina Başla</button>
+      </div>
+    </div>
+  </div>
+  <div id="diag-ui" style="display:none;">
+    <div class="quiz-container">
+      <div class="quiz-progress">
+        <span style="font-size:.88rem;">Sual <span id="dq-num">1</span>/<span id="dq-total">20</span></span>
+        <div class="progress-bar"><div class="progress-fill" id="dq-bar"></div></div>
+        <span id="dq-score" style="font-size:.88rem;color:var(--success);font-weight:700;">0 ✓</span>
+      </div>
+      <div class="quiz-question" id="dq-q"></div>
+      <div class="quiz-options" id="dq-opts"></div>
+      <div class="diag-explanation" id="dq-expl"></div>
+      <div class="quiz-nav" style="margin-top:16px;">
+        <button class="btn btn-secondary" onclick="prevDiag()" id="dq-prev" disabled>← Geri</button>
+        <button class="btn btn-primary" onclick="nextDiag()" id="dq-next" disabled>İrəli →</button>
+      </div>
+    </div>
+  </div>
+  <div id="vik-ui" style="display:none;">
+    <div class="quiz-container">
+      <div style="text-align:center;margin-bottom:16px;">
+        <div id="vik-timer" style="font-size:2rem;font-weight:900;color:var(--warning);">30</div>
+        <div style="display:flex;gap:4px;margin-top:8px;" id="vik-dots"></div>
+      </div>
+      <div style="display:inline-block;background:var(--accent-dim);color:var(--accent);border-radius:16px;padding:2px 10px;font-size:.72rem;font-weight:700;margin-bottom:10px;" id="vik-tag"></div>
+      <div class="quiz-question" id="vik-q"></div>
+      <div class="quiz-options" id="vik-opts"></div>
+    </div>
+  </div>
+  <div id="result-ui" style="display:none;">
+    <div class="quiz-container">
+      <div class="results-container">
+        <div style="font-size:.95rem;color:var(--text-secondary);margin-bottom:8px;">Nəticəniz</div>
+        <div class="score-circle" id="res-circle"><div class="score-value" id="res-pct">0%</div></div>
+        <div class="score-message" id="res-msg"></div>
+        <div class="results-breakdown">
+          <div class="breakdown-item"><div class="breakdown-value" id="res-correct">0</div><div class="breakdown-label">Düzgün</div></div>
+          <div class="breakdown-item"><div class="breakdown-value" id="res-wrong">0</div><div class="breakdown-label">Səhv</div></div>
+          <div class="breakdown-item"><div class="breakdown-value" id="res-mastery">—</div><div class="breakdown-label">Səviyyə</div></div>
         </div>
-        <div class="section-body open">
-          <div class="def-box">
-            <strong>Çoxluq:</strong> Müəyyən əlamətə görə birləşdirilmiş obyektlər (elementlər) toplusuna <strong>çoxluq</strong> deyilir. Çoxluqlar adətən böyük latın hərfləri ilə işarə olunur: $A, B, C, \ldots$
-          </div>
-          <p style="font-size:0.88rem;margin:10px 0;">Çoxluğun elementləri kiçik hərflər və ya rəqəmlərlə göstərilir. Çoxluğun yazılış üsulları:</p>
-          <div class="rule-row">
-            <div class="rule-num">1</div>
-            <div class="rule-txt"><strong>Sadalama üsulu:</strong> $A = \{1,\,2,\,3,\,4,\,5\}$ — elementlər birbaşa yazılır.</div>
-          </div>
-          <div class="rule-row">
-            <div class="rule-num">2</div>
-            <div class="rule-txt"><strong>Əlamət üsulu (şərt):</strong> $A = \{x \mid x \in \mathbb{N},\; x < 6\}$ — mənsubluq şərti verilir.</div>
-          </div>
-          <div class="rule-row">
-            <div class="rule-num">3</div>
-            <div class="rule-txt"><strong>Qrafik (Euler-Venn):</strong> Dairə daxilindəki nöqtələr çoxluğu təsvir edir.</div>
-          </div>
-
-          <p style="font-size:0.88rem;margin:12px 0 6px;font-weight:600;">Mənsubluq əlamətləri:</p>
-          <div class="law-grid">
-            <div class="law-item">$a \in A$ — $a$ elementi $A$-ya <strong>daxildir</strong></div>
-            <div class="law-item">$a \notin A$ — $a$ elementi $A$-ya <strong>daxil deyil</strong></div>
-            <div class="law-item">$A = \{2;\,4;\,6\}$ olarsa, $4 \in A$</div>
-            <div class="law-item">$A = \{2;\,4;\,6\}$ olarsa, $3 \notin A$</div>
-          </div>
-
-          <div class="qeyd-box">
-            <strong>Qeyd:</strong> Çoxluq elementlərinin sırası fərq etmir: $\{1,2,3\} = \{3,1,2\}$. Eyni element bir dəfə yazılır.
-          </div>
+        <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
+          <button class="btn btn-primary" onclick="resetAssessment()">Yenidən cəhd et</button>
+          <button class="btn btn-secondary" onclick="showSection('theory')">Nəzəriyyəyə qayıt</button>
         </div>
       </div>
+    </div>
+  </div>
+</section>
 
-      <!-- §2 Çoxluq növləri -->
-      <div class="section-block">
-        <div class="section-head" onclick="toggleSection(this)">
-          <h3>§2. Çoxluq növləri</h3>
-          <span class="toggle">▾</span>
-        </div>
-        <div class="section-body">
-          <div class="def-box">
-            <strong>Sona aid (sonlu) çoxluq:</strong> Elementlərinin sayı sonlu olan çoxluq. Məs: $A = \{2;\,4;\,6;\,8\}$, elementlərinin sayı $n(A) = 4$.
-          </div>
-          <div class="def-box">
-            <strong>Sonsuz çoxluq:</strong> Elementlərinin sayı sonsuz olan çoxluq. Məs: $\mathbb{N} = \{1,\,2,\,3,\ldots\}$.
-          </div>
-          <div class="def-box">
-            <strong>Boş çoxluq ($\emptyset$):</strong> Heç bir element daxil olmayan çoxluq. $\emptyset = \{\}$, $n(\emptyset) = 0$. Boş çoxluq hər çoxluğun alt çoxluğudur.
-          </div>
-          <div class="def-box">
-            <strong>Vahid çoxluq:</strong> Yalnız bir elementi olan çoxluq. Məs: $A = \{5\}$, $n(A) = 1$.
-          </div>
+<script>
+/* ── NAVIGATION ── */
+function showSection(id){
+  document.querySelectorAll('section').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.nav-links a').forEach(a=>a.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  const lnk=document.querySelector(`.nav-links a[data-sec="${id}"]`);
+  if(lnk) lnk.classList.add('active');
+  if(id==='examples') renderExamples();
+  if(id==='assessment'){
+    document.getElementById('diag-ui').style.display='none';
+    document.getElementById('vik-ui').style.display='none';
+    document.getElementById('result-ui').style.display='none';
+  }
+  if(window.renderMathInElement) renderMathInElement(document.getElementById(id),{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}]});
+}
+document.querySelectorAll('.nav-links a[data-sec]').forEach(a=>{
+  a.addEventListener('click',e=>{e.preventDefault();showSection(a.dataset.sec);});
+});
 
-          <p style="font-size:0.88rem;margin:12px 0 6px;font-weight:600;">Çoxluğun elementlərinin sayı (kardinal ədəd):</p>
-          <div class="formula-box">
-            $n(A)$ — $A$ çoxluğunun elementlərinin sayı (sonlu çoxluqlar üçün)
-          </div>
-
-          <div class="qeyd-box">
-            <strong>Nümunə:</strong> $A = \{a,\,b,\,c,\,d\}$ → $n(A) = 4$. &nbsp;
-            $B = \{x \mid x^2 = -1,\; x \in \mathbb{R}\}$ → $B = \emptyset$ (həqiqi ədədlər arasında belə element yoxdur).
-          </div>
-        </div>
+/* ════════ SLIDES ════════ */
+const slides=[
+  {
+    title:'§1. Çoxluq anlayışı',
+    content:`
+      <div class="def-box"><strong>Çoxluq</strong> — müəyyən əlamətə görə birləşdirilmiş obyektlər (elementlər) toplusu. Böyük hərflə işarə olunur: $A, B, C, \ldots$</div>
+      <p><strong>Yazılış üsulları:</strong></p>
+      <div class="rule-grid">
+        <div class="rule-item"><strong>Sadalama:</strong> $A = \{1,2,3,4,5\}$</div>
+        <div class="rule-item"><strong>Əlamət:</strong> $A = \{x \mid x \in \mathbb{N},\; x \leq 5\}$</div>
       </div>
-
-      <!-- §3 Hesabi çoxluqlar -->
-      <div class="section-block">
-        <div class="section-head" onclick="toggleSection(this)">
-          <h3>§3. Hesabi çoxluqlar (Ədəd çoxluqları)</h3>
-          <span class="toggle">▾</span>
-        </div>
-        <div class="section-body">
-          <p style="font-size:0.88rem;margin:0 0 12px;">Riyaziyyatda istifadə olunan əsas ədəd çoxluqları:</p>
-
-          <div class="set-hierarchy">
-            <div class="set-row" style="background:rgba(63,185,80,0.08);border:1px solid rgba(63,185,80,0.2);">
-              <div class="set-badge" style="color:var(--green);">$\mathbb{N}$</div>
-              <div>
-                <strong>Natural ədədlər çoxluğu</strong><br>
-                <span style="font-size:0.82rem;color:var(--muted);">$\mathbb{N} = \{1,\,2,\,3,\,4,\ldots\}$ &nbsp;|&nbsp; $0 \notin \mathbb{N}$</span>
-              </div>
-            </div>
-            <div class="set-row" style="background:rgba(88,166,255,0.08);border:1px solid rgba(88,166,255,0.2);">
-              <div class="set-badge" style="color:var(--accent);">$\mathbb{Z}$</div>
-              <div>
-                <strong>Tam ədədlər çoxluğu</strong><br>
-                <span style="font-size:0.82rem;color:var(--muted);">$\mathbb{Z} = \{\ldots,-2,-1,0,1,2,\ldots\}$ &nbsp;|&nbsp; $\mathbb{N} \subset \mathbb{Z}$</span>
-              </div>
-            </div>
-            <div class="set-row" style="background:rgba(255,166,87,0.08);border:1px solid rgba(255,166,87,0.2);">
-              <div class="set-badge" style="color:var(--orange);">$\mathbb{Q}$</div>
-              <div>
-                <strong>Rasional ədədlər çoxluğu</strong><br>
-                <span style="font-size:0.82rem;color:var(--muted);">$\mathbb{Q} = \left\{\dfrac{m}{n} \;\middle|\; m\in\mathbb{Z},\; n\in\mathbb{N}\right\}$ &nbsp;|&nbsp; $\mathbb{Z} \subset \mathbb{Q}$</span>
-              </div>
-            </div>
-            <div class="set-row" style="background:rgba(188,140,255,0.08);border:1px solid rgba(188,140,255,0.2);">
-              <div class="set-badge" style="color:var(--purple);">$\mathbb{I}$</div>
-              <div>
-                <strong>İrrational ədədlər çoxluğu</strong><br>
-                <span style="font-size:0.82rem;color:var(--muted);">$\sqrt{2},\;\sqrt{3},\;\pi,\;e,\ldots$ — kəsrə çevrilmir</span>
-              </div>
-            </div>
-            <div class="set-row" style="background:rgba(248,81,73,0.08);border:1px solid rgba(248,81,73,0.2);">
-              <div class="set-badge" style="color:var(--red);">$\mathbb{R}$</div>
-              <div>
-                <strong>Həqiqi ədədlər çoxluğu</strong><br>
-                <span style="font-size:0.82rem;color:var(--muted);">$\mathbb{R} = \mathbb{Q} \cup \mathbb{I}$ &nbsp;|&nbsp; Bütün rasional + irrational ədədlər</span>
-              </div>
-            </div>
-          </div>
-
-          <div class="formula-box">
-            <strong>İçəlmə zənciri:</strong> $\mathbb{N} \subset \mathbb{Z} \subset \mathbb{Q} \subset \mathbb{R}$
-          </div>
-
-          <div class="svg-wrap">
-            <svg viewBox="0 0 320 180" width="320" aria-label="Ədəd çoxluqları içəlmə diaqramı">
-              <ellipse cx="160" cy="95" rx="145" ry="78" fill="rgba(248,81,73,0.06)" stroke="var(--red)" stroke-width="1.5"/>
-              <ellipse cx="155" cy="100" rx="108" ry="58" fill="rgba(188,140,255,0.06)" stroke="var(--purple)" stroke-width="1.5" stroke-dasharray="4,3"/>
-              <ellipse cx="150" cy="104" rx="76" ry="40" fill="rgba(255,166,87,0.08)" stroke="var(--orange)" stroke-width="1.5"/>
-              <ellipse cx="143" cy="108" rx="48" ry="26" fill="rgba(88,166,255,0.10)" stroke="var(--accent)" stroke-width="1.5"/>
-              <ellipse cx="138" cy="112" rx="24" ry="14" fill="rgba(63,185,80,0.15)" stroke="var(--green)" stroke-width="1.5"/>
-              <text x="138" y="116" text-anchor="middle" font-size="10" font-weight="700" fill="var(--green)">ℕ</text>
-              <text x="168" y="120" text-anchor="middle" font-size="10" font-weight="700" fill="var(--accent)">ℤ</text>
-              <text x="204" y="120" text-anchor="middle" font-size="10" font-weight="700" fill="var(--orange)">ℚ</text>
-              <text x="235" y="115" text-anchor="middle" font-size="10" font-weight="700" fill="var(--purple)">𝕀</text>
-              <text x="280" y="100" text-anchor="middle" font-size="10" font-weight="700" fill="var(--red)">ℝ</text>
-            </svg>
-          </div>
-
-          <div class="qeyd-box">
-            <strong>Nümunə:</strong> $\pi \in \mathbb{I}$, $\pi \in \mathbb{R}$, $\pi \notin \mathbb{Q}$. &nbsp;
-            $-3 \in \mathbb{Z}$, $-3 \in \mathbb{Q}$, $-3 \notin \mathbb{N}$.
-          </div>
-        </div>
+      <p style="margin-top:12px;"><strong>Mənsubluq əlamətləri:</strong></p>
+      <div class="rule-grid">
+        <div class="rule-item">$a \in A$ — $a$ elementi $A$-ya <strong>daxildir</strong></div>
+        <div class="rule-item">$a \notin A$ — $a$ elementi $A$-ya <strong>daxil deyil</strong></div>
       </div>
-
-      <!-- §4 Bərabər çoxluqlar və Alt çoxluqlar -->
-      <div class="section-block">
-        <div class="section-head" onclick="toggleSection(this)">
-          <h3>§4. Bərabər çoxluqlar. Alt çoxluqlar</h3>
-          <span class="toggle">▾</span>
-        </div>
-        <div class="section-body">
-          <div class="def-box">
-            <strong>Bərabər çoxluqlar:</strong> $A = B$ — eyni elementlərə malik olduqda. $A = B \Leftrightarrow A \subseteq B$ və $B \subseteq A$.
-          </div>
-          <div class="def-box">
-            <strong>Alt çoxluq ($A \subseteq B$):</strong> $A$-nın hər bir elementi eyni zamanda $B$-yə də daxildirsə, $A$ çoxluğu $B$-nin alt çoxluğudur.
-            <br><br>
-            $A \subseteq B \Leftrightarrow \forall x:\; x \in A \Rightarrow x \in B$
-          </div>
-          <div class="def-box">
-            <strong>Məxsusi alt çoxluq ($A \subsetneq B$):</strong> $A \subseteq B$ və $A \neq B$ olarsa.
-          </div>
-
-          <p style="font-size:0.88rem;margin:12px 0 6px;font-weight:600;">Alt çoxluqların sayı:</p>
-          <div class="formula-box">
-            $n(A) = k$ olan çoxluğun alt çoxluqlarının sayı: $\boxed{2^k}$
-            <br><br>
-            Məxsusi alt çoxluqların sayı: $2^k - 1$
-          </div>
-
-          <p style="font-size:0.88rem;margin:10px 0 6px;font-weight:600;">Nümunə:</p>
-          <div class="qeyd-box">
-            $A = \{1,\,2,\,3\}$, $n(A)=3$ → Alt çoxluqların sayı $= 2^3 = 8$:<br>
-            $\emptyset$, $\{1\}$, $\{2\}$, $\{3\}$, $\{1,2\}$, $\{1,3\}$, $\{2,3\}$, $\{1,2,3\}$
-          </div>
-
-          <p style="font-size:0.88rem;margin:12px 0 6px;font-weight:600;">Alt çoxluq xassələri:</p>
-          <div class="law-grid">
-            <div class="law-item">$\emptyset \subseteq A$ (hər çoxluq üçün)</div>
-            <div class="law-item">$A \subseteq A$ (refleksivlik)</div>
-            <div class="law-item">$A \subseteq B,\; B \subseteq C \Rightarrow A \subseteq C$</div>
-            <div class="law-item">$A \subseteq B,\; B \subseteq A \Rightarrow A = B$</div>
-          </div>
-        </div>
+      <div class="warn-box"><strong>Qeyd:</strong> Çoxluqda sıra əhəmiyyətsizdir: $\{1,2,3\}=\{3,1,2\}$. Bir element bir dəfə yazılır.</div>
+      <div style="display:flex;justify-content:center;margin:14px 0;">
+        <svg viewBox="0 0 220 130" width="220" aria-label="Euler diaqramı A çoxluğu">
+          <ellipse cx="110" cy="65" rx="90" ry="52" fill="rgba(188,140,255,0.1)" stroke="#bc8cff" stroke-width="2"/>
+          <text x="110" y="20" text-anchor="middle" fill="#bc8cff" font-size="14" font-weight="700">A</text>
+          <text x="70" y="60" text-anchor="middle" fill="#e8e8f0" font-size="13">a₁</text>
+          <text x="100" y="75" text-anchor="middle" fill="#e8e8f0" font-size="13">a₂</text>
+          <text x="140" y="58" text-anchor="middle" fill="#e8e8f0" font-size="13">a₃</text>
+          <text x="120" y="90" text-anchor="middle" fill="#e8e8f0" font-size="13">a₄</text>
+          <text x="80" y="90" text-anchor="middle" fill="#e8e8f0" font-size="13">a₅</text>
+        </svg>
+      </div>`
+  },
+  {
+    title:'§2. Çoxluq növləri',
+    content:`
+      <div class="def-box"><strong>Sonlu çoxluq:</strong> elementlərinin sayı sonlu. $n(A)$ — elementlərinin sayı (kardinal ədəd).</div>
+      <div class="def-box"><strong>Sonsuz çoxluq:</strong> elementlərinin sayı sonsuz. Məs: $\mathbb{N}, \mathbb{Z}, \mathbb{R}$.</div>
+      <div class="def-box"><strong>Boş çoxluq ($\emptyset$):</strong> heç bir elementi olmayan çoxluq. $n(\emptyset)=0$. Hər çoxluğun alt çoxluğudur.</div>
+      <div class="def-box"><strong>Vahid çoxluq:</strong> yalnız bir elementi olan çoxluq. Məs: $\{5\}$, $n=1$.</div>
+      <p style="margin-top:12px;"><strong>Alt çoxluq:</strong></p>
+      <div class="def-box">$A \subseteq B$ — $A$-nın hər elementi $B$-yə də daxildirsə.<br>
+      Alt çoxluqların sayı: $n(A)=k$ olarsa, <strong>$2^k$</strong> alt çoxluq var.</div>
+      <div class="rule-grid">
+        <div class="rule-item">$\emptyset \subseteq A$ — hər çoxluq üçün</div>
+        <div class="rule-item">$A \subseteq A$ — refleksivlik</div>
+        <div class="rule-item">$\{1,2\}$: alt çoxluqlar → $2^2=4$: $\emptyset,\{1\},\{2\},\{1,2\}$</div>
+        <div class="rule-item">$A=B \Leftrightarrow A\subseteq B$ və $B\subseteq A$</div>
+      </div>`
+  },
+  {
+    title:'§3. Hesabi çoxluqlar (Ədəd çoxluqları)',
+    content:`
+      <p>Riyaziyyatda istifadə olunan əsas ədəd çoxluqları:</p>
+      <div class="set-row" style="background:rgba(81,207,102,.08);border:1px solid rgba(81,207,102,.2);">
+        <div class="set-badge" style="color:#51cf66;">ℕ</div>
+        <div><strong>Natural ədədlər</strong> — $\{1,2,3,\ldots\}$ &nbsp;|&nbsp; $0 \notin \mathbb{N}$</div>
       </div>
-
-      <!-- §5 Birləşmə -->
-      <div class="section-block">
-        <div class="section-head" onclick="toggleSection(this)">
-          <h3>§5. Çoxluqların birləşməsi ($A \cup B$)</h3>
-          <span class="toggle">▾</span>
-        </div>
-        <div class="section-body">
-          <div class="def-box">
-            <strong>Birləşmə:</strong> $A \cup B$ — ya $A$-ya, ya $B$-yə, ya da hər ikisinə daxil olan elementlər çoxluğu.<br>
-            $A \cup B = \{x \mid x \in A \;\text{və ya}\; x \in B\}$
-          </div>
-
-          <div class="svg-wrap">
-            <svg viewBox="0 0 260 140" width="260" aria-label="Birləşmə A∪B — hər iki dairə rənglənib">
-              <circle cx="90" cy="70" r="52" fill="rgba(88,166,255,0.25)" stroke="var(--accent)" stroke-width="2"/>
-              <circle cx="170" cy="70" r="52" fill="rgba(88,166,255,0.25)" stroke="var(--accent)" stroke-width="2"/>
-              <text x="65" y="74" text-anchor="middle" font-size="22" font-weight="700" fill="var(--accent)">A</text>
-              <text x="195" y="74" text-anchor="middle" font-size="22" font-weight="700" fill="var(--accent)">B</text>
-              <text x="130" y="128" text-anchor="middle" font-size="12" fill="var(--muted)">A ∪ B (hər ikisi)</text>
-            </svg>
-          </div>
-
-          <p style="font-size:0.88rem;margin:12px 0 6px;font-weight:600;">Birləşmənin xassələri:</p>
-          <div class="law-grid">
-            <div class="law-item">$A \cup A = A$ (idempotentlik)</div>
-            <div class="law-item">$A \cup \emptyset = A$</div>
-            <div class="law-item">$A \cup B = B \cup A$ (kommutativlik)</div>
-            <div class="law-item">$(A \cup B) \cup C = A \cup (B \cup C)$</div>
-            <div class="law-item">$A \subseteq B \Rightarrow A \cup B = B$</div>
-            <div class="law-item">$A \cup U = U$</div>
-          </div>
-
-          <div class="formula-box">
-            $n(A \cup B) = n(A) + n(B) - n(A \cap B)$
-          </div>
-        </div>
+      <div class="set-row" style="background:rgba(77,171,247,.08);border:1px solid rgba(77,171,247,.2);">
+        <div class="set-badge" style="color:#4dabf7;">ℤ</div>
+        <div><strong>Tam ədədlər</strong> — $\{\ldots,-2,-1,0,1,2,\ldots\}$ &nbsp;|&nbsp; $\mathbb{N}\subset\mathbb{Z}$</div>
       </div>
-
-      <!-- §6 Kəsişmə -->
-      <div class="section-block">
-        <div class="section-head" onclick="toggleSection(this)">
-          <h3>§6. Çoxluqların kəsişməsi ($A \cap B$)</h3>
-          <span class="toggle">▾</span>
-        </div>
-        <div class="section-body">
-          <div class="def-box">
-            <strong>Kəsişmə:</strong> $A \cap B$ — həm $A$-ya, həm də $B$-yə daxil olan elementlər çoxluğu.<br>
-            $A \cap B = \{x \mid x \in A \;\text{və}\; x \in B\}$
-          </div>
-          <div class="def-box">
-            <strong>Ayrıq çoxluqlar:</strong> $A \cap B = \emptyset$ olarsa, $A$ və $B$ ayrıq (kəsişməyən) çoxluqlardır.
-          </div>
-
-          <div class="svg-wrap">
-            <svg viewBox="0 0 260 140" width="260" aria-label="Kəsişmə A∩B — ortaq hissə rənglənib">
-              <circle cx="90" cy="70" r="52" fill="rgba(88,166,255,0.10)" stroke="var(--accent)" stroke-width="2"/>
-              <circle cx="170" cy="70" r="52" fill="rgba(88,166,255,0.10)" stroke="var(--accent)" stroke-width="2"/>
-              <ellipse cx="130" cy="70" rx="25" ry="44" fill="rgba(88,166,255,0.38)" stroke="none"/>
-              <text x="65" y="74" text-anchor="middle" font-size="22" font-weight="700" fill="var(--accent)">A</text>
-              <text x="195" y="74" text-anchor="middle" font-size="22" font-weight="700" fill="var(--accent)">B</text>
-              <text x="130" y="128" text-anchor="middle" font-size="12" fill="var(--muted)">A ∩ B (ümumi hissə)</text>
-            </svg>
-          </div>
-
-          <p style="font-size:0.88rem;margin:12px 0 6px;font-weight:600;">Kəsişmənin xassələri:</p>
-          <div class="law-grid">
-            <div class="law-item">$A \cap A = A$ (idempotentlik)</div>
-            <div class="law-item">$A \cap \emptyset = \emptyset$</div>
-            <div class="law-item">$A \cap B = B \cap A$ (kommutativlik)</div>
-            <div class="law-item">$(A \cap B) \cap C = A \cap (B \cap C)$</div>
-            <div class="law-item">$A \subseteq B \Rightarrow A \cap B = A$</div>
-            <div class="law-item">$A \cap U = A$</div>
-          </div>
-        </div>
+      <div class="set-row" style="background:rgba(255,166,87,.08);border:1px solid rgba(255,166,87,.2);">
+        <div class="set-badge" style="color:#ffa657;">ℚ</div>
+        <div><strong>Rasional ədədlər</strong> — $\tfrac{m}{n}$ şəklində, $n\neq0$ &nbsp;|&nbsp; $\mathbb{Z}\subset\mathbb{Q}$</div>
       </div>
-
-      <!-- §7 Fərq -->
-      <div class="section-block">
-        <div class="section-head" onclick="toggleSection(this)">
-          <h3>§7. Çoxluqların fərqi ($A \setminus B$)</h3>
-          <span class="toggle">▾</span>
-        </div>
-        <div class="section-body">
-          <div class="def-box">
-            <strong>Fərq:</strong> $A \setminus B$ — $A$-ya daxil olan, lakin $B$-yə daxil olmayan elementlər çoxluğu.<br>
-            $A \setminus B = \{x \mid x \in A \;\text{və}\; x \notin B\} = A \cap \overline{B}$
-          </div>
-
-          <div class="svg-wrap">
-            <svg viewBox="0 0 260 140" width="260" aria-label="Fərq A minus B — yalnız A-da olan hissə">
-              <circle cx="90" cy="70" r="52" fill="rgba(88,166,255,0.30)" stroke="var(--accent)" stroke-width="2"/>
-              <circle cx="170" cy="70" r="52" fill="rgba(13,17,23,0.4)" stroke="var(--border)" stroke-width="2"/>
-              <ellipse cx="130" cy="70" rx="25" ry="44" fill="rgba(13,17,23,0.9)" stroke="none"/>
-              <text x="65" y="74" text-anchor="middle" font-size="22" font-weight="700" fill="var(--accent)">A</text>
-              <text x="195" y="74" text-anchor="middle" font-size="22" font-weight="700" fill="var(--muted)">B</text>
-              <text x="130" y="128" text-anchor="middle" font-size="12" fill="var(--muted)">A \ B (yalnız A-da)</text>
-            </svg>
-          </div>
-
-          <p style="font-size:0.88rem;margin:12px 0 6px;font-weight:600;">Fərqin xassələri:</p>
-          <div class="law-grid">
-            <div class="law-item">$A \setminus \emptyset = A$</div>
-            <div class="law-item">$A \setminus A = \emptyset$</div>
-            <div class="law-item">$\emptyset \setminus A = \emptyset$</div>
-            <div class="law-item">$A \subseteq B \Rightarrow A \setminus B = \emptyset$</div>
-          </div>
-
-          <div class="def-box">
-            <strong>Simmetrik fərq:</strong> $A \triangle B = (A \setminus B) \cup (B \setminus A)$ — yalnız bir çoxluqda olan elementlər.<br>
-            $A \triangle B = (A \cup B) \setminus (A \cap B)$
-          </div>
-        </div>
+      <div class="set-row" style="background:rgba(188,140,255,.08);border:1px solid rgba(188,140,255,.2);">
+        <div class="set-badge" style="color:#bc8cff;">𝕀</div>
+        <div><strong>İrrational ədədlər</strong> — $\sqrt{2},\sqrt{3},\pi,e,\ldots$ — kəsrə çevrilmir</div>
       </div>
-
-      <!-- §8 Tamamlayıcı -->
-      <div class="section-block">
-        <div class="section-head" onclick="toggleSection(this)">
-          <h3>§8. Tamamlayıcı çoxluq ($\overline{A}$ / $A'$). Universal çoxluq</h3>
-          <span class="toggle">▾</span>
-        </div>
-        <div class="section-body">
-          <div class="def-box">
-            <strong>Universal çoxluq ($U$):</strong> Baxılan kontekstdə bütün elementləri əhatə edən çoxluq.
-          </div>
-          <div class="def-box">
-            <strong>Tamamlayıcı çoxluq:</strong> $\overline{A} = A' = U \setminus A$ — universal çoxluqda $A$-ya daxil olmayan elementlər.<br>
-            $n(A') = n(U) - n(A)$
-          </div>
-
-          <div class="svg-wrap">
-            <svg viewBox="0 0 280 160" width="280" aria-label="Tamamlayıcı çoxluq — A-nın xarici hissəsi">
-              <rect x="10" y="10" width="260" height="140" rx="8" fill="rgba(88,166,255,0.05)" stroke="var(--accent)" stroke-width="1.5"/>
-              <circle cx="130" cy="80" r="50" fill="rgba(88,166,255,0.15)" stroke="var(--accent)" stroke-width="2"/>
-              <text x="130" y="84" text-anchor="middle" font-size="20" font-weight="700" fill="var(--accent)">A</text>
-              <text x="220" y="50" text-anchor="middle" font-size="13" fill="var(--muted)">A' = U\A</text>
-              <text x="35" y="140" text-anchor="middle" font-size="11" fill="var(--muted)">U</text>
-            </svg>
-          </div>
-
-          <p style="font-size:0.88rem;margin:12px 0 6px;font-weight:600;">Tamamlayıcının xassələri:</p>
-          <div class="law-grid">
-            <div class="law-item">$A \cup A' = U$</div>
-            <div class="law-item">$A \cap A' = \emptyset$</div>
-            <div class="law-item">$(A')' = A$</div>
-            <div class="law-item">$U' = \emptyset,\quad \emptyset' = U$</div>
-            <div class="law-item">$\overline{A \cup B} = \overline{A} \cap \overline{B}$ (de Morgan)</div>
-            <div class="law-item">$\overline{A \cap B} = \overline{A} \cup \overline{B}$ (de Morgan)</div>
-          </div>
-
-          <div class="formula-box">
-            <strong>De Morgan qanunları:</strong>
-            $$\overline{A \cup B} = \overline{A} \cap \overline{B}$$
-            $$\overline{A \cap B} = \overline{A} \cup \overline{B}$$
-          </div>
-        </div>
+      <div class="set-row" style="background:rgba(248,81,73,.08);border:1px solid rgba(248,81,73,.2);">
+        <div class="set-badge" style="color:#ff6b6b;">ℝ</div>
+        <div><strong>Həqiqi ədədlər</strong> — $\mathbb{Q}\cup\mathbb{I}$ &nbsp;|&nbsp; bütün rasional + irrational</div>
       </div>
-
-      <!-- §9 Sayma düsturları -->
-      <div class="section-block">
-        <div class="section-head" onclick="toggleSection(this)">
-          <h3>§9. Sayma düsturları. Euler-Venn diaqramı</h3>
-          <span class="toggle">▾</span>
-        </div>
-        <div class="section-body">
-          <div class="formula-box">
-            <strong>İki çoxluq üçün:</strong>
-            $$n(A \cup B) = n(A) + n(B) - n(A \cap B)$$
-          </div>
-
-          <div class="svg-wrap">
-            <svg viewBox="0 0 300 170" width="300" aria-label="Euler-Venn iki çoxluq üç bölgə">
-              <circle cx="110" cy="85" r="65" fill="rgba(88,166,255,0.12)" stroke="var(--accent)" stroke-width="2"/>
-              <circle cx="190" cy="85" r="65" fill="rgba(63,185,80,0.12)" stroke="var(--green)" stroke-width="2"/>
-              <text x="72" y="82" text-anchor="middle" font-size="16" font-weight="700" fill="var(--accent)">a</text>
-              <text x="150" y="82" text-anchor="middle" font-size="16" font-weight="700">b</text>
-              <text x="228" y="82" text-anchor="middle" font-size="16" font-weight="700" fill="var(--green)">c</text>
-              <text x="60" y="162" text-anchor="middle" font-size="12" fill="var(--muted)">A</text>
-              <text x="240" y="162" text-anchor="middle" font-size="12" fill="var(--muted)">B</text>
-            </svg>
-          </div>
-
-          <div class="law-grid">
-            <div class="law-item">$n(A) = a + b$</div>
-            <div class="law-item">$n(B) = b + c$</div>
-            <div class="law-item">$n(A \cap B) = b$</div>
-            <div class="law-item">$n(A \cup B) = a + b + c$</div>
-            <div class="law-item">$n(A \setminus B) = a$</div>
-            <div class="law-item">$n(B \setminus A) = c$</div>
-          </div>
-
-          <div class="formula-box">
-            <strong>Üç çoxluq üçün:</strong>
-            $$n(A \cup B \cup C) = n(A)+n(B)+n(C) - n(A \cap B) - n(A \cap C) - n(B \cap C) + n(A \cap B \cap C)$$
-          </div>
-
-          <div class="svg-wrap">
-            <svg viewBox="0 0 300 210" width="300" aria-label="Euler-Venn üç çoxluq yeddi bölgə">
-              <circle cx="120" cy="95" r="68" fill="rgba(88,166,255,0.10)" stroke="var(--accent)" stroke-width="2"/>
-              <circle cx="180" cy="95" r="68" fill="rgba(63,185,80,0.10)" stroke="var(--green)" stroke-width="2"/>
-              <circle cx="150" cy="148" r="68" fill="rgba(188,140,255,0.10)" stroke="var(--purple)" stroke-width="2"/>
-              <text x="82" y="80" text-anchor="middle" font-size="13" fill="var(--muted)">A</text>
-              <text x="218" y="80" text-anchor="middle" font-size="13" fill="var(--muted)">B</text>
-              <text x="150" y="208" text-anchor="middle" font-size="13" fill="var(--muted)">C</text>
-              <text x="150" y="105" text-anchor="middle" font-size="10" fill="var(--text)">A∩B∩C</text>
-            </svg>
-          </div>
-
-          <div class="qeyd-box">
-            <strong>Qeyd:</strong> Sayma düsturu DİM-də çox istifadə olunur. Əgər $n(A \cup B)$ tapılırsa: $n(A \cup B) = n(A) + n(B) - n(A \cap B)$.
-          </div>
-        </div>
+      <div class="formula-box">$\mathbb{N} \subset \mathbb{Z} \subset \mathbb{Q} \subset \mathbb{R}$</div>
+      <div class="warn-box"><strong>Nümunə:</strong> $\pi\in\mathbb{I}$, $\pi\in\mathbb{R}$, $\pi\notin\mathbb{Q}$. &nbsp; $\sqrt{4}=2\in\mathbb{N},\mathbb{Z},\mathbb{Q},\mathbb{R}$.</div>`
+  },
+  {
+    title:'§4–§5. Birləşmə ($A \\cup B$)',
+    content:`
+      <div class="def-box"><strong>Birləşmə:</strong> $A \cup B = \{x \mid x\in A \;\text{və ya}\; x\in B\}$ — ya $A$-ya, ya $B$-yə, ya hər ikisinə daxil olan elementlər.</div>
+      <div style="display:flex;justify-content:center;margin:12px 0;">
+        <svg viewBox="0 0 250 130" width="240" aria-label="A∪B birləşmə — hər iki dairə rənglənib">
+          <circle cx="88" cy="65" r="52" fill="rgba(188,140,255,0.25)" stroke="#bc8cff" stroke-width="2"/>
+          <circle cx="162" cy="65" r="52" fill="rgba(188,140,255,0.25)" stroke="#bc8cff" stroke-width="2"/>
+          <text x="62" y="68" text-anchor="middle" font-size="20" font-weight="700" fill="#bc8cff">A</text>
+          <text x="188" y="68" text-anchor="middle" font-size="20" font-weight="700" fill="#bc8cff">B</text>
+          <text x="125" y="118" text-anchor="middle" font-size="11" fill="#a0a0b8">A ∪ B</text>
+        </svg>
       </div>
-
-    </div><!-- /theory -->
-
-    <!-- ══════════════════════════ EXAMPLES ══════════════════════════ -->
-    <div id="tab-examples" class="tab-panel">
-
-      <div class="example-card">
-        <div class="example-head">
-          <span class="example-num">Misal 1</span>
-          <span class="example-q">Çoxluğun yazılışı və mənsubluq</span>
-        </div>
-        <div class="example-body">
-          <p style="font-size:0.88rem;margin-bottom:10px;">$A = \{x \mid x \in \mathbb{N},\; x \leq 5\}$ çoxluğunu sadalama ilə yazın. $3 \in A?$ $6 \in A?$</p>
-          <div class="step"><div class="step-n">1.</div><div class="step-t">Şərtə uyğun natural ədədlər: $1, 2, 3, 4, 5$</div></div>
-          <div class="step"><div class="step-n">2.</div><div class="step-t">$A = \{1;\,2;\,3;\,4;\,5\}$</div></div>
-          <div class="step"><div class="step-n">3.</div><div class="step-t">$3 \leq 5$ olduğundan $3 \in A$ ✓</div></div>
-          <div class="step"><div class="step-n">4.</div><div class="step-t">$6 > 5$ olduğundan $6 \notin A$ ✓</div></div>
-          <div class="answer-box">$A = \{1;\,2;\,3;\,4;\,5\}$, &nbsp; $3 \in A$, &nbsp; $6 \notin A$</div>
-        </div>
+      <p><strong>Birləşmənin xassələri:</strong></p>
+      <div class="rule-grid">
+        <div class="rule-item">$A \cup A = A$</div>
+        <div class="rule-item">$A \cup \emptyset = A$</div>
+        <div class="rule-item">$A \cup B = B \cup A$</div>
+        <div class="rule-item">$(A \cup B) \cup C = A \cup (B \cup C)$</div>
+        <div class="rule-item">$A \subseteq B \Rightarrow A \cup B = B$</div>
+        <div class="rule-item">$A \cup U = U$</div>
       </div>
-
-      <div class="example-card">
-        <div class="example-head">
-          <span class="example-num">Misal 2</span>
-          <span class="example-q">Alt çoxluqların sayı</span>
-        </div>
-        <div class="example-body">
-          <p style="font-size:0.88rem;margin-bottom:10px;">$B = \{a,\,b,\,c,\,d\}$ çoxluğunun neçə alt çoxluğu var? Neçəsi məxsusi alt çoxluqdur?</p>
-          <div class="step"><div class="step-n">1.</div><div class="step-t">$n(B) = 4$</div></div>
-          <div class="step"><div class="step-n">2.</div><div class="step-t">Alt çoxluqların sayı $= 2^4 = 16$</div></div>
-          <div class="step"><div class="step-n">3.</div><div class="step-t">Məxsusi alt çoxluqların sayı $= 2^4 - 1 = 15$ ($B$-nin özü çıxılır)</div></div>
-          <div class="answer-box">16 alt çoxluq, 15 məxsusi alt çoxluq</div>
-        </div>
+      <div class="formula-box">$$n(A \cup B) = n(A) + n(B) - n(A \cap B)$$</div>`
+  },
+  {
+    title:'§6. Kəsişmə ($A \\cap B$)',
+    content:`
+      <div class="def-box"><strong>Kəsişmə:</strong> $A \cap B = \{x \mid x\in A \;\text{və}\; x\in B\}$ — həm $A$-ya həm $B$-yə daxil olan elementlər.</div>
+      <div class="def-box"><strong>Ayrıq çoxluqlar:</strong> $A \cap B = \emptyset$ olarsa, $A$ və $B$ kəsişmir (ayrıqdır).</div>
+      <div style="display:flex;justify-content:center;margin:12px 0;">
+        <svg viewBox="0 0 250 130" width="240" aria-label="A∩B kəsişmə — ortaq hissə rənglənib">
+          <circle cx="88" cy="65" r="52" fill="rgba(188,140,255,0.08)" stroke="#bc8cff" stroke-width="2"/>
+          <circle cx="162" cy="65" r="52" fill="rgba(188,140,255,0.08)" stroke="#bc8cff" stroke-width="2"/>
+          <ellipse cx="125" cy="65" rx="24" ry="44" fill="rgba(188,140,255,0.40)" stroke="none"/>
+          <text x="62" y="68" text-anchor="middle" font-size="20" font-weight="700" fill="#bc8cff">A</text>
+          <text x="188" y="68" text-anchor="middle" font-size="20" font-weight="700" fill="#bc8cff">B</text>
+          <text x="125" y="118" text-anchor="middle" font-size="11" fill="#a0a0b8">A ∩ B</text>
+        </svg>
       </div>
-
-      <div class="example-card">
-        <div class="example-head">
-          <span class="example-num">Misal 3</span>
-          <span class="example-q">Birləşmə və kəsişmə</span>
-        </div>
-        <div class="example-body">
-          <p style="font-size:0.88rem;margin-bottom:10px;">$A = \{1;\,3;\,5;\,7;\,9\}$, $B = \{2;\,3;\,5;\,8;\,9\}$. $A \cup B$ və $A \cap B$-ni tapın.</p>
-          <div class="step"><div class="step-n">1.</div><div class="step-t">$A \cup B$: hər iki çoxluğun elementlərini bir yerə yığırıq (tərarlama olmadan): $\{1;\,2;\,3;\,5;\,7;\,8;\,9\}$</div></div>
-          <div class="step"><div class="step-n">2.</div><div class="step-t">$A \cap B$: hər ikisində olan elementlər: $\{3;\,5;\,9\}$</div></div>
-          <div class="step"><div class="step-n">3.</div><div class="step-t">Yoxlama: $n(A \cup B) = n(A)+n(B)-n(A \cap B) = 5+5-3 = 7$ ✓</div></div>
-          <div class="answer-box">$A \cup B = \{1;\,2;\,3;\,5;\,7;\,8;\,9\}$, &nbsp; $A \cap B = \{3;\,5;\,9\}$</div>
-        </div>
+      <p><strong>Kəsişmənin xassələri:</strong></p>
+      <div class="rule-grid">
+        <div class="rule-item">$A \cap A = A$</div>
+        <div class="rule-item">$A \cap \emptyset = \emptyset$</div>
+        <div class="rule-item">$A \cap B = B \cap A$</div>
+        <div class="rule-item">$(A \cap B) \cap C = A \cap (B \cap C)$</div>
+        <div class="rule-item">$A \subseteq B \Rightarrow A \cap B = A$</div>
+        <div class="rule-item">$A \cap U = A$</div>
+      </div>`
+  },
+  {
+    title:'§7. Fərq ($A \\setminus B$) və Simmetrik fərq',
+    content:`
+      <div class="def-box"><strong>Fərq:</strong> $A \setminus B = \{x \mid x\in A,\; x\notin B\}$ — $A$-da olan, $B$-də olmayan elementlər.</div>
+      <div style="display:flex;justify-content:center;margin:10px 0;">
+        <svg viewBox="0 0 250 130" width="240" aria-label="A\\B fərq — yalnız A-nın xüsusi hissəsi">
+          <circle cx="88" cy="65" r="52" fill="rgba(188,140,255,0.30)" stroke="#bc8cff" stroke-width="2"/>
+          <circle cx="162" cy="65" r="52" fill="rgba(13,17,23,.4)" stroke="rgba(255,255,255,.15)" stroke-width="2"/>
+          <ellipse cx="125" cy="65" rx="24" ry="44" fill="rgba(13,17,23,.9)" stroke="none"/>
+          <text x="62" y="68" text-anchor="middle" font-size="20" font-weight="700" fill="#bc8cff">A</text>
+          <text x="188" y="68" text-anchor="middle" font-size="20" font-weight="700" fill="#a0a0b8">B</text>
+          <text x="125" y="118" text-anchor="middle" font-size="11" fill="#a0a0b8">A \ B</text>
+        </svg>
       </div>
-
-      <div class="example-card">
-        <div class="example-head">
-          <span class="example-num">Misal 4</span>
-          <span class="example-q">Sayma düsturu ilə kəsişməni tapmaq</span>
-        </div>
-        <div class="example-body">
-          <p style="font-size:0.88rem;margin-bottom:10px;">$n(A) = 12$, $n(B) = 18$, $n(A \cup B) = 25$. $n(A \cap B) = ?$</p>
-          <div class="step"><div class="step-n">1.</div><div class="step-t">Düstur: $n(A \cup B) = n(A) + n(B) - n(A \cap B)$</div></div>
-          <div class="step"><div class="step-n">2.</div><div class="step-t">$25 = 12 + 18 - n(A \cap B)$</div></div>
-          <div class="step"><div class="step-n">3.</div><div class="step-t">$n(A \cap B) = 12 + 18 - 25 = 30 - 25 = 5$</div></div>
-          <div class="answer-box">$n(A \cap B) = 5$</div>
-        </div>
+      <div class="rule-grid">
+        <div class="rule-item">$A \setminus \emptyset = A$</div>
+        <div class="rule-item">$A \setminus A = \emptyset$</div>
+        <div class="rule-item">$A \subseteq B \Rightarrow A\setminus B=\emptyset$</div>
+        <div class="rule-item">$A\setminus B = A \cap \overline{B}$</div>
       </div>
-
-      <div class="example-card">
-        <div class="example-head">
-          <span class="example-num">Misal 5</span>
-          <span class="example-q">Tamamlayıcı çoxluq + de Morgan</span>
-        </div>
-        <div class="example-body">
-          <p style="font-size:0.88rem;margin-bottom:10px;">$U = \{1;2;3;4;5;6;7;8;9;10\}$, $A = \{2;\,4;\,6;\,8;\,10\}$, $B = \{1;\,3;\,5;\,7;\,9\}$. <br>
-          $A' = ?$, $\overline{A \cup B} = ?$, $\overline{A} \cap \overline{B} = ?$</p>
-          <div class="step"><div class="step-n">1.</div><div class="step-t">$A' = U \setminus A = \{1;\,3;\,5;\,7;\,9\} = B$</div></div>
-          <div class="step"><div class="step-n">2.</div><div class="step-t">$A \cup B = \{1;2;3;4;5;6;7;8;9;10\} = U$</div></div>
-          <div class="step"><div class="step-n">3.</div><div class="step-t">$\overline{A \cup B} = U' = \emptyset$</div></div>
-          <div class="step"><div class="step-n">4.</div><div class="step-t">De Morgan: $\overline{A} \cap \overline{B} = B \cap A = \emptyset$ (A və B ayrıq, $A \cap B = \emptyset$) ✓</div></div>
-          <div class="answer-box">$A' = \{1;\,3;\,5;\,7;\,9\}$, &nbsp; $\overline{A \cup B} = \emptyset$, &nbsp; $\overline{A} \cap \overline{B} = \emptyset$</div>
-        </div>
+      <div class="def-box"><strong>Simmetrik fərq:</strong> $A \triangle B = (A\setminus B)\cup(B\setminus A) = (A\cup B)\setminus(A\cap B)$<br>
+      Yalnız bir çoxluqda olan elementlər.</div>`
+  },
+  {
+    title:'§8. Tamamlayıcı çoxluq. De Morgan qanunları',
+    content:`
+      <div class="def-box"><strong>Universal çoxluq ($U$):</strong> baxılan kontekstdə bütün elementləri əhatə edən çoxluq.</div>
+      <div class="def-box"><strong>Tamamlayıcı:</strong> $\overline{A} = A' = U\setminus A$ — $U$-da $A$-ya daxil olmayan elementlər.<br>
+      $n(A') = n(U) - n(A)$</div>
+      <div style="display:flex;justify-content:center;margin:10px 0;">
+        <svg viewBox="0 0 260 140" width="240" aria-label="Tamamlayıcı çoxluq U\\A">
+          <rect x="10" y="10" width="240" height="120" rx="8" fill="rgba(188,140,255,.05)" stroke="#bc8cff" stroke-width="1.5"/>
+          <circle cx="118" cy="70" r="44" fill="rgba(188,140,255,.15)" stroke="#bc8cff" stroke-width="2"/>
+          <text x="118" y="74" text-anchor="middle" font-size="18" font-weight="700" fill="#bc8cff">A</text>
+          <text x="205" y="40" text-anchor="middle" font-size="12" fill="#a0a0b8">A'=U\A</text>
+          <text x="28" y="126" text-anchor="middle" font-size="11" fill="#a0a0b8">U</text>
+        </svg>
       </div>
-
-      <div class="example-card">
-        <div class="example-head">
-          <span class="example-num">Misal 6</span>
-          <span class="example-q">DİM tipli məsələ: üç çoxluq</span>
-        </div>
-        <div class="example-body">
-          <p style="font-size:0.88rem;margin-bottom:10px;">Bir sinfin 40 şagirdindən 25-i riyaziyyatı, 20-si fizikanı, 10-u hər ikisini sevir. Nə riyaziyyatı nə fizikanı sevməyənlərin sayı neçədir?</p>
-          <div class="step"><div class="step-n">1.</div><div class="step-t">$n(R) = 25$, $n(F) = 20$, $n(R \cap F) = 10$</div></div>
-          <div class="step"><div class="step-n">2.</div><div class="step-t">$n(R \cup F) = 25 + 20 - 10 = 35$</div></div>
-          <div class="step"><div class="step-n">3.</div><div class="step-t">Heç birini sevməyənlər: $n(U) - n(R \cup F) = 40 - 35 = 5$</div></div>
-          <div class="answer-box">5 şagird nə riyaziyyatı nə fizikanı sevmir</div>
-        </div>
+      <div class="rule-grid">
+        <div class="rule-item">$A \cup A' = U$</div>
+        <div class="rule-item">$A \cap A' = \emptyset$</div>
+        <div class="rule-item">$(A')' = A$</div>
+        <div class="rule-item">$U'=\emptyset,\;\emptyset'=U$</div>
       </div>
-
-      <div class="example-card">
-        <div class="example-head">
-          <span class="example-num">Misal 7</span>
-          <span class="example-q">Ədəd çoxluqlarına mənsubluq</span>
-        </div>
-        <div class="example-body">
-          <p style="font-size:0.88rem;margin-bottom:10px;">Aşağıdakı ədədlərin hansı çoxluqlara (N, Z, Q, I, R) daxil olduğunu müəyyən edin: &nbsp; $-3$, &nbsp; $\sqrt{4}$, &nbsp; $\sqrt{5}$, &nbsp; $\dfrac{7}{3}$, &nbsp; $\pi$</p>
-          <div class="step"><div class="step-n">1.</div><div class="step-t">$-3 \in \mathbb{Z},\; \mathbb{Q},\; \mathbb{R}$ &nbsp; ($-3 \notin \mathbb{N}$)</div></div>
-          <div class="step"><div class="step-n">2.</div><div class="step-t">$\sqrt{4} = 2 \in \mathbb{N},\; \mathbb{Z},\; \mathbb{Q},\; \mathbb{R}$</div></div>
-          <div class="step"><div class="step-n">3.</div><div class="step-t">$\sqrt{5} \in \mathbb{I},\; \mathbb{R}$ &nbsp; ($\sqrt{5} \approx 2.236...$, kəsrə çevrilmir)</div></div>
-          <div class="step"><div class="step-n">4.</div><div class="step-t">$\dfrac{7}{3} \in \mathbb{Q},\; \mathbb{R}$ &nbsp; ($\notin \mathbb{Z}$)</div></div>
-          <div class="step"><div class="step-n">5.</div><div class="step-t">$\pi \in \mathbb{I},\; \mathbb{R}$ &nbsp; ($\pi \approx 3.14159...$, kəsrə çevrilmir)</div></div>
-          <div class="answer-box">$\mathbb{N} \subset \mathbb{Z} \subset \mathbb{Q} \subset \mathbb{R}$, İrrational ədədlər: $\sqrt{5},\, \pi$</div>
-        </div>
+      <div class="formula-box"><strong>De Morgan qanunları:</strong><br>
+      $\overline{A\cup B} = \overline{A}\cap\overline{B}$<br>
+      $\overline{A\cap B} = \overline{A}\cup\overline{B}$</div>`
+  },
+  {
+    title:'§9. Sayma düsturları. Euler-Venn',
+    content:`
+      <div class="formula-box"><strong>İki çoxluq:</strong> $n(A\cup B) = n(A)+n(B)-n(A\cap B)$</div>
+      <div style="display:flex;justify-content:center;margin:10px 0;">
+        <svg viewBox="0 0 290 160" width="270" aria-label="Euler-Venn iki çoxluq a,b,c bölgələri">
+          <circle cx="105" cy="80" r="64" fill="rgba(188,140,255,.12)" stroke="#bc8cff" stroke-width="2"/>
+          <circle cx="185" cy="80" r="64" fill="rgba(77,171,247,.12)" stroke="#4dabf7" stroke-width="2"/>
+          <text x="68" y="78" text-anchor="middle" font-size="16" font-weight="700" fill="#bc8cff">a</text>
+          <text x="145" y="78" text-anchor="middle" font-size="16" font-weight="700">b</text>
+          <text x="222" y="78" text-anchor="middle" font-size="16" font-weight="700" fill="#4dabf7">c</text>
+          <text x="56" y="154" text-anchor="middle" font-size="11" fill="#a0a0b8">A</text>
+          <text x="234" y="154" text-anchor="middle" font-size="11" fill="#a0a0b8">B</text>
+        </svg>
       </div>
-
-    </div><!-- /examples -->
-
-    <!-- ═══════════════════════════ TEST (DİAQNOSTİK) ═══════════════════════ -->
-    <div id="tab-test" class="tab-panel">
-
-      <div id="diag-intro" style="text-align:center;padding:32px 20px;">
-        <div style="font-size:3rem;margin-bottom:12px;">📋</div>
-        <h2 style="font-size:1.2rem;margin-bottom:8px;">Diaqnostik Test</h2>
-        <p style="color:var(--muted);font-size:0.88rem;margin-bottom:20px;">20 sual · Çoxluqlar mövzusu üzrə</p>
-        <button onclick="startDiag()" style="padding:12px 32px;border:none;border-radius:10px;background:var(--accent);color:#fff;font-size:1rem;font-weight:700;cursor:pointer;">Testi Başla</button>
+      <div class="rule-grid">
+        <div class="rule-item">$n(A)=a+b$</div>
+        <div class="rule-item">$n(B)=b+c$</div>
+        <div class="rule-item">$n(A\cap B)=b$</div>
+        <div class="rule-item">$n(A\cup B)=a+b+c$</div>
+        <div class="rule-item">$n(A\setminus B)=a$</div>
+        <div class="rule-item">$n(B\setminus A)=c$</div>
       </div>
-
-      <div id="diag-body" style="display:none;">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;padding:10px 0;border-bottom:1px solid var(--border);">
-          <span id="diag-counter" style="font-size:0.85rem;color:var(--muted);"></span>
-          <span id="diag-score-live" style="font-size:0.85rem;font-weight:700;color:var(--green);"></span>
-        </div>
-        <div id="diag-q-area"></div>
-        <button id="diag-next-btn" class="diag-next" onclick="diagNext()">Növbəti →</button>
+      <div class="formula-box"><strong>Üç çoxluq:</strong><br>
+      $n(A\cup B\cup C)=n(A)+n(B)+n(C)-n(A\cap B)-n(A\cap C)-n(B\cap C)+n(A\cap B\cap C)$</div>
+      <div class="warn-box"><strong>DİM tipli:</strong> 40 şagirddən 25-i riyaziyyatı, 20-si fizikanı, 10-u hər ikisini sevir. Heç birini sevməyən: $40-(25+20-10)=5$.</div>`
+  },
+  {
+    title:'§9 (davam). Distributivlik və xülasə',
+    content:`
+      <p><strong>Distributivlik qanunları:</strong></p>
+      <div class="rule-grid">
+        <div class="rule-item">$A\cup(B\cap C) = (A\cup B)\cap(A\cup C)$</div>
+        <div class="rule-item">$A\cap(B\cup C) = (A\cap B)\cup(A\cap C)$</div>
       </div>
-
-      <div id="diag-result" class="result-wrap">
-        <div class="result-header">
-          <div class="result-score" id="res-score"></div>
-          <div style="font-size:0.9rem;color:var(--muted);margin-top:6px;" id="res-msg"></div>
-        </div>
-        <div class="topic-bars" id="res-bars"></div>
-        <div style="text-align:center;">
-          <button class="retry-btn" onclick="retryDiag()">Yenidən cəhd et</button>
-        </div>
+      <p style="margin-top:12px;"><strong>Bütün əməllərin xülasəsi:</strong></p>
+      <div class="rule-grid">
+        <div class="rule-item">$A\cup B$ — birləşmə</div>
+        <div class="rule-item">$A\cap B$ — kəsişmə</div>
+        <div class="rule-item">$A\setminus B$ — fərq</div>
+        <div class="rule-item">$A\triangle B$ — simmetrik fərq</div>
+        <div class="rule-item">$\overline{A}=U\setminus A$ — tamamlayıcı</div>
+        <div class="rule-item">$A\subseteq B$ — alt çoxluq</div>
       </div>
-    </div><!-- /test -->
-
-    <!-- ════════════════════════ VİKTORİNA ════════════════════════ -->
-    <div id="tab-quiz" class="tab-panel">
-      <div class="quiz-wrap">
-        <div id="quiz-start" class="start-screen">
-          <div class="big-icon">⚡</div>
-          <h2 style="font-size:1.2rem;margin-top:12px;">Sürət Viktorinası</h2>
-          <p class="quiz-subtitle">10 sual · Sual başına 30 saniyə · Çoxluqlar</p>
-          <button class="start-btn" onclick="quizStart()">Başla!</button>
-        </div>
-        <div id="quiz-game" style="display:none;">
-          <div class="quiz-timer" id="quiz-timer">30</div>
-          <div class="quiz-progress" id="quiz-dots"></div>
-          <div class="quiz-tag-label" id="quiz-tag"></div>
-          <div class="quiz-q" id="quiz-q"></div>
-          <div class="quiz-opts" id="quiz-opts"></div>
-        </div>
-        <div id="quiz-finish" class="quiz-finish">
-          <div class="big-score" id="quiz-score"></div>
-          <div class="stars" id="quiz-stars"></div>
-          <div id="quiz-msg" style="color:var(--muted);font-size:0.9rem;"></div>
-          <button class="start-btn" style="margin-top:20px;" onclick="quizReset()">Yenidən oyna</button>
-        </div>
+      <div class="formula-box">
+        <strong>n(A') = n(U) − n(A)</strong><br>
+        <strong>n(A∪B) = n(A)+n(B)−n(A∩B)</strong><br>
+        <strong>2^n</strong> — n elementli çoxluğun alt çoxluqlarının sayı
       </div>
-    </div><!-- /quiz -->
+      <div class="warn-box"><strong>Diqqət:</strong> $\emptyset \neq \{0\}$. Boş çoxluqda element yoxdur, $\{0\}$-da isə 0 elementi var.</div>`
+  }
+];
 
-    <script>
-      /* ── TAB SWITCH ── */
-      function switchTab(id, btn) {
-        document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
-        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-        document.getElementById('tab-' + id).classList.add('active');
-        btn.classList.add('active');
-        if (window.renderMathInElement) {
-          renderMathInElement(document.getElementById('tab-' + id), {
-            delimiters: [
-              { left: '$$', right: '$$', display: true },
-              { left: '$', right: '$', display: false },
-            ],
-          });
-        }
-      }
+let slideIdx=0;
+function renderSlides(){
+  const track=document.getElementById('strack');
+  const dots=document.getElementById('sdots');
+  document.getElementById('snum').textContent=slideIdx+1;
+  document.getElementById('stotal').textContent=slides.length;
+  track.innerHTML='';
+  dots.innerHTML='';
+  slides.forEach((s,i)=>{
+    const d=document.createElement('div');
+    d.className='slide'+(i===slideIdx?' active':'');
+    d.innerHTML=`<h3>📌 ${s.title}</h3>${s.content}`;
+    track.appendChild(d);
+    const dot=document.createElement('div');
+    dot.className='slide-dot'+(i===slideIdx?' active':'');
+    dot.onclick=()=>{slideIdx=i;renderSlides();};
+    dots.appendChild(dot);
+  });
+  if(window.renderMathInElement) renderMathInElement(track,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}]});
+}
+function nextSlide(){if(slideIdx<slides.length-1){slideIdx++;renderSlides();}else showSection('examples');}
+function prevSlide(){if(slideIdx>0){slideIdx--;renderSlides();}}
+renderSlides();
 
-      /* ── SECTION TOGGLE ── */
-      function toggleSection(head) {
-        head.classList.toggle('open');
-        const body = head.nextElementSibling;
-        body.classList.toggle('open');
-      }
+/* ════════ EXAMPLES ════════ */
+const examples=[
+  {title:'Çoxluğun yazılışı və mənsubluq',type:'§1 Çoxluq anlayışı',
+   task:'$A = \\{x \\mid x \\in \\mathbb{N},\\; x \\leq 6\\}$ çoxluğunu sadalama ilə yazın. $4\\in A$? $7\\in A$?',
+   sol:'<p>$x\\leq6$, $x\\in\\mathbb{N}$ → $A=\\{1,2,3,4,5,6\\}$</p><p>$4\\leq6$ → $4\\in A$ ✓</p><p>$7>6$ → $7\\notin A$ ✓</p>'},
+  {title:'Alt çoxluqların sayı',type:'§2 Çoxluq növləri',
+   task:'$B=\\{a,b,c,d\\}$ çoxluğunun neçə alt çoxluğu var? Neçəsi məxsusi alt çoxluqdur?',
+   sol:'<p>$n(B)=4$ → alt çoxluqların sayı $=2^4=16$</p><p>Məxsusi alt çoxluqlar: $2^4-1=15$ ($B$ özü çıxılır)</p>'},
+  {title:'Birləşmə, kəsişmə, fərq',type:'§4–§6 Əməllər',
+   task:'$A=\\{1;3;5;7;9\\}$, $B=\\{2;3;5;8;9\\}$. $A\\cup B$, $A\\cap B$, $A\\setminus B$ tapın.',
+   sol:'<p>$A\\cup B=\\{1;2;3;5;7;8;9\\}$, $n=7$</p><p>$A\\cap B=\\{3;5;9\\}$, $n=3$</p><p>$A\\setminus B=\\{1;7\\}$ (A-da var, B-də yox)</p><p>Yoxlama: $7=5+5-3$ ✓</p>'},
+  {title:'Sayma düsturu ilə tapma',type:'§9 Sayma düsturu',
+   task:'$n(A)=12$, $n(B)=18$, $n(A\\cup B)=25$. $n(A\\cap B)=?$',
+   sol:'<p>$n(A\\cup B)=n(A)+n(B)-n(A\\cap B)$</p><p>$25=12+18-n(A\\cap B)$</p><p>$n(A\\cap B)=30-25=\\mathbf{5}$</p>'},
+  {title:'Tamamlayıcı və De Morgan',type:'§8 Tamamlayıcı',
+   task:'$U=\\{1;2;\\ldots;10\\}$, $A=\\{2;4;6;8;10\\}$, $B=\\{1;3;5;7;9\\}$.<br>$A\'$, $\\overline{A\\cup B}$, $\\overline{A}\\cap\\overline{B}$ tapın.',
+   sol:'<p>$A\'=\\{1;3;5;7;9\\}=B$</p><p>$A\\cup B=U$ → $\\overline{A\\cup B}=\\emptyset$</p><p>De Morgan: $\\overline{A}\\cap\\overline{B}=B\\cap A=\\emptyset$ ✓</p>'},
+  {title:'DİM tipli məsələ — üç çoxluq',type:'§9 Euler-Venn',
+   task:'60 şagirddən 35-i riyaziyyatı (R), 28-i fizikanı (F), 22-si informatikanı (İ) sevir. $R\\cap F=15$, $R\\cap İ=12$, $F\\cap İ=10$, $R\\cap F\\cap İ=6$. Heç birini sevməyən neçədir?',
+   sol:'<p>$n(R\\cup F\\cup İ)=35+28+22-15-12-10+6=54$</p><p>Heç birini sevməyən: $60-54=\\mathbf{6}$</p>'},
+];
 
-      /* ════════ DIAGNOSTIC TEST DATA ════════ */
-      const DIAG = [
-        { s: "Tərif", q: "Çoxluğun tərifi hansıdır?",
-          o: ["Müəyyən əlamətə görə birləşdirilmiş obyektlər toplusu","Yalnız ədədlər toplusu","Sıralanmış cütlər","İki ədədin cəmi"], a: 0 },
-        { s: "Mənsubluq", q: "$A = \\{2;\\,4;\\,6;\\,8\\}$. $5 \\in A$?",
-          o: ["Bəli","Xeyr","Həm bəli həm xeyr","Müəyyən edilmir"], a: 1 },
-        { s: "Boş çoxluq", q: "$\\emptyset$-in elementlərinin sayı neçədir?",
-          o: ["0","1","Sonsuz","Müəyyən edilmir"], a: 0 },
-        { s: "Alt çoxluq", q: "$n(A) = 4$ olarsa, alt çoxluqların sayı?",
-          o: ["8","16","12","4"], a: 1 },
-        { s: "Ədəd çoxluqları", q: "$-5$ hansı çoxluğa daxil deyil?",
-          o: ["$\\mathbb{N}$","$\\mathbb{Z}$","$\\mathbb{Q}$","$\\mathbb{R}$"], a: 0 },
-        { s: "Birləşmə", q: "$A = \\{1;2;3\\}$, $B = \\{3;4;5\\}$. $n(A \\cup B) = ?$",
-          o: ["5","6","7","4"], a: 0 },
-        { s: "Kəsişmə", q: "$A = \\{1;2;3\\}$, $B = \\{3;4;5\\}$. $A \\cap B = ?$",
-          o: ["$\\{3\\}$","$\\{1;2;3;4;5\\}$","$\\emptyset$","$\\{1;2\\}$"], a: 0 },
-        { s: "Sayma", q: "$n(A)=10,\\;n(B)=8,\\;n(A \\cap B)=3$. $n(A \\cup B)=?$",
-          o: ["15","18","21","13"], a: 0 },
-        { s: "Fərq", q: "$A = \\{1;2;3;4;5\\}$, $B = \\{3;4;5;6;7\\}$. $A \\setminus B = ?$",
-          o: ["$\\{1;2\\}$","$\\{6;7\\}$","$\\{3;4;5\\}$","$\\{1;2;3;4;5;6;7\\}$"], a: 0 },
-        { s: "Tamamlayıcı", q: "$n(U)=20,\\;n(A)=13$. $n(A')=?$",
-          o: ["7","13","20","33"], a: 0 },
-        { s: "De Morgan", q: "$\\overline{A \\cup B}$ de Morgan qanununa görə nəyə bərabərdir?",
-          o: ["$\\overline{A} \\cap \\overline{B}$","$\\overline{A} \\cup \\overline{B}$","$A \\cap B$","$A \\cup B$"], a: 0 },
-        { s: "Alt çoxluq", q: "$A \\subseteq B$ olarsa, $A \\cup B = ?$",
-          o: ["$B$","$A$","$\\emptyset$","$A \\cap B$"], a: 0 },
-        { s: "Kəsişmə", q: "$A \\cap B = \\emptyset$ olarsa, $A$ və $B$ necə adlanır?",
-          o: ["Ayrıq çoxluqlar","Bərabər çoxluqlar","Alt çoxluq","Sonsuz çoxluqlar"], a: 0 },
-        { s: "Ədəd çoxluqları", q: "$\\sqrt{7}$ hansı çoxluğa daxildir?",
-          o: ["$\\mathbb{I}$ və $\\mathbb{R}$","Yalnız $\\mathbb{Q}$","$\\mathbb{N}$","$\\mathbb{Z}$"], a: 0 },
-        { s: "Birləşmə", q: "$A \\cup \\emptyset = ?$",
-          o: ["$A$","$\\emptyset$","$U$","$A'$"], a: 0 },
-        { s: "Tamamlayıcı", q: "$A \\cup A' = ?$",
-          o: ["$U$","$\\emptyset$","$A$","$A'$"], a: 0 },
-        { s: "Sayma", q: "40 şagirddən 25-i riyaziyyatı, 20-si fizikanı, 10-u hər ikisini sevir. Heç birini sevməyən neçə nəfərdir?",
-          o: ["5","10","15","0"], a: 0 },
-        { s: "Alt çoxluq", q: "$\\emptyset$ haqqında doğru olan ifadə hansıdır?",
-          o: ["$\\emptyset$ hər çoxluğun alt çoxluğudur","$\\emptyset = \\{0\\}$","$n(\\emptyset) = 1$","$\\emptyset$ yalnız $\\mathbb{N}$-in alt çoxluğudur"], a: 0 },
-        { s: "Kəsişmə", q: "$A \\subseteq B$ olarsa, $A \\cap B = ?$",
-          o: ["$A$","$B$","$\\emptyset$","$U$"], a: 0 },
-        { s: "Sayma", q: "$n(A)=7,\\;n(B)=9,\\;n(A \\cup B)=14$. $n(A \\cap B)=?$",
-          o: ["2","3","4","5"], a: 0 },
-      ];
+function renderExamples(){
+  const c=document.getElementById('examples-container');
+  if(c.dataset.done) return; c.dataset.done='1';
+  examples.forEach((ex,i)=>{
+    const d=document.createElement('div'); d.className='problem-card';
+    d.innerHTML=`<div class="problem-header"><span class="problem-number">Misal ${i+1}</span><span class="problem-type">${ex.type}</span></div><div class="problem-text"><strong>${ex.title}</strong><br><br>${ex.task}</div><button class="solution-btn" onclick="toggleSol(this)">Həlli göstər</button><div class="solution">${ex.sol}</div>`;
+    c.appendChild(d);
+  });
+  if(window.renderMathInElement) renderMathInElement(c,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}]});
+}
+function toggleSol(btn){const s=btn.nextElementSibling;const a=s.classList.toggle('active');btn.textContent=a?'Həlli gizlət':'Həlli göstər';}
 
-      let diagIdx = 0, diagScore = 0, diagAnswered = false;
-      let diagResults = {};
+/* ════════ QUESTIONS ════════ */
+const Qs=[
+  {s:'§1',q:'Çoxluğun tərifi nədir?',o:['Müəyyən əlamətə görə birləşdirilmiş obyektlər toplusu','Yalnız ədədlər toplusu','Sıralanmış cütlər','İki ədədin cəmi'],a:0,e:'Çoxluq — ümumi əlamətlə birləşən obyektlər toplusudur.'},
+  {s:'§1',q:'$A=\\{2;4;6\\}$. $5\\in A$?',o:['Xeyr, $5\\notin A$','Bəli, $5\\in A$','Bəzən','Müəyyən deyil'],a:0,e:'5 cüt deyil, A-da yoxdur.'},
+  {s:'§2',q:'$n(A)=5$ olarsa alt çoxluqların sayı?',o:['32','16','25','10'],a:0,e:'$2^5=32$.'},
+  {s:'§2',q:'Boş çoxluq ($\\emptyset$) haqqında doğru olan?',o:['Hər çoxluğun alt çoxluğudur','Heç bir çoxluğun alt çoxluğu deyil','$\\{0\\}$ ilə eynidir','Yalnız $\\mathbb{N}$-in alt çoxluğudur'],a:0,e:'$\\emptyset$ hər çoxluğun alt çoxluğudur.'},
+  {s:'§3',q:'$-3$ hansı çoxluğa daxil deyil?',o:['$\\mathbb{N}$','$\\mathbb{Z}$','$\\mathbb{Q}$','$\\mathbb{R}$'],a:0,e:'-3 mənfi tam ədəddir, $\\mathbb{N}$-ə daxil deyil.'},
+  {s:'§3',q:'$\\sqrt{7}$ hansı çoxluqlara daxildir?',o:['$\\mathbb{I}$ və $\\mathbb{R}$','$\\mathbb{Q}$','$\\mathbb{N}$','$\\mathbb{Z}$'],a:0,e:'$\\sqrt{7}$ irrational ədəddir.'},
+  {s:'§4',q:'$A=\\{1;2;3\\}$, $B=\\{2;3;4;5\\}$. $n(A\\cup B)=?$',o:['5','6','7','4'],a:0,e:'$A\\cup B=\\{1;2;3;4;5\\}$, $n=5$.'},
+  {s:'§5',q:'$n(A)=10,\\;n(B)=8,\\;n(A\\cap B)=3$. $n(A\\cup B)=?$',o:['15','18','21','13'],a:0,e:'$10+8-3=15$.'},
+  {s:'§5',q:'$A\\cup\\emptyset=?$',o:['$A$','$\\emptyset$','$U$','$A\'$'],a:0,e:'$A\\cup\\emptyset=A$ — mənəvi element əlavə etmir.'},
+  {s:'§6',q:'$A\\cap B=\\emptyset$ olarsa $A$ və $B$...',o:['Ayrıq çoxluqlardır','Bərabərdir','$A\\subset B$-dir','$U$-a bərabərdir'],a:0,e:'Kəsişməyən çoxluqlara ayrıq deyilir.'},
+  {s:'§7',q:'$A=\\{1;2;3;4;5\\}$, $B=\\{3;4;5;6;7\\}$. $A\\setminus B=?$',o:['$\\{1;2\\}$','$\\{6;7\\}$','$\\{3;4;5\\}$','$\\{1;2;6;7\\}$'],a:0,e:'$A\\setminus B$ — A-da olan, B-də olmayan: {1,2}.'},
+  {s:'§8',q:'$n(U)=20,\\;n(A)=13$. $n(A\')=?$',o:['7','13','20','33'],a:0,e:'$n(A\')=n(U)-n(A)=20-13=7$.'},
+  {s:'§8',q:'$\\overline{A\\cup B}$ De Morgan qanununa görə?',o:['$\\overline{A}\\cap\\overline{B}$','$\\overline{A}\\cup\\overline{B}$','$A\\cap B$','$A\\cup B$'],a:0,e:'De Morgan: $\\overline{A\\cup B}=\\overline{A}\\cap\\overline{B}$.'},
+  {s:'§8',q:'$A\\cup A\'=?$',o:['$U$','$\\emptyset$','$A$','$A\'$'],a:0,e:'Çoxluq ilə tamamlayıcısının birləşməsi universal çoxluqdur.'},
+  {s:'§9',q:'$n(A)=7,\\;n(B)=9,\\;n(A\\cup B)=14$. $n(A\\cap B)=?$',o:['2','3','4','5'],a:0,e:'$n(A\\cap B)=7+9-14=2$.'},
+  {s:'§9',q:'40 şagirddən 25-i riyaziyyatı, 20-si fizikanı, 10-u hər ikisini sevir. Heç birini sevməyən?',o:['5','10','15','0'],a:0,e:'$n(R\\cup F)=25+20-10=35$. Heç biri: $40-35=5$.'},
+  {s:'§4',q:'$A\\subseteq B$ olarsa $A\\cup B=?$',o:['$B$','$A$','$\\emptyset$','$A\\cap B$'],a:0,e:'$A\\subseteq B$ olarsa bütün A-nın elementləri B-dədir, $A\\cup B=B$.'},
+  {s:'§6',q:'$A\\cap A\'=?$',o:['$\\emptyset$','$U$','$A$','$A\'$'],a:0,e:'Çoxluq ilə tamamlayıcısının kəsişməsi boş çoxluqdur.'},
+  {s:'§2',q:'$A=\\{x\\mid x^2=-1, x\\in\\mathbb{R}\\}$ nəyə bərabərdir?',o:['$\\emptyset$','$\\{0\\}$','$\\{1;-1\\}$','Sonsuz çoxluq'],a:0,e:'Həqiqi ədədlər arasında $x^2=-1$ həlli yoxdur. $A=\\emptyset$.'},
+  {s:'§9',q:'3 elementli çoxluğun alt çoxluqlarının sayı?',o:['8','6','4','3'],a:0,e:'$2^3=8$.'},
+];
 
-      function startDiag() {
-        diagIdx = 0; diagScore = 0; diagAnswered = false;
-        diagResults = {};
-        DIAG.forEach(q => { diagResults[q.s] = diagResults[q.s] || { got: 0, total: 0 }; diagResults[q.s].total++; });
-        diagResults = {};
-        document.getElementById('diag-intro').style.display = 'none';
-        document.getElementById('diag-result').classList.remove('show');
-        document.getElementById('diag-body').style.display = 'block';
-        renderDiagQ();
-      }
+let dIdx=0,dScore=0,dAns=[];
+function startDiag(){
+  dIdx=0;dScore=0;dAns=new Array(Qs.length).fill(null);
+  document.getElementById('diag-ui').style.display='block';
+  document.getElementById('vik-ui').style.display='none';
+  document.getElementById('result-ui').style.display='none';
+  renderDQ();
+  document.getElementById('diag-ui').scrollIntoView({behavior:'smooth'});
+}
+function renderDQ(){
+  const q=Qs[dIdx];
+  document.getElementById('dq-num').textContent=dIdx+1;
+  document.getElementById('dq-total').textContent=Qs.length;
+  document.getElementById('dq-score').textContent=dScore+' ✓';
+  document.getElementById('dq-bar').style.width=(dIdx/Qs.length*100)+'%';
+  document.getElementById('dq-expl').style.display='none';
+  document.getElementById('dq-next').disabled=dAns[dIdx]===null;
+  document.getElementById('dq-prev').disabled=dIdx===0;
+  document.getElementById('dq-q').innerHTML=q.q;
+  const opts=document.getElementById('dq-opts'); opts.innerHTML='';
+  const L=['A','B','C','D'];
+  q.o.forEach((opt,i)=>{
+    const div=document.createElement('div'); div.className='quiz-option';
+    if(dAns[dIdx]!==null){div.classList.add('disabled');if(i===q.a)div.classList.add('correct');else if(i===dAns[dIdx])div.classList.add('wrong');}
+    div.innerHTML=`<span class="option-letter">${L[i]}</span><span>${opt}</span>`;
+    div.addEventListener('click',()=>selectDQ(i));
+    opts.appendChild(div);
+  });
+  if(window.renderMathInElement){renderMathInElement(document.getElementById('dq-q'),{delimiters:[{left:'$',right:'$',display:false},{left:'$$',right:'$$',display:true}]});renderMathInElement(opts,{delimiters:[{left:'$',right:'$',display:false}]});}
+}
+function selectDQ(i){
+  if(dAns[dIdx]!==null) return;
+  dAns[dIdx]=i;
+  if(i===Qs[dIdx].a) dScore++;
+  document.getElementById('dq-next').disabled=false;
+  document.getElementById('dq-score').textContent=dScore+' ✓';
+  const expl=document.getElementById('dq-expl');
+  expl.style.display='block';
+  expl.style.background=i===Qs[dIdx].a?'rgba(81,207,102,.1)':'rgba(255,107,107,.1)';
+  expl.style.borderLeftColor=i===Qs[dIdx].a?'var(--success)':'var(--error)';
+  expl.innerHTML=(i===Qs[dIdx].a?'<strong style="color:var(--success)">✓ Düzgün!</strong> ':'<strong style="color:var(--error)">✗ Səhv.</strong> Düzgün cavab: <strong>'+Qs[dIdx].o[Qs[dIdx].a]+'</strong>. ')+Qs[dIdx].e;
+  renderDQ();
+}
+function nextDiag(){if(dIdx<Qs.length-1){dIdx++;renderDQ();}else showResults(dScore,Qs.length);}
+function prevDiag(){if(dIdx>0){dIdx--;renderDQ();}}
 
-      function renderDiagQ() {
-        const q = DIAG[diagIdx];
-        diagAnswered = false;
-        document.getElementById('diag-counter').textContent = `Sual ${diagIdx+1} / ${DIAG.length}`;
-        document.getElementById('diag-score-live').textContent = `✓ ${diagScore}`;
-        document.getElementById('diag-next-btn').classList.remove('show');
+let vIdx=0,vScore=0,vTimer=null,vTime=30,vRes=[];
+function startViktorina(){
+  vIdx=0;vScore=0;vRes=[];
+  document.getElementById('diag-ui').style.display='none';
+  document.getElementById('vik-ui').style.display='block';
+  document.getElementById('result-ui').style.display='none';
+  renderVQ();
+  document.getElementById('vik-ui').scrollIntoView({behavior:'smooth'});
+}
+function renderVQ(){
+  clearInterval(vTimer);vTime=30;
+  const q=Qs[vIdx];
+  document.getElementById('vik-tag').textContent=q.s;
+  document.getElementById('vik-q').innerHTML=q.q;
+  updateVTimer();
+  vTimer=setInterval(()=>{vTime--;updateVTimer();if(vTime<=0){clearInterval(vTimer);answerV(-1,null);}},1000);
+  const opts=document.getElementById('vik-opts');opts.innerHTML='';
+  const L=['A','B','C','D'];
+  q.o.forEach((opt,i)=>{
+    const div=document.createElement('div');div.className='quiz-option';
+    div.innerHTML=`<span class="option-letter">${L[i]}</span><span>${opt}</span>`;
+    div.onclick=()=>answerV(i,div);
+    opts.appendChild(div);
+  });
+  renderVDots();
+  if(window.renderMathInElement){renderMathInElement(document.getElementById('vik-q'),{delimiters:[{left:'$',right:'$',display:false}]});renderMathInElement(opts,{delimiters:[{left:'$',right:'$',display:false}]});}
+}
+function updateVTimer(){
+  const el=document.getElementById('vik-timer');
+  el.textContent=vTime;
+  el.style.color=vTime<=10?'var(--error)':'var(--warning)';
+}
+function renderVDots(){
+  const el=document.getElementById('vik-dots');el.innerHTML='';
+  Qs.forEach((_,i)=>{
+    const d=document.createElement('div');
+    d.style.cssText=`flex:1;height:5px;border-radius:3px;background:${i<vIdx?(vRes[i]?'var(--success)':'var(--error)'):i===vIdx?'var(--accent)':'var(--border-glass)'}`;
+    el.appendChild(d);
+  });
+}
+function answerV(idx,btn){
+  clearInterval(vTimer);
+  const q=Qs[vIdx];
+  document.querySelectorAll('#vik-opts .quiz-option').forEach(b=>b.disabled=true);
+  const ok=idx===q.a;
+  if(btn) btn.classList.add(ok?'correct':'wrong');
+  if(!ok) document.querySelectorAll('#vik-opts .quiz-option')[q.a]?.classList.add('correct');
+  if(ok) vScore++;
+  vRes.push(ok);
+  setTimeout(()=>{vIdx++;if(vIdx>=Qs.length){showResults(vScore,Qs.length);return;}renderVQ();},900);
+}
 
-        const html = `
-          <div class="diag-q-block">
-            <div class="diag-q-num">Sual ${diagIdx+1} <span class="diag-tag">${q.s}</span></div>
-            <div class="diag-q-text">${q.q}</div>
-            <div class="diag-opts" id="diag-opts-area">
-              ${q.o.map((opt, i) => `<button class="diag-opt" onclick="diagAnswer(${i},this)">${String.fromCharCode(65+i)}) ${opt}</button>`).join('')}
-            </div>
-          </div>`;
-        document.getElementById('diag-q-area').innerHTML = html;
-        if (window.renderMathInElement) {
-          renderMathInElement(document.getElementById('diag-q-area'), {
-            delimiters: [{ left: '$', right: '$', display: false }, { left: '$$', right: '$$', display: true }],
-          });
-        }
-      }
-
-      function diagAnswer(idx, btn) {
-        if (diagAnswered) return;
-        diagAnswered = true;
-        const q = DIAG[diagIdx];
-        document.querySelectorAll('#diag-opts-area .diag-opt').forEach(b => b.disabled = true);
-        if (idx === q.a) {
-          btn.classList.add('correct');
-          diagScore++;
-        } else {
-          btn.classList.add('wrong');
-          document.querySelectorAll('#diag-opts-area .diag-opt')[q.a].classList.add('correct');
-        }
-        document.getElementById('diag-score-live').textContent = `✓ ${diagScore}`;
-        document.getElementById('diag-next-btn').classList.add('show');
-      }
-
-      function diagNext() {
-        diagIdx++;
-        if (diagIdx >= DIAG.length) { showDiagResult(); return; }
-        renderDiagQ();
-      }
-
-      function showDiagResult() {
-        document.getElementById('diag-body').style.display = 'none';
-        const res = document.getElementById('diag-result');
-        res.classList.add('show');
-        const pct = Math.round(diagScore / DIAG.length * 100);
-        document.getElementById('res-score').textContent = `${diagScore} / ${DIAG.length}`;
-        const msgs = ['Nəzəriyyəni təkrar oxu 📚', 'Yaxşıdır! Davam et 💪', 'Əla nəticə! 🏆'];
-        document.getElementById('res-msg').textContent = msgs[pct >= 80 ? 2 : pct >= 50 ? 1 : 0];
-
-        // topic breakdown
-        const breakdown = {};
-        DIAG.forEach((q, i) => {
-          breakdown[q.s] = breakdown[q.s] || { got: 0, total: 0 };
-          breakdown[q.s].total++;
-        });
-        // We don't track per-question results here; show simple bar
-        const barsEl = document.getElementById('res-bars');
-        const sections = [...new Set(DIAG.map(q => q.s))];
-        barsEl.innerHTML = '';
-        sections.forEach(s => {
-          const total = DIAG.filter(q => q.s === s).length;
-          const pctS = pct;
-          const color = pct >= 80 ? 'var(--green)' : pct >= 50 ? 'var(--yellow)' : 'var(--red)';
-          barsEl.innerHTML += `
-            <div class="topic-bar-row">
-              <div class="topic-bar-label">${s}</div>
-              <div class="topic-bar-track"><div class="topic-bar-fill" style="width:${pctS}%;background:${color};"></div></div>
-              <div class="topic-bar-pct" style="color:${color};">${pctS}%</div>
-            </div>`;
-        });
-      }
-
-      function retryDiag() {
-        document.getElementById('diag-result').classList.remove('show');
-        document.getElementById('diag-intro').style.display = 'block';
-      }
-
-      /* ════════ QUIZ DATA ════════ */
-      const QUIZ = [
-        { s: "Tərif", q: "Çoxluğun tərifi nədir?",
-          o: ["Müəyyən əlamətə görə birləşdirilmiş obyektlər toplusu","Yalnız ədədlər toplusu","Sıralanmış cütlər","İki ədədin cəmi"], a: 0 },
-        { s: "Ədəd", q: "$n(A) = 3$ olarsa, alt çoxluqların sayı?",
-          o: ["8","6","4","3"], a: 0 },
-        { s: "Birləşmə", q: "$A \\cup B = ?$ tərifi:",
-          o: ["Hər ikisinin elementlərini əhatə edən çoxluq","Hər ikisindəki ümumi elementlər","Yalnız A-dakı elementlər","A ilə B-nin fərqi"], a: 0 },
-        { s: "Kəsişmə", q: "$A \\cap B = \\emptyset$ nə bildirir?",
-          o: ["A və B ayrıqdır (kəsişmir)","A = B","A boşdur","$A \\subseteq B$"], a: 0 },
-        { s: "Sayma", q: "$n(A \\cup B)$ düsturu:",
-          o: ["$n(A)+n(B)-n(A \\cap B)$","$n(A)+n(B)+n(A \\cap B)$","$n(A) \\cdot n(B)$","$n(A)-n(B)$"], a: 0 },
-        { s: "Fərq", q: "$A \\setminus B$ nədir?",
-          o: ["A-da olan, B-də olmayan elementlər","B-də olan, A-da olmayan elementlər","$A \\cap B$","$A \\cup B$"], a: 0 },
-        { s: "Tamamlayıcı", q: "$A' = ?$",
-          o: ["$U \\setminus A$","$A \\setminus B$","$A \\cup B$","$A \\cap B$"], a: 0 },
-        { s: "De Morgan", q: "$\\overline{A \\cup B} = ?$",
-          o: ["$\\overline{A} \\cap \\overline{B}$","$\\overline{A} \\cup \\overline{B}$","$A \\cap B$","$A \\cup B$"], a: 0 },
-        { s: "Alt çoxluq", q: "$A \\subseteq B$ olarsa $A \\cup B = ?$",
-          o: ["$B$","$A$","$A \\cap B$","$\\emptyset$"], a: 0 },
-        { s: "Ədəd çoxluqları", q: "$\\pi$ hansı çoxluğa daxildir?",
-          o: ["$\\mathbb{I}$ və $\\mathbb{R}$","$\\mathbb{Q}$","$\\mathbb{N}$","$\\mathbb{Z}$"], a: 0 },
-      ];
-
-      let quizIdx = 0, quizScore = 0, quizTimer = null, quizTime = 30;
-      let quizResults = [];
-
-      function quizStart() {
-        quizIdx = 0; quizScore = 0; quizResults = [];
-        document.getElementById('quiz-start').style.display = 'none';
-        document.getElementById('quiz-finish').classList.remove('show');
-        document.getElementById('quiz-game').style.display = 'block';
-        quizRenderDots();
-        quizRenderQ();
-      }
-
-      function quizRenderDots() {
-        const el = document.getElementById('quiz-dots');
-        el.innerHTML = '';
-        QUIZ.forEach((_, i) => {
-          const d = document.createElement('div');
-          d.className = 'quiz-dot' +
-            (i < quizIdx ? (quizResults[i] ? ' done-correct' : ' done-wrong') : i === quizIdx ? ' current' : '');
-          el.appendChild(d);
-        });
-      }
-
-      function quizRenderQ() {
-        clearInterval(quizTimer);
-        quizTime = 30;
-        const q = QUIZ[quizIdx];
-        document.getElementById('quiz-tag').textContent = q.s;
-        document.getElementById('quiz-q').innerHTML = q.q;
-        const optsEl = document.getElementById('quiz-opts');
-        optsEl.innerHTML = '';
-        q.o.forEach((opt, i) => {
-          const btn = document.createElement('button');
-          btn.className = 'quiz-opt';
-          btn.innerHTML = opt;
-          btn.onclick = () => quizAnswer(i, btn);
-          optsEl.appendChild(btn);
-        });
-        quizUpdateTimer();
-        quizTimer = setInterval(() => {
-          quizTime--;
-          quizUpdateTimer();
-          if (quizTime <= 0) { clearInterval(quizTimer); quizAnswer(-1, null); }
-        }, 1000);
-        if (window.renderMathInElement) {
-          renderMathInElement(document.getElementById('tab-quiz'), {
-            delimiters: [{ left: '$$', right: '$$', display: true }, { left: '$', right: '$', display: false }],
-          });
-        }
-      }
-
-      function quizUpdateTimer() {
-        const el = document.getElementById('quiz-timer');
-        el.textContent = quizTime;
-        el.classList.toggle('danger', quizTime <= 10);
-      }
-
-      function quizAnswer(idx, btn) {
-        clearInterval(quizTimer);
-        const q = QUIZ[quizIdx];
-        document.querySelectorAll('#quiz-opts .quiz-opt').forEach(b => b.disabled = true);
-        const correct = idx === q.a;
-        if (btn) btn.classList.add(correct ? 'correct' : 'wrong');
-        if (!correct) document.querySelectorAll('#quiz-opts .quiz-opt')[q.a].classList.add('correct');
-        if (correct) quizScore++;
-        quizResults.push(correct);
-        setTimeout(() => {
-          quizIdx++;
-          if (quizIdx >= QUIZ.length) { quizFinish(); return; }
-          quizRenderDots();
-          quizRenderQ();
-        }, 900);
-      }
-
-      function quizFinish() {
-        document.getElementById('quiz-game').style.display = 'none';
-        const fin = document.getElementById('quiz-finish');
-        fin.classList.add('show');
-        document.getElementById('quiz-score').textContent = `${quizScore} / ${QUIZ.length}`;
-        const stars = quizScore >= 9 ? '⭐⭐⭐' : quizScore >= 7 ? '⭐⭐' : '⭐';
-        document.getElementById('quiz-stars').textContent = stars;
-        const msgs = ['Nəzəriyyəni yaxşı öyrən! 📚', 'Yaxşıdır, davam et! 💪', 'Əla bilik! 🏆'];
-        document.getElementById('quiz-msg').textContent = msgs[quizScore >= 9 ? 2 : quizScore >= 7 ? 1 : 0];
-      }
-
-      function quizReset() {
-        document.getElementById('quiz-finish').classList.remove('show');
-        document.getElementById('quiz-start').style.display = 'block';
-      }
-    </script>
-  </body>
+function showResults(score,total){
+  document.getElementById('diag-ui').style.display='none';
+  document.getElementById('vik-ui').style.display='none';
+  document.getElementById('result-ui').style.display='block';
+  const pct=Math.round(score/total*100);
+  document.getElementById('res-circle').style.setProperty('--score',pct);
+  document.getElementById('res-pct').textContent=pct+'%';
+  document.getElementById('res-correct').textContent=score;
+  document.getElementById('res-wrong').textContent=total-score;
+  let mastery,msg;
+  if(pct>=90){mastery='Əla';msg='🏆 Əla! Mövzunu mükəmməl bilirsiniz!';}
+  else if(pct>=70){mastery='Yaxşı';msg='👍 Yaxşı! Bir neçə bölməni təkrar edin.';}
+  else if(pct>=50){mastery='Kafi';msg='📚 Nəzəriyyəni yenidən oxuyun.';}
+  else{mastery='Zəif';msg='💡 Mövzunu əvvəldən keçin.';}
+  document.getElementById('res-mastery').textContent=mastery;
+  document.getElementById('res-msg').innerHTML=msg;
+  document.getElementById('result-ui').scrollIntoView({behavior:'smooth'});
+}
+function resetAssessment(){
+  document.getElementById('diag-ui').style.display='none';
+  document.getElementById('vik-ui').style.display='none';
+  document.getElementById('result-ui').style.display='none';
+  clearInterval(vTimer);
+}
+</script>
+</body>
 </html>
