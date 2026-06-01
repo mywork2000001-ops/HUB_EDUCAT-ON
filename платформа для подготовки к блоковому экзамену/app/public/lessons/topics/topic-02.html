@@ -1,0 +1,743 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Çoxluqlar — DİM Hazırlıq</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css"/>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
+  onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}]})"></script>
+<style>
+:root{
+  --bg:#0d1117;--surface:#161b22;--surface2:#21262d;
+  --border:#30363d;--accent:#58a6ff;--green:#3fb950;
+  --yellow:#d29922;--red:#f85149;--purple:#bc8cff;
+  --text:#e6edf3;--muted:#8b949e;--radius:10px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,sans-serif;font-size:15px;line-height:1.65}
+/* TABS */
+.tab-bar{display:flex;gap:4px;padding:12px 16px 0;background:var(--surface);border-bottom:1px solid var(--border);overflow-x:auto;flex-shrink:0}
+.tab-btn{padding:8px 16px;border:none;border-radius:6px 6px 0 0;background:transparent;color:var(--muted);cursor:pointer;font-size:13px;white-space:nowrap;transition:.2s}
+.tab-btn.active{background:var(--bg);color:var(--accent);font-weight:600}
+.tab-btn:hover:not(.active){color:var(--text)}
+.tab-panel{display:none;padding:20px;max-width:860px;margin:0 auto}
+.tab-panel.active{display:block}
+/* THEORY */
+.section{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);margin-bottom:18px;overflow:hidden}
+.section-header{padding:12px 16px;display:flex;justify-content:space-between;align-items:center;cursor:pointer;user-select:none}
+.section-header h3{font-size:15px;color:var(--accent)}
+.section-body{padding:16px;border-top:1px solid var(--border)}
+.section-body p{margin-bottom:10px;color:var(--text)}
+.def-box{background:var(--surface2);border-left:3px solid var(--accent);border-radius:6px;padding:12px 14px;margin:10px 0}
+.formula-box{background:var(--surface2);border:1px solid var(--purple);border-radius:8px;padding:14px;margin:12px 0;text-align:center}
+.formula-box .label{font-size:12px;color:var(--purple);margin-bottom:6px}
+.law-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:10px 0}
+@media(max-width:520px){.law-grid{grid-template-columns:1fr}}
+.law-item{background:var(--surface2);border-radius:6px;padding:8px 12px;font-size:13px}
+.ex-box{background:#1c2130;border:1px solid var(--accent);border-radius:8px;padding:14px;margin:12px 0}
+.ex-box .ex-title{color:var(--accent);font-weight:600;margin-bottom:8px;font-size:13px}
+.step{display:flex;gap:10px;margin:6px 0;align-items:flex-start}
+.step-num{background:var(--accent);color:#000;border-radius:50%;width:22px;height:22px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;margin-top:2px}
+/* SVG diagrams */
+.diagram-wrap{display:flex;justify-content:center;margin:14px 0}
+svg text{fill:var(--text);font-family:system-ui,sans-serif}
+/* EXAMPLES */
+.example-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);margin-bottom:16px;overflow:hidden}
+.example-header{padding:12px 16px;background:var(--surface2);font-weight:600;color:var(--accent);font-size:14px}
+.example-body{padding:14px 16px}
+.example-problem{background:var(--surface2);border-radius:6px;padding:12px;margin-bottom:10px}
+.solution-step{padding:6px 0;border-bottom:1px solid var(--border);font-size:14px}
+.solution-step:last-child{border-bottom:none}
+.answer-badge{display:inline-block;background:var(--green);color:#000;border-radius:20px;padding:4px 12px;font-size:13px;font-weight:700;margin-top:8px}
+/* TRAINER */
+.trainer-problem{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px;margin-bottom:16px;min-height:140px}
+.trainer-problem h3{color:var(--accent);margin-bottom:14px;font-size:15px}
+.trainer-input{width:100%;padding:10px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:15px;outline:none}
+.trainer-input:focus{border-color:var(--accent)}
+.btn{padding:10px 22px;border:none;border-radius:6px;cursor:pointer;font-size:14px;font-weight:600;transition:.2s}
+.btn-primary{background:var(--accent);color:#000}
+.btn-primary:hover{opacity:.85}
+.btn-secondary{background:var(--surface2);color:var(--text);border:1px solid var(--border)}
+.btn-secondary:hover{border-color:var(--accent)}
+.feedback{padding:10px 14px;border-radius:6px;margin-top:10px;font-size:14px;display:none}
+.feedback.correct{background:#1a3a20;border:1px solid var(--green);color:var(--green)}
+.feedback.wrong{background:#3a1a1a;border:1px solid var(--red);color:var(--red)}
+.trainer-stats{display:flex;gap:12px;margin-bottom:16px;flex-wrap:wrap}
+.stat-box{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:10px 16px;text-align:center;flex:1;min-width:80px}
+.stat-box .val{font-size:22px;font-weight:700;color:var(--accent)}
+.stat-box .lbl{font-size:11px;color:var(--muted);margin-top:2px}
+/* DIAG */
+.progress-sections{display:flex;flex-direction:column;gap:6px;margin-bottom:16px}
+.prog-row{display:flex;align-items:center;gap:10px;font-size:13px}
+.prog-label{width:140px;color:var(--muted);flex-shrink:0}
+.prog-bar-wrap{flex:1;height:8px;background:var(--surface2);border-radius:4px;overflow:hidden}
+.prog-bar{height:100%;border-radius:4px;transition:.4s;width:0}
+.diag-q{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:18px;margin-bottom:14px}
+.diag-q h4{margin-bottom:12px;font-size:15px;line-height:1.5}
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.opt-btn{padding:10px;background:var(--surface2);border:1px solid var(--border);border-radius:6px;color:var(--text);cursor:pointer;font-size:14px;text-align:left;transition:.2s}
+.opt-btn:hover:not(:disabled){border-color:var(--accent)}
+.opt-btn.correct{background:#1a3a20;border-color:var(--green);color:var(--green)}
+.opt-btn.wrong{background:#3a1a1a;border-color:var(--red);color:var(--red)}
+/* QUIZ */
+.quiz-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}
+.timer-display{font-size:28px;font-weight:700;color:var(--green);transition:.3s}
+.timer-display.danger{color:var(--red);animation:pulse .5s infinite alternate}
+@keyframes pulse{from{transform:scale(1)}to{transform:scale(1.1)}}
+.quiz-question{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px;margin-bottom:16px}
+.quiz-question h3{font-size:16px;margin-bottom:16px;line-height:1.5}
+.quiz-opts{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.quiz-opt{padding:12px;background:var(--surface2);border:1px solid var(--border);border-radius:6px;color:var(--text);cursor:pointer;font-size:14px;text-align:left;transition:.2s}
+.quiz-opt:hover:not(:disabled){border-color:var(--accent);background:#1c2538}
+.quiz-opt.correct{background:#1a3a20;border-color:var(--green);color:var(--green)}
+.quiz-opt.wrong{background:#3a1a1a;border-color:var(--red);color:var(--red)}
+.stars{font-size:28px;text-align:center;padding:10px}
+.result-box{text-align:center;padding:24px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius)}
+.result-box h2{font-size:22px;margin-bottom:8px;color:var(--green)}
+@media(max-width:480px){.opts,.quiz-opts{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<div class="tab-bar">
+  <button class="tab-btn active" onclick="showTab('theory',this)">📚 Nəzəriyyə</button>
+  <button class="tab-btn" onclick="showTab('examples',this)">✏️ Nümunələr</button>
+  <button class="tab-btn" onclick="showTab('trainer',this)">🔁 Trenajör</button>
+  <button class="tab-btn" onclick="showTab('diag',this)">📊 Diaqnostika</button>
+  <button class="tab-btn" onclick="showTab('quiz',this)">⚡ Viktorina</button>
+</div>
+
+<!-- ═══════════════════════════════ THEORY ════════════════════════════════════ -->
+<div id="theory" class="tab-panel active">
+
+  <div class="section">
+    <div class="section-header" onclick="toggleSection(this)">
+      <h3>§1 — Çoxluq anlayışı</h3><span>▼</span>
+    </div>
+    <div class="section-body">
+      <div class="def-box">
+        Müəyyən əlamətlərə görə birləşdirilmiş obyektlər toplusuna <strong>çoxluq</strong> deyilir. Çoxluğun hər bir obyektinə onun <strong>elementi</strong> deyilir.
+      </div>
+      <p>Çoxluqlar böyük latın hərfləri ilə ($A, B, C, ...$), elementlər kiçik hərflərlə ($a, b, c, ...$) göstərilir.</p>
+      <p>$a \in A$ — $a$ elementi $A$ çoxluğuna daxildir.<br/>
+         $a \notin A$ — $a$ elementi $A$ çoxluğuna daxil deyil.</p>
+      <p><strong>Boş çoxluq</strong> ($\emptyset$) — elementi olmayan çoxluq.</p>
+      <div class="formula-box">
+        <div class="label">$n$ elementli çoxluğun alt çoxluqlarının sayı:</div>
+        $$2^n$$
+        <div class="label">Məxsusi alt çoxluqların sayı:</div>
+        $$2^n - 1$$
+      </div>
+      <div class="ex-box">
+        <div class="ex-title">Nümunə:</div>
+        <p>$A = \{a, b, c\}$ üçün $n(A) = 3$, alt çoxluqların sayı $2^3 = 8$, məxsusi alt çoxluq sayı $2^3-1=7$.</p>
+      </div>
+      <div class="ex-box">
+        <div class="ex-title">Nümunə 2:</div>
+        <p>$A = \{1; 3; 5; 7\} \Rightarrow n(A) = 4$, alt çoxluq sayı $2^4 = 16$</p>
+        <p>$A = \{a, b, c, d, e\} \Rightarrow n(A) = 5$, alt çoxluq sayı $2^5 = 32$</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-header" onclick="toggleSection(this)">
+      <h3>§2 — Məxsusi alt çoxluq</h3><span>▼</span>
+    </div>
+    <div class="section-body">
+      <div class="def-box">
+        $B \subset A$ — $B$, $A$ çoxluğunun <strong>alt çoxluğudur</strong>.<br/>
+        Əgər $B \subset A$ və $B \neq A$ olarsa, $B$ — $A$-nın <strong>məxsusi alt çoxluğu</strong>deyilir.
+      </div>
+      <p><strong>Xassələr:</strong></p>
+      <div class="law-grid">
+        <div class="law-item">$\emptyset \subset A$ — boş çoxluq hər çoxluğun alt çoxluğudur</div>
+        <div class="law-item">$A \subset A$ — hər çoxluq özünün alt çoxluğudur</div>
+        <div class="law-item">$A \subset B$ və $B \subset C \Rightarrow A \subset C$</div>
+        <div class="law-item">$A \subset B$ və $B \subset A \Rightarrow A = B$</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-header" onclick="toggleSection(this)">
+      <h3>§3 — Çoxluqların birləşməsi ($A \cup B$)</h3><span>▼</span>
+    </div>
+    <div class="section-body">
+      <div class="def-box">
+        İki çoxluqdan birinin ən azı birinə daxil olan bütün elementlərdən ibarət olan çoxluğa həmin çoxluqların <strong>birləşməsi</strong> deyilir: $A \cup B$.
+      </div>
+      <div class="diagram-wrap">
+        <svg viewBox="0 0 240 130" width="240" aria-label="Euler-Venn diaqramı: A birləşmə B">
+          <circle cx="80" cy="65" r="50" fill="rgba(88,166,255,0.18)" stroke="var(--accent)" stroke-width="2"/>
+          <circle cx="160" cy="65" r="50" fill="rgba(88,166,255,0.18)" stroke="var(--accent)" stroke-width="2"/>
+          <text x="55" y="68" text-anchor="middle" font-size="20" font-weight="700">A</text>
+          <text x="185" y="68" text-anchor="middle" font-size="20" font-weight="700">B</text>
+          <text x="120" y="118" text-anchor="middle" font-size="12" fill="#8b949e">A ∪ B</text>
+        </svg>
+      </div>
+      <p><strong>Birləşmənin xassələri:</strong></p>
+      <div class="law-grid">
+        <div class="law-item">$A \cup A = A$</div>
+        <div class="law-item">$A \cup \emptyset = A$</div>
+        <div class="law-item">$A \cup B = B \cup A$ (kommunativ)</div>
+        <div class="law-item">$(A \cup B) \cup C = A \cup (B \cup C)$ (assosativ)</div>
+        <div class="law-item">$A \subset B \Rightarrow A \cup B = B$</div>
+        <div class="law-item">$A \subset B \Rightarrow A \cap B = A$</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-header" onclick="toggleSection(this)">
+      <h3>§4 — Çoxluqların kəsişməsi ($A \cap B$)</h3><span>▼</span>
+    </div>
+    <div class="section-body">
+      <div class="def-box">
+        Verilmiş çoxluqların hər birinə eyni zamanda daxil olan elementlərdən ibarət çoxluğa həmin çoxluqların <strong>kəsişməsi</strong> deyilir: $A \cap B$.
+      </div>
+      <div class="diagram-wrap">
+        <svg viewBox="0 0 240 130" width="240" aria-label="Euler-Venn: A kəsişmə B">
+          <circle cx="85" cy="65" r="50" fill="rgba(88,166,255,0.10)" stroke="var(--accent)" stroke-width="2"/>
+          <circle cx="155" cy="65" r="50" fill="rgba(88,166,255,0.10)" stroke="var(--accent)" stroke-width="2"/>
+          <ellipse cx="120" cy="65" rx="22" ry="42" fill="rgba(88,166,255,0.35)" stroke="none"/>
+          <text x="55" y="68" text-anchor="middle" font-size="20" font-weight="700">A</text>
+          <text x="185" y="68" text-anchor="middle" font-size="20" font-weight="700">B</text>
+          <text x="120" y="118" text-anchor="middle" font-size="12" fill="#8b949e">A ∩ B</text>
+        </svg>
+      </div>
+      <p>Əgər $A \cap B = \emptyset$ olarsa, $A$ və $B$ çoxluqları <strong>kəsişməyən</strong> (ayrık) çoxluqlardır.</p>
+      <div class="formula-box">
+        <div class="label">Natural ədədlər çoxluqları üçün ƏKOB düsturu:</div>
+        $$\Theta BOB(A,B) = \frac{n(A) \cdot n(B)}{n(A \cup B)}$$
+      </div>
+      <p><strong>Kəsişmənin xassələri:</strong></p>
+      <div class="law-grid">
+        <div class="law-item">$A \cap A = A$</div>
+        <div class="law-item">$A \cap \emptyset = \emptyset$</div>
+        <div class="law-item">$A \cap B = B \cap A$</div>
+        <div class="law-item">$(A \cap B) \cap C = A \cap (B \cap C)$</div>
+        <div class="law-item">$A \subset B \Rightarrow A \cap B = A$</div>
+        <div class="law-item">$A \subset B \Rightarrow A \cap B = B \Rightarrow$ yox</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-header" onclick="toggleSection(this)">
+      <h3>§5 — Çoxluqların fərqi ($A \setminus B$)</h3><span>▼</span>
+    </div>
+    <div class="section-body">
+      <div class="def-box">
+        $A$ çoxluğunun yalnız $A$-ya daxil olan (B-yə daxil olmayan) elementlərindən ibarət çoxluğa $A \setminus B$ kimi işarə olunan <strong>çoxluqların fərqi</strong> deyilir.
+      </div>
+      <div class="diagram-wrap">
+        <svg viewBox="0 0 240 130" width="240" aria-label="Çoxluqların fərqi A minus B">
+          <circle cx="85" cy="65" r="50" fill="rgba(88,166,255,0.30)" stroke="var(--accent)" stroke-width="2"/>
+          <circle cx="155" cy="65" r="50" fill="rgba(30,40,60,0.5)" stroke="var(--border)" stroke-width="2"/>
+          <ellipse cx="120" cy="65" rx="22" ry="42" fill="rgba(13,17,23,0.7)" stroke="none"/>
+          <text x="60" y="68" text-anchor="middle" font-size="20" font-weight="700" fill="var(--accent)">A</text>
+          <text x="185" y="68" text-anchor="middle" font-size="20" font-weight="700">B</text>
+          <text x="120" y="118" text-anchor="middle" font-size="12" fill="#8b949e">A \ B (yalnız A)</text>
+        </svg>
+      </div>
+      <p><strong>Fərqin xassələri:</strong></p>
+      <div class="law-grid">
+        <div class="law-item">$A \setminus \emptyset = A$</div>
+        <div class="law-item">$A \setminus A = \emptyset$</div>
+        <div class="law-item">$A \setminus B = B \setminus A$ olmaya bilər</div>
+        <div class="law-item">$A \subset B \Rightarrow A \setminus B = \emptyset$</div>
+        <div class="law-item">$A \setminus B = A \cap B'$</div>
+        <div class="law-item">$(A \setminus B) \cup (B \setminus A) = (A \cup B) \setminus (A \cap B)$</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-header" onclick="toggleSection(this)">
+      <h3>§6 — Tamamlayıcı çoxluq ($\overline{A}$ və ya $A'$)</h3><span>▼</span>
+    </div>
+    <div class="section-body">
+      <div class="def-box">
+        $B \setminus A$ — $B$ çoxluğunun $A$ fərqinə <strong>tamamlayıcı çoxluq</strong> deyilir. Universal çoxluğun $U \setminus A = A'$ kimi işarə olunan tamamlayıcısı adlanır.
+      </div>
+      <p><strong>Tamamlayıcının xassələri:</strong></p>
+      <div class="law-grid">
+        <div class="law-item">$A \cup A' = U$</div>
+        <div class="law-item">$A \cap A' = \emptyset$</div>
+        <div class="law-item">$(A')' = A$</div>
+        <div class="law-item">$U' = \emptyset,\quad \emptyset' = U$</div>
+        <div class="law-item">$\overline{A \cup B} = \overline{A} \cap \overline{B}$ (de Morgan)</div>
+        <div class="law-item">$\overline{A \cap B} = \overline{A} \cup \overline{B}$ (de Morgan)</div>
+      </div>
+      <p><strong>Tamamlayıcı üçün:</strong> $n(A') = n(U) - n(A)$</p>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-header" onclick="toggleSection(this)">
+      <h3>§7 — Sayma düsturları (Euler-Venn)</h3><span>▼</span>
+    </div>
+    <div class="section-body">
+      <div class="formula-box">
+        <div class="label">İki çoxluq üçün əsas düstur:</div>
+        $$n(A \cup B) = n(A) + n(B) - n(A \cap B)$$
+      </div>
+      <div class="diagram-wrap">
+        <svg viewBox="0 0 280 160" width="280" aria-label="Euler-Venn: iki çoxluq bölgələri">
+          <circle cx="100" cy="80" r="60" fill="rgba(88,166,255,0.15)" stroke="var(--accent)" stroke-width="2"/>
+          <circle cx="180" cy="80" r="60" fill="rgba(63,185,80,0.15)" stroke="var(--green)" stroke-width="2"/>
+          <text x="68" y="78" text-anchor="middle" font-size="18" font-weight="700" fill="var(--accent)">a</text>
+          <text x="140" y="78" text-anchor="middle" font-size="18" font-weight="700">b</text>
+          <text x="212" y="78" text-anchor="middle" font-size="18" font-weight="700" fill="var(--green)">c</text>
+          <text x="55" y="155" text-anchor="middle" font-size="12" fill="var(--muted)">A</text>
+          <text x="225" y="155" text-anchor="middle" font-size="12" fill="var(--muted)">B</text>
+        </svg>
+      </div>
+      <div class="law-grid">
+        <div class="law-item">$n(A) = a + b$</div>
+        <div class="law-item">$n(B) = b + c$</div>
+        <div class="law-item">$n(A \cap B) = b$</div>
+        <div class="law-item">$n(A \cup B) = a + b + c$</div>
+        <div class="law-item">$n(A \setminus B) = a$ (yalnız A)</div>
+        <div class="law-item">$n(B \setminus A) = c$ (yalnız B)</div>
+      </div>
+      <div class="diagram-wrap">
+        <svg viewBox="0 0 300 200" width="300" aria-label="Euler-Venn: üç çoxluq">
+          <circle cx="120" cy="90" r="65" fill="rgba(88,166,255,0.12)" stroke="var(--accent)" stroke-width="2"/>
+          <circle cx="180" cy="90" r="65" fill="rgba(63,185,80,0.12)" stroke="var(--green)" stroke-width="2"/>
+          <circle cx="150" cy="140" r="65" fill="rgba(188,140,255,0.12)" stroke="var(--purple)" stroke-width="2"/>
+          <text x="85" y="78" text-anchor="middle" font-size="13" fill="var(--muted)">A</text>
+          <text x="215" y="78" text-anchor="middle" font-size="13" fill="var(--muted)">B</text>
+          <text x="150" y="198" text-anchor="middle" font-size="13" fill="var(--muted)">C</text>
+          <text x="150" y="95" text-anchor="middle" font-size="11">A∩B∩C</text>
+        </svg>
+      </div>
+      <div class="formula-box">
+        <div class="label">Üç çoxluq üçün:</div>
+        $$n(A \cup B \cup C) = n(A)+n(B)+n(C) - n(A \cap B) - n(A \cap C) - n(B \cap C) + n(A \cap B \cap C)$$
+      </div>
+    </div>
+  </div>
+
+</div><!-- /theory -->
+
+<!-- ═══════════════════════════════ EXAMPLES ══════════════════════════════════ -->
+<div id="examples" class="tab-panel">
+
+  <div class="example-card">
+    <div class="example-header">Misal 1 — Birləşmə (A ∪ B)</div>
+    <div class="example-body">
+      <div class="example-problem">$A = \{2;4;6;8\}$ və $B = \{1;3;5;6;7;8\}$ verilmişdir. $C = A \cup B$-ni tapın.</div>
+      <div class="solution-step">$A \cup B$ — hər iki çoxluğun elementlərini bir araya gətiririk (təkrarlanmaz):</div>
+      <div class="solution-step">$A \cup B = \{1;2;3;4;5;6;7;8\}$</div>
+      <div class="solution-step">$n(A \cup B) = 8$</div>
+      <span class="answer-badge">C = {1,2,3,4,5,6,7,8}</span>
+    </div>
+  </div>
+
+  <div class="example-card">
+    <div class="example-header">Misal 2 — Kəsişmə (A ∩ B) + ÖBOB</div>
+    <div class="example-body">
+      <div class="example-problem">$A = \{2;4;6;8\}$, $B = \{1;3;5;6;7;8\}$. $A \cap B = ?$, $\Theta BOB(A;B) = ?$</div>
+      <div class="solution-step">Hər iki çoxluqda olan elementlər: $6$ və $8$.</div>
+      <div class="solution-step">$A \cap B = \{6;8\}$, $n(A \cap B) = 2$</div>
+      <div class="solution-step">$\Theta BOB(A;B) = \frac{n(A)\cdot n(B)}{n(A \cup B)} = \frac{4 \cdot 6}{8} = 3$ — yox, bu yalnız say nisbəti nümunəsidir.</div>
+      <span class="answer-badge">A ∩ B = {6; 8}</span>
+    </div>
+  </div>
+
+  <div class="example-card">
+    <div class="example-header">Misal 3 — Sayma düsturu</div>
+    <div class="example-body">
+      <div class="example-problem">$n(A) = 7$ adad, $n(B) = 5$ adad, $n(A \cup B) = 25$ verilmişdir (diaqrama baxın). $n(A \cap B) = ?$</div>
+      <div class="solution-step">Düstur: $n(A \cup B) = n(A) + n(B) - n(A \cap B)$</div>
+      <div class="solution-step">$25 = 7 + 5 + 13 - n(A \cap B)$... yox, düzgün: $n(A \cup B) = n(A)+n(B)-n(A\cap B)$</div>
+      <div class="solution-step">$n(A \cap B) = n(A) + n(B) - n(A \cup B) = 12 + 18 - 25 = 5$</div>
+      <span class="answer-badge">n(A ∩ B) = 5</span>
+    </div>
+  </div>
+
+  <div class="example-card">
+    <div class="example-header">Misal 4 — İnterval kəsişməsi</div>
+    <div class="example-body">
+      <div class="example-problem">$A = [-2;\,6]$ və $B = (-3;\,4]$ çoxluqlarının kəsişməsini tapın.</div>
+      <div class="solution-step">$A \cap B$ — hər ikisini eyni zamanda ödəyən ədədlər.</div>
+      <div class="solution-step">Sol hüdud: $\max(-2,\,-3) = -2$ (qapalı $[-2$, çünki A-da qapalı)</div>
+      <div class="solution-step">Sağ hüdud: $\min(6,\,4] = 4]$ (qapalı)</div>
+      <span class="answer-badge">A ∩ B = [-2; 4]</span>
+    </div>
+  </div>
+
+  <div class="example-card">
+    <div class="example-header">Misal 5 — İnterval birləşməsi</div>
+    <div class="example-body">
+      <div class="example-problem">$A = [-2;\,6]$ və $B = (-3;\,4]$. $A \cup B = ?$</div>
+      <div class="solution-step">Birləşmə — hər ikisini əhatə edən ən kiçik interval.</div>
+      <div class="solution-step">Sol: $\min(-2,\,-3) = -3$ (açıq, B-dən)</div>
+      <div class="solution-step">Sağ: $\max(6,\,4) = 6$ (qapalı, A-dan)</div>
+      <span class="answer-badge">A ∪ B = (-3; 6]</span>
+    </div>
+  </div>
+
+  <div class="example-card">
+    <div class="example-header">Misal 6 — Alt çoxluqların sayı</div>
+    <div class="example-body">
+      <div class="example-problem">$A = \{1;\,2;\,3;\,4;\,5\}$ çoxluğunun neçə alt çoxluğu var?</div>
+      <div class="solution-step">$n(A) = 5$</div>
+      <div class="solution-step">Alt çoxluqların sayı $= 2^5 = 32$</div>
+      <div class="solution-step">Məxsusi alt çoxluqların sayı $= 2^5 - 1 = 31$</div>
+      <span class="answer-badge">32 alt çoxluq</span>
+    </div>
+  </div>
+
+  <div class="example-card">
+    <div class="example-header">Misal 7 — Tamamlayıcı</div>
+    <div class="example-body">
+      <div class="example-problem">$U = \{1;2;3;4;5;6;7;8;9;10\}$, $A = \{2;4;6;8;10\}$. $A' = ?$</div>
+      <div class="solution-step">$A'$ — $U$-da olan, amma $A$-da olmayan elementlər.</div>
+      <div class="solution-step">$A' = U \setminus A = \{1;3;5;7;9\}$</div>
+      <div class="solution-step">Yoxlama: $n(A') = n(U) - n(A) = 10 - 5 = 5$ ✓</div>
+      <span class="answer-badge">A' = {1; 3; 5; 7; 9}</span>
+    </div>
+  </div>
+
+  <div class="example-card">
+    <div class="example-header">Misal 8 — Praktiki məsələ (turistlər)</div>
+    <div class="example-body">
+      <div class="example-problem">12 nəfər turist 2 dil bilir. 5-i Azərbaycan, 18-i ingilis dili bilir. Hər iki dili bilənlərin sayı neçədir?</div>
+      <div class="solution-step">$A$ = Azərbaycan bilənlər, $B$ = ingilis bilənlər</div>
+      <div class="solution-step">$n(A \cup B) = 12$ (cəmi), $n(A) = 5$, $n(B) = 18$... hmm, bunu yenidən oxuyaq:</div>
+      <div class="solution-step">$n(A) = 12$ (Azərbaycan), $n(B) = 18$ (ingilis), $n(A \cup B) = 25$ (hamısı)</div>
+      <div class="solution-step">$n(A \cap B) = n(A)+n(B)-n(A\cup B) = 12+18-25 = 5$</div>
+      <span class="answer-badge">Hər iki dili bilən: 5 nəfər</span>
+    </div>
+  </div>
+
+</div><!-- /examples -->
+
+<!-- ═══════════════════════════════ TRAINER ═══════════════════════════════════ -->
+<div id="trainer" class="tab-panel">
+  <div class="trainer-stats">
+    <div class="stat-box"><div class="val" id="tr-solved">0</div><div class="lbl">Həll edildi</div></div>
+    <div class="stat-box"><div class="val" id="tr-correct">0</div><div class="lbl">Düzgün</div></div>
+    <div class="stat-box"><div class="val" id="tr-pct">—</div><div class="lbl">Faiz</div></div>
+  </div>
+  <div class="trainer-problem">
+    <h3 id="tr-q">Yüklənir...</h3>
+    <input class="trainer-input" id="tr-inp" type="text" placeholder="Cavabı daxil edin..." autocomplete="off"/>
+    <div style="display:flex;gap:10px;margin-top:12px">
+      <button class="btn btn-primary" onclick="checkTrainer()">Yoxla</button>
+      <button class="btn btn-secondary" onclick="nextTrainer()">Növbəti →</button>
+    </div>
+    <div class="feedback" id="tr-fb"></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════ DIAGNOSTIC ═══════════════════════════════ -->
+<div id="diag" class="tab-panel">
+  <div id="diag-intro">
+    <h2 style="color:var(--accent);margin-bottom:12px">📊 Diaqnostik Qiymətləndirmə</h2>
+    <p style="color:var(--muted);margin-bottom:18px">20 sual · Çoxluqlar mövzusunun bütün bölmələri · Avtomatik nəticə</p>
+    <div class="progress-sections" id="diag-prog-bars"></div>
+    <button class="btn btn-primary" onclick="startDiag()">Başla</button>
+  </div>
+  <div id="diag-body" style="display:none"></div>
+  <div id="diag-result" style="display:none" class="result-box">
+    <h2 id="dr-title">Nəticə</h2>
+    <p id="dr-score" style="font-size:18px;color:var(--muted);margin:10px 0"></p>
+    <div id="dr-breakdown" style="text-align:left;margin:16px 0"></div>
+    <button class="btn btn-primary" onclick="restartDiag()">Yenidən cəhd et</button>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════ QUIZ ════════════════════════════════════ -->
+<div id="quiz" class="tab-panel">
+  <div id="quiz-intro" style="text-align:center;padding:30px 0">
+    <h2 style="color:var(--accent);font-size:22px;margin-bottom:12px">⚡ Nəzəriyyə Viktorinası</h2>
+    <p style="color:var(--muted);margin-bottom:8px">10 sual · Hər sual üçün 30 saniyə</p>
+    <p style="color:var(--muted);margin-bottom:24px">Çoxluqlar nəzəriyyəsini nə qədər bilirsiniz?</p>
+    <button class="btn btn-primary" style="font-size:16px;padding:14px 32px" onclick="startQuiz()">Başla →</button>
+  </div>
+  <div id="quiz-body" style="display:none">
+    <div class="quiz-header">
+      <span id="qz-counter" style="color:var(--muted);font-size:14px">Sual 1/10</span>
+      <div class="timer-display" id="qz-timer">30</div>
+    </div>
+    <div class="quiz-question">
+      <h3 id="qz-q">—</h3>
+      <div class="quiz-opts" id="qz-opts"></div>
+    </div>
+    <div id="qz-explain" style="display:none;padding:12px;background:var(--surface2);border-radius:6px;font-size:14px;color:var(--muted)"></div>
+  </div>
+  <div id="quiz-result" style="display:none" class="result-box">
+    <h2 id="qzr-title" style="color:var(--green)">—</h2>
+    <div class="stars" id="qzr-stars">⭐</div>
+    <p id="qzr-score" style="color:var(--muted);font-size:16px;margin:8px 0"></p>
+    <button class="btn btn-primary" onclick="restartQuiz()" style="margin-top:12px">Yenidən oyna</button>
+  </div>
+</div>
+
+<script>
+// ── TAB ──────────────────────────────────────────────────────────────────────
+function showTab(id,btn){
+  document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  btn.classList.add('active');
+}
+function toggleSection(h){
+  const b=h.nextElementSibling;
+  const s=h.querySelector('span');
+  b.style.display=b.style.display==='none'?'block':'none';
+  s.textContent=b.style.display==='none'?'▶':'▼';
+}
+
+// ── TRAINER DATA ──────────────────────────────────────────────────────────────
+const TRAINER=[
+  // §1 Çoxluq anlayışı
+  {q:'$A=\\{1,2,3\\}$ çoxluğunun neçə alt çoxluğu var?',a:'8'},
+  {q:'$A=\\{a,b,c,d\\}$ çoxluğunun alt çoxluqlarının sayı nədir?',a:'16'},
+  {q:'$A=\\{x,y\\}$ çoxluğunun məxsusi alt çoxluqlarının sayı nədir?',a:'3'},
+  {q:'$A=\\{1\\}$ çoxluğunun alt çoxluqlarının sayı nədir?',a:'2'},
+  {q:'5 elementli çoxluğun alt çoxluqlarının sayı nədir?',a:'32'},
+  {q:'$n(A)=6$ olduqda alt çoxluqların sayı nədir?',a:'64'},
+  // §2 Birləşmə
+  {q:'$A=\\{1,2,3\\}$, $B=\\{3,4,5\\}$. $n(A\\cup B)=?$',a:'5'},
+  {q:'$A=\\{2,4,6\\}$, $B=\\{1,3,5\\}$. $n(A\\cup B)=?$',a:'6'},
+  {q:'$A=\\{a,b\\}$, $B=\\{b,c,d\\}$. $n(A\\cup B)=?$',a:'4'},
+  {q:'$A=\\{1,2,3,4\\}$, $B=\\{3,4,5,6,7\\}$. $A\\cup B$-nin ən böyük elementi nədir?',a:'7'},
+  // §3 Kəsişmə
+  {q:'$A=\\{1,2,3,4\\}$, $B=\\{3,4,5\\}$. $A\\cap B=?$ (elementlər vergüllə)',a:'{3,4}'},
+  {q:'$A=\\{2,4,6,8\\}$, $B=\\{1,3,5,7\\}$. $n(A\\cap B)=?$',a:'0'},
+  {q:'$A=\\{a,b,c\\}$, $B=\\{b,c,d,e\\}$. $n(A\\cap B)=?$',a:'2'},
+  {q:'$A=\\{1,2,...,10\\}$, $B=\\{5,6,...,15\\}$. $n(A\\cap B)=?$',a:'6'},
+  // §4 Fərq
+  {q:'$A=\\{1,2,3,4,5\\}$, $B=\\{3,4,5,6,7\\}$. $n(A\\setminus B)=?$',a:'2'},
+  {q:'$A=\\{2,4,6,8\\}$, $B=\\{4,8\\}$. $A\\setminus B=?$ (elementlər vergüllə)',a:'{2,6}'},
+  // §5 Tamamlayıcı
+  {q:'$U=\\{1,...,10\\}$, $A=\\{1,3,5,7,9\\}$. $n(A\')=?$',a:'5'},
+  {q:'$n(U)=20$, $n(A)=12$. $n(A\')=?$',a:'8'},
+  // §6 Sayma düsturu
+  {q:'$n(A)=8$, $n(B)=10$, $n(A\\cap B)=3$. $n(A\\cup B)=?$',a:'15'},
+  {q:'$n(A)=15$, $n(B)=20$, $n(A\\cup B)=30$. $n(A\\cap B)=?$',a:'5'},
+  {q:'$n(A)=25$, $n(B)=30$, $n(A\\cup B)=45$. $n(A\\cap B)=?$',a:'10'},
+  {q:'$n(A)=n(B)=12$, $n(A\\cup B)=20$. $n(A\\cap B)=?$',a:'4'},
+  {q:'$n(A\\cup B)=35$, $n(A\\cap B)=5$, $n(A)=20$. $n(B)=?$',a:'20'},
+  // İntervallar
+  {q:'$A=[1;5]$, $B=[3;8]$. $A\\cap B=?$ (interval kimi yazın)',a:'[3;5]'},
+  {q:'$A=(-2;4)$, $B=(1;6)$. $A\\cap B=?$',a:'(1;4)'},
+  {q:'$A=[-3;2]$, $B=[2;7]$. $n$ nöqtəsi olaraq $A\\cap B=?$',a:'{2}'},
+  {q:'$A=(-\\infty;5)$, $B=(3;+\\infty)$. $A\\cap B=?$',a:'(3;5)'},
+  {q:'$A=[1;4]$, $B=[6;9]$. $A\\cap B=?$',a:'{}'},
+  // Məsələlər
+  {q:'40 şagirddən 25-i riyaziyyat, 30-u fizika bilir. Hər ikisini bilənlər 15 nəfərdirsə, heç birini bilməyən neçədir?',a:'0'},
+  {q:'$n(A)=7$, $n(B)=5$, $n(A\\cap B)=2$. $n(A\\cup B)=?$',a:'10'},
+  {q:'Sinifin 30 şagirdindən 18-i AZ, 20-si RU, 12-si hər ikisini bilir. Heç birini bilməyən neçədir?',a:'4'},
+  {q:'$A=\\{$cüt təbii ədədlər$\\}$, $B=\\{3$-ə bölünən təbii ədədlər$\\}$. $A\\cap B$-yə 12 daxildirmi? (bəli/xeyr)',a:'bəli'},
+  {q:'$A\\cup B=A$ olarsa, $B\\subset A$ doğrudurmu? (bəli/xeyr)',a:'bəli'},
+  {q:'$A\\cap B=A$ olarsa, hansı ifadə doğrudur: $A\\subset B$, yoxsa $B\\subset A$?',a:'A⊂B'},
+  {q:'$A=\\{2,4,6,...,20\\}$. $n(A)=?$',a:'10'},
+  {q:'$B=\\{3,6,9,...,30\\}$. $n(B)=?$',a:'10'},
+  {q:'$A=\\{2,4,...,20\\}$, $B=\\{3,6,...,30\\}$. $n(A\\cap B)=?$ (6,12,18 çoxluq)',a:'3'},
+  {q:'5 elementli $A$ çoxluğunun 3 elementli alt çoxluqlarının sayı nədir?',a:'10'},
+  {q:'$n(A)=n(B)$, $n(A\\cup B)=16$, $n(A\\cap B)=4$. $n(A)=?$',a:'10'},
+  {q:'$n(A)=10$, $n(B)=8$. $A$ və $B$ ayrıq (kəsişmirsə) $n(A\\cup B)=?$',a:'18'},
+  {q:'$A\\subset B$ olduqda $n(A\\cup B)=?$ (n(B) ilə ifadə edin)',a:'n(B)'},
+  {q:'$A\\subset B$ olduqda $n(A\\cap B)=?$ (n(A) ilə ifadə edin)',a:'n(A)'},
+  {q:'Boş çoxluğun alt çoxluqlarının sayı nədir?',a:'1'},
+];
+
+let trIdx=-1,trSolved=0,trCorrect=0;
+function nextTrainer(){
+  trIdx=Math.floor(Math.random()*TRAINER.length);
+  const p=TRAINER[trIdx];
+  document.getElementById('tr-q').innerHTML=p.q;
+  document.getElementById('tr-inp').value='';
+  document.getElementById('tr-fb').style.display='none';
+  document.getElementById('tr-inp').focus();
+  if(window.renderMathInElement) renderMathInElement(document.getElementById('tr-q'),{delimiters:[{left:'$',right:'$',display:false},{left:'$$',right:'$$',display:true}]});
+}
+function checkTrainer(){
+  if(trIdx<0)return;
+  const inp=document.getElementById('tr-inp').value.trim();
+  const ans=TRAINER[trIdx].a.trim();
+  const fb=document.getElementById('tr-fb');
+  trSolved++;
+  const ok=inp.toLowerCase()===ans.toLowerCase()||inp===ans;
+  if(ok){trCorrect++;fb.className='feedback correct';fb.textContent='✓ Düzgündür!';}
+  else{fb.className='feedback wrong';fb.textContent=`✗ Düzgün cavab: ${ans}`;}
+  fb.style.display='block';
+  document.getElementById('tr-solved').textContent=trSolved;
+  document.getElementById('tr-correct').textContent=trCorrect;
+  document.getElementById('tr-pct').textContent=Math.round(trCorrect/trSolved*100)+'%';
+}
+document.getElementById('tr-inp').addEventListener('keydown',e=>{if(e.key==='Enter')checkTrainer();});
+nextTrainer();
+
+// ── DIAGNOSTIC DATA ───────────────────────────────────────────────────────────
+const DIAG=[
+  // §1 alt çoxluqlar
+  {s:'Alt çoxluqlar',q:'$\\{a,b,c\\}$ çoxluğunun alt çoxluqlarının sayı:',o:['6','8','7','9'],a:1},
+  {s:'Alt çoxluqlar',q:'$n(A)=4$ olduqda $A$-nın məxsusi alt çoxluqlarının sayı:',o:['15','16','14','8'],a:0},
+  // §2 Birləşmə
+  {s:'Birləşmə',q:'$A=\\{1,3,5\\}$, $B=\\{2,3,4\\}$. $A\\cup B$-nin elementlərinin sayı:',o:['5','6','4','3'],a:0},
+  {s:'Birləşmə',q:'$A=\\{1,2,3\\}$, $B=\\{1,2,3\\}$. $n(A\\cup B)=?$',o:['6','3','9','1'],a:1},
+  // §3 Kəsişmə
+  {s:'Kəsişmə',q:'$A=\\{2,4,6,8,10\\}$, $B=\\{4,6,8\\}$. $n(A\\cap B)=?$',o:['3','2','5','8'],a:0},
+  {s:'Kəsişmə',q:'$A=\\{1,2,3\\}$, $B=\\{4,5,6\\}$. $A\\cap B=?$',o:['∅','\\{1,2,3,4,5,6\\}','\\{3,4\\}','\\{1\\}'],a:0},
+  // §4 Fərq
+  {s:'Fərq',q:'$A=\\{1,2,3,4,5\\}$, $B=\\{3,4,5,6,7\\}$. $n(A\\setminus B)=?$',o:['2','3','5','7'],a:0},
+  {s:'Fərq',q:'$A=\\{a,b,c,d\\}$, $B=\\{c,d,e\\}$. $B\\setminus A=?$',o:['\\{e\\}','\\{c,d\\}','\\{a,b\\}','\\{a,b,c,d,e\\}'],a:0},
+  // §5 Tamamlayıcı
+  {s:'Tamamlayıcı',q:'$n(U)=30$, $n(A)=18$. $n(A\')=?$',o:['12','18','30','48'],a:0},
+  {s:'Tamamlayıcı',q:"$(A')' = ?$",o:['A','U','∅','A\''],a:0},
+  // §6 Sayma
+  {s:'Sayma düsturu',q:'$n(A)=10$, $n(B)=8$, $n(A\\cap B)=3$. $n(A\\cup B)=?$',o:['15','18','21','13'],a:0},
+  {s:'Sayma düsturu',q:'$n(A\\cup B)=20$, $n(A)=12$, $n(B)=14$. $n(A\\cap B)=?$',o:['6','8','4','2'],a:0},
+  {s:'Sayma düsturu',q:'$n(A)=n(B)=15$, $n(A\\cap B)=5$. $n(A\\cup B)=?$',o:['25','30','20','35'],a:0},
+  {s:'Sayma düsturu',q:'$n(A\\cup B)=40$, $n(A\\cap B)=10$, $n(A)=25$. $n(B)=?$',o:['25','15','30','20'],a:0},
+  // Praktiki
+  {s:'Praktiki',q:'50 şagirddən 30-u riyaziyyat, 35-i fizika seçir. Heç birini seçməyən yoxdursa $n(R\\cap F)=?$',o:['15','20','25','10'],a:0},
+  {s:'Praktiki',q:'$A=[2;7]$, $B=[5;10]$. $A\\cap B=?$',o:['[5;7]','[2;10]','[7;5]','∅'],a:0},
+  {s:'Praktiki',q:'$A=(-\\infty;4)$, $B=(2;+\\infty)$. $A\\cap B=?$',o:['(2;4)','(-\\infty;+\\infty)','∅','[2;4]'],a:0},
+  {s:'Praktiki',q:'$A\\cup B=B$ olarsa, hansı nəticə çıxır?',o:['A⊂B','B⊂A','A=B','A∩B=∅'],a:0},
+  {s:'Praktiki',q:'$A\\cap B=A$ olarsa, hansı nəticə çıxır?',o:['A⊂B','B⊂A','A=∅','A=U'],a:0},
+  {s:'Praktiki',q:'60 nəfərlik qrupun 40-ı AZ, 30-u EN bilir, 15-i hər ikisini bilir. Heç birini bilməyən neçədir?',o:['5','10','15','20'],a:0},
+];
+
+let diagAnswers=[],diagDone=false;
+function startDiag(){
+  document.getElementById('diag-intro').style.display='none';
+  diagAnswers=new Array(DIAG.length).fill(null);
+  diagDone=false;
+  const body=document.getElementById('diag-body');
+  body.style.display='block';
+  body.innerHTML='';
+  DIAG.forEach((q,i)=>{
+    const d=document.createElement('div');
+    d.className='diag-q';
+    d.innerHTML=`<h4>${i+1}. ${q.q}</h4><div class="opts">${q.o.map((o,j)=>`<button class="opt-btn" onclick="answerDiag(${i},${j},this)">${String.fromCharCode(65+j)}) ${o}</button>`).join('')}</div>`;
+    body.appendChild(d);
+  });
+  body.innerHTML+=`<div style="text-align:center;margin-top:20px"><button class="btn btn-primary" onclick="submitDiag()">Nəticəni gör</button></div>`;
+  if(window.renderMathInElement)renderMathInElement(body,{delimiters:[{left:'$',right:'$',display:false},{left:'$$',right:'$$',display:true}]});
+}
+function answerDiag(qi,oi,btn){
+  if(diagAnswers[qi]!==null)return;
+  diagAnswers[qi]=oi;
+  const btns=btn.parentElement.querySelectorAll('.opt-btn');
+  btns.forEach(b=>b.disabled=true);
+  if(oi===DIAG[qi].a){btn.classList.add('correct');}
+  else{btn.classList.add('wrong');btns[DIAG[qi].a].classList.add('correct');}
+}
+function submitDiag(){
+  let score=0;
+  const breakdown={};
+  DIAG.forEach((q,i)=>{
+    if(!breakdown[q.s])breakdown[q.s]={got:0,total:0};
+    breakdown[q.s].total++;
+    if(diagAnswers[i]===q.a){score++;breakdown[q.s].got++;}
+  });
+  document.getElementById('diag-body').style.display='none';
+  const res=document.getElementById('diag-result');
+  res.style.display='block';
+  document.getElementById('dr-title').textContent=score>=16?'Əla! ✓':score>=12?'Yaxşı':'Zəif';
+  document.getElementById('dr-score').textContent=`${score} / ${DIAG.length} düzgün (${Math.round(score/DIAG.length*100)}%)`;
+  let html='<table style="width:100%;font-size:13px;border-collapse:collapse">';
+  Object.entries(breakdown).forEach(([s,v])=>{
+    const pct=Math.round(v.got/v.total*100);
+    const c=pct>=80?'var(--green)':pct>=50?'var(--yellow)':'var(--red)';
+    html+=`<tr><td style="padding:6px;color:var(--muted)">${s}</td><td style="color:${c};font-weight:700;text-align:right">${v.got}/${v.total}</td></tr>`;
+  });
+  html+='</table>';
+  document.getElementById('dr-breakdown').innerHTML=html;
+}
+function restartDiag(){
+  document.getElementById('diag-result').style.display='none';
+  document.getElementById('diag-intro').style.display='block';
+}
+
+// ── QUIZ DATA ─────────────────────────────────────────────────────────────────
+const QUIZ=[
+  {q:'Çoxluğun tərifi nədir?',o:['Müəyyən əlamətə görə birləşdirilmiş obyektlər toplusu','Yalnız ədədlər toplusu','Sıralanmış cütlər','İki ədədin cəmi'],a:0,e:'Çoxluq — ümumi əlamətlə birləşən obyektlər toplusudur.'},
+  {q:'$n$ elementli çoxluğun alt çoxluqlarının sayı nədir?',o:['$2^n$','$n^2$','$2n$','$n!$'],a:0,e:'Alt çoxluqların sayı həmişə $2^n$ olur.'},
+  {q:'$A\\cup B$ nə deməkdir?',o:['Hər ikisinin elementlərini əhatə edən çoxluq','Hər ikisində olan elementlər','Yalnız A-dakı elementlər','A-dan B-ni çıxarmaq'],a:0,e:'Birləşmə — hər iki çoxluğun bütün elementlərini birləşdirir.'},
+  {q:'$A\\cap B = \\emptyset$ nə bildirir?',o:['A və B kəsişmir (ayrıqdır)','A, B-nin alt çoxluğudur','A = B','A boşdur'],a:0,e:'$A\\cap B=\\emptyset$ — iki çoxluqda ümumi element yoxdur.'},
+  {q:'$n(A\\cup B)$ düsturu:',o:['$n(A)+n(B)-n(A\\cap B)$','$n(A)+n(B)+n(A\\cap B)$','$n(A)\\cdot n(B)$','$n(A)-n(B)$'],a:0,e:'Toplama prinsipindən: $n(A\\cup B)=n(A)+n(B)-n(A\\cap B)$.'},
+  {q:'$A\\setminus B$ nəyi bildirir?',o:['Yalnız A-da olan, B-də olmayan elementlər','Yalnız B-də olan elementlər','A∩B','A∪B'],a:0,e:'$A\\setminus B$ — $A$-dan $B$-nin elementlərini çıxarır.'},
+  {q:'$A\'$ (A-nın tamamlayıcısı) nədir?',o:['$U\\setminus A$','$A\\setminus B$','$A\\cup B$','$A\\cap B$'],a:0,e:"$A'=U\\setminus A$ — universal çoxluqdan A-nı çıxarırıq."},
+  {q:'$A\\cup A\'=?$',o:['$U$','$\\emptyset$','$A$','$A\'$'],a:0,e:'$A\\cup A\'=U$ — çoxluq və tamamlayıcısının birləşməsi universal çoxluqdur.'},
+  {q:'$A\\subset B$ olarsa $A\\cup B=?$',o:['$B$','$A$','$A\\cap B$','$\\emptyset$'],a:0,e:'Əgər $A\\subset B$ olarsa, $A\\cup B=B$ olur.'},
+  {q:'De Morgan qanununa görə $\\overline{A\\cup B}=?$',o:["$\\overline{A}\\cap\\overline{B}$","$\\overline{A}\\cup\\overline{B}$","$A\\cap B$","$A\\cup B$"],a:0,e:"De Morgan: $\\overline{A\\cup B}=\\overline{A}\\cap\\overline{B}$."},
+];
+
+let qzIdx=0,qzScore=0,qzTimer,qzSec=30,qzActive=false;
+function startQuiz(){
+  document.getElementById('quiz-intro').style.display='none';
+  document.getElementById('quiz-body').style.display='block';
+  qzIdx=0;qzScore=0;qzActive=true;
+  showQuizQ();
+}
+function showQuizQ(){
+  if(qzIdx>=QUIZ.length){endQuiz();return;}
+  const q=QUIZ[qzIdx];
+  document.getElementById('qz-counter').textContent=`Sual ${qzIdx+1}/${QUIZ.length}`;
+  document.getElementById('qz-q').innerHTML=q.q;
+  document.getElementById('qz-explain').style.display='none';
+  const opts=document.getElementById('qz-opts');
+  opts.innerHTML=q.o.map((o,i)=>`<button class="quiz-opt" onclick="answerQuiz(${i},this)">${String.fromCharCode(65+i)}) ${o}</button>`).join('');
+  if(window.renderMathInElement){
+    renderMathInElement(document.getElementById('qz-q'),{delimiters:[{left:'$',right:'$',display:false}]});
+    renderMathInElement(opts,{delimiters:[{left:'$',right:'$',display:false}]});
+  }
+  startQTimer();
+}
+function startQTimer(){
+  clearInterval(qzTimer);qzSec=30;
+  const td=document.getElementById('qz-timer');
+  td.textContent=30;td.className='timer-display';
+  qzTimer=setInterval(()=>{
+    qzSec--;
+    td.textContent=qzSec;
+    if(qzSec<=10)td.className='timer-display danger';
+    if(qzSec<=0){clearInterval(qzTimer);timeoutQuiz();}
+  },1000);
+}
+function answerQuiz(i,btn){
+  clearInterval(qzTimer);
+  const q=QUIZ[qzIdx];
+  document.querySelectorAll('.quiz-opt').forEach(b=>b.disabled=true);
+  if(i===q.a){btn.classList.add('correct');qzScore++;}
+  else{btn.classList.add('wrong');document.querySelectorAll('.quiz-opt')[q.a].classList.add('correct');}
+  const ex=document.getElementById('qz-explain');
+  ex.style.display='block';ex.textContent=q.e;
+  setTimeout(()=>{qzIdx++;showQuizQ();},1800);
+}
+function timeoutQuiz(){
+  document.querySelectorAll('.quiz-opt').forEach(b=>b.disabled=true);
+  document.querySelectorAll('.quiz-opt')[QUIZ[qzIdx].a].classList.add('correct');
+  const ex=document.getElementById('qz-explain');
+  ex.style.display='block';ex.textContent='⏰ Vaxt bitdi! '+QUIZ[qzIdx].e;
+  setTimeout(()=>{qzIdx++;showQuizQ();},1800);
+}
+function endQuiz(){
+  document.getElementById('quiz-body').style.display='none';
+  document.getElementById('quiz-result').style.display='block';
+  const pct=qzScore/QUIZ.length;
+  document.getElementById('qzr-title').textContent=pct>=0.9?'Əla! Mükəmməl!':pct>=0.7?'Yaxşı nəticə!':'Daha çox məşq lazımdır';
+  document.getElementById('qzr-stars').textContent=pct>=0.9?'⭐⭐⭐':pct>=0.7?'⭐⭐':'⭐';
+  document.getElementById('qzr-score').textContent=`${qzScore} / ${QUIZ.length} düzgün`;
+  if(window.parent&&window.parent!==window){
+    window.parent.postMessage({type:'LESSON_COMPLETE',lessonId:'topic-02-main',score:Math.round(pct*100)},'*');
+  }
+}
+function restartQuiz(){
+  document.getElementById('quiz-result').style.display='none';
+  document.getElementById('quiz-intro').style.display='block';
+}
+</script>
+</body>
+</html>
