@@ -113,7 +113,17 @@ export const TOPICS: Topic[] = [
       ru: 'Точка, прямая, угол, окружность, фигуры',
       en: 'Point, line, angle, circle, figures',
     },
-    lessons: [],
+    lessons: [
+      {
+        id: 'topic-04-main',
+        topicId: 'topic-04',
+        type: 'theory',
+        title: { az: 'Həndəsənin əsas anlayışları — tam dərs', ru: 'Основные понятия геометрии — полный урок', en: 'Basic Geometry — full lesson' },
+        url_path: '/lessons/topics/topic-04.html',
+        estimatedMinutes: 40,
+        questionCount: 20,
+      },
+    ],
   },
 
   {
