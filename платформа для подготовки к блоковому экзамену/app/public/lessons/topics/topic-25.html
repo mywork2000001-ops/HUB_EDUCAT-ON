@@ -1,0 +1,534 @@
+<!doctype html>
+<html lang="az">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Koordinat Üsulu — Tam Dərs</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css"/>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
+    onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}]})"></script>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{--accent:#f97316;--accent-dark:#ea6c0a;--bg:#0f172a;--bg-card:#1e293b;--text:#f1f5f9;--text-muted:#94a3b8;--border:rgba(148,163,184,0.15);--success:#22c55e;--warning:#f59e0b;--error:#ef4444;--radius:14px}
+    html{scroll-behavior:smooth}
+    body{font-family:"Segoe UI",system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;line-height:1.6}
+    .lesson-header{background:linear-gradient(135deg,#0c1a10 0%,#1a1000 50%,#0c1a10 100%);border-bottom:1px solid var(--border);padding:28px 20px 24px;text-align:center}
+    .lesson-header .badge{display:inline-flex;align-items:center;gap:8px;background:rgba(249,115,22,0.12);border:1px solid rgba(249,115,22,0.3);color:var(--accent);border-radius:20px;padding:4px 14px;font-size:.78rem;font-weight:600;letter-spacing:.04em;text-transform:uppercase;margin-bottom:12px}
+    .lesson-header h1{font-size:clamp(1.5rem,4vw,2.2rem);font-weight:800;background:linear-gradient(135deg,#fff 40%,var(--accent));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:8px}
+    .lesson-header p{color:var(--text-muted);font-size:.95rem;max-width:560px;margin:0 auto}
+    .tab-nav{display:flex;overflow-x:auto;background:var(--bg-card);border-bottom:1px solid var(--border);scrollbar-width:none;position:sticky;top:0;z-index:40}
+    .tab-nav::-webkit-scrollbar{display:none}
+    .tab-btn{flex:1;min-width:80px;padding:13px 6px;font-size:.8rem;font-weight:600;color:var(--text-muted);background:transparent;border:none;cursor:pointer;border-bottom:2px solid transparent;transition:all .2s;white-space:nowrap;display:flex;flex-direction:column;align-items:center;gap:2px}
+    .tab-btn .t-icon{font-size:1.1rem}
+    .tab-btn:hover{color:var(--text)}
+    .tab-btn.active{color:var(--accent);border-bottom-color:var(--accent)}
+    .section{display:none;padding:20px 16px 40px;max-width:820px;margin:0 auto}
+    .section.active{display:block}
+    .slide{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:22px 20px;margin-bottom:18px}
+    .slide-num{display:inline-block;background:var(--accent);color:#fff;font-size:.7rem;font-weight:700;padding:2px 9px;border-radius:20px;margin-bottom:10px;letter-spacing:.06em}
+    .slide h2{font-size:1.2rem;font-weight:700;color:var(--accent);margin-bottom:14px;line-height:1.3}
+    .slide h3{font-size:1rem;font-weight:700;color:#e2e8f0;margin:14px 0 8px}
+    .slide p{color:var(--text-muted);font-size:.93rem;margin-bottom:10px}
+    .slide ul,.slide ol{color:var(--text-muted);font-size:.93rem;padding-left:20px;margin-bottom:10px}
+    .slide li{margin-bottom:5px}
+    .formula-box{background:rgba(249,115,22,.08);border:1px solid rgba(249,115,22,.25);border-left:3px solid var(--accent);border-radius:10px;padding:14px 18px;margin:14px 0}
+    .formula-box .formula-label{font-size:.72rem;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px}
+    .formula-box .formula-main{font-size:1.1rem;font-weight:700;color:#fff;line-height:1.7}
+    .formula-box .formula-note{font-size:.82rem;color:var(--text-muted);margin-top:6px}
+    .def-box{background:rgba(249,115,22,.05);border:1px solid rgba(249,115,22,.2);border-radius:10px;padding:14px 18px;margin:12px 0}
+    .def-box strong{color:var(--accent);font-size:.82rem;text-transform:uppercase;letter-spacing:.06em;display:block;margin-bottom:6px}
+    .def-box p{color:#cbd5e1;font-size:.93rem;margin:0}
+    .prop-list{list-style:none;padding:0;margin:12px 0}
+    .prop-list li{display:flex;align-items:flex-start;gap:10px;background:rgba(249,115,22,.04);border:1px solid var(--border);border-radius:8px;padding:10px 14px;margin-bottom:8px;color:#cbd5e1;font-size:.9rem}
+    .prop-list li::before{content:"✦";color:var(--accent);font-size:.75rem;margin-top:2px;flex-shrink:0}
+    .info-table{width:100%;border-collapse:collapse;font-size:.85rem;margin:14px 0}
+    .info-table th{background:rgba(249,115,22,.15);color:var(--accent);padding:9px 11px;text-align:center;font-weight:700;border-bottom:1px solid rgba(249,115,22,.2)}
+    .info-table td{padding:8px 11px;color:#cbd5e1;border-bottom:1px solid var(--border);text-align:center}
+    .info-table tr:hover td{background:rgba(249,115,22,.04)}
+    .info-table td:first-child{text-align:left;font-weight:600}
+    .svg-wrap{background:rgba(15,23,42,.7);border:1px solid var(--border);border-radius:12px;padding:16px;margin:14px 0;text-align:center;overflow-x:auto}
+    .svg-wrap svg{max-width:100%;height:auto}
+    .hl{color:var(--accent);font-weight:700}
+    .hl-g{color:var(--success);font-weight:700}
+    .hl-y{color:var(--warning);font-weight:700}
+    .hl-r{color:var(--error);font-weight:700}
+    .hl-b{color:#6366f1;font-weight:700}
+    .progress-bar{height:4px;background:var(--border);border-radius:2px;margin-bottom:14px}
+    .progress-fill{height:100%;background:var(--accent);border-radius:2px;transition:width .4s}
+    #qs-panel,#vk-panel{display:flex;flex-direction:column;gap:14px}
+    .q-card{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:20px}
+    .q-card .q-num{font-size:.75rem;font-weight:700;color:var(--accent);letter-spacing:.06em;margin-bottom:6px}
+    .q-card .q-text{font-size:.97rem;color:#e2e8f0;margin-bottom:14px;line-height:1.5}
+    .opts{display:flex;flex-direction:column;gap:8px}
+    .opt-btn{background:rgba(249,115,22,.05);border:1px solid var(--border);border-radius:9px;padding:10px 14px;text-align:left;cursor:pointer;color:#cbd5e1;font-size:.92rem;transition:all .18s}
+    .opt-btn:hover:not(:disabled){background:rgba(249,115,22,.12);border-color:var(--accent);color:#fff}
+    .opt-btn.correct{background:rgba(34,197,94,.12);border-color:var(--success);color:var(--success)}
+    .opt-btn.wrong{background:rgba(239,68,68,.12);border-color:var(--error);color:var(--error)}
+    .opt-btn:disabled{cursor:default}
+    .q-expl{display:none;background:rgba(249,115,22,.07);border:1px solid rgba(249,115,22,.2);border-radius:9px;padding:12px 14px;font-size:.88rem;color:#94a3b8;margin-top:10px}
+    .q-expl.show{display:block}
+    .score-ring{width:160px;height:160px;border-radius:50%;background:conic-gradient(var(--accent) calc(var(--score,0)*3.6deg),rgba(30,41,59,.9) 0);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;position:relative}
+    .score-ring::before{content:"";position:absolute;width:130px;height:130px;background:var(--bg);border-radius:50%}
+    .score-ring span{position:relative;z-index:1;font-size:2rem;font-weight:800;color:#fff}
+    .vk-timer{font-size:2.5rem;font-weight:800;color:var(--accent);text-align:center;font-variant-numeric:tabular-nums;margin-bottom:4px}
+    .vk-streak{text-align:center;font-size:.85rem;color:var(--text-muted);margin-bottom:14px}
+    .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:11px 22px;border-radius:10px;font-size:.93rem;font-weight:600;cursor:pointer;border:none;transition:all .2s}
+    .btn-primary{background:var(--accent);color:#fff}
+    .btn-primary:hover{background:var(--accent-dark);transform:translateY(-1px)}
+    #qs-result,#vk-result{display:none;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:28px 24px;text-align:center}
+    #qs-result.show,#vk-result.show{display:block}
+    .result-title{font-size:1.4rem;font-weight:800;margin-bottom:8px}
+    .result-sub{color:var(--text-muted);font-size:.93rem;margin-bottom:22px}
+    @media(max-width:480px){.slide{padding:16px 14px}.formula-box .formula-main{font-size:.95rem}}
+
+    /* ── Slide navigation controls ── */
+    .slide{display:none}
+    .slide.active{display:block;animation:slideIn .3s ease}
+    @keyframes slideIn{from{opacity:0;transform:translateX(14px)}to{opacity:1;transform:translateX(0)}}
+    .slide-ctrl{display:flex;justify-content:space-between;align-items:center;
+      margin-bottom:14px;flex-wrap:wrap;gap:8px;padding:0 2px}
+    .slide-info{font-size:.88rem;color:var(--text-muted)}
+    .slide-info strong{color:var(--text)}
+    .slide-ctrl-btns{display:flex;gap:8px}
+      /* ── JSXGraph / function-plot containers ── */
+    .jxgbox { touch-action: none; overflow: hidden; position: relative; }
+    .jxg-board { background: transparent !important; }
+    .graph-wrap {
+      background: var(--bg-card, #1e293b);
+      border: 1px solid var(--border-glass, rgba(255,255,255,.15));
+      border-radius: 12px;
+      padding: 12px;
+      margin: 14px 0;
+      overflow: hidden;
+    }
+    .fp-canvas { background: transparent !important; }
+  </style>
+  <!-- JSXGraph -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jsxgraph@1.9.3/distrib/jsxgraph.css" crossorigin="anonymous"/>
+  <script src="https://cdn.jsdelivr.net/npm/jsxgraph@1.9.3/distrib/jsxgraphcore.js" crossorigin="anonymous"></script>
+  <!-- function-plot (includes d3 v7) -->
+  <script src="https://cdn.jsdelivr.net/npm/d3@7/dist/d3.min.js" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/function-plot@1/dist/function-plot.js" crossorigin="anonymous"></script>
+</head>
+<body>
+<header class="lesson-header">
+  <div class="badge">📐 Mövzu 25</div>
+  <h1>Koordinat Üsulu</h1>
+  <p>Analitik həndəsə — nöqtələr, düz xətlər, çevrə, parabolanın koordinat müstəvisindəki tədqiqi</p>
+</header>
+
+<nav class="tab-nav">
+  <button class="tab-btn active" onclick="showTab('theory',this)"><span class="t-icon">📖</span>Nəzəriyyə</button>
+  <button class="tab-btn" onclick="showTab('test',this)"><span class="t-icon">✏️</span>Test</button>
+  <button class="tab-btn" onclick="showTab('viktorina',this)"><span class="t-icon">⚡</span>Viktorina</button>
+</nav>
+
+<!-- THEORY -->
+<section class="section active" id="theory">
+  <div class="progress-bar"><div class="progress-fill" id="theory-progress" style="width:0%"></div></div>
+  <div class="slide-ctrl">
+    <span class="slide-info">Slayd <strong id="s-cur">1</strong> / <strong id="s-tot">?</strong></span>
+    <div class="slide-ctrl-btns">
+      <button class="btn btn-ghost" onclick="prevSlide()">&#8592; Əvvəlki</button>
+      <button class="btn btn-primary" id="s-next" onclick="nextSlide()">Növbəti &#8594;</button>
+    </div>
+  </div>
+
+
+  <div class="slide">
+    <div class="slide-num">SLIDE 01</div>
+    <h2>Dekart Koordinat Sistemi</h2>
+    <p>Koordinat müstəvisi iki perpendikulyar ox vasitəsilə qurulur: üfüqi <span class="hl">x-ox</span> (absis) və şaquli <span class="hl">y-ox</span> (ordinat). Onların kəsişmə nöqtəsi <span class="hl">başlanğıc nöqtə O(0,0)</span> adlanır.</p>
+    <div class="svg-wrap">
+      <svg viewBox="0 0 280 220" aria-label="Dekart koordinat sistemi dörd rüblə">
+        <defs><marker id="arr" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#94a3b8"/></marker></defs>
+        <line x1="20" y1="110" x2="260" y2="110" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arr)"/>
+        <line x1="140" y1="200" x2="140" y2="10" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arr)"/>
+        <text x="255" y="105" fill="#94a3b8" font-size="12">x</text>
+        <text x="145" y="14" fill="#94a3b8" font-size="12">y</text>
+        <text x="130" y="125" fill="#f97316" font-size="11">O</text>
+        <!-- grid lines -->
+        <line x1="80" y1="15" x2="80" y2="205" stroke="rgba(148,163,184,0.1)" stroke-width="1"/>
+        <line x1="200" y1="15" x2="200" y2="205" stroke="rgba(148,163,184,0.1)" stroke-width="1"/>
+        <line x1="20" y1="50" x2="260" y2="50" stroke="rgba(148,163,184,0.1)" stroke-width="1"/>
+        <line x1="20" y1="170" x2="260" y2="170" stroke="rgba(148,163,184,0.1)" stroke-width="1"/>
+        <!-- quadrant labels -->
+        <text x="180" y="70" fill="#6366f1" font-size="13" font-weight="700">I</text>
+        <text x="60" y="70" fill="#22c55e" font-size="13" font-weight="700">II</text>
+        <text x="55" y="160" fill="#f59e0b" font-size="13" font-weight="700">III</text>
+        <text x="175" y="160" fill="#ef4444" font-size="13" font-weight="700">IV</text>
+        <!-- point A -->
+        <circle cx="200" cy="50" r="4" fill="#f97316"/>
+        <text x="206" y="46" fill="#f97316" font-size="11">A(2,2)</text>
+        <!-- point B -->
+        <circle cx="80" cy="170" r="4" fill="#22c55e"/>
+        <text x="52" y="165" fill="#22c55e" font-size="11">B(-2,-1)</text>
+      </svg>
+    </div>
+    <ul class="prop-list">
+      <li>I rüb: x&gt;0, y&gt;0</li>
+      <li>II rüb: x&lt;0, y&gt;0</li>
+      <li>III rüb: x&lt;0, y&lt;0</li>
+      <li>IV rüb: x&gt;0, y&lt;0</li>
+    </ul>
+  </div>
+
+  <div class="slide">
+    <div class="slide-num">SLIDE 02</div>
+    <h2>İki Nöqtə Arasındakı Məsafə</h2>
+    <div class="def-box"><strong>Düstur</strong><p>$A(x_1,y_1)$ və $B(x_2,y_2)$ nöqtələri üçün aralarındakı məsafə:</p></div>
+    <div class="formula-box">
+      <div class="formula-label">Məsafə düsturu</div>
+      <div class="formula-main">$$d = \sqrt{(x_2 - x_1)^2 + (y_2 - y_1)^2}$$</div>
+      <div class="formula-note">Pifaqor teoremindən alınır: $d^2 = \Delta x^2 + \Delta y^2$</div>
+    </div>
+    <h3>Nümunə</h3>
+    <p>$A(1,2)$ və $B(4,6)$ nöqtələri arasındakı məsafəni tapın:</p>
+    <p>$d = \sqrt{(4-1)^2+(6-2)^2} = \sqrt{9+16} = \sqrt{25} = $ <span class="hl-g">5</span></p>
+  </div>
+
+  <div class="slide">
+    <div class="slide-num">SLIDE 03</div>
+    <h2>Parçanın Orta Nöqtəsi</h2>
+    <div class="formula-box">
+      <div class="formula-label">Orta nöqtə düsturu</div>
+      <div class="formula-main">$$M = \left(\frac{x_1+x_2}{2},\; \frac{y_1+y_2}{2}\right)$$</div>
+      <div class="formula-note">Hər koordinat ayrı-ayrılıqda ortalanır</div>
+    </div>
+    <h3>Nümunə</h3>
+    <p>$A(-2,4)$ və $B(6,0)$ parçasının orta nöqtəsi: $M = \left(\frac{-2+6}{2}, \frac{4+0}{2}\right) = $ <span class="hl-g">(2, 2)</span></p>
+    <div class="def-box"><strong>Xatırlatma</strong><p>Orta nöqtə hər iki nöqtəyə bərabər məsafədə yerləşir: $|AM| = |MB|$</p></div>
+  </div>
+
+  <div class="slide">
+    <div class="slide-num">SLIDE 04</div>
+    <h2>Düz Xətt Tənliyi</h2>
+    <h3>Əsas formalar</h3>
+    <table class="info-table">
+      <tr><th>Forma</th><th>Tənlik</th><th>İzah</th></tr>
+      <tr><td>Əyim-kəsişmə forması</td><td>$y = kx + b$</td><td>$k$ — əyim, $b$ — y-kəsişməsi</td></tr>
+      <tr><td>Ümumi forma</td><td>$Ax + By + C = 0$</td><td>A, B, C — sabitlər</td></tr>
+      <tr><td>İki nöqtəli forma</td><td>$\dfrac{y-y_1}{y_2-y_1}=\dfrac{x-x_1}{x_2-x_1}$</td><td>İki nöqtə verilir</td></tr>
+      <tr><td>Kəsişmə forması</td><td>$\dfrac{x}{a}+\dfrac{y}{b}=1$</td><td>a,b — ox kəsişmələri</td></tr>
+    </table>
+  </div>
+
+  <div class="slide">
+    <div class="slide-num">SLIDE 05</div>
+    <h2>Düz Xəttin Əyimi</h2>
+    <div class="formula-box">
+      <div class="formula-label">Əyim (slope)</div>
+      <div class="formula-main">$$k = \frac{y_2 - y_1}{x_2 - x_1} = \tan\alpha$$</div>
+      <div class="formula-note">$\alpha$ — x-oxu ilə düz xətt arasındakı bucaq</div>
+    </div>
+    <h3>Paralel və perpendikulyar xətlər</h3>
+    <ul class="prop-list">
+      <li>Paralel xətlər: $k_1 = k_2$ (əyimlər bərabərdir)</li>
+      <li>Perpendikulyar xətlər: $k_1 \cdot k_2 = -1$</li>
+      <li>x-oxuna paralel: $k = 0$ (y = const)</li>
+      <li>y-oxuna paralel: $k$ mövcud deyil (x = const)</li>
+    </ul>
+    <h3>Nümunə</h3>
+    <p>$A(2,3)$, $B(5,9)$: $k = \frac{9-3}{5-2} = \frac{6}{3} = $ <span class="hl-g">2</span></p>
+  </div>
+
+  <div class="slide">
+    <div class="slide-num">SLIDE 06</div>
+    <h2>Nöqtədən Düz Xəttə Məsafə</h2>
+    <div class="formula-box">
+      <div class="formula-label">Nöqtədən xəttə məsafə</div>
+      <div class="formula-main">$$d = \frac{|Ax_0 + By_0 + C|}{\sqrt{A^2 + B^2}}$$</div>
+      <div class="formula-note">$P(x_0, y_0)$ nöqtəsindən $Ax+By+C=0$ xəttinə məsafə</div>
+    </div>
+    <h3>Nümunə</h3>
+    <p>$P(1,2)$ nöqtəsindən $3x + 4y - 5 = 0$ xəttinə məsafə:</p>
+    <p>$d = \frac{|3\cdot1 + 4\cdot2 - 5|}{\sqrt{9+16}} = \frac{|3+8-5|}{5} = \frac{6}{5} = $ <span class="hl-g">1.2</span></p>
+  </div>
+
+  <div class="slide">
+    <div class="slide-num">SLIDE 07</div>
+    <h2>Çevrənin Tənliyi</h2>
+    <div class="formula-box">
+      <div class="formula-label">Çevrə tənliyi</div>
+      <div class="formula-main">$$(x - a)^2 + (y - b)^2 = r^2$$</div>
+      <div class="formula-note">Mərkəz $O(a,b)$, radius $r$</div>
+    </div>
+    <h3>Xüsusi hallar</h3>
+    <ul class="prop-list">
+      <li>Mərkəz başlanğıcda: $x^2 + y^2 = r^2$</li>
+      <li>Ümumi forma $x^2+y^2+Dx+Ey+F=0$ ilə: mərkəz $(-D/2, -E/2)$, $r = \frac{1}{2}\sqrt{D^2+E^2-4F}$</li>
+      <li>Düz xətt çevrəni kəsirsə: mərkəzdən məsafə $< r$</li>
+    </ul>
+    <h3>Nümunə</h3>
+    <p>$(x-2)^2+(y+3)^2=25$: mərkəz <span class="hl-g">(2, −3)</span>, radius <span class="hl-g">5</span></p>
+  </div>
+
+  <div class="slide">
+    <div class="slide-num">SLIDE 08</div>
+    <h2>Parabolanın Tənliyi</h2>
+    <div class="formula-box">
+      <div class="formula-label">Parabolanın standart forması</div>
+      <div class="formula-main">$$y = ax^2 + bx + c \quad (a \neq 0)$$</div>
+      <div class="formula-note">$a>0$: aşağı açıq; $a&lt;0$: yuxarı açıq</div>
+    </div>
+    <h3>Zirvə nöqtəsi</h3>
+    <div class="formula-box">
+      <div class="formula-label">Zirvə</div>
+      <div class="formula-main">$$x_v = -\frac{b}{2a}, \quad y_v = c - \frac{b^2}{4a}$$</div>
+    </div>
+    <p>Simmetriya oxu: $x = -\dfrac{b}{2a}$</p>
+    <h3>Nümunə</h3>
+    <p>$y = x^2 - 4x + 3$: $x_v = 2$, $y_v = 3 - 4 = -1$ → zirvə <span class="hl-g">(2, −1)</span></p>
+  </div>
+
+  <div class="slide">
+    <div class="slide-num">SLIDE 09</div>
+    <h2>Üçbucağın Sahəsi Koordinatlarla</h2>
+    <div class="formula-box">
+      <div class="formula-label">Koordinatlarla sahə</div>
+      <div class="formula-main">$$S = \frac{1}{2}\bigl|x_1(y_2-y_3) + x_2(y_3-y_1) + x_3(y_1-y_2)\bigr|$$</div>
+      <div class="formula-note">Mənfi çıxmaması üçün mütləq dəyər alınır</div>
+    </div>
+    <h3>Nümunə</h3>
+    <p>$A(0,0)$, $B(4,0)$, $C(2,3)$:</p>
+    <p>$S = \tfrac{1}{2}|0(0-3)+4(3-0)+2(0-0)| = \tfrac{1}{2}|0+12+0| = $ <span class="hl-g">6</span></p>
+  </div>
+
+  <div class="slide">
+    <div class="slide-num">SLIDE 10</div>
+    <h2>İki Nöqtədən Keçən Düz Xətt</h2>
+    <div class="formula-box">
+      <div class="formula-label">İki nöqtə üçün düz xətt tənliyi</div>
+      <div class="formula-main">$$\frac{x - x_1}{x_2 - x_1} = \frac{y - y_1}{y_2 - y_1}$$</div>
+    </div>
+    <h3>Alqoritm</h3>
+    <ol class="slide ol" style="color:var(--text-muted);font-size:.93rem;padding-left:20px">
+      <li>Əyimi tap: $k = \dfrac{y_2-y_1}{x_2-x_1}$</li>
+      <li>$y - y_1 = k(x - x_1)$ tənliyini yaz</li>
+      <li>$y = kx + b$ formasına gətir</li>
+    </ol>
+    <h3>Nümunə</h3>
+    <p>$A(1,3)$ və $B(3,7)$: $k=2$, $y-3=2(x-1)$ → <span class="hl-g">$y=2x+1$</span></p>
+  </div>
+
+  <div class="slide">
+    <div class="slide-num">SLIDE 11</div>
+    <h2>Koordinat Sistemi — SVG Nümunəsi</h2>
+    <div class="svg-wrap">
+      <svg viewBox="0 0 320 250" aria-label="Koordinat müstəvisində nöqtələr və düz xətt">
+        <defs><marker id="arw" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#94a3b8"/></marker></defs>
+        <!-- axes -->
+        <line x1="20" y1="125" x2="300" y2="125" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arw)"/>
+        <line x1="160" y1="230" x2="160" y2="10" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arw)"/>
+        <!-- axis labels -->
+        <text x="294" y="120" fill="#94a3b8" font-size="12">x</text>
+        <text x="165" y="14" fill="#94a3b8" font-size="12">y</text>
+        <text x="148" y="140" fill="#f97316" font-size="11">O</text>
+        <!-- tick marks -->
+        <line x1="100" y1="121" x2="100" y2="129" stroke="#94a3b8" stroke-width="1"/><text x="96" y="142" fill="#94a3b8" font-size="10">-3</text>
+        <line x1="220" y1="121" x2="220" y2="129" stroke="#94a3b8" stroke-width="1"/><text x="218" y="142" fill="#94a3b8" font-size="10">3</text>
+        <line x1="156" y1="65" x2="164" y2="65" stroke="#94a3b8" stroke-width="1"/><text x="140" y="69" fill="#94a3b8" font-size="10">3</text>
+        <line x1="156" y1="185" x2="164" y2="185" stroke="#94a3b8" stroke-width="1"/><text x="136" y="189" fill="#94a3b8" font-size="10">-3</text>
+        <!-- line y = 2x + 1 -->
+        <line x1="80" y1="205" x2="240" y2="45" stroke="#f97316" stroke-width="2" stroke-dasharray="none"/>
+        <text x="242" y="44" fill="#f97316" font-size="11">y=2x+1</text>
+        <!-- points -->
+        <circle cx="160" cy="105" r="5" fill="#f97316"/>
+        <text x="165" y="102" fill="#f97316" font-size="11">B(0,1)</text>
+        <circle cx="220" cy="45" r="5" fill="#22c55e"/>
+        <text x="225" y="42" fill="#22c55e" font-size="11">A(3,7)</text>
+        <circle cx="100" cy="165" r="5" fill="#6366f1"/>
+        <text x="64" y="162" fill="#6366f1" font-size="11">C(-3,-5)</text>
+      </svg>
+    </div>
+    <p>$y = 2x+1$ xətti $A(3,7)$ və $C(-3,-5)$ nöqtələrindən keçir. $B(0,1)$ y-oxunu kəsir.</p>
+  </div>
+
+  <div class="slide">
+    <div class="slide-num">SLIDE 12</div>
+    <h2>Mühüm Formullar — Yekun Xülasə</h2>
+    <table class="info-table">
+      <tr><th>Anlayış</th><th>Düstur</th></tr>
+      <tr><td>Məsafə</td><td>$d=\sqrt{(x_2-x_1)^2+(y_2-y_1)^2}$</td></tr>
+      <tr><td>Orta nöqtə</td><td>$M=\left(\frac{x_1+x_2}{2},\frac{y_1+y_2}{2}\right)$</td></tr>
+      <tr><td>Əyim</td><td>$k=\frac{y_2-y_1}{x_2-x_1}$</td></tr>
+      <tr><td>Nöqtə-xətt məsafəsi</td><td>$d=\frac{|Ax_0+By_0+C|}{\sqrt{A^2+B^2}}$</td></tr>
+      <tr><td>Çevrə</td><td>$(x-a)^2+(y-b)^2=r^2$</td></tr>
+      <tr><td>Üçbucaq sahəsi</td><td>$S=\frac{1}{2}|x_1(y_2-y_3)+x_2(y_3-y_1)+x_3(y_1-y_2)|$</td></tr>
+      <tr><td>Parabolanın zirvəsi</td><td>$x_v=-\frac{b}{2a}$</td></tr>
+    </table>
+  </div>
+  <div class="slide-ctrl" style="margin-top:18px">
+    <div class="slide-ctrl-btns" style="width:100%;justify-content:space-between">
+      <button class="btn btn-ghost" onclick="prevSlide()">&#8592; Əvvəlki</button>
+      <button class="btn btn-primary" id="s-next2" onclick="nextSlide()">Növbəti &#8594;</button>
+    </div>
+  </div>
+</section>
+
+<!-- TEST -->
+<section class="section" id="test">
+  <div id="qs-panel"></div>
+  <div id="qs-result">
+    <div class="score-ring"><span id="qs-pct">0%</span></div>
+    <div class="result-title" id="qs-title"></div>
+    <div class="result-sub" id="qs-sub"></div>
+    <button class="btn btn-primary" onclick="restartQs()">🔄 Yenidən başla</button>
+  </div>
+</section>
+
+<!-- VIKTORINA -->
+<section class="section" id="viktorina">
+  <div class="vk-timer" id="vk-time">60</div>
+  <div class="vk-streak">Ardıcıl düzgün: <span id="vk-streak">0</span></div>
+  <div id="vk-panel"></div>
+  <div id="vk-result">
+    <div class="result-title">Vaxt bitdi!</div>
+    <div class="result-sub" id="vk-sub"></div>
+    <button class="btn btn-primary" onclick="startVk()">🔄 Yenidən oyna</button>
+  </div>
+</section>
+
+<script>
+function showTab(id,btn){
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  btn.classList.add('active');
+  if(id==='test'&&!window.qsLoaded){loadQs();window.qsLoaded=true;}
+  if(id==='viktorina'&&!window.vkInit){startVk();window.vkInit=true;}
+}
+
+document.addEventListener('scroll',()=>{
+  const slides=document.querySelectorAll('.slide');
+  let visible=0;
+  slides.forEach(s=>{if(s.getBoundingClientRect().top<window.innerHeight*0.8)visible++;});
+  const el=document.getElementById('theory-progress');
+  if(el)el.style.width=(visible/slides.length*100)+'%';
+});
+
+const QS=[
+  {text:"$A(1,1)$ və $B(4,5)$ nöqtələri arasındakı məsafə nədir?",opts:["3","4","5","6"],ans:2,expl:"$d=\\sqrt{(4-1)^2+(5-1)^2}=\\sqrt{9+16}=\\sqrt{25}=5$"},
+  {text:"$A(0,0)$ və $B(6,8)$ nöqtələri arasındakı məsafə nədir?",opts:["10","12","8","14"],ans:0,expl:"$d=\\sqrt{36+64}=\\sqrt{100}=10$"},
+  {text:"$A(-2,3)$ və $B(4,3)$ nöqtələri arasındakı məsafə nədir?",opts:["4","6","8","3"],ans:1,expl:"$y$-koordinatlar bərabərdir, $d=|4-(-2)|=6$"},
+  {text:"$A(2,4)$ və $B(8,4)$ parçasının orta nöqtəsi hansıdır?",opts:["(4,4)","(5,4)","(3,4)","(6,4)"],ans:1,expl:"$M=\\left(\\frac{2+8}{2},\\frac{4+4}{2}\\right)=(5,4)$"},
+  {text:"$A(-3,1)$ və $B(5,7)$ parçasının orta nöqtəsi hansıdır?",opts:["(1,3)","(1,4)","(2,4)","(0,3)"],ans:1,expl:"$M=\\left(\\frac{-3+5}{2},\\frac{1+7}{2}\\right)=(1,4)$"},
+  {text:"$A(1,2)$ və $B(3,8)$ nöqtələrindən keçən xəttin əyimi nədir?",opts:["2","3","4","6"],ans:1,expl:"$k=\\frac{8-2}{3-1}=\\frac{6}{2}=3$"},
+  {text:"$y=3x-5$ xəttinə paralel xəttin əyimi nədir?",opts:["$-3$","$\\frac{1}{3}$","$3$","$5$"],ans:2,expl:"Paralel xətlərin əyimləri bərabərdir: $k=3$"},
+  {text:"$y=2x+1$ xəttinə perpendikulyar xəttin əyimi nədir?",opts:["$2$","$-2$","$-\\frac{1}{2}$","$\\frac{1}{2}$"],ans:2,expl:"$k_1\\cdot k_2=-1$, yəni $k_2=-\\frac{1}{2}$"},
+  {text:"$P(2,3)$ nöqtəsindən $3x+4y-12=0$ xəttinə məsafə nədir?",opts:["$\\frac{2}{5}$","$\\frac{3}{5}$","$\\frac{6}{5}$","$\\frac{7}{5}$"],ans:0,expl:"$d=\\frac{|6+12-12|}{\\sqrt{9+16}}=\\frac{6}{5}$... gözləyin: $d=\\frac{|3\\cdot2+4\\cdot3-12|}{5}=\\frac{|6|}{5}=\\frac{6}{5}$"},
+  {text:"Mərkəzi $(2,-1)$, radiusu $3$ olan çevrənin tənliyi hansıdır?",opts:["$(x+2)^2+(y-1)^2=9$","$(x-2)^2+(y+1)^2=9$","$(x-2)^2+(y-1)^2=9$","$(x+2)^2+(y+1)^2=9$"],ans:1,expl:"$(x-a)^2+(y-b)^2=r^2$: $(x-2)^2+(y+1)^2=9$"},
+  {text:"$x^2+y^2-6x+4y-3=0$ çevrəsinin mərkəzi hansıdır?",opts:["$(3,-2)$","$(-3,2)$","$(6,-4)$","$(-6,4)$"],ans:0,expl:"$D=-6, E=4$: mərkəz $(-D/2,-E/2)=(3,-2)$"},
+  {text:"$y=x^2-6x+8$ parabolasının zirvəsi hansıdır?",opts:["$(3,-1)$","$(3,1)$","$(2,0)$","$(-3,-1)$"],ans:0,expl:"$x_v=-\\frac{-6}{2}=3$, $y_v=9-18+8=-1$. Zirvə $(3,-1)$"},
+  {text:"$A(0,0)$, $B(4,0)$, $C(0,3)$ üçbucağının sahəsi nədir?",opts:["6","12","7","8"],ans:0,expl:"$S=\\frac{1}{2}|0(0-3)+4(3-0)+0(0-0)|=\\frac{12}{2}=6$"},
+  {text:"$A(1,1)$, $B(5,1)$, $C(3,4)$ üçbucağının sahəsi nədir?",opts:["4","6","8","10"],ans:1,expl:"$S=\\frac{1}{2}|1(1-4)+5(4-1)+3(1-1)|=\\frac{1}{2}|{-3}+15|=6$"},
+  {text:"$A(2,1)$ və $B(4,5)$ nöqtələrindən keçən düz xəttin tənliyi hansıdır?",opts:["$y=2x-3$","$y=3x-5$","$y=2x-1$","$y=x+3$"],ans:0,expl:"$k=\\frac{5-1}{4-2}=2$; $y-1=2(x-2)$; $y=2x-3$"},
+  {text:"$(x-1)^2+(y-2)^2=16$ çevrəsinin radiusu nədir?",opts:["2","4","8","16"],ans:1,expl:"$r^2=16$, $r=4$"},
+  {text:"$P(0,0)$ nöqtəsindən $5x-12y+26=0$ xəttinə məsafə nədir?",opts:["$1$","$2$","$3$","$4$"],ans:1,expl:"$d=\\frac{|0-0+26|}{\\sqrt{25+144}}=\\frac{26}{13}=2$"},
+  {text:"$y=2x^2-8x+6$ parabolasının simmetriya oxu hansıdır?",opts:["$x=2$","$x=-2$","$x=4$","$x=1$"],ans:0,expl:"$x=-\\frac{b}{2a}=-\\frac{-8}{4}=2$"},
+  {text:"$A(1,0)$ və $B(0,1)$ nöqtələrindən keçən xəttin ümumi forması hansıdır?",opts:["$x-y+1=0$","$x+y-1=0$","$x+y+1=0$","$x-y-1=0$"],ans:1,expl:"$\\frac{x}{1}+\\frac{y}{1}=1$, yəni $x+y-1=0$"},
+  {text:"İki paralel $y=3x+1$ və $y=3x-4$ xəttlərinin arasındakı məsafə nədir?",opts:["$1$","$\\frac{5}{\\sqrt{10}}$","$5$","$\\frac{1}{\\sqrt{10}}$"],ans:1,expl:"$d=\\frac{|C_1-C_2|}{\\sqrt{A^2+B^2}}=\\frac{|1-(-4)|}{\\sqrt{9+1}}=\\frac{5}{\\sqrt{10}}$"}
+];
+
+let qsScore=0,qsAnswered=0;
+function loadQs(){
+  const panel=document.getElementById('qs-panel');
+  panel.innerHTML='';
+  QS.forEach((q,i)=>{
+    const card=document.createElement('div');card.className='q-card';card.id='q'+i;
+    card.innerHTML=`<div class="q-num">SUAL ${i+1} / ${QS.length}</div><div class="q-text">${q.text}</div><div class="opts">${q.opts.map((o,j)=>`<button class="opt-btn" onclick="pickOpt(${i},${j},this)">${String.fromCharCode(65+j)}) ${o}</button>`).join('')}</div><div class="q-expl" id="expl${i}">${q.expl}</div>`;
+    panel.appendChild(card);
+  });
+  if(typeof renderMathInElement==='function')renderMathInElement(panel,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}]});
+}
+function pickOpt(qi,oi,btn){
+  const card=document.getElementById('q'+qi);
+  card.querySelectorAll('.opt-btn').forEach(b=>b.disabled=true);
+  const ok=oi===QS[qi].ans;
+  btn.classList.add(ok?'correct':'wrong');
+  if(!ok)card.querySelectorAll('.opt-btn')[QS[qi].ans].classList.add('correct');
+  document.getElementById('expl'+qi).classList.add('show');
+  if(ok)qsScore++;
+  qsAnswered++;
+  if(qsAnswered===QS.length)setTimeout(showQsResult,600);
+}
+function showQsResult(){
+  document.getElementById('qs-panel').style.display='none';
+  const pct=Math.round(qsScore/QS.length*100);
+  const ring=document.getElementById('qs-ring');
+  if(ring)ring.style.setProperty('--score',pct);
+  document.getElementById('qs-pct').textContent=pct+'%';
+  document.getElementById('qs-title').textContent=pct>=80?'Əla!':pct>=60?'Yaxşı':'Daha çox məşq lazımdır';
+  document.getElementById('qs-sub').textContent=qsScore+' / '+QS.length+' düzgün cavab';
+  document.getElementById('qs-result').classList.add('show');
+  try{window.parent.postMessage({type:'LESSON_COMPLETE',score:pct},'*');}catch(e){}
+}
+function restartQs(){
+  qsScore=0;qsAnswered=0;
+  document.getElementById('qs-panel').style.display='';
+  document.getElementById('qs-result').classList.remove('show');
+  loadQs();
+}
+
+let vkTimer,vkTime,vkStreak,vkQ,vkScore;
+const VKQS=[...QS].sort(()=>Math.random()-0.5);
+function startVk(){
+  vkTime=60;vkStreak=0;vkScore=0;
+  document.getElementById('vk-result').classList.remove('show');
+  document.getElementById('vk-streak').textContent=0;
+  clearInterval(vkTimer);
+  vkTimer=setInterval(()=>{
+    vkTime--;
+    document.getElementById('vk-time').textContent=vkTime;
+    if(vkTime<=0){clearInterval(vkTimer);endVk();}
+  },1000);
+  nextVkQ(0);
+}
+function nextVkQ(idx){
+  vkQ=idx%VKQS.length;
+  const q=VKQS[vkQ];
+  const panel=document.getElementById('vk-panel');
+  panel.innerHTML=`<div class="q-card"><div class="q-num">VİKTORİNA</div><div class="q-text">${q.text}</div><div class="opts">${q.opts.map((o,j)=>`<button class="opt-btn" onclick="pickVk(${vkQ},${j},${idx},this)">${String.fromCharCode(65+j)}) ${o}</button>`).join('')}</div></div>`;
+  if(typeof renderMathInElement==='function')renderMathInElement(panel,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}]});
+}
+function pickVk(qi,oi,idx,btn){
+  const ok=oi===VKQS[qi].ans;
+  btn.style.background=ok?'rgba(34,197,94,.3)':'rgba(239,68,68,.3)';
+  btn.parentElement.querySelectorAll('.opt-btn').forEach(b=>b.disabled=true);
+  if(ok){vkStreak++;vkScore++;}else{vkStreak=0;}
+  document.getElementById('vk-streak').textContent=vkStreak;
+  setTimeout(()=>nextVkQ(idx+1),600);
+}
+function endVk(){
+  document.getElementById('vk-panel').innerHTML='';
+  document.getElementById('vk-sub').textContent=vkScore+' düzgün cavab, ən uzun sıra: '+vkStreak;
+  document.getElementById('vk-result').classList.add('show');
+}
+/* ── Slide navigation ─────────────────────────────────── */
+const _sls = Array.from(document.querySelectorAll('#theory .slide'));
+let _si = 0;
+function _upd() {
+  _sls.forEach((s,i) => s.classList.toggle('active', i === _si));
+  const c=document.getElementById('s-cur'), t=document.getElementById('s-tot');
+  if(c) c.textContent=_si+1;
+  if(t) t.textContent=_sls.length;
+  const fill=document.getElementById('theory-progress');
+  if(fill) fill.style.width=((_si+1)/_sls.length*100)+'%';
+  const nb=document.getElementById('s-next');
+  const nb2=document.getElementById('s-next2');
+  const last=_si===_sls.length-1;
+  if(nb)  nb.textContent  = last ? 'Testi Başla →' : 'Növbəti →';
+  if(nb2) nb2.textContent = last ? 'Testi Başla →' : 'Növbəti →';
+  document.getElementById('theory').scrollIntoView({behavior:'smooth',block:'start'});
+}
+function prevSlide() { if(_si>0){--_si;_upd();} }
+function nextSlide() {
+  if(_si<_sls.length-1){++_si;_upd();}
+  else { const tb=document.querySelector('.tab-btn:nth-child(2)'); if(tb) showTab('test',tb); }
+}
+_upd();
+
+</script>
+</body>
+</html>

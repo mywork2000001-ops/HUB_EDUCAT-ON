@@ -6,7 +6,10 @@
     <meta name="theme-color" content="#0f172a" />
     <meta name="color-scheme" content="dark light" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta
+      name="apple-mobile-web-app-status-bar-style"
+      content="black-translucent"
+    />
     <meta name="mobile-web-app-capable" content="yes" />
     <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
     <title>Mövzu 1 — Natural Ədədlər</title>
@@ -865,11 +868,61 @@
           padding: 12px 14px;
         }
       }
+      /* ── JSXGraph / function-plot containers ── */
+      .jxgbox {
+        touch-action: none;
+        overflow: hidden;
+        position: relative;
+      }
+      .jxg-board {
+        background: transparent !important;
+      }
+      .graph-wrap {
+        background: var(--bg-card, #1e293b);
+        border: 1px solid var(--border-glass, rgba(255, 255, 255, 0.15));
+        border-radius: 12px;
+        padding: 12px;
+        margin: 14px 0;
+        overflow: hidden;
+      }
+      .fp-canvas {
+        background: transparent !important;
+      }
     </style>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" crossorigin="anonymous">
-  <script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js" crossorigin="anonymous"></script>
-  <script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" crossorigin="anonymous"></script>
-</head>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css"
+      crossorigin="anonymous"
+    />
+
+    <script
+      src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"
+      crossorigin="anonymous"
+    ></script>
+    <!-- JSXGraph -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/jsxgraph@1.9.3/distrib/jsxgraph.css"
+      crossorigin="anonymous"
+    />
+    <script
+      src="https://cdn.jsdelivr.net/npm/jsxgraph@1.9.3/distrib/jsxgraphcore.js"
+      crossorigin="anonymous"
+    ></script>
+    <!-- function-plot (includes d3 v7) -->
+    <script
+      src="https://cdn.jsdelivr.net/npm/d3@7/dist/d3.min.js"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/function-plot@1/dist/function-plot.js"
+      crossorigin="anonymous"
+    ></script>
+  </head>
   <body>
     <div class="bg"></div>
 
@@ -1918,7 +1971,15 @@
         document
           .getElementById("res-ui")
           .scrollIntoView({ behavior: "smooth" });
-        try { var _p={points:score,maxPoints:total,timeSpentSeconds:0};window.parent.postMessage({type:"SCORE_UPDATE",payload:_p},"*");if(pct>=50)window.parent.postMessage({type:"LESSON_COMPLETE",payload:_p},"*"); } catch(e){}
+        try {
+          var _p = { points: score, maxPoints: total, timeSpentSeconds: 0 };
+          window.parent.postMessage({ type: "SCORE_UPDATE", payload: _p }, "*");
+          if (pct >= 50)
+            window.parent.postMessage(
+              { type: "LESSON_COMPLETE", payload: _p },
+              "*",
+            );
+        } catch (e) {}
       }
       function resetAssessment() {
         ["diag-ui", "vik-ui", "res-ui"].forEach(
@@ -1926,7 +1987,19 @@
         );
         clearInterval(vTmr);
       }
-      const K={delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false},{left:'\\(',right:'\\)',display:false},{left:'\\[',right:'\\]',display:true}],throwOnError:false};function renderMathNow(id){const el=document.getElementById(id);if(el)renderMathInElement(el,K);}
+      const K = {
+        delimiters: [
+          { left: "$$", right: "$$", display: true },
+          { left: "$", right: "$", display: false },
+          { left: "\\(", right: "\\)", display: false },
+          { left: "\\[", right: "\\]", display: true },
+        ],
+        throwOnError: false,
+      };
+      function renderMathNow(id) {
+        const el = document.getElementById(id);
+        if (el) renderMathInElement(el, K);
+      }
     </script>
   </body>
 </html>

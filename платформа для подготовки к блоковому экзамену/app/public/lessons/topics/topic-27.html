@@ -1,0 +1,522 @@
+<!doctype html>
+<html lang="az">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>İntegral — Tam Dərs</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css"/>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
+    onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}]})"></script>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{--accent:#f97316;--accent-dark:#ea6c0a;--bg:#0f172a;--bg-card:#1e293b;--text:#f1f5f9;--text-muted:#94a3b8;--border:rgba(148,163,184,0.15);--success:#22c55e;--warning:#f59e0b;--error:#ef4444;--radius:14px}
+    html{scroll-behavior:smooth}
+    body{font-family:"Segoe UI",system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;line-height:1.6}
+    .lesson-header{background:linear-gradient(135deg,#0c1a10 0%,#1a1000 50%,#0c1a10 100%);border-bottom:1px solid var(--border);padding:28px 20px 24px;text-align:center}
+    .lesson-header .badge{display:inline-flex;align-items:center;gap:8px;background:rgba(249,115,22,0.12);border:1px solid rgba(249,115,22,0.3);color:var(--accent);border-radius:20px;padding:4px 14px;font-size:.78rem;font-weight:600;letter-spacing:.04em;text-transform:uppercase;margin-bottom:12px}
+    .lesson-header h1{font-size:clamp(1.5rem,4vw,2.2rem);font-weight:800;background:linear-gradient(135deg,#fff 40%,var(--accent));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:8px}
+    .lesson-header p{color:var(--text-muted);font-size:.95rem;max-width:560px;margin:0 auto}
+    .tab-nav{display:flex;overflow-x:auto;background:var(--bg-card);border-bottom:1px solid var(--border);scrollbar-width:none;position:sticky;top:0;z-index:40}
+    .tab-nav::-webkit-scrollbar{display:none}
+    .tab-btn{flex:1;min-width:80px;padding:13px 6px;font-size:.8rem;font-weight:600;color:var(--text-muted);background:transparent;border:none;cursor:pointer;border-bottom:2px solid transparent;transition:all .2s;white-space:nowrap;display:flex;flex-direction:column;align-items:center;gap:2px}
+    .tab-btn .t-icon{font-size:1.1rem}
+    .tab-btn:hover{color:var(--text)}
+    .tab-btn.active{color:var(--accent);border-bottom-color:var(--accent)}
+    .section{display:none;padding:20px 16px 40px;max-width:820px;margin:0 auto}
+    .section.active{display:block}
+    .slide{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:22px 20px;margin-bottom:18px}
+    .slide-num{display:inline-block;background:var(--accent);color:#fff;font-size:.7rem;font-weight:700;padding:2px 9px;border-radius:20px;margin-bottom:10px;letter-spacing:.06em}
+    .slide h2{font-size:1.2rem;font-weight:700;color:var(--accent);margin-bottom:14px;line-height:1.3}
+    .slide h3{font-size:1rem;font-weight:700;color:#e2e8f0;margin:14px 0 8px}
+    .slide p{color:var(--text-muted);font-size:.93rem;margin-bottom:10px}
+    .slide ul,.slide ol{color:var(--text-muted);font-size:.93rem;padding-left:20px;margin-bottom:10px}
+    .slide li{margin-bottom:5px}
+    .formula-box{background:rgba(249,115,22,.08);border:1px solid rgba(249,115,22,.25);border-left:3px solid var(--accent);border-radius:10px;padding:14px 18px;margin:14px 0}
+    .formula-box .formula-label{font-size:.72rem;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px}
+    .formula-box .formula-main{font-size:1.1rem;font-weight:700;color:#fff;line-height:1.7}
+    .formula-box .formula-note{font-size:.82rem;color:var(--text-muted);margin-top:6px}
+    .def-box{background:rgba(249,115,22,.05);border:1px solid rgba(249,115,22,.2);border-radius:10px;padding:14px 18px;margin:12px 0}
+    .def-box strong{color:var(--accent);font-size:.82rem;text-transform:uppercase;letter-spacing:.06em;display:block;margin-bottom:6px}
+    .def-box p{color:#cbd5e1;font-size:.93rem;margin:0}
+    .prop-list{list-style:none;padding:0;margin:12px 0}
+    .prop-list li{display:flex;align-items:flex-start;gap:10px;background:rgba(249,115,22,.04);border:1px solid var(--border);border-radius:8px;padding:10px 14px;margin-bottom:8px;color:#cbd5e1;font-size:.9rem}
+    .prop-list li::before{content:"✦";color:var(--accent);font-size:.75rem;margin-top:2px;flex-shrink:0}
+    .info-table{width:100%;border-collapse:collapse;font-size:.85rem;margin:14px 0}
+    .info-table th{background:rgba(249,115,22,.15);color:var(--accent);padding:9px 11px;text-align:center;font-weight:700;border-bottom:1px solid rgba(249,115,22,.2)}
+    .info-table td{padding:8px 11px;color:#cbd5e1;border-bottom:1px solid var(--border);text-align:center}
+    .info-table tr:hover td{background:rgba(249,115,22,.04)}
+    .info-table td:first-child{text-align:left;font-weight:600}
+    .svg-wrap{background:rgba(15,23,42,.7);border:1px solid var(--border);border-radius:12px;padding:16px;margin:14px 0;text-align:center;overflow-x:auto}
+    .svg-wrap svg{max-width:100%;height:auto}
+    .hl{color:var(--accent);font-weight:700}
+    .hl-g{color:var(--success);font-weight:700}
+    .hl-y{color:var(--warning);font-weight:700}
+    .hl-r{color:var(--error);font-weight:700}
+    .hl-b{color:#6366f1;font-weight:700}
+    .progress-bar{height:4px;background:var(--border);border-radius:2px;margin-bottom:14px}
+    .progress-fill{height:100%;background:var(--accent);border-radius:2px;transition:width .4s}
+    #qs-panel,#vk-panel{display:flex;flex-direction:column;gap:14px}
+    .q-card{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:20px}
+    .q-card .q-num{font-size:.75rem;font-weight:700;color:var(--accent);letter-spacing:.06em;margin-bottom:6px}
+    .q-card .q-text{font-size:.97rem;color:#e2e8f0;margin-bottom:14px;line-height:1.5}
+    .opts{display:flex;flex-direction:column;gap:8px}
+    .opt-btn{background:rgba(249,115,22,.05);border:1px solid var(--border);border-radius:9px;padding:10px 14px;text-align:left;cursor:pointer;color:#cbd5e1;font-size:.92rem;transition:all .18s}
+    .opt-btn:hover:not(:disabled){background:rgba(249,115,22,.12);border-color:var(--accent);color:#fff}
+    .opt-btn.correct{background:rgba(34,197,94,.12);border-color:var(--success);color:var(--success)}
+    .opt-btn.wrong{background:rgba(239,68,68,.12);border-color:var(--error);color:var(--error)}
+    .opt-btn:disabled{cursor:default}
+    .q-expl{display:none;background:rgba(249,115,22,.07);border:1px solid rgba(249,115,22,.2);border-radius:9px;padding:12px 14px;font-size:.88rem;color:#94a3b8;margin-top:10px}
+    .q-expl.show{display:block}
+    .score-ring{width:160px;height:160px;border-radius:50%;background:conic-gradient(var(--accent) calc(var(--score,0)*3.6deg),rgba(30,41,59,.9) 0);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;position:relative}
+    .score-ring::before{content:"";position:absolute;width:130px;height:130px;background:var(--bg);border-radius:50%}
+    .score-ring span{position:relative;z-index:1;font-size:2rem;font-weight:800;color:#fff}
+    .vk-timer{font-size:2.5rem;font-weight:800;color:var(--accent);text-align:center;font-variant-numeric:tabular-nums;margin-bottom:4px}
+    .vk-streak{text-align:center;font-size:.85rem;color:var(--text-muted);margin-bottom:14px}
+    .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:11px 22px;border-radius:10px;font-size:.93rem;font-weight:600;cursor:pointer;border:none;transition:all .2s}
+    .btn-primary{background:var(--accent);color:#fff}
+    .btn-primary:hover{background:var(--accent-dark);transform:translateY(-1px)}
+    #qs-result,#vk-result{display:none;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:28px 24px;text-align:center}
+    #qs-result.show,#vk-result.show{display:block}
+    .result-title{font-size:1.4rem;font-weight:800;margin-bottom:8px}
+    .result-sub{color:var(--text-muted);font-size:.93rem;margin-bottom:22px}
+    @media(max-width:480px){.slide{padding:16px 14px}.formula-box .formula-main{font-size:.95rem}}
+
+    /* ── Slide navigation controls ── */
+    .slide{display:none}
+    .slide.active{display:block;animation:slideIn .3s ease}
+    @keyframes slideIn{from{opacity:0;transform:translateX(14px)}to{opacity:1;transform:translateX(0)}}
+    .slide-ctrl{display:flex;justify-content:space-between;align-items:center;
+      margin-bottom:14px;flex-wrap:wrap;gap:8px;padding:0 2px}
+    .slide-info{font-size:.88rem;color:var(--text-muted)}
+    .slide-info strong{color:var(--text)}
+    .slide-ctrl-btns{display:flex;gap:8px}
+      /* ── JSXGraph / function-plot containers ── */
+    .jxgbox { touch-action: none; overflow: hidden; position: relative; }
+    .jxg-board { background: transparent !important; }
+    .graph-wrap {
+      background: var(--bg-card, #1e293b);
+      border: 1px solid var(--border-glass, rgba(255,255,255,.15));
+      border-radius: 12px;
+      padding: 12px;
+      margin: 14px 0;
+      overflow: hidden;
+    }
+    .fp-canvas { background: transparent !important; }
+  </style>
+  <!-- JSXGraph -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jsxgraph@1.9.3/distrib/jsxgraph.css" crossorigin="anonymous"/>
+  <script src="https://cdn.jsdelivr.net/npm/jsxgraph@1.9.3/distrib/jsxgraphcore.js" crossorigin="anonymous"></script>
+  <!-- function-plot (includes d3 v7) -->
+  <script src="https://cdn.jsdelivr.net/npm/d3@7/dist/d3.min.js" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/function-plot@1/dist/function-plot.js" crossorigin="anonymous"></script>
+</head>
+<body>
+<header class="lesson-header">
+  <div class="badge">∫ Mövzu 27</div>
+  <h1>İntegral (Hədd Hesabı)</h1>
+  <p>Qeyri-müəyyən və müəyyən inteqral — antitöremə, Newton-Leybnits düsturu, sahə hesabı</p>
+</header>
+
+<nav class="tab-nav">
+  <button class="tab-btn active" onclick="showTab('theory',this)"><span class="t-icon">📖</span>Nəzəriyyə</button>
+  <button class="tab-btn" onclick="showTab('test',this)"><span class="t-icon">✏️</span>Test</button>
+  <button class="tab-btn" onclick="showTab('viktorina',this)"><span class="t-icon">⚡</span>Viktorina</button>
+</nav>
+
+<!-- THEORY -->
+<section class="section active" id="theory">
+  <div class="progress-bar"><div class="progress-fill" id="theory-progress" style="width:0%"></div></div>
+  <div class="slide-ctrl">
+    <span class="slide-info">Slayd <strong id="s-cur">1</strong> / <strong id="s-tot">?</strong></span>
+    <div class="slide-ctrl-btns">
+      <button class="btn btn-ghost" onclick="prevSlide()">&#8592; Əvvəlki</button>
+      <button class="btn btn-primary" id="s-next" onclick="nextSlide()">Növbəti &#8594;</button>
+    </div>
+  </div>
+
+
+  <div class="slide">
+    <div class="slide-num">SLIDE 01</div>
+    <h2>Antitöremə (İbtidai Funksiya)</h2>
+    <div class="def-box"><strong>Tərif</strong><p>$F(x)$ funksiyası $f(x)$-in antitöreməsidir, əgər $F'(x) = f(x)$ bütün $x$ üçün doğrudursa.</p></div>
+    <div class="formula-box">
+      <div class="formula-label">Ümumi antitöremə</div>
+      <div class="formula-main">$$F(x) + C \quad (C = \text{sabit})$$</div>
+      <div class="formula-note">$C$ ixtiyari sabitdir. $F(x)+C$-nin törəməsi $f(x)$-dir.</div>
+    </div>
+    <h3>Nümunə</h3>
+    <p>$f(x) = 2x$ üçün antitöremə: $F(x) = x^2 + C$ (çünki $(x^2+C)' = 2x$)</p>
+    <ul class="prop-list">
+      <li>Antitöremə sonsuz sayda ola bilər ($C$ fərqli olduqda)</li>
+      <li>Başlanğıc şərt verilsə, konkret $C$ tapılır</li>
+    </ul>
+  </div>
+
+  <div class="slide">
+    <div class="slide-num">SLIDE 02</div>
+    <h2>İnteqral Cədvəli</h2>
+    <table class="info-table">
+      <tr><th>$f(x)$</th><th>$\int f(x)\,dx$</th></tr>
+      <tr><td>$x^n$ ($n\neq-1$)</td><td>$\dfrac{x^{n+1}}{n+1} + C$</td></tr>
+      <tr><td>$\dfrac{1}{x}$</td><td>$\ln|x| + C$</td></tr>
+      <tr><td>$e^x$</td><td>$e^x + C$</td></tr>
+      <tr><td>$a^x$</td><td>$\dfrac{a^x}{\ln a} + C$</td></tr>
+      <tr><td>$\sin x$</td><td>$-\cos x + C$</td></tr>
+      <tr><td>$\cos x$</td><td>$\sin x + C$</td></tr>
+      <tr><td>$\dfrac{1}{\cos^2 x}$</td><td>$\tan x + C$</td></tr>
+      <tr><td>$\dfrac{1}{\sin^2 x}$</td><td>$-\cot x + C$</td></tr>
+    </table>
+  </div>
+
+  <div class="slide">
+    <div class="slide-num">SLIDE 03</div>
+    <h2>İnteqralın Xassələri</h2>
+    <ul class="prop-list">
+      <li>$\displaystyle\int k\,f(x)\,dx = k\int f(x)\,dx$ — sabitlə vurma</li>
+      <li>$\displaystyle\int [f(x)\pm g(x)]\,dx = \int f(x)\,dx \pm \int g(x)\,dx$ — cəm/fərq</li>
+      <li>$\left(\displaystyle\int f(x)\,dx\right)' = f(x)$ — inteqral törəməsinin inversidir</li>
+      <li>$\displaystyle\int f'(x)\,dx = f(x) + C$ — törəmənin inteqralı</li>
+    </ul>
+    <h3>Nümunə</h3>
+    <p>$\displaystyle\int (3x^2 - 2x + 5)\,dx = x^3 - x^2 + 5x + C$</p>
+  </div>
+
+  <div class="slide">
+    <div class="slide-num">SLIDE 04</div>
+    <h2>Əvəzetmə Üsulu (u-Əvəzetmə)</h2>
+    <div class="formula-box">
+      <div class="formula-label">Əvəzetmə düsturu</div>
+      <div class="formula-main">$$\int f(g(x))\cdot g'(x)\,dx = \int f(u)\,du \Big|_{u=g(x)}$$</div>
+    </div>
+    <h3>Alqoritm</h3>
+    <ol style="color:var(--text-muted);font-size:.93rem;padding-left:20px">
+      <li>Daxili funksiyanı $u = g(x)$ kimi seç</li>
+      <li>$du = g'(x)\,dx$ tap</li>
+      <li>İnteqralı $u$ ilə yaz</li>
+      <li>İnteqralı hesabla, sonra $u = g(x)$ geri qoy</li>
+    </ol>
+    <h3>Nümunə</h3>
+    <p>$\displaystyle\int 2x e^{x^2}\,dx$: $u=x^2$, $du=2x\,dx$ → $\displaystyle\int e^u\,du = e^u+C = $ <span class="hl-g">$e^{x^2}+C$</span></p>
+  </div>
+
+  <div class="slide">
+    <div class="slide-num">SLIDE 05</div>
+    <h2>Hissə-Hissə İnteqrasiya</h2>
+    <div class="formula-box">
+      <div class="formula-label">Hissə-hissə düstur</div>
+      <div class="formula-main">$$\int u\,dv = uv - \int v\,du$$</div>
+    </div>
+    <h3>Seçim qaydası (LIATE)</h3>
+    <p>$u$ üçün: <span class="hl">L</span>ogarifm → <span class="hl">I</span>nvers trig → <span class="hl">A</span>lgebraik → <span class="hl">T</span>riqonometrik → <span class="hl">E</span>ksponensial</p>
+    <h3>Nümunə</h3>
+    <p>$\displaystyle\int x e^x\,dx$: $u=x$, $dv=e^x dx$ → $du=dx$, $v=e^x$</p>
+    <p>$= xe^x - \displaystyle\int e^x\,dx = xe^x - e^x + C = $ <span class="hl-g">$(x-1)e^x + C$</span></p>
+  </div>
+
+  <div class="slide">
+    <div class="slide-num">SLIDE 06</div>
+    <h2>Müəyyən İnteqral və Newton-Leybnits Düsturu</h2>
+    <div class="formula-box">
+      <div class="formula-label">Newton-Leybnits düsturu</div>
+      <div class="formula-main">$$\int_a^b f(x)\,dx = F(b) - F(a) = \bigl[F(x)\bigr]_a^b$$</div>
+      <div class="formula-note">$F$ — $f$-in ixtiyari antitöreməsi</div>
+    </div>
+    <h3>Nümunə</h3>
+    <p>$\displaystyle\int_1^3 2x\,dx = [x^2]_1^3 = 9 - 1 = $ <span class="hl-g">8</span></p>
+    <h3>Xassələr</h3>
+    <ul class="prop-list">
+      <li>$\displaystyle\int_a^a f(x)\,dx = 0$</li>
+      <li>$\displaystyle\int_a^b f(x)\,dx = -\int_b^a f(x)\,dx$</li>
+      <li>$\displaystyle\int_a^c f\,dx = \int_a^b f\,dx + \int_b^c f\,dx$</li>
+    </ul>
+  </div>
+
+  <div class="slide">
+    <div class="slide-num">SLIDE 07</div>
+    <h2>Əyri Altındakı Sahə</h2>
+    <div class="formula-box">
+      <div class="formula-label">Sahə düsturu</div>
+      <div class="formula-main">$$S = \int_a^b |f(x)|\,dx$$</div>
+      <div class="formula-note">$f(x)\geq 0$ olduqda: $S = \int_a^b f(x)\,dx$</div>
+    </div>
+    <h3>Mənfi sahə</h3>
+    <p>Funksiya $x$-oxunun altında ($f(x)<0$) olduqda, sahə tapılarkən <span class="hl">mütləq dəyər alınır</span>. İnteqral mənfi ola bilər, amma sahə həmişə müsbətdir.</p>
+    <h3>Nümunə</h3>
+    <p>$y=x^2-1$, $[0,2]$ arasındakı sahə:</p>
+    <p>$\displaystyle\int_0^1|x^2-1|\,dx + \int_1^2(x^2-1)\,dx = \frac{2}{3}+\frac{4}{3} = 2$</p>
+  </div>
+
+  <div class="slide">
+    <div class="slide-num">SLIDE 08</div>
+    <h2>İki Əyri Arasındakı Sahə</h2>
+    <div class="formula-box">
+      <div class="formula-label">İki əyri arasındakı sahə</div>
+      <div class="formula-main">$$S = \int_a^b |f(x) - g(x)|\,dx$$</div>
+      <div class="formula-note">$f(x)\geq g(x)$ olduqda mütləq dəyər lazım deyil</div>
+    </div>
+    <h3>Alqoritm</h3>
+    <ol style="color:var(--text-muted);font-size:.93rem;padding-left:20px">
+      <li>$f(x)=g(x)$ tənliyini həll et → kəsişmə nöqtələri ($a$, $b$)</li>
+      <li>Hansı funksiyanın üstdə olduğunu müəyyən et</li>
+      <li>$S = \displaystyle\int_a^b [f(x)-g(x)]\,dx$</li>
+    </ol>
+    <h3>Nümunə</h3>
+    <p>$f(x)=x$, $g(x)=x^2$, kəsişmə: $x=0,1$: $S=\displaystyle\int_0^1(x-x^2)\,dx=\left[\frac{x^2}{2}-\frac{x^3}{3}\right]_0^1=\frac{1}{6}$</p>
+  </div>
+
+  <div class="slide">
+    <div class="slide-num">SLIDE 09</div>
+    <h2>Qeyri-Xas İnteqrallar</h2>
+    <div class="def-box"><strong>Tərif</strong><p>İnteqrasiya intervalı sonsuz olduqda və ya integrand hərhansi nöqtədə ∞ olduqda qeyri-xas inteqraldan söhbət gedir.</p></div>
+    <div class="formula-box">
+      <div class="formula-label">Sonsuz həddli qeyri-xas inteqral</div>
+      <div class="formula-main">$$\int_a^{+\infty} f(x)\,dx = \lim_{t\to+\infty} \int_a^t f(x)\,dx$$</div>
+    </div>
+    <h3>Nümunə</h3>
+    <p>$\displaystyle\int_1^{+\infty}\frac{1}{x^2}\,dx = \lim_{t\to\infty}\left[-\frac{1}{x}\right]_1^t = \lim_{t\to\infty}\left(-\frac{1}{t}+1\right) = $ <span class="hl-g">1</span> (yığılır)</p>
+  </div>
+
+  <div class="slide">
+    <div class="slide-num">SLIDE 10</div>
+    <h2>Disk Üsulu — Fırlanma Həcmi</h2>
+    <div class="formula-box">
+      <div class="formula-label">x-oxu ətrafında fırlanma həcmi</div>
+      <div class="formula-main">$$V = \pi \int_a^b [f(x)]^2\,dx$$</div>
+    </div>
+    <h3>Nümunə</h3>
+    <p>$y=\sqrt{x}$ qrafiki, $[0,4]$ arası, $x$-oxu ətrafında fırlanır:</p>
+    <p>$V = \pi\displaystyle\int_0^4 x\,dx = \pi\cdot\left[\frac{x^2}{2}\right]_0^4 = \pi\cdot8 = $ <span class="hl-g">$8\pi$</span></p>
+    <div class="def-box"><strong>Üzük üsulu</strong><p>Boş silindir üçün: $V=\pi\displaystyle\int_a^b([f(x)]^2-[g(x)]^2)\,dx$</p></div>
+  </div>
+
+  <div class="slide">
+    <div class="slide-num">SLIDE 11</div>
+    <h2>Əyri Altındakı Sahə — SVG</h2>
+    <div class="svg-wrap">
+      <svg viewBox="0 0 320 220" aria-label="y=x² funksiyası ilə x=0 və x=2 arasındakı kölgəli sahə">
+        <defs>
+          <marker id="arw3" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#94a3b8"/></marker>
+          <clipPath id="clip1"><rect x="80" y="30" width="120" height="140"/></clipPath>
+        </defs>
+        <!-- axes -->
+        <line x1="30" y1="170" x2="300" y2="170" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arw3)"/>
+        <line x1="80" y1="210" x2="80" y2="10" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arw3)"/>
+        <text x="293" y="165" fill="#94a3b8" font-size="11">x</text>
+        <text x="85" y="14" fill="#94a3b8" font-size="11">y</text>
+        <text x="66" y="185" fill="#f97316" font-size="10">O</text>
+        <!-- shaded area under y=x^2 from x=0 to x=2 -->
+        <!-- scale: 1 unit = 60px; origin at (80, 170); y=x^2: at x=0 y=0; at x=2 y=4 (too tall) -->
+        <!-- use scale: 1 unit = 50px horizontally, 30px vertically -->
+        <!-- x in [0,2]: pixel x from 80 to 180; y=x^2 pixel y = 170 - (x^2)*30 -->
+        <polygon points="80,170 88,168 96,162 104,153 112,141 120,125 128,106 136,84 144,58 152,30 160,170" fill="rgba(249,115,22,0.2)" stroke="none"/>
+        <!-- parabola curve -->
+        <polyline points="80,170 88,168 96,162 104,153 112,141 120,125 128,106 136,84 144,58 152,30 160,10" fill="none" stroke="#f97316" stroke-width="2"/>
+        <!-- x=2 vertical line -->
+        <line x1="160" y1="170" x2="160" y2="30" stroke="#22c55e" stroke-width="1.5" stroke-dasharray="4,3"/>
+        <!-- labels -->
+        <text x="76" y="184" fill="#94a3b8" font-size="10">0</text>
+        <text x="156" y="184" fill="#22c55e" font-size="10">2</text>
+        <text x="100" y="130" fill="#f97316" font-size="11" font-weight="700">S</text>
+        <text x="165" y="50" fill="#6366f1" font-size="11">y=x²</text>
+        <!-- tick at x=1 -->
+        <line x1="120" y1="167" x2="120" y2="173" stroke="#94a3b8" stroke-width="1"/>
+        <text x="117" y="183" fill="#94a3b8" font-size="10">1</text>
+        <!-- y axis ticks -->
+        <line x1="77" y1="110" x2="83" y2="110" stroke="#94a3b8" stroke-width="1"/>
+        <text x="62" y="114" fill="#94a3b8" font-size="10">2</text>
+        <line x1="77" y1="50" x2="83" y2="50" stroke="#94a3b8" stroke-width="1"/>
+        <text x="62" y="54" fill="#94a3b8" font-size="10">4</text>
+      </svg>
+    </div>
+    <p>$y=x^2$, $[0,2]$ intervalındakı sahə: $\displaystyle\int_0^2 x^2\,dx = \left[\frac{x^3}{3}\right]_0^2 = \frac{8}{3} \approx $ <span class="hl-g">2.67</span></p>
+  </div>
+
+  <div class="slide">
+    <div class="slide-num">SLIDE 12</div>
+    <h2>Mühüm Formullar — Yekun Xülasə</h2>
+    <table class="info-table">
+      <tr><th>Anlayış</th><th>Düstur</th></tr>
+      <tr><td>Antitöremə</td><td>$F'(x)=f(x)$</td></tr>
+      <tr><td>$\int x^n dx$</td><td>$\frac{x^{n+1}}{n+1}+C$</td></tr>
+      <tr><td>$\int e^x dx$</td><td>$e^x+C$</td></tr>
+      <tr><td>$\int \frac{1}{x}dx$</td><td>$\ln|x|+C$</td></tr>
+      <tr><td>Newton-Leybnits</td><td>$\int_a^b f\,dx = F(b)-F(a)$</td></tr>
+      <tr><td>Sahə</td><td>$S=\int_a^b|f(x)|\,dx$</td></tr>
+      <tr><td>İki əyri arası</td><td>$S=\int_a^b|f-g|\,dx$</td></tr>
+      <tr><td>Fırlanma həcmi</td><td>$V=\pi\int_a^b[f(x)]^2\,dx$</td></tr>
+    </table>
+  </div>
+  <div class="slide-ctrl" style="margin-top:18px">
+    <div class="slide-ctrl-btns" style="width:100%;justify-content:space-between">
+      <button class="btn btn-ghost" onclick="prevSlide()">&#8592; Əvvəlki</button>
+      <button class="btn btn-primary" id="s-next2" onclick="nextSlide()">Növbəti &#8594;</button>
+    </div>
+  </div>
+</section>
+
+<!-- TEST -->
+<section class="section" id="test">
+  <div id="qs-panel"></div>
+  <div id="qs-result">
+    <div class="score-ring"><span id="qs-pct">0%</span></div>
+    <div class="result-title" id="qs-title"></div>
+    <div class="result-sub" id="qs-sub"></div>
+    <button class="btn btn-primary" onclick="restartQs()">🔄 Yenidən başla</button>
+  </div>
+</section>
+
+<!-- VIKTORINA -->
+<section class="section" id="viktorina">
+  <div class="vk-timer" id="vk-time">60</div>
+  <div class="vk-streak">Ardıcıl düzgün: <span id="vk-streak">0</span></div>
+  <div id="vk-panel"></div>
+  <div id="vk-result">
+    <div class="result-title">Vaxt bitdi!</div>
+    <div class="result-sub" id="vk-sub"></div>
+    <button class="btn btn-primary" onclick="startVk()">🔄 Yenidən oyna</button>
+  </div>
+</section>
+
+<script>
+function showTab(id,btn){
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  btn.classList.add('active');
+  if(id==='test'&&!window.qsLoaded){loadQs();window.qsLoaded=true;}
+  if(id==='viktorina'&&!window.vkInit){startVk();window.vkInit=true;}
+}
+
+document.addEventListener('scroll',()=>{
+  const slides=document.querySelectorAll('.slide');
+  let visible=0;
+  slides.forEach(s=>{if(s.getBoundingClientRect().top<window.innerHeight*0.8)visible++;});
+  const el=document.getElementById('theory-progress');
+  if(el)el.style.width=(visible/slides.length*100)+'%';
+});
+
+const QS=[
+  {text:"$\\displaystyle\\int x^3\\,dx$ nəyə bərabərdir?",opts:["$\\frac{x^4}{4}+C$","$3x^2+C$","$\\frac{x^3}{3}+C$","$x^4+C$"],ans:0,expl:"$\\int x^n dx=\\frac{x^{n+1}}{n+1}+C$: $\\int x^3 dx=\\frac{x^4}{4}+C$"},
+  {text:"$\\displaystyle\\int e^x\\,dx$ nəyə bərabərdir?",opts:["$xe^x+C$","$e^x+C$","$\\frac{e^x}{x}+C$","$e^{x+1}+C$"],ans:1,expl:"$\\int e^x dx = e^x+C$"},
+  {text:"$\\displaystyle\\int \\frac{1}{x}\\,dx$ nəyə bərabərdir?",opts:["$-\\frac{1}{x^2}+C$","$\\frac{1}{x^2}+C$","$\\ln|x|+C$","$\\frac{x^2}{2}+C$"],ans:2,expl:"$\\int \\frac{1}{x}dx=\\ln|x|+C$"},
+  {text:"$\\displaystyle\\int \\cos x\\,dx$ nəyə bərabərdir?",opts:["$-\\sin x+C$","$\\sin x+C$","$\\cos x+C$","$-\\cos x+C$"],ans:1,expl:"$\\int \\cos x\\,dx=\\sin x+C$"},
+  {text:"$\\displaystyle\\int \\sin x\\,dx$ nəyə bərabərdir?",opts:["$\\cos x+C$","$-\\sin x+C$","$-\\cos x+C$","$\\sin x+C$"],ans:2,expl:"$\\int \\sin x\\,dx=-\\cos x+C$"},
+  {text:"$\\displaystyle\\int_0^2 2x\\,dx$ nəyə bərabərdir?",opts:["$2$","$4$","$8$","$6$"],ans:1,expl:"$[x^2]_0^2=4-0=4$"},
+  {text:"$\\displaystyle\\int_1^3 (x^2+1)\\,dx$ nəyə bərabərdir?",opts:["$\\frac{26}{3}$","$\\frac{32}{3}$","$10$","$\\frac{28}{3}$"],ans:0,expl:"$[\\frac{x^3}{3}+x]_1^3=(9+3)-(\\frac{1}{3}+1)=12-\\frac{4}{3}=\\frac{32}{3}$... $\\frac{x^3}{3}+x\\big|_1^3=(9+3)-(\\frac{1}{3}+1)=12-\\frac{4}{3}=\\frac{32}{3}$"},
+  {text:"$\\displaystyle\\int_0^{\\pi} \\sin x\\,dx$ nəyə bərabərdir?",opts:["$0$","$1$","$2$","$\\pi$"],ans:2,expl:"$[-\\cos x]_0^\\pi = -\\cos\\pi+\\cos 0=1+1=2$"},
+  {text:"$\\displaystyle\\int 3x^2\\,dx$ nəyə bərabərdir?",opts:["$x^3+C$","$6x+C$","$x^2+C$","$\\frac{3x^3}{2}+C$"],ans:0,expl:"$3\\cdot\\frac{x^3}{3}+C=x^3+C$"},
+  {text:"$2x e^{x^2}$-nin antitöreməsi nədir?",opts:["$2e^{x^2}+C$","$e^{x^2}+C$","$x^2e^{x^2}+C$","$e^{2x}+C$"],ans:1,expl:"Əvəzetmə: $u=x^2$, $du=2x\\,dx$ → $\\int e^u du=e^u+C=e^{x^2}+C$"},
+  {text:"$\\displaystyle\\int x e^x\\,dx$ nəyə bərabərdir? (Hissə-hissə)",opts:["$(x-1)e^x+C$","$(x+1)e^x+C$","$xe^x+C$","$e^x(x^2-1)+C$"],ans:0,expl:"$u=x$, $dv=e^x dx$: $xe^x-\\int e^x dx=xe^x-e^x+C=(x-1)e^x+C$"},
+  {text:"$y=x^2$, $[0,3]$ arasındakı sahə nədir?",opts:["$6$","$9$","$12$","$3$"],ans:1,expl:"$\\int_0^3 x^2 dx=[\\frac{x^3}{3}]_0^3=9$"},
+  {text:"$y=4-x^2$ əyrisi ilə $x$-oxu arasındakı sahə nədir?",opts:["$\\frac{32}{3}$","$8$","$\\frac{16}{3}$","$16$"],ans:0,expl:"Kəsişmə: $x=\\pm2$. $\\int_{-2}^2(4-x^2)dx=[4x-\\frac{x^3}{3}]_{-2}^2=(8-\\frac{8}{3})-(-8+\\frac{8}{3})=\\frac{32}{3}$"},
+  {text:"$y=x$ və $y=x^2$ arasındakı sahə nədir?",opts:["$\\frac{1}{6}$","$\\frac{1}{3}$","$\\frac{1}{2}$","$1$"],ans:0,expl:"Kəsişmə: $x=0,1$. $\\int_0^1(x-x^2)dx=[\\frac{x^2}{2}-\\frac{x^3}{3}]_0^1=\\frac{1}{2}-\\frac{1}{3}=\\frac{1}{6}$"},
+  {text:"$y=\\sqrt{x}$, $[0,4]$ arası $x$-oxu ətrafında fırlandıqda həcm nədir?",opts:["$4\\pi$","$8\\pi$","$16\\pi$","$2\\pi$"],ans:1,expl:"$V=\\pi\\int_0^4 x\\,dx=\\pi[\\frac{x^2}{2}]_0^4=8\\pi$"},
+  {text:"$\\displaystyle\\int_0^1 (3x^2 - 2x)\\,dx$ nəyə bərabərdir?",opts:["$0$","$1$","$-1$","$2$"],ans:0,expl:"$[x^3-x^2]_0^1=1-1=0$"},
+  {text:"$\\displaystyle\\int (5x^4 - 3x + 2)\\,dx$ nəyə bərabərdir?",opts:["$x^5-\\frac{3x^2}{2}+2x+C$","$20x^3-3+C$","$x^5-3x+C$","$5x^5-3x+2+C$"],ans:0,expl:"$\\int 5x^4 dx - \\int 3x\\,dx+\\int 2\\,dx=x^5-\\frac{3x^2}{2}+2x+C$"},
+  {text:"$\\displaystyle\\int \\frac{2x}{x^2+1}\\,dx$ nəyə bərabərdir?",opts:["$\\frac{1}{x^2+1}+C$","$\\ln(x^2+1)+C$","$2\\ln|x|+C$","$\\arctan x+C$"],ans:1,expl:"$u=x^2+1$, $du=2x\\,dx$: $\\int\\frac{du}{u}=\\ln|u|+C=\\ln(x^2+1)+C$"},
+  {text:"$\\displaystyle\\int_1^e \\frac{1}{x}\\,dx$ nəyə bərabərdir?",opts:["$e-1$","$1$","$e$","$\\frac{1}{e}$"],ans:1,expl:"$[\\ln x]_1^e=\\ln e-\\ln 1=1-0=1$"},
+  {text:"$\\displaystyle\\int_0^{\\pi/2} \\cos x\\,dx$ nəyə bərabərdir?",opts:["$0$","$-1$","$1$","$\\pi$"],ans:2,expl:"$[\\sin x]_0^{\\pi/2}=\\sin\\frac{\\pi}{2}-\\sin 0=1-0=1$"}
+];
+
+let qsScore=0,qsAnswered=0;
+function loadQs(){
+  const panel=document.getElementById('qs-panel');
+  panel.innerHTML='';
+  QS.forEach((q,i)=>{
+    const card=document.createElement('div');card.className='q-card';card.id='q'+i;
+    card.innerHTML=`<div class="q-num">SUAL ${i+1} / ${QS.length}</div><div class="q-text">${q.text}</div><div class="opts">${q.opts.map((o,j)=>`<button class="opt-btn" onclick="pickOpt(${i},${j},this)">${String.fromCharCode(65+j)}) ${o}</button>`).join('')}</div><div class="q-expl" id="expl${i}">${q.expl}</div>`;
+    panel.appendChild(card);
+  });
+  if(typeof renderMathInElement==='function')renderMathInElement(panel,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}]});
+}
+function pickOpt(qi,oi,btn){
+  const card=document.getElementById('q'+qi);
+  card.querySelectorAll('.opt-btn').forEach(b=>b.disabled=true);
+  const ok=oi===QS[qi].ans;
+  btn.classList.add(ok?'correct':'wrong');
+  if(!ok)card.querySelectorAll('.opt-btn')[QS[qi].ans].classList.add('correct');
+  document.getElementById('expl'+qi).classList.add('show');
+  if(ok)qsScore++;
+  qsAnswered++;
+  if(qsAnswered===QS.length)setTimeout(showQsResult,600);
+}
+function showQsResult(){
+  document.getElementById('qs-panel').style.display='none';
+  const pct=Math.round(qsScore/QS.length*100);
+  const ring=document.getElementById('qs-ring');
+  if(ring)ring.style.setProperty('--score',pct);
+  document.getElementById('qs-pct').textContent=pct+'%';
+  document.getElementById('qs-title').textContent=pct>=80?'Əla!':pct>=60?'Yaxşı':'Daha çox məşq lazımdır';
+  document.getElementById('qs-sub').textContent=qsScore+' / '+QS.length+' düzgün cavab';
+  document.getElementById('qs-result').classList.add('show');
+  try{window.parent.postMessage({type:'LESSON_COMPLETE',score:pct},'*');}catch(e){}
+}
+function restartQs(){
+  qsScore=0;qsAnswered=0;
+  document.getElementById('qs-panel').style.display='';
+  document.getElementById('qs-result').classList.remove('show');
+  loadQs();
+}
+
+let vkTimer,vkTime,vkStreak,vkQ,vkScore;
+const VKQS=[...QS].sort(()=>Math.random()-0.5);
+function startVk(){
+  vkTime=60;vkStreak=0;vkScore=0;
+  document.getElementById('vk-result').classList.remove('show');
+  document.getElementById('vk-streak').textContent=0;
+  clearInterval(vkTimer);
+  vkTimer=setInterval(()=>{
+    vkTime--;
+    document.getElementById('vk-time').textContent=vkTime;
+    if(vkTime<=0){clearInterval(vkTimer);endVk();}
+  },1000);
+  nextVkQ(0);
+}
+function nextVkQ(idx){
+  vkQ=idx%VKQS.length;
+  const q=VKQS[vkQ];
+  const panel=document.getElementById('vk-panel');
+  panel.innerHTML=`<div class="q-card"><div class="q-num">VİKTORİNA</div><div class="q-text">${q.text}</div><div class="opts">${q.opts.map((o,j)=>`<button class="opt-btn" onclick="pickVk(${vkQ},${j},${idx},this)">${String.fromCharCode(65+j)}) ${o}</button>`).join('')}</div></div>`;
+  if(typeof renderMathInElement==='function')renderMathInElement(panel,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}]});
+}
+function pickVk(qi,oi,idx,btn){
+  const ok=oi===VKQS[qi].ans;
+  btn.style.background=ok?'rgba(34,197,94,.3)':'rgba(239,68,68,.3)';
+  btn.parentElement.querySelectorAll('.opt-btn').forEach(b=>b.disabled=true);
+  if(ok){vkStreak++;vkScore++;}else{vkStreak=0;}
+  document.getElementById('vk-streak').textContent=vkStreak;
+  setTimeout(()=>nextVkQ(idx+1),600);
+}
+function endVk(){
+  document.getElementById('vk-panel').innerHTML='';
+  document.getElementById('vk-sub').textContent=vkScore+' düzgün cavab, ən uzun sıra: '+vkStreak;
+  document.getElementById('vk-result').classList.add('show');
+}
+/* ── Slide navigation ─────────────────────────────────── */
+const _sls = Array.from(document.querySelectorAll('#theory .slide'));
+let _si = 0;
+function _upd() {
+  _sls.forEach((s,i) => s.classList.toggle('active', i === _si));
+  const c=document.getElementById('s-cur'), t=document.getElementById('s-tot');
+  if(c) c.textContent=_si+1;
+  if(t) t.textContent=_sls.length;
+  const fill=document.getElementById('theory-progress');
+  if(fill) fill.style.width=((_si+1)/_sls.length*100)+'%';
+  const nb=document.getElementById('s-next');
+  const nb2=document.getElementById('s-next2');
+  const last=_si===_sls.length-1;
+  if(nb)  nb.textContent  = last ? 'Testi Başla →' : 'Növbəti →';
+  if(nb2) nb2.textContent = last ? 'Testi Başla →' : 'Növbəti →';
+  document.getElementById('theory').scrollIntoView({behavior:'smooth',block:'start'});
+}
+function prevSlide() { if(_si>0){--_si;_upd();} }
+function nextSlide() {
+  if(_si<_sls.length-1){++_si;_upd();}
+  else { const tb=document.querySelector('.tab-btn:nth-child(2)'); if(tb) showTab('test',tb); }
+}
+_upd();
+
+</script>
+</body>
+</html>
