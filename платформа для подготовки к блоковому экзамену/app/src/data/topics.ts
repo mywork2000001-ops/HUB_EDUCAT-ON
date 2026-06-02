@@ -171,7 +171,17 @@ export const TOPICS: Topic[] = [
       ru: 'Иррациональные числа, степени, квадратный корень, упрощение',
       en: 'Irrational numbers, powers, square root, simplification',
     },
-    lessons: [],
+    lessons: [
+      {
+        id: 'topic-06-main',
+        topicId: 'topic-06',
+        type: 'theory',
+        title: { az: 'Həqiqi ədədlər. Üstlər. Kvadrat kök — tam dərs', ru: 'Действительные числа. Степени. Корень — полный урок', en: 'Real Numbers. Powers. Square Root — full lesson' },
+        url_path: '/lessons/topics/topic-06.html',
+        estimatedMinutes: 45,
+        questionCount: 20,
+      },
+    ],
   },
 
   {
