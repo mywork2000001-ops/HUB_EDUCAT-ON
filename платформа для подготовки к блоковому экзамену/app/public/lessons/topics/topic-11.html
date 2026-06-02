@@ -1,0 +1,626 @@
+<!doctype html>
+<html lang="az">
+<head>
+  <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <meta name="theme-color" content="#0f172a"/><meta name="color-scheme" content="dark light"/>
+  <meta name="apple-mobile-web-app-capable" content="yes"/>
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+  <meta name="mobile-web-app-capable" content="yes"/>
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin/>
+  <title>Mövzu 11 — Çevrə</title>
+  <style>
+    :root{--bg-dark:#0f0f1a;--bg-card:rgba(255,255,255,0.05);--bg-glass:rgba(255,255,255,0.08);--border-glass:rgba(255,255,255,0.15);--text-primary:#e8e8f0;--text-secondary:#a0a0b8;--accent:#f06595;--accent-dim:rgba(240,101,149,0.18);--accent-warm:#fa5252;--accent-blue:#4dabf7;--accent-blue-dim:rgba(77,171,247,0.18);--success:#51cf66;--error:#ff6b6b;--warning:#fcc419;}
+    *{margin:0;padding:0;box-sizing:border-box;}
+    body{font-family:"Segoe UI",system-ui,sans-serif;background:var(--bg-dark);color:var(--text-primary);min-height:100vh;overflow-x:hidden;line-height:1.65;}
+    .MathJax{font-size:1.05em!important;}mjx-container[display="true"]{overflow-x:auto;padding:6px 0;}
+    .bg{position:fixed;top:0;left:0;width:100%;height:100%;z-index:-1;background:radial-gradient(ellipse at 30% 20%,rgba(240,101,149,0.07) 0%,transparent 55%),radial-gradient(ellipse at 70% 80%,rgba(77,171,247,0.07) 0%,transparent 55%);}
+    .bg::before{content:"";position:absolute;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 44px,rgba(255,255,255,0.018) 44px,rgba(255,255,255,0.018) 45px);animation:bgScroll 25s linear infinite;}
+    @keyframes bgScroll{to{transform:translateY(45px);}}
+    nav{position:fixed;top:0;left:0;right:0;background:rgba(15,15,26,0.9);backdrop-filter:blur(24px);border-bottom:1px solid var(--border-glass);z-index:1000;padding:0 20px;}
+    .nav-inner{max-width:1100px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;height:62px;}
+    .logo{font-size:1.05rem;font-weight:800;background:linear-gradient(135deg,var(--accent),var(--accent-blue));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;cursor:pointer;user-select:none;}
+    .nav-links{display:flex;gap:2px;list-style:none;}
+    .nav-links a{color:var(--text-secondary);text-decoration:none;padding:8px 14px;border-radius:9px;transition:all 0.25s;font-size:0.85rem;font-weight:500;cursor:pointer;border:none;background:transparent;display:block;}
+    .nav-links a:hover{color:var(--text-primary);background:var(--bg-glass);}
+    .nav-links a.active{background:var(--accent-dim);color:var(--accent);}
+    .hamburger{display:none;background:none;border:1px solid var(--border-glass);color:var(--text-primary);font-size:1.3rem;cursor:pointer;padding:8px 12px;border-radius:9px;transition:all 0.2s;}
+    .hamburger:hover{background:var(--bg-glass);}
+    .mob-nav{display:none;position:fixed;top:62px;left:0;right:0;bottom:0;background:rgba(10,10,20,0.97);backdrop-filter:blur(24px);z-index:999;padding:24px 20px;overflow-y:auto;flex-direction:column;gap:6px;}
+    .mob-nav.open{display:flex;}
+    .mob-nav a{color:var(--text-secondary);text-decoration:none;padding:16px 20px;border-radius:14px;font-size:1.05rem;font-weight:500;transition:all 0.2s;border:1px solid transparent;}
+    .mob-nav a.active{background:var(--accent-dim);color:var(--accent);border-color:rgba(240,101,149,0.25);}
+    .mob-nav a:hover{background:var(--bg-glass);color:var(--text-primary);}
+    section{display:none;padding:80px 20px 48px;max-width:1000px;margin:0 auto;}
+    section.active{display:block;animation:fadeUp 0.35s ease;}
+    @keyframes fadeUp{from{opacity:0;transform:translateY(14px);}to{opacity:1;transform:translateY(0);}}
+    .card{background:var(--bg-card);backdrop-filter:blur(20px);border:1px solid var(--border-glass);border-radius:18px;padding:22px;margin-bottom:18px;}
+    .card-title{font-size:1.25rem;font-weight:700;margin-bottom:16px;display:flex;align-items:center;gap:10px;}
+    .card-title .icon{width:40px;height:40px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0;}
+    .hero{text-align:center;padding:110px 20px 64px;}
+    .hero h1{font-size:clamp(1.9rem,5vw,3rem);font-weight:800;margin-bottom:18px;background:linear-gradient(135deg,var(--accent),var(--accent-blue),var(--accent-warm));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1.15;}
+    .hero p{color:var(--text-secondary);font-size:1.05rem;margin-bottom:32px;}
+    .hero-btns{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;}
+    .btn{padding:11px 24px;border-radius:12px;border:none;font-size:0.95rem;font-weight:600;cursor:pointer;transition:all 0.25s;}
+    .btn-primary{background:linear-gradient(135deg,var(--accent),#c2255c);color:#fff;box-shadow:0 4px 18px rgba(240,101,149,0.35);}
+    .btn-primary:hover{transform:translateY(-2px);box-shadow:0 6px 22px rgba(240,101,149,0.45);}
+    .btn-secondary{background:var(--bg-glass);color:var(--text-primary);border:1px solid var(--border-glass);}
+    .btn-secondary:hover{background:rgba(255,255,255,0.12);}
+    .feat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:14px;}
+    .feat-card{background:var(--bg-glass);border:1px solid var(--border-glass);border-radius:14px;padding:18px;text-align:center;}
+    .feat-card .fi{font-size:2rem;margin-bottom:10px;}
+    .feat-card h3{font-size:0.95rem;font-weight:700;margin-bottom:6px;}
+    .feat-card p{font-size:0.82rem;color:var(--text-secondary);}
+    .svg-wrap{display:flex;justify-content:center;margin:16px 0;}.svg-wrap svg{max-width:100%;height:auto;}
+    .slide-wrap{background:var(--bg-glass);border:1px solid var(--border-glass);border-radius:14px;padding:22px;}
+    .slide-meta{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;flex-wrap:wrap;gap:10px;}
+    .slide-dots{display:flex;gap:6px;flex-wrap:wrap;}
+    .slide-dot{width:9px;height:9px;border-radius:50%;background:var(--border-glass);cursor:pointer;transition:all 0.2s;}
+    .slide-dot.active{background:var(--accent);transform:scale(1.3);}
+    .slide-track{min-height:260px;}.slide{display:none;}.slide.active{display:block;animation:fadeUp 0.28s ease;}
+    .slide h3{font-size:1.1rem;font-weight:700;margin-bottom:14px;color:var(--accent);}
+    .slide-nav{display:flex;gap:12px;justify-content:flex-end;margin-top:20px;}
+    .rule-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin:14px 0;}
+    .rule-card{background:var(--bg-card);border:1px solid var(--border-glass);border-radius:12px;padding:14px;}
+    .rule-card h4{font-size:0.9rem;font-weight:700;margin-bottom:8px;}
+    .rule-card p{font-size:0.85rem;color:var(--text-secondary);}
+    .formula-box{background:var(--accent-dim);border:1px solid rgba(240,101,149,0.3);border-radius:12px;padding:16px;margin:14px 0;font-size:0.92rem;line-height:1.7;}
+    .info-box{background:rgba(77,171,247,0.1);border-left:3px solid var(--accent-blue);border-radius:0 10px 10px 0;padding:12px 16px;margin:12px 0;font-size:0.88rem;}
+    .warn-box{background:rgba(252,196,25,0.1);border-left:3px solid var(--warning);border-radius:0 10px 10px 0;padding:12px 16px;margin:12px 0;font-size:0.88rem;}
+    .problem-card{background:var(--bg-card);border:1px solid var(--border-glass);border-radius:16px;padding:20px;margin-bottom:16px;}
+    .problem-header{display:flex;gap:10px;align-items:center;margin-bottom:12px;}
+    .problem-num{background:var(--accent-dim);color:var(--accent);font-size:0.78rem;font-weight:700;padding:3px 10px;border-radius:20px;}
+    .problem-topic{background:var(--bg-glass);color:var(--text-secondary);font-size:0.78rem;padding:3px 10px;border-radius:20px;}
+    .problem-text{font-size:0.95rem;margin-bottom:14px;line-height:1.7;}
+    .sol-btn{background:var(--bg-glass);border:1px solid var(--border-glass);color:var(--text-secondary);padding:8px 18px;border-radius:9px;font-size:0.85rem;cursor:pointer;transition:all 0.2s;}
+    .sol-btn:hover{background:rgba(255,255,255,0.12);color:var(--text-primary);}
+    .solution{display:none;margin-top:14px;padding:14px;background:var(--bg-glass);border-radius:12px;font-size:0.9rem;line-height:1.75;}
+    .solution.open{display:block;animation:fadeUp 0.25s ease;}
+    .quiz-wrap{background:var(--bg-card);border:1px solid var(--border-glass);border-radius:18px;padding:26px;margin-bottom:18px;}
+    .quiz-progress{display:flex;align-items:center;gap:14px;margin-bottom:20px;}
+    .prog-bar{flex:1;height:6px;background:var(--bg-glass);border-radius:3px;}
+    .prog-fill{height:100%;border-radius:3px;background:linear-gradient(90deg,var(--accent),var(--accent-blue));transition:width 0.35s;}
+    .quiz-q{font-size:1.04rem;font-weight:600;line-height:1.6;padding:16px;background:var(--bg-glass);border-radius:12px;margin-bottom:16px;}
+    .quiz-opts{display:flex;flex-direction:column;gap:10px;}
+    .opt{display:flex;align-items:center;gap:12px;padding:14px 18px;border:1px solid var(--border-glass);border-radius:12px;cursor:pointer;transition:all 0.2s;font-size:0.93rem;}
+    .opt:hover:not(.disabled){border-color:var(--accent);background:var(--accent-dim);}
+    .opt.correct{border-color:var(--success);background:rgba(81,207,102,0.12);}
+    .opt.wrong{border-color:var(--error);background:rgba(255,107,107,0.12);}
+    .opt.disabled{cursor:default;}
+    .opt-ltr{width:28px;height:28px;border-radius:8px;background:var(--bg-glass);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:0.82rem;flex-shrink:0;}
+    .expl-box{margin-top:14px;padding:14px;border-radius:12px;border-left:4px solid;font-size:0.88rem;line-height:1.6;display:none;}
+    .quiz-nav-row{display:flex;justify-content:space-between;margin-top:18px;}
+    .results-wrap{text-align:center;padding:20px 0;}
+    .score-ring{width:160px;height:160px;border-radius:50%;border:8px solid var(--accent);display:flex;align-items:center;justify-content:center;margin:0 auto 24px;position:relative;}
+    .score-ring::before{content:"";position:absolute;width:144px;height:144px;background:var(--bg-dark);border-radius:50%;}
+    .score-val{position:relative;font-size:2.4rem;font-weight:800;color:var(--accent);}
+    .score-msg{font-size:1.3rem;font-weight:700;margin-bottom:24px;}
+    .breakdown{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;max-width:420px;margin:0 auto 24px;}
+    .breakdown-item{background:var(--bg-glass);padding:14px;border-radius:10px;}
+    .breakdown-val{font-size:1.35rem;font-weight:700;color:var(--accent);}
+    .breakdown-lbl{font-size:0.78rem;color:var(--text-secondary);}
+    .vik-timer{font-size:2.2rem;font-weight:900;transition:color 0.3s;}
+    @media(max-width:768px){.hamburger{display:block;}.nav-links{display:none;}section{padding:72px 14px 40px;}.hero{padding:90px 14px 52px;}.rule-grid{grid-template-columns:1fr;}.feat-grid{grid-template-columns:repeat(2,1fr);}.quiz-wrap{padding:18px;}}
+    @media(max-width:480px){.slide-wrap{padding:14px;}.quiz-q{font-size:0.95rem;padding:14px;}.opt{font-size:0.85rem;padding:12px 14px;}}
+  </style>
+</head>
+<body>
+<div class="bg"></div>
+<nav>
+  <div class="nav-inner">
+    <span class="logo" onclick="showSection('home')">⭕ Mövzu 11 — Çevrə</span>
+    <ul class="nav-links">
+      <li><a class="active" data-sec="home">Ana səhifə</a></li>
+      <li><a data-sec="theory">Nəzəriyyə</a></li>
+      <li><a data-sec="examples">Misallar</a></li>
+      <li><a data-sec="assessment">Qiymətləndirmə</a></li>
+    </ul>
+    <button class="hamburger" id="ham" onclick="toggleMobNav()" aria-label="Menyu">☰</button>
+  </div>
+</nav>
+<div class="mob-nav" id="mob-nav">
+  <a data-sec="home">🏠 Ana səhifə</a>
+  <a data-sec="theory">📖 Nəzəriyyə</a>
+  <a data-sec="examples">✏️ Misallar</a>
+  <a data-sec="assessment">📋 Qiymətləndirmə</a>
+</div>
+
+<section id="home" class="active">
+  <div class="hero">
+    <h1>Çevrə</h1>
+    <p>DR.Math · §1–§8. Elementlər · Bucaqlar · Vətər · Toxunan · Ölçülər</p>
+    <div class="hero-btns">
+      <button class="btn btn-primary" onclick="showSection('theory')">📖 Dərsi Başla</button>
+      <button class="btn btn-secondary" onclick="showSection('assessment')">🔍 Bilikləri Yoxla</button>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title"><div class="icon" style="background:var(--accent-dim)">📚</div>Bu mövzuda nə öyrənəcəksiniz?</div>
+    <div class="feat-grid">
+      <div class="feat-card"><div class="fi">⭕</div><h3>Çevrə elementləri</h3><p>Radius, diametr, vətər, yay, sektor</p></div>
+      <div class="feat-card"><div class="fi">📐</div><h3>Mərkəzi bucaq</h3><p>Mərkəzi bucaq = yay dərəcəsi</p></div>
+      <div class="feat-card"><div class="fi">∠</div><h3>Yazılmış bucaq</h3><p>Yazılmış bucaq = ½ mərkəzi bucaq</p></div>
+      <div class="feat-card"><div class="fi">—</div><h3>Toxunan</h3><p>Radiusla perpendikulyar, xarici nöqtə</p></div>
+      <div class="feat-card"><div class="fi">📏</div><h3>Ölçülər</h3><p>Uzunluq C=2πr, sahə S=πr²</p></div>
+      <div class="feat-card"><div class="fi">🎯</div><h3>DİM məsələləri</h3><p>20 sual — orta çətinlik</p></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title"><div class="icon" style="background:var(--accent-dim)">💡</div>Mövzunun əhəmiyyəti</div>
+    <p style="color:var(--text-secondary);font-size:0.93rem;line-height:1.75">DİM imtahanında hər il <strong style="color:var(--accent)">4–7 sual</strong> çevrə ilə bağlıdır. Yazılmış bucaq teoremi, toxunan xassəsi və sektor sahəsi — ən çox sınaq keçirilən mövzulardır.</p>
+  </div>
+</section>
+
+<section id="theory">
+  <div class="card">
+    <div class="card-title"><div class="icon" style="background:var(--accent-dim)">📖</div>Nəzəriyyə</div>
+    <div class="slide-wrap">
+      <div class="slide-meta">
+        <div class="slide-dots" id="dots"></div>
+        <span style="font-size:0.82rem;color:var(--text-secondary)" id="slide-counter">1 / 16</span>
+      </div>
+      <div class="slide-track" id="slide-track"></div>
+      <div class="slide-nav">
+        <button class="btn btn-secondary" id="prev-btn" onclick="changeSlide(-1)">← Geri</button>
+        <button class="btn btn-primary" id="next-btn" onclick="changeSlide(1)">İrəli →</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="examples">
+  <div class="card">
+    <div class="card-title"><div class="icon" style="background:var(--accent-dim)">✏️</div>İşlənmiş misallar</div>
+    <p style="color:var(--text-secondary);font-size:0.88rem;margin-bottom:18px">Hər misalı özünüz həll etməyə çalışın, sonra həlli açın.</p>
+
+    <div class="problem-card">
+      <div class="problem-header"><span class="problem-num">Misal 1</span><span class="problem-topic">Çevrə uzunluğu — §6</span></div>
+      <div class="problem-text">Radiusu 7 sm olan çevrənin uzunluğunu tapın. (\(\pi \approx \frac{22}{7}\))</div>
+      <button class="sol-btn" onclick="toggleSol(this)">💡 Həlli göstər</button>
+      <div class="solution">
+        <strong>Düstur:</strong> \(C = 2\pi r\)<br><br>
+        <strong>Əvəz edirik:</strong> \(C = 2 \cdot \dfrac{22}{7} \cdot 7 = 2 \cdot 22 = 44\) sm<br><br>
+        <strong>Cavab:</strong> \(\boxed{44 \text{ sm}}\)
+      </div>
+    </div>
+
+    <div class="problem-card">
+      <div class="problem-header"><span class="problem-num">Misal 2</span><span class="problem-topic">Dairənin sahəsi — §6</span></div>
+      <div class="problem-text">Radiusu 5 sm olan dairənin sahəsini tapın. (\(\pi \approx 3{,}14\))</div>
+      <button class="sol-btn" onclick="toggleSol(this)">💡 Həlli göstər</button>
+      <div class="solution">
+        <strong>Düstur:</strong> \(S = \pi r^2\)<br><br>
+        <strong>Əvəz edirik:</strong> \(S = 3{,}14 \cdot 5^2 = 3{,}14 \cdot 25 = 78{,}5\) sm²<br><br>
+        <strong>Cavab:</strong> \(\boxed{78{,}5 \text{ sm}^2}\)
+      </div>
+    </div>
+
+    <div class="problem-card">
+      <div class="problem-header"><span class="problem-num">Misal 3</span><span class="problem-topic">Mərkəzi bucaq — §2</span></div>
+      <div class="problem-text">Çevrənin mərkəzi bucağı 120°-dir. Bu bucağa uyğun yayın dərəcə ölçüsü neçədir?</div>
+      <button class="sol-btn" onclick="toggleSol(this)">💡 Həlli göstər</button>
+      <div class="solution">
+        <strong>Qayda:</strong> Mərkəzi bucaq = uyğun yayın dərəcə ölçüsü.<br><br>
+        <strong>Cavab:</strong> \(\boxed{120°}\)<br><br>
+        <div class="info-box">Mərkəzi bucaq (mərkəzdən) = yay dərəcəsi. Yazılmış bucaq (çevrə üzərindən) = yayın yarısı.</div>
+      </div>
+    </div>
+
+    <div class="problem-card">
+      <div class="problem-header"><span class="problem-num">Misal 4</span><span class="problem-topic">Yazılmış bucaq teoremi — §3</span></div>
+      <div class="problem-text">Çevrəyə yazılmış \(\angle B = 35°\)-dir. Bu bucağa uyğun mərkəzi bucağı tapın.</div>
+      <button class="sol-btn" onclick="toggleSol(this)">💡 Həlli göstər</button>
+      <div class="solution">
+        <strong>Yazılmış bucaq teoremi:</strong> Yazılmış bucaq = mərkəzi bucağın yarısı.<br>
+        Deməli, mərkəzi bucaq = 2 × yazılmış bucaq.<br><br>
+        <strong>Hesablama:</strong> \(\angle_{mərkəzi} = 2 \times 35° = 70°\)<br><br>
+        <strong>Cavab:</strong> \(\boxed{70°}\)
+      </div>
+    </div>
+
+    <div class="problem-card">
+      <div class="problem-header"><span class="problem-num">Misal 5</span><span class="problem-topic">Toxunan uzunluğu — §4</span></div>
+      <div class="problem-text">Xarici nöqtədən çevrəyə toxunanın uzunluğu 6 sm, nöqtənin mərkəzə məsafəsi 10 sm-dir. Radiusu tapın.</div>
+      <button class="sol-btn" onclick="toggleSol(this)">💡 Həlli göstər</button>
+      <div class="solution">
+        <strong>Xassə:</strong> Toxunan radiusa perpendikulyardır. Düzbucaqlı üçbucaq: toxunan, radius, məsafə.<br>
+        \(l^2 + r^2 = d^2\) (Pifaqor teoremi)<br><br>
+        <strong>Əvəz edirik:</strong> \(6^2 + r^2 = 10^2\)<br>
+        \(36 + r^2 = 100\)<br>
+        \(r^2 = 64 \Rightarrow r = 8\) sm<br><br>
+        <strong>Cavab:</strong> \(\boxed{r = 8 \text{ sm}}\)
+      </div>
+    </div>
+
+    <div class="problem-card">
+      <div class="problem-header"><span class="problem-num">Misal 6</span><span class="problem-topic">Sektor sahəsi — §7</span></div>
+      <div class="problem-text">Radiusu 9 sm, mərkəzi bucağı 80° olan sektorun sahəsini tapın.</div>
+      <button class="sol-btn" onclick="toggleSol(this)">💡 Həlli göstər</button>
+      <div class="solution">
+        <strong>Düstur:</strong> \(S_{sektor} = \dfrac{\alpha}{360°} \cdot \pi r^2\)<br><br>
+        <strong>Əvəz edirik:</strong> \(S = \dfrac{80°}{360°} \cdot \pi \cdot 9^2 = \dfrac{2}{9} \cdot 81\pi = 18\pi \approx 56{,}5\) sm²<br><br>
+        <strong>Cavab:</strong> \(\boxed{18\pi \approx 56{,}5 \text{ sm}^2}\)
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="assessment">
+  <div class="card">
+    <div class="card-title"><div class="icon" style="background:var(--accent-dim)">📋</div>Qiymətləndirmə</div>
+    <p style="color:var(--text-secondary);font-size:0.88rem;margin-bottom:22px">20 sual · DİM səviyyəsi · Anlıq cavab + izah</p>
+    <div style="display:flex;gap:12px;flex-wrap:wrap">
+      <button class="btn btn-primary" onclick="startDiag()">📝 Testi Başla</button>
+      <button class="btn btn-secondary" onclick="startViktorina()">⚡ Viktorina (30s/sual)</button>
+    </div>
+  </div>
+  <div id="diag-ui" style="display:none">
+    <div class="quiz-wrap">
+      <div class="quiz-progress">
+        <span style="font-size:0.85rem;color:var(--text-secondary)">Sual <span id="dq-n">1</span>/<span id="dq-tot">20</span></span>
+        <div class="prog-bar"><div class="prog-fill" id="dq-bar" style="width:0%"></div></div>
+        <span style="font-size:0.85rem;color:var(--success)" id="dq-score">0 ✓</span>
+      </div>
+      <div class="quiz-q" id="dq-q"></div>
+      <div class="quiz-opts" id="dq-opts"></div>
+      <div class="expl-box" id="dq-expl"></div>
+      <div class="quiz-nav-row">
+        <button class="btn btn-secondary" id="dq-prev" onclick="prevDiag()" disabled>← Əvvəlki</button>
+        <button class="btn btn-primary" id="dq-next" onclick="nextDiag()" disabled>Növbəti →</button>
+      </div>
+    </div>
+  </div>
+  <div id="vik-ui" style="display:none">
+    <div class="quiz-wrap">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+        <span style="font-size:0.82rem;padding:3px 12px;background:var(--accent-dim);color:var(--accent);border-radius:20px;font-weight:700" id="vik-tag">§1</span>
+        <div class="vik-timer" id="vik-timer">30</div>
+      </div>
+      <div style="display:flex;gap:4px;flex-wrap:wrap;margin-bottom:16px" id="vik-dots"></div>
+      <div class="quiz-q" id="vik-q"></div>
+      <div class="quiz-opts" id="vik-opts"></div>
+    </div>
+  </div>
+  <div id="res-ui" style="display:none">
+    <div class="quiz-wrap results-wrap">
+      <div class="score-ring" id="res-ring"><span class="score-val" id="res-pct">0%</span></div>
+      <div class="score-msg" id="res-msg"></div>
+      <span style="font-size:1.05rem;font-weight:700;color:var(--text-secondary)" id="res-lvl"></span>
+      <div class="breakdown" style="margin-top:20px">
+        <div class="breakdown-item"><div class="breakdown-val" id="res-ok">0</div><div class="breakdown-lbl">Düzgün</div></div>
+        <div class="breakdown-item"><div class="breakdown-val" id="res-no">0</div><div class="breakdown-lbl">Yanlış</div></div>
+        <div class="breakdown-item"><div class="breakdown-val">20</div><div class="breakdown-lbl">Cəmi</div></div>
+      </div>
+      <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:10px">
+        <button class="btn btn-primary" onclick="startDiag()">🔄 Yenidən cəhd et</button>
+        <button class="btn btn-secondary" onclick="resetAssessment()">✕ Bağla</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],packages:{'[+]':['ams']}},options:{skipHtmlTags:['script','noscript','style','textarea','pre']},startup:{typeset:false}};
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" id="MathJax-script" async></script>
+<script>
+function showSection(id){document.querySelectorAll('section').forEach(s=>s.classList.remove('active'));document.querySelectorAll('.nav-links a,.mob-nav a').forEach(a=>a.classList.toggle('active',a.dataset.sec===id));const sec=document.getElementById(id);if(sec){sec.classList.add('active');window.scrollTo({top:0,behavior:'smooth'});}closeMobNav();}
+document.querySelectorAll('[data-sec]').forEach(a=>a.addEventListener('click',()=>showSection(a.dataset.sec)));
+function toggleMobNav(){document.getElementById('mob-nav').classList.toggle('open');}
+function closeMobNav(){document.getElementById('mob-nav').classList.remove('open');}
+function toggleSol(btn){const sol=btn.nextElementSibling;sol.classList.toggle('open');btn.textContent=sol.classList.contains('open')?'🙈 Həlli gizlə':'💡 Həlli göstər';if(sol.classList.contains('open')&&window.MathJax)MathJax.typesetPromise([sol]).catch(console.error);}
+
+const SLIDES=[
+  {title:'§1.1 Çevrə anlayışı',html:`
+<p><strong>Çevrə</strong> — müstəvidə verilmiş nöqtədən (mərkəzdən) bərabər məsafədə olan bütün nöqtələrin məcmusudur.</p>
+<div class="svg-wrap">
+  <svg viewBox="0 0 200 200" width="200" aria-label="O mərkəzli çevrə, r radiusu, d diametri">
+    <circle cx="100" cy="100" r="75" fill="none" stroke="var(--accent)" stroke-width="2"/>
+    <circle cx="100" cy="100" r="3" fill="var(--accent)"/>
+    <line x1="100" y1="100" x2="175" y2="100" stroke="#4dabf7" stroke-width="1.5"/>
+    <line x1="25" y1="100" x2="175" y2="100" stroke="#fcc419" stroke-width="1.5" stroke-dasharray="5,4"/>
+    <text x="102" y="96" fill="#e8e8f0" font-size="11">O</text>
+    <text x="135" y="93" fill="#4dabf7" font-size="11">r</text>
+    <text x="90" y="118" fill="#fcc419" font-size="11">d = 2r</text>
+  </svg>
+</div>
+<div class="formula-box">
+<strong>Əsas ölçülər:</strong><br>
+\(r\) — radius (mərkəzdən çevrəyə qədər)<br>
+\(d = 2r\) — diametr (ən uzun vətər, mərkəzdən keçir)<br><br>
+<strong>Çevrə uzunluğu:</strong> \(C = 2\pi r = \pi d\)<br>
+<strong>Dairənin sahəsi:</strong> \(S = \pi r^2\)
+</div>
+<div class="rule-grid">
+  <div class="rule-card"><h4>Çevrə vs Dairə</h4><p><strong>Çevrə</strong> — yalnız xətt (perimetr).<br><strong>Dairə</strong> — çevrənin içi ilə birlikdə.</p></div>
+  <div class="rule-card"><h4>π qiyməti</h4><p>\(\pi \approx 3{,}14159...\)<br>Hesablamada: \(\pi \approx \dfrac{22}{7}\) (r=7 olduqda rahat)</p></div>
+</div>`},
+  {title:'§1.2 Çevrənin elementləri',html:`
+<p>Çevrənin əsas elementlərini tanımaq DİM-də vacibdir.</p>
+<div class="svg-wrap">
+  <svg viewBox="0 0 240 200" width="240" aria-label="Çevrənin elementləri: vətər, yay, sektor, seqment">
+    <circle cx="120" cy="100" r="80" fill="none" stroke="var(--accent)" stroke-width="2"/>
+    <circle cx="120" cy="100" r="3" fill="var(--accent)"/>
+    <line x1="50" y1="55" x2="185" y2="148" stroke="#4dabf7" stroke-width="2"/>
+    <path d="M 50,55 A 80,80 0 0,1 185,148" fill="rgba(240,101,149,0.15)" stroke="var(--accent)" stroke-width="2"/>
+    <line x1="120" y1="100" x2="50" y2="55" stroke="#51cf66" stroke-width="1.5"/>
+    <line x1="120" y1="100" x2="185" y2="148" stroke="#51cf66" stroke-width="1.5"/>
+    <text x="110" y="55" fill="#4dabf7" font-size="10">A</text>
+    <text x="188" y="152" fill="#4dabf7" font-size="10">B</text>
+    <text x="122" y="95" fill="#e8e8f0" font-size="10">O</text>
+    <text x="108" y="130" fill="#51cf66" font-size="9">r</text>
+  </svg>
+</div>
+<div class="rule-grid">
+  <div class="rule-card"><h4>Vətər (chord)</h4><p>Çevrənin iki nöqtəsini birləşdirən parça. Diametr ən uzun vətərdir.</p></div>
+  <div class="rule-card"><h4>Yay (arc)</h4><p>Çevrənin iki nöqtəsi arasındakı hissəsi. Kiçik yay və böyük yay.</p></div>
+  <div class="rule-card"><h4>Sektor</h4><p>İki radius və yay arasındakı fiqur. Dilim forması.</p></div>
+  <div class="rule-card"><h4>Seqment</h4><p>Vətər və yay arasındakı fiqur. Sektor – üçbucaq.</p></div>
+</div>
+<div class="info-box"><strong>Dərəcə ölçüsü:</strong> Tam çevrə = 360°. Yarım çevrə = 180°. Çeyrek çevrə = 90°.</div>`},
+  {title:'§2.1 Mərkəzi bucaq',html:`
+<p><strong>Mərkəzi bucaq</strong> — çevrənin mərkəzini zirvə kimi götürən bucaqdır. Onun tərəfləri iki radius olur.</p>
+<div class="formula-box">
+<strong>Əsas qayda:</strong><br>
+Mərkəzi bucaq = uyğun yayın dərəcə ölçüsü<br>
+\(\angle AOB = \overset{\frown}{AB}\) (dərəcə ilə)<br><br>
+<strong>Yay uzunluğu:</strong><br>
+\(l = \dfrac{\alpha}{360°} \cdot 2\pi r = \dfrac{\alpha \pi r}{180°}\)<br>
+burada \(\alpha\) — mərkəzi bucaq dərəcə ilə
+</div>
+<div class="rule-grid">
+  <div class="rule-card"><h4>Misal</h4>
+    <p>r=10 sm, α=72°:<br>
+    \(l=\dfrac{72}{360}\cdot 2\pi\cdot10=\dfrac{1}{5}\cdot20\pi=4\pi\approx12{,}6\) sm</p></div>
+  <div class="rule-card"><h4>Tam çevrə</h4>
+    <p>α=360°: \(l=\dfrac{360}{360}\cdot2\pi r=2\pi r\) — bu çevrə uzunluğunun özüdür.</p></div>
+</div>
+<div class="warn-box"><strong>Diqqət:</strong> Dərəcəni radiusla qarışdırmayın! α dərəcə ilə (°), r sm (və ya başqa uzunluq vahidi ilə) olur.</div>`},
+  {title:'§2.2 Yazılmış bucaq teoremi',html:`
+<p><strong>Yazılmış bucaq</strong> — zirvəsi çevrə üzərindəki nöqtə, tərəfləri isə çevrənin iki xordasından ibarət bucaqdır.</p>
+<div class="formula-box">
+<strong>Yazılmış bucaq teoremi:</strong><br>
+Yazılmış bucaq = uyğun mərkəzi bucağın yarısı<br>
+\(\angle BAC = \dfrac{1}{2}\angle BOC\)<br><br>
+<strong>Alternativ ifadə:</strong><br>
+Yazılmış bucaq = uyğun yayın dərəcə ölçüsünün yarısı<br>
+\(\angle BAC = \dfrac{1}{2}\overset{\frown}{BC}\)
+</div>
+<div class="rule-grid">
+  <div class="rule-card"><h4>Eyni yaya baxan yazılmış bucaqlar</h4>
+    <p>Eyni yaya (BC yayına) baxan bütün yazılmış bucaqlar bərabərdir.</p></div>
+  <div class="rule-card"><h4>Yarım çevrə üzərindəki bucaq</h4>
+    <p>Diametr üzərindəki yazılmış bucaq = 90° (Tales teoremi).<br>Diametr üzərindəki bucaq həmişə düz bucaqdır!</p></div>
+</div>
+<div class="info-box"><strong>DİM klassiki:</strong> AB diametrdirsə, ∠ACB = 90° — Tales teoremin ən çox istifadə olunan halı.</div>`},
+  {title:'§2.3 Xüsusi bucaq halları',html:`
+<div class="formula-box">
+<strong>Tales teoremi (xüsusi hal):</strong><br>
+Diametr üzərindəki yazılmış bucaq = 90°<br>
+AB diametr, C çevrə üzərindədirsə: \(\angle ACB = 90°\)<br><br>
+<strong>Eyni yaya baxan bucaqlar:</strong><br>
+BC yayına baxan bütün yazılmış bucaqlar bərabərdir<br>
+\(\angle BAC = \angle BDC = \angle BEC = \dfrac{1}{2}\overset{\frown}{BC}\)
+</div>
+<div class="rule-grid">
+  <div class="rule-card"><h4>Çevrəyə yazılmış dörd­bucaqlı</h4>
+    <p>Qarşı bucaqların cəmi 180°:<br>\(\angle A+\angle C=180°\)<br>\(\angle B+\angle D=180°\)</p></div>
+  <div class="rule-card"><h4>DİM tətbiqi</h4>
+    <p>∠ACB = 90° (diametr üzərindəki) olduqda Pifaqor teoremini tətbiq etmək mümkündür.</p></div>
+</div>
+<div class="warn-box"><strong>Tez-tez edilən xəta:</strong> Yazılmış bucaq = mərkəzi bucaq DEYİL! Yazılmış = mərkəzinin yarısı.</div>`},
+  {title:'§3.1 Vətər xassələri',html:`
+<p><strong>Vətər</strong> — çevrənin iki nöqtəsini birləşdirən parça. Diametr ən uzun vətərdir.</p>
+<div class="formula-box">
+<strong>Əsas xassələr:</strong><br>
+1. Mərkəzdən vətərə endirilmiş perpendikulyar vətəri bərabər hissələrə bölür.<br>
+2. Vətərin orta nöqtəsindən keçən radius həmin vətərə perpendikulyardır.<br>
+3. Bərabər vətərlər mərkəzdən bərabər məsafədə olur.
+</div>
+<div class="rule-grid">
+  <div class="rule-card"><h4>Düstur</h4>
+    <p>Vətər uzunluğu \(l\), mərkəzdən məsafəsi \(d\), radius \(r\):<br>
+    \(l = 2\sqrt{r^2 - d^2}\)</p></div>
+  <div class="rule-card"><h4>Maksimum vətər</h4>
+    <p>d=0 (vətər mərkəzdən keçir): \(l=2r\) — diametr!</p></div>
+  <div class="rule-card"><h4>DİM tətbiqi</h4>
+    <p>Vətəri bilərək mərkəzdən məsafəni tapmaq: \(d=\sqrt{r^2-(l/2)^2}\)</p></div>
+</div>`},
+  {title:'§3.2 Vətər və yay əlaqəsi',html:`
+<div class="formula-box">
+<strong>Vətər-yay əlaqəsi:</strong><br>
+Eyni yaya uyğun bərabər vətərlər → bərabər yaylar (bərabər dərəcə ölçüsü)<br>
+Bərabər yaylara uyğun vətərlər bərabərdir.<br><br>
+<strong>Kəsişən vətərlər teoremi:</strong><br>
+İki vətər daxildə kəsişirsə:<br>
+\(AE \cdot EC = BE \cdot ED\)
+</div>
+<div class="rule-grid">
+  <div class="rule-card"><h4>Kənar nöqtədən vətər</h4>
+    <p>Xarici E nöqtəsindən iki kəsən (sekant) çəkilibsə:<br>
+    \(EA \cdot EB = EC \cdot ED\)</p></div>
+  <div class="rule-card"><h4>Xarici nöqtə: toxunan + sekant</h4>
+    <p>\(l^2 = EA \cdot EB\)<br>
+    (l — toxunan, EA·EB — sekant parçaları)</p></div>
+</div>
+<div class="info-box"><strong>Əzbərləyin:</strong> Daxili kəsişmə: \(AE \cdot EC = BE \cdot ED\). Xarici nöqtə: toxunan² = iki sekant parçasının hasili.</div>`},
+  {title:'§4.1 Toxunan xassələri',html:`
+<p><strong>Toxunan (tangent)</strong> — çevrəyə yalnız bir nöqtədə toxunan düz xətt.</p>
+<div class="formula-box">
+<strong>Əsas xassələr:</strong><br>
+1. Toxunan toxunma nöqtəsindəki radiusa perpendikulyardır:<br>
+\(OT \perp t\) (O — mərkəz, T — toxunma nöqtəsi, t — toxunan)<br><br>
+2. Xarici nöqtədən çevrəyə iki toxunan çəkmək olar — onlar bərabərdir:<br>
+\(PA = PB\) (A, B — toxunma nöqtələri, P — xarici nöqtə)
+</div>
+<div class="rule-grid">
+  <div class="rule-card"><h4>Toxunan uzunluğu</h4>
+    <p>\(l = \sqrt{d^2 - r^2}\)<br>d — xarici nöqtədən mərkəzə məsafə, r — radius</p></div>
+  <div class="rule-card"><h4>Pifaqor əlaqəsi</h4>
+    <p>\(l^2 + r^2 = d^2\)<br>Toxunan, radius, məsafə — düzbucaqlı üçbucaq!</p></div>
+</div>
+<div class="warn-box"><strong>Diqqət:</strong> Toxunan yalnız bir nöqtədə toxunur. İki toxunma nöqtəsi varsa — bu artıq kəsən (sekant)-dır.</div>`},
+  {title:'§4.2 Xarici nöqtədən iki toxunan',html:`
+<div class="formula-box">
+<strong>İki toxunan teoremi:</strong><br>
+P xarici nöqtəsindən çəkilmiş PA və PB toxunanlar:<br>
+\(PA = PB\) (bərabərdir)<br>
+\(\angle OPA = \angle OPB\) (OP hər iki toxunanı bərabər hissəyə bölür)<br>
+\(\angle POA = \angle POB\) (üçbucaqlar konqruentdir: OPA ≅ OPB)
+</div>
+<div class="rule-grid">
+  <div class="rule-card"><h4>Nəticə</h4>
+    <p>OP xətti PA ilə PB arasındakı bucağı bərabər hissəyə bölür — bisektrisdir.</p></div>
+  <div class="rule-card"><h4>DİM tətbiqi</h4>
+    <p>Quadrilateral çevrəyə toxunursa: AB+CD = BC+DA (qarşı tərəflərin cəmləri bərabər)</p></div>
+</div>
+<div class="info-box"><strong>Tərsinə:</strong> Dördbucaqlı çevrəyə yazılmışsa: qarşı bucaqların cəmi = 180°. Dördbucaqlı çevrəyə toxunursa: qarşı tərəflərin cəmləri bərabər.</div>`},
+  {title:'§5.1 Çevrəyə yazılmış üçbucaq',html:`
+<p><strong>Çevrəyə yazılmış üçbucaq</strong> — bütün zirvələri çevrə üzərindədir.</p>
+<div class="formula-box">
+<strong>Sinuslar teoremi (çevrə radiusu ilə):</strong><br>
+\(\dfrac{a}{\sin A} = \dfrac{b}{\sin B} = \dfrac{c}{\sin C} = 2R\)<br>
+burada R — çevrəyazılmış çevrənin radiusu<br><br>
+<strong>Tales teoremi (xüsusi hal):</strong><br>
+AB diametr olduqda: \(\angle ACB = 90°\) (diametr üzərindəki yazılmış bucaq)
+</div>
+<div class="rule-grid">
+  <div class="rule-card"><h4>Çevrəyazılmış dairənin radiusu</h4>
+    <p>\(R = \dfrac{abc}{4S}\), burada S — üçbucağın sahəsi</p></div>
+  <div class="rule-card"><h4>Daxilyazılmış dairənin radiusu</h4>
+    <p>\(r = \dfrac{S}{p}\), burada p = (a+b+c)/2 — yarımperimetr</p></div>
+</div>
+<div class="info-box">Tales teoremi DİM-də çox istifadə olunur: diametr üzərindəki yazılmış bucaq 90° olur → Pifaqor teoremi tətbiq etmək mümkündür.</div>`},
+  {title:'§5.2 Çevrəyə yazılmış dördbucaqlı',html:`
+<p><strong>Çevrəyə yazılmış dördbucaqlı</strong> (siklik dördbucaqlı) — bütün dörd zirvəsi çevrə üzərindədir.</p>
+<div class="formula-box">
+<strong>Əsas xassəsi:</strong><br>
+Qarşı bucaqların cəmi 180°:<br>
+\(\angle A + \angle C = 180°\)<br>
+\(\angle B + \angle D = 180°\)
+</div>
+<div class="rule-grid">
+  <div class="rule-card"><h4>Nə vaxt çevrəyə yazıla bilər?</h4>
+    <p>Dördbucaqlı çevrəyə yazıla bilər ancaq qarşı bucaqların cəmi 180° olduqda.</p></div>
+  <div class="rule-card"><h4>Xüsusi hallar</h4>
+    <p>Düzbucaqlı, kvadrat, bərabər yanlı trapesiya — çevrəyə yazıla bilir.<br>Ümumi paralel­kenar — yazıla bilmir (yalnız düzbucaqlı).</p></div>
+</div>
+<div class="warn-box"><strong>DİM testi:</strong> Qarşı bucaqların cəmi 180° olub-olmadığını yoxlayın. Bu çevrəyə yazılma şərtidir.</div>`},
+  {title:'§6 Çevrə uzunluğu və dairənin sahəsi',html:`
+<div class="formula-box">
+<strong>Çevrə uzunluğu:</strong> \(C = 2\pi r = \pi d\)<br><br>
+<strong>Dairənin sahəsi:</strong> \(S = \pi r^2\)<br><br>
+<strong>Radius-diametr əlaqəsi:</strong> \(d = 2r\), \(r = \dfrac{d}{2}\)<br><br>
+<strong>C-dən r tapmaq:</strong> \(r = \dfrac{C}{2\pi}\)<br>
+<strong>S-dən r tapmaq:</strong> \(r = \sqrt{\dfrac{S}{\pi}}\)
+</div>
+<div class="rule-grid">
+  <div class="rule-card"><h4>Nümunə: r=7 sm</h4>
+    <p>\(C=2\cdot\frac{22}{7}\cdot7=44\) sm<br>
+    \(S=\frac{22}{7}\cdot49=154\) sm²</p></div>
+  <div class="rule-card"><h4>Nümunə: C=31,4 sm</h4>
+    <p>\(r=\frac{31{,}4}{2\cdot3{,}14}=5\) sm<br>
+    \(S=3{,}14\cdot25=78{,}5\) sm²</p></div>
+</div>
+<div class="info-box"><strong>π qiyməti:</strong> \(\pi\approx3{,}14\) (ümumi), \(\pi\approx\frac{22}{7}\) (r=7 olduqda rahat), dəqiq: \(\pi=3{,}14159...\)</div>`},
+  {title:'§7.1 Yay uzunluğu və sektor sahəsi',html:`
+<div class="formula-box">
+<strong>Yay uzunluğu (α dərəcə ilə):</strong><br>
+\(l = \dfrac{\alpha}{360°} \cdot 2\pi r = \dfrac{\alpha\pi r}{180°}\)<br><br>
+<strong>Sektor sahəsi:</strong><br>
+\(S_{sektor} = \dfrac{\alpha}{360°} \cdot \pi r^2 = \dfrac{1}{2} l r\)<br>
+burada \(l\) — yay uzunluğu, \(r\) — radius, \(\alpha\) — mərkəzi bucaq
+</div>
+<div class="rule-grid">
+  <div class="rule-card"><h4>Misal 1: α=90°, r=6</h4>
+    <p>\(l=\frac{90}{360}\cdot2\pi\cdot6=3\pi\approx9{,}4\) sm<br>
+    \(S=\frac{90}{360}\cdot\pi\cdot36=9\pi\approx28{,}3\) sm²</p></div>
+  <div class="rule-card"><h4>Misal 2: α=120°, r=3</h4>
+    <p>\(S=\frac{120}{360}\cdot\pi\cdot9=3\pi\approx9{,}4\) sm²</p></div>
+</div>
+<div class="info-box"><strong>Alternativ:</strong> \(S_{sektor}=\frac{1}{2}lr\) — yay uzunluğunu bilsəniz bu düsturu istifadə edin.</div>`},
+  {title:'§7.2 Seqment sahəsi',html:`
+<p><strong>Seqment</strong> — vətər və yay arasındakı fiqur (sektor − üçbucaq).</p>
+<div class="formula-box">
+<strong>Seqment sahəsi:</strong><br>
+\(S_{seqment} = S_{sektor} - S_{\triangle}\)<br><br>
+\(S_{seqment} = \dfrac{\alpha}{360°}\pi r^2 - \dfrac{r^2 \sin\alpha}{2}\)<br><br>
+burada \(\alpha\) — mərkəzi bucaq dərəcə ilə
+</div>
+<div class="rule-grid">
+  <div class="rule-card"><h4>Xüsusi hal: α=60°</h4>
+    <p>Üçbucaq bərabərtərəflıdır:<br>
+    \(S_{seg}=\frac{\pi r^2}{6}-\frac{r^2\sqrt{3}}{4}\)</p></div>
+  <div class="rule-card"><h4>Xüsusi hal: α=90°</h4>
+    <p>\(S_{seg}=\frac{\pi r^2}{4}-\frac{r^2}{2}\)<br>(çeyrek dairə − düzbucaqlı üçbucaq)</p></div>
+</div>
+<div class="warn-box"><strong>DİM tələsi:</strong> sin funksiyasını istifadə edin: \(\sin 60°=\frac{\sqrt{3}}{2}\), \(\sin 90°=1\), \(\sin 30°=\frac{1}{2}\).</div>`},
+  {title:'§8 DİM tipli çevrə məsələləri',html:`
+<div class="formula-box">
+<strong>Bütün düsturların xülasəsi:</strong><br>
+\(C=2\pi r\) · \(S=\pi r^2\) · \(l=\dfrac{\alpha\pi r}{180}\) · \(S_{sek}=\dfrac{\alpha}{360}\pi r^2\)<br><br>
+Yazılmış bucaq = ½ mərkəzi bucaq<br>
+Diametr üzərindəki yazılmış bucaq = 90° (Tales)<br>
+Toxunan ⊥ radius · \(l_{tox}=\sqrt{d^2-r^2}\)<br>
+Vətər uzunluğu: \(l=2\sqrt{r^2-h^2}\) (h — mərkəzdən məsafə)
+</div>
+<div class="rule-grid">
+  <div class="rule-card"><h4>DİM tipi 1</h4>
+    <p>AB diametr, C çevrədə → ∠ACB=90° → Pifaqor tətbiq et.</p></div>
+  <div class="rule-card"><h4>DİM tipi 2</h4>
+    <p>Xarici nöqtədən toxunan: l²+r²=d². Hər zaman düzbucaqlı üçbucaq!</p></div>
+  <div class="rule-card"><h4>DİM tipi 3</h4>
+    <p>Yazılmış bucaq verilir → mərkəzi bucaq = 2× yazılmış bucaq.</p></div>
+  <div class="rule-card"><h4>DİM tipi 4</h4>
+    <p>Çevrəyə yazılmış dördbucaqlıda: qarşı bucaqların cəmi = 180°.</p></div>
+</div>`},
+];
+
+const QS=[
+  {s:'§1',q:'Radiusu 5 sm olan çevrənin uzunluğu neçədir? (\\(\\pi\\approx3{,}14\\))',o:['31,4 sm','15,7 sm','78,5 sm','25 sm'],a:0,e:'\\(C=2\\pi r=2\\cdot3{,}14\\cdot5=31{,}4\\) sm.'},
+  {s:'§1',q:'Diametri 14 sm olan dairənin sahəsi? (\\(\\pi\\approx\\frac{22}{7}\\))',o:['154 sm²','308 sm²','44 sm²','616 sm²'],a:0,e:'r=7 sm. \\(S=\\pi r^2=\\frac{22}{7}\\cdot49=154\\) sm².'},
+  {s:'§1',q:'Çevrə uzunluğu 62,8 sm olarsa, radiusu neçədir? (\\(\\pi\\approx3{,}14\\))',o:['10 sm','5 sm','20 sm','31,4 sm'],a:0,e:'\\(r=\\frac{C}{2\\pi}=\\frac{62{,}8}{2\\cdot3{,}14}=10\\) sm.'},
+  {s:'§2',q:'Mərkəzi bucaq 80° olan yayın dərəcə ölçüsü neçədir?',o:['80°','40°','160°','20°'],a:0,e:'Mərkəzi bucaq = uyğun yayın dərəcə ölçüsü = 80°.'},
+  {s:'§2',q:'Yazılmış bucaq 45°-dirsə, uyğun mərkəzi bucaq neçədir?',o:['90°','45°','22,5°','180°'],a:0,e:'Mərkəzi bucaq = 2 × yazılmış bucaq = 2 × 45° = 90°.'},
+  {s:'§2',q:'AB diametrdirsə, ∠ACB (C çevrə üzərindədir) neçədir?',o:['90°','60°','45°','180°'],a:0,e:'Tales teoremi: diametr üzərindəki yazılmış bucaq = 90°.'},
+  {s:'§2',q:'Çevrəyə yazılmış ABCD dördbucaqlısında ∠A=75°-dirsə, ∠C neçədir?',o:['105°','75°','90°','285°'],a:0,e:'Qarşı bucaqların cəmi: \\(\\angle A+\\angle C=180°\\Rightarrow\\angle C=105°\\).'},
+  {s:'§3',q:'Radiusu 10 sm olan çevrədə mərkəzdən 6 sm məsafəli vətərin uzunluğu?',o:['16 sm','8 sm','14 sm','12 sm'],a:0,e:'\\(l=2\\sqrt{r^2-d^2}=2\\sqrt{100-36}=2\\sqrt{64}=16\\) sm.'},
+  {s:'§3',q:'Vətər uzunluğu 12 sm, mərkəzdən məsafəsi 8 sm. Radius neçədir?',o:['10 sm','8 sm','14 sm','20 sm'],a:0,e:'\\(r=\\sqrt{(l/2)^2+d^2}=\\sqrt{36+64}=\\sqrt{100}=10\\) sm.'},
+  {s:'§4',q:'Xarici nöqtədən çevrəyə toxunanın uzunluğu 8 sm, mərkəzə məsafəsi 10 sm. Radius?',o:['6 sm','8 sm','4 sm','2 sm'],a:0,e:'\\(r=\\sqrt{d^2-l^2}=\\sqrt{100-64}=\\sqrt{36}=6\\) sm.'},
+  {s:'§4',q:'Xarici nöqtədən çəkilmiş iki toxunanın uzunluğu əlaqəsi necədir?',o:['Bərabərdir','Cəmləri r-ə bərabər','Fərqli ola bilər','Cəmləri 2r-ə bərabər'],a:0,e:'Xarici nöqtədən çəkilmiş iki toxunan həmişə bərabərdir.'},
+  {s:'§4',q:'Toxunan radiusa necə yerləşir?',o:['Perpendikulyar','Paralel','Kəsişir','45° altında'],a:0,e:'Toxunan həmişə toxunma nöqtəsindəki radiusa perpendikulyardır.'},
+  {s:'§5',q:'Çevrəyə yazılmış üçbucağın bir tərəfi diametrdir. Qarşı bucaq neçədir?',o:['90°','60°','45°','180°'],a:0,e:'Tales teoremi: diametr üzərindəki yazılmış bucaq = 90°.'},
+  {s:'§6',q:'Radiusu 3 sm, mərkəzi bucağı 90° olan sektorun sahəsi? (\\(\\pi\\approx3{,}14\\))',o:['7,065 sm²','28,26 sm²','14,13 sm²','3,14 sm²'],a:0,e:'\\(S=\\frac{90}{360}\\pi\\cdot9=\\frac{\\pi\\cdot9}{4}=\\frac{3{,}14\\cdot9}{4}\\approx7{,}065\\) sm².'},
+  {s:'§7',q:'Radiusu 6 sm, mərkəzi bucağı 60° olan yayın uzunluğu?',o:['\\(2\\pi\\) sm','\\(\\pi\\) sm','\\(4\\pi\\) sm','\\(6\\pi\\) sm'],a:0,e:'\\(l=\\frac{60}{360}\\cdot2\\pi\\cdot6=\\frac{1}{6}\\cdot12\\pi=2\\pi\\) sm.'},
+  {s:'§7',q:'Radiusu 4 sm, mərkəzi bucağı 180° olan sektorun sahəsi?',o:['\\(8\\pi\\) sm²','\\(4\\pi\\) sm²','\\(16\\pi\\) sm²','\\(2\\pi\\) sm²'],a:0,e:'\\(S=\\frac{180}{360}\\pi\\cdot16=8\\pi\\) sm² (yarım dairənin sahəsi).'},
+  {s:'§2',q:'DİM: ∠BAC = 30° yazılmış bucaqdır. BC yayının dərəcə ölçüsü neçədir?',o:['60°','30°','120°','15°'],a:0,e:'Yazılmış bucaq = yayın yarısı: \\(\\overset{\\frown}{BC}=2\\times30°=60°\\).'},
+  {s:'§3',q:'DİM: İki vətər daxildə kəsişir: AE=4, EC=9, BE=6. DE neçədir?',o:['6','4','9','3'],a:0,e:'\\(AE\\cdot EC=BE\\cdot DE\\Rightarrow4\\cdot9=6\\cdot DE\\Rightarrow DE=6\\).'},
+  {s:'§6',q:'DİM: Dairənin sahəsi 100π sm². Çevrəsinin uzunluğu neçədir?',o:['20π sm','10π sm','50π sm','200π sm'],a:0,e:'\\(S=\\pi r^2=100\\pi\\Rightarrow r=10\\) sm. \\(C=2\\pi r=20\\pi\\) sm.'},
+  {s:'§5',q:'DİM: Çevrəyə yazılmış ABCD-də AB∥CD. ∠ABC=70°. ∠BCD neçədir?',o:['110°','70°','90°','140°'],a:0,e:'ABCD çevrəyə yazılıb: \\(\\angle B+\\angle D=180°\\Rightarrow\\angle D=110°\\). AB∥CD olduğundan \\(\\angle BCD=180°-\\angle ABC=110°\\) (co-interior angles).'},
+];
+
+let curSlide=0;
+function buildSlides(){const track=document.getElementById('slide-track'),dots=document.getElementById('dots');track.innerHTML='';dots.innerHTML='';SLIDES.forEach((s,i)=>{const div=document.createElement('div');div.className='slide'+(i===0?' active':'');div.innerHTML=`<h3>${s.title}</h3>${s.html}`;track.appendChild(div);const dot=document.createElement('div');dot.className='slide-dot'+(i===0?' active':'');dot.onclick=()=>goSlide(i);dots.appendChild(dot);});updateSlideUI();MathJax.startup.promise.then(()=>MathJax.typesetPromise([track]));}
+function goSlide(n){document.querySelectorAll('.slide')[curSlide].classList.remove('active');document.querySelectorAll('.slide-dot')[curSlide].classList.remove('active');curSlide=Math.max(0,Math.min(n,SLIDES.length-1));document.querySelectorAll('.slide')[curSlide].classList.add('active');document.querySelectorAll('.slide-dot')[curSlide].classList.add('active');updateSlideUI();}
+function changeSlide(d){goSlide(curSlide+d);}
+function updateSlideUI(){document.getElementById('slide-counter').textContent=`${curSlide+1} / ${SLIDES.length}`;document.getElementById('prev-btn').disabled=curSlide===0;document.getElementById('next-btn').textContent=curSlide===SLIDES.length-1?'✓ Bitdi':'İrəli →';}
+function renderMathNow(id){const el=document.getElementById(id);if(el&&window.MathJax)MathJax.typesetPromise([el]).catch(console.error);}
+
+let dIdx=0,dScore=0,dAns=[];
+function startDiag(){dIdx=0;dScore=0;dAns=new Array(QS.length).fill(null);document.getElementById('diag-ui').style.display='block';document.getElementById('vik-ui').style.display='none';document.getElementById('res-ui').style.display='none';renderDQ();document.getElementById('diag-ui').scrollIntoView({behavior:'smooth',block:'start'});}
+function renderDQ(){const q=QS[dIdx];document.getElementById('dq-n').textContent=dIdx+1;document.getElementById('dq-tot').textContent=QS.length;document.getElementById('dq-score').textContent=dScore+' ✓';document.getElementById('dq-bar').style.width=(dIdx/QS.length)*100+'%';document.getElementById('dq-expl').style.display='none';document.getElementById('dq-next').disabled=dAns[dIdx]===null;document.getElementById('dq-prev').disabled=dIdx===0;document.getElementById('dq-q').innerHTML=q.q;const opts=document.getElementById('dq-opts');opts.innerHTML='';const L=['A','B','C','D'];q.o.forEach((opt,i)=>{const div=document.createElement('div');div.className='opt';if(dAns[dIdx]!==null){div.classList.add('disabled');if(i===q.a)div.classList.add('correct');else if(i===dAns[dIdx])div.classList.add('wrong');}div.innerHTML=`<span class="opt-ltr">${L[i]}</span><span>${opt}</span>`;div.addEventListener('click',()=>selectDQ(i));opts.appendChild(div);});renderMathNow('dq-q');renderMathNow('dq-opts');}
+function selectDQ(i){if(dAns[dIdx]!==null)return;dAns[dIdx]=i;if(i===QS[dIdx].a)dScore++;document.getElementById('dq-next').disabled=false;document.getElementById('dq-score').textContent=dScore+' ✓';const ex=document.getElementById('dq-expl');ex.style.display='block';const ok=i===QS[dIdx].a;ex.style.background=ok?'rgba(81,207,102,.09)':'rgba(255,107,107,.09)';ex.style.borderLeftColor=ok?'var(--success)':'var(--error)';ex.innerHTML=(ok?'<strong style="color:var(--success)">✓ Düzgün!</strong> ':'<strong style="color:var(--error)">✗ Səhv.</strong> Düzgün: <strong>'+QS[dIdx].o[QS[dIdx].a]+'</strong>. ')+QS[dIdx].e;renderDQ();if(window.MathJax)MathJax.typesetPromise([ex]).catch(console.error);}
+function nextDiag(){if(dIdx<QS.length-1){dIdx++;renderDQ();}else showResults(dScore,QS.length);}
+function prevDiag(){if(dIdx>0){dIdx--;renderDQ();}}
+
+let vIdx=0,vScore=0,vTmr=null,vT=30,vRes=[];
+function startViktorina(){vIdx=0;vScore=0;vRes=[];document.getElementById('diag-ui').style.display='none';document.getElementById('vik-ui').style.display='block';document.getElementById('res-ui').style.display='none';renderVQ();document.getElementById('vik-ui').scrollIntoView({behavior:'smooth',block:'start'});}
+function renderVQ(){clearInterval(vTmr);vT=30;const q=QS[vIdx];document.getElementById('vik-tag').textContent=q.s;document.getElementById('vik-q').innerHTML=q.q;tickV();vTmr=setInterval(tickV,1000);const opts=document.getElementById('vik-opts');opts.innerHTML='';const L=['A','B','C','D'];q.o.forEach((opt,i)=>{const d=document.createElement('div');d.className='opt';d.innerHTML=`<span class="opt-ltr">${L[i]}</span><span>${opt}</span>`;d.onclick=()=>answerV(i,d);opts.appendChild(d);});renderVDots();renderMathNow('vik-q');renderMathNow('vik-opts');}
+function tickV(){const el=document.getElementById('vik-timer');if(!el)return;el.textContent=vT;el.style.color=vT<=10?'var(--error)':vT<=20?'var(--warning)':'var(--accent)';if(vT<=0){answerV(-1,null);return;}vT--;}
+function answerV(i,el){clearInterval(vTmr);document.querySelectorAll('#vik-opts .opt').forEach(o=>o.classList.add('disabled'));const correct=i===QS[vIdx].a;if(correct)vScore++;vRes.push(correct);document.querySelectorAll('#vik-opts .opt')[QS[vIdx].a]?.classList.add('correct');if(el&&!correct)el.classList.add('wrong');setTimeout(()=>{if(vIdx<QS.length-1){vIdx++;renderVQ();}else showResults(vScore,QS.length);},1000);}
+function renderVDots(){const c=document.getElementById('vik-dots');c.innerHTML='';QS.forEach((_,i)=>{const d=document.createElement('div');d.style.cssText=`width:8px;height:8px;border-radius:50%;flex-shrink:0;transition:background 0.3s;background:${i<vRes.length?(vRes[i]?'var(--success)':'var(--error)'):i===vIdx?'var(--accent)':'var(--border-glass)'}`;c.appendChild(d);});}
+function showResults(score,total){clearInterval(vTmr);document.getElementById('diag-ui').style.display='none';document.getElementById('vik-ui').style.display='none';document.getElementById('res-ui').style.display='block';const pct=Math.round((score/total)*100);document.getElementById('res-pct').textContent=pct+'%';document.getElementById('res-ok').textContent=score;document.getElementById('res-no').textContent=total-score;const lvl=pct>=90?'Əla':pct>=70?'Yaxşı':pct>=50?'Orta':'Zəif';document.getElementById('res-lvl').textContent=lvl;document.getElementById('res-msg').textContent=pct>=90?'🏆 Əla nəticə! DİM-ə hazırsınız!':pct>=70?'✅ Yaxşı nəticə! Bir az daha çalışın.':pct>=50?'📚 Orta nəticə. Nəzəriyyəni təkrar edin.':'💪 Zəif nəticə. Başdan öyrənin.';const ring=document.getElementById('res-ring');ring.style.borderColor=pct>=90?'var(--success)':pct>=70?'var(--accent-blue)':pct>=50?'var(--warning)':'var(--error)';document.getElementById('res-ring').querySelector('.score-val').style.color=pct>=70?'var(--success)':'var(--accent)';document.getElementById('res-ui').scrollIntoView({behavior:'smooth',block:'start'});try{var _p={points:score,maxPoints:total,timeSpentSeconds:0};window.parent.postMessage({type:'SCORE_UPDATE',payload:_p},'*');if(pct>=50)window.parent.postMessage({type:'LESSON_COMPLETE',payload:_p},'*');}catch(e){}}
+function resetAssessment(){document.getElementById('diag-ui').style.display='none';document.getElementById('vik-ui').style.display='none';document.getElementById('res-ui').style.display='none';}
+document.addEventListener('DOMContentLoaded',()=>{buildSlides();MathJax.startup.promise.then(()=>MathJax.typesetPromise([document.body]));});
+</script>
+</body>
+</html>

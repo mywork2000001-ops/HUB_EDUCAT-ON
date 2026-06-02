@@ -229,7 +229,17 @@ export const TOPICS: Topic[] = [
       ru: 'Многочлены, факторизация, операции с рациональными выражениями',
       en: 'Polynomials, factorization, operations with rational expressions',
     },
-    lessons: [],
+    lessons: [
+      {
+        id: 'topic-08-main',
+        topicId: 'topic-08',
+        type: 'theory',
+        title: { az: 'Rasional ifadələr — tam dərs', ru: 'Рациональные выражения — полный урок', en: 'Rational Expressions — full lesson' },
+        url_path: '/lessons/topics/topic-08.html',
+        estimatedMinutes: 40,
+        questionCount: 20,
+      },
+    ],
   },
 
   {
@@ -248,7 +258,17 @@ export const TOPICS: Topic[] = [
       ru: 'Линейные, квадратные, рациональные уравнения; методы решения',
       en: 'Linear, quadratic, rational equations; solution methods',
     },
-    lessons: [],
+    lessons: [
+      {
+        id: 'topic-09-main',
+        topicId: 'topic-09',
+        type: 'theory',
+        title: { az: 'Birməchullu tənliklər — tam dərs', ru: 'Уравнения с одним неизвестным — полный урок', en: 'Single-Variable Equations — full lesson' },
+        url_path: '/lessons/topics/topic-09.html',
+        estimatedMinutes: 40,
+        questionCount: 20,
+      },
+    ],
   },
 
   {
@@ -267,7 +287,17 @@ export const TOPICS: Topic[] = [
       ru: 'Системы с двумя неизвестными, методы решения, задачи',
       en: 'Systems with two unknowns, solution methods, problems',
     },
-    lessons: [],
+    lessons: [
+      {
+        id: 'topic-10-main',
+        topicId: 'topic-10',
+        type: 'theory',
+        title: { az: 'Tənliklər sistemi — tam dərs', ru: 'Системы уравнений — полный урок', en: 'Systems of Equations — full lesson' },
+        url_path: '/lessons/topics/topic-10.html',
+        estimatedMinutes: 40,
+        questionCount: 20,
+      },
+    ],
   },
 
   {
@@ -286,7 +316,17 @@ export const TOPICS: Topic[] = [
       ru: 'Свойства окружности, теоремы, углы, хорда, касательная',
       en: 'Circle properties, theorems, angles, chord, tangent',
     },
-    lessons: [],
+    lessons: [
+      {
+        id: 'topic-11-main',
+        topicId: 'topic-11',
+        type: 'theory',
+        title: { az: 'Çevrə — tam dərs', ru: 'Окружность — полный урок', en: 'Circle — full lesson' },
+        url_path: '/lessons/topics/topic-11.html',
+        estimatedMinutes: 45,
+        questionCount: 20,
+      },
+    ],
   },
 
   {
