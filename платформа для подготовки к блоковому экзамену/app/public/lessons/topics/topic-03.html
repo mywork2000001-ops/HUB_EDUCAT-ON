@@ -1,343 +1,1155 @@
 <!doctype html>
 <html lang="az">
-<head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-  <title>Mövzu 3 — Adi və Onluq Kəsirlər</title>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css"/>
-  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
-  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
-    onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}]})"></script>
-  <style>
-    :root{
-      --bg-dark:#0f0f1a;--bg-card:rgba(255,255,255,0.05);--bg-glass:rgba(255,255,255,0.08);
-      --border-glass:rgba(255,255,255,0.15);--text-primary:#e8e8f0;--text-secondary:#a0a0b8;
-      --accent:#f59e0b;--accent-dim:rgba(245,158,11,0.18);--accent-warm:#ff6b6b;
-      --accent-blue:#4dabf7;--accent-blue-dim:rgba(77,171,247,0.18);
-      --success:#51cf66;--error:#ff6b6b;--warning:#fcc419;
-    }
-    *{margin:0;padding:0;box-sizing:border-box;}
-    body{font-family:"Segoe UI",system-ui,sans-serif;background:var(--bg-dark);color:var(--text-primary);min-height:100vh;overflow-x:hidden;line-height:1.65;}
-    .katex{font-size:1.1em;}
-    .katex-display{overflow-x:auto;padding:6px 0;}
-    .katex-display>.katex{font-size:1.1em;}
-    .bg{position:fixed;top:0;left:0;width:100%;height:100%;z-index:-1;
-      background:radial-gradient(ellipse at 30% 20%,rgba(245,158,11,.07) 0%,transparent 55%),
-                 radial-gradient(ellipse at 70% 80%,rgba(77,171,247,.07) 0%,transparent 55%);}
-    .bg::before{content:"";position:absolute;inset:0;
-      background:repeating-linear-gradient(0deg,transparent,transparent 44px,rgba(255,255,255,.018) 44px,rgba(255,255,255,.018) 45px);
-      animation:bgScroll 25s linear infinite;}
-    @keyframes bgScroll{to{transform:translateY(45px)}}
-    nav{position:fixed;top:0;left:0;right:0;background:rgba(15,15,26,.9);backdrop-filter:blur(24px);
-      border-bottom:1px solid var(--border-glass);z-index:1000;padding:0 20px;}
-    .nav-inner{max-width:1100px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;height:62px;}
-    .logo{font-size:1.05rem;font-weight:800;background:linear-gradient(135deg,var(--accent),var(--accent-blue));
-      -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;cursor:pointer;user-select:none;}
-    .nav-links{display:flex;gap:2px;list-style:none;}
-    .nav-links a{color:var(--text-secondary);text-decoration:none;padding:8px 14px;border-radius:9px;
-      transition:all .25s;font-size:.85rem;font-weight:500;cursor:pointer;border:none;background:transparent;display:block;}
-    .nav-links a:hover{color:var(--text-primary);background:var(--bg-glass);}
-    .nav-links a.active{background:var(--accent-dim);color:var(--accent);}
-    .hamburger{display:none;background:none;border:1px solid var(--border-glass);color:var(--text-primary);
-      font-size:1.3rem;cursor:pointer;padding:8px 12px;border-radius:9px;transition:all .2s;}
-    .hamburger:hover{background:var(--bg-glass);}
-    .mob-nav{display:none;position:fixed;top:62px;left:0;right:0;bottom:0;
-      background:rgba(10,10,20,.97);backdrop-filter:blur(24px);z-index:999;
-      padding:24px 20px;overflow-y:auto;flex-direction:column;gap:6px;}
-    .mob-nav.open{display:flex;}
-    .mob-nav a{color:var(--text-secondary);text-decoration:none;padding:16px 20px;border-radius:14px;
-      font-size:1.05rem;font-weight:500;transition:all .2s;border:1px solid transparent;}
-    .mob-nav a.active{background:var(--accent-dim);color:var(--accent);border-color:rgba(245,158,11,.25);}
-    .mob-nav a:hover{background:var(--bg-glass);color:var(--text-primary);}
-    section{display:none;padding:80px 20px 48px;max-width:1000px;margin:0 auto;}
-    section.active{display:block;animation:fadeUp .35s ease;}
-    @keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
-    .card{background:var(--bg-card);backdrop-filter:blur(20px);border:1px solid var(--border-glass);border-radius:18px;padding:22px;margin-bottom:18px;}
-    .card-title{font-size:1.25rem;font-weight:700;margin-bottom:16px;display:flex;align-items:center;gap:10px;}
-    .card-title .icon{width:40px;height:40px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0;}
-    .hero{text-align:center;padding:110px 20px 64px;}
-    .hero h1{font-size:clamp(1.9rem,5vw,3rem);font-weight:800;margin-bottom:18px;
-      background:linear-gradient(135deg,var(--accent),var(--accent-blue),var(--accent-warm));
-      -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1.15;}
-    .hero p{font-size:1.05rem;color:var(--text-secondary);max-width:600px;margin:0 auto 36px;line-height:1.7;}
-    .hero-btns{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;}
-    .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:13px 28px;
-      border-radius:11px;border:none;font-size:.95rem;font-weight:600;cursor:pointer;transition:all .25s;min-height:46px;}
-    .btn-primary{background:linear-gradient(135deg,var(--accent),var(--accent-blue));color:#000;}
-    .btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(245,158,11,.35);}
-    .btn-secondary{background:var(--bg-glass);color:var(--text-primary);border:1px solid var(--border-glass);}
-    .btn-secondary:hover{background:var(--bg-card);}
-    .btn:disabled{opacity:.45;cursor:not-allowed;transform:none!important;}
-    .feat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:14px;}
-    .feat-card{background:var(--bg-glass);border:1px solid var(--border-glass);border-radius:14px;padding:18px 14px;text-align:center;}
-    .feat-card .fi{font-size:2rem;margin-bottom:8px;}
-    .feat-card h3{font-size:.9rem;font-weight:700;margin-bottom:4px;}
-    .feat-card p{color:var(--text-secondary);font-size:.78rem;}
-    .slide-wrap{background:var(--bg-glass);border:1px solid var(--border-glass);border-radius:16px;padding:18px;}
-    .slide-meta{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;}
-    .slide-meta span{font-size:.85rem;color:var(--text-secondary);}
-    .slide-dots{display:flex;gap:5px;flex-wrap:wrap;}
-    .slide-dot{width:10px;height:10px;border-radius:50%;background:var(--border-glass);cursor:pointer;transition:all .2s;flex-shrink:0;}
-    .slide-dot.active{background:var(--accent);transform:scale(1.2);}
-    .slide-track{min-height:220px;}
-    .slide{display:none;padding:14px 4px;animation:slideIn .3s ease;}
-    .slide.active{display:block;}
-    @keyframes slideIn{from{opacity:0;transform:translateX(12px)}to{opacity:1;transform:translateX(0)}}
-    .slide h3{font-size:1.15rem;color:var(--accent);margin-bottom:16px;font-weight:700;}
-    .slide p{color:var(--text-secondary);line-height:1.8;margin-bottom:10px;font-size:.93rem;}
-    .slide-nav{display:flex;justify-content:space-between;align-items:center;margin-top:16px;gap:10px;}
-    .def-box{background:rgba(245,158,11,.08);border-left:4px solid var(--accent);border-radius:0 12px 12px 0;
-      padding:14px 16px;margin:12px 0;font-size:.92rem;color:var(--text-secondary);line-height:1.7;}
-    .def-box strong{color:var(--text-primary);}
-    .info-box{background:rgba(77,171,247,.08);border-left:4px solid var(--accent-blue);border-radius:0 12px 12px 0;
-      padding:14px 16px;margin:12px 0;font-size:.9rem;color:var(--text-secondary);line-height:1.7;}
-    .warn-box{background:rgba(252,196,25,.08);border-left:4px solid var(--warning);border-radius:0 12px 12px 0;
-      padding:12px 16px;margin:12px 0;font-size:.88rem;color:var(--text-secondary);line-height:1.65;}
-    .warn-box strong{color:var(--warning);}
-    .formula-box{background:var(--bg-glass);border:1px solid var(--border-glass);border-radius:12px;
-      padding:16px;margin:14px 0;text-align:center;overflow-x:auto;font-size:.95rem;line-height:1.8;}
-    .rule-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin:12px 0;}
-    .rule-item{background:var(--bg-glass);border:1px solid var(--border-glass);border-radius:9px;
-      padding:9px 13px;font-size:.84rem;color:var(--text-secondary);line-height:1.6;}
-    .rule-item strong{color:var(--text-primary);}
-    .type-tag{display:inline-block;font-size:.7rem;font-weight:700;padding:2px 8px;border-radius:10px;margin:2px 3px 2px 0;}
-    .tag-proper{background:rgba(81,207,102,.15);color:var(--success);}
-    .tag-improper{background:rgba(255,107,107,.15);color:var(--error);}
-    .tag-mixed{background:rgba(245,158,11,.15);color:var(--accent);}
-    .tag-decimal{background:rgba(77,171,247,.15);color:var(--accent-blue);}
-    .frac-visual{display:flex;justify-content:center;gap:3px;margin:10px 0;flex-wrap:wrap;}
-    .frac-block{display:inline-block;width:34px;height:34px;border:2px solid var(--border-glass);border-radius:4px;}
-    .frac-block.filled{background:var(--accent);opacity:.75;}
-    .problem-card{background:var(--bg-card);border:1px solid var(--border-glass);border-radius:16px;padding:24px;margin-bottom:18px;}
-    .problem-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:8px;}
-    .problem-num{background:var(--accent-dim);color:var(--accent);padding:4px 14px;border-radius:20px;font-size:.8rem;font-weight:700;}
-    .problem-topic{color:var(--text-secondary);font-size:.8rem;}
-    .problem-text{font-size:.97rem;margin-bottom:16px;line-height:1.8;color:var(--text-primary);}
-    .sol-btn{background:var(--accent-dim);color:var(--accent);border:1px solid rgba(245,158,11,.4);
-      padding:9px 20px;border-radius:9px;cursor:pointer;font-weight:600;transition:all .25s;font-size:.88rem;min-height:40px;}
-    .sol-btn:hover{background:var(--accent);color:#000;}
-    .solution{display:none;margin-top:16px;padding:16px 18px;background:rgba(245,158,11,.05);
-      border-left:3px solid var(--accent);border-radius:0 12px 12px 0;}
-    .solution.open{display:block;animation:fadeDn .3s ease;}
-    @keyframes fadeDn{from{opacity:0}to{opacity:1}}
-    .solution p{margin-bottom:8px;color:var(--text-secondary);font-size:.9rem;line-height:1.7;}
-    .solution strong{color:var(--accent);}
-    .quiz-wrap{background:var(--bg-card);border:1px solid var(--border-glass);border-radius:18px;padding:28px;}
-    .quiz-progress{display:flex;justify-content:space-between;align-items:center;margin-bottom:22px;flex-wrap:wrap;gap:8px;}
-    .prog-bar{flex:1;height:7px;background:var(--bg-glass);border-radius:4px;margin:0 14px;overflow:hidden;min-width:80px;}
-    .prog-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent-blue));border-radius:4px;transition:width .5s ease;}
-    .quiz-q{font-size:1.05rem;margin-bottom:22px;padding:18px;background:var(--bg-glass);border-radius:12px;
-      border-left:4px solid var(--accent);line-height:1.75;}
-    .quiz-opts{display:grid;gap:10px;}
-    .opt{background:var(--bg-glass);border:2px solid var(--border-glass);border-radius:12px;padding:14px 18px;
-      cursor:pointer;transition:all .25s;display:flex;align-items:center;gap:12px;font-size:.9rem;min-height:52px;}
-    .opt:hover{border-color:var(--accent);background:var(--accent-dim);}
-    .opt.correct{border-color:var(--success);background:rgba(81,207,102,.15);}
-    .opt.wrong{border-color:var(--error);background:rgba(255,107,107,.15);}
-    .opt.disabled{pointer-events:none;opacity:.65;}
-    .opt-ltr{width:32px;height:32px;border-radius:8px;background:var(--bg-card);display:flex;align-items:center;
-      justify-content:center;font-weight:700;flex-shrink:0;font-size:.85rem;}
-    .quiz-nav-row{display:flex;justify-content:space-between;margin-top:20px;gap:10px;}
-    .expl-box{display:none;margin-top:16px;padding:14px 16px;border-radius:11px;border-left:4px solid;
-      font-size:.88rem;color:var(--text-secondary);line-height:1.65;}
-    .results-wrap{text-align:center;padding:32px 16px;}
-    .score-ring{width:172px;height:172px;border-radius:50%;
-      background:conic-gradient(var(--accent) calc(var(--score)*3.6deg),var(--bg-glass) 0);
-      margin:0 auto 24px;display:flex;align-items:center;justify-content:center;position:relative;}
-    .score-ring::before{content:"";position:absolute;width:144px;height:144px;background:var(--bg-dark);border-radius:50%;}
-    .score-val{position:relative;font-size:2.4rem;font-weight:800;color:var(--accent);}
-    .score-msg{font-size:1.3rem;font-weight:700;margin-bottom:24px;}
-    .breakdown{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;max-width:420px;margin:0 auto 24px;}
-    .breakdown-item{background:var(--bg-glass);padding:14px;border-radius:10px;}
-    .breakdown-val{font-size:1.35rem;font-weight:700;color:var(--accent);}
-    .breakdown-lbl{font-size:.78rem;color:var(--text-secondary);}
-    .vik-timer{font-size:2.2rem;font-weight:900;transition:color .3s;}
-    @media(max-width:768px){
-      .hamburger{display:block;}
-      .nav-links{display:none;}
-      section{padding:72px 14px 40px;}
-      .hero{padding:90px 14px 52px;}
-      .rule-grid{grid-template-columns:1fr;}
-      .feat-grid{grid-template-columns:repeat(2,1fr);}
-      .quiz-wrap{padding:18px;}
-    }
-    @media(max-width:480px){
-      .slide-wrap{padding:14px;}
-      .quiz-q{font-size:.95rem;padding:14px;}
-      .opt{font-size:.85rem;padding:12px 14px;}
-    }
-  </style>
-</head>
-<body>
-<div class="bg"></div>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+    <title>Mövzu 3 — Adi və Onluq Kəsirlər</title>
+    <style>
+      :root {
+        --bg-dark: #0f0f1a;
+        --bg-card: rgba(255, 255, 255, 0.05);
+        --bg-glass: rgba(255, 255, 255, 0.08);
+        --border-glass: rgba(255, 255, 255, 0.15);
+        --text-primary: #e8e8f0;
+        --text-secondary: #a0a0b8;
+        --accent: #f59e0b;
+        --accent-dim: rgba(245, 158, 11, 0.18);
+        --accent-warm: #ff6b6b;
+        --accent-blue: #4dabf7;
+        --accent-blue-dim: rgba(77, 171, 247, 0.18);
+        --success: #51cf66;
+        --error: #ff6b6b;
+        --warning: #fcc419;
+      }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      body {
+        font-family: "Segoe UI", system-ui, sans-serif;
+        background: var(--bg-dark);
+        color: var(--text-primary);
+        min-height: 100vh;
+        overflow-x: hidden;
+        line-height: 1.65;
+      }
+      .MathJax {
+        font-size: 1.1em !important;
+      }
+      mjx-container[display="true"] {
+        overflow-x: auto;
+        padding: 6px 0;
+      }
+      .bg {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: -1;
+        background:
+          radial-gradient(
+            ellipse at 30% 20%,
+            rgba(245, 158, 11, 0.07) 0%,
+            transparent 55%
+          ),
+          radial-gradient(
+            ellipse at 70% 80%,
+            rgba(77, 171, 247, 0.07) 0%,
+            transparent 55%
+          );
+      }
+      .bg::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: repeating-linear-gradient(
+          0deg,
+          transparent,
+          transparent 44px,
+          rgba(255, 255, 255, 0.018) 44px,
+          rgba(255, 255, 255, 0.018) 45px
+        );
+        animation: bgScroll 25s linear infinite;
+      }
+      @keyframes bgScroll {
+        to {
+          transform: translateY(45px);
+        }
+      }
+      nav {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        background: rgba(15, 15, 26, 0.9);
+        backdrop-filter: blur(24px);
+        border-bottom: 1px solid var(--border-glass);
+        z-index: 1000;
+        padding: 0 20px;
+      }
+      .nav-inner {
+        max-width: 1100px;
+        margin: 0 auto;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        height: 62px;
+      }
+      .logo {
+        font-size: 1.05rem;
+        font-weight: 800;
+        background: linear-gradient(135deg, var(--accent), var(--accent-blue));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        cursor: pointer;
+        user-select: none;
+      }
+      .nav-links {
+        display: flex;
+        gap: 2px;
+        list-style: none;
+      }
+      .nav-links a {
+        color: var(--text-secondary);
+        text-decoration: none;
+        padding: 8px 14px;
+        border-radius: 9px;
+        transition: all 0.25s;
+        font-size: 0.85rem;
+        font-weight: 500;
+        cursor: pointer;
+        border: none;
+        background: transparent;
+        display: block;
+      }
+      .nav-links a:hover {
+        color: var(--text-primary);
+        background: var(--bg-glass);
+      }
+      .nav-links a.active {
+        background: var(--accent-dim);
+        color: var(--accent);
+      }
+      .hamburger {
+        display: none;
+        background: none;
+        border: 1px solid var(--border-glass);
+        color: var(--text-primary);
+        font-size: 1.3rem;
+        cursor: pointer;
+        padding: 8px 12px;
+        border-radius: 9px;
+        transition: all 0.2s;
+      }
+      .hamburger:hover {
+        background: var(--bg-glass);
+      }
+      .mob-nav {
+        display: none;
+        position: fixed;
+        top: 62px;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(10, 10, 20, 0.97);
+        backdrop-filter: blur(24px);
+        z-index: 999;
+        padding: 24px 20px;
+        overflow-y: auto;
+        flex-direction: column;
+        gap: 6px;
+      }
+      .mob-nav.open {
+        display: flex;
+      }
+      .mob-nav a {
+        color: var(--text-secondary);
+        text-decoration: none;
+        padding: 16px 20px;
+        border-radius: 14px;
+        font-size: 1.05rem;
+        font-weight: 500;
+        transition: all 0.2s;
+        border: 1px solid transparent;
+      }
+      .mob-nav a.active {
+        background: var(--accent-dim);
+        color: var(--accent);
+        border-color: rgba(245, 158, 11, 0.25);
+      }
+      .mob-nav a:hover {
+        background: var(--bg-glass);
+        color: var(--text-primary);
+      }
+      section {
+        display: none;
+        padding: 80px 20px 48px;
+        max-width: 1000px;
+        margin: 0 auto;
+      }
+      section.active {
+        display: block;
+        animation: fadeUp 0.35s ease;
+      }
+      @keyframes fadeUp {
+        from {
+          opacity: 0;
+          transform: translateY(14px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      .card {
+        background: var(--bg-card);
+        backdrop-filter: blur(20px);
+        border: 1px solid var(--border-glass);
+        border-radius: 18px;
+        padding: 22px;
+        margin-bottom: 18px;
+      }
+      .card-title {
+        font-size: 1.25rem;
+        font-weight: 700;
+        margin-bottom: 16px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .card-title .icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 11px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.2rem;
+        flex-shrink: 0;
+      }
+      .hero {
+        text-align: center;
+        padding: 110px 20px 64px;
+      }
+      .hero h1 {
+        font-size: clamp(1.9rem, 5vw, 3rem);
+        font-weight: 800;
+        margin-bottom: 18px;
+        background: linear-gradient(
+          135deg,
+          var(--accent),
+          var(--accent-blue),
+          var(--accent-warm)
+        );
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        line-height: 1.15;
+      }
+      .hero p {
+        font-size: 1.05rem;
+        color: var(--text-secondary);
+        max-width: 600px;
+        margin: 0 auto 36px;
+        line-height: 1.7;
+      }
+      .hero-btns {
+        display: flex;
+        gap: 14px;
+        justify-content: center;
+        flex-wrap: wrap;
+      }
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        padding: 13px 28px;
+        border-radius: 11px;
+        border: none;
+        font-size: 0.95rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.25s;
+        min-height: 46px;
+      }
+      .btn-primary {
+        background: linear-gradient(135deg, var(--accent), var(--accent-blue));
+        color: #000;
+      }
+      .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 28px rgba(245, 158, 11, 0.35);
+      }
+      .btn-secondary {
+        background: var(--bg-glass);
+        color: var(--text-primary);
+        border: 1px solid var(--border-glass);
+      }
+      .btn-secondary:hover {
+        background: var(--bg-card);
+      }
+      .btn:disabled {
+        opacity: 0.45;
+        cursor: not-allowed;
+        transform: none !important;
+      }
+      .feat-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+        gap: 14px;
+      }
+      .feat-card {
+        background: var(--bg-glass);
+        border: 1px solid var(--border-glass);
+        border-radius: 14px;
+        padding: 18px 14px;
+        text-align: center;
+      }
+      .feat-card .fi {
+        font-size: 2rem;
+        margin-bottom: 8px;
+      }
+      .feat-card h3 {
+        font-size: 0.9rem;
+        font-weight: 700;
+        margin-bottom: 4px;
+      }
+      .feat-card p {
+        color: var(--text-secondary);
+        font-size: 0.78rem;
+      }
+      .slide-wrap {
+        background: var(--bg-glass);
+        border: 1px solid var(--border-glass);
+        border-radius: 16px;
+        padding: 18px;
+      }
+      .slide-meta {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 12px;
+      }
+      .slide-meta span {
+        font-size: 0.85rem;
+        color: var(--text-secondary);
+      }
+      .slide-dots {
+        display: flex;
+        gap: 5px;
+        flex-wrap: wrap;
+      }
+      .slide-dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background: var(--border-glass);
+        cursor: pointer;
+        transition: all 0.2s;
+        flex-shrink: 0;
+      }
+      .slide-dot.active {
+        background: var(--accent);
+        transform: scale(1.2);
+      }
+      .slide-track {
+        min-height: 220px;
+      }
+      .slide {
+        display: none;
+        padding: 14px 4px;
+        animation: slideIn 0.3s ease;
+      }
+      .slide.active {
+        display: block;
+      }
+      @keyframes slideIn {
+        from {
+          opacity: 0;
+          transform: translateX(12px);
+        }
+        to {
+          opacity: 1;
+          transform: translateX(0);
+        }
+      }
+      .slide h3 {
+        font-size: 1.15rem;
+        color: var(--accent);
+        margin-bottom: 16px;
+        font-weight: 700;
+      }
+      .slide p {
+        color: var(--text-secondary);
+        line-height: 1.8;
+        margin-bottom: 10px;
+        font-size: 0.93rem;
+      }
+      .slide-nav {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 16px;
+        gap: 10px;
+      }
+      .def-box {
+        background: rgba(245, 158, 11, 0.08);
+        border-left: 4px solid var(--accent);
+        border-radius: 0 12px 12px 0;
+        padding: 14px 16px;
+        margin: 12px 0;
+        font-size: 0.92rem;
+        color: var(--text-secondary);
+        line-height: 1.7;
+      }
+      .def-box strong {
+        color: var(--text-primary);
+      }
+      .info-box {
+        background: rgba(77, 171, 247, 0.08);
+        border-left: 4px solid var(--accent-blue);
+        border-radius: 0 12px 12px 0;
+        padding: 14px 16px;
+        margin: 12px 0;
+        font-size: 0.9rem;
+        color: var(--text-secondary);
+        line-height: 1.7;
+      }
+      .warn-box {
+        background: rgba(252, 196, 25, 0.08);
+        border-left: 4px solid var(--warning);
+        border-radius: 0 12px 12px 0;
+        padding: 12px 16px;
+        margin: 12px 0;
+        font-size: 0.88rem;
+        color: var(--text-secondary);
+        line-height: 1.65;
+      }
+      .warn-box strong {
+        color: var(--warning);
+      }
+      .formula-box {
+        background: var(--bg-glass);
+        border: 1px solid var(--border-glass);
+        border-radius: 12px;
+        padding: 16px;
+        margin: 14px 0;
+        text-align: center;
+        overflow-x: auto;
+        font-size: 0.95rem;
+        line-height: 1.8;
+      }
+      .rule-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 7px;
+        margin: 12px 0;
+      }
+      .rule-item {
+        background: var(--bg-glass);
+        border: 1px solid var(--border-glass);
+        border-radius: 9px;
+        padding: 9px 13px;
+        font-size: 0.84rem;
+        color: var(--text-secondary);
+        line-height: 1.6;
+      }
+      .rule-item strong {
+        color: var(--text-primary);
+      }
+      .type-tag {
+        display: inline-block;
+        font-size: 0.7rem;
+        font-weight: 700;
+        padding: 2px 8px;
+        border-radius: 10px;
+        margin: 2px 3px 2px 0;
+      }
+      .tag-proper {
+        background: rgba(81, 207, 102, 0.15);
+        color: var(--success);
+      }
+      .tag-improper {
+        background: rgba(255, 107, 107, 0.15);
+        color: var(--error);
+      }
+      .tag-mixed {
+        background: rgba(245, 158, 11, 0.15);
+        color: var(--accent);
+      }
+      .tag-decimal {
+        background: rgba(77, 171, 247, 0.15);
+        color: var(--accent-blue);
+      }
+      .frac-visual {
+        display: flex;
+        justify-content: center;
+        gap: 3px;
+        margin: 10px 0;
+        flex-wrap: wrap;
+      }
+      .frac-block {
+        display: inline-block;
+        width: 34px;
+        height: 34px;
+        border: 2px solid var(--border-glass);
+        border-radius: 4px;
+      }
+      .frac-block.filled {
+        background: var(--accent);
+        opacity: 0.75;
+      }
+      .problem-card {
+        background: var(--bg-card);
+        border: 1px solid var(--border-glass);
+        border-radius: 16px;
+        padding: 24px;
+        margin-bottom: 18px;
+      }
+      .problem-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 14px;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+      .problem-num {
+        background: var(--accent-dim);
+        color: var(--accent);
+        padding: 4px 14px;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: 700;
+      }
+      .problem-topic {
+        color: var(--text-secondary);
+        font-size: 0.8rem;
+      }
+      .problem-text {
+        font-size: 0.97rem;
+        margin-bottom: 16px;
+        line-height: 1.8;
+        color: var(--text-primary);
+      }
+      .sol-btn {
+        background: var(--accent-dim);
+        color: var(--accent);
+        border: 1px solid rgba(245, 158, 11, 0.4);
+        padding: 9px 20px;
+        border-radius: 9px;
+        cursor: pointer;
+        font-weight: 600;
+        transition: all 0.25s;
+        font-size: 0.88rem;
+        min-height: 40px;
+      }
+      .sol-btn:hover {
+        background: var(--accent);
+        color: #000;
+      }
+      .solution {
+        display: none;
+        margin-top: 16px;
+        padding: 16px 18px;
+        background: rgba(245, 158, 11, 0.05);
+        border-left: 3px solid var(--accent);
+        border-radius: 0 12px 12px 0;
+      }
+      .solution.open {
+        display: block;
+        animation: fadeDn 0.3s ease;
+      }
+      @keyframes fadeDn {
+        from {
+          opacity: 0;
+        }
+        to {
+          opacity: 1;
+        }
+      }
+      .solution p {
+        margin-bottom: 8px;
+        color: var(--text-secondary);
+        font-size: 0.9rem;
+        line-height: 1.7;
+      }
+      .solution strong {
+        color: var(--accent);
+      }
+      .quiz-wrap {
+        background: var(--bg-card);
+        border: 1px solid var(--border-glass);
+        border-radius: 18px;
+        padding: 28px;
+      }
+      .quiz-progress {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 22px;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+      .prog-bar {
+        flex: 1;
+        height: 7px;
+        background: var(--bg-glass);
+        border-radius: 4px;
+        margin: 0 14px;
+        overflow: hidden;
+        min-width: 80px;
+      }
+      .prog-fill {
+        height: 100%;
+        background: linear-gradient(90deg, var(--accent), var(--accent-blue));
+        border-radius: 4px;
+        transition: width 0.5s ease;
+      }
+      .quiz-q {
+        font-size: 1.05rem;
+        margin-bottom: 22px;
+        padding: 18px;
+        background: var(--bg-glass);
+        border-radius: 12px;
+        border-left: 4px solid var(--accent);
+        line-height: 1.75;
+      }
+      .quiz-opts {
+        display: grid;
+        gap: 10px;
+      }
+      .opt {
+        background: var(--bg-glass);
+        border: 2px solid var(--border-glass);
+        border-radius: 12px;
+        padding: 14px 18px;
+        cursor: pointer;
+        transition: all 0.25s;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        font-size: 0.9rem;
+        min-height: 52px;
+      }
+      .opt:hover {
+        border-color: var(--accent);
+        background: var(--accent-dim);
+      }
+      .opt.correct {
+        border-color: var(--success);
+        background: rgba(81, 207, 102, 0.15);
+      }
+      .opt.wrong {
+        border-color: var(--error);
+        background: rgba(255, 107, 107, 0.15);
+      }
+      .opt.disabled {
+        pointer-events: none;
+        opacity: 0.65;
+      }
+      .opt-ltr {
+        width: 32px;
+        height: 32px;
+        border-radius: 8px;
+        background: var(--bg-card);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        flex-shrink: 0;
+        font-size: 0.85rem;
+      }
+      .quiz-nav-row {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 20px;
+        gap: 10px;
+      }
+      .expl-box {
+        display: none;
+        margin-top: 16px;
+        padding: 14px 16px;
+        border-radius: 11px;
+        border-left: 4px solid;
+        font-size: 0.88rem;
+        color: var(--text-secondary);
+        line-height: 1.65;
+      }
+      .results-wrap {
+        text-align: center;
+        padding: 32px 16px;
+      }
+      .score-ring {
+        width: 172px;
+        height: 172px;
+        border-radius: 50%;
+        background: conic-gradient(
+          var(--accent) calc(var(--score) * 3.6deg),
+          var(--bg-glass) 0
+        );
+        margin: 0 auto 24px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+      }
+      .score-ring::before {
+        content: "";
+        position: absolute;
+        width: 144px;
+        height: 144px;
+        background: var(--bg-dark);
+        border-radius: 50%;
+      }
+      .score-val {
+        position: relative;
+        font-size: 2.4rem;
+        font-weight: 800;
+        color: var(--accent);
+      }
+      .score-msg {
+        font-size: 1.3rem;
+        font-weight: 700;
+        margin-bottom: 24px;
+      }
+      .breakdown {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 12px;
+        max-width: 420px;
+        margin: 0 auto 24px;
+      }
+      .breakdown-item {
+        background: var(--bg-glass);
+        padding: 14px;
+        border-radius: 10px;
+      }
+      .breakdown-val {
+        font-size: 1.35rem;
+        font-weight: 700;
+        color: var(--accent);
+      }
+      .breakdown-lbl {
+        font-size: 0.78rem;
+        color: var(--text-secondary);
+      }
+      .vik-timer {
+        font-size: 2.2rem;
+        font-weight: 900;
+        transition: color 0.3s;
+      }
+      @media (max-width: 768px) {
+        .hamburger {
+          display: block;
+        }
+        .nav-links {
+          display: none;
+        }
+        section {
+          padding: 72px 14px 40px;
+        }
+        .hero {
+          padding: 90px 14px 52px;
+        }
+        .rule-grid {
+          grid-template-columns: 1fr;
+        }
+        .feat-grid {
+          grid-template-columns: repeat(2, 1fr);
+        }
+        .quiz-wrap {
+          padding: 18px;
+        }
+      }
+      @media (max-width: 480px) {
+        .slide-wrap {
+          padding: 14px;
+        }
+        .quiz-q {
+          font-size: 0.95rem;
+          padding: 14px;
+        }
+        .opt {
+          font-size: 0.85rem;
+          padding: 12px 14px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="bg"></div>
 
-<nav>
-  <div class="nav-inner">
-    <span class="logo" onclick="showSection('home')">½ Mövzu 3 — Adi və Onluq Kəsirlər</span>
-    <ul class="nav-links">
-      <li><a class="active" data-sec="home">Ana səhifə</a></li>
-      <li><a data-sec="theory">Nəzəriyyə</a></li>
-      <li><a data-sec="examples">Misallar</a></li>
-      <li><a data-sec="assessment">Qiymətləndirmə</a></li>
-    </ul>
-    <button class="hamburger" id="ham" onclick="toggleMobNav()" aria-label="Menyu">☰</button>
-  </div>
-</nav>
+    <nav>
+      <div class="nav-inner">
+        <span class="logo" onclick="showSection('home')"
+          >½ Mövzu 3 — Adi və Onluq Kəsirlər</span
+        >
+        <ul class="nav-links">
+          <li><a class="active" data-sec="home">Ana səhifə</a></li>
+          <li><a data-sec="theory">Nəzəriyyə</a></li>
+          <li><a data-sec="examples">Misallar</a></li>
+          <li><a data-sec="assessment">Qiymətləndirmə</a></li>
+        </ul>
+        <button
+          class="hamburger"
+          id="ham"
+          onclick="toggleMobNav()"
+          aria-label="Menyu"
+        >
+          ☰
+        </button>
+      </div>
+    </nav>
 
-<div class="mob-nav" id="mob-nav">
-  <a data-sec="home">🏠 Ana səhifə</a>
-  <a data-sec="theory">📖 Nəzəriyyə</a>
-  <a data-sec="examples">✏️ Misallar</a>
-  <a data-sec="assessment">📋 Qiymətləndirmə</a>
-</div>
+    <div class="mob-nav" id="mob-nav">
+      <a data-sec="home">🏠 Ana səhifə</a>
+      <a data-sec="theory">📖 Nəzəriyyə</a>
+      <a data-sec="examples">✏️ Misallar</a>
+      <a data-sec="assessment">📋 Qiymətləndirmə</a>
+    </div>
 
-<!-- HOME -->
-<section id="home" class="active">
-  <div class="hero">
-    <h1>Adi və Onluq Kəsirlər</h1>
-    <p>DR.Math · I Hissə · §1–§9. Kəsir növləri · Sadələşdirmə · Əməliyyatlar · Onluq kəsirlər · Dövri kəsirlər · Söz məsələləri</p>
-    <div class="hero-btns">
-      <button class="btn btn-primary" onclick="showSection('theory')">📖 Dərsi Başla</button>
-      <button class="btn btn-secondary" onclick="showSection('assessment')">🔍 Bilikləri Yoxla</button>
-    </div>
-  </div>
-  <div class="card">
-    <div class="card-title"><span class="icon" style="background:var(--accent-dim)">🎯</span>Bu mövzuda öyrənəcəksiniz</div>
-    <div class="feat-grid">
-      <div class="feat-card"><div class="fi">½</div><h3 style="color:var(--accent)">Kəsir növləri</h3><p>Düzgün, düzgün olmayan, qarışıq</p></div>
-      <div class="feat-card"><div class="fi">✂️</div><h3 style="color:var(--accent-blue)">Sadələşdirmə</h3><p>ƏBOB ilə ixtisara vermə</p></div>
-      <div class="feat-card"><div class="fi">➕</div><h3 style="color:var(--accent-warm)">Əməliyyatlar</h3><p>Toplama, çıxma, vurma, bölmə</p></div>
-      <div class="feat-card"><div class="fi">0.5</div><h3 style="color:var(--warning)">Onluq kəsirlər</h3><p>Çevrilmə, dövri kəsirlər</p></div>
-      <div class="feat-card"><div class="fi">🎯</div><h3 style="color:var(--success)">Söz məsələləri</h3><p>DİM tipli kəsir məsələləri</p></div>
-    </div>
-  </div>
-</section>
-
-<!-- THEORY -->
-<section id="theory">
-  <div class="card">
-    <div class="card-title"><span class="icon" style="background:var(--accent-dim)">📖</span>Adi və Onluq Kəsirlər — §1–§9 (DR.Math I Hissə)</div>
-    <p style="color:var(--text-secondary);margin-bottom:16px;">Kəsirlər DİM-in hər bölməsindədir. Bütün qaydaları mənimsəyin.</p>
-    <div class="slide-wrap">
-      <div class="slide-meta">
-        <span>Bölmə <strong id="snum">1</strong> / <strong id="stotal">10</strong></span>
-        <div class="slide-dots" id="sdots"></div>
-      </div>
-      <div class="slide-track" id="strack"></div>
-      <div class="slide-nav">
-        <button class="btn btn-secondary" onclick="prevSlide()">← Əvvəlki</button>
-        <button class="btn btn-primary" onclick="nextSlide()" id="snext">Növbəti →</button>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- EXAMPLES -->
-<section id="examples">
-  <div class="card">
-    <div class="card-title"><span class="icon" style="background:var(--accent-blue-dim)">✏️</span>Həll edilmiş misallar</div>
-    <p style="color:var(--text-secondary);margin-bottom:20px;">DİM tipli məsələlər — addım-addım həll ilə.</p>
-  </div>
-  <div id="ex-wrap"></div>
-</section>
-
-<!-- ASSESSMENT -->
-<section id="assessment">
-  <div class="card">
-    <div class="card-title"><span class="icon" style="background:var(--accent-blue-dim)">📋</span>Qiymətləndirmə — 20 sual</div>
-    <p style="color:var(--text-secondary);margin-bottom:20px;">Diaqnostik test (izahatla) və ya sürət viktorinası seçin.</p>
-    <div class="feat-grid" style="grid-template-columns:repeat(auto-fit,minmax(220px,1fr));">
-      <div class="feat-card" style="padding:24px;cursor:default;">
-        <div class="fi">🔍</div>
-        <h3 style="color:var(--accent);margin-bottom:8px;">Diaqnostik Test</h3>
-        <p style="margin-bottom:16px;">20 sual · hər sualdan sonra izahat</p>
-        <button class="btn btn-primary" onclick="startDiag()" style="width:100%">Testi Başla</button>
-      </div>
-      <div class="feat-card" style="padding:24px;cursor:default;">
-        <div class="fi">⚡</div>
-        <h3 style="color:var(--accent-blue);margin-bottom:8px;">Sürət Viktorinası</h3>
-        <p style="margin-bottom:16px;">20 sual · sual başına 30 saniyə</p>
-        <button class="btn btn-primary" onclick="startViktorina()" style="width:100%;background:linear-gradient(135deg,var(--accent-blue),#7c3aed)">Başla ⚡</button>
-      </div>
-    </div>
-  </div>
-  <div id="diag-ui" style="display:none;">
-    <div class="quiz-wrap">
-      <div class="quiz-progress">
-        <span style="font-size:.87rem;white-space:nowrap;">Sual <strong id="dq-n">1</strong>/<strong id="dq-tot">20</strong></span>
-        <div class="prog-bar"><div class="prog-fill" id="dq-bar" style="width:0%"></div></div>
-        <span id="dq-score" style="font-size:.87rem;color:var(--success);font-weight:700;white-space:nowrap;">0 ✓</span>
-      </div>
-      <div class="quiz-q" id="dq-q"></div>
-      <div class="quiz-opts" id="dq-opts"></div>
-      <div class="expl-box" id="dq-expl"></div>
-      <div class="quiz-nav-row">
-        <button class="btn btn-secondary" onclick="prevDiag()" id="dq-prev" disabled>← Geri</button>
-        <button class="btn btn-primary" onclick="nextDiag()" id="dq-next" disabled>İrəli →</button>
-      </div>
-    </div>
-  </div>
-  <div id="vik-ui" style="display:none;">
-    <div class="quiz-wrap">
-      <div style="text-align:center;margin-bottom:16px;">
-        <div class="vik-timer" id="vik-timer">30</div>
-        <div style="display:flex;gap:4px;margin-top:10px;" id="vik-dots"></div>
-      </div>
-      <div style="display:inline-block;background:var(--accent-dim);color:var(--accent);border-radius:20px;padding:3px 12px;font-size:.72rem;font-weight:700;margin-bottom:12px;" id="vik-tag"></div>
-      <div class="quiz-q" id="vik-q"></div>
-      <div class="quiz-opts" id="vik-opts"></div>
-    </div>
-  </div>
-  <div id="res-ui" style="display:none;">
-    <div class="quiz-wrap">
-      <div class="results-wrap">
-        <div style="font-size:.9rem;color:var(--text-secondary);margin-bottom:10px;">Nəticəniz</div>
-        <div class="score-ring" id="res-ring"><div class="score-val" id="res-pct">0%</div></div>
-        <div class="score-msg" id="res-msg"></div>
-        <div class="breakdown">
-          <div class="breakdown-item"><div class="breakdown-val" id="res-ok">0</div><div class="breakdown-lbl">Düzgün</div></div>
-          <div class="breakdown-item"><div class="breakdown-val" id="res-no">0</div><div class="breakdown-lbl">Səhv</div></div>
-          <div class="breakdown-item"><div class="breakdown-val" id="res-lvl">—</div><div class="breakdown-lbl">Səviyyə</div></div>
+    <!-- HOME -->
+    <section id="home" class="active">
+      <div class="hero">
+        <h1>Adi və Onluq Kəsirlər</h1>
+        <p>
+          DR.Math · I Hissə · §1–§9. Kəsir növləri · Sadələşdirmə · Əməliyyatlar
+          · Onluq kəsirlər · Dövri kəsirlər · Söz məsələləri
+        </p>
+        <div class="hero-btns">
+          <button class="btn btn-primary" onclick="showSection('theory')">
+            📖 Dərsi Başla
+          </button>
+          <button class="btn btn-secondary" onclick="showSection('assessment')">
+            🔍 Bilikləri Yoxla
+          </button>
         </div>
-        <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
-          <button class="btn btn-primary" onclick="resetAssessment()">Yenidən cəhd et</button>
-          <button class="btn btn-secondary" onclick="showSection('theory')">Nəzəriyyəyə qayıt</button>
+      </div>
+      <div class="card">
+        <div class="card-title">
+          <span class="icon" style="background: var(--accent-dim)">🎯</span>Bu
+          mövzuda öyrənəcəksiniz
+        </div>
+        <div class="feat-grid">
+          <div class="feat-card">
+            <div class="fi">½</div>
+            <h3 style="color: var(--accent)">Kəsir növləri</h3>
+            <p>Düzgün, düzgün olmayan, qarışıq</p>
+          </div>
+          <div class="feat-card">
+            <div class="fi">✂️</div>
+            <h3 style="color: var(--accent-blue)">Sadələşdirmə</h3>
+            <p>ƏBOB ilə ixtisara vermə</p>
+          </div>
+          <div class="feat-card">
+            <div class="fi">➕</div>
+            <h3 style="color: var(--accent-warm)">Əməliyyatlar</h3>
+            <p>Toplama, çıxma, vurma, bölmə</p>
+          </div>
+          <div class="feat-card">
+            <div class="fi">0.5</div>
+            <h3 style="color: var(--warning)">Onluq kəsirlər</h3>
+            <p>Çevrilmə, dövri kəsirlər</p>
+          </div>
+          <div class="feat-card">
+            <div class="fi">🎯</div>
+            <h3 style="color: var(--success)">Söz məsələləri</h3>
+            <p>DİM tipli kəsir məsələləri</p>
+          </div>
         </div>
       </div>
-    </div>
-  </div>
-</section>
+    </section>
 
-<script>
-function showSection(id){
-  document.querySelectorAll('section').forEach(s=>s.classList.remove('active'));
-  document.querySelectorAll('[data-sec]').forEach(a=>a.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
-  document.querySelectorAll(`[data-sec="${id}"]`).forEach(a=>a.classList.add('active'));
-  if(id==='examples') renderExamples();
-  if(id==='assessment') resetAssessment();
-  document.getElementById('mob-nav').classList.remove('open');
-  window.scrollTo(0,0);
-  setTimeout(()=>{if(window.renderMathInElement) renderMathInElement(document.getElementById(id),{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}]});},100);
-}
-document.querySelectorAll('[data-sec]').forEach(a=>a.addEventListener('click',e=>{e.preventDefault();showSection(a.dataset.sec);}));
-function toggleMobNav(){document.getElementById('mob-nav').classList.toggle('open');}
-document.addEventListener('click',e=>{
-  const mn=document.getElementById('mob-nav');
-  if(!mn.contains(e.target)&&e.target.id!=='ham') mn.classList.remove('open');
-});
+    <!-- THEORY -->
+    <section id="theory">
+      <div class="card">
+        <div class="card-title">
+          <span class="icon" style="background: var(--accent-dim)">📖</span>Adi
+          və Onluq Kəsirlər — §1–§9 (DR.Math I Hissə)
+        </div>
+        <p style="color: var(--text-secondary); margin-bottom: 16px">
+          Kəsirlər DİM-in hər bölməsindədir. Bütün qaydaları mənimsəyin.
+        </p>
+        <div class="slide-wrap">
+          <div class="slide-meta">
+            <span
+              >Bölmə <strong id="snum">1</strong> /
+              <strong id="stotal">10</strong></span
+            >
+            <div class="slide-dots" id="sdots"></div>
+          </div>
+          <div class="slide-track" id="strack"></div>
+          <div class="slide-nav">
+            <button class="btn btn-secondary" onclick="prevSlide()">
+              ← Əvvəlki
+            </button>
+            <button class="btn btn-primary" onclick="nextSlide()" id="snext">
+              Növbəti →
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
 
-/* ══════════════════════════════════════════════════════════
+    <!-- EXAMPLES -->
+    <section id="examples">
+      <div class="card">
+        <div class="card-title">
+          <span class="icon" style="background: var(--accent-blue-dim)">✏️</span
+          >Həll edilmiş misallar
+        </div>
+        <p style="color: var(--text-secondary); margin-bottom: 20px">
+          DİM tipli məsələlər — addım-addım həll ilə.
+        </p>
+      </div>
+      <div id="ex-wrap"></div>
+    </section>
+
+    <!-- ASSESSMENT -->
+    <section id="assessment">
+      <div class="card">
+        <div class="card-title">
+          <span class="icon" style="background: var(--accent-blue-dim)">📋</span
+          >Qiymətləndirmə — 20 sual
+        </div>
+        <p style="color: var(--text-secondary); margin-bottom: 20px">
+          Diaqnostik test (izahatla) və ya sürət viktorinası seçin.
+        </p>
+        <div
+          class="feat-grid"
+          style="grid-template-columns: repeat(auto-fit, minmax(220px, 1fr))"
+        >
+          <div class="feat-card" style="padding: 24px; cursor: default">
+            <div class="fi">🔍</div>
+            <h3 style="color: var(--accent); margin-bottom: 8px">
+              Diaqnostik Test
+            </h3>
+            <p style="margin-bottom: 16px">
+              20 sual · hər sualdan sonra izahat
+            </p>
+            <button
+              class="btn btn-primary"
+              onclick="startDiag()"
+              style="width: 100%"
+            >
+              Testi Başla
+            </button>
+          </div>
+          <div class="feat-card" style="padding: 24px; cursor: default">
+            <div class="fi">⚡</div>
+            <h3 style="color: var(--accent-blue); margin-bottom: 8px">
+              Sürət Viktorinası
+            </h3>
+            <p style="margin-bottom: 16px">20 sual · sual başına 30 saniyə</p>
+            <button
+              class="btn btn-primary"
+              onclick="startViktorina()"
+              style="
+                width: 100%;
+                background: linear-gradient(
+                  135deg,
+                  var(--accent-blue),
+                  #7c3aed
+                );
+              "
+            >
+              Başla ⚡
+            </button>
+          </div>
+        </div>
+      </div>
+      <div id="diag-ui" style="display: none">
+        <div class="quiz-wrap">
+          <div class="quiz-progress">
+            <span style="font-size: 0.87rem; white-space: nowrap"
+              >Sual <strong id="dq-n">1</strong>/<strong id="dq-tot"
+                >20</strong
+              ></span
+            >
+            <div class="prog-bar">
+              <div class="prog-fill" id="dq-bar" style="width: 0%"></div>
+            </div>
+            <span
+              id="dq-score"
+              style="
+                font-size: 0.87rem;
+                color: var(--success);
+                font-weight: 700;
+                white-space: nowrap;
+              "
+              >0 ✓</span
+            >
+          </div>
+          <div class="quiz-q" id="dq-q"></div>
+          <div class="quiz-opts" id="dq-opts"></div>
+          <div class="expl-box" id="dq-expl"></div>
+          <div class="quiz-nav-row">
+            <button
+              class="btn btn-secondary"
+              onclick="prevDiag()"
+              id="dq-prev"
+              disabled
+            >
+              ← Geri
+            </button>
+            <button
+              class="btn btn-primary"
+              onclick="nextDiag()"
+              id="dq-next"
+              disabled
+            >
+              İrəli →
+            </button>
+          </div>
+        </div>
+      </div>
+      <div id="vik-ui" style="display: none">
+        <div class="quiz-wrap">
+          <div style="text-align: center; margin-bottom: 16px">
+            <div class="vik-timer" id="vik-timer">30</div>
+            <div
+              style="display: flex; gap: 4px; margin-top: 10px"
+              id="vik-dots"
+            ></div>
+          </div>
+          <div
+            style="
+              display: inline-block;
+              background: var(--accent-dim);
+              color: var(--accent);
+              border-radius: 20px;
+              padding: 3px 12px;
+              font-size: 0.72rem;
+              font-weight: 700;
+              margin-bottom: 12px;
+            "
+            id="vik-tag"
+          ></div>
+          <div class="quiz-q" id="vik-q"></div>
+          <div class="quiz-opts" id="vik-opts"></div>
+        </div>
+      </div>
+      <div id="res-ui" style="display: none">
+        <div class="quiz-wrap">
+          <div class="results-wrap">
+            <div
+              style="
+                font-size: 0.9rem;
+                color: var(--text-secondary);
+                margin-bottom: 10px;
+              "
+            >
+              Nəticəniz
+            </div>
+            <div class="score-ring" id="res-ring">
+              <div class="score-val" id="res-pct">0%</div>
+            </div>
+            <div class="score-msg" id="res-msg"></div>
+            <div class="breakdown">
+              <div class="breakdown-item">
+                <div class="breakdown-val" id="res-ok">0</div>
+                <div class="breakdown-lbl">Düzgün</div>
+              </div>
+              <div class="breakdown-item">
+                <div class="breakdown-val" id="res-no">0</div>
+                <div class="breakdown-lbl">Səhv</div>
+              </div>
+              <div class="breakdown-item">
+                <div class="breakdown-val" id="res-lvl">—</div>
+                <div class="breakdown-lbl">Səviyyə</div>
+              </div>
+            </div>
+            <div
+              style="
+                display: flex;
+                gap: 12px;
+                justify-content: center;
+                flex-wrap: wrap;
+              "
+            >
+              <button class="btn btn-primary" onclick="resetAssessment()">
+                Yenidən cəhd et
+              </button>
+              <button class="btn btn-secondary" onclick="showSection('theory')">
+                Nəzəriyyəyə qayıt
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <script>
+MathJax = {
+  tex: {
+    inlineMath: [['$', '$']],
+    displayMath: [['$$', '$$']],
+    processEscapes: true,
+    processEnvironments: true
+  },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre'] },
+  startup: {
+    typeset: false,
+    ready() {
+      MathJax.startup.defaultReady();
+      const trk = document.getElementById('strack');
+      if (trk) MathJax.typesetPromise([trk]).catch(console.error);
+    }
+  }
+};
+</script>
+    <script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+    <script>
+      function showSection(id) {
+        document
+          .querySelectorAll("section")
+          .forEach((s) => s.classList.remove("active"));
+        document
+          .querySelectorAll("[data-sec]")
+          .forEach((a) => a.classList.remove("active"));
+        document.getElementById(id).classList.add("active");
+        document
+          .querySelectorAll(`[data-sec="${id}"]`)
+          .forEach((a) => a.classList.add("active"));
+        if (id === "examples") renderExamples();
+        if (id === "assessment") resetAssessment();
+        document.getElementById("mob-nav").classList.remove("open");
+        window.scrollTo(0, 0);
+        setTimeout(() => {
+          if (window.MathJax) MathJax.typesetPromise([document.getElementById(id)]).catch(console.error);
+        }, 100);
+      }
+      document.querySelectorAll("[data-sec]").forEach((a) =>
+        a.addEventListener("click", (e) => {
+          e.preventDefault();
+          showSection(a.dataset.sec);
+        }),
+      );
+      function toggleMobNav() {
+        document.getElementById("mob-nav").classList.toggle("open");
+      }
+      document.addEventListener("click", (e) => {
+        const mn = document.getElementById("mob-nav");
+        if (!mn.contains(e.target) && e.target.id !== "ham")
+          mn.classList.remove("open");
+      });
+
+      /* ══════════════════════════════════════════════════════════
    SLIDES — Theory content (DR.Math I Hissə, Kəsirlər bölməsi)
    ══════════════════════════════════════════════════════════ */
-const slides=[
-  {
-    title:'§1. Kəsir anlayışı. Kəsir növləri',
-    html:`
+      const slides = [
+        {
+          title: "§1. Kəsir anlayışı. Kəsir növləri",
+          html: String.raw`
       <div class="def-box"><strong>Kəsir</strong> — bütövün hissəsini ifadə edən ədəd.
       Yazılış: $\dfrac{a}{b}$ — <em>surət</em> $a$ (neçə hissə götürülüb) və <em>məxrəc</em> $b$ (bütöv neçə bərabər hissəyə bölünüb). $b\neq0$.</div>
       <div class="frac-visual">
-        ${[...Array(8)].map((_,i)=>`<div class="frac-block${i<3?' filled':''}"></div>`).join('')}
+        ${[...Array(8)].map((_, i) => `<div class="frac-block${i < 3 ? " filled" : ""}"></div>`).join("")}
       </div>
       <p style="text-align:center;color:var(--text-secondary);font-size:.85rem;margin-top:4px;">8 hissədən 3-ü götürülüb → $\dfrac{3}{8}$</p>
       <p style="margin-top:14px;"><strong>Kəsir növləri:</strong></p>
@@ -347,11 +1159,11 @@ const slides=[
         <div class="rule-item"><span class="type-tag tag-mixed">Qarışıq ədəd</span> $q\dfrac{a}{b}=q+\dfrac{a}{b}$.<br>Nümunə: $2\dfrac{1}{3}=2+\dfrac{1}{3}=\dfrac{7}{3}$</div>
         <div class="rule-item"><span class="type-tag tag-decimal">Onluq kəsir</span> məxrəci $10^n$ olan kəsir.<br>Nümunə: $0.75=\dfrac{75}{100}=\dfrac{3}{4}$</div>
       </div>
-      <div class="formula-box"><strong>Kəsrin əsas xassəsi:</strong> $\dfrac{a}{b}=\dfrac{a\cdot k}{b\cdot k}=\dfrac{a\div k}{b\div k}$ (hər ikisini eyni ədədə vurub/böldükdə qiymət dəyişmir)</div>`
-  },
-  {
-    title:'§2. Sadələşdirmə. Ümumi məxrəcə gətirmə',
-    html:`
+      <div class="formula-box"><strong>Kəsrin əsas xassəsi:</strong> $\dfrac{a}{b}=\dfrac{a\cdot k}{b\cdot k}=\dfrac{a\div k}{b\div k}$ (hər ikisini eyni ədədə vurub/böldükdə qiymət dəyişmir)</div>`,
+        },
+        {
+          title: "§2. Sadələşdirmə. Ümumi məxrəcə gətirmə",
+          html: String.raw`
       <div class="def-box"><strong>Sadələşdirmə (ixtisara vermə):</strong> Surəti və məxrəci ƏBOB-larına böl.
       $$\dfrac{a}{b} = \dfrac{a\div d}{b\div d}, \quad d=\text{ƏBOB}(a,b)$$
       <strong>Tam sadə kəsir:</strong> ƏBOB(a,b)=1 olduqda daha sadələşdirilə bilmir.</div>
@@ -365,11 +1177,11 @@ const slides=[
         <div class="rule-item">$\dfrac{3}{4}=\dfrac{3\times3}{12}=\dfrac{9}{12}$</div>
         <div class="rule-item">$\dfrac{5}{6}=\dfrac{5\times2}{12}=\dfrac{10}{12}$</div>
       </div>
-      <div class="warn-box"><strong>Tez üsul:</strong> İki kəsri müqayisə edərkən çarpaz vurma: $\dfrac{a}{b}$ vs $\dfrac{c}{d}$ → $a\cdot d$ vs $b\cdot c$.</div>`
-  },
-  {
-    title:'§3. Qarışıq ədədlər. Çevrilmə',
-    html:`
+      <div class="warn-box"><strong>Tez üsul:</strong> İki kəsri müqayisə edərkən çarpaz vurma: $\dfrac{a}{b}$ vs $\dfrac{c}{d}$ → $a\cdot d$ vs $b\cdot c$.</div>`,
+        },
+        {
+          title: "§3. Qarışıq ədədlər. Çevrilmə",
+          html: String.raw`
       <div class="def-box"><strong>Qarışıq ədəd:</strong> $q\dfrac{a}{b}=q+\dfrac{a}{b}$ — tam hissə $q$ ($q\geq1$) və düzgün kəsir $\dfrac{a}{b}$ ($0<a<b$).</div>
       <p><strong>Düzgün olmayan kəsirdən qarışıq ədədə:</strong></p>
       <div class="formula-box">$\dfrac{a}{b}$: &nbsp; $a=b\cdot q+r$ (qalıqlı bölmə) &nbsp;→&nbsp; $q\dfrac{r}{b}$<br>
@@ -383,11 +1195,11 @@ const slides=[
         <div class="rule-item">$5\dfrac{3}{4}=\dfrac{23}{4}$</div>
         <div class="rule-item">$1\dfrac{7}{8}=\dfrac{15}{8}$</div>
       </div>
-      <div class="warn-box"><strong>Qeyd:</strong> Mənfi qarışıq ədəd: $-2\dfrac{3}{5}=-\dfrac{13}{5}$ (mənfi işarəsi bütün ədədə aiddir, yalnız tam hissəyə yox).</div>`
-  },
-  {
-    title:'§4. Kəsirlərin müqayisəsi',
-    html:`
+      <div class="warn-box"><strong>Qeyd:</strong> Mənfi qarışıq ədəd: $-2\dfrac{3}{5}=-\dfrac{13}{5}$ (mənfi işarəsi bütün ədədə aiddir, yalnız tam hissəyə yox).</div>`,
+        },
+        {
+          title: "§4. Kəsirlərin müqayisəsi",
+          html: String.raw`
       <p><strong>Eyni məxrəcli:</strong> Surəti böyük olan kəsir böyükdür.</p>
       <div class="formula-box">$\dfrac{a}{c}$ vs $\dfrac{b}{c}$: &nbsp; $a>b \Rightarrow \dfrac{a}{c}>\dfrac{b}{c}$</div>
       <p style="margin-top:12px;"><strong>Müxtəlif məxrəcli — çarpaz vurma üsulu:</strong></p>
@@ -400,11 +1212,11 @@ const slides=[
         <div class="rule-item">Onluğa çevir: $\dfrac{3}{7}\approx0.429$, $\dfrac{4}{9}\approx0.444$</div>
         <div class="rule-item">Ümumi məxrəcə gətir: ƏKOB(7,9)=63 → $\dfrac{27}{63}$ vs $\dfrac{28}{63}$</div>
       </div>
-      <div class="warn-box"><strong>DİM taktikası:</strong> Neçə kəsri sıralamaq lazım olduqda hamısını eyni məxrəcə gətirin.</div>`
-  },
-  {
-    title:'§5. Kəsirlərin toplanması və çıxılması',
-    html:`
+      <div class="warn-box"><strong>DİM taktikası:</strong> Neçə kəsri sıralamaq lazım olduqda hamısını eyni məxrəcə gətirin.</div>`,
+        },
+        {
+          title: "§5. Kəsirlərin toplanması və çıxılması",
+          html: String.raw`
       <div class="rule-grid">
         <div class="rule-item"><strong>Eyni məxrəcli:</strong><br>$\dfrac{a}{c}+\dfrac{b}{c}=\dfrac{a+b}{c}$<br>$\dfrac{a}{c}-\dfrac{b}{c}=\dfrac{a-b}{c}$</div>
         <div class="rule-item"><strong>Müxtəlif məxrəcli:</strong><br>Ümumi məxrəcə gətir, sonra topla/çıx.<br>Nəticəni sadələşdir!</div>
@@ -420,11 +1232,11 @@ const slides=[
         <div class="rule-item">$\dfrac{1}{n}-\dfrac{1}{n+1}=\dfrac{1}{n(n+1)}$ — teleskopik</div>
         <div class="rule-item">$\dfrac{1}{2}+\dfrac{1}{4}+\dfrac{1}{8}+\cdots=1$ — həndəsi sıra</div>
       </div>
-      <div class="warn-box"><strong>Qeyd:</strong> Toplama/çıxmadan sonra nəticəni sadələşdir: $\dfrac{4}{6}=\dfrac{2}{3}$. Bunu unutmaq DİM-də nöqtə itirir.</div>`
-  },
-  {
-    title:'§6. Kəsirlərin vurulması',
-    html:`
+      <div class="warn-box"><strong>Qeyd:</strong> Toplama/çıxmadan sonra nəticəni sadələşdir: $\dfrac{4}{6}=\dfrac{2}{3}$. Bunu unutmaq DİM-də nöqtə itirir.</div>`,
+        },
+        {
+          title: "§6. Kəsirlərin vurulması",
+          html: String.raw`
       <div class="def-box"><strong>Vurma qaydası:</strong> $\dfrac{a}{b}\times\dfrac{c}{d}=\dfrac{a\cdot c}{b\cdot d}$<br>
       <strong>Optimal üsul:</strong> Əvvəlcə çapraz ixtisara ver (surəti bir kəsirin məxrəcinə böl).</div>
       <div class="formula-box">$\dfrac{14}{15}\times\dfrac{10}{21}$<br>
@@ -438,11 +1250,11 @@ const slides=[
         <div class="rule-item">$\left(\dfrac{a}{b}\right)^n=\dfrac{a^n}{b^n}$ — qüvvətə yüksəltmə</div>
       </div>
       <div class="info-box"><strong>Qarışıq ədədlərin vurulması:</strong> Əvvəlcə düzgün olmayan kəsirə çevir.<br>
-      $2\dfrac{1}{3}\times1\dfrac{1}{2}=\dfrac{7}{3}\times\dfrac{3}{2}=\dfrac{7}{2}=3\dfrac{1}{2}$</div>`
-  },
-  {
-    title:'§7. Kəsirlərin bölünməsi. Qarşılıqlı kəsir',
-    html:`
+      $2\dfrac{1}{3}\times1\dfrac{1}{2}=\dfrac{7}{3}\times\dfrac{3}{2}=\dfrac{7}{2}=3\dfrac{1}{2}$</div>`,
+        },
+        {
+          title: "§7. Kəsirlərin bölünməsi. Qarşılıqlı kəsir",
+          html: String.raw`
       <div class="def-box"><strong>Bölmə qaydası:</strong> Bölürlərini onun <em>qarşılıqlı kəsirinə</em> vur.<br>
       $$\dfrac{a}{b}\div\dfrac{c}{d}=\dfrac{a}{b}\times\dfrac{d}{c}=\dfrac{ad}{bc}$$</div>
       <div class="def-box"><strong>Qarşılıqlı kəsir:</strong> $\dfrac{a}{b}$-nin qarşılıqlısı $\dfrac{b}{a}$ — hasili 1-dir.<br>
@@ -454,11 +1266,11 @@ const slides=[
         <div class="rule-item">$\dfrac{a/b}{c/d}=\dfrac{ad}{bc}$ — mürəkkəb kəsir</div>
         <div class="rule-item">$\dfrac{1}{1/n}=n$ — vahidin bölünməsi</div>
       </div>
-      <div class="warn-box"><strong>Yoxlama üsulu:</strong> $a\div b=c$ olarsa, $c\times b=a$ olmalıdır. Bölmə nəticəsini vurma ilə yoxlayın.</div>`
-  },
-  {
-    title:'§8. Onluq kəsirlər. Çevrilmə',
-    html:`
+      <div class="warn-box"><strong>Yoxlama üsulu:</strong> $a\div b=c$ olarsa, $c\times b=a$ olmalıdır. Bölmə nəticəsini vurma ilə yoxlayın.</div>`,
+        },
+        {
+          title: "§8. Onluq kəsirlər. Çevrilmə",
+          html: String.raw`
       <div class="def-box"><strong>Onluq kəsir:</strong> məxrəci $10^n$ olan kəsirin xüsusi yazılışı.<br>
       $0.75=\dfrac{75}{100}=\dfrac{3}{4}$ &nbsp;|&nbsp; $3.14=\dfrac{314}{100}=\dfrac{157}{50}$</div>
       <p><strong>Rəqəm mövqeləri:</strong></p>
@@ -474,11 +1286,11 @@ const slides=[
       <div class="formula-box">$0.125=\dfrac{125}{1000}=\dfrac{1}{8}$ &nbsp;|&nbsp; Rəqəm sayı qədər sıfır</div>
       <div class="def-box"><strong>Dövri kəsirdən adi kəsirə:</strong><br>
       $x=0.\overline{36}$ → $100x=36.\overline{36}$ → $99x=36$ → $x=\dfrac{36}{99}=\dfrac{4}{11}$<br>
-      <em>Dövrün rəqəm sayı qədər 10-la vur, fərq al.</em></div>`
-  },
-  {
-    title:'§8 (davam). Onluq kəsirlərlə əməliyyatlar',
-    html:`
+      <em>Dövrün rəqəm sayı qədər 10-la vur, fərq al.</em></div>`,
+        },
+        {
+          title: "§8 (davam). Onluq kəsirlərlə əməliyyatlar",
+          html: String.raw`
       <p><strong>Toplama/Çıxma:</strong> Onluq nöqtəsini hizalayıb sütun ilə hesabla.</p>
       <div class="rule-grid">
         <div class="rule-item">$3.14+2.7=3.14+2.70=5.84$</div>
@@ -496,11 +1308,11 @@ const slides=[
         <div class="rule-item">$\sqrt{2}\approx1.41$ &nbsp;|&nbsp; $\sqrt{3}\approx1.73$</div>
       </div>
       <div class="warn-box"><strong>10-la vurma/bölmə:</strong> 10-a vuranda nöqtəni sağa, bölündükdə sola sürüşdür.<br>
-      $3.14\times10=31.4$ &nbsp;|&nbsp; $3.14\div10=0.314$ &nbsp;|&nbsp; $3.14\times100=314$</div>`
-  },
-  {
-    title:'§9. Kəsirlərlə söz məsələləri. DİM taktikası',
-    html:`
+      $3.14\times10=31.4$ &nbsp;|&nbsp; $3.14\div10=0.314$ &nbsp;|&nbsp; $3.14\times100=314$</div>`,
+        },
+        {
+          title: "§9. Kəsirlərlə söz məsələləri. DİM taktikası",
+          html: String.raw`
       <p><strong>Əsas şablonlar:</strong></p>
       <div class="rule-grid">
         <div class="rule-item"><strong>"$x$-in $\dfrac{a}{b}$-si"</strong> → $x\times\dfrac{a}{b}$</div>
@@ -516,208 +1328,530 @@ const slides=[
       <div class="info-box"><strong>Nisbət məsələsi:</strong> İki ədədin nisbəti $a:b$, cəmləri $S$ olarsa:<br>
       Kiçik ədəd $=\dfrac{a}{a+b}\times S$, &nbsp; Böyük ədəd $=\dfrac{b}{a+b}\times S$<br>
       Nümunə: Nisbət 3:5, cəm 40 → kiçik $=\dfrac{3}{8}\times40=15$, böyük $=25$</div>
-      <div class="warn-box"><strong>DİM taktikası:</strong> Kəsirli məsələlərdə tam hissəni $1$ (bütöv) kimi götür. Hissələrin cəmi 1-dən böyük olmamalıdır.</div>`
-  }
-];
+      <div class="warn-box"><strong>DİM taktikası:</strong> Kəsirli məsələlərdə tam hissəni $1$ (bütöv) kimi götür. Hissələrin cəmi 1-dən böyük olmamalıdır.</div>`,
+        },
+      ];
 
-let sIdx=0;
-function renderSlides(){
-  const trk=document.getElementById('strack');
-  const dots=document.getElementById('sdots');
-  document.getElementById('snum').textContent=sIdx+1;
-  document.getElementById('stotal').textContent=slides.length;
-  trk.innerHTML='';dots.innerHTML='';
-  slides.forEach((s,i)=>{
-    const d=document.createElement('div');d.className='slide'+(i===sIdx?' active':'');
-    d.innerHTML=`<h3>📌 ${s.title}</h3>${s.html}`;trk.appendChild(d);
-    const dot=document.createElement('div');dot.className='slide-dot'+(i===sIdx?' active':'');
-    dot.onclick=()=>{sIdx=i;renderSlides();};dots.appendChild(dot);
-  });
-  document.getElementById('snext').textContent=sIdx===slides.length-1?'Misallara keç →':'Növbəti →';
-  if(window.renderMathInElement) renderMathInElement(trk,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}]});
-}
-function nextSlide(){if(sIdx<slides.length-1){sIdx++;renderSlides();}else showSection('examples');}
-function prevSlide(){if(sIdx>0){sIdx--;renderSlides();}}
-renderSlides();
+      let sIdx = 0;
+      function renderSlides() {
+        const trk = document.getElementById("strack");
+        const dots = document.getElementById("sdots");
+        document.getElementById("snum").textContent = sIdx + 1;
+        document.getElementById("stotal").textContent = slides.length;
+        trk.innerHTML = "";
+        dots.innerHTML = "";
+        slides.forEach((s, i) => {
+          const d = document.createElement("div");
+          d.className = "slide" + (i === sIdx ? " active" : "");
+          d.innerHTML = `<h3>📌 ${s.title}</h3>${s.html}`;
+          trk.appendChild(d);
+          const dot = document.createElement("div");
+          dot.className = "slide-dot" + (i === sIdx ? " active" : "");
+          dot.onclick = () => {
+            sIdx = i;
+            renderSlides();
+          };
+          dots.appendChild(dot);
+        });
+        document.getElementById("snext").textContent =
+          sIdx === slides.length - 1 ? "Misallara keç →" : "Növbəti →";
+        if (window.MathJax) MathJax.typesetPromise([trk]).catch(console.error);
+      }
+      function nextSlide() {
+        if (sIdx < slides.length - 1) {
+          sIdx++;
+          renderSlides();
+        } else showSection("examples");
+      }
+      function prevSlide() {
+        if (sIdx > 0) {
+          sIdx--;
+          renderSlides();
+        }
+      }
+      renderSlides();
 
-/* ════════ EXAMPLES ════════ */
-const EXAMPLES=[
-  {num:1,topic:'§2 Sadələşdirmə',title:'Kəsrin sadələşdirilməsi',
-   q:'$\\dfrac{48}{72}$ kəsrini tam sadə kəsirə çevirin.',
-   a:'<p>ƏBOB(48,72): $48=2^4\\cdot3$, $72=2^3\\cdot3^2$ → ƏBOB$=2^3\\cdot3=24$</p><p>$\\dfrac{48\\div24}{72\\div24}=\\dfrac{2}{3}$</p><p><strong style="color:var(--accent)">Cavab: $\\dfrac{2}{3}$</strong></p>'},
-  {num:2,topic:'§5 Toplama',title:'Müxtəlif məxrəcli kəsirlərin toplanması',
-   q:'$\\dfrac{3}{4}+\\dfrac{5}{6}$ — nəticəni qarışıq ədəd kimi yazın.',
-   a:'<p>ƏKOB(4,6)=12</p><p>$\\dfrac{3}{4}=\\dfrac{9}{12}$, &nbsp; $\\dfrac{5}{6}=\\dfrac{10}{12}$</p><p>$\\dfrac{9}{12}+\\dfrac{10}{12}=\\dfrac{19}{12}=\\mathbf{1\\dfrac{7}{12}}$</p>'},
-  {num:3,topic:'§6 Vurma',title:'Çapraz ixtisara vermə ilə vurma',
-   q:'$\\dfrac{14}{15}\\times\\dfrac{10}{21}$ hesablayın.',
-   a:'<p>$14$ və $21$-in ƏBOB=7: $14\\div7=2$, $21\\div7=3$</p><p>$15$ və $10$-un ƏBOB=5: $15\\div5=3$, $10\\div5=2$</p><p>$\\dfrac{2}{3}\\times\\dfrac{2}{3}=\\dfrac{4}{9}$</p><p><strong style="color:var(--accent)">Cavab: $\\dfrac{4}{9}$</strong></p>'},
-  {num:4,topic:'§7 Bölmə',title:'Qarışıq ədədlərin bölünməsi',
-   q:'$2\\dfrac{1}{3}\\div1\\dfrac{3}{4}$ hesablayın.',
-   a:'<p>$2\\dfrac{1}{3}=\\dfrac{7}{3}$, &nbsp; $1\\dfrac{3}{4}=\\dfrac{7}{4}$</p><p>$\\dfrac{7}{3}\\div\\dfrac{7}{4}=\\dfrac{7}{3}\\times\\dfrac{4}{7}=\\dfrac{4}{3}=\\mathbf{1\\dfrac{1}{3}}$</p>'},
-  {num:5,topic:'§8 Onluq kəsirlər',title:'Dövri kəsirdən adi kəsirə çevirmə',
-   q:'$0.\\overline{36}$ adi kəsrə çevirin.',
-   a:'<p>$x=0.363636\\ldots$</p><p>$100x=36.363636\\ldots$</p><p>$100x-x=36$ → $99x=36$ → $x=\\dfrac{36}{99}=\\dfrac{4}{11}$</p><p><strong style="color:var(--accent)">Cavab: $\\dfrac{4}{11}$</strong></p>'},
-  {num:6,topic:'§9 Söz məsələləri',title:'Kəsirli söz məsələsi',
-   q:'Bir ədədin $\\dfrac{3}{5}$-i 24-dür. Ədədin $\\dfrac{7}{8}$-si nəçədir?',
-   a:'<p>$x\\cdot\\dfrac{3}{5}=24 \\Rightarrow x=24\\cdot\\dfrac{5}{3}=40$</p><p>$40\\cdot\\dfrac{7}{8}=5\\cdot7=\\mathbf{35}$</p>'},
-];
+      /* ════════ EXAMPLES ════════ */
+      const EXAMPLES = [
+        {
+          num: 1,
+          topic: "§2 Sadələşdirmə",
+          title: "Kəsrin sadələşdirilməsi",
+          q: "$\\dfrac{48}{72}$ kəsrini tam sadə kəsirə çevirin.",
+          a: '<p>ƏBOB(48,72): $48=2^4\\cdot3$, $72=2^3\\cdot3^2$ → ƏBOB$=2^3\\cdot3=24$</p><p>$\\dfrac{48\\div24}{72\\div24}=\\dfrac{2}{3}$</p><p><strong style="color:var(--accent)">Cavab: $\\dfrac{2}{3}$</strong></p>',
+        },
+        {
+          num: 2,
+          topic: "§5 Toplama",
+          title: "Müxtəlif məxrəcli kəsirlərin toplanması",
+          q: "$\\dfrac{3}{4}+\\dfrac{5}{6}$ — nəticəni qarışıq ədəd kimi yazın.",
+          a: "<p>ƏKOB(4,6)=12</p><p>$\\dfrac{3}{4}=\\dfrac{9}{12}$, &nbsp; $\\dfrac{5}{6}=\\dfrac{10}{12}$</p><p>$\\dfrac{9}{12}+\\dfrac{10}{12}=\\dfrac{19}{12}=\\mathbf{1\\dfrac{7}{12}}$</p>",
+        },
+        {
+          num: 3,
+          topic: "§6 Vurma",
+          title: "Çapraz ixtisara vermə ilə vurma",
+          q: "$\\dfrac{14}{15}\\times\\dfrac{10}{21}$ hesablayın.",
+          a: '<p>$14$ və $21$-in ƏBOB=7: $14\\div7=2$, $21\\div7=3$</p><p>$15$ və $10$-un ƏBOB=5: $15\\div5=3$, $10\\div5=2$</p><p>$\\dfrac{2}{3}\\times\\dfrac{2}{3}=\\dfrac{4}{9}$</p><p><strong style="color:var(--accent)">Cavab: $\\dfrac{4}{9}$</strong></p>',
+        },
+        {
+          num: 4,
+          topic: "§7 Bölmə",
+          title: "Qarışıq ədədlərin bölünməsi",
+          q: "$2\\dfrac{1}{3}\\div1\\dfrac{3}{4}$ hesablayın.",
+          a: "<p>$2\\dfrac{1}{3}=\\dfrac{7}{3}$, &nbsp; $1\\dfrac{3}{4}=\\dfrac{7}{4}$</p><p>$\\dfrac{7}{3}\\div\\dfrac{7}{4}=\\dfrac{7}{3}\\times\\dfrac{4}{7}=\\dfrac{4}{3}=\\mathbf{1\\dfrac{1}{3}}$</p>",
+        },
+        {
+          num: 5,
+          topic: "§8 Onluq kəsirlər",
+          title: "Dövri kəsirdən adi kəsirə çevirmə",
+          q: "$0.\\overline{36}$ adi kəsrə çevirin.",
+          a: '<p>$x=0.363636\\ldots$</p><p>$100x=36.363636\\ldots$</p><p>$100x-x=36$ → $99x=36$ → $x=\\dfrac{36}{99}=\\dfrac{4}{11}$</p><p><strong style="color:var(--accent)">Cavab: $\\dfrac{4}{11}$</strong></p>',
+        },
+        {
+          num: 6,
+          topic: "§9 Söz məsələləri",
+          title: "Kəsirli söz məsələsi",
+          q: "Bir ədədin $\\dfrac{3}{5}$-i 24-dür. Ədədin $\\dfrac{7}{8}$-si nəçədir?",
+          a: "<p>$x\\cdot\\dfrac{3}{5}=24 \\Rightarrow x=24\\cdot\\dfrac{5}{3}=40$</p><p>$40\\cdot\\dfrac{7}{8}=5\\cdot7=\\mathbf{35}$</p>",
+        },
+      ];
 
-function renderExamples(){
-  const w=document.getElementById('ex-wrap');
-  if(w.dataset.done) return;w.dataset.done='1';
-  EXAMPLES.forEach(ex=>{
-    const d=document.createElement('div');d.className='problem-card';
-    d.innerHTML=`<div class="problem-header"><span class="problem-num">Misal ${ex.num}</span><span class="problem-topic">${ex.topic}</span></div>
+      function renderExamples() {
+        const w = document.getElementById("ex-wrap");
+        if (w.dataset.done) return;
+        w.dataset.done = "1";
+        EXAMPLES.forEach((ex) => {
+          const d = document.createElement("div");
+          d.className = "problem-card";
+          d.innerHTML = `<div class="problem-header"><span class="problem-num">Misal ${ex.num}</span><span class="problem-topic">${ex.topic}</span></div>
       <div class="problem-text"><strong>${ex.title}</strong><br><br>${ex.q}</div>
       <button class="sol-btn" onclick="toggleSol(this)">Həlli göstər ▼</button>
       <div class="solution">${ex.a}</div>`;
-    w.appendChild(d);
-  });
-  if(window.renderMathInElement) renderMathInElement(w,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}]});
-}
-function toggleSol(btn){const s=btn.nextElementSibling;s.classList.toggle('open');btn.textContent=s.classList.contains('open')?'Həlli gizlət ▲':'Həlli göstər ▼';}
+          w.appendChild(d);
+        });
+        if (window.MathJax) MathJax.typesetPromise([w]).catch(console.error);
+      }
+      function toggleSol(btn) {
+        const s = btn.nextElementSibling;
+        s.classList.toggle("open");
+        btn.textContent = s.classList.contains("open")
+          ? "Həlli gizlət ▲"
+          : "Həlli göstər ▼";
+      }
 
-/* ════════ QUESTIONS ════════ */
-const QS=[
-  {s:'§1',q:'$\\dfrac{7}{4}$ kəsri hansı növdəndir?',o:['Düzgün olmayan','Düzgün','Tam ədəd','Mənfi kəsir'],a:0,e:'7 > 4 olduğundan düzgün olmayan kəsirdir (qiyməti ≥ 1).'},
-  {s:'§2',q:'$\\dfrac{60}{84}$ kəsrini sadələşdirin.',o:['$\\dfrac{5}{7}$','$\\dfrac{6}{7}$','$\\dfrac{4}{7}$','$\\dfrac{3}{4}$'],a:0,e:'ƏBOB(60,84)=12. 60÷12=5, 84÷12=7 → 5/7.'},
-  {s:'§3',q:'$3\\dfrac{2}{5}$-ni düzgün olmayan kəsirə çevirin.',o:['$\\dfrac{17}{5}$','$\\dfrac{13}{5}$','$\\dfrac{16}{5}$','$\\dfrac{32}{5}$'],a:0,e:'3×5+2=17. Cavab: 17/5.'},
-  {s:'§3',q:'$\\dfrac{23}{6}$-nı qarışıq ədəd kimi yazın.',o:['$3\\dfrac{5}{6}$','$4\\dfrac{1}{6}$','$2\\dfrac{5}{6}$','$3\\dfrac{1}{6}$'],a:0,e:'23÷6=3 qalıq 5. Cavab: 3⅚.'},
-  {s:'§4',q:'$\\dfrac{5}{8}$ ilə $\\dfrac{7}{12}$-dən hansı böyükdür?',o:['$\\dfrac{5}{8}$','$\\dfrac{7}{12}$','Bərabərdir','Müəyyən edilmir'],a:0,e:'Çarpaz: 5×12=60, 8×7=56. 60>56 → 5/8 > 7/12.'},
-  {s:'§5',q:'$\\dfrac{2}{3}+\\dfrac{3}{4}=?$',o:['$\\dfrac{17}{12}$','$\\dfrac{5}{7}$','$\\dfrac{5}{12}$','$1\\dfrac{5}{12}$'],a:0,e:'ƏKOB(3,4)=12. 8/12+9/12=17/12.'},
-  {s:'§5',q:'$2\\dfrac{3}{4}-1\\dfrac{5}{6}=?$',o:['$\\dfrac{11}{12}$','$1\\dfrac{1}{12}$','$\\dfrac{5}{12}$','$\\dfrac{7}{12}$'],a:0,e:'11/4-11/6: ƏKOB=12. 33/12-22/12=11/12.'},
-  {s:'§6',q:'$\\dfrac{5}{6}\\times\\dfrac{9}{10}=?$',o:['$\\dfrac{3}{4}$','$\\dfrac{5}{9}$','$\\dfrac{4}{5}$','$\\dfrac{15}{16}$'],a:0,e:'5×9=45, 6×10=60. 45/60=3/4.'},
-  {s:'§7',q:'$\\dfrac{4}{5}\\div\\dfrac{8}{15}=?$',o:['$\\dfrac{3}{2}$','$\\dfrac{2}{3}$','$\\dfrac{32}{75}$','$\\dfrac{5}{6}$'],a:0,e:'4/5 × 15/8 = 60/40 = 3/2.'},
-  {s:'§7',q:'$1\\dfrac{1}{2}\\div2\\dfrac{1}{4}=?$',o:['$\\dfrac{2}{3}$','$\\dfrac{3}{2}$','$\\dfrac{4}{9}$','$1\\dfrac{1}{3}$'],a:0,e:'3/2 ÷ 9/4 = 3/2 × 4/9 = 12/18 = 2/3.'},
-  {s:'§8',q:'$0.625$ adi kəsir kimi nədir?',o:['$\\dfrac{5}{8}$','$\\dfrac{3}{5}$','$\\dfrac{6}{10}$','$\\dfrac{7}{8}$'],a:0,e:'625/1000. ƏBOB=125. 5/8.'},
-  {s:'§8',q:'$0.\\overline{3}$ adi kəsirə bərabərdir:',o:['$\\dfrac{1}{3}$','$\\dfrac{3}{10}$','$\\dfrac{1}{4}$','$\\dfrac{33}{100}$'],a:0,e:'x=0.333... → 10x=3.333... → 9x=3 → x=1/3.'},
-  {s:'§8',q:'$2.4\\times0.05=?$',o:['$0.12$','$1.2$','$0.012$','$12$'],a:0,e:'24×5=120. Toplam onluq yer=3. Cavab: 0.120=0.12.'},
-  {s:'§8',q:'$7.2\\div0.9=?$',o:['$8$','$0.8$','$80$','$0.08$'],a:0,e:'72÷9=8.'},
-  {s:'§8',q:'$\\dfrac{7}{16}$ onluq kəsir kimi:',o:['$0.4375$','$0.435$','$0.4315$','$0.475$'],a:0,e:'7÷16=0.4375.'},
-  {s:'§9',q:'Bir ədədin $\\dfrac{4}{7}$-si 36-dır. Ədəd nəçədir?',o:['$63$','$56$','$45$','$72$'],a:0,e:'x×4/7=36 → x=36×7/4=63.'},
-  {s:'§9',q:'Kitabın $\\dfrac{1}{3}$-i Bazartəsi, $\\dfrac{2}{5}$-i Çərşənbə oxundu. Nə qədəri qaldı?',o:['$\\dfrac{4}{15}$','$\\dfrac{11}{15}$','$\\dfrac{1}{5}$','$\\dfrac{2}{15}$'],a:0,e:'1/3+2/5=5/15+6/15=11/15. Qalan: 1-11/15=4/15.'},
-  {s:'§4',q:'Hansı kəsir ən böyükdür? $\\dfrac{3}{5},\\;\\dfrac{5}{8},\\;\\dfrac{7}{10}$',o:['$\\dfrac{7}{10}$','$\\dfrac{5}{8}$','$\\dfrac{3}{5}$','Hamısı bərabər'],a:0,e:'Ümumi məxrəc 40: 24/40, 25/40, 28/40. Ən böyük 28/40=7/10.'},
-  {s:'§6',q:'$\\left(\\dfrac{2}{3}\\right)^3=?$',o:['$\\dfrac{8}{27}$','$\\dfrac{6}{9}$','$\\dfrac{2}{9}$','$\\dfrac{4}{9}$'],a:0,e:'(2/3)³=2³/3³=8/27.'},
-  {s:'§9',q:'İki ədədin nisbəti $3:5$, cəmləri $40$-dır. Böyük ədəd nəçədir?',o:['$25$','$15$','$20$','$30$'],a:0,e:'3x+5x=40 → x=5. Böyük: 5×5=25.'},
-];
+      /* ════════ QUESTIONS ════════ */
+      const QS = [
+        {
+          s: "§1",
+          q: "$\\dfrac{7}{4}$ kəsri hansı növdəndir?",
+          o: ["Düzgün olmayan", "Düzgün", "Tam ədəd", "Mənfi kəsir"],
+          a: 0,
+          e: "7 > 4 olduğundan düzgün olmayan kəsirdir (qiyməti ≥ 1).",
+        },
+        {
+          s: "§2",
+          q: "$\\dfrac{60}{84}$ kəsrini sadələşdirin.",
+          o: [
+            "$\\dfrac{5}{7}$",
+            "$\\dfrac{6}{7}$",
+            "$\\dfrac{4}{7}$",
+            "$\\dfrac{3}{4}$",
+          ],
+          a: 0,
+          e: "ƏBOB(60,84)=12. 60÷12=5, 84÷12=7 → 5/7.",
+        },
+        {
+          s: "§3",
+          q: "$3\\dfrac{2}{5}$-ni düzgün olmayan kəsirə çevirin.",
+          o: [
+            "$\\dfrac{17}{5}$",
+            "$\\dfrac{13}{5}$",
+            "$\\dfrac{16}{5}$",
+            "$\\dfrac{32}{5}$",
+          ],
+          a: 0,
+          e: "3×5+2=17. Cavab: 17/5.",
+        },
+        {
+          s: "§3",
+          q: "$\\dfrac{23}{6}$-nı qarışıq ədəd kimi yazın.",
+          o: [
+            "$3\\dfrac{5}{6}$",
+            "$4\\dfrac{1}{6}$",
+            "$2\\dfrac{5}{6}$",
+            "$3\\dfrac{1}{6}$",
+          ],
+          a: 0,
+          e: "23÷6=3 qalıq 5. Cavab: 3⅚.",
+        },
+        {
+          s: "§4",
+          q: "$\\dfrac{5}{8}$ ilə $\\dfrac{7}{12}$-dən hansı böyükdür?",
+          o: [
+            "$\\dfrac{5}{8}$",
+            "$\\dfrac{7}{12}$",
+            "Bərabərdir",
+            "Müəyyən edilmir",
+          ],
+          a: 0,
+          e: "Çarpaz: 5×12=60, 8×7=56. 60>56 → 5/8 > 7/12.",
+        },
+        {
+          s: "§5",
+          q: "$\\dfrac{2}{3}+\\dfrac{3}{4}=?$",
+          o: [
+            "$\\dfrac{17}{12}$",
+            "$\\dfrac{5}{7}$",
+            "$\\dfrac{5}{12}$",
+            "$1\\dfrac{5}{12}$",
+          ],
+          a: 0,
+          e: "ƏKOB(3,4)=12. 8/12+9/12=17/12.",
+        },
+        {
+          s: "§5",
+          q: "$2\\dfrac{3}{4}-1\\dfrac{5}{6}=?$",
+          o: [
+            "$\\dfrac{11}{12}$",
+            "$1\\dfrac{1}{12}$",
+            "$\\dfrac{5}{12}$",
+            "$\\dfrac{7}{12}$",
+          ],
+          a: 0,
+          e: "11/4-11/6: ƏKOB=12. 33/12-22/12=11/12.",
+        },
+        {
+          s: "§6",
+          q: "$\\dfrac{5}{6}\\times\\dfrac{9}{10}=?$",
+          o: [
+            "$\\dfrac{3}{4}$",
+            "$\\dfrac{5}{9}$",
+            "$\\dfrac{4}{5}$",
+            "$\\dfrac{15}{16}$",
+          ],
+          a: 0,
+          e: "5×9=45, 6×10=60. 45/60=3/4.",
+        },
+        {
+          s: "§7",
+          q: "$\\dfrac{4}{5}\\div\\dfrac{8}{15}=?$",
+          o: [
+            "$\\dfrac{3}{2}$",
+            "$\\dfrac{2}{3}$",
+            "$\\dfrac{32}{75}$",
+            "$\\dfrac{5}{6}$",
+          ],
+          a: 0,
+          e: "4/5 × 15/8 = 60/40 = 3/2.",
+        },
+        {
+          s: "§7",
+          q: "$1\\dfrac{1}{2}\\div2\\dfrac{1}{4}=?$",
+          o: [
+            "$\\dfrac{2}{3}$",
+            "$\\dfrac{3}{2}$",
+            "$\\dfrac{4}{9}$",
+            "$1\\dfrac{1}{3}$",
+          ],
+          a: 0,
+          e: "3/2 ÷ 9/4 = 3/2 × 4/9 = 12/18 = 2/3.",
+        },
+        {
+          s: "§8",
+          q: "$0.625$ adi kəsir kimi nədir?",
+          o: [
+            "$\\dfrac{5}{8}$",
+            "$\\dfrac{3}{5}$",
+            "$\\dfrac{6}{10}$",
+            "$\\dfrac{7}{8}$",
+          ],
+          a: 0,
+          e: "625/1000. ƏBOB=125. 5/8.",
+        },
+        {
+          s: "§8",
+          q: "$0.\\overline{3}$ adi kəsirə bərabərdir:",
+          o: [
+            "$\\dfrac{1}{3}$",
+            "$\\dfrac{3}{10}$",
+            "$\\dfrac{1}{4}$",
+            "$\\dfrac{33}{100}$",
+          ],
+          a: 0,
+          e: "x=0.333... → 10x=3.333... → 9x=3 → x=1/3.",
+        },
+        {
+          s: "§8",
+          q: "$2.4\\times0.05=?$",
+          o: ["$0.12$", "$1.2$", "$0.012$", "$12$"],
+          a: 0,
+          e: "24×5=120. Toplam onluq yer=3. Cavab: 0.120=0.12.",
+        },
+        {
+          s: "§8",
+          q: "$7.2\\div0.9=?$",
+          o: ["$8$", "$0.8$", "$80$", "$0.08$"],
+          a: 0,
+          e: "72÷9=8.",
+        },
+        {
+          s: "§8",
+          q: "$\\dfrac{7}{16}$ onluq kəsir kimi:",
+          o: ["$0.4375$", "$0.435$", "$0.4315$", "$0.475$"],
+          a: 0,
+          e: "7÷16=0.4375.",
+        },
+        {
+          s: "§9",
+          q: "Bir ədədin $\\dfrac{4}{7}$-si 36-dır. Ədəd nəçədir?",
+          o: ["$63$", "$56$", "$45$", "$72$"],
+          a: 0,
+          e: "x×4/7=36 → x=36×7/4=63.",
+        },
+        {
+          s: "§9",
+          q: "Kitabın $\\dfrac{1}{3}$-i Bazartəsi, $\\dfrac{2}{5}$-i Çərşənbə oxundu. Nə qədəri qaldı?",
+          o: [
+            "$\\dfrac{4}{15}$",
+            "$\\dfrac{11}{15}$",
+            "$\\dfrac{1}{5}$",
+            "$\\dfrac{2}{15}$",
+          ],
+          a: 0,
+          e: "1/3+2/5=5/15+6/15=11/15. Qalan: 1-11/15=4/15.",
+        },
+        {
+          s: "§4",
+          q: "Hansı kəsir ən böyükdür? $\\dfrac{3}{5},\\;\\dfrac{5}{8},\\;\\dfrac{7}{10}$",
+          o: [
+            "$\\dfrac{7}{10}$",
+            "$\\dfrac{5}{8}$",
+            "$\\dfrac{3}{5}$",
+            "Hamısı bərabər",
+          ],
+          a: 0,
+          e: "Ümumi məxrəc 40: 24/40, 25/40, 28/40. Ən böyük 28/40=7/10.",
+        },
+        {
+          s: "§6",
+          q: "$\\left(\\dfrac{2}{3}\\right)^3=?$",
+          o: [
+            "$\\dfrac{8}{27}$",
+            "$\\dfrac{6}{9}$",
+            "$\\dfrac{2}{9}$",
+            "$\\dfrac{4}{9}$",
+          ],
+          a: 0,
+          e: "(2/3)³=2³/3³=8/27.",
+        },
+        {
+          s: "§9",
+          q: "İki ədədin nisbəti $3:5$, cəmləri $40$-dır. Böyük ədəd nəçədir?",
+          o: ["$25$", "$15$", "$20$", "$30$"],
+          a: 0,
+          e: "3x+5x=40 → x=5. Böyük: 5×5=25.",
+        },
+      ];
 
-let dIdx=0,dScore=0,dAns=[];
-function startDiag(){
-  dIdx=0;dScore=0;dAns=new Array(QS.length).fill(null);
-  document.getElementById('diag-ui').style.display='block';
-  document.getElementById('vik-ui').style.display='none';
-  document.getElementById('res-ui').style.display='none';
-  renderDQ();
-  document.getElementById('diag-ui').scrollIntoView({behavior:'smooth',block:'start'});
-}
-function renderDQ(){
-  const q=QS[dIdx];
-  document.getElementById('dq-n').textContent=dIdx+1;
-  document.getElementById('dq-tot').textContent=QS.length;
-  document.getElementById('dq-score').textContent=dScore+' ✓';
-  document.getElementById('dq-bar').style.width=(dIdx/QS.length*100)+'%';
-  document.getElementById('dq-expl').style.display='none';
-  document.getElementById('dq-next').disabled=dAns[dIdx]===null;
-  document.getElementById('dq-prev').disabled=dIdx===0;
-  document.getElementById('dq-q').innerHTML=q.q;
-  const opts=document.getElementById('dq-opts');opts.innerHTML='';
-  const L=['A','B','C','D'];
-  q.o.forEach((opt,i)=>{
-    const div=document.createElement('div');div.className='opt';
-    if(dAns[dIdx]!==null){div.classList.add('disabled');if(i===q.a)div.classList.add('correct');else if(i===dAns[dIdx])div.classList.add('wrong');}
-    div.innerHTML=`<span class="opt-ltr">${L[i]}</span><span>${opt}</span>`;
-    div.addEventListener('click',()=>selectDQ(i));opts.appendChild(div);
-  });
-  renderMathNow('dq-q');renderMathNow('dq-opts');
-}
-function selectDQ(i){
-  if(dAns[dIdx]!==null) return;
-  dAns[dIdx]=i;if(i===QS[dIdx].a) dScore++;
-  document.getElementById('dq-next').disabled=false;
-  document.getElementById('dq-score').textContent=dScore+' ✓';
-  const ex=document.getElementById('dq-expl');ex.style.display='block';
-  const ok=i===QS[dIdx].a;
-  ex.style.background=ok?'rgba(81,207,102,.09)':'rgba(255,107,107,.09)';
-  ex.style.borderLeftColor=ok?'var(--success)':'var(--error)';
-  ex.innerHTML=(ok?'<strong style="color:var(--success)">✓ Düzgün!</strong> ':
-    '<strong style="color:var(--error)">✗ Səhv.</strong> Düzgün: <strong>'+QS[dIdx].o[QS[dIdx].a]+'</strong>. ')+QS[dIdx].e;
-  renderDQ();
-}
-function nextDiag(){if(dIdx<QS.length-1){dIdx++;renderDQ();}else showResults(dScore,QS.length);}
-function prevDiag(){if(dIdx>0){dIdx--;renderDQ();}}
+      let dIdx = 0,
+        dScore = 0,
+        dAns = [];
+      function startDiag() {
+        dIdx = 0;
+        dScore = 0;
+        dAns = new Array(QS.length).fill(null);
+        document.getElementById("diag-ui").style.display = "block";
+        document.getElementById("vik-ui").style.display = "none";
+        document.getElementById("res-ui").style.display = "none";
+        renderDQ();
+        document
+          .getElementById("diag-ui")
+          .scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+      function renderDQ() {
+        const q = QS[dIdx];
+        document.getElementById("dq-n").textContent = dIdx + 1;
+        document.getElementById("dq-tot").textContent = QS.length;
+        document.getElementById("dq-score").textContent = dScore + " ✓";
+        document.getElementById("dq-bar").style.width =
+          (dIdx / QS.length) * 100 + "%";
+        document.getElementById("dq-expl").style.display = "none";
+        document.getElementById("dq-next").disabled = dAns[dIdx] === null;
+        document.getElementById("dq-prev").disabled = dIdx === 0;
+        document.getElementById("dq-q").innerHTML = q.q;
+        const opts = document.getElementById("dq-opts");
+        opts.innerHTML = "";
+        const L = ["A", "B", "C", "D"];
+        q.o.forEach((opt, i) => {
+          const div = document.createElement("div");
+          div.className = "opt";
+          if (dAns[dIdx] !== null) {
+            div.classList.add("disabled");
+            if (i === q.a) div.classList.add("correct");
+            else if (i === dAns[dIdx]) div.classList.add("wrong");
+          }
+          div.innerHTML = `<span class="opt-ltr">${L[i]}</span><span>${opt}</span>`;
+          div.addEventListener("click", () => selectDQ(i));
+          opts.appendChild(div);
+        });
+        renderMathNow("dq-q");
+        renderMathNow("dq-opts");
+      }
+      function selectDQ(i) {
+        if (dAns[dIdx] !== null) return;
+        dAns[dIdx] = i;
+        if (i === QS[dIdx].a) dScore++;
+        document.getElementById("dq-next").disabled = false;
+        document.getElementById("dq-score").textContent = dScore + " ✓";
+        const ex = document.getElementById("dq-expl");
+        ex.style.display = "block";
+        const ok = i === QS[dIdx].a;
+        ex.style.background = ok
+          ? "rgba(81,207,102,.09)"
+          : "rgba(255,107,107,.09)";
+        ex.style.borderLeftColor = ok ? "var(--success)" : "var(--error)";
+        ex.innerHTML =
+          (ok
+            ? '<strong style="color:var(--success)">✓ Düzgün!</strong> '
+            : '<strong style="color:var(--error)">✗ Səhv.</strong> Düzgün: <strong>' +
+              QS[dIdx].o[QS[dIdx].a] +
+              "</strong>. ") + QS[dIdx].e;
+        if (window.MathJax) MathJax.typesetPromise([ex]).catch(console.error);
+        renderDQ();
+      }
+      function nextDiag() {
+        if (dIdx < QS.length - 1) {
+          dIdx++;
+          renderDQ();
+        } else showResults(dScore, QS.length);
+      }
+      function prevDiag() {
+        if (dIdx > 0) {
+          dIdx--;
+          renderDQ();
+        }
+      }
 
-let vIdx=0,vScore=0,vTmr=null,vT=30,vRes=[];
-function startViktorina(){
-  vIdx=0;vScore=0;vRes=[];
-  document.getElementById('diag-ui').style.display='none';
-  document.getElementById('vik-ui').style.display='block';
-  document.getElementById('res-ui').style.display='none';
-  renderVQ();
-  document.getElementById('vik-ui').scrollIntoView({behavior:'smooth',block:'start'});
-}
-function renderVQ(){
-  clearInterval(vTmr);vT=30;
-  const q=QS[vIdx];
-  document.getElementById('vik-tag').textContent=q.s;
-  document.getElementById('vik-q').innerHTML=q.q;
-  tickV();vTmr=setInterval(tickV,1000);
-  const opts=document.getElementById('vik-opts');opts.innerHTML='';
-  const L=['A','B','C','D'];
-  q.o.forEach((opt,i)=>{
-    const d=document.createElement('div');d.className='opt';
-    d.innerHTML=`<span class="opt-ltr">${L[i]}</span><span>${opt}</span>`;
-    d.onclick=()=>answerV(i,d);opts.appendChild(d);
-  });
-  renderVDots();
-  renderMathNow('vik-q');renderMathNow('vik-opts');
-}
-function tickV(){
-  const el=document.getElementById('vik-timer');
-  el.textContent=vT;el.style.color=vT<=10?'var(--error)':'var(--warning)';
-  if(vT--<=0){clearInterval(vTmr);answerV(-1,null);}
-}
-function renderVDots(){
-  const el=document.getElementById('vik-dots');el.innerHTML='';
-  QS.forEach((_,i)=>{const d=document.createElement('div');
-    d.style.cssText=`flex:1;height:5px;border-radius:3px;background:${i<vIdx?(vRes[i]?'var(--success)':'var(--error)'):i===vIdx?'var(--accent)':'var(--border-glass)'}`;
-    el.appendChild(d);});
-}
-function answerV(idx,btn){
-  clearInterval(vTmr);
-  const q=QS[vIdx];
-  document.querySelectorAll('#vik-opts .opt').forEach(b=>b.style.pointerEvents='none');
-  const ok=idx===q.a;
-  if(btn) btn.classList.add(ok?'correct':'wrong');
-  if(!ok&&idx!==-1) document.querySelectorAll('#vik-opts .opt')[q.a]?.classList.add('correct');
-  if(ok) vScore++;vRes.push(ok);
-  setTimeout(()=>{vIdx++;if(vIdx>=QS.length){showResults(vScore,QS.length);return;}renderVQ();},900);
-}
-function showResults(score,total){
-  document.getElementById('diag-ui').style.display='none';
-  document.getElementById('vik-ui').style.display='none';
-  document.getElementById('res-ui').style.display='block';
-  const pct=Math.round(score/total*100);
-  document.getElementById('res-ring').style.setProperty('--score',pct);
-  document.getElementById('res-pct').textContent=pct+'%';
-  document.getElementById('res-ok').textContent=score;
-  document.getElementById('res-no').textContent=total-score;
-  let lv,msg;
-  if(pct>=90){lv='Əla';msg='🏆 Əla! Mövzunu mükəmməl bilirsiniz!';}
-  else if(pct>=70){lv='Yaxşı';msg='👍 Yaxşı! Bir neçə bölməni təkrarlayın.';}
-  else if(pct>=50){lv='Kafi';msg='📚 Nəzəriyyəni yenidən oxuyun.';}
-  else{lv='Zəif';msg='💡 Bütün bölmələri əvvəldən keçin.';}
-  document.getElementById('res-lvl').textContent=lv;
-  document.getElementById('res-msg').innerHTML=msg;
-  document.getElementById('res-ui').scrollIntoView({behavior:'smooth'});
-}
-function resetAssessment(){
-  ['diag-ui','vik-ui','res-ui'].forEach(id=>document.getElementById(id).style.display='none');
-  clearInterval(vTmr);
-}
-function renderMathNow(id){
-  const el=document.getElementById(id);
-  if(el&&window.renderMathInElement) renderMathInElement(el,{delimiters:[{left:'$',right:'$',display:false},{left:'$$',right:'$$',display:true}]});
-}
-</script>
-</body>
+      let vIdx = 0,
+        vScore = 0,
+        vTmr = null,
+        vT = 30,
+        vRes = [];
+      function startViktorina() {
+        vIdx = 0;
+        vScore = 0;
+        vRes = [];
+        document.getElementById("diag-ui").style.display = "none";
+        document.getElementById("vik-ui").style.display = "block";
+        document.getElementById("res-ui").style.display = "none";
+        renderVQ();
+        document
+          .getElementById("vik-ui")
+          .scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+      function renderVQ() {
+        clearInterval(vTmr);
+        vT = 30;
+        const q = QS[vIdx];
+        document.getElementById("vik-tag").textContent = q.s;
+        document.getElementById("vik-q").innerHTML = q.q;
+        tickV();
+        vTmr = setInterval(tickV, 1000);
+        const opts = document.getElementById("vik-opts");
+        opts.innerHTML = "";
+        const L = ["A", "B", "C", "D"];
+        q.o.forEach((opt, i) => {
+          const d = document.createElement("div");
+          d.className = "opt";
+          d.innerHTML = `<span class="opt-ltr">${L[i]}</span><span>${opt}</span>`;
+          d.onclick = () => answerV(i, d);
+          opts.appendChild(d);
+        });
+        renderVDots();
+        renderMathNow("vik-q");
+        renderMathNow("vik-opts");
+      }
+      function tickV() {
+        const el = document.getElementById("vik-timer");
+        el.textContent = vT;
+        el.style.color = vT <= 10 ? "var(--error)" : "var(--warning)";
+        if (vT-- <= 0) {
+          clearInterval(vTmr);
+          answerV(-1, null);
+        }
+      }
+      function renderVDots() {
+        const el = document.getElementById("vik-dots");
+        el.innerHTML = "";
+        QS.forEach((_, i) => {
+          const d = document.createElement("div");
+          d.style.cssText = `flex:1;height:5px;border-radius:3px;background:${i < vIdx ? (vRes[i] ? "var(--success)" : "var(--error)") : i === vIdx ? "var(--accent)" : "var(--border-glass)"}`;
+          el.appendChild(d);
+        });
+      }
+      function answerV(idx, btn) {
+        clearInterval(vTmr);
+        const q = QS[vIdx];
+        document
+          .querySelectorAll("#vik-opts .opt")
+          .forEach((b) => (b.style.pointerEvents = "none"));
+        const ok = idx === q.a;
+        if (btn) btn.classList.add(ok ? "correct" : "wrong");
+        if (!ok && idx !== -1)
+          document
+            .querySelectorAll("#vik-opts .opt")
+            [q.a]?.classList.add("correct");
+        if (ok) vScore++;
+        vRes.push(ok);
+        setTimeout(() => {
+          vIdx++;
+          if (vIdx >= QS.length) {
+            showResults(vScore, QS.length);
+            return;
+          }
+          renderVQ();
+        }, 900);
+      }
+      function showResults(score, total) {
+        document.getElementById("diag-ui").style.display = "none";
+        document.getElementById("vik-ui").style.display = "none";
+        document.getElementById("res-ui").style.display = "block";
+        const pct = Math.round((score / total) * 100);
+        document.getElementById("res-ring").style.setProperty("--score", pct);
+        document.getElementById("res-pct").textContent = pct + "%";
+        document.getElementById("res-ok").textContent = score;
+        document.getElementById("res-no").textContent = total - score;
+        let lv, msg;
+        if (pct >= 90) {
+          lv = "Əla";
+          msg = "🏆 Əla! Mövzunu mükəmməl bilirsiniz!";
+        } else if (pct >= 70) {
+          lv = "Yaxşı";
+          msg = "👍 Yaxşı! Bir neçə bölməni təkrarlayın.";
+        } else if (pct >= 50) {
+          lv = "Kafi";
+          msg = "📚 Nəzəriyyəni yenidən oxuyun.";
+        } else {
+          lv = "Zəif";
+          msg = "💡 Bütün bölmələri əvvəldən keçin.";
+        }
+        document.getElementById("res-lvl").textContent = lv;
+        document.getElementById("res-msg").innerHTML = msg;
+        document
+          .getElementById("res-ui")
+          .scrollIntoView({ behavior: "smooth" });
+      }
+      function resetAssessment() {
+        ["diag-ui", "vik-ui", "res-ui"].forEach(
+          (id) => (document.getElementById(id).style.display = "none"),
+        );
+        clearInterval(vTmr);
+      }
+      function renderMathNow(id) {
+        const el = document.getElementById(id);
+        if (el && window.MathJax) MathJax.typesetPromise([el]).catch(console.error);
+      }
+    </script>
+  </body>
 </html>

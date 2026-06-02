@@ -142,7 +142,17 @@ export const TOPICS: Topic[] = [
       ru: 'Отношение, пропорция, процентные вычисления, прикладные задачи',
       en: 'Ratio, proportion, percentage calculations, applied problems',
     },
-    lessons: [],
+    lessons: [
+      {
+        id: 'topic-05-main',
+        topicId: 'topic-05',
+        type: 'theory',
+        title: { az: 'Nisbət. Tənasüb. Faiz — tam dərs', ru: 'Отношение. Пропорция. Процент — полный урок', en: 'Ratio. Proportion. Percent — full lesson' },
+        url_path: '/lessons/topics/topic-05.html',
+        estimatedMinutes: 45,
+        questionCount: 20,
+      },
+    ],
   },
 
   {

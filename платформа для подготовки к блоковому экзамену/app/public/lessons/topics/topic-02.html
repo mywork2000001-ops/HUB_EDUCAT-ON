@@ -1,337 +1,1135 @@
 <!doctype html>
 <html lang="az">
-<head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-  <title>Mövzu 2 — Çoxluqlar</title>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css"/>
-  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
-  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
-    onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}]})"></script>
-  <style>
-    :root{
-      --bg-dark:#0f0f1a;--bg-card:rgba(255,255,255,0.05);--bg-glass:rgba(255,255,255,0.08);
-      --border-glass:rgba(255,255,255,0.15);--text-primary:#e8e8f0;--text-secondary:#a0a0b8;
-      --accent:#bc8cff;--accent-dim:rgba(188,140,255,0.18);--accent-warm:#ff6b6b;
-      --accent-blue:#4dabf7;--accent-blue-dim:rgba(77,171,247,0.18);
-      --success:#51cf66;--error:#ff6b6b;--warning:#fcc419;
-    }
-    *{margin:0;padding:0;box-sizing:border-box;}
-    body{font-family:"Segoe UI",system-ui,sans-serif;background:var(--bg-dark);color:var(--text-primary);min-height:100vh;overflow-x:hidden;line-height:1.65;}
-    .katex{font-size:1.1em;}
-    .katex-display{overflow-x:auto;padding:6px 0;}
-    .katex-display>.katex{font-size:1.1em;}
-    .bg{position:fixed;top:0;left:0;width:100%;height:100%;z-index:-1;
-      background:radial-gradient(ellipse at 25% 25%,rgba(188,140,255,.07) 0%,transparent 55%),
-                 radial-gradient(ellipse at 75% 75%,rgba(77,171,247,.07) 0%,transparent 55%);}
-    .bg::before{content:"";position:absolute;inset:0;
-      background:repeating-linear-gradient(0deg,transparent,transparent 44px,rgba(255,255,255,.018) 44px,rgba(255,255,255,.018) 45px);
-      animation:bgScroll 25s linear infinite;}
-    @keyframes bgScroll{to{transform:translateY(45px)}}
-    nav{position:fixed;top:0;left:0;right:0;background:rgba(15,15,26,.9);backdrop-filter:blur(24px);
-      border-bottom:1px solid var(--border-glass);z-index:1000;padding:0 20px;}
-    .nav-inner{max-width:1100px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;height:62px;}
-    .logo{font-size:1.05rem;font-weight:800;background:linear-gradient(135deg,var(--accent),var(--accent-blue));
-      -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;cursor:pointer;user-select:none;}
-    .nav-links{display:flex;gap:2px;list-style:none;}
-    .nav-links a{color:var(--text-secondary);text-decoration:none;padding:8px 14px;border-radius:9px;
-      transition:all .25s;font-size:.85rem;font-weight:500;cursor:pointer;border:none;background:transparent;display:block;}
-    .nav-links a:hover{color:var(--text-primary);background:var(--bg-glass);}
-    .nav-links a.active{background:var(--accent-dim);color:var(--accent);}
-    .hamburger{display:none;background:none;border:1px solid var(--border-glass);color:var(--text-primary);
-      font-size:1.3rem;cursor:pointer;padding:8px 12px;border-radius:9px;transition:all .2s;}
-    .hamburger:hover{background:var(--bg-glass);}
-    .mob-nav{display:none;position:fixed;top:62px;left:0;right:0;bottom:0;
-      background:rgba(10,10,20,.97);backdrop-filter:blur(24px);z-index:999;
-      padding:24px 20px;overflow-y:auto;flex-direction:column;gap:6px;}
-    .mob-nav.open{display:flex;}
-    .mob-nav a{color:var(--text-secondary);text-decoration:none;padding:16px 20px;border-radius:14px;
-      font-size:1.05rem;font-weight:500;transition:all .2s;border:1px solid transparent;}
-    .mob-nav a.active{background:var(--accent-dim);color:var(--accent);border-color:rgba(188,140,255,.25);}
-    .mob-nav a:hover{background:var(--bg-glass);color:var(--text-primary);}
-    section{display:none;padding:80px 20px 48px;max-width:1000px;margin:0 auto;}
-    section.active{display:block;animation:fadeUp .35s ease;}
-    @keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
-    .card{background:var(--bg-card);backdrop-filter:blur(20px);border:1px solid var(--border-glass);border-radius:18px;padding:22px;margin-bottom:18px;}
-    .card-title{font-size:1.25rem;font-weight:700;margin-bottom:16px;display:flex;align-items:center;gap:10px;}
-    .card-title .icon{width:40px;height:40px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0;}
-    .hero{text-align:center;padding:110px 20px 64px;}
-    .hero h1{font-size:clamp(1.9rem,5vw,3rem);font-weight:800;margin-bottom:18px;
-      background:linear-gradient(135deg,var(--accent),var(--accent-blue),var(--accent-warm));
-      -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1.15;}
-    .hero p{font-size:1.05rem;color:var(--text-secondary);max-width:600px;margin:0 auto 36px;line-height:1.7;}
-    .hero-btns{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;}
-    .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:13px 28px;
-      border-radius:11px;border:none;font-size:.95rem;font-weight:600;cursor:pointer;transition:all .25s;min-height:46px;}
-    .btn-primary{background:linear-gradient(135deg,var(--accent),var(--accent-blue));color:#000;}
-    .btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(188,140,255,.35);}
-    .btn-secondary{background:var(--bg-glass);color:var(--text-primary);border:1px solid var(--border-glass);}
-    .btn-secondary:hover{background:var(--bg-card);}
-    .btn:disabled{opacity:.45;cursor:not-allowed;transform:none!important;}
-    .feat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:14px;}
-    .feat-card{background:var(--bg-glass);border:1px solid var(--border-glass);border-radius:14px;padding:18px 14px;text-align:center;}
-    .feat-card .fi{font-size:2rem;margin-bottom:8px;}
-    .feat-card h3{font-size:.9rem;font-weight:700;margin-bottom:4px;}
-    .feat-card p{color:var(--text-secondary);font-size:.78rem;}
-    .slide-wrap{background:var(--bg-glass);border:1px solid var(--border-glass);border-radius:16px;padding:18px;}
-    .slide-meta{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;}
-    .slide-meta span{font-size:.85rem;color:var(--text-secondary);}
-    .slide-dots{display:flex;gap:5px;flex-wrap:wrap;}
-    .slide-dot{width:10px;height:10px;border-radius:50%;background:var(--border-glass);cursor:pointer;transition:all .2s;flex-shrink:0;}
-    .slide-dot.active{background:var(--accent);transform:scale(1.2);}
-    .slide-track{min-height:220px;}
-    .slide{display:none;padding:14px 4px;animation:slideIn .3s ease;}
-    .slide.active{display:block;}
-    @keyframes slideIn{from{opacity:0;transform:translateX(12px)}to{opacity:1;transform:translateX(0)}}
-    .slide h3{font-size:1.15rem;color:var(--accent);margin-bottom:16px;font-weight:700;}
-    .slide p{color:var(--text-secondary);line-height:1.8;margin-bottom:10px;font-size:.93rem;}
-    .slide-nav{display:flex;justify-content:space-between;align-items:center;margin-top:16px;gap:10px;}
-    .def-box{background:rgba(188,140,255,.08);border-left:4px solid var(--accent);border-radius:0 12px 12px 0;
-      padding:14px 16px;margin:12px 0;font-size:.92rem;color:var(--text-secondary);line-height:1.7;}
-    .def-box strong{color:var(--text-primary);}
-    .info-box{background:rgba(77,171,247,.08);border-left:4px solid var(--accent-blue);border-radius:0 12px 12px 0;
-      padding:14px 16px;margin:12px 0;font-size:.9rem;color:var(--text-secondary);line-height:1.7;}
-    .warn-box{background:rgba(252,196,25,.08);border-left:4px solid var(--warning);border-radius:0 12px 12px 0;
-      padding:12px 16px;margin:12px 0;font-size:.88rem;color:var(--text-secondary);line-height:1.65;}
-    .warn-box strong{color:var(--warning);}
-    .formula-box{background:var(--bg-glass);border:1px solid var(--border-glass);border-radius:12px;
-      padding:16px;margin:14px 0;text-align:center;overflow-x:auto;font-size:.95rem;}
-    .rule-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin:12px 0;}
-    .rule-item{background:var(--bg-glass);border:1px solid var(--border-glass);border-radius:9px;
-      padding:9px 13px;font-size:.84rem;color:var(--text-secondary);line-height:1.6;}
-    .rule-item strong{color:var(--text-primary);}
-    .set-badge{display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;
-      border-radius:50%;font-size:1.1rem;font-weight:800;flex-shrink:0;margin-right:10px;}
-    .set-row{display:flex;align-items:center;padding:10px 14px;border-radius:10px;margin:6px 0;font-size:.88rem;}
-    .op-label{display:inline-block;background:var(--accent-dim);color:var(--accent);border-radius:8px;
-      padding:3px 10px;font-size:.78rem;font-weight:700;margin-right:6px;}
-    .problem-card{background:var(--bg-card);border:1px solid var(--border-glass);border-radius:16px;padding:24px;margin-bottom:18px;}
-    .problem-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:8px;}
-    .problem-num{background:var(--accent-dim);color:var(--accent);padding:4px 14px;border-radius:20px;font-size:.8rem;font-weight:700;}
-    .problem-topic{color:var(--text-secondary);font-size:.8rem;}
-    .problem-text{font-size:.97rem;margin-bottom:16px;line-height:1.8;color:var(--text-primary);}
-    .sol-btn{background:var(--accent-dim);color:var(--accent);border:1px solid rgba(188,140,255,.4);
-      padding:9px 20px;border-radius:9px;cursor:pointer;font-weight:600;transition:all .25s;font-size:.88rem;min-height:40px;}
-    .sol-btn:hover{background:var(--accent);color:#000;}
-    .solution{display:none;margin-top:16px;padding:16px 18px;background:rgba(188,140,255,.05);
-      border-left:3px solid var(--accent);border-radius:0 12px 12px 0;}
-    .solution.open{display:block;animation:fadeDn .3s ease;}
-    @keyframes fadeDn{from{opacity:0}to{opacity:1}}
-    .solution p{margin-bottom:8px;color:var(--text-secondary);font-size:.9rem;line-height:1.7;}
-    .solution strong{color:var(--accent);}
-    .quiz-wrap{background:var(--bg-card);border:1px solid var(--border-glass);border-radius:18px;padding:28px;}
-    .quiz-progress{display:flex;justify-content:space-between;align-items:center;margin-bottom:22px;flex-wrap:wrap;gap:8px;}
-    .prog-bar{flex:1;height:7px;background:var(--bg-glass);border-radius:4px;margin:0 14px;overflow:hidden;min-width:80px;}
-    .prog-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent-blue));border-radius:4px;transition:width .5s ease;}
-    .quiz-q{font-size:1.05rem;margin-bottom:22px;padding:18px;background:var(--bg-glass);border-radius:12px;
-      border-left:4px solid var(--accent);line-height:1.75;}
-    .quiz-opts{display:grid;gap:10px;}
-    .opt{background:var(--bg-glass);border:2px solid var(--border-glass);border-radius:12px;padding:14px 18px;
-      cursor:pointer;transition:all .25s;display:flex;align-items:center;gap:12px;font-size:.9rem;min-height:52px;}
-    .opt:hover{border-color:var(--accent);background:var(--accent-dim);}
-    .opt.correct{border-color:var(--success);background:rgba(81,207,102,.15);}
-    .opt.wrong{border-color:var(--error);background:rgba(255,107,107,.15);}
-    .opt.disabled{pointer-events:none;opacity:.65;}
-    .opt-ltr{width:32px;height:32px;border-radius:8px;background:var(--bg-card);display:flex;align-items:center;
-      justify-content:center;font-weight:700;flex-shrink:0;font-size:.85rem;}
-    .quiz-nav-row{display:flex;justify-content:space-between;margin-top:20px;gap:10px;}
-    .expl-box{display:none;margin-top:16px;padding:14px 16px;border-radius:11px;border-left:4px solid;
-      font-size:.88rem;color:var(--text-secondary);line-height:1.65;}
-    .results-wrap{text-align:center;padding:32px 16px;}
-    .score-ring{width:172px;height:172px;border-radius:50%;
-      background:conic-gradient(var(--accent) calc(var(--score)*3.6deg),var(--bg-glass) 0);
-      margin:0 auto 24px;display:flex;align-items:center;justify-content:center;position:relative;}
-    .score-ring::before{content:"";position:absolute;width:144px;height:144px;background:var(--bg-dark);border-radius:50%;}
-    .score-val{position:relative;font-size:2.4rem;font-weight:800;color:var(--accent);}
-    .score-msg{font-size:1.3rem;font-weight:700;margin-bottom:24px;}
-    .breakdown{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;max-width:420px;margin:0 auto 24px;}
-    .breakdown-item{background:var(--bg-glass);padding:14px;border-radius:10px;}
-    .breakdown-val{font-size:1.35rem;font-weight:700;color:var(--accent);}
-    .breakdown-lbl{font-size:.78rem;color:var(--text-secondary);}
-    .vik-timer{font-size:2.2rem;font-weight:900;transition:color .3s;}
-    @media(max-width:768px){
-      .hamburger{display:block;}
-      .nav-links{display:none;}
-      section{padding:72px 14px 40px;}
-      .hero{padding:90px 14px 52px;}
-      .rule-grid{grid-template-columns:1fr;}
-      .feat-grid{grid-template-columns:repeat(2,1fr);}
-      .breakdown{grid-template-columns:repeat(3,1fr);}
-      .quiz-wrap{padding:18px;}
-    }
-    @media(max-width:480px){
-      .slide-wrap{padding:14px;}
-      .quiz-q{font-size:.95rem;padding:14px;}
-      .opt{font-size:.85rem;padding:12px 14px;}
-    }
-  </style>
-</head>
-<body>
-<div class="bg"></div>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+    <title>Mövzu 2 — Çoxluqlar</title>
+    <style>
+      :root {
+        --bg-dark: #0f0f1a;
+        --bg-card: rgba(255, 255, 255, 0.05);
+        --bg-glass: rgba(255, 255, 255, 0.08);
+        --border-glass: rgba(255, 255, 255, 0.15);
+        --text-primary: #e8e8f0;
+        --text-secondary: #a0a0b8;
+        --accent: #bc8cff;
+        --accent-dim: rgba(188, 140, 255, 0.18);
+        --accent-warm: #ff6b6b;
+        --accent-blue: #4dabf7;
+        --accent-blue-dim: rgba(77, 171, 247, 0.18);
+        --success: #51cf66;
+        --error: #ff6b6b;
+        --warning: #fcc419;
+      }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      body {
+        font-family: "Segoe UI", system-ui, sans-serif;
+        background: var(--bg-dark);
+        color: var(--text-primary);
+        min-height: 100vh;
+        overflow-x: hidden;
+        line-height: 1.65;
+      }
+      .bg {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: -1;
+        background:
+          radial-gradient(
+            ellipse at 25% 25%,
+            rgba(188, 140, 255, 0.07) 0%,
+            transparent 55%
+          ),
+          radial-gradient(
+            ellipse at 75% 75%,
+            rgba(77, 171, 247, 0.07) 0%,
+            transparent 55%
+          );
+      }
+      .bg::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: repeating-linear-gradient(
+          0deg,
+          transparent,
+          transparent 44px,
+          rgba(255, 255, 255, 0.018) 44px,
+          rgba(255, 255, 255, 0.018) 45px
+        );
+        animation: bgScroll 25s linear infinite;
+      }
+      @keyframes bgScroll {
+        to {
+          transform: translateY(45px);
+        }
+      }
+      nav {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        background: rgba(15, 15, 26, 0.9);
+        backdrop-filter: blur(24px);
+        border-bottom: 1px solid var(--border-glass);
+        z-index: 1000;
+        padding: 0 20px;
+      }
+      .nav-inner {
+        max-width: 1100px;
+        margin: 0 auto;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        height: 62px;
+      }
+      .logo {
+        font-size: 1.05rem;
+        font-weight: 800;
+        background: linear-gradient(135deg, var(--accent), var(--accent-blue));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        cursor: pointer;
+        user-select: none;
+      }
+      .nav-links {
+        display: flex;
+        gap: 2px;
+        list-style: none;
+      }
+      .nav-links a {
+        color: var(--text-secondary);
+        text-decoration: none;
+        padding: 8px 14px;
+        border-radius: 9px;
+        transition: all 0.25s;
+        font-size: 0.85rem;
+        font-weight: 500;
+        cursor: pointer;
+        border: none;
+        background: transparent;
+        display: block;
+      }
+      .nav-links a:hover {
+        color: var(--text-primary);
+        background: var(--bg-glass);
+      }
+      .nav-links a.active {
+        background: var(--accent-dim);
+        color: var(--accent);
+      }
+      .hamburger {
+        display: none;
+        background: none;
+        border: 1px solid var(--border-glass);
+        color: var(--text-primary);
+        font-size: 1.3rem;
+        cursor: pointer;
+        padding: 8px 12px;
+        border-radius: 9px;
+        transition: all 0.2s;
+      }
+      .hamburger:hover {
+        background: var(--bg-glass);
+      }
+      .mob-nav {
+        display: none;
+        position: fixed;
+        top: 62px;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(10, 10, 20, 0.97);
+        backdrop-filter: blur(24px);
+        z-index: 999;
+        padding: 24px 20px;
+        overflow-y: auto;
+        flex-direction: column;
+        gap: 6px;
+      }
+      .mob-nav.open {
+        display: flex;
+      }
+      .mob-nav a {
+        color: var(--text-secondary);
+        text-decoration: none;
+        padding: 16px 20px;
+        border-radius: 14px;
+        font-size: 1.05rem;
+        font-weight: 500;
+        transition: all 0.2s;
+        border: 1px solid transparent;
+      }
+      .mob-nav a.active {
+        background: var(--accent-dim);
+        color: var(--accent);
+        border-color: rgba(188, 140, 255, 0.25);
+      }
+      .mob-nav a:hover {
+        background: var(--bg-glass);
+        color: var(--text-primary);
+      }
+      section {
+        display: none;
+        padding: 80px 20px 48px;
+        max-width: 1000px;
+        margin: 0 auto;
+      }
+      section.active {
+        display: block;
+        animation: fadeUp 0.35s ease;
+      }
+      @keyframes fadeUp {
+        from {
+          opacity: 0;
+          transform: translateY(14px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      .card {
+        background: var(--bg-card);
+        backdrop-filter: blur(20px);
+        border: 1px solid var(--border-glass);
+        border-radius: 18px;
+        padding: 22px;
+        margin-bottom: 18px;
+      }
+      .card-title {
+        font-size: 1.25rem;
+        font-weight: 700;
+        margin-bottom: 16px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .card-title .icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 11px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.2rem;
+        flex-shrink: 0;
+      }
+      .hero {
+        text-align: center;
+        padding: 110px 20px 64px;
+      }
+      .hero h1 {
+        font-size: clamp(1.9rem, 5vw, 3rem);
+        font-weight: 800;
+        margin-bottom: 18px;
+        background: linear-gradient(
+          135deg,
+          var(--accent),
+          var(--accent-blue),
+          var(--accent-warm)
+        );
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        line-height: 1.15;
+      }
+      .hero p {
+        font-size: 1.05rem;
+        color: var(--text-secondary);
+        max-width: 600px;
+        margin: 0 auto 36px;
+        line-height: 1.7;
+      }
+      .hero-btns {
+        display: flex;
+        gap: 14px;
+        justify-content: center;
+        flex-wrap: wrap;
+      }
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        padding: 13px 28px;
+        border-radius: 11px;
+        border: none;
+        font-size: 0.95rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.25s;
+        min-height: 46px;
+      }
+      .btn-primary {
+        background: linear-gradient(135deg, var(--accent), var(--accent-blue));
+        color: #000;
+      }
+      .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 28px rgba(188, 140, 255, 0.35);
+      }
+      .btn-secondary {
+        background: var(--bg-glass);
+        color: var(--text-primary);
+        border: 1px solid var(--border-glass);
+      }
+      .btn-secondary:hover {
+        background: var(--bg-card);
+      }
+      .btn:disabled {
+        opacity: 0.45;
+        cursor: not-allowed;
+        transform: none !important;
+      }
+      .feat-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+        gap: 14px;
+      }
+      .feat-card {
+        background: var(--bg-glass);
+        border: 1px solid var(--border-glass);
+        border-radius: 14px;
+        padding: 18px 14px;
+        text-align: center;
+      }
+      .feat-card .fi {
+        font-size: 2rem;
+        margin-bottom: 8px;
+      }
+      .feat-card h3 {
+        font-size: 0.9rem;
+        font-weight: 700;
+        margin-bottom: 4px;
+      }
+      .feat-card p {
+        color: var(--text-secondary);
+        font-size: 0.78rem;
+      }
+      .slide-wrap {
+        background: var(--bg-glass);
+        border: 1px solid var(--border-glass);
+        border-radius: 16px;
+        padding: 18px;
+      }
+      .slide-meta {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 12px;
+      }
+      .slide-meta span {
+        font-size: 0.85rem;
+        color: var(--text-secondary);
+      }
+      .slide-dots {
+        display: flex;
+        gap: 5px;
+        flex-wrap: wrap;
+      }
+      .slide-dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background: var(--border-glass);
+        cursor: pointer;
+        transition: all 0.2s;
+        flex-shrink: 0;
+      }
+      .slide-dot.active {
+        background: var(--accent);
+        transform: scale(1.2);
+      }
+      .slide-track {
+        min-height: 220px;
+      }
+      .slide {
+        display: none;
+        padding: 14px 4px;
+        animation: slideIn 0.3s ease;
+      }
+      .slide.active {
+        display: block;
+      }
+      @keyframes slideIn {
+        from {
+          opacity: 0;
+          transform: translateX(12px);
+        }
+        to {
+          opacity: 1;
+          transform: translateX(0);
+        }
+      }
+      .slide h3 {
+        font-size: 1.15rem;
+        color: var(--accent);
+        margin-bottom: 16px;
+        font-weight: 700;
+      }
+      .slide p {
+        color: var(--text-secondary);
+        line-height: 1.8;
+        margin-bottom: 10px;
+        font-size: 0.93rem;
+      }
+      .slide-nav {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 16px;
+        gap: 10px;
+      }
+      .def-box {
+        background: rgba(188, 140, 255, 0.08);
+        border-left: 4px solid var(--accent);
+        border-radius: 0 12px 12px 0;
+        padding: 14px 16px;
+        margin: 12px 0;
+        font-size: 0.92rem;
+        color: var(--text-secondary);
+        line-height: 1.7;
+      }
+      .def-box strong {
+        color: var(--text-primary);
+      }
+      .info-box {
+        background: rgba(77, 171, 247, 0.08);
+        border-left: 4px solid var(--accent-blue);
+        border-radius: 0 12px 12px 0;
+        padding: 14px 16px;
+        margin: 12px 0;
+        font-size: 0.9rem;
+        color: var(--text-secondary);
+        line-height: 1.7;
+      }
+      .warn-box {
+        background: rgba(252, 196, 25, 0.08);
+        border-left: 4px solid var(--warning);
+        border-radius: 0 12px 12px 0;
+        padding: 12px 16px;
+        margin: 12px 0;
+        font-size: 0.88rem;
+        color: var(--text-secondary);
+        line-height: 1.65;
+      }
+      .warn-box strong {
+        color: var(--warning);
+      }
+      .formula-box {
+        background: var(--bg-glass);
+        border: 1px solid var(--border-glass);
+        border-radius: 12px;
+        padding: 16px;
+        margin: 14px 0;
+        text-align: center;
+        overflow-x: auto;
+        font-size: 0.95rem;
+      }
+      .rule-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 7px;
+        margin: 12px 0;
+      }
+      .rule-item {
+        background: var(--bg-glass);
+        border: 1px solid var(--border-glass);
+        border-radius: 9px;
+        padding: 9px 13px;
+        font-size: 0.84rem;
+        color: var(--text-secondary);
+        line-height: 1.6;
+      }
+      .rule-item strong {
+        color: var(--text-primary);
+      }
+      .set-badge {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        font-size: 1.1rem;
+        font-weight: 800;
+        flex-shrink: 0;
+        margin-right: 10px;
+      }
+      .set-row {
+        display: flex;
+        align-items: center;
+        padding: 10px 14px;
+        border-radius: 10px;
+        margin: 6px 0;
+        font-size: 0.88rem;
+      }
+      .op-label {
+        display: inline-block;
+        background: var(--accent-dim);
+        color: var(--accent);
+        border-radius: 8px;
+        padding: 3px 10px;
+        font-size: 0.78rem;
+        font-weight: 700;
+        margin-right: 6px;
+      }
+      .problem-card {
+        background: var(--bg-card);
+        border: 1px solid var(--border-glass);
+        border-radius: 16px;
+        padding: 24px;
+        margin-bottom: 18px;
+      }
+      .problem-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 14px;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+      .problem-num {
+        background: var(--accent-dim);
+        color: var(--accent);
+        padding: 4px 14px;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: 700;
+      }
+      .problem-topic {
+        color: var(--text-secondary);
+        font-size: 0.8rem;
+      }
+      .problem-text {
+        font-size: 0.97rem;
+        margin-bottom: 16px;
+        line-height: 1.8;
+        color: var(--text-primary);
+      }
+      .sol-btn {
+        background: var(--accent-dim);
+        color: var(--accent);
+        border: 1px solid rgba(188, 140, 255, 0.4);
+        padding: 9px 20px;
+        border-radius: 9px;
+        cursor: pointer;
+        font-weight: 600;
+        transition: all 0.25s;
+        font-size: 0.88rem;
+        min-height: 40px;
+      }
+      .sol-btn:hover {
+        background: var(--accent);
+        color: #000;
+      }
+      .solution {
+        display: none;
+        margin-top: 16px;
+        padding: 16px 18px;
+        background: rgba(188, 140, 255, 0.05);
+        border-left: 3px solid var(--accent);
+        border-radius: 0 12px 12px 0;
+      }
+      .solution.open {
+        display: block;
+        animation: fadeDn 0.3s ease;
+      }
+      @keyframes fadeDn {
+        from {
+          opacity: 0;
+        }
+        to {
+          opacity: 1;
+        }
+      }
+      .solution p {
+        margin-bottom: 8px;
+        color: var(--text-secondary);
+        font-size: 0.9rem;
+        line-height: 1.7;
+      }
+      .solution strong {
+        color: var(--accent);
+      }
+      .quiz-wrap {
+        background: var(--bg-card);
+        border: 1px solid var(--border-glass);
+        border-radius: 18px;
+        padding: 28px;
+      }
+      .quiz-progress {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 22px;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+      .prog-bar {
+        flex: 1;
+        height: 7px;
+        background: var(--bg-glass);
+        border-radius: 4px;
+        margin: 0 14px;
+        overflow: hidden;
+        min-width: 80px;
+      }
+      .prog-fill {
+        height: 100%;
+        background: linear-gradient(90deg, var(--accent), var(--accent-blue));
+        border-radius: 4px;
+        transition: width 0.5s ease;
+      }
+      .quiz-q {
+        font-size: 1.05rem;
+        margin-bottom: 22px;
+        padding: 18px;
+        background: var(--bg-glass);
+        border-radius: 12px;
+        border-left: 4px solid var(--accent);
+        line-height: 1.75;
+      }
+      .quiz-opts {
+        display: grid;
+        gap: 10px;
+      }
+      .opt {
+        background: var(--bg-glass);
+        border: 2px solid var(--border-glass);
+        border-radius: 12px;
+        padding: 14px 18px;
+        cursor: pointer;
+        transition: all 0.25s;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        font-size: 0.9rem;
+        min-height: 52px;
+      }
+      .opt:hover {
+        border-color: var(--accent);
+        background: var(--accent-dim);
+      }
+      .opt.correct {
+        border-color: var(--success);
+        background: rgba(81, 207, 102, 0.15);
+      }
+      .opt.wrong {
+        border-color: var(--error);
+        background: rgba(255, 107, 107, 0.15);
+      }
+      .opt.disabled {
+        pointer-events: none;
+        opacity: 0.65;
+      }
+      .opt-ltr {
+        width: 32px;
+        height: 32px;
+        border-radius: 8px;
+        background: var(--bg-card);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        flex-shrink: 0;
+        font-size: 0.85rem;
+      }
+      .quiz-nav-row {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 20px;
+        gap: 10px;
+      }
+      .expl-box {
+        display: none;
+        margin-top: 16px;
+        padding: 14px 16px;
+        border-radius: 11px;
+        border-left: 4px solid;
+        font-size: 0.88rem;
+        color: var(--text-secondary);
+        line-height: 1.65;
+      }
+      .results-wrap {
+        text-align: center;
+        padding: 32px 16px;
+      }
+      .score-ring {
+        width: 172px;
+        height: 172px;
+        border-radius: 50%;
+        background: conic-gradient(
+          var(--accent) calc(var(--score) * 3.6deg),
+          var(--bg-glass) 0
+        );
+        margin: 0 auto 24px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+      }
+      .score-ring::before {
+        content: "";
+        position: absolute;
+        width: 144px;
+        height: 144px;
+        background: var(--bg-dark);
+        border-radius: 50%;
+      }
+      .score-val {
+        position: relative;
+        font-size: 2.4rem;
+        font-weight: 800;
+        color: var(--accent);
+      }
+      .score-msg {
+        font-size: 1.3rem;
+        font-weight: 700;
+        margin-bottom: 24px;
+      }
+      .breakdown {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 12px;
+        max-width: 420px;
+        margin: 0 auto 24px;
+      }
+      .breakdown-item {
+        background: var(--bg-glass);
+        padding: 14px;
+        border-radius: 10px;
+      }
+      .breakdown-val {
+        font-size: 1.35rem;
+        font-weight: 700;
+        color: var(--accent);
+      }
+      .breakdown-lbl {
+        font-size: 0.78rem;
+        color: var(--text-secondary);
+      }
+      .vik-timer {
+        font-size: 2.2rem;
+        font-weight: 900;
+        transition: color 0.3s;
+      }
+      @media (max-width: 768px) {
+        .hamburger {
+          display: block;
+        }
+        .nav-links {
+          display: none;
+        }
+        section {
+          padding: 72px 14px 40px;
+        }
+        .hero {
+          padding: 90px 14px 52px;
+        }
+        .rule-grid {
+          grid-template-columns: 1fr;
+        }
+        .feat-grid {
+          grid-template-columns: repeat(2, 1fr);
+        }
+        .breakdown {
+          grid-template-columns: repeat(3, 1fr);
+        }
+        .quiz-wrap {
+          padding: 18px;
+        }
+      }
+      @media (max-width: 480px) {
+        .slide-wrap {
+          padding: 14px;
+        }
+        .quiz-q {
+          font-size: 0.95rem;
+          padding: 14px;
+        }
+        .opt {
+          font-size: 0.85rem;
+          padding: 12px 14px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="bg"></div>
 
-<nav>
-  <div class="nav-inner">
-    <span class="logo" onclick="showSection('home')">🔵 Mövzu 2 — Çoxluqlar</span>
-    <ul class="nav-links">
-      <li><a class="active" data-sec="home">Ana səhifə</a></li>
-      <li><a data-sec="theory">Nəzəriyyə</a></li>
-      <li><a data-sec="examples">Misallar</a></li>
-      <li><a data-sec="assessment">Qiymətləndirmə</a></li>
-    </ul>
-    <button class="hamburger" id="ham" onclick="toggleMobNav()" aria-label="Menyu">☰</button>
-  </div>
-</nav>
+    <nav>
+      <div class="nav-inner">
+        <span class="logo" onclick="showSection('home')"
+          >🔵 Mövzu 2 — Çoxluqlar</span
+        >
+        <ul class="nav-links">
+          <li><a class="active" data-sec="home">Ana səhifə</a></li>
+          <li><a data-sec="theory">Nəzəriyyə</a></li>
+          <li><a data-sec="examples">Misallar</a></li>
+          <li><a data-sec="assessment">Qiymətləndirmə</a></li>
+        </ul>
+        <button
+          class="hamburger"
+          id="ham"
+          onclick="toggleMobNav()"
+          aria-label="Menyu"
+        >
+          ☰
+        </button>
+      </div>
+    </nav>
 
-<div class="mob-nav" id="mob-nav">
-  <a data-sec="home">🏠 Ana səhifə</a>
-  <a data-sec="theory">📖 Nəzəriyyə</a>
-  <a data-sec="examples">✏️ Misallar</a>
-  <a data-sec="assessment">📋 Qiymətləndirmə</a>
-</div>
+    <div class="mob-nav" id="mob-nav">
+      <a data-sec="home">🏠 Ana səhifə</a>
+      <a data-sec="theory">📖 Nəzəriyyə</a>
+      <a data-sec="examples">✏️ Misallar</a>
+      <a data-sec="assessment">📋 Qiymətləndirmə</a>
+    </div>
 
-<!-- HOME -->
-<section id="home" class="active">
-  <div class="hero">
-    <h1>Çoxluqlar</h1>
-    <p>DR.Math · I Hissə · §1–§9. Çoxluq anlayışı · Əməllər · Euler-Venn diaqramı · Sayma düsturları · De Morgan qanunları</p>
-    <div class="hero-btns">
-      <button class="btn btn-primary" onclick="showSection('theory')">📖 Dərsi Başla</button>
-      <button class="btn btn-secondary" onclick="showSection('assessment')">🔍 Bilikləri Yoxla</button>
-    </div>
-  </div>
-  <div class="card">
-    <div class="card-title"><span class="icon" style="background:var(--accent-dim)">🎯</span>Bu mövzuda öyrənəcəksiniz</div>
-    <div class="feat-grid">
-      <div class="feat-card"><div class="fi">🔵</div><h3 style="color:var(--accent)">Çoxluq anlayışı</h3><p>Növlər, mənsubluq, yazılış</p></div>
-      <div class="feat-card"><div class="fi">∪</div><h3 style="color:var(--accent-blue)">Birləşmə & Kəsişmə</h3><p>A∪B, A∩B əməlləri</p></div>
-      <div class="feat-card"><div class="fi">∖</div><h3 style="color:var(--accent-warm)">Fərq & Tamamlayıcı</h3><p>A\B, A', simmetrik fərq</p></div>
-      <div class="feat-card"><div class="fi">n()</div><h3 style="color:var(--warning)">Sayma düsturları</h3><p>Euler-Venn, 2 və 3 çoxluq</p></div>
-      <div class="feat-card"><div class="fi">≡</div><h3 style="color:var(--success)">De Morgan qanunları</h3><p>Tamamlayıcı ilə əlaqə</p></div>
-    </div>
-  </div>
-</section>
-
-<!-- THEORY -->
-<section id="theory">
-  <div class="card">
-    <div class="card-title"><span class="icon" style="background:var(--accent-dim)">📖</span>Çoxluqlar — §1–§9 (DR.Math I Hissə)</div>
-    <p style="color:var(--text-secondary);margin-bottom:16px;">Hər bölməni diqqətlə oxuyun. Euler-Venn diaqramı DİM-in əsas mövzularından biridir.</p>
-    <div class="slide-wrap">
-      <div class="slide-meta">
-        <span>Bölmə <strong id="snum">1</strong> / <strong id="stotal">10</strong></span>
-        <div class="slide-dots" id="sdots"></div>
-      </div>
-      <div class="slide-track" id="strack"></div>
-      <div class="slide-nav">
-        <button class="btn btn-secondary" onclick="prevSlide()">← Əvvəlki</button>
-        <button class="btn btn-primary" onclick="nextSlide()" id="snext">Növbəti →</button>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- EXAMPLES -->
-<section id="examples">
-  <div class="card">
-    <div class="card-title"><span class="icon" style="background:var(--accent-blue-dim)">✏️</span>Həll edilmiş misallar</div>
-    <p style="color:var(--text-secondary);margin-bottom:20px;">DİM tipli məsələlər — addım-addım həll ilə.</p>
-  </div>
-  <div id="ex-wrap"></div>
-</section>
-
-<!-- ASSESSMENT -->
-<section id="assessment">
-  <div class="card">
-    <div class="card-title"><span class="icon" style="background:var(--accent-blue-dim)">📋</span>Qiymətləndirmə — 20 sual</div>
-    <p style="color:var(--text-secondary);margin-bottom:20px;">Diaqnostik test (izahatla) və ya sürət viktorinası seçin.</p>
-    <div class="feat-grid" style="grid-template-columns:repeat(auto-fit,minmax(220px,1fr));">
-      <div class="feat-card" style="padding:24px;cursor:default;">
-        <div class="fi">🔍</div>
-        <h3 style="color:var(--accent);margin-bottom:8px;">Diaqnostik Test</h3>
-        <p style="margin-bottom:16px;">20 sual · hər sualdan sonra izahat</p>
-        <button class="btn btn-primary" onclick="startDiag()" style="width:100%">Testi Başla</button>
-      </div>
-      <div class="feat-card" style="padding:24px;cursor:default;">
-        <div class="fi">⚡</div>
-        <h3 style="color:var(--accent-blue);margin-bottom:8px;">Sürət Viktorinası</h3>
-        <p style="margin-bottom:16px;">20 sual · sual başına 30 saniyə</p>
-        <button class="btn btn-primary" onclick="startViktorina()" style="width:100%;background:linear-gradient(135deg,var(--accent-blue),#7c3aed)">Başla ⚡</button>
-      </div>
-    </div>
-  </div>
-  <div id="diag-ui" style="display:none;">
-    <div class="quiz-wrap">
-      <div class="quiz-progress">
-        <span style="font-size:.87rem;white-space:nowrap;">Sual <strong id="dq-n">1</strong>/<strong id="dq-tot">20</strong></span>
-        <div class="prog-bar"><div class="prog-fill" id="dq-bar" style="width:0%"></div></div>
-        <span id="dq-score" style="font-size:.87rem;color:var(--success);font-weight:700;white-space:nowrap;">0 ✓</span>
-      </div>
-      <div class="quiz-q" id="dq-q"></div>
-      <div class="quiz-opts" id="dq-opts"></div>
-      <div class="expl-box" id="dq-expl"></div>
-      <div class="quiz-nav-row">
-        <button class="btn btn-secondary" onclick="prevDiag()" id="dq-prev" disabled>← Geri</button>
-        <button class="btn btn-primary" onclick="nextDiag()" id="dq-next" disabled>İrəli →</button>
-      </div>
-    </div>
-  </div>
-  <div id="vik-ui" style="display:none;">
-    <div class="quiz-wrap">
-      <div style="text-align:center;margin-bottom:16px;">
-        <div class="vik-timer" id="vik-timer">30</div>
-        <div style="display:flex;gap:4px;margin-top:10px;" id="vik-dots"></div>
-      </div>
-      <div style="display:inline-block;background:var(--accent-dim);color:var(--accent);border-radius:20px;padding:3px 12px;font-size:.72rem;font-weight:700;margin-bottom:12px;" id="vik-tag"></div>
-      <div class="quiz-q" id="vik-q"></div>
-      <div class="quiz-opts" id="vik-opts"></div>
-    </div>
-  </div>
-  <div id="res-ui" style="display:none;">
-    <div class="quiz-wrap">
-      <div class="results-wrap">
-        <div style="font-size:.9rem;color:var(--text-secondary);margin-bottom:10px;">Nəticəniz</div>
-        <div class="score-ring" id="res-ring"><div class="score-val" id="res-pct">0%</div></div>
-        <div class="score-msg" id="res-msg"></div>
-        <div class="breakdown">
-          <div class="breakdown-item"><div class="breakdown-val" id="res-ok">0</div><div class="breakdown-lbl">Düzgün</div></div>
-          <div class="breakdown-item"><div class="breakdown-val" id="res-no">0</div><div class="breakdown-lbl">Səhv</div></div>
-          <div class="breakdown-item"><div class="breakdown-val" id="res-lvl">—</div><div class="breakdown-lbl">Səviyyə</div></div>
+    <!-- HOME -->
+    <section id="home" class="active">
+      <div class="hero">
+        <h1>Çoxluqlar</h1>
+        <p>
+          DR.Math · I Hissə · §1–§9. Çoxluq anlayışı · Əməllər · Euler-Venn
+          diaqramı · Sayma düsturları · De Morgan qanunları
+        </p>
+        <div class="hero-btns">
+          <button class="btn btn-primary" onclick="showSection('theory')">
+            📖 Dərsi Başla
+          </button>
+          <button class="btn btn-secondary" onclick="showSection('assessment')">
+            🔍 Bilikləri Yoxla
+          </button>
         </div>
-        <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
-          <button class="btn btn-primary" onclick="resetAssessment()">Yenidən cəhd et</button>
-          <button class="btn btn-secondary" onclick="showSection('theory')">Nəzəriyyəyə qayıt</button>
+      </div>
+      <div class="card">
+        <div class="card-title">
+          <span class="icon" style="background: var(--accent-dim)">🎯</span>Bu
+          mövzuda öyrənəcəksiniz
+        </div>
+        <div class="feat-grid">
+          <div class="feat-card">
+            <div class="fi">🔵</div>
+            <h3 style="color: var(--accent)">Çoxluq anlayışı</h3>
+            <p>Növlər, mənsubluq, yazılış</p>
+          </div>
+          <div class="feat-card">
+            <div class="fi">∪</div>
+            <h3 style="color: var(--accent-blue)">Birləşmə & Kəsişmə</h3>
+            <p>A∪B, A∩B əməlləri</p>
+          </div>
+          <div class="feat-card">
+            <div class="fi">∖</div>
+            <h3 style="color: var(--accent-warm)">Fərq & Tamamlayıcı</h3>
+            <p>A\B, A', simmetrik fərq</p>
+          </div>
+          <div class="feat-card">
+            <div class="fi">n()</div>
+            <h3 style="color: var(--warning)">Sayma düsturları</h3>
+            <p>Euler-Venn, 2 və 3 çoxluq</p>
+          </div>
+          <div class="feat-card">
+            <div class="fi">≡</div>
+            <h3 style="color: var(--success)">De Morgan qanunları</h3>
+            <p>Tamamlayıcı ilə əlaqə</p>
+          </div>
         </div>
       </div>
-    </div>
-  </div>
-</section>
+    </section>
 
-<script>
-function showSection(id){
-  document.querySelectorAll('section').forEach(s=>s.classList.remove('active'));
-  document.querySelectorAll('[data-sec]').forEach(a=>a.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
-  document.querySelectorAll(`[data-sec="${id}"]`).forEach(a=>a.classList.add('active'));
-  if(id==='examples') renderExamples();
-  if(id==='assessment') resetAssessment();
-  document.getElementById('mob-nav').classList.remove('open');
-  window.scrollTo(0,0);
-  setTimeout(()=>{if(window.renderMathInElement) renderMathInElement(document.getElementById(id),{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}]});},100);
-}
-document.querySelectorAll('[data-sec]').forEach(a=>a.addEventListener('click',e=>{e.preventDefault();showSection(a.dataset.sec);}));
-function toggleMobNav(){document.getElementById('mob-nav').classList.toggle('open');}
-document.addEventListener('click',e=>{
-  const mn=document.getElementById('mob-nav');
-  if(!mn.contains(e.target)&&e.target.id!=='ham') mn.classList.remove('open');
-});
+    <!-- THEORY -->
+    <section id="theory">
+      <div class="card">
+        <div class="card-title">
+          <span class="icon" style="background: var(--accent-dim)">📖</span
+          >Çoxluqlar — §1–§9 (DR.Math I Hissə)
+        </div>
+        <p style="color: var(--text-secondary); margin-bottom: 16px">
+          Hər bölməni diqqətlə oxuyun. Euler-Venn diaqramı DİM-in əsas
+          mövzularından biridir.
+        </p>
+        <div class="slide-wrap">
+          <div class="slide-meta">
+            <span
+              >Bölmə <strong id="snum">1</strong> /
+              <strong id="stotal">10</strong></span
+            >
+            <div class="slide-dots" id="sdots"></div>
+          </div>
+          <div class="slide-track" id="strack"></div>
+          <div class="slide-nav">
+            <button class="btn btn-secondary" onclick="prevSlide()">
+              ← Əvvəlki
+            </button>
+            <button class="btn btn-primary" onclick="nextSlide()" id="snext">
+              Növbəti →
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
 
-/* ══════════════════════════════════════════════════════════
+    <!-- EXAMPLES -->
+    <section id="examples">
+      <div class="card">
+        <div class="card-title">
+          <span class="icon" style="background: var(--accent-blue-dim)">✏️</span
+          >Həll edilmiş misallar
+        </div>
+        <p style="color: var(--text-secondary); margin-bottom: 20px">
+          DİM tipli məsələlər — addım-addım həll ilə.
+        </p>
+      </div>
+      <div id="ex-wrap"></div>
+    </section>
+
+    <!-- ASSESSMENT -->
+    <section id="assessment">
+      <div class="card">
+        <div class="card-title">
+          <span class="icon" style="background: var(--accent-blue-dim)">📋</span
+          >Qiymətləndirmə — 20 sual
+        </div>
+        <p style="color: var(--text-secondary); margin-bottom: 20px">
+          Diaqnostik test (izahatla) və ya sürət viktorinası seçin.
+        </p>
+        <div
+          class="feat-grid"
+          style="grid-template-columns: repeat(auto-fit, minmax(220px, 1fr))"
+        >
+          <div class="feat-card" style="padding: 24px; cursor: default">
+            <div class="fi">🔍</div>
+            <h3 style="color: var(--accent); margin-bottom: 8px">
+              Diaqnostik Test
+            </h3>
+            <p style="margin-bottom: 16px">
+              20 sual · hər sualdan sonra izahat
+            </p>
+            <button
+              class="btn btn-primary"
+              onclick="startDiag()"
+              style="width: 100%"
+            >
+              Testi Başla
+            </button>
+          </div>
+          <div class="feat-card" style="padding: 24px; cursor: default">
+            <div class="fi">⚡</div>
+            <h3 style="color: var(--accent-blue); margin-bottom: 8px">
+              Sürət Viktorinası
+            </h3>
+            <p style="margin-bottom: 16px">20 sual · sual başına 30 saniyə</p>
+            <button
+              class="btn btn-primary"
+              onclick="startViktorina()"
+              style="
+                width: 100%;
+                background: linear-gradient(
+                  135deg,
+                  var(--accent-blue),
+                  #7c3aed
+                );
+              "
+            >
+              Başla ⚡
+            </button>
+          </div>
+        </div>
+      </div>
+      <div id="diag-ui" style="display: none">
+        <div class="quiz-wrap">
+          <div class="quiz-progress">
+            <span style="font-size: 0.87rem; white-space: nowrap"
+              >Sual <strong id="dq-n">1</strong>/<strong id="dq-tot"
+                >20</strong
+              ></span
+            >
+            <div class="prog-bar">
+              <div class="prog-fill" id="dq-bar" style="width: 0%"></div>
+            </div>
+            <span
+              id="dq-score"
+              style="
+                font-size: 0.87rem;
+                color: var(--success);
+                font-weight: 700;
+                white-space: nowrap;
+              "
+              >0 ✓</span
+            >
+          </div>
+          <div class="quiz-q" id="dq-q"></div>
+          <div class="quiz-opts" id="dq-opts"></div>
+          <div class="expl-box" id="dq-expl"></div>
+          <div class="quiz-nav-row">
+            <button
+              class="btn btn-secondary"
+              onclick="prevDiag()"
+              id="dq-prev"
+              disabled
+            >
+              ← Geri
+            </button>
+            <button
+              class="btn btn-primary"
+              onclick="nextDiag()"
+              id="dq-next"
+              disabled
+            >
+              İrəli →
+            </button>
+          </div>
+        </div>
+      </div>
+      <div id="vik-ui" style="display: none">
+        <div class="quiz-wrap">
+          <div style="text-align: center; margin-bottom: 16px">
+            <div class="vik-timer" id="vik-timer">30</div>
+            <div
+              style="display: flex; gap: 4px; margin-top: 10px"
+              id="vik-dots"
+            ></div>
+          </div>
+          <div
+            style="
+              display: inline-block;
+              background: var(--accent-dim);
+              color: var(--accent);
+              border-radius: 20px;
+              padding: 3px 12px;
+              font-size: 0.72rem;
+              font-weight: 700;
+              margin-bottom: 12px;
+            "
+            id="vik-tag"
+          ></div>
+          <div class="quiz-q" id="vik-q"></div>
+          <div class="quiz-opts" id="vik-opts"></div>
+        </div>
+      </div>
+      <div id="res-ui" style="display: none">
+        <div class="quiz-wrap">
+          <div class="results-wrap">
+            <div
+              style="
+                font-size: 0.9rem;
+                color: var(--text-secondary);
+                margin-bottom: 10px;
+              "
+            >
+              Nəticəniz
+            </div>
+            <div class="score-ring" id="res-ring">
+              <div class="score-val" id="res-pct">0%</div>
+            </div>
+            <div class="score-msg" id="res-msg"></div>
+            <div class="breakdown">
+              <div class="breakdown-item">
+                <div class="breakdown-val" id="res-ok">0</div>
+                <div class="breakdown-lbl">Düzgün</div>
+              </div>
+              <div class="breakdown-item">
+                <div class="breakdown-val" id="res-no">0</div>
+                <div class="breakdown-lbl">Səhv</div>
+              </div>
+              <div class="breakdown-item">
+                <div class="breakdown-val" id="res-lvl">—</div>
+                <div class="breakdown-lbl">Səviyyə</div>
+              </div>
+            </div>
+            <div
+              style="
+                display: flex;
+                gap: 12px;
+                justify-content: center;
+                flex-wrap: wrap;
+              "
+            >
+              <button class="btn btn-primary" onclick="resetAssessment()">
+                Yenidən cəhd et
+              </button>
+              <button class="btn btn-secondary" onclick="showSection('theory')">
+                Nəzəriyyəyə qayıt
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <script>
+MathJax = {
+  tex: {
+    inlineMath: [['$', '$']],
+    displayMath: [['$$', '$$']],
+    processEscapes: true,
+    processEnvironments: true
+  },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre'] },
+  startup: {
+    typeset: false,
+    ready() {
+      MathJax.startup.defaultReady();
+      const trk = document.getElementById('strack');
+      if (trk) MathJax.typesetPromise([trk]).catch(console.error);
+    }
+  }
+};
+</script>
+<script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+    <script>
+      function showSection(id) {
+        document
+          .querySelectorAll("section")
+          .forEach((s) => s.classList.remove("active"));
+        document
+          .querySelectorAll("[data-sec]")
+          .forEach((a) => a.classList.remove("active"));
+        document.getElementById(id).classList.add("active");
+        document
+          .querySelectorAll(`[data-sec="${id}"]`)
+          .forEach((a) => a.classList.add("active"));
+        if (id === "examples") renderExamples();
+        if (id === "assessment") resetAssessment();
+        document.getElementById("mob-nav").classList.remove("open");
+        window.scrollTo(0, 0);
+        setTimeout(() => {
+          if (window.MathJax) MathJax.typesetPromise([document.getElementById(id)]).catch(console.error);
+        }, 100);
+      }
+      document.querySelectorAll("[data-sec]").forEach((a) =>
+        a.addEventListener("click", (e) => {
+          e.preventDefault();
+          showSection(a.dataset.sec);
+        }),
+      );
+      function toggleMobNav() {
+        document.getElementById("mob-nav").classList.toggle("open");
+      }
+      document.addEventListener("click", (e) => {
+        const mn = document.getElementById("mob-nav");
+        if (!mn.contains(e.target) && e.target.id !== "ham")
+          mn.classList.remove("open");
+      });
+
+      /* ══════════════════════════════════════════════════════════
    SLIDES — Theory content (from DR.Math Hissə 1, pp.15–17)
    ══════════════════════════════════════════════════════════ */
-const slides=[
-  {
-    title:'§1. Çoxluq anlayışı',
-    html:`
+      const slides = [
+        {
+          title: "§1. Çoxluq anlayışı",
+          html: String.raw`
       <div class="def-box"><strong>Çoxluq</strong> — müəyyən xassəyə görə birləşdirilmiş fərqli obyektlər (elementlər) toplusu.
       Böyük hərflə: $A, B, C, \ldots$; elementlər isə adətən kiçik hərflə: $a, b, c, \ldots$</div>
       <p><strong>Yazılış üsulları:</strong></p>
@@ -355,11 +1153,11 @@ const slides=[
           <text x="82" y="90" text-anchor="middle" fill="#e8e8f0" font-size="13">a₅</text>
         </svg>
       </div>
-      <div class="warn-box"><strong>Qeyd:</strong> Çoxluqda sıra əhəmiyyətsizdir: $\{1,2,3\}=\{3,1,2\}$. Hər element yalnız bir dəfə yazılır: $\{1,1,2\}=\{1,2\}$.</div>`
-  },
-  {
-    title:'§2. Çoxluq növləri. Alt çoxluq',
-    html:`
+      <div class="warn-box"><strong>Qeyd:</strong> Çoxluqda sıra əhəmiyyətsizdir: $\{1,2,3\}=\{3,1,2\}$. Hər element yalnız bir dəfə yazılır: $\{1,1,2\}=\{1,2\}$.</div>`,
+        },
+        {
+          title: "§2. Çoxluq növləri. Alt çoxluq",
+          html: String.raw`
       <div class="rule-grid">
         <div class="rule-item"><strong>Sonlu çoxluq:</strong> elementlərin sayı sonludur. $n(A)$ — kardinal ədəd (elementlərin sayı).</div>
         <div class="rule-item"><strong>Sonsuz çoxluq:</strong> $\mathbb{N},\,\mathbb{Z},\,\mathbb{R},\ldots$ — elementlər sonsuz çoxdur.</div>
@@ -376,11 +1174,11 @@ const slides=[
         <div class="rule-item">$A\subseteq B,\;B\subseteq C \Rightarrow A\subseteq C$</div>
       </div>
       <div class="formula-box"><strong>Alt çoxluqların sayı:</strong> $n(A)=k$ olarsa, $A$-nın <strong>$2^k$</strong> alt çoxluğu var.<br>
-      Nümunə: $A=\{1,2,3\}$ ($k=3$) → $2^3=8$ alt çoxluq:<br>$\emptyset,\{1\},\{2\},\{3\},\{1,2\},\{1,3\},\{2,3\},\{1,2,3\}$</div>`
-  },
-  {
-    title:'§3. Hesabi çoxluqlar (Ədəd çoxluqları)',
-    html:`
+      Nümunə: $A=\{1,2,3\}$ ($k=3$) → $2^3=8$ alt çoxluq:<br>$\emptyset,\{1\},\{2\},\{3\},\{1,2\},\{1,3\},\{2,3\},\{1,2,3\}$</div>`,
+        },
+        {
+          title: "§3. Hesabi çoxluqlar (Ədəd çoxluqları)",
+          html: String.raw`
       <p style="margin-bottom:12px;color:var(--text-secondary);">Riyaziyyatda istifadə olunan əsas ədəd çoxluqları:</p>
       <div class="set-row" style="background:rgba(81,207,102,.08);border:1px solid rgba(81,207,102,.2);">
         <span class="set-badge" style="background:rgba(81,207,102,.2);color:#51cf66;">ℕ</span>
@@ -403,11 +1201,11 @@ const slides=[
         <div><strong>Həqiqi ədədlər:</strong> $\mathbb{Q}\cup\mathbb{I}$ — bütün rasional + irrational</div>
       </div>
       <div class="formula-box">$$\mathbb{N}\subset\mathbb{Z}\subset\mathbb{Q}\subset\mathbb{R}$$</div>
-      <div class="warn-box"><strong>Nümunə:</strong> $\sqrt{4}=2\in\mathbb{N}$. $\sqrt{2}\in\mathbb{I}$. $\frac{22}{7}\in\mathbb{Q}$, lakin $\pi\notin\mathbb{Q}$ ($\pi\in\mathbb{I}$).</div>`
-  },
-  {
-    title:'§4. Bərabər çoxluqlar. Birləşmə ($A \\cup B$)',
-    html:`
+      <div class="warn-box"><strong>Nümunə:</strong> $\sqrt{4}=2\in\mathbb{N}$. $\sqrt{2}\in\mathbb{I}$. $\frac{22}{7}\in\mathbb{Q}$, lakin $\pi\notin\mathbb{Q}$ ($\pi\in\mathbb{I}$).</div>`,
+        },
+        {
+          title: "§4. Bərabər çoxluqlar. Birləşmə ($A \\cup B$)",
+          html: String.raw`
       <div class="def-box"><strong>Bərabər çoxluqlar:</strong> $A=B \Leftrightarrow A\subseteq B$ və $B\subseteq A$, yəni eyni elementlərə malikdirlər.</div>
       <div class="def-box"><strong>Birləşmə:</strong> $A\cup B = \{x \mid x\in A \;\text{və ya}\; x\in B\}$ — ya $A$-ya, ya $B$-yə, ya hər ikisinə aid elementlər.</div>
       <div style="display:flex;justify-content:center;gap:12px;margin:12px 0;flex-wrap:wrap;">
@@ -428,11 +1226,11 @@ const slides=[
         <div class="rule-item">$A\subseteq B \Rightarrow A\cup B = B$</div>
         <div class="rule-item">$A\cup U = U$ (universal çoxluq)</div>
       </div>
-      <div class="formula-box">$$n(A\cup B) = n(A) + n(B) - n(A\cap B)$$</div>`
-  },
-  {
-    title:'§5. Kəsişmə ($A \\cap B$). Ayrıq çoxluqlar',
-    html:`
+      <div class="formula-box">$$n(A\cup B) = n(A) + n(B) - n(A\cap B)$$</div>`,
+        },
+        {
+          title: "§5. Kəsişmə ($A \\cap B$). Ayrıq çoxluqlar",
+          html: String.raw`
       <div class="def-box"><strong>Kəsişmə:</strong> $A\cap B = \{x \mid x\in A \;\text{və}\; x\in B\}$ — həm $A$-ya, həm də $B$-yə aid elementlər.</div>
       <div class="def-box"><strong>Ayrıq çoxluqlar:</strong> $A\cap B=\emptyset$ — heç bir ortaq elementi olmayan çoxluqlar.</div>
       <div style="display:flex;justify-content:center;gap:12px;margin:12px 0;flex-wrap:wrap;">
@@ -454,11 +1252,12 @@ const slides=[
         <div class="rule-item">$A\subseteq B \Rightarrow A\cap B=A$</div>
         <div class="rule-item">$A\cap U=A$</div>
       </div>
-      <div class="warn-box"><strong>Distributivlik:</strong> $A\cap(B\cup C)=(A\cap B)\cup(A\cap C)$ &nbsp;|&nbsp; $A\cup(B\cap C)=(A\cup B)\cap(A\cup C)$</div>`
-  },
-  {
-    title:'§6. Fərq ($A \\setminus B$). Simmetrik fərq ($A \\triangle B$)',
-    html:`
+      <div class="warn-box"><strong>Distributivlik:</strong> $A\cap(B\cup C)=(A\cap B)\cup(A\cap C)$ &nbsp;|&nbsp; $A\cup(B\cap C)=(A\cup B)\cap(A\cup C)$</div>`,
+        },
+        {
+          title:
+            "§6. Fərq ($A \\setminus B$). Simmetrik fərq ($A \\triangle B$)",
+          html: String.raw`
       <div class="def-box"><strong>Fərq:</strong> $A\setminus B = \{x \mid x\in A,\; x\notin B\}$ — $A$-da olan, $B$-də olmayan elementlər.</div>
       <div style="display:flex;justify-content:center;gap:12px;margin:12px 0;flex-wrap:wrap;">
         <svg viewBox="0 0 240 120" width="215" aria-label="A\\B fərq — yalnız A-nın özünəməxsus hissəsi">
@@ -479,11 +1278,11 @@ const slides=[
         <div class="rule-item">$n(A\setminus B)=n(A)-n(A\cap B)$</div>
       </div>
       <div class="def-box"><strong>Simmetrik fərq:</strong> $A\triangle B = (A\setminus B)\cup(B\setminus A) = (A\cup B)\setminus(A\cap B)$<br>
-      Yalnız bir çoxluqda olan elementlər. $n(A\triangle B)=n(A)+n(B)-2n(A\cap B)$.</div>`
-  },
-  {
-    title:'§7. Tamamlayıcı çoxluq. De Morgan qanunları',
-    html:`
+      Yalnız bir çoxluqda olan elementlər. $n(A\triangle B)=n(A)+n(B)-2n(A\cap B)$.</div>`,
+        },
+        {
+          title: "§7. Tamamlayıcı çoxluq. De Morgan qanunları",
+          html: String.raw`
       <div class="def-box"><strong>Universal çoxluq ($U$):</strong> baxılan məsələdəki bütün elementləri əhatə edən çoxluq. $A\subseteq U$.</div>
       <div class="def-box"><strong>Tamamlayıcı:</strong> $\overline{A}=A'=U\setminus A$ — $U$-da $A$-ya daxil olmayan elementlər.<br>
       $n(A')=n(U)-n(A)$, &nbsp; $A\cup A'=U$, &nbsp; $A\cap A'=\emptyset$, &nbsp; $(\overline{A})'=A$.</div>
@@ -499,11 +1298,11 @@ const slides=[
       <div class="formula-box"><strong>De Morgan qanunları (ən vacib xassə!):</strong><br>
       $$\overline{A\cup B} = \overline{A}\cap\overline{B}$$
       $$\overline{A\cap B} = \overline{A}\cup\overline{B}$$</div>
-      <div class="info-box">De Morgan: birləşmənin tamamlayıcısı = tamamlayıcıların kəsişməsi. Kəsişmənin tamamlayıcısı = tamamlayıcıların birləşməsi.</div>`
-  },
-  {
-    title:'§8. Sayma düsturları. Euler-Venn diaqramı',
-    html:`
+      <div class="info-box">De Morgan: birləşmənin tamamlayıcısı = tamamlayıcıların kəsişməsi. Kəsişmənin tamamlayıcısı = tamamlayıcıların birləşməsi.</div>`,
+        },
+        {
+          title: "§8. Sayma düsturları. Euler-Venn diaqramı",
+          html: String.raw`
       <div class="formula-box"><strong>İki çoxluq üçün:</strong><br>
       $$n(A\cup B)=n(A)+n(B)-n(A\cap B)$$</div>
       <div style="display:flex;justify-content:center;margin:10px 0;">
@@ -527,11 +1326,11 @@ const slides=[
       </div>
       <div class="formula-box"><strong>Üç çoxluq üçün (İnklüziya-ekslüziya):</strong><br>
       $n(A\cup B\cup C) = n(A)+n(B)+n(C)$<br>$-\;n(A\cap B)-n(A\cap C)-n(B\cap C)$<br>$+\;n(A\cap B\cap C)$</div>
-      <div class="warn-box"><strong>DİM tipli nümunə:</strong> 40 şagirddən 25-i riyaziyyat, 20-si fizika sevir, 10-u hər ikisini sevir. Heç birini sevməyən: $40-(25+20-10)=5$.</div>`
-  },
-  {
-    title:'§8 (davam). Üç çoxluq — Euler-Venn',
-    html:`
+      <div class="warn-box"><strong>DİM tipli nümunə:</strong> 40 şagirddən 25-i riyaziyyat, 20-si fizika sevir, 10-u hər ikisini sevir. Heç birini sevməyən: $40-(25+20-10)=5$.</div>`,
+        },
+        {
+          title: "§8 (davam). Üç çoxluq — Euler-Venn",
+          html: String.raw`
       <div style="display:flex;justify-content:center;margin:8px 0;">
         <svg viewBox="0 0 300 260" width="270" aria-label="Üç çoxluq A B C Euler-Venn diaqramı yeddi bölgə">
           <rect x="5" y="5" width="290" height="250" rx="12" fill="rgba(255,255,255,.02)" stroke="rgba(255,255,255,.1)" stroke-width="1"/>
@@ -546,11 +1345,11 @@ const slides=[
       </div>
       <p style="font-size:.88rem;color:var(--text-secondary);"><strong>7 bölgə:</strong> yalnız A, yalnız B, yalnız C, A∩B (C-siz), A∩C (B-siz), B∩C (A-siz), A∩B∩C.</p>
       <div class="formula-box">Ümumilikdə: &nbsp; $n(A)+n(B)+n(C)-n(A\cap B)-n(A\cap C)-n(B\cap C)+n(A\cap B\cap C) = n(A\cup B\cup C)$</div>
-      <div class="info-box"><strong>DİM tipli:</strong> 60 şagirdin 30-u Azərbaycan, 35-i Rus, 40-ı İngilis dilini bilir. 20-si 3 dili, 10-u yalnız Azərbaycan bilir. Hamısı ən azı bir dil bilir. Yalnız İngilisçəni bilən: $60-(30+35+40-n(A\cap R)-n(A\cap İ)-n(R\cap İ)+20)=?$ — bu tipli məsələlər addım-addım həll tələb edir.</div>`
-  },
-  {
-    title:'§9. Bütün əməllər — xülasə cədvəli',
-    html:`
+      <div class="info-box"><strong>DİM tipli:</strong> 60 şagirdin 30-u Azərbaycan, 35-i Rus, 40-ı İngilis dilini bilir. 20-si 3 dili, 10-u yalnız Azərbaycan bilir. Hamısı ən azı bir dil bilir. Yalnız İngilisçəni bilən: $60-(30+35+40-n(A\cap R)-n(A\cap İ)-n(R\cap İ)+20)=?$ — bu tipli məsələlər addım-addım həll tələb edir.</div>`,
+        },
+        {
+          title: "§9. Bütün əməllər — xülasə cədvəli",
+          html: String.raw`
       <p style="margin-bottom:12px;color:var(--text-secondary);">Çoxluq əməllərinin tam xülasəsi:</p>
       <div class="rule-grid">
         <div class="rule-item"><span class="op-label">A ∪ B</span><strong>Birləşmə</strong> — A-da ya da B-da olan</div>
@@ -569,208 +1368,495 @@ const slides=[
       <div class="warn-box"><strong>Tez-tez buraxılan səhvlər:</strong><br>
       ✗ $\{0\}=\emptyset$ — YANLIŞ. $\emptyset$ elementssizdir, $\{0\}$-ın 0 elementi var.<br>
       ✗ $A\setminus B = B\setminus A$ — YANLIŞ (kommutativ deyil).<br>
-      ✗ $A\cup B$ həmişə $A\cap B$-dən böyükdür — YANLIŞ, $A\subseteq B$ olarsa bərabər ola bilər.</div>`
-  }
-];
+      ✗ $A\cup B$ həmişə $A\cap B$-dən böyükdür — YANLIŞ, $A\subseteq B$ olarsa bərabər ola bilər.</div>`,
+        },
+      ];
 
-let sIdx=0;
-function renderSlides(){
-  const trk=document.getElementById('strack');
-  const dots=document.getElementById('sdots');
-  document.getElementById('snum').textContent=sIdx+1;
-  document.getElementById('stotal').textContent=slides.length;
-  trk.innerHTML='';dots.innerHTML='';
-  slides.forEach((s,i)=>{
-    const d=document.createElement('div');d.className='slide'+(i===sIdx?' active':'');
-    d.innerHTML=`<h3>📌 ${s.title}</h3>${s.html}`;trk.appendChild(d);
-    const dot=document.createElement('div');dot.className='slide-dot'+(i===sIdx?' active':'');
-    dot.onclick=()=>{sIdx=i;renderSlides();};dots.appendChild(dot);
-  });
-  document.getElementById('snext').textContent=sIdx===slides.length-1?'Misallara keç →':'Növbəti →';
-  if(window.renderMathInElement) renderMathInElement(trk,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}]});
-}
-function nextSlide(){if(sIdx<slides.length-1){sIdx++;renderSlides();}else showSection('examples');}
-function prevSlide(){if(sIdx>0){sIdx--;renderSlides();}}
-renderSlides();
+      let sIdx = 0;
+      function renderSlides() {
+        const trk = document.getElementById("strack");
+        const dots = document.getElementById("sdots");
+        document.getElementById("snum").textContent = sIdx + 1;
+        document.getElementById("stotal").textContent = slides.length;
+        trk.innerHTML = "";
+        dots.innerHTML = "";
+        slides.forEach((s, i) => {
+          const d = document.createElement("div");
+          d.className = "slide" + (i === sIdx ? " active" : "");
+          d.innerHTML = `<h3>📌 ${s.title}</h3>${s.html}`;
+          trk.appendChild(d);
+          const dot = document.createElement("div");
+          dot.className = "slide-dot" + (i === sIdx ? " active" : "");
+          dot.onclick = () => {
+            sIdx = i;
+            renderSlides();
+          };
+          dots.appendChild(dot);
+        });
+        document.getElementById("snext").textContent =
+          sIdx === slides.length - 1 ? "Misallara keç →" : "Növbəti →";
+        if (window.MathJax) MathJax.typesetPromise([trk]).catch(console.error);
+      }
+      function nextSlide() {
+        if (sIdx < slides.length - 1) {
+          sIdx++;
+          renderSlides();
+        } else showSection("examples");
+      }
+      function prevSlide() {
+        if (sIdx > 0) {
+          sIdx--;
+          renderSlides();
+        }
+      }
+      renderSlides();
 
-/* ════════ EXAMPLES ════════ */
-const EXAMPLES=[
-  {num:1,topic:'§1 Çoxluq anlayışı',title:'Mənsubluq yoxlaması',
-   q:'$B=\\{x\\mid x\\in\\mathbb{N},\\;x^2<30\\}$ çoxluğunu tapın. $5\\in B$? $\\sqrt{28}\\in B$?',
-   a:'<p>$x^2<30$, $x\\in\\mathbb{N}$: $1,4,9,16,25<30$, $36>30$ → $B=\\{1,2,3,4,5\\}$</p><p>$5\\in B$ ✓ ($5^2=25<30$)</p><p>$\\sqrt{28}\\approx5.29\\notin\\mathbb{N}$ → $\\sqrt{28}\\notin B$ ✓</p>'},
-  {num:2,topic:'§2 Alt çoxluqlar',title:'Alt çoxluqların sayı',
-   q:'$A=\\{a,b,c,d\\}$ çoxluğunun neçə alt çoxluğu var? $b$-ni ehtiva edənlər neçədir?',
-   a:'<p>$|A|=4$ → $2^4=\\mathbf{16}$ alt çoxluq</p><p>$b$ daxil olan: qalanları 3 element, $2^3=\\mathbf{8}$ alt çoxluq</p>'},
-  {num:3,topic:'§4–§5 Birləşmə/Kəsişmə',title:'Əməllərin hesablanması',
-   q:'$A=\\{1,2,3,4,5,6\\}$, $B=\\{2,4,6,8,10\\}$ verilmişdir. $A\\cup B$, $A\\cap B$, $A\\setminus B$ tapın.',
-   a:'<p>$A\\cup B=\\{1,2,3,4,5,6,8,10\\}$</p><p>$A\\cap B=\\{2,4,6\\}$</p><p>$A\\setminus B=\\{1,3,5\\}$</p>'},
-  {num:4,topic:'§8 Sayma düsturu',title:'Euler-Venn — iki çoxluq',
-   q:'60 şagirddən 35-i fizika, 28-i kimya oxuyur, 12-si hər ikisini oxuyur. Heç birini oxumayanların sayını tapın.',
-   a:'<p>$n(F\\cup K)=35+28-12=51$</p><p>Heç birini oxumayanlar: $60-51=\\mathbf{9}$</p>'},
-  {num:5,topic:'§7 De Morgan',title:'De Morgan qanununun tətbiqi',
-   q:'$U=\\{1,2,3,4,5,6,7,8,9,10\\}$, $A=\\{1,3,5,7,9\\}$, $B=\\{1,2,3,4,5\\}$. $\\overline{A\\cup B}$ tapın.',
-   a:'<p>$A\\cup B=\\{1,2,3,4,5,7,9\\}$</p><p>$\\overline{A\\cup B}=U\\setminus(A\\cup B)=\\{6,8,10\\}$</p><p>Yoxlama (De Morgan): $\\overline{A}=\\{2,4,6,8,10\\}$, $\\overline{B}=\\{6,7,8,9,10\\}$, $\\overline{A}\\cap\\overline{B}=\\{6,8,10\\}$ ✓</p>'},
-  {num:6,topic:'§9 DİM tipli',title:'Üç çoxluq məsələsi',
-   q:'100 tələbədən 60-ı A, 50-si B, 40-ı C dərsinə yazılıb. A∩B=20, A∩C=15, B∩C=10, A∩B∩C=5. A∪B∪C nədir?',
-   a:'<p>$n(A\\cup B\\cup C)=60+50+40-20-15-10+5=\\mathbf{110}$</p><p>Lakin 100 tələbə var → 110−100=<strong>10 tələbə bir neçə dərsə yazılıb amma bu düzgün hesablanır</strong>, çünki 110 > 100 mümkün deyil. Yenidən yoxla: 100−n(hər birindən kənarda) = 100 − (100−n(A∪B∪C)). Burada n(A∪B∪C) ≤ 100 olmalıdır. Verilənlər yoxlanmalıdır.</p>'},
-];
+      /* ════════ EXAMPLES ════════ */
+      const EXAMPLES = [
+        {
+          num: 1,
+          topic: "§1 Çoxluq anlayışı",
+          title: "Mənsubluq yoxlaması",
+          q: "$B=\\{x\\mid x\\in\\mathbb{N},\\;x^2<30\\}$ çoxluğunu tapın. $5\\in B$? $\\sqrt{28}\\in B$?",
+          a: "<p>$x^2<30$, $x\\in\\mathbb{N}$: $1,4,9,16,25<30$, $36>30$ → $B=\\{1,2,3,4,5\\}$</p><p>$5\\in B$ ✓ ($5^2=25<30$)</p><p>$\\sqrt{28}\\approx5.29\\notin\\mathbb{N}$ → $\\sqrt{28}\\notin B$ ✓</p>",
+        },
+        {
+          num: 2,
+          topic: "§2 Alt çoxluqlar",
+          title: "Alt çoxluqların sayı",
+          q: "$A=\\{a,b,c,d\\}$ çoxluğunun neçə alt çoxluğu var? $b$-ni ehtiva edənlər neçədir?",
+          a: "<p>$|A|=4$ → $2^4=\\mathbf{16}$ alt çoxluq</p><p>$b$ daxil olan: qalanları 3 element, $2^3=\\mathbf{8}$ alt çoxluq</p>",
+        },
+        {
+          num: 3,
+          topic: "§4–§5 Birləşmə/Kəsişmə",
+          title: "Əməllərin hesablanması",
+          q: "$A=\\{1,2,3,4,5,6\\}$, $B=\\{2,4,6,8,10\\}$ verilmişdir. $A\\cup B$, $A\\cap B$, $A\\setminus B$ tapın.",
+          a: "<p>$A\\cup B=\\{1,2,3,4,5,6,8,10\\}$</p><p>$A\\cap B=\\{2,4,6\\}$</p><p>$A\\setminus B=\\{1,3,5\\}$</p>",
+        },
+        {
+          num: 4,
+          topic: "§8 Sayma düsturu",
+          title: "Euler-Venn — iki çoxluq",
+          q: "60 şagirddən 35-i fizika, 28-i kimya oxuyur, 12-si hər ikisini oxuyur. Heç birini oxumayanların sayını tapın.",
+          a: "<p>$n(F\\cup K)=35+28-12=51$</p><p>Heç birini oxumayanlar: $60-51=\\mathbf{9}$</p>",
+        },
+        {
+          num: 5,
+          topic: "§7 De Morgan",
+          title: "De Morgan qanununun tətbiqi",
+          q: "$U=\\{1,2,3,4,5,6,7,8,9,10\\}$, $A=\\{1,3,5,7,9\\}$, $B=\\{1,2,3,4,5\\}$. $\\overline{A\\cup B}$ tapın.",
+          a: "<p>$A\\cup B=\\{1,2,3,4,5,7,9\\}$</p><p>$\\overline{A\\cup B}=U\\setminus(A\\cup B)=\\{6,8,10\\}$</p><p>Yoxlama (De Morgan): $\\overline{A}=\\{2,4,6,8,10\\}$, $\\overline{B}=\\{6,7,8,9,10\\}$, $\\overline{A}\\cap\\overline{B}=\\{6,8,10\\}$ ✓</p>",
+        },
+        {
+          num: 6,
+          topic: "§9 DİM tipli",
+          title: "Üç çoxluq məsələsi",
+          q: "100 tələbədən 60-ı A, 50-si B, 40-ı C dərsinə yazılıb. A∩B=20, A∩C=15, B∩C=10, A∩B∩C=5. A∪B∪C nədir?",
+          a: "<p>$n(A\\cup B\\cup C)=60+50+40-20-15-10+5=\\mathbf{110}$</p><p>Lakin 100 tələbə var → 110−100=<strong>10 tələbə bir neçə dərsə yazılıb amma bu düzgün hesablanır</strong>, çünki 110 > 100 mümkün deyil. Yenidən yoxla: 100−n(hər birindən kənarda) = 100 − (100−n(A∪B∪C)). Burada n(A∪B∪C) ≤ 100 olmalıdır. Verilənlər yoxlanmalıdır.</p>",
+        },
+      ];
 
-function renderExamples(){
-  const w=document.getElementById('ex-wrap');
-  if(w.dataset.done) return;w.dataset.done='1';
-  EXAMPLES.forEach(ex=>{
-    const d=document.createElement('div');d.className='problem-card';
-    d.innerHTML=`<div class="problem-header"><span class="problem-num">Misal ${ex.num}</span><span class="problem-topic">${ex.topic}</span></div>
+      function renderExamples() {
+        const w = document.getElementById("ex-wrap");
+        if (w.dataset.done) return;
+        w.dataset.done = "1";
+        EXAMPLES.forEach((ex) => {
+          const d = document.createElement("div");
+          d.className = "problem-card";
+          d.innerHTML = `<div class="problem-header"><span class="problem-num">Misal ${ex.num}</span><span class="problem-topic">${ex.topic}</span></div>
       <div class="problem-text"><strong>${ex.title}</strong><br><br>${ex.q}</div>
       <button class="sol-btn" onclick="toggleSol(this)">Həlli göstər ▼</button>
       <div class="solution">${ex.a}</div>`;
-    w.appendChild(d);
-  });
-  if(window.renderMathInElement) renderMathInElement(w,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}]});
-}
-function toggleSol(btn){const s=btn.nextElementSibling;s.classList.toggle('open');btn.textContent=s.classList.contains('open')?'Həlli gizlət ▲':'Həlli göstər ▼';}
+          w.appendChild(d);
+        });
+        if (window.MathJax) MathJax.typesetPromise([w]).catch(console.error);
+      }
+      function toggleSol(btn) {
+        const s = btn.nextElementSibling;
+        s.classList.toggle("open");
+        btn.textContent = s.classList.contains("open")
+          ? "Həlli gizlət ▲"
+          : "Həlli göstər ▼";
+      }
 
-/* ════════ QUESTIONS ════════ */
-const QS=[
-  {s:'§1',q:'$A=\\{x\\mid x\\in\\mathbb{N},\\;2< x<8\\}$ çoxluğunu sadalama ilə yazın.',o:['$\\{3,4,5,6,7\\}$','$\\{2,3,4,5,6,7,8\\}$','$\\{3,4,5,6\\}$','$\\{2,3,4,5,6\\}$'],a:0,e:'2 < x < 8 şərti x=3,4,5,6,7-ni verir.'},
-  {s:'§2',q:'$|A|=4$ olarsa, $A$-nın neçə alt çoxluğu var?',o:['16','8','4','12'],a:0,e:'2^4=16. n elementli çoxluğun 2^n alt çoxluğu var.'},
-  {s:'§2',q:'$\\{a,b\\}$ çoxluğunun ciddi alt çoxluqlarının sayı:',o:['3','4','2','1'],a:0,e:'Ciddi alt çoxluqlar (özü xaric): ∅,{a},{b} — 3 ədəd.'},
-  {s:'§3',q:'$\\pi$ hansı çoxluqda var, hansında yoxdur?',o:['$\\mathbb{R}$ bəli, $\\mathbb{Q}$ xeyr','$\\mathbb{Q}$ bəli, $\\mathbb{Z}$ xeyr','$\\mathbb{N}$ bəli','$\\mathbb{Z}$ bəli'],a:0,e:'π irrational ədəddir. ℝ ∋ π, lakin π ∉ ℚ.'},
-  {s:'§4',q:'$A=\\{1,2,3\\}$, $B=\\{2,3,4,5\\}$. $n(A\\cup B)=?$',o:['5','4','6','7'],a:0,e:'A∪B={1,2,3,4,5} → n=5. Düstur: 3+4-2=5.'},
-  {s:'§5',q:'$A=\\{1,3,5,7\\}$, $B=\\{3,5,9\\}$. $A\\cap B=?$',o:['$\\{3,5\\}$','$\\{1,7,9\\}$','$\\{1,3,5,7,9\\}$','$\\{3\\}$'],a:0,e:'Ortaq elementlər: 3 və 5.'},
-  {s:'§6',q:'$A=\\{1,2,3,4,5\\}$, $B=\\{2,4,6\\}$. $A\\setminus B=?$',o:['$\\{1,3,5\\}$','$\\{2,4\\}$','$\\{6\\}$','$\\{1,3,5,6\\}$'],a:0,e:'A-da olan, B-də olmayan: 1,3,5.'},
-  {s:'§6',q:'$A\\triangle B$ (simmetrik fərq) nədir?',o:['$(A\\setminus B)\\cup(B\\setminus A)$','$A\\cap B$','$A\\cup B$','$A\\setminus B$'],a:0,e:'Simmetrik fərq: hər ikisinin yalnız özünəxas hissəsi.'},
-  {s:'§7',q:'De Morgan: $\\overline{A\\cup B}=?$',o:['$\\overline{A}\\cap\\overline{B}$','$\\overline{A}\\cup\\overline{B}$','$A\\cap B$','$\\overline{A\\cap B}$'],a:0,e:'De Morgan 1-ci qanun: birləşmənin tamamlayıcısı = tamamlayıcıların kəsişməsi.'},
-  {s:'§7',q:'$n(A)=30$, $n(U)=100$. $n(A\')=?$',o:['70','30','100','50'],a:0,e:'n(A\')=n(U)-n(A)=100-30=70.'},
-  {s:'§8',q:'$n(A)=20,\\;n(B)=15,\\;n(A\\cap B)=8$. $n(A\\cup B)=?$',o:['27','35','28','23'],a:0,e:'n(A∪B)=20+15-8=27.'},
-  {s:'§8',q:'50 şagirddən 30-u riyaziyyat, 25-i fizika oxuyur, 10-u hər ikisini. Heç birini oxumayanlar?',o:['5','10','15','20'],a:0,e:'n(R∪F)=30+25-10=45. Heç birini oxumayanlar: 50-45=5.'},
-  {s:'§8',q:'$n(A\\setminus B)=?$ ifadəsi:',o:['$n(A)-n(A\\cap B)$','$n(A)-n(B)$','$n(A\\cup B)-n(B)$','$n(B)-n(A\\cap B)$'],a:0,e:'A\\B = A-nın B ilə kəsişməsindən azad hissəsi.'},
-  {s:'§5',q:'$A\\cap B=\\emptyset$ nə deməkdir?',o:['A və B ayrıqdır','A = B','A ⊆ B','B ⊆ A'],a:0,e:'Kəsişmə boş çoxluqdursa, A və B ayrıqdır (ortaq elementi yoxdur).'},
-  {s:'§2',q:'$A=\\{0\\}$ çoxluğu haqqında hansı doğrudur?',o:['Vahid çoxluqdur','Boş çoxluqdur','Sonsuz çoxluqdur','Hər çoxluğun alt çoxluğudur'],a:0,e:'{0} bir elementi var (0 ədədi) → vahid çoxluqdur. Boş çoxluq isə ∅-dır.'},
-  {s:'§4',q:'$A\\subseteq B$ olarsa, $A\\cup B=?$',o:['$B$','$A$','$\\emptyset$','$A\\cap B$'],a:0,e:'A⊆B olduqda A∪B=B (A artıq B-nin içindədir).'},
-  {s:'§5',q:'$A\\subseteq B$ olarsa, $A\\cap B=?$',o:['$A$','$B$','$\\emptyset$','$A\\cup B$'],a:0,e:'A⊆B olduqda A∩B=A (kəsişmə kiçik çoxluqdur).'},
-  {s:'§9',q:'$n(A\\triangle B)=?$ düsturu:',o:['$n(A)+n(B)-2n(A\\cap B)$','$n(A\\cup B)-n(A\\cap B)$','$n(A)-n(B)$','$n(A\\cup B)$'],a:0,e:'n(A△B) = n(A)+n(B)-2n(A∩B) = n(A∪B)-n(A∩B).'},
-  {s:'§7',q:'$\\overline{\\overline{A}}=?$',o:['$A$','$\\emptyset$','$U$','$\\overline{A}$'],a:0,e:'İki dəfə tamamlayıcı orijinalı qaytarır: (A\')\'=A.'},
-  {s:'§8',q:'$n(A)=n(B)=n(C)=10$, $n(A\\cap B)=n(A\\cap C)=n(B\\cap C)=3$, $n(A\\cap B\\cap C)=1$. $n(A\\cup B\\cup C)=?$',o:['21','20','22','24'],a:0,e:'10+10+10-3-3-3+1=22.'},
-];
+      /* ════════ QUESTIONS ════════ */
+      const QS = [
+        {
+          s: "§1",
+          q: "$A=\\{x\\mid x\\in\\mathbb{N},\\;2< x<8\\}$ çoxluğunu sadalama ilə yazın.",
+          o: [
+            "$\\{3,4,5,6,7\\}$",
+            "$\\{2,3,4,5,6,7,8\\}$",
+            "$\\{3,4,5,6\\}$",
+            "$\\{2,3,4,5,6\\}$",
+          ],
+          a: 0,
+          e: "2 < x < 8 şərti x=3,4,5,6,7-ni verir.",
+        },
+        {
+          s: "§2",
+          q: "$|A|=4$ olarsa, $A$-nın neçə alt çoxluğu var?",
+          o: ["16", "8", "4", "12"],
+          a: 0,
+          e: "2^4=16. n elementli çoxluğun 2^n alt çoxluğu var.",
+        },
+        {
+          s: "§2",
+          q: "$\\{a,b\\}$ çoxluğunun ciddi alt çoxluqlarının sayı:",
+          o: ["3", "4", "2", "1"],
+          a: 0,
+          e: "Ciddi alt çoxluqlar (özü xaric): ∅,{a},{b} — 3 ədəd.",
+        },
+        {
+          s: "§3",
+          q: "$\\pi$ hansı çoxluqda var, hansında yoxdur?",
+          o: [
+            "$\\mathbb{R}$ bəli, $\\mathbb{Q}$ xeyr",
+            "$\\mathbb{Q}$ bəli, $\\mathbb{Z}$ xeyr",
+            "$\\mathbb{N}$ bəli",
+            "$\\mathbb{Z}$ bəli",
+          ],
+          a: 0,
+          e: "π irrational ədəddir. ℝ ∋ π, lakin π ∉ ℚ.",
+        },
+        {
+          s: "§4",
+          q: "$A=\\{1,2,3\\}$, $B=\\{2,3,4,5\\}$. $n(A\\cup B)=?$",
+          o: ["5", "4", "6", "7"],
+          a: 0,
+          e: "A∪B={1,2,3,4,5} → n=5. Düstur: 3+4-2=5.",
+        },
+        {
+          s: "§5",
+          q: "$A=\\{1,3,5,7\\}$, $B=\\{3,5,9\\}$. $A\\cap B=?$",
+          o: ["$\\{3,5\\}$", "$\\{1,7,9\\}$", "$\\{1,3,5,7,9\\}$", "$\\{3\\}$"],
+          a: 0,
+          e: "Ortaq elementlər: 3 və 5.",
+        },
+        {
+          s: "§6",
+          q: "$A=\\{1,2,3,4,5\\}$, $B=\\{2,4,6\\}$. $A\\setminus B=?$",
+          o: ["$\\{1,3,5\\}$", "$\\{2,4\\}$", "$\\{6\\}$", "$\\{1,3,5,6\\}$"],
+          a: 0,
+          e: "A-da olan, B-də olmayan: 1,3,5.",
+        },
+        {
+          s: "§6",
+          q: "$A\\triangle B$ (simmetrik fərq) nədir?",
+          o: [
+            "$(A\\setminus B)\\cup(B\\setminus A)$",
+            "$A\\cap B$",
+            "$A\\cup B$",
+            "$A\\setminus B$",
+          ],
+          a: 0,
+          e: "Simmetrik fərq: hər ikisinin yalnız özünəxas hissəsi.",
+        },
+        {
+          s: "§7",
+          q: "De Morgan: $\\overline{A\\cup B}=?$",
+          o: [
+            "$\\overline{A}\\cap\\overline{B}$",
+            "$\\overline{A}\\cup\\overline{B}$",
+            "$A\\cap B$",
+            "$\\overline{A\\cap B}$",
+          ],
+          a: 0,
+          e: "De Morgan 1-ci qanun: birləşmənin tamamlayıcısı = tamamlayıcıların kəsişməsi.",
+        },
+        {
+          s: "§7",
+          q: "$n(A)=30$, $n(U)=100$. $n(A')=?$",
+          o: ["70", "30", "100", "50"],
+          a: 0,
+          e: "n(A')=n(U)-n(A)=100-30=70.",
+        },
+        {
+          s: "§8",
+          q: "$n(A)=20,\\;n(B)=15,\\;n(A\\cap B)=8$. $n(A\\cup B)=?$",
+          o: ["27", "35", "28", "23"],
+          a: 0,
+          e: "n(A∪B)=20+15-8=27.",
+        },
+        {
+          s: "§8",
+          q: "50 şagirddən 30-u riyaziyyat, 25-i fizika oxuyur, 10-u hər ikisini. Heç birini oxumayanlar?",
+          o: ["5", "10", "15", "20"],
+          a: 0,
+          e: "n(R∪F)=30+25-10=45. Heç birini oxumayanlar: 50-45=5.",
+        },
+        {
+          s: "§8",
+          q: "$n(A\\setminus B)=?$ ifadəsi:",
+          o: [
+            "$n(A)-n(A\\cap B)$",
+            "$n(A)-n(B)$",
+            "$n(A\\cup B)-n(B)$",
+            "$n(B)-n(A\\cap B)$",
+          ],
+          a: 0,
+          e: "A\\B = A-nın B ilə kəsişməsindən azad hissəsi.",
+        },
+        {
+          s: "§5",
+          q: "$A\\cap B=\\emptyset$ nə deməkdir?",
+          o: ["A və B ayrıqdır", "A = B", "A ⊆ B", "B ⊆ A"],
+          a: 0,
+          e: "Kəsişmə boş çoxluqdursa, A və B ayrıqdır (ortaq elementi yoxdur).",
+        },
+        {
+          s: "§2",
+          q: "$A=\\{0\\}$ çoxluğu haqqında hansı doğrudur?",
+          o: [
+            "Vahid çoxluqdur",
+            "Boş çoxluqdur",
+            "Sonsuz çoxluqdur",
+            "Hər çoxluğun alt çoxluğudur",
+          ],
+          a: 0,
+          e: "{0} bir elementi var (0 ədədi) → vahid çoxluqdur. Boş çoxluq isə ∅-dır.",
+        },
+        {
+          s: "§4",
+          q: "$A\\subseteq B$ olarsa, $A\\cup B=?$",
+          o: ["$B$", "$A$", "$\\emptyset$", "$A\\cap B$"],
+          a: 0,
+          e: "A⊆B olduqda A∪B=B (A artıq B-nin içindədir).",
+        },
+        {
+          s: "§5",
+          q: "$A\\subseteq B$ olarsa, $A\\cap B=?$",
+          o: ["$A$", "$B$", "$\\emptyset$", "$A\\cup B$"],
+          a: 0,
+          e: "A⊆B olduqda A∩B=A (kəsişmə kiçik çoxluqdur).",
+        },
+        {
+          s: "§9",
+          q: "$n(A\\triangle B)=?$ düsturu:",
+          o: [
+            "$n(A)+n(B)-2n(A\\cap B)$",
+            "$n(A\\cup B)-n(A\\cap B)$",
+            "$n(A)-n(B)$",
+            "$n(A\\cup B)$",
+          ],
+          a: 0,
+          e: "n(A△B) = n(A)+n(B)-2n(A∩B) = n(A∪B)-n(A∩B).",
+        },
+        {
+          s: "§7",
+          q: "$\\overline{\\overline{A}}=?$",
+          o: ["$A$", "$\\emptyset$", "$U$", "$\\overline{A}$"],
+          a: 0,
+          e: "İki dəfə tamamlayıcı orijinalı qaytarır: (A')'=A.",
+        },
+        {
+          s: "§8",
+          q: "$n(A)=n(B)=n(C)=10$, $n(A\\cap B)=n(A\\cap C)=n(B\\cap C)=3$, $n(A\\cap B\\cap C)=1$. $n(A\\cup B\\cup C)=?$",
+          o: ["21", "20", "22", "24"],
+          a: 0,
+          e: "10+10+10-3-3-3+1=22.",
+        },
+      ];
 
-let dIdx=0,dScore=0,dAns=[];
-function startDiag(){
-  dIdx=0;dScore=0;dAns=new Array(QS.length).fill(null);
-  document.getElementById('diag-ui').style.display='block';
-  document.getElementById('vik-ui').style.display='none';
-  document.getElementById('res-ui').style.display='none';
-  renderDQ();
-  document.getElementById('diag-ui').scrollIntoView({behavior:'smooth',block:'start'});
-}
-function renderDQ(){
-  const q=QS[dIdx];
-  document.getElementById('dq-n').textContent=dIdx+1;
-  document.getElementById('dq-tot').textContent=QS.length;
-  document.getElementById('dq-score').textContent=dScore+' ✓';
-  document.getElementById('dq-bar').style.width=(dIdx/QS.length*100)+'%';
-  document.getElementById('dq-expl').style.display='none';
-  document.getElementById('dq-next').disabled=dAns[dIdx]===null;
-  document.getElementById('dq-prev').disabled=dIdx===0;
-  document.getElementById('dq-q').innerHTML=q.q;
-  const opts=document.getElementById('dq-opts');opts.innerHTML='';
-  const L=['A','B','C','D'];
-  q.o.forEach((opt,i)=>{
-    const div=document.createElement('div');div.className='opt';
-    if(dAns[dIdx]!==null){div.classList.add('disabled');if(i===q.a)div.classList.add('correct');else if(i===dAns[dIdx])div.classList.add('wrong');}
-    div.innerHTML=`<span class="opt-ltr">${L[i]}</span><span>${opt}</span>`;
-    div.addEventListener('click',()=>selectDQ(i));opts.appendChild(div);
-  });
-  renderMathNow('dq-q');renderMathNow('dq-opts');
-}
-function selectDQ(i){
-  if(dAns[dIdx]!==null) return;
-  dAns[dIdx]=i;if(i===QS[dIdx].a) dScore++;
-  document.getElementById('dq-next').disabled=false;
-  document.getElementById('dq-score').textContent=dScore+' ✓';
-  const ex=document.getElementById('dq-expl');ex.style.display='block';
-  const ok=i===QS[dIdx].a;
-  ex.style.background=ok?'rgba(81,207,102,.09)':'rgba(255,107,107,.09)';
-  ex.style.borderLeftColor=ok?'var(--success)':'var(--error)';
-  ex.innerHTML=(ok?'<strong style="color:var(--success)">✓ Düzgün!</strong> ':
-    '<strong style="color:var(--error)">✗ Səhv.</strong> Düzgün: <strong>'+QS[dIdx].o[QS[dIdx].a]+'</strong>. ')+QS[dIdx].e;
-  renderDQ();
-}
-function nextDiag(){if(dIdx<QS.length-1){dIdx++;renderDQ();}else showResults(dScore,QS.length);}
-function prevDiag(){if(dIdx>0){dIdx--;renderDQ();}}
+      let dIdx = 0,
+        dScore = 0,
+        dAns = [];
+      function startDiag() {
+        dIdx = 0;
+        dScore = 0;
+        dAns = new Array(QS.length).fill(null);
+        document.getElementById("diag-ui").style.display = "block";
+        document.getElementById("vik-ui").style.display = "none";
+        document.getElementById("res-ui").style.display = "none";
+        renderDQ();
+        document
+          .getElementById("diag-ui")
+          .scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+      function renderDQ() {
+        const q = QS[dIdx];
+        document.getElementById("dq-n").textContent = dIdx + 1;
+        document.getElementById("dq-tot").textContent = QS.length;
+        document.getElementById("dq-score").textContent = dScore + " ✓";
+        document.getElementById("dq-bar").style.width =
+          (dIdx / QS.length) * 100 + "%";
+        document.getElementById("dq-expl").style.display = "none";
+        document.getElementById("dq-next").disabled = dAns[dIdx] === null;
+        document.getElementById("dq-prev").disabled = dIdx === 0;
+        document.getElementById("dq-q").innerHTML = q.q;
+        const opts = document.getElementById("dq-opts");
+        opts.innerHTML = "";
+        const L = ["A", "B", "C", "D"];
+        q.o.forEach((opt, i) => {
+          const div = document.createElement("div");
+          div.className = "opt";
+          if (dAns[dIdx] !== null) {
+            div.classList.add("disabled");
+            if (i === q.a) div.classList.add("correct");
+            else if (i === dAns[dIdx]) div.classList.add("wrong");
+          }
+          div.innerHTML = `<span class="opt-ltr">${L[i]}</span><span>${opt}</span>`;
+          div.addEventListener("click", () => selectDQ(i));
+          opts.appendChild(div);
+        });
+        renderMathNow("dq-q");
+        renderMathNow("dq-opts");
+      }
+      function selectDQ(i) {
+        if (dAns[dIdx] !== null) return;
+        dAns[dIdx] = i;
+        if (i === QS[dIdx].a) dScore++;
+        document.getElementById("dq-next").disabled = false;
+        document.getElementById("dq-score").textContent = dScore + " ✓";
+        const ex = document.getElementById("dq-expl");
+        ex.style.display = "block";
+        const ok = i === QS[dIdx].a;
+        ex.style.background = ok
+          ? "rgba(81,207,102,.09)"
+          : "rgba(255,107,107,.09)";
+        ex.style.borderLeftColor = ok ? "var(--success)" : "var(--error)";
+        ex.innerHTML =
+          (ok
+            ? '<strong style="color:var(--success)">✓ Düzgün!</strong> '
+            : '<strong style="color:var(--error)">✗ Səhv.</strong> Düzgün: <strong>' +
+              QS[dIdx].o[QS[dIdx].a] +
+              "</strong>. ") + QS[dIdx].e;
+        if (window.MathJax) MathJax.typesetPromise([ex]).catch(console.error);
+        renderDQ();
+      }
+      function nextDiag() {
+        if (dIdx < QS.length - 1) {
+          dIdx++;
+          renderDQ();
+        } else showResults(dScore, QS.length);
+      }
+      function prevDiag() {
+        if (dIdx > 0) {
+          dIdx--;
+          renderDQ();
+        }
+      }
 
-let vIdx=0,vScore=0,vTmr=null,vT=30,vRes=[];
-function startViktorina(){
-  vIdx=0;vScore=0;vRes=[];
-  document.getElementById('diag-ui').style.display='none';
-  document.getElementById('vik-ui').style.display='block';
-  document.getElementById('res-ui').style.display='none';
-  renderVQ();
-  document.getElementById('vik-ui').scrollIntoView({behavior:'smooth',block:'start'});
-}
-function renderVQ(){
-  clearInterval(vTmr);vT=30;
-  const q=QS[vIdx];
-  document.getElementById('vik-tag').textContent=q.s;
-  document.getElementById('vik-q').innerHTML=q.q;
-  tickV();vTmr=setInterval(tickV,1000);
-  const opts=document.getElementById('vik-opts');opts.innerHTML='';
-  const L=['A','B','C','D'];
-  q.o.forEach((opt,i)=>{
-    const d=document.createElement('div');d.className='opt';
-    d.innerHTML=`<span class="opt-ltr">${L[i]}</span><span>${opt}</span>`;
-    d.onclick=()=>answerV(i,d);opts.appendChild(d);
-  });
-  renderVDots();
-  renderMathNow('vik-q');renderMathNow('vik-opts');
-}
-function tickV(){
-  const el=document.getElementById('vik-timer');
-  el.textContent=vT;el.style.color=vT<=10?'var(--error)':'var(--warning)';
-  if(vT--<=0){clearInterval(vTmr);answerV(-1,null);}
-}
-function renderVDots(){
-  const el=document.getElementById('vik-dots');el.innerHTML='';
-  QS.forEach((_,i)=>{const d=document.createElement('div');
-    d.style.cssText=`flex:1;height:5px;border-radius:3px;background:${i<vIdx?(vRes[i]?'var(--success)':'var(--error)'):i===vIdx?'var(--accent)':'var(--border-glass)'}`;
-    el.appendChild(d);});
-}
-function answerV(idx,btn){
-  clearInterval(vTmr);
-  const q=QS[vIdx];
-  document.querySelectorAll('#vik-opts .opt').forEach(b=>b.style.pointerEvents='none');
-  const ok=idx===q.a;
-  if(btn) btn.classList.add(ok?'correct':'wrong');
-  if(!ok&&idx!==-1) document.querySelectorAll('#vik-opts .opt')[q.a]?.classList.add('correct');
-  if(ok) vScore++;vRes.push(ok);
-  setTimeout(()=>{vIdx++;if(vIdx>=QS.length){showResults(vScore,QS.length);return;}renderVQ();},900);
-}
-function showResults(score,total){
-  document.getElementById('diag-ui').style.display='none';
-  document.getElementById('vik-ui').style.display='none';
-  document.getElementById('res-ui').style.display='block';
-  const pct=Math.round(score/total*100);
-  document.getElementById('res-ring').style.setProperty('--score',pct);
-  document.getElementById('res-pct').textContent=pct+'%';
-  document.getElementById('res-ok').textContent=score;
-  document.getElementById('res-no').textContent=total-score;
-  let lv,msg;
-  if(pct>=90){lv='Əla';msg='🏆 Əla! Mövzunu mükəmməl bilirsiniz!';}
-  else if(pct>=70){lv='Yaxşı';msg='👍 Yaxşı! Bir neçə bölməni təkrarlayın.';}
-  else if(pct>=50){lv='Kafi';msg='📚 Nəzəriyyəni yenidən oxuyun.';}
-  else{lv='Zəif';msg='💡 Bütün bölmələri əvvəldən keçin.';}
-  document.getElementById('res-lvl').textContent=lv;
-  document.getElementById('res-msg').innerHTML=msg;
-  document.getElementById('res-ui').scrollIntoView({behavior:'smooth'});
-}
-function resetAssessment(){
-  ['diag-ui','vik-ui','res-ui'].forEach(id=>document.getElementById(id).style.display='none');
-  clearInterval(vTmr);
-}
-function renderMathNow(id){
-  const el=document.getElementById(id);
-  if(el&&window.renderMathInElement) renderMathInElement(el,{delimiters:[{left:'$',right:'$',display:false},{left:'$$',right:'$$',display:true}]});
-}
-</script>
-</body>
+      let vIdx = 0,
+        vScore = 0,
+        vTmr = null,
+        vT = 30,
+        vRes = [];
+      function startViktorina() {
+        vIdx = 0;
+        vScore = 0;
+        vRes = [];
+        document.getElementById("diag-ui").style.display = "none";
+        document.getElementById("vik-ui").style.display = "block";
+        document.getElementById("res-ui").style.display = "none";
+        renderVQ();
+        document
+          .getElementById("vik-ui")
+          .scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+      function renderVQ() {
+        clearInterval(vTmr);
+        vT = 30;
+        const q = QS[vIdx];
+        document.getElementById("vik-tag").textContent = q.s;
+        document.getElementById("vik-q").innerHTML = q.q;
+        tickV();
+        vTmr = setInterval(tickV, 1000);
+        const opts = document.getElementById("vik-opts");
+        opts.innerHTML = "";
+        const L = ["A", "B", "C", "D"];
+        q.o.forEach((opt, i) => {
+          const d = document.createElement("div");
+          d.className = "opt";
+          d.innerHTML = `<span class="opt-ltr">${L[i]}</span><span>${opt}</span>`;
+          d.onclick = () => answerV(i, d);
+          opts.appendChild(d);
+        });
+        renderVDots();
+        renderMathNow("vik-q");
+        renderMathNow("vik-opts");
+      }
+      function tickV() {
+        const el = document.getElementById("vik-timer");
+        el.textContent = vT;
+        el.style.color = vT <= 10 ? "var(--error)" : "var(--warning)";
+        if (vT-- <= 0) {
+          clearInterval(vTmr);
+          answerV(-1, null);
+        }
+      }
+      function renderVDots() {
+        const el = document.getElementById("vik-dots");
+        el.innerHTML = "";
+        QS.forEach((_, i) => {
+          const d = document.createElement("div");
+          d.style.cssText = `flex:1;height:5px;border-radius:3px;background:${i < vIdx ? (vRes[i] ? "var(--success)" : "var(--error)") : i === vIdx ? "var(--accent)" : "var(--border-glass)"}`;
+          el.appendChild(d);
+        });
+      }
+      function answerV(idx, btn) {
+        clearInterval(vTmr);
+        const q = QS[vIdx];
+        document
+          .querySelectorAll("#vik-opts .opt")
+          .forEach((b) => (b.style.pointerEvents = "none"));
+        const ok = idx === q.a;
+        if (btn) btn.classList.add(ok ? "correct" : "wrong");
+        if (!ok && idx !== -1)
+          document
+            .querySelectorAll("#vik-opts .opt")
+            [q.a]?.classList.add("correct");
+        if (ok) vScore++;
+        vRes.push(ok);
+        setTimeout(() => {
+          vIdx++;
+          if (vIdx >= QS.length) {
+            showResults(vScore, QS.length);
+            return;
+          }
+          renderVQ();
+        }, 900);
+      }
+      function showResults(score, total) {
+        document.getElementById("diag-ui").style.display = "none";
+        document.getElementById("vik-ui").style.display = "none";
+        document.getElementById("res-ui").style.display = "block";
+        const pct = Math.round((score / total) * 100);
+        document.getElementById("res-ring").style.setProperty("--score", pct);
+        document.getElementById("res-pct").textContent = pct + "%";
+        document.getElementById("res-ok").textContent = score;
+        document.getElementById("res-no").textContent = total - score;
+        let lv, msg;
+        if (pct >= 90) {
+          lv = "Əla";
+          msg = "🏆 Əla! Mövzunu mükəmməl bilirsiniz!";
+        } else if (pct >= 70) {
+          lv = "Yaxşı";
+          msg = "👍 Yaxşı! Bir neçə bölməni təkrarlayın.";
+        } else if (pct >= 50) {
+          lv = "Kafi";
+          msg = "📚 Nəzəriyyəni yenidən oxuyun.";
+        } else {
+          lv = "Zəif";
+          msg = "💡 Bütün bölmələri əvvəldən keçin.";
+        }
+        document.getElementById("res-lvl").textContent = lv;
+        document.getElementById("res-msg").innerHTML = msg;
+        document
+          .getElementById("res-ui")
+          .scrollIntoView({ behavior: "smooth" });
+      }
+      function resetAssessment() {
+        ["diag-ui", "vik-ui", "res-ui"].forEach(
+          (id) => (document.getElementById(id).style.display = "none"),
+        );
+        clearInterval(vTmr);
+      }
+      function renderMathNow(id) {
+        const el = document.getElementById(id);
+        if (el && window.MathJax) MathJax.typesetPromise([el]).catch(console.error);
+      }
+    </script>
+  </body>
 </html>
