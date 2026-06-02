@@ -1,0 +1,1073 @@
+<!doctype html>
+<html lang="az">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+    <meta name="theme-color" content="#0f172a" />
+    <meta name="color-scheme" content="dark light" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
+    <title>Mövzu 6 — Həqiqi ədədlər. Üstlər. Kvadrat kök</title>
+    <style>
+      :root {
+        --bg-dark: #0f172a;
+        --bg-card: rgba(255, 255, 255, 0.05);
+        --bg-glass: rgba(255, 255, 255, 0.08);
+        --border-glass: rgba(255, 255, 255, 0.15);
+        --text-primary: #e8e8f0;
+        --text-secondary: #a0a0b8;
+        --accent: #8b5cf6;
+        --accent-dim: rgba(139, 92, 246, 0.18);
+        --accent-warm: #ff6b6b;
+        --accent-blue: #4dabf7;
+        --accent-blue-dim: rgba(77, 171, 247, 0.18);
+        --success: #51cf66;
+        --error: #ff6b6b;
+        --warning: #fcc419;
+      }
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      body {
+        font-family: "Segoe UI", system-ui, sans-serif;
+        background: var(--bg-dark);
+        color: var(--text-primary);
+        min-height: 100vh;
+        overflow-x: hidden;
+        line-height: 1.65;
+      }
+      .MathJax { font-size: 1.05em !important; }
+      mjx-container[display="true"] { overflow-x: auto; padding: 6px 0; }
+      .bg {
+        position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;
+        background:
+          radial-gradient(ellipse at 30% 20%, rgba(139,92,246,0.07) 0%, transparent 55%),
+          radial-gradient(ellipse at 70% 80%, rgba(77,171,247,0.07) 0%, transparent 55%);
+      }
+      .bg::before {
+        content: "";
+        position: absolute; inset: 0;
+        background: repeating-linear-gradient(0deg, transparent, transparent 44px,
+          rgba(255,255,255,0.018) 44px, rgba(255,255,255,0.018) 45px);
+        animation: bgScroll 25s linear infinite;
+      }
+      @keyframes bgScroll { to { transform: translateY(45px); } }
+      nav {
+        position: fixed; top: 0; left: 0; right: 0;
+        background: rgba(15,15,26,0.9);
+        backdrop-filter: blur(24px);
+        border-bottom: 1px solid var(--border-glass);
+        z-index: 1000; padding: 0 20px;
+      }
+      .nav-inner {
+        max-width: 1100px; margin: 0 auto;
+        display: flex; justify-content: space-between; align-items: center; height: 62px;
+      }
+      .logo {
+        font-size: 1.05rem; font-weight: 800;
+        background: linear-gradient(135deg, var(--accent), var(--accent-blue));
+        -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        background-clip: text; cursor: pointer; user-select: none;
+      }
+      .nav-links { display: flex; gap: 2px; list-style: none; }
+      .nav-links a {
+        color: var(--text-secondary); text-decoration: none;
+        padding: 8px 14px; border-radius: 9px; transition: all 0.25s;
+        font-size: 0.85rem; font-weight: 500; cursor: pointer;
+        border: none; background: transparent; display: block;
+      }
+      .nav-links a:hover { color: var(--text-primary); background: var(--bg-glass); }
+      .nav-links a.active { background: var(--accent-dim); color: var(--accent); }
+      .hamburger {
+        display: none; background: none; border: 1px solid var(--border-glass);
+        color: var(--text-primary); font-size: 1.3rem; cursor: pointer;
+        padding: 8px 12px; border-radius: 9px; transition: all 0.2s;
+      }
+      .hamburger:hover { background: var(--bg-glass); }
+      .mob-nav {
+        display: none; position: fixed; top: 62px; left: 0; right: 0; bottom: 0;
+        background: rgba(10,10,20,0.97); backdrop-filter: blur(24px);
+        z-index: 999; padding: 24px 20px; overflow-y: auto;
+        flex-direction: column; gap: 6px;
+      }
+      .mob-nav.open { display: flex; }
+      .mob-nav a {
+        color: var(--text-secondary); text-decoration: none;
+        padding: 16px 20px; border-radius: 14px; font-size: 1.05rem;
+        font-weight: 500; transition: all 0.2s; border: 1px solid transparent;
+      }
+      .mob-nav a.active { background: var(--accent-dim); color: var(--accent); border-color: rgba(139,92,246,0.25); }
+      .mob-nav a:hover { background: var(--bg-glass); color: var(--text-primary); }
+      section { display: none; padding: 80px 20px 48px; max-width: 1000px; margin: 0 auto; }
+      section.active { display: block; animation: fadeUp 0.35s ease; }
+      @keyframes fadeUp {
+        from { opacity: 0; transform: translateY(14px); }
+        to   { opacity: 1; transform: translateY(0); }
+      }
+      .card {
+        background: var(--bg-card); backdrop-filter: blur(20px);
+        border: 1px solid var(--border-glass); border-radius: 18px;
+        padding: 22px; margin-bottom: 18px;
+      }
+      .card-title {
+        font-size: 1.25rem; font-weight: 700; margin-bottom: 16px;
+        display: flex; align-items: center; gap: 10px;
+      }
+      .card-title .icon {
+        width: 40px; height: 40px; border-radius: 11px;
+        display: flex; align-items: center; justify-content: center;
+        font-size: 1.2rem; flex-shrink: 0;
+      }
+      .hero { text-align: center; padding: 110px 20px 64px; }
+      .hero h1 {
+        font-size: clamp(1.9rem, 5vw, 3rem); font-weight: 800; margin-bottom: 18px;
+        background: linear-gradient(135deg, var(--accent), var(--accent-blue), var(--accent-warm));
+        -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        background-clip: text; line-height: 1.15;
+      }
+      .hero p { color: var(--text-secondary); font-size: 1.05rem; margin-bottom: 32px; }
+      .hero-btns { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
+      .btn {
+        padding: 11px 24px; border-radius: 12px; border: none; font-size: 0.95rem;
+        font-weight: 600; cursor: pointer; transition: all 0.25s;
+      }
+      .btn-primary {
+        background: linear-gradient(135deg, var(--accent), #7c3aed);
+        color: #fff; box-shadow: 0 4px 18px rgba(139,92,246,0.35);
+      }
+      .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 6px 22px rgba(139,92,246,0.45); }
+      .btn-secondary {
+        background: var(--bg-glass); color: var(--text-primary);
+        border: 1px solid var(--border-glass);
+      }
+      .btn-secondary:hover { background: rgba(255,255,255,0.12); }
+      .feat-grid {
+        display: grid; grid-template-columns: repeat(auto-fit, minmax(170px,1fr)); gap: 14px;
+      }
+      .feat-card {
+        background: var(--bg-glass); border: 1px solid var(--border-glass);
+        border-radius: 14px; padding: 18px; text-align: center; cursor: default;
+      }
+      .feat-card .fi { font-size: 2rem; margin-bottom: 10px; }
+      .feat-card h3 { font-size: 0.95rem; font-weight: 700; margin-bottom: 6px; }
+      .feat-card p { font-size: 0.82rem; color: var(--text-secondary); }
+      /* ─── Slides ─── */
+      .slide-wrap {
+        background: var(--bg-glass); border: 1px solid var(--border-glass);
+        border-radius: 14px; padding: 22px;
+      }
+      .slide-meta {
+        display: flex; justify-content: space-between; align-items: center;
+        margin-bottom: 18px; flex-wrap: wrap; gap: 10px;
+      }
+      .slide-dots { display: flex; gap: 6px; flex-wrap: wrap; }
+      .slide-dot {
+        width: 9px; height: 9px; border-radius: 50%;
+        background: var(--border-glass); cursor: pointer; transition: all 0.2s;
+      }
+      .slide-dot.active { background: var(--accent); transform: scale(1.3); }
+      .slide-track { min-height: 260px; }
+      .slide { display: none; }
+      .slide.active { display: block; animation: fadeUp 0.28s ease; }
+      .slide h3 { font-size: 1.1rem; font-weight: 700; margin-bottom: 14px; color: var(--accent); }
+      .slide-nav { display: flex; gap: 12px; justify-content: flex-end; margin-top: 20px; }
+      .rule-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px,1fr)); gap: 12px; margin: 14px 0; }
+      .rule-card {
+        background: var(--bg-card); border: 1px solid var(--border-glass);
+        border-radius: 12px; padding: 14px;
+      }
+      .rule-card h4 { font-size: 0.9rem; font-weight: 700; margin-bottom: 8px; }
+      .rule-card p { font-size: 0.85rem; color: var(--text-secondary); }
+      .formula-box {
+        background: var(--accent-dim); border: 1px solid rgba(139,92,246,0.3);
+        border-radius: 12px; padding: 16px; margin: 14px 0;
+        font-size: 0.92rem; line-height: 1.7;
+      }
+      .info-box {
+        background: rgba(77,171,247,0.1); border-left: 3px solid var(--accent-blue);
+        border-radius: 0 10px 10px 0; padding: 12px 16px; margin: 12px 0;
+        font-size: 0.88rem;
+      }
+      .warn-box {
+        background: rgba(252,196,25,0.1); border-left: 3px solid var(--warning);
+        border-radius: 0 10px 10px 0; padding: 12px 16px; margin: 12px 0;
+        font-size: 0.88rem;
+      }
+      /* ─── Examples ─── */
+      .problem-card {
+        background: var(--bg-card); border: 1px solid var(--border-glass);
+        border-radius: 16px; padding: 20px; margin-bottom: 16px;
+      }
+      .problem-header { display: flex; gap: 10px; align-items: center; margin-bottom: 12px; }
+      .problem-num {
+        background: var(--accent-dim); color: var(--accent);
+        font-size: 0.78rem; font-weight: 700; padding: 3px 10px; border-radius: 20px;
+      }
+      .problem-topic {
+        background: var(--bg-glass); color: var(--text-secondary);
+        font-size: 0.78rem; padding: 3px 10px; border-radius: 20px;
+      }
+      .problem-text { font-size: 0.95rem; margin-bottom: 14px; line-height: 1.7; }
+      .sol-btn {
+        background: var(--bg-glass); border: 1px solid var(--border-glass);
+        color: var(--text-secondary); padding: 8px 18px; border-radius: 9px;
+        font-size: 0.85rem; cursor: pointer; transition: all 0.2s;
+      }
+      .sol-btn:hover { background: rgba(255,255,255,0.12); color: var(--text-primary); }
+      .solution {
+        display: none; margin-top: 14px; padding: 14px;
+        background: var(--bg-glass); border-radius: 12px;
+        font-size: 0.9rem; line-height: 1.75;
+      }
+      .solution.open { display: block; animation: fadeUp 0.25s ease; }
+      /* ─── Quiz ─── */
+      .quiz-wrap {
+        background: var(--bg-card); border: 1px solid var(--border-glass);
+        border-radius: 18px; padding: 26px; margin-bottom: 18px;
+      }
+      .quiz-progress { display: flex; align-items: center; gap: 14px; margin-bottom: 20px; }
+      .prog-bar { flex: 1; height: 6px; background: var(--bg-glass); border-radius: 3px; }
+      .prog-fill { height: 100%; border-radius: 3px; background: linear-gradient(90deg, var(--accent), var(--accent-blue)); transition: width 0.35s; }
+      .quiz-q {
+        font-size: 1.04rem; font-weight: 600; line-height: 1.6;
+        padding: 16px; background: var(--bg-glass); border-radius: 12px; margin-bottom: 16px;
+      }
+      .quiz-opts { display: flex; flex-direction: column; gap: 10px; }
+      .opt {
+        display: flex; align-items: center; gap: 12px; padding: 14px 18px;
+        border: 1px solid var(--border-glass); border-radius: 12px;
+        cursor: pointer; transition: all 0.2s; font-size: 0.93rem;
+      }
+      .opt:hover:not(.disabled) { border-color: var(--accent); background: var(--accent-dim); }
+      .opt.correct { border-color: var(--success); background: rgba(81,207,102,0.12); }
+      .opt.wrong   { border-color: var(--error);   background: rgba(255,107,107,0.12); }
+      .opt.disabled { cursor: default; }
+      .opt-ltr {
+        width: 28px; height: 28px; border-radius: 8px;
+        background: var(--bg-glass); display: flex; align-items: center;
+        justify-content: center; font-weight: 700; font-size: 0.82rem;
+        flex-shrink: 0;
+      }
+      .expl-box {
+        margin-top: 14px; padding: 14px; border-radius: 12px;
+        border-left: 4px solid; font-size: 0.88rem; line-height: 1.6; display: none;
+      }
+      .quiz-nav-row { display: flex; justify-content: space-between; margin-top: 18px; }
+      .results-wrap { text-align: center; padding: 20px 0; }
+      .score-ring {
+        width: 160px; height: 160px; border-radius: 50%;
+        border: 8px solid var(--accent); display: flex; align-items: center;
+        justify-content: center; margin: 0 auto 24px; position: relative;
+      }
+      .score-ring::before {
+        content: ""; position: absolute; width: 144px; height: 144px;
+        background: var(--bg-dark); border-radius: 50%;
+      }
+      .score-val { position: relative; font-size: 2.4rem; font-weight: 800; color: var(--accent); }
+      .score-msg { font-size: 1.3rem; font-weight: 700; margin-bottom: 24px; }
+      .breakdown {
+        display: grid; grid-template-columns: repeat(3,1fr); gap: 12px;
+        max-width: 420px; margin: 0 auto 24px;
+      }
+      .breakdown-item { background: var(--bg-glass); padding: 14px; border-radius: 10px; }
+      .breakdown-val { font-size: 1.35rem; font-weight: 700; color: var(--accent); }
+      .breakdown-lbl { font-size: 0.78rem; color: var(--text-secondary); }
+      .vik-timer { font-size: 2.2rem; font-weight: 900; transition: color 0.3s; }
+      @media (max-width: 768px) {
+        .hamburger { display: block; }
+        .nav-links { display: none; }
+        section { padding: 72px 14px 40px; }
+        .hero { padding: 90px 14px 52px; }
+        .rule-grid { grid-template-columns: 1fr; }
+        .feat-grid { grid-template-columns: repeat(2,1fr); }
+        .quiz-wrap { padding: 18px; }
+      }
+      @media (max-width: 480px) {
+        .slide-wrap { padding: 14px; }
+        .quiz-q { font-size: 0.95rem; padding: 14px; }
+        .opt { font-size: 0.85rem; padding: 12px 14px; }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="bg"></div>
+
+    <nav>
+      <div class="nav-inner">
+        <span class="logo" onclick="showSection('home')">√ Mövzu 6 — Həqiqi ədədlər · Üstlər · Kvadrat kök</span>
+        <ul class="nav-links">
+          <li><a class="active" data-sec="home">Ana səhifə</a></li>
+          <li><a data-sec="theory">Nəzəriyyə</a></li>
+          <li><a data-sec="examples">Misallar</a></li>
+          <li><a data-sec="assessment">Qiymətləndirmə</a></li>
+        </ul>
+        <button class="hamburger" id="ham" onclick="toggleMobNav()" aria-label="Menyu">☰</button>
+      </div>
+    </nav>
+
+    <div class="mob-nav" id="mob-nav">
+      <a data-sec="home">🏠 Ana səhifə</a>
+      <a data-sec="theory">📖 Nəzəriyyə</a>
+      <a data-sec="examples">✏️ Misallar</a>
+      <a data-sec="assessment">📋 Qiymətləndirmə</a>
+    </div>
+
+    <!-- HOME -->
+    <section id="home" class="active">
+      <div class="hero">
+        <h1>Həqiqi ədədlər · Üstlər · Kvadrat kök</h1>
+        <p>DR.Math · §1–§5. Ədədlər sistemi · İrrасional ədədlər · Üst qanunları · Kəsrli üstlər · Kvadrat kök xassələri</p>
+        <div class="hero-btns">
+          <button class="btn btn-primary" onclick="showSection('theory')">📖 Dərsi Başla</button>
+          <button class="btn btn-secondary" onclick="showSection('assessment')">🔍 Bilikləri Yoxla</button>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">
+          <div class="icon" style="background:var(--accent-dim)">📚</div>
+          Bu mövzuda nə öyrənəcəksiniz?
+        </div>
+        <div class="feat-grid">
+          <div class="feat-card">
+            <div class="fi">🔢</div>
+            <h3>Ədədlər sistemi</h3>
+            <p>N ⊂ Z ⊂ Q ⊂ R — irrасional ədədlər</p>
+          </div>
+          <div class="feat-card">
+            <div class="fi">⚡</div>
+            <h3>Üst qanunları</h3>
+            <p>Tam və kəsrli üstlər, 5 əsas qanun</p>
+          </div>
+          <div class="feat-card">
+            <div class="fi">√</div>
+            <h3>Kvadrat kök</h3>
+            <p>Xassələr, sadələşdirmə, rasionallaşdırma</p>
+          </div>
+          <div class="feat-card">
+            <div class="fi">🎯</div>
+            <h3>DİM məsələləri</h3>
+            <p>20 sual — orta çətinlik</p>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">
+          <div class="icon" style="background:rgba(139,92,246,0.18)">💡</div>
+          Mövzunun əhəmiyyəti
+        </div>
+        <p style="color:var(--text-secondary);font-size:0.93rem;line-height:1.75">
+          DİM imtahanında hər il <strong style="color:var(--accent)">4–6 sual</strong> birbaşa üstlər, köklər və irrасional ədədlərlə bağlıdır.
+          Üst qanunlarını bilmədən kvadrat tənlikləri, loqarifmləri və trigonometriya mövzularını
+          öyrənmək <em>mümkün deyil</em>. Bu mövzu — bütün qalan mövzular üçün riyazi əsasdır.
+        </p>
+      </div>
+    </section>
+
+    <!-- THEORY -->
+    <section id="theory">
+      <div class="card">
+        <div class="card-title">
+          <div class="icon" style="background:var(--accent-dim)">📖</div>
+          Nəzəriyyə
+        </div>
+        <div class="slide-wrap">
+          <div class="slide-meta">
+            <div class="slide-dots" id="dots"></div>
+            <span style="font-size:0.82rem;color:var(--text-secondary)" id="slide-counter">1 / 5</span>
+          </div>
+          <div class="slide-track" id="slide-track"></div>
+          <div class="slide-nav">
+            <button class="btn btn-secondary" id="prev-btn" onclick="changeSlide(-1)">← Geri</button>
+            <button class="btn btn-primary" id="next-btn" onclick="changeSlide(1)">İrəli →</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- EXAMPLES -->
+    <section id="examples">
+      <div class="card">
+        <div class="card-title">
+          <div class="icon" style="background:var(--accent-dim)">✏️</div>
+          İşlənmiş misallar
+        </div>
+        <p style="color:var(--text-secondary);font-size:0.88rem;margin-bottom:18px">
+          Hər misalı özünüz həll etməyə çalışın, sonra həlli açın.
+        </p>
+
+        <div class="problem-card">
+          <div class="problem-header">
+            <span class="problem-num">Misal 1</span>
+            <span class="problem-topic">Üst qanunları — tam üstlər</span>
+          </div>
+          <div class="problem-text">
+            Sadələşdirin: \(\dfrac{3^4 \cdot 3^{-2}}{3^{-1}}\)
+          </div>
+          <button class="sol-btn" onclick="toggleSol(this)">💡 Həlli göstər</button>
+          <div class="solution">
+            <strong>Addım 1.</strong> Surəti sadələşdirik — eyni əsaslı üstləri toplayırıq:<br>
+            \(3^4 \cdot 3^{-2} = 3^{4+(-2)} = 3^2\)<br><br>
+            <strong>Addım 2.</strong> Bölmə — üstləri çıxırıq:<br>
+            \(\dfrac{3^2}{3^{-1}} = 3^{2-(-1)} = 3^3\)<br><br>
+            <strong>Cavab:</strong> \(3^3 = \boxed{27}\)
+          </div>
+        </div>
+
+        <div class="problem-card">
+          <div class="problem-header">
+            <span class="problem-num">Misal 2</span>
+            <span class="problem-topic">Üstlər — dəyişənli ifadə</span>
+          </div>
+          <div class="problem-text">
+            Sadələşdirin: \((2a^2b)^3 \cdot (a b^{-2})^2\)
+          </div>
+          <button class="sol-btn" onclick="toggleSol(this)">💡 Həlli göstər</button>
+          <div class="solution">
+            <strong>Addım 1.</strong> Hər mötərizəni açırıq:<br>
+            \((2a^2b)^3 = 2^3 \cdot a^6 \cdot b^3 = 8a^6b^3\)<br>
+            \((ab^{-2})^2 = a^2 \cdot b^{-4}\)<br><br>
+            <strong>Addım 2.</strong> Vururuq — eyni əsaslı üstləri toplayırıq:<br>
+            \(8a^6b^3 \cdot a^2 b^{-4} = 8 \cdot a^{6+2} \cdot b^{3+(-4)} = 8a^8b^{-1}\)<br><br>
+            <strong>Cavab:</strong> \(\boxed{8a^8b^{-1}} = \dfrac{8a^8}{b}\)
+          </div>
+        </div>
+
+        <div class="problem-card">
+          <div class="problem-header">
+            <span class="problem-num">Misal 3</span>
+            <span class="problem-topic">Kəsrli üstlər</span>
+          </div>
+          <div class="problem-text">
+            Hesablayın: \(8^{2/3} + 16^{3/4}\)
+          </div>
+          <button class="sol-btn" onclick="toggleSol(this)">💡 Həlli göstər</button>
+          <div class="solution">
+            <strong>Addım 1.</strong> Kəsrli üstü köklə ifadə edin:<br>
+            \(8^{2/3} = \left(\sqrt[3]{8}\right)^2 = 2^2 = 4\)<br><br>
+            <strong>Addım 2.</strong> İkinci həddi hesablayın:<br>
+            \(16^{3/4} = \left(\sqrt[4]{16}\right)^3 = 2^3 = 8\)<br><br>
+            <strong>Cavab:</strong> \(4 + 8 = \boxed{12}\)
+          </div>
+        </div>
+
+        <div class="problem-card">
+          <div class="problem-header">
+            <span class="problem-num">Misal 4</span>
+            <span class="problem-topic">Kvadrat kökün sadələşdirilməsi</span>
+          </div>
+          <div class="problem-text">
+            Sadələşdirin: \(\sqrt{72}\)
+          </div>
+          <button class="sol-btn" onclick="toggleSol(this)">💡 Həlli göstər</button>
+          <div class="solution">
+            <strong>Addım 1.</strong> 72-ni tam kvadrat amilə vurun:<br>
+            \(72 = 36 \cdot 2\)<br><br>
+            <strong>Addım 2.</strong> Kökü bölün:<br>
+            \(\sqrt{72} = \sqrt{36 \cdot 2} = \sqrt{36} \cdot \sqrt{2} = 6\sqrt{2}\)<br><br>
+            <strong>Cavab:</strong> \(\boxed{6\sqrt{2}}\)
+            <div class="info-box" style="margin-top:12px">
+              <strong>Qaydа:</strong> \(\sqrt{ab} = \sqrt{a}\cdot\sqrt{b}\) — kök altındakı ən böyük tam kvadratı axtarın.
+            </div>
+          </div>
+        </div>
+
+        <div class="problem-card">
+          <div class="problem-header">
+            <span class="problem-num">Misal 5</span>
+            <span class="problem-topic">Məxrəcin rasionallaşdırılması</span>
+          </div>
+          <div class="problem-text">
+            Rasionallaşdırın: \(\dfrac{4}{2 - \sqrt{3}}\)
+          </div>
+          <button class="sol-btn" onclick="toggleSol(this)">💡 Həlli göstər</button>
+          <div class="solution">
+            <strong>Addım 1.</strong> Surəti və məxrəci \((2+\sqrt{3})\)-ə vurun:<br>
+            \(\dfrac{4}{2-\sqrt{3}} \cdot \dfrac{2+\sqrt{3}}{2+\sqrt{3}}\)<br><br>
+            <strong>Addım 2.</strong> Məxrəcdə konyuqat düsturu: \((a-b)(a+b) = a^2 - b^2\)<br>
+            \((2-\sqrt{3})(2+\sqrt{3}) = 4 - 3 = 1\)<br><br>
+            <strong>Addım 3:</strong><br>
+            \(\dfrac{4(2+\sqrt{3})}{1} = 8 + 4\sqrt{3}\)<br><br>
+            <strong>Cavab:</strong> \(\boxed{8 + 4\sqrt{3}}\)
+          </div>
+        </div>
+
+        <div class="problem-card">
+          <div class="problem-header">
+            <span class="problem-num">Misal 6</span>
+            <span class="problem-topic">DİM tipli — birləşik ifadə</span>
+          </div>
+          <div class="problem-text">
+            Hesablayın: \((\sqrt{7} - \sqrt{2})(\sqrt{7} + \sqrt{2}) + 3\sqrt{4}\)
+          </div>
+          <button class="sol-btn" onclick="toggleSol(this)">💡 Həlli göstər</button>
+          <div class="solution">
+            <strong>Addım 1.</strong> Birinci həddi konyuqat düsturu ilə açırıq:<br>
+            \((\sqrt{7} - \sqrt{2})(\sqrt{7} + \sqrt{2}) = (\sqrt{7})^2 - (\sqrt{2})^2 = 7 - 2 = 5\)<br><br>
+            <strong>Addım 2.</strong> İkinci həddi hesablayırıq:<br>
+            \(3\sqrt{4} = 3 \cdot 2 = 6\)<br><br>
+            <strong>Cavab:</strong> \(5 + 6 = \boxed{11}\)
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ASSESSMENT -->
+    <section id="assessment">
+      <div class="card">
+        <div class="card-title">
+          <div class="icon" style="background:var(--accent-dim)">📋</div>
+          Qiymətləndirmə
+        </div>
+        <p style="color:var(--text-secondary);font-size:0.88rem;margin-bottom:22px">
+          20 sual · DİM səviyyəsi · Anlıq cavab + izah
+        </p>
+        <div style="display:flex;gap:12px;flex-wrap:wrap">
+          <button class="btn btn-primary" onclick="startDiag()">📝 Testi Başla</button>
+          <button class="btn btn-secondary" onclick="startViktorina()">⚡ Viktorina (30s/sual)</button>
+        </div>
+      </div>
+
+      <!-- Diagnostic -->
+      <div id="diag-ui" style="display:none">
+        <div class="quiz-wrap">
+          <div class="quiz-progress">
+            <span style="font-size:0.85rem;color:var(--text-secondary)">Sual <span id="dq-n">1</span>/<span id="dq-tot">20</span></span>
+            <div class="prog-bar"><div class="prog-fill" id="dq-bar" style="width:0%"></div></div>
+            <span style="font-size:0.85rem;color:var(--success)" id="dq-score">0 ✓</span>
+          </div>
+          <div class="quiz-q" id="dq-q"></div>
+          <div class="quiz-opts" id="dq-opts"></div>
+          <div class="expl-box" id="dq-expl"></div>
+          <div class="quiz-nav-row">
+            <button class="btn btn-secondary" id="dq-prev" onclick="prevDiag()" disabled>← Əvvəlki</button>
+            <button class="btn btn-primary" id="dq-next" onclick="nextDiag()" disabled>Növbəti →</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Viktorina -->
+      <div id="vik-ui" style="display:none">
+        <div class="quiz-wrap">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+            <span style="font-size:0.82rem;padding:3px 12px;background:var(--accent-dim);color:var(--accent);border-radius:20px;font-weight:700" id="vik-tag">§1</span>
+            <div class="vik-timer" id="vik-timer">30</div>
+          </div>
+          <div style="display:flex;gap:4px;flex-wrap:wrap;margin-bottom:16px" id="vik-dots"></div>
+          <div class="quiz-q" id="vik-q"></div>
+          <div class="quiz-opts" id="vik-opts"></div>
+        </div>
+      </div>
+
+      <!-- Results -->
+      <div id="res-ui" style="display:none">
+        <div class="quiz-wrap results-wrap">
+          <div class="score-ring" id="res-ring">
+            <span class="score-val" id="res-pct">0%</span>
+          </div>
+          <div class="score-msg" id="res-msg"></div>
+          <span style="font-size:1.05rem;font-weight:700;color:var(--text-secondary)" id="res-lvl"></span>
+          <div class="breakdown" style="margin-top:20px">
+            <div class="breakdown-item"><div class="breakdown-val" id="res-ok">0</div><div class="breakdown-lbl">Düzgün</div></div>
+            <div class="breakdown-item"><div class="breakdown-val" id="res-no">0</div><div class="breakdown-lbl">Yanlış</div></div>
+            <div class="breakdown-item"><div class="breakdown-val">20</div><div class="breakdown-lbl">Cəmi</div></div>
+          </div>
+          <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:10px">
+            <button class="btn btn-primary" onclick="startDiag()">🔄 Yenidən cəhd et</button>
+            <button class="btn btn-secondary" onclick="resetAssessment()">✕ Bağla</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <script>
+      // ─── MathJax ──────────────────────────────────────────────────────────
+      window.MathJax = {
+        tex: { inlineMath: [['\\(','\\)']], displayMath: [['\\[','\\]']], packages: {'[+]': ['ams']} },
+        options: { skipHtmlTags: ['script','noscript','style','textarea','pre'] },
+        startup: { typeset: false },
+      };
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" id="MathJax-script" async></script>
+
+    <script>
+      // ─── Navigation ───────────────────────────────────────────────────────
+      function showSection(id) {
+        document.querySelectorAll('section').forEach(s => s.classList.remove('active'));
+        document.querySelectorAll('.nav-links a, .mob-nav a').forEach(a => {
+          a.classList.toggle('active', a.dataset.sec === id);
+        });
+        const sec = document.getElementById(id);
+        if (sec) { sec.classList.add('active'); window.scrollTo({top:0,behavior:'smooth'}); }
+        closeMobNav();
+      }
+      document.querySelectorAll('[data-sec]').forEach(a => {
+        a.addEventListener('click', () => showSection(a.dataset.sec));
+      });
+      function toggleMobNav() {
+        document.getElementById('mob-nav').classList.toggle('open');
+      }
+      function closeMobNav() {
+        document.getElementById('mob-nav').classList.remove('open');
+      }
+      function toggleSol(btn) {
+        const sol = btn.nextElementSibling;
+        sol.classList.toggle('open');
+        btn.textContent = sol.classList.contains('open') ? '🙈 Həlli gizlə' : '💡 Həlli göstər';
+        if (sol.classList.contains('open') && window.MathJax)
+          MathJax.typesetPromise([sol]).catch(console.error);
+      }
+
+      // ─── Theory Slides ────────────────────────────────────────────────────
+      const SLIDES = [
+        {
+          title: '§1 Ədədlər sistemi',
+          html: `
+<p>Ədədlər bir-birinin alt çoxluğu olan ardıcıl sistemlər əmələ gətirir:</p>
+<div class="formula-box">
+<strong>İerarxiya:</strong><br>
+\(\mathbb{N} \subset \mathbb{Z} \subset \mathbb{Q} \subset \mathbb{R}\)<br><br>
+\(\mathbb{N}\) — <strong>natural</strong>: \(1, 2, 3, \ldots\)<br>
+\(\mathbb{Z}\) — <strong>tam</strong>: \(\ldots, -2, -1, 0, 1, 2, \ldots\)<br>
+\(\mathbb{Q}\) — <strong>rasional</strong>: \(\dfrac{p}{q}\) şəklində, \(q \neq 0\)<br>
+\(\mathbb{R}\) — <strong>həqiqi</strong>: rasional + irrасional
+</div>
+<div class="rule-grid">
+  <div class="rule-card"><h4>Rasional ədəd</h4><p>Tam kəsir şəklində yazıla bilər. Onluq kəsri ya sonludur, ya da dövridir: \(0{,}5;\ 0{,}333\ldots\)</p></div>
+  <div class="rule-card"><h4>İrrasional ədəd</h4><p>Kəsir şəklində yazıla bilməz. Onluq kəsri sonsuz qeyri-dövridir: \(\sqrt{2} \approx 1{,}41421\ldots\)</p></div>
+</div>
+<div class="info-box"><strong>Nümunələr:</strong> \(\sqrt{2},\ \sqrt{3},\ \sqrt{5},\ \pi \approx 3{,}14159\ldots,\ e \approx 2{,}71828\ldots\) — irrasional ədədlərdir.</div>`,
+        },
+        {
+          title: '§2 İrrasional ədədlər',
+          html: `
+<p>İrrasional ədədlər \(\mathbb{Q}\) çoxluğunun tamamlayıcısıdır.</p>
+<div class="rule-grid">
+  <div class="rule-card"><h4>\(\sqrt{n}\) nə vaxt irrасionaldır?</h4><p>Əgər \(n\) tam kvadrat deyilsə: \(\sqrt{2}, \sqrt{3}, \sqrt{5}, \sqrt{6}, \sqrt{7}\ldots\)</p></div>
+  <div class="rule-card"><h4>\(\sqrt{n}\) nə vaxt rasionaldır?</h4><p>\(n = k^2\) olarsa: \(\sqrt{1}=1,\ \sqrt{4}=2,\ \sqrt{9}=3,\ \sqrt{16}=4,\ \sqrt{25}=5\)</p></div>
+</div>
+<div class="formula-box">
+<strong>Əzbərləyin — tam kvadratlar (1–25):</strong><br>
+1, 4, 9, 16, 25, 36, 49, 64, 81, 100, 121, 144, 169, 196, 225, 256, 289, 324, 361, 400, 441, 484, 529, 576, 625
+</div>
+<div class="rule-grid">
+  <div class="rule-card"><h4>İrrasional ədədlər üzərində əməliyyatlar</h4><p>\(\sqrt{2} + \sqrt{8} = \sqrt{2} + 2\sqrt{2} = 3\sqrt{2}\) — oxşar kökləri cəmləyin</p></div>
+  <div class="rule-card"><h4>Mühüm dəyərlər</h4><p>\(\sqrt{2} \approx 1{,}414\)<br>\(\sqrt{3} \approx 1{,}732\)<br>\(\sqrt{5} \approx 2{,}236\)</p></div>
+</div>
+<div class="warn-box"><strong>DİM xəbərdarlığı:</strong> \(\sqrt{a^2} = |a|\) — tam kvadrat kökü mütləq qiymət verir, <em>mənfi deyil</em>!</div>`,
+        },
+        {
+          title: '§3 Tam ədədli üstlər',
+          html: `
+<p><strong>Üst</strong> (qüvvət) — ədədin özü-özünə müəyyən sayda vurulmasıdır.</p>
+<div class="formula-box">
+\(a^n = \underbrace{a \cdot a \cdot \ldots \cdot a}_{n}\), \(a^0 = 1\ (a \neq 0)\), \(a^{-n} = \dfrac{1}{a^n}\)
+</div>
+<div class="rule-grid">
+  <div class="rule-card"><h4>Üst 1: Vurma</h4><p>\(a^m \cdot a^n = a^{m+n}\)<br>Misal: \(2^3 \cdot 2^4 = 2^7 = 128\)</p></div>
+  <div class="rule-card"><h4>Üst 2: Bölmə</h4><p>\(\dfrac{a^m}{a^n} = a^{m-n}\)<br>Misal: \(\dfrac{3^5}{3^2} = 3^3 = 27\)</p></div>
+  <div class="rule-card"><h4>Üst 3: Üstün üstü</h4><p>\((a^m)^n = a^{m \cdot n}\)<br>Misal: \((2^3)^4 = 2^{12}\)</p></div>
+  <div class="rule-card"><h4>Üst 4: Hasili üstə qaldır</h4><p>\((ab)^n = a^n b^n\)<br>Misal: \((2x)^3 = 8x^3\)</p></div>
+  <div class="rule-card"><h4>Üst 5: Kəsri üstə qaldır</h4><p>\(\left(\dfrac{a}{b}\right)^n = \dfrac{a^n}{b^n}\)<br>Misal: \(\left(\dfrac{x}{3}\right)^2 = \dfrac{x^2}{9}\)</p></div>
+  <div class="rule-card"><h4>Mənfi üst</h4><p>\(a^{-n} = \dfrac{1}{a^n}\)<br>Misal: \(5^{-2} = \dfrac{1}{25}\)</p></div>
+</div>
+<div class="info-box"><strong>Qaydа:</strong> Mənfi üst ədədi sıfıra çevirmir — sadəcə kəsrə çevirir!</div>`,
+        },
+        {
+          title: '§4 Kəsrli üstlər',
+          html: `
+<p>Kəsrli üstlər köklər vasitəsilə ifadə olunur:</p>
+<div class="formula-box">
+\(a^{1/n} = \sqrt[n]{a}\qquad (a \geq 0,\ n \in \mathbb{N})\)<br><br>
+\(a^{m/n} = \sqrt[n]{a^m} = \left(\sqrt[n]{a}\right)^m\)
+</div>
+<div class="rule-grid">
+  <div class="rule-card"><h4>\(a^{1/2} = \sqrt{a}\)</h4><p>\(16^{1/2} = \sqrt{16} = 4\)<br>\(9^{1/2} = 3\)</p></div>
+  <div class="rule-card"><h4>\(a^{1/3} = \sqrt[3]{a}\)</h4><p>\(8^{1/3} = \sqrt[3]{8} = 2\)<br>\(27^{1/3} = 3\)</p></div>
+  <div class="rule-card"><h4>\(a^{2/3}\)</h4><p>\(8^{2/3} = (\sqrt[3]{8})^2 = 2^2 = 4\)</p></div>
+  <div class="rule-card"><h4>\(a^{3/4}\)</h4><p>\(16^{3/4} = (\sqrt[4]{16})^3 = 2^3 = 8\)</p></div>
+</div>
+<div class="formula-box">
+<strong>Mənfi kəsrli üst:</strong><br>
+\(a^{-m/n} = \dfrac{1}{a^{m/n}} = \dfrac{1}{\sqrt[n]{a^m}}\)<br>
+Misal: \(27^{-1/3} = \dfrac{1}{\sqrt[3]{27}} = \dfrac{1}{3}\)
+</div>
+<div class="warn-box"><strong>DİM taktikası:</strong> Kəsrli üstü görəndə ilk növbədə kök işarəsinə çevirin — hesablama asanlaşır!</div>`,
+        },
+        {
+          title: '§5 Kvadrat kök xassələri',
+          html: `
+<p><strong>Kvadrat kök:</strong> \(\sqrt{a} \geq 0\) elə ədəddir ki, \((\sqrt{a})^2 = a\) (\(a \geq 0\)).</p>
+<div class="formula-box">
+<strong>Əsas xassələr:</strong><br>
+\(\sqrt{a^2} = |a|\quad\) (mütləq qiymət!)<br>
+\(\sqrt{ab} = \sqrt{a} \cdot \sqrt{b}\quad (a, b \geq 0)\)<br>
+\(\sqrt{\dfrac{a}{b}} = \dfrac{\sqrt{a}}{\sqrt{b}}\quad (a \geq 0,\ b > 0)\)<br>
+\((\sqrt{a})^2 = a\quad (a \geq 0)\)
+</div>
+<div class="rule-grid">
+  <div class="rule-card"><h4>Sadələşdirmə</h4><p>\(\sqrt{48} = \sqrt{16 \cdot 3} = 4\sqrt{3}\)<br>Ən böyük tam kvadrat amili tapın.</p></div>
+  <div class="rule-card"><h4>Rasionallaşdırma</h4><p>\(\dfrac{1}{\sqrt{a}} = \dfrac{\sqrt{a}}{a}\)<br>Məxrəci \(\sqrt{a}\)-ya vurun.</p></div>
+  <div class="rule-card"><h4>Konyuqat</h4><p>\(\dfrac{k}{a-\sqrt{b}} \cdot \dfrac{a+\sqrt{b}}{a+\sqrt{b}}\)<br>Məxrəc: \(a^2 - b\)</p></div>
+  <div class="rule-card"><h4>İç-içə kök</h4><p>\(\sqrt{\sqrt{a}} = a^{1/4} = \sqrt[4]{a}\)</p></div>
+</div>
+<div class="info-box"><strong>DİM klassiki:</strong> \((a-b)(a+b) = a^2 - b^2\) — bu düsturla konyuqat sürətlə hesablanır!</div>
+<div class="warn-box"><strong>Diqqət:</strong> \(\sqrt{a+b} \neq \sqrt{a} + \sqrt{b}\) — bu <em>yanlışdır</em>! Misal: \(\sqrt{9+16} = 5 \neq 3+4 = 7\).</div>`,
+        },
+      ];
+
+      let curSlide = 0;
+      function buildSlides() {
+        const track = document.getElementById('slide-track');
+        const dots = document.getElementById('dots');
+        track.innerHTML = '';
+        dots.innerHTML = '';
+        SLIDES.forEach((s, i) => {
+          const div = document.createElement('div');
+          div.className = 'slide' + (i === 0 ? ' active' : '');
+          div.innerHTML = `<h3>${s.title}</h3>${s.html}`;
+          track.appendChild(div);
+          const dot = document.createElement('div');
+          dot.className = 'slide-dot' + (i === 0 ? ' active' : '');
+          dot.onclick = () => goSlide(i);
+          dots.appendChild(dot);
+        });
+        updateSlideUI();
+        MathJax.startup.promise.then(() => MathJax.typesetPromise([track]));
+      }
+      function goSlide(n) {
+        document.querySelectorAll('.slide')[curSlide].classList.remove('active');
+        document.querySelectorAll('.slide-dot')[curSlide].classList.remove('active');
+        curSlide = Math.max(0, Math.min(n, SLIDES.length - 1));
+        document.querySelectorAll('.slide')[curSlide].classList.add('active');
+        document.querySelectorAll('.slide-dot')[curSlide].classList.add('active');
+        updateSlideUI();
+      }
+      function changeSlide(d) { goSlide(curSlide + d); }
+      function updateSlideUI() {
+        document.getElementById('slide-counter').textContent = `${curSlide + 1} / ${SLIDES.length}`;
+        document.getElementById('prev-btn').disabled = curSlide === 0;
+        document.getElementById('next-btn').textContent = curSlide === SLIDES.length - 1 ? '✓ Bitdi' : 'İrəli →';
+      }
+
+      // ─── Math rendering helper ─────────────────────────────────────────────
+      function renderMathNow(id) {
+        const el = document.getElementById(id);
+        if (el && window.MathJax) MathJax.typesetPromise([el]).catch(console.error);
+      }
+
+      // ─── Questions ────────────────────────────────────────────────────────
+      const QS = [
+        {
+          s: '§1',
+          q: 'Hansı ədəd irrасionaldır?',
+          o: ['\\(\\sqrt{2}\\)', '\\(\\sqrt{9}\\)', '\\(\\sqrt{16}\\)', '\\(\\sqrt{25}\\)'],
+          a: 0,
+          e: '\\(\\sqrt{9}=3,\\ \\sqrt{16}=4,\\ \\sqrt{25}=5\\) — rasional. \\(\\sqrt{2} \\approx 1{,}41421\\ldots\\) — irrасionaldır.',
+        },
+        {
+          s: '§3',
+          q: '\\(2^3 \\cdot 2^{-5}\\) = ?',
+          o: ['\\(2^{-2}\\)', '\\(2^{2}\\)', '\\(2^{-3}\\)', '\\(2^{8}\\)'],
+          a: 0,
+          e: '\\(2^{3+(-5)} = 2^{-2} = \\dfrac{1}{4}\\).',
+        },
+        {
+          s: '§3',
+          q: '\\((3^2)^3\\) = ?',
+          o: ['\\(3^{6}\\)', '\\(3^{5}\\)', '\\(3^{9}\\)', '\\(3^{1}\\)'],
+          a: 0,
+          e: '\\((3^2)^3 = 3^{2 \\times 3} = 3^6 = 729\\).',
+        },
+        {
+          s: '§3',
+          q: '\\(a^0\\) = ? &nbsp;(\\(a \\neq 0\\))',
+          o: ['1', '0', '\\(a\\)', '\\(\\infty\\)'],
+          a: 0,
+          e: 'Sıfırdan fərqli hər ədədin sıfır üstü 1-ə bərabərdir.',
+        },
+        {
+          s: '§3',
+          q: '\\(4^{-2}\\) = ?',
+          o: ['\\(\\dfrac{1}{16}\\)', '\\(-8\\)', '16', '\\(-16\\)'],
+          a: 0,
+          e: '\\(4^{-2} = \\dfrac{1}{4^2} = \\dfrac{1}{16}\\).',
+        },
+        {
+          s: '§5',
+          q: '\\(\\sqrt{75}\\) = ?',
+          o: ['\\(5\\sqrt{3}\\)', '\\(3\\sqrt{5}\\)', '15', '\\(5\\sqrt{15}\\)'],
+          a: 0,
+          e: '\\(\\sqrt{75} = \\sqrt{25 \\cdot 3} = 5\\sqrt{3}\\).',
+        },
+        {
+          s: '§5',
+          q: '\\(\\sqrt{18} \\cdot \\sqrt{2}\\) = ?',
+          o: ['6', '\\(3\\sqrt{2}\\)', '\\(\\sqrt{20}\\)', '9'],
+          a: 0,
+          e: '\\(\\sqrt{18} \\cdot \\sqrt{2} = \\sqrt{36} = 6\\).',
+        },
+        {
+          s: '§5',
+          q: '\\(\\dfrac{\\sqrt{3}}{\\sqrt{12}}\\) = ?',
+          o: ['\\(\\dfrac{1}{2}\\)', '\\(\\dfrac{1}{4}\\)', '2', '\\(\\dfrac{\\sqrt{3}}{3}\\)'],
+          a: 0,
+          e: '\\(\\dfrac{\\sqrt{3}}{\\sqrt{12}} = \\sqrt{\\dfrac{3}{12}} = \\sqrt{\\dfrac{1}{4}} = \\dfrac{1}{2}\\).',
+        },
+        {
+          s: '§5',
+          q: 'Məxrəci rasionallaşdırın: \\(\\dfrac{1}{\\sqrt{5}}\\) = ?',
+          o: ['\\(\\dfrac{\\sqrt{5}}{5}\\)', '\\(\\dfrac{5}{\\sqrt{5}}\\)', '\\(\\sqrt{5}\\)', '\\(\\dfrac{1}{5}\\)'],
+          a: 0,
+          e: '\\(\\dfrac{1}{\\sqrt{5}} \\cdot \\dfrac{\\sqrt{5}}{\\sqrt{5}} = \\dfrac{\\sqrt{5}}{5}\\).',
+        },
+        {
+          s: '§4',
+          q: '\\(8^{2/3}\\) = ?',
+          o: ['4', '2', '8', '6'],
+          a: 0,
+          e: '\\(8^{2/3} = (\\sqrt[3]{8})^2 = 2^2 = 4\\).',
+        },
+        {
+          s: '§4',
+          q: '\\(27^{-1/3}\\) = ?',
+          o: ['\\(\\dfrac{1}{3}\\)', '\\(-3\\)', '3', '\\(-\\dfrac{1}{3}\\)'],
+          a: 0,
+          e: '\\(27^{-1/3} = \\dfrac{1}{27^{1/3}} = \\dfrac{1}{\\sqrt[3]{27}} = \\dfrac{1}{3}\\).',
+        },
+        {
+          s: '§3',
+          q: '\\((2x^3)^4\\) = ?',
+          o: ['\\(16x^{12}\\)', '\\(8x^7\\)', '\\(2x^{12}\\)', '\\(16x^7\\)'],
+          a: 0,
+          e: '\\(2^4 \\cdot x^{3 \\times 4} = 16x^{12}\\).',
+        },
+        {
+          s: '§3',
+          q: '\\(\\left(\\dfrac{a^3}{b^2}\\right)^{-2}\\) = ?',
+          o: ['\\(\\dfrac{b^4}{a^6}\\)', '\\(\\dfrac{a^6}{b^4}\\)', '\\(\\dfrac{b^2}{a^3}\\)', '\\(a^3b^2\\)'],
+          a: 0,
+          e: '\\(\\left(\\dfrac{a^3}{b^2}\\right)^{-2} = \\left(\\dfrac{b^2}{a^3}\\right)^{2} = \\dfrac{b^4}{a^6}\\).',
+        },
+        {
+          s: '§5',
+          q: '\\((\\sqrt{5}+2)(\\sqrt{5}-2)\\) = ?',
+          o: ['1', '3', '7', '5'],
+          a: 0,
+          e: '\\((\\sqrt{5})^2 - 2^2 = 5 - 4 = 1\\). Konyuqat düsturu: \\((a+b)(a-b)=a^2-b^2\\).',
+        },
+        {
+          s: '§5',
+          q: '\\(\\sqrt{\\sqrt{81}}\\) = ?',
+          o: ['3', '9', '81', '\\(\\sqrt{3}\\)'],
+          a: 0,
+          e: '\\(\\sqrt{81} = 9\\), sonra \\(\\sqrt{9} = 3\\).',
+        },
+        {
+          s: '§5',
+          q: '\\(\\sqrt{2} + \\sqrt{8}\\) = ?',
+          o: ['\\(3\\sqrt{2}\\)', '\\(2\\sqrt{2}\\)', '\\(\\sqrt{10}\\)', '4'],
+          a: 0,
+          e: '\\(\\sqrt{8} = \\sqrt{4 \\cdot 2} = 2\\sqrt{2}\\), yəni \\(\\sqrt{2} + 2\\sqrt{2} = 3\\sqrt{2}\\).',
+        },
+        {
+          s: '§3',
+          q: 'Əgər \\(2^x = 16\\) olarsa, \\(x\\) = ?',
+          o: ['4', '3', '8', '2'],
+          a: 0,
+          e: '\\(16 = 2^4\\), yəni \\(x = 4\\).',
+        },
+        {
+          s: '§5',
+          q: '\\(\\sqrt{12} - \\sqrt{3}\\) = ?',
+          o: ['\\(\\sqrt{3}\\)', '3', '\\(\\sqrt{6}\\)', '\\(2\\sqrt{3}\\)'],
+          a: 0,
+          e: '\\(\\sqrt{12} = 2\\sqrt{3}\\), yəni \\(2\\sqrt{3} - \\sqrt{3} = \\sqrt{3}\\).',
+        },
+        {
+          s: '§4',
+          q: '\\(4^{0{,}5} + 9^{0{,}5}\\) = ?',
+          o: ['5', '6', '7', '\\(\\sqrt{13}\\)'],
+          a: 0,
+          e: '\\(4^{0{,}5} = \\sqrt{4} = 2\\), \\(9^{0{,}5} = \\sqrt{9} = 3\\), \\(2+3=5\\).',
+        },
+        {
+          s: '§5',
+          q: 'DİM: \\(\\dfrac{\\sqrt{50} - \\sqrt{8}}{\\sqrt{2}}\\) = ?',
+          o: ['3', '\\(2\\sqrt{2}\\)', '4', '\\(\\sqrt{2}\\)'],
+          a: 0,
+          e: '\\(\\sqrt{50}=5\\sqrt{2}\\), \\(\\sqrt{8}=2\\sqrt{2}\\). \\(\\dfrac{5\\sqrt{2}-2\\sqrt{2}}{\\sqrt{2}} = \\dfrac{3\\sqrt{2}}{\\sqrt{2}} = 3\\).',
+        },
+      ];
+
+      let dIdx = 0, dScore = 0, dAns = [];
+      function startDiag() {
+        dIdx = 0; dScore = 0;
+        dAns = new Array(QS.length).fill(null);
+        document.getElementById('diag-ui').style.display = 'block';
+        document.getElementById('vik-ui').style.display  = 'none';
+        document.getElementById('res-ui').style.display  = 'none';
+        renderDQ();
+        document.getElementById('diag-ui').scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+      function renderDQ() {
+        const q = QS[dIdx];
+        document.getElementById('dq-n').textContent     = dIdx + 1;
+        document.getElementById('dq-tot').textContent   = QS.length;
+        document.getElementById('dq-score').textContent = dScore + ' ✓';
+        document.getElementById('dq-bar').style.width   = (dIdx / QS.length) * 100 + '%';
+        document.getElementById('dq-expl').style.display = 'none';
+        document.getElementById('dq-next').disabled = dAns[dIdx] === null;
+        document.getElementById('dq-prev').disabled = dIdx === 0;
+        document.getElementById('dq-q').innerHTML = q.q;
+        const opts = document.getElementById('dq-opts');
+        opts.innerHTML = '';
+        const L = ['A','B','C','D'];
+        q.o.forEach((opt, i) => {
+          const div = document.createElement('div');
+          div.className = 'opt';
+          if (dAns[dIdx] !== null) {
+            div.classList.add('disabled');
+            if (i === q.a) div.classList.add('correct');
+            else if (i === dAns[dIdx]) div.classList.add('wrong');
+          }
+          div.innerHTML = `<span class="opt-ltr">${L[i]}</span><span>${opt}</span>`;
+          div.addEventListener('click', () => selectDQ(i));
+          opts.appendChild(div);
+        });
+        renderMathNow('dq-q');
+        renderMathNow('dq-opts');
+      }
+      function selectDQ(i) {
+        if (dAns[dIdx] !== null) return;
+        dAns[dIdx] = i;
+        if (i === QS[dIdx].a) dScore++;
+        document.getElementById('dq-next').disabled = false;
+        document.getElementById('dq-score').textContent = dScore + ' ✓';
+        const ex = document.getElementById('dq-expl');
+        ex.style.display = 'block';
+        const ok = i === QS[dIdx].a;
+        ex.style.background       = ok ? 'rgba(81,207,102,.09)' : 'rgba(255,107,107,.09)';
+        ex.style.borderLeftColor  = ok ? 'var(--success)' : 'var(--error)';
+        ex.innerHTML = (ok
+          ? '<strong style="color:var(--success)">✓ Düzgün!</strong> '
+          : '<strong style="color:var(--error)">✗ Səhv.</strong> Düzgün: <strong>' + QS[dIdx].o[QS[dIdx].a] + '</strong>. ')
+          + QS[dIdx].e;
+        renderDQ();
+        if (window.MathJax) MathJax.typesetPromise([ex]).catch(console.error);
+      }
+      function nextDiag() {
+        if (dIdx < QS.length - 1) { dIdx++; renderDQ(); }
+        else showResults(dScore, QS.length);
+      }
+      function prevDiag() {
+        if (dIdx > 0) { dIdx--; renderDQ(); }
+      }
+
+      let vIdx = 0, vScore = 0, vTmr = null, vT = 30, vRes = [];
+      function startViktorina() {
+        vIdx = 0; vScore = 0; vRes = [];
+        document.getElementById('diag-ui').style.display = 'none';
+        document.getElementById('vik-ui').style.display  = 'block';
+        document.getElementById('res-ui').style.display  = 'none';
+        renderVQ();
+        document.getElementById('vik-ui').scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+      function renderVQ() {
+        clearInterval(vTmr);
+        vT = 30;
+        const q = QS[vIdx];
+        document.getElementById('vik-tag').textContent = q.s;
+        document.getElementById('vik-q').innerHTML = q.q;
+        tickV();
+        vTmr = setInterval(tickV, 1000);
+        const opts = document.getElementById('vik-opts');
+        opts.innerHTML = '';
+        const L = ['A','B','C','D'];
+        q.o.forEach((opt, i) => {
+          const d = document.createElement('div');
+          d.className = 'opt';
+          d.innerHTML = `<span class="opt-ltr">${L[i]}</span><span>${opt}</span>`;
+          d.onclick = () => answerV(i, d);
+          opts.appendChild(d);
+        });
+        renderVDots();
+        renderMathNow('vik-q');
+        renderMathNow('vik-opts');
+      }
+      function tickV() {
+        const el = document.getElementById('vik-timer');
+        if (!el) return;
+        el.textContent = vT;
+        el.style.color = vT <= 10 ? 'var(--error)' : vT <= 20 ? 'var(--warning)' : 'var(--accent)';
+        if (vT <= 0) { answerV(-1, null); return; }
+        vT--;
+      }
+      function answerV(i, el) {
+        clearInterval(vTmr);
+        const correct = i === QS[vIdx].a;
+        if (correct) vScore++;
+        vRes.push(correct);
+        if (el) {
+          el.classList.add(correct ? 'correct' : 'wrong');
+          if (!correct) {
+            document.querySelectorAll('#vik-opts .opt')[QS[vIdx].a]?.classList.add('correct');
+          }
+        }
+        setTimeout(() => {
+          if (vIdx < QS.length - 1) { vIdx++; renderVQ(); }
+          else showResults(vScore, QS.length);
+        }, 800);
+      }
+      function renderVDots() {
+        const c = document.getElementById('vik-dots');
+        c.innerHTML = '';
+        QS.forEach((_, i) => {
+          const d = document.createElement('div');
+          d.style.cssText = `width:8px;height:8px;border-radius:50%;flex-shrink:0;transition:background 0.3s;background:${
+            i < vRes.length ? (vRes[i] ? 'var(--success)' : 'var(--error)') :
+            i === vIdx ? 'var(--accent)' : 'var(--border-glass)'
+          }`;
+          c.appendChild(d);
+        });
+      }
+
+      function showResults(score, total) {
+        clearInterval(vTmr);
+        document.getElementById('diag-ui').style.display = 'none';
+        document.getElementById('vik-ui').style.display  = 'none';
+        document.getElementById('res-ui').style.display  = 'block';
+        const pct = Math.round((score / total) * 100);
+        document.getElementById('res-pct').textContent = pct + '%';
+        document.getElementById('res-ok').textContent  = score;
+        document.getElementById('res-no').textContent  = total - score;
+        const lvl = pct >= 90 ? 'Əla' : pct >= 70 ? 'Yaxşı' : pct >= 50 ? 'Orta' : 'Zəif';
+        document.getElementById('res-lvl').textContent = lvl;
+        document.getElementById('res-msg').textContent =
+          pct >= 90 ? '🏆 Əla nəticə! DİM-ə hazırsınız!' :
+          pct >= 70 ? '✅ Yaxşı nəticə! Bir az daha çalışın.' :
+          pct >= 50 ? '📚 Orta nəticə. Nəzəriyyəni təkrar edin.' :
+          '💪 Zəif nəticə. Başdan öyrənin.';
+        const ring = document.getElementById('res-ring');
+        ring.style.borderColor =
+          pct >= 90 ? 'var(--success)' : pct >= 70 ? 'var(--accent-blue)' :
+          pct >= 50 ? 'var(--warning)' : 'var(--error)';
+        document.getElementById('res-ring').querySelector('.score-val').style.color =
+          pct >= 70 ? 'var(--success)' : 'var(--accent)';
+        document.getElementById('res-ui').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        try { var _p={points:score,maxPoints:total,timeSpentSeconds:0};window.parent.postMessage({type:'SCORE_UPDATE',payload:_p},'*');if(pct>=50)window.parent.postMessage({type:'LESSON_COMPLETE',payload:_p},'*'); } catch(e){}
+      }
+
+      function resetAssessment() {
+        document.getElementById('diag-ui').style.display = 'none';
+        document.getElementById('vik-ui').style.display  = 'none';
+        document.getElementById('res-ui').style.display  = 'none';
+      }
+
+      // ─── Init ─────────────────────────────────────────────────────────────
+      document.addEventListener('DOMContentLoaded', () => {
+        buildSlides();
+        MathJax.startup.promise.then(() => MathJax.typesetPromise([document.body]));
+      });
+    </script>
+  </body>
+</html>

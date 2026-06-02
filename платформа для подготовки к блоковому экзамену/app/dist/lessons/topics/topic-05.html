@@ -1,0 +1,1105 @@
+<!doctype html>
+<html lang="az">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+    <meta name="theme-color" content="#0f172a" />
+    <meta name="color-scheme" content="dark light" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
+    <title>Mövzu 5 — Nisbət. Tənasüb. Faiz</title>
+    <style>
+      :root {
+        --bg-dark: #0f172a;
+        --bg-card: rgba(255, 255, 255, 0.05);
+        --bg-glass: rgba(255, 255, 255, 0.08);
+        --border-glass: rgba(255, 255, 255, 0.15);
+        --text-primary: #e8e8f0;
+        --text-secondary: #a0a0b8;
+        --accent: #06b6d4;
+        --accent-dim: rgba(6, 182, 212, 0.18);
+        --accent-warm: #ff6b6b;
+        --accent-blue: #4dabf7;
+        --accent-blue-dim: rgba(77, 171, 247, 0.18);
+        --success: #51cf66;
+        --error: #ff6b6b;
+        --warning: #fcc419;
+      }
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      body {
+        font-family: "Segoe UI", system-ui, sans-serif;
+        background: var(--bg-dark);
+        color: var(--text-primary);
+        min-height: 100vh;
+        overflow-x: hidden;
+        line-height: 1.65;
+      }
+      .MathJax { font-size: 1.05em !important; }
+      mjx-container[display="true"] { overflow-x: auto; padding: 6px 0; }
+      .bg {
+        position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;
+        background:
+          radial-gradient(ellipse at 30% 20%, rgba(6,182,212,0.07) 0%, transparent 55%),
+          radial-gradient(ellipse at 70% 80%, rgba(77,171,247,0.07) 0%, transparent 55%);
+      }
+      .bg::before {
+        content: "";
+        position: absolute; inset: 0;
+        background: repeating-linear-gradient(0deg, transparent, transparent 44px,
+          rgba(255,255,255,0.018) 44px, rgba(255,255,255,0.018) 45px);
+        animation: bgScroll 25s linear infinite;
+      }
+      @keyframes bgScroll { to { transform: translateY(45px); } }
+      nav {
+        position: fixed; top: 0; left: 0; right: 0;
+        background: rgba(15,15,26,0.9);
+        backdrop-filter: blur(24px);
+        border-bottom: 1px solid var(--border-glass);
+        z-index: 1000; padding: 0 20px;
+      }
+      .nav-inner {
+        max-width: 1100px; margin: 0 auto;
+        display: flex; justify-content: space-between; align-items: center; height: 62px;
+      }
+      .logo {
+        font-size: 1.05rem; font-weight: 800;
+        background: linear-gradient(135deg, var(--accent), var(--accent-blue));
+        -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        background-clip: text; cursor: pointer; user-select: none;
+      }
+      .nav-links { display: flex; gap: 2px; list-style: none; }
+      .nav-links a {
+        color: var(--text-secondary); text-decoration: none;
+        padding: 8px 14px; border-radius: 9px; transition: all 0.25s;
+        font-size: 0.85rem; font-weight: 500; cursor: pointer;
+        border: none; background: transparent; display: block;
+      }
+      .nav-links a:hover { color: var(--text-primary); background: var(--bg-glass); }
+      .nav-links a.active { background: var(--accent-dim); color: var(--accent); }
+      .hamburger {
+        display: none; background: none; border: 1px solid var(--border-glass);
+        color: var(--text-primary); font-size: 1.3rem; cursor: pointer;
+        padding: 8px 12px; border-radius: 9px; transition: all 0.2s;
+      }
+      .hamburger:hover { background: var(--bg-glass); }
+      .mob-nav {
+        display: none; position: fixed; top: 62px; left: 0; right: 0; bottom: 0;
+        background: rgba(10,10,20,0.97); backdrop-filter: blur(24px);
+        z-index: 999; padding: 24px 20px; overflow-y: auto;
+        flex-direction: column; gap: 6px;
+      }
+      .mob-nav.open { display: flex; }
+      .mob-nav a {
+        color: var(--text-secondary); text-decoration: none;
+        padding: 16px 20px; border-radius: 14px; font-size: 1.05rem;
+        font-weight: 500; transition: all 0.2s; border: 1px solid transparent;
+      }
+      .mob-nav a.active { background: var(--accent-dim); color: var(--accent); border-color: rgba(6,182,212,0.25); }
+      .mob-nav a:hover { background: var(--bg-glass); color: var(--text-primary); }
+      section { display: none; padding: 80px 20px 48px; max-width: 1000px; margin: 0 auto; }
+      section.active { display: block; animation: fadeUp 0.35s ease; }
+      @keyframes fadeUp {
+        from { opacity: 0; transform: translateY(14px); }
+        to   { opacity: 1; transform: translateY(0); }
+      }
+      .card {
+        background: var(--bg-card); backdrop-filter: blur(20px);
+        border: 1px solid var(--border-glass); border-radius: 18px;
+        padding: 22px; margin-bottom: 18px;
+      }
+      .card-title {
+        font-size: 1.25rem; font-weight: 700; margin-bottom: 16px;
+        display: flex; align-items: center; gap: 10px;
+      }
+      .card-title .icon {
+        width: 40px; height: 40px; border-radius: 11px;
+        display: flex; align-items: center; justify-content: center;
+        font-size: 1.2rem; flex-shrink: 0;
+      }
+      .hero { text-align: center; padding: 110px 20px 64px; }
+      .hero h1 {
+        font-size: clamp(1.9rem, 5vw, 3rem); font-weight: 800; margin-bottom: 18px;
+        background: linear-gradient(135deg, var(--accent), var(--accent-blue), var(--accent-warm));
+        -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        background-clip: text; line-height: 1.15;
+      }
+      .hero p { color: var(--text-secondary); font-size: 1.05rem; margin-bottom: 32px; }
+      .hero-btns { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
+      .btn {
+        padding: 11px 24px; border-radius: 12px; border: none; font-size: 0.95rem;
+        font-weight: 600; cursor: pointer; transition: all 0.25s;
+      }
+      .btn-primary {
+        background: linear-gradient(135deg, var(--accent), #0284c7);
+        color: #fff; box-shadow: 0 4px 18px rgba(6,182,212,0.35);
+      }
+      .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 6px 22px rgba(6,182,212,0.45); }
+      .btn-secondary {
+        background: var(--bg-glass); color: var(--text-primary);
+        border: 1px solid var(--border-glass);
+      }
+      .btn-secondary:hover { background: rgba(255,255,255,0.12); }
+      .feat-grid {
+        display: grid; grid-template-columns: repeat(auto-fit, minmax(170px,1fr)); gap: 14px;
+      }
+      .feat-card {
+        background: var(--bg-glass); border: 1px solid var(--border-glass);
+        border-radius: 14px; padding: 18px; text-align: center; cursor: default;
+      }
+      .feat-card .fi { font-size: 2rem; margin-bottom: 10px; }
+      .feat-card h3 { font-size: 0.95rem; font-weight: 700; margin-bottom: 6px; }
+      .feat-card p { font-size: 0.82rem; color: var(--text-secondary); }
+      /* ─── Slides ─── */
+      .slide-wrap {
+        background: var(--bg-glass); border: 1px solid var(--border-glass);
+        border-radius: 14px; padding: 22px;
+      }
+      .slide-meta {
+        display: flex; justify-content: space-between; align-items: center;
+        margin-bottom: 18px; flex-wrap: wrap; gap: 10px;
+      }
+      .slide-dots { display: flex; gap: 6px; flex-wrap: wrap; }
+      .slide-dot {
+        width: 9px; height: 9px; border-radius: 50%;
+        background: var(--border-glass); cursor: pointer; transition: all 0.2s;
+      }
+      .slide-dot.active { background: var(--accent); transform: scale(1.3); }
+      .slide-track { min-height: 260px; }
+      .slide { display: none; }
+      .slide.active { display: block; animation: fadeUp 0.28s ease; }
+      .slide h3 { font-size: 1.1rem; font-weight: 700; margin-bottom: 14px; color: var(--accent); }
+      .slide-nav { display: flex; gap: 12px; justify-content: flex-end; margin-top: 20px; }
+      .rule-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px,1fr)); gap: 12px; margin: 14px 0; }
+      .rule-card {
+        background: var(--bg-card); border: 1px solid var(--border-glass);
+        border-radius: 12px; padding: 14px;
+      }
+      .rule-card h4 { font-size: 0.9rem; font-weight: 700; margin-bottom: 8px; }
+      .rule-card p { font-size: 0.85rem; color: var(--text-secondary); }
+      .formula-box {
+        background: var(--accent-dim); border: 1px solid rgba(6,182,212,0.3);
+        border-radius: 12px; padding: 16px; margin: 14px 0;
+        font-size: 0.92rem; line-height: 1.7;
+      }
+      .info-box {
+        background: rgba(77,171,247,0.1); border-left: 3px solid var(--accent-blue);
+        border-radius: 0 10px 10px 0; padding: 12px 16px; margin: 12px 0;
+        font-size: 0.88rem;
+      }
+      .warn-box {
+        background: rgba(252,196,25,0.1); border-left: 3px solid var(--warning);
+        border-radius: 0 10px 10px 0; padding: 12px 16px; margin: 12px 0;
+        font-size: 0.88rem;
+      }
+      /* ─── Examples ─── */
+      .problem-card {
+        background: var(--bg-card); border: 1px solid var(--border-glass);
+        border-radius: 16px; padding: 20px; margin-bottom: 16px;
+      }
+      .problem-header { display: flex; gap: 10px; align-items: center; margin-bottom: 12px; }
+      .problem-num {
+        background: var(--accent-dim); color: var(--accent);
+        font-size: 0.78rem; font-weight: 700; padding: 3px 10px; border-radius: 20px;
+      }
+      .problem-topic {
+        background: var(--bg-glass); color: var(--text-secondary);
+        font-size: 0.78rem; padding: 3px 10px; border-radius: 20px;
+      }
+      .problem-text { font-size: 0.95rem; margin-bottom: 14px; line-height: 1.7; }
+      .sol-btn {
+        background: var(--bg-glass); border: 1px solid var(--border-glass);
+        color: var(--text-secondary); padding: 8px 18px; border-radius: 9px;
+        font-size: 0.85rem; cursor: pointer; transition: all 0.2s;
+      }
+      .sol-btn:hover { background: rgba(255,255,255,0.12); color: var(--text-primary); }
+      .solution {
+        display: none; margin-top: 14px; padding: 14px;
+        background: var(--bg-glass); border-radius: 12px;
+        font-size: 0.9rem; line-height: 1.75;
+      }
+      .solution.open { display: block; animation: fadeUp 0.25s ease; }
+      /* ─── Quiz ─── */
+      .quiz-wrap {
+        background: var(--bg-card); border: 1px solid var(--border-glass);
+        border-radius: 18px; padding: 26px; margin-bottom: 18px;
+      }
+      .quiz-progress { display: flex; align-items: center; gap: 14px; margin-bottom: 20px; }
+      .prog-bar { flex: 1; height: 6px; background: var(--bg-glass); border-radius: 3px; }
+      .prog-fill { height: 100%; border-radius: 3px; background: linear-gradient(90deg, var(--accent), var(--accent-blue)); transition: width 0.35s; }
+      .quiz-q {
+        font-size: 1.04rem; font-weight: 600; line-height: 1.6;
+        padding: 16px; background: var(--bg-glass); border-radius: 12px; margin-bottom: 16px;
+      }
+      .quiz-opts { display: flex; flex-direction: column; gap: 10px; }
+      .opt {
+        display: flex; align-items: center; gap: 12px; padding: 14px 18px;
+        border: 1px solid var(--border-glass); border-radius: 12px;
+        cursor: pointer; transition: all 0.2s; font-size: 0.93rem;
+      }
+      .opt:hover:not(.disabled) { border-color: var(--accent); background: var(--accent-dim); }
+      .opt.correct { border-color: var(--success); background: rgba(81,207,102,0.12); }
+      .opt.wrong   { border-color: var(--error);   background: rgba(255,107,107,0.12); }
+      .opt.disabled { cursor: default; }
+      .opt-ltr {
+        width: 28px; height: 28px; border-radius: 8px;
+        background: var(--bg-glass); display: flex; align-items: center;
+        justify-content: center; font-weight: 700; font-size: 0.82rem;
+        flex-shrink: 0;
+      }
+      .expl-box {
+        margin-top: 14px; padding: 14px; border-radius: 12px;
+        border-left: 4px solid; font-size: 0.88rem; line-height: 1.6; display: none;
+      }
+      .quiz-nav-row { display: flex; justify-content: space-between; margin-top: 18px; }
+      .results-wrap { text-align: center; padding: 20px 0; }
+      .score-ring {
+        width: 160px; height: 160px; border-radius: 50%;
+        border: 8px solid var(--accent); display: flex; align-items: center;
+        justify-content: center; margin: 0 auto 24px; position: relative;
+      }
+      .score-ring::before {
+        content: ""; position: absolute; width: 144px; height: 144px;
+        background: var(--bg-dark); border-radius: 50%;
+      }
+      .score-val { position: relative; font-size: 2.4rem; font-weight: 800; color: var(--accent); }
+      .score-msg { font-size: 1.3rem; font-weight: 700; margin-bottom: 24px; }
+      .breakdown {
+        display: grid; grid-template-columns: repeat(3,1fr); gap: 12px;
+        max-width: 420px; margin: 0 auto 24px;
+      }
+      .breakdown-item { background: var(--bg-glass); padding: 14px; border-radius: 10px; }
+      .breakdown-val { font-size: 1.35rem; font-weight: 700; color: var(--accent); }
+      .breakdown-lbl { font-size: 0.78rem; color: var(--text-secondary); }
+      .vik-timer { font-size: 2.2rem; font-weight: 900; transition: color 0.3s; }
+      @media (max-width: 768px) {
+        .hamburger { display: block; }
+        .nav-links { display: none; }
+        section { padding: 72px 14px 40px; }
+        .hero { padding: 90px 14px 52px; }
+        .rule-grid { grid-template-columns: 1fr; }
+        .feat-grid { grid-template-columns: repeat(2,1fr); }
+        .quiz-wrap { padding: 18px; }
+      }
+      @media (max-width: 480px) {
+        .slide-wrap { padding: 14px; }
+        .quiz-q { font-size: 0.95rem; padding: 14px; }
+        .opt { font-size: 0.85rem; padding: 12px 14px; }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="bg"></div>
+
+    <nav>
+      <div class="nav-inner">
+        <span class="logo" onclick="showSection('home')">💯 Mövzu 5 — Nisbət · Tənasüb · Faiz</span>
+        <ul class="nav-links">
+          <li><a class="active" data-sec="home">Ana səhifə</a></li>
+          <li><a data-sec="theory">Nəzəriyyə</a></li>
+          <li><a data-sec="examples">Misallar</a></li>
+          <li><a data-sec="assessment">Qiymətləndirmə</a></li>
+        </ul>
+        <button class="hamburger" id="ham" onclick="toggleMobNav()" aria-label="Menyu">☰</button>
+      </div>
+    </nav>
+
+    <div class="mob-nav" id="mob-nav">
+      <a data-sec="home">🏠 Ana səhifə</a>
+      <a data-sec="theory">📖 Nəzəriyyə</a>
+      <a data-sec="examples">✏️ Misallar</a>
+      <a data-sec="assessment">📋 Qiymətləndirmə</a>
+    </div>
+
+    <!-- HOME -->
+    <section id="home" class="active">
+      <div class="hero">
+        <h1>Nisbət · Tənasüb · Faiz</h1>
+        <p>DR.Math · §1–§10. Nisbət · Bərabər nisbətlər · Tənasüb · Tənasübün xassələri · Faiz · Artım/azalma · Mürəkkəb faiz</p>
+        <div class="hero-btns">
+          <button class="btn btn-primary" onclick="showSection('theory')">📖 Dərsi Başla</button>
+          <button class="btn btn-secondary" onclick="showSection('assessment')">🔍 Bilikləri Yoxla</button>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">
+          <span class="icon" style="background:var(--accent-dim)">🎯</span>Bu mövzuda öyrənəcəksiniz
+        </div>
+        <div class="feat-grid">
+          <div class="feat-card">
+            <div class="fi">➗</div>
+            <h3 style="color:var(--accent)">Nisbət</h3>
+            <p>İki kəmiyyətin bölünməsi, sadələşdirmə</p>
+          </div>
+          <div class="feat-card">
+            <div class="fi">⚖️</div>
+            <h3 style="color:var(--accent-blue)">Tənasüb</h3>
+            <p>Bərabər nisbətlər, əsas xassə</p>
+          </div>
+          <div class="feat-card">
+            <div class="fi">💯</div>
+            <h3 style="color:var(--accent-warm)">Faiz</h3>
+            <p>Yüzdən bir hissə, hesablama</p>
+          </div>
+          <div class="feat-card">
+            <div class="fi">📈</div>
+            <h3 style="color:var(--warning)">Artım/Azalma</h3>
+            <p>Faizlə dəyişmə, çoxalma əmsalı</p>
+          </div>
+          <div class="feat-card">
+            <div class="fi">🔄</div>
+            <h3 style="color:var(--success)">Mürəkkəb Faiz</h3>
+            <p>Ardıcıl faiz dəyişmələri, əmsal</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- THEORY -->
+    <section id="theory">
+      <div class="card">
+        <div class="card-title">
+          <span class="icon" style="background:var(--accent-dim)">📖</span>Nisbət. Tənasüb. Faiz — §1–§10
+        </div>
+        <p style="color:var(--text-secondary);margin-bottom:16px">
+          DİM-in hər variantında 3–5 faiz məsələsi olur. Bu anlayışları mükəmməl bilin.
+        </p>
+        <div class="slide-wrap">
+          <div class="slide-meta">
+            <span>Bölmə <strong id="snum">1</strong> / <strong id="stotal">10</strong></span>
+            <div class="slide-dots" id="sdots"></div>
+          </div>
+          <div class="slide-track" id="strack"></div>
+          <div class="slide-nav">
+            <button class="btn btn-secondary" onclick="prevSlide()">← Əvvəlki</button>
+            <button class="btn btn-primary" onclick="nextSlide()" id="snext">Növbəti →</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- EXAMPLES -->
+    <section id="examples">
+      <div class="card">
+        <div class="card-title">
+          <span class="icon" style="background:var(--accent-blue-dim)">✏️</span>Həll edilmiş misallar
+        </div>
+        <p style="color:var(--text-secondary);margin-bottom:20px">
+          DİM tipli nisbət, tənasüb və faiz məsələləri — addım-addım həll ilə.
+        </p>
+      </div>
+      <div id="ex-wrap"></div>
+    </section>
+
+    <!-- ASSESSMENT -->
+    <section id="assessment">
+      <div class="card">
+        <div class="card-title">
+          <span class="icon" style="background:var(--accent-blue-dim)">📋</span>Qiymətləndirmə — 20 sual
+        </div>
+        <p style="color:var(--text-secondary);margin-bottom:20px">Diaqnostik test (izahatla) və ya sürət viktorinası seçin.</p>
+        <div class="feat-grid" style="grid-template-columns:repeat(auto-fit,minmax(220px,1fr))">
+          <div class="feat-card" style="padding:24px;cursor:default">
+            <div class="fi">🔍</div>
+            <h3 style="color:var(--accent);margin-bottom:8px">Diaqnostik Test</h3>
+            <p style="margin-bottom:16px">20 sual · hər sualdan sonra izahat</p>
+            <button class="btn btn-primary" onclick="startDiag()" style="width:100%">Testi Başla</button>
+          </div>
+          <div class="feat-card" style="padding:24px;cursor:default">
+            <div class="fi">⚡</div>
+            <h3 style="color:var(--accent-blue);margin-bottom:8px">Sürət Viktorinası</h3>
+            <p style="margin-bottom:16px">20 sual · sual başına 30 saniyə</p>
+            <button class="btn btn-primary" onclick="startViktorina()"
+              style="width:100%;background:linear-gradient(135deg,var(--accent-blue),#7c3aed)">
+              Başla ⚡
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div id="diag-ui" style="display:none">
+        <div class="quiz-wrap">
+          <div class="quiz-progress">
+            <span style="font-size:0.87rem;white-space:nowrap">Sual <strong id="dq-n">1</strong>/<strong id="dq-tot">20</strong></span>
+            <div class="prog-bar"><div class="prog-fill" id="dq-bar" style="width:0%"></div></div>
+            <span id="dq-score" style="font-size:0.87rem;color:var(--success);font-weight:700;white-space:nowrap">0 ✓</span>
+          </div>
+          <div class="quiz-q" id="dq-q"></div>
+          <div class="quiz-opts" id="dq-opts"></div>
+          <div class="expl-box" id="dq-expl"></div>
+          <div class="quiz-nav-row">
+            <button class="btn btn-secondary" onclick="prevDiag()" id="dq-prev" disabled>← Geri</button>
+            <button class="btn btn-primary" onclick="nextDiag()" id="dq-next" disabled>İrəli →</button>
+          </div>
+        </div>
+      </div>
+
+      <div id="vik-ui" style="display:none">
+        <div class="quiz-wrap">
+          <div style="text-align:center;margin-bottom:16px">
+            <div class="vik-timer" id="vik-timer">30</div>
+            <div style="display:flex;gap:4px;margin-top:10px" id="vik-dots"></div>
+          </div>
+          <div style="display:inline-block;background:var(--accent-dim);color:var(--accent);
+            border-radius:20px;padding:3px 12px;font-size:0.72rem;font-weight:700;margin-bottom:12px"
+            id="vik-tag"></div>
+          <div class="quiz-q" id="vik-q"></div>
+          <div class="quiz-opts" id="vik-opts"></div>
+        </div>
+      </div>
+
+      <div id="res-ui" style="display:none">
+        <div class="quiz-wrap">
+          <div class="results-wrap">
+            <div style="font-size:0.9rem;color:var(--text-secondary);margin-bottom:10px">Nəticəniz</div>
+            <div class="score-ring" id="res-ring">
+              <div class="score-val" id="res-pct">0%</div>
+            </div>
+            <div class="score-msg" id="res-msg"></div>
+            <div class="breakdown">
+              <div class="breakdown-item">
+                <div class="breakdown-val" id="res-ok">0</div>
+                <div class="breakdown-lbl">Düzgün</div>
+              </div>
+              <div class="breakdown-item">
+                <div class="breakdown-val" id="res-no">0</div>
+                <div class="breakdown-lbl">Səhv</div>
+              </div>
+              <div class="breakdown-item">
+                <div class="breakdown-val" id="res-lvl">—</div>
+                <div class="breakdown-lbl">Səviyyə</div>
+              </div>
+            </div>
+            <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
+              <button class="btn btn-primary" onclick="resetAssessment()">Yenidən cəhd et</button>
+              <button class="btn btn-secondary" onclick="showSection('theory')">Nəzəriyyəyə qayıt</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <script>
+MathJax = {
+  tex: {
+    inlineMath: [['$', '$']],
+    displayMath: [['$$', '$$']],
+    processEscapes: true,
+    processEnvironments: true
+  },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre'] },
+  startup: {
+    typeset: false,
+    ready() {
+      MathJax.startup.defaultReady();
+      const trk = document.getElementById('strack');
+      if (trk) MathJax.typesetPromise([trk]).catch(console.error);
+    }
+  }
+};
+</script>
+    <script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+    <script>
+      /* ════ NAV ════ */
+      function showSection(id) {
+        document.querySelectorAll('section').forEach(s => s.classList.remove('active'));
+        document.querySelectorAll('[data-sec]').forEach(a => a.classList.remove('active'));
+        document.getElementById(id).classList.add('active');
+        document.querySelectorAll(`[data-sec="${id}"]`).forEach(a => a.classList.add('active'));
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        if (id === 'examples') renderExamples();
+        document.getElementById('mob-nav').classList.remove('open');
+      }
+      function toggleMobNav() {
+        document.getElementById('mob-nav').classList.toggle('open');
+      }
+      document.querySelectorAll('[data-sec]').forEach(a => {
+        a.addEventListener('click', () => showSection(a.dataset.sec));
+      });
+
+      function renderMathNow(id) {
+        const el = document.getElementById(id);
+        if (el && window.MathJax) MathJax.typesetPromise([el]).catch(console.error);
+      }
+
+      /* ════ SLIDES ════ */
+      const slides = [
+        {
+          title: '§1 Nisbət anlayışı',
+          html: `
+<p>İki həmcins kəmiyyətin <strong>eyni vahidlə</strong> bölünməsinə onların <strong>nisbəti</strong> deyilir.</p>
+<div class="formula-box">
+$$a : b = \\frac{a}{b}, \\quad b \\neq 0$$
+<br>Nisbət ölçüsüz (dimensionless) bir ədəddir.
+</div>
+<div class="rule-grid">
+  <div class="rule-card"><h4>Sadələşdirmə</h4><p>$\\frac{a}{b} = \\frac{a \\div k}{b \\div k}$ — hər ikisini OBOB-a bölün</p></div>
+  <div class="rule-card"><h4>Vahidlər</h4><p>Müxtəlif vahidlər varsa, əvvəl çevirin: 1 km = 1000 m</p></div>
+  <div class="rule-card"><h4>Ardıcıl nisbət</h4><p>$a : b : c$ — üç kəmiyyətin nisbəti</p></div>
+</div>
+<div class="info-box"><strong>Nümunə:</strong> 12 sm ilə 4 dm nisbəti — əvvəl çevir: 12 sm : 40 sm = 12/40 = <strong>3/10</strong></div>
+<div class="warn-box"><strong>Diqqət:</strong> Nisbəti hər zaman sadə (ixtisara gətirilmiş) formada yazın. $8:12 = 2:3$.</div>`,
+        },
+        {
+          title: '§2 Bərabər nisbətlər',
+          html: `
+<p>İki nisbət <strong>bərabərdir</strong>, əgər onlar eyni dəyərə malikdirsə:</p>
+<div class="formula-box">
+$$\\frac{a}{b} = \\frac{c}{d} \\iff a \\cdot d = b \\cdot c$$
+</div>
+<p style="margin:12px 0">Bu, <strong>çarpaz vurma</strong> (cross-multiplication) qaydası adlanır.</p>
+<div class="rule-grid">
+  <div class="rule-card"><h4>Yoxlama</h4><p>$\\frac{3}{4} = \\frac{9}{12}$? → $3 \\times 12 = 36$, $4 \\times 9 = 36$ ✓</p></div>
+  <div class="rule-card"><h4>Tənliklə</h4><p>$\\frac{x}{5} = \\frac{6}{15}$ → $15x = 30$ → $x = 2$</p></div>
+</div>
+<div class="info-box">Bərabər nisbətlər hər ikisini eyni ədədə vurduqda (və ya böldükdə) alınır: $\\frac{2}{3} = \\frac{4}{6} = \\frac{6}{9}$</div>`,
+        },
+        {
+          title: '§3 Tənasüb anlayışı',
+          html: `
+<p><strong>Tənasüb</strong> — iki nisbətin bərabərliyi: $a : b = c : d$ və ya $\\dfrac{a}{b} = \\dfrac{c}{d}$</p>
+<div class="formula-box">
+<strong>Elementlər:</strong><br>
+$a, d$ — <span style="color:var(--accent)">həddlər (extremes)</span> — kənar üzvlər<br>
+$b, c$ — <span style="color:var(--accent-blue)">orta üzvlər (means)</span><br><br>
+<strong>Əsas xassə:</strong> $a \\cdot d = b \\cdot c$ (kənarların hasili = ortaların hasili)
+</div>
+<div class="rule-grid">
+  <div class="rule-card"><h4>Bilinməyəni tap</h4><p>$3 : x = 6 : 10$ → $x = \\frac{3 \\times 10}{6} = 5$</p></div>
+  <div class="rule-card"><h4>Yoxlama</h4><p>$3 : 5 = 6 : 10$ → $3 \\times 10 = 30$, $5 \\times 6 = 30$ ✓</p></div>
+</div>
+<div class="warn-box"><strong>DİM xəbərdarlığı:</strong> Tənasübdə $b = 0$ və ya $d = 0$ ola bilməz!</div>`,
+        },
+        {
+          title: '§4 Tənasübün xassələri',
+          html: `
+<p>Tənasübü dəyişdirməyən çevrilmələr:</p>
+<div class="formula-box">
+Əgər $\\dfrac{a}{b} = \\dfrac{c}{d}$ olarsa:<br><br>
+<strong>1. Ters çevirme:</strong> $\\dfrac{b}{a} = \\dfrac{d}{c}$<br>
+<strong>2. Yerlərini dəyiş:</strong> $\\dfrac{a}{c} = \\dfrac{b}{d}$<br>
+<strong>3. Toplama xassəsi:</strong> $\\dfrac{a+b}{b} = \\dfrac{c+d}{d}$<br>
+<strong>4. Çıxma xassəsi:</strong> $\\dfrac{a-b}{b} = \\dfrac{c-d}{d}$
+</div>
+<div class="info-box"><strong>Birləşmiş tənasüb (componendo-dividendo):</strong><br>
+$\\dfrac{a}{b} = \\dfrac{c}{d} \\implies \\dfrac{a+b}{a-b} = \\dfrac{c+d}{c-d}$</div>
+<div class="warn-box"><strong>DİM taktikası:</strong> Xassə 3 (toplama) çox işlənir: $\\dfrac{a}{b} = \\dfrac{c}{d} = \\dfrac{a+c}{b+d}$ (alternation)</div>`,
+        },
+        {
+          title: '§5 Faiz anlayışı',
+          html: `
+<p><strong>Faiz (%)</strong> — bir kəmiyyətin 100-dən bir hissəsi.</p>
+<div class="formula-box">
+$1\\% = \\dfrac{1}{100} = 0{,}01$<br><br>
+<strong>Faizin tapılması:</strong> $P\\% = \\dfrac{P}{100} \\times A$<br><br>
+<strong>Faizi tapmaq:</strong> $P = \\dfrac{\\text{hissə}}{\\text{tam}} \\times 100$
+</div>
+<div class="rule-grid">
+  <div class="rule-card"><h4>Faizi tapmaq</h4><p>200-ün 30%-i = $\\frac{30}{100} \\times 200 = 60$</p></div>
+  <div class="rule-card"><h4>Tam kəmiyyəti tapmaq</h4><p>60, 200-ün neçə %-i? → $\\frac{60}{200} \\times 100 = 30\\%$</p></div>
+  <div class="rule-card"><h4>Əsas ədədi tapmaq</h4><p>60 ədədin 30%-i. Tam = $\\frac{60}{0{,}30} = 200$</p></div>
+</div>
+<div class="info-box"><strong>Sürətli üsul:</strong> $P\\%$ tapmaq üçün ədədi $P$-yə vurub 100-ə bölün.</div>`,
+        },
+        {
+          title: '§6 Faiz hesablamaları — üç əsas tip',
+          html: `
+<div class="rule-grid">
+  <div class="rule-card">
+    <h4 style="color:var(--accent)">Tip 1: Hissəni tap</h4>
+    <p>$A$-nın $P\\%$-i:<br>$\\text{Hissə} = A \\times \\dfrac{P}{100}$</p>
+  </div>
+  <div class="rule-card">
+    <h4 style="color:var(--accent-blue)">Tip 2: Faizi tap</h4>
+    <p>$B$, $A$-nın neçə %-i?<br>$P = \\dfrac{B}{A} \\times 100$</p>
+  </div>
+  <div class="rule-card">
+    <h4 style="color:var(--accent-warm)">Tip 3: Tam ədədi tap</h4>
+    <p>$B$, $A$-nın $P\\%$-idir:<br>$A = \\dfrac{B}{P} \\times 100$</p>
+  </div>
+</div>
+<div class="formula-box">
+<strong>Əsas tənlik:</strong><br>
+$$\\frac{\\text{Hissə}}{\\text{Tam}} = \\frac{P}{100}$$
+</div>
+<div class="warn-box"><strong>Diqqət:</strong> "X ədədin 20%-i 15-dir" — burada tam (X) axtarılır: $X = \\frac{15}{0{,}20} = 75$</div>`,
+        },
+        {
+          title: '§7 Artım və azalma (Percentage change)',
+          html: `
+<p>Bir kəmiyyət faizlə artır və ya azalırsa:</p>
+<div class="formula-box">
+<strong>P% artım:</strong> $A_{yeni} = A \\times \\left(1 + \\dfrac{P}{100}\\right) = A \\times k$<br><br>
+<strong>P% azalma:</strong> $A_{yeni} = A \\times \\left(1 - \\dfrac{P}{100}\\right) = A \\times k$<br><br>
+Burada $k$ — <strong>çoxalma əmsalı</strong>dır.
+</div>
+<div class="rule-grid">
+  <div class="rule-card"><h4>20% artım</h4><p>$k = 1{,}20$ → 500 × 1,20 = <strong>600</strong></p></div>
+  <div class="rule-card"><h4>15% azalma</h4><p>$k = 0{,}85$ → 400 × 0,85 = <strong>340</strong></p></div>
+  <div class="rule-card"><h4>Dəyişmə faizi</h4><p>$\\Delta\\% = \\dfrac{yeni - köhnə}{köhnə} \\times 100$</p></div>
+</div>
+<div class="info-box"><strong>Sürətli çevirmə:</strong> 30% artım = ×1,3; 30% azalma = ×0,7; 50% azalma = ×0,5</div>`,
+        },
+        {
+          title: '§8 Ardıcıl faiz dəyişmələri (Mürəkkəb faiz)',
+          html: `
+<p>Əgər kəmiyyət ardıcıl olaraq bir neçə dəfə dəyişirsə:</p>
+<div class="formula-box">
+$A_{son} = A_0 \\times k_1 \\times k_2 \\times \\ldots \\times k_n$<br><br>
+Misal: Əvvəlcə 20% artım, sonra 10% azalma:<br>
+$A_{son} = A_0 \\times 1{,}2 \\times 0{,}9 = A_0 \\times 1{,}08$<br>
+→ Ümumi artım: <strong>8%</strong>
+</div>
+<div class="rule-grid">
+  <div class="rule-card"><h4>Eyni faiz, n dəfə</h4><p>$A_{son} = A_0 \\times k^n$<br>10% artım, 3 il: ×$1{,}1^3 = 1{,}331$</p></div>
+  <div class="rule-card"><h4>Əhəmiyyətli xəta</h4><p>20% artıb 20% azalsa, sıfıra gəlmir: $1{,}2 \\times 0{,}8 = 0{,}96$ → 4% itirildi!</p></div>
+</div>
+<div class="warn-box"><strong>DİM klassiki:</strong> "Qiymət 10% artdı, sonra 10% azaldı" — nəticə 1% itkidir: $1{,}1 \\times 0{,}9 = 0{,}99$</div>`,
+        },
+        {
+          title: '§9 Faiz məsələlərinin həll alqoritmi',
+          html: `
+<p>DİM tipli faiz məsələlərini 4 addımda həll edin:</p>
+<div class="rule-grid">
+  <div class="rule-card"><h4>1. Verilənlər</h4><p>Tam, hissə, faiz — hansını axtarırsınız?</p></div>
+  <div class="rule-card"><h4>2. Əmsal</h4><p>Artım → k > 1; azalma → k &lt; 1</p></div>
+  <div class="rule-card"><h4>3. Tənlik</h4><p>Əsas tənliyi qurun, bilinməyəni tapın</p></div>
+  <div class="rule-card"><h4>4. Yoxlama</h4><p>Cavabı yerinə qoyun, doğrudurmu?</p></div>
+</div>
+<div class="formula-box">
+<strong>Tez-tez lazım olan faizlər (əzbərləyin):</strong><br>
+$\\frac{1}{2} = 50\\%$, $\\frac{1}{4} = 25\\%$, $\\frac{1}{5} = 20\\%$, $\\frac{1}{8} = 12{,}5\\%$<br>
+$\\frac{1}{3} \\approx 33{,}3\\%$, $\\frac{2}{3} \\approx 66{,}7\\%$, $\\frac{3}{4} = 75\\%$
+</div>
+<div class="info-box"><strong>Yadda saxlayın:</strong> DİM-də faiz məsələlərinin çoxu ardıcıl dəyişmə ilə bağlıdır — çoxalma əmsallarını vurun!</div>`,
+        },
+        {
+          title: '§10 DİM taktikası — nisbət, tənasüb, faiz',
+          html: `
+<div class="rule-grid">
+  <div class="rule-card"><h4 style="color:var(--accent)">Nisbət məsələsi</h4><p>$a : b = m : n$ → $a = km$, $b = kn$. $a + b$ verilirsə $k$ tapın.</p></div>
+  <div class="rule-card"><h4 style="color:var(--accent-blue)">Tənasüb məsələsi</h4><p>Çarpaz vurun: $\frac{a}{b} = \frac{c}{d}$ → $ad = bc$. Bir bilinməyən qalır.</p></div>
+  <div class="rule-card"><h4 style="color:var(--accent-warm)">Faiz məsələsi</h4><p>Çoxalma əmsalı ilə həll edin. Heç vaxt "faiz toplamayın" — çarpın!</p></div>
+</div>
+<div class="formula-box">
+<strong>Bölüşdürmə məsələsi:</strong> $S$ cəmini $a:b:c$ nisbətində böl:<br>
+$$x_1 = S \\cdot \\frac{a}{a+b+c}, \quad x_2 = S \\cdot \\frac{b}{a+b+c}, \quad x_3 = S \\cdot \\frac{c}{a+b+c}$$
+</div>
+<div class="warn-box"><strong>Tez-tez düşən xəta:</strong> "20% artıb 25% azaldı" — addımla hesabla: $1{,}2 \\times 0{,}75 = 0{,}9$ → 10% azalma, yox 5%!</div>
+<div class="info-box"><strong>Son məsləhət:</strong> Faiz məsələlərini həmişə kəsir (0,xx) kimi yazın, % işarəsi ilə işləmə — xəta şansı azalar.</div>`,
+        },
+      ];
+
+      let sIdx = 0;
+      function renderSlides() {
+        const trk  = document.getElementById('strack');
+        const dots = document.getElementById('sdots');
+        document.getElementById('snum').textContent   = sIdx + 1;
+        document.getElementById('stotal').textContent = slides.length;
+        trk.innerHTML = '';
+        dots.innerHTML = '';
+        slides.forEach((s, i) => {
+          const d = document.createElement('div');
+          d.className = 'slide' + (i === sIdx ? ' active' : '');
+          d.innerHTML = `<h3>📌 ${s.title}</h3>${s.html}`;
+          trk.appendChild(d);
+          const dot = document.createElement('div');
+          dot.className = 'slide-dot' + (i === sIdx ? ' active' : '');
+          dot.onclick = () => { sIdx = i; renderSlides(); };
+          dots.appendChild(dot);
+        });
+        document.getElementById('snext').textContent =
+          sIdx === slides.length - 1 ? 'Misallara keç →' : 'Növbəti →';
+        if (window.MathJax) MathJax.typesetPromise([trk]).catch(console.error);
+      }
+      function nextSlide() {
+        if (sIdx < slides.length - 1) { sIdx++; renderSlides(); }
+        else showSection('examples');
+      }
+      function prevSlide() {
+        if (sIdx > 0) { sIdx--; renderSlides(); }
+      }
+      renderSlides();
+
+      /* ════ EXAMPLES ════ */
+      const EXAMPLES = [
+        {
+          num: 1,
+          topic: '§1 Nisbət',
+          title: 'Nisbətin sadələşdirilməsi',
+          q: '450 q ilə 1,5 kq nisbətini tapın.',
+          a: '<p>Vahidləri eyniləşdir: 1,5 kq = 1500 q</p><p>Nisbət: $\\frac{450}{1500} = \\frac{450 \\div 150}{1500 \\div 150} = \\frac{3}{10}$</p><p><strong style="color:var(--accent)">Cavab: 3 : 10</strong></p>',
+        },
+        {
+          num: 2,
+          topic: '§3 Tənasüb',
+          title: 'Bilinməyəni tap',
+          q: '$x : 8 = 15 : 24$ tənasübündə $x$ tapın.',
+          a: '<p>Əsas xassə: kənarlar × kənarlar = ortalar × ortalar</p><p>$x \\cdot 24 = 8 \\cdot 15$</p><p>$24x = 120$</p><p>$x = 5$</p><p><strong style="color:var(--accent)">Cavab: x = 5</strong></p>',
+        },
+        {
+          num: 3,
+          topic: '§5–6 Faiz',
+          title: 'Üç tip faiz hesablaması',
+          q: '(a) 350-nin 40%-i; (b) 84, 350-nin neçə %-i; (c) bir ədədin 35%-i 70-dir, ədədi tapın.',
+          a: '<p><strong>(a)</strong> $350 \\times 0{,}40 = \\mathbf{140}$</p><p><strong>(b)</strong> $\\frac{84}{350} \\times 100 = \\mathbf{24\\%}$</p><p><strong>(c)</strong> $x = \\frac{70}{0{,}35} = \\mathbf{200}$</p>',
+        },
+        {
+          num: 4,
+          topic: '§7 Artım/azalma',
+          title: 'Çoxalma əmsalı',
+          q: 'Malın qiyməti 2400 manatdır. Əvvəlcə 25% endirim edildi, sonra 10% artırıldı. Son qiymət nədir?',
+          a: '<p>25% azalma: $k_1 = 0{,}75$</p><p>10% artım: $k_2 = 1{,}10$</p><p>$2400 \\times 0{,}75 \\times 1{,}10 = 2400 \\times 0{,}825 = \\mathbf{1980}$ manat</p><p><strong style="color:var(--accent)">Cavab: 1980 manat</strong></p>',
+        },
+        {
+          num: 5,
+          topic: '§8 Ardıcıl dəyişmə',
+          title: 'Ümumi dəyişmə faizini tap',
+          q: 'Əmək haqqı birinci ildə 20% artdı, ikinci ildə 15% azaldı. Ümumi dəyişmə neçə faizdir?',
+          a: '<p>$k = 1{,}20 \\times 0{,}85 = 1{,}02$</p><p>Ümumi: $+2\\%$ artım</p><p><strong style="color:var(--accent)">Cavab: 2% artım</strong></p>',
+        },
+        {
+          num: 6,
+          topic: '§10 Bölüşdürmə',
+          title: 'Nisbətə görə bölüşdürmə',
+          q: '630 manатı 2 : 3 : 4 nisbətində bölüşdürün.',
+          a: '<p>Cəm: $2 + 3 + 4 = 9$ hissə</p><p>1 hissə: $630 \\div 9 = 70$ manat</p><p>$2 \\times 70 = 140$ manat; $3 \\times 70 = 210$ manat; $4 \\times 70 = 280$ manat</p><p>Yoxlama: $140 + 210 + 280 = 630$ ✓</p><p><strong style="color:var(--accent)">Cavab: 140 : 210 : 280</strong></p>',
+        },
+      ];
+
+      function renderExamples() {
+        const w = document.getElementById('ex-wrap');
+        if (w.dataset.done) return;
+        w.dataset.done = '1';
+        EXAMPLES.forEach(ex => {
+          const d = document.createElement('div');
+          d.className = 'problem-card';
+          d.innerHTML = `
+<div class="problem-header">
+  <span class="problem-num">Misal ${ex.num}</span>
+  <span class="problem-topic">${ex.topic}</span>
+</div>
+<div class="problem-text"><strong>${ex.title}</strong><br><br>${ex.q}</div>
+<button class="sol-btn" onclick="toggleSol(this)">Həlli göstər ▼</button>
+<div class="solution">${ex.a}</div>`;
+          w.appendChild(d);
+        });
+        if (window.MathJax) MathJax.typesetPromise([w]).catch(console.error);
+      }
+      function toggleSol(btn) {
+        const s = btn.nextElementSibling;
+        s.classList.toggle('open');
+        btn.textContent = s.classList.contains('open') ? 'Həlli gizlət ▲' : 'Həlli göstər ▼';
+      }
+
+      /* ════ QUESTIONS ════ */
+      const QS = [
+        {
+          s: '§1',
+          q: '36 sm ilə 1,2 m nisbəti nədir?',
+          o: ['3 : 10', '1 : 3', '3 : 4', '1 : 4'],
+          a: 0,
+          e: '1,2 m = 120 sm. Nisbət: 36/120 = 3/10.',
+        },
+        {
+          s: '§1',
+          q: '$\\frac{3}{5}$ kəsirini faizlə ifadə edin.',
+          o: ['60%', '35%', '53%', '30%'],
+          a: 0,
+          e: '$\\frac{3}{5} = \\frac{60}{100} = 60\\%$',
+        },
+        {
+          s: '§1',
+          q: '2 saatı 45 dəqiqəyə nisbəti necədir?',
+          o: ['8 : 3', '4 : 1', '3 : 8', '2 : 1'],
+          a: 0,
+          e: '2 saat = 120 dəq. 120:45 = 8:3.',
+        },
+        {
+          s: '§2',
+          q: '$\\frac{4}{6} = \\frac{x}{15}$ bərabərliyindən $x$ tapın.',
+          o: ['10', '8', '12', '6'],
+          a: 0,
+          e: 'Çarpaz vurun: $6x = 60$ → $x = 10$.',
+        },
+        {
+          s: '§3',
+          q: '$5 : 8 = 20 : x$ tənasübündən $x$ tapın.',
+          o: ['32', '20', '25', '40'],
+          a: 0,
+          e: '$5x = 8 \\times 20 = 160$ → $x = 32$.',
+        },
+        {
+          s: '§3',
+          q: '$7 : x = 14 : 10$ tənasübündən $x$ tapın.',
+          o: ['5', '4', '7', '6'],
+          a: 0,
+          e: '$7 \\times 10 = 14x$ → $x = 70/14 = 5$.',
+        },
+        {
+          s: '§4',
+          q: '$\\frac{a}{b} = \\frac{3}{5}$ olarsa, $\\frac{a+b}{b}$ nədir?',
+          o: ['$\\frac{8}{5}$', '$\\frac{3}{8}$', '$\\frac{5}{3}$', '$\\frac{3}{5}$'],
+          a: 0,
+          e: 'Toplama xassəsi: $\\frac{a+b}{b} = \\frac{3+5}{5} = \\frac{8}{5}$.',
+        },
+        {
+          s: '§5',
+          q: '480-in 35%-i nədir?',
+          o: ['168', '160', '172', '150'],
+          a: 0,
+          e: '$480 \\times 0{,}35 = 168$.',
+        },
+        {
+          s: '§5',
+          q: '56 ədədi 320-nin neçə faizidir?',
+          o: ['17,5%', '15%', '20%', '18%'],
+          a: 0,
+          e: '$\\frac{56}{320} \\times 100 = 17{,}5\\%$.',
+        },
+        {
+          s: '§6',
+          q: 'Bir ədədin 24%-i 60-dır. Həmin ədəd nədir?',
+          o: ['250', '240', '200', '260'],
+          a: 0,
+          e: '$x = \\frac{60}{0{,}24} = 250$.',
+        },
+        {
+          s: '§6',
+          q: '900 manatın 12,5%-i nədir?',
+          o: ['112,5', '100', '125', '90'],
+          a: 0,
+          e: '$\\frac{1}{8} = 12{,}5\\%$. $900 \\div 8 = 112{,}5$.',
+        },
+        {
+          s: '§7',
+          q: 'Qiymət 800 manatdan 1000 manata qalxdı. Artım neçə faizdir?',
+          o: ['25%', '20%', '30%', '15%'],
+          a: 0,
+          e: '$\\frac{1000-800}{800} \\times 100 = \\frac{200}{800} \\times 100 = 25\\%$.',
+        },
+        {
+          s: '§7',
+          q: '600 manat 20% azaldı. Yeni qiymət nədir?',
+          o: ['480', '500', '520', '540'],
+          a: 0,
+          e: '$600 \\times 0{,}80 = 480$.',
+        },
+        {
+          s: '§8',
+          q: 'Bir ədəd əvvəl 10% artdı, sonra 10% azaldı. Ümumi nəticə:',
+          o: ['1% azalma', 'Dəyişmədi', '1% artım', '2% azalma'],
+          a: 0,
+          e: '$1{,}1 \\times 0{,}9 = 0{,}99$ → 1% azalma.',
+        },
+        {
+          s: '§8',
+          q: 'Əmək haqqı 30% artdı, sonra 20% azaldı. Çoxalma əmsalı:',
+          o: ['1,04', '0,96', '1,10', '0,90'],
+          a: 0,
+          e: '$1{,}3 \\times 0{,}8 = 1{,}04$ → 4% artım.',
+        },
+        {
+          s: '§8',
+          q: '1000 manat iki il boyunca hər il 5% artırıldı. Son məbləğ:',
+          o: ['1102,5', '1100', '1050', '1210'],
+          a: 0,
+          e: '$1000 \\times 1{,}05^2 = 1000 \\times 1{,}1025 = 1102{,}5$.',
+        },
+        {
+          s: '§10',
+          q: '420 manатı 3 : 4 nisbətində bölün. Böyük hissə nədir?',
+          o: ['240', '180', '210', '220'],
+          a: 0,
+          e: 'Cəm: 7 hissə. 1 hissə = 60. Böyük: $4 \\times 60 = 240$.',
+        },
+        {
+          s: '§10',
+          q: 'Üç şərik 2:3:5 nisbətində 1000 manat qazandı. Ən böyük pay:',
+          o: ['500', '300', '200', '400'],
+          a: 0,
+          e: 'Cəm: 10. Böyük pay: $\\frac{5}{10} \\times 1000 = 500$.',
+        },
+        {
+          s: '§6',
+          q: 'Bir sinifin 45%-i qızlardan ibarətdir. Oğlanların faizi:',
+          o: ['55%', '45%', '50%', '40%'],
+          a: 0,
+          e: '$100\\% - 45\\% = 55\\%$.',
+        },
+        {
+          s: '§7',
+          q: 'Qiymət 500-dən 400-ə düşdü. Azalma neçə faizdir?',
+          o: ['20%', '25%', '15%', '10%'],
+          a: 0,
+          e: '$\\frac{500-400}{500} \\times 100 = \\frac{100}{500} \\times 100 = 20\\%$.',
+        },
+      ];
+
+      let dIdx = 0, dScore = 0, dAns = [];
+      function startDiag() {
+        dIdx = 0; dScore = 0;
+        dAns = new Array(QS.length).fill(null);
+        document.getElementById('diag-ui').style.display = 'block';
+        document.getElementById('vik-ui').style.display  = 'none';
+        document.getElementById('res-ui').style.display  = 'none';
+        renderDQ();
+        document.getElementById('diag-ui').scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+      function renderDQ() {
+        const q = QS[dIdx];
+        document.getElementById('dq-n').textContent     = dIdx + 1;
+        document.getElementById('dq-tot').textContent   = QS.length;
+        document.getElementById('dq-score').textContent = dScore + ' ✓';
+        document.getElementById('dq-bar').style.width   = (dIdx / QS.length) * 100 + '%';
+        document.getElementById('dq-expl').style.display = 'none';
+        document.getElementById('dq-next').disabled = dAns[dIdx] === null;
+        document.getElementById('dq-prev').disabled = dIdx === 0;
+        document.getElementById('dq-q').innerHTML = q.q;
+        const opts = document.getElementById('dq-opts');
+        opts.innerHTML = '';
+        const L = ['A','B','C','D'];
+        q.o.forEach((opt, i) => {
+          const div = document.createElement('div');
+          div.className = 'opt';
+          if (dAns[dIdx] !== null) {
+            div.classList.add('disabled');
+            if (i === q.a) div.classList.add('correct');
+            else if (i === dAns[dIdx]) div.classList.add('wrong');
+          }
+          div.innerHTML = `<span class="opt-ltr">${L[i]}</span><span>${opt}</span>`;
+          div.addEventListener('click', () => selectDQ(i));
+          opts.appendChild(div);
+        });
+        renderMathNow('dq-q');
+        renderMathNow('dq-opts');
+      }
+      function selectDQ(i) {
+        if (dAns[dIdx] !== null) return;
+        dAns[dIdx] = i;
+        if (i === QS[dIdx].a) dScore++;
+        document.getElementById('dq-next').disabled = false;
+        document.getElementById('dq-score').textContent = dScore + ' ✓';
+        const ex = document.getElementById('dq-expl');
+        ex.style.display = 'block';
+        const ok = i === QS[dIdx].a;
+        ex.style.background       = ok ? 'rgba(81,207,102,.09)' : 'rgba(255,107,107,.09)';
+        ex.style.borderLeftColor  = ok ? 'var(--success)' : 'var(--error)';
+        ex.innerHTML = (ok
+          ? '<strong style="color:var(--success)">✓ Düzgün!</strong> '
+          : '<strong style="color:var(--error)">✗ Səhv.</strong> Düzgün: <strong>' + QS[dIdx].o[QS[dIdx].a] + '</strong>. ')
+          + QS[dIdx].e;
+        renderDQ();
+        if (window.MathJax) MathJax.typesetPromise([ex]).catch(console.error);
+      }
+      function nextDiag() {
+        if (dIdx < QS.length - 1) { dIdx++; renderDQ(); }
+        else showResults(dScore, QS.length);
+      }
+      function prevDiag() {
+        if (dIdx > 0) { dIdx--; renderDQ(); }
+      }
+
+      let vIdx = 0, vScore = 0, vTmr = null, vT = 30, vRes = [];
+      function startViktorina() {
+        vIdx = 0; vScore = 0; vRes = [];
+        document.getElementById('diag-ui').style.display = 'none';
+        document.getElementById('vik-ui').style.display  = 'block';
+        document.getElementById('res-ui').style.display  = 'none';
+        renderVQ();
+        document.getElementById('vik-ui').scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+      function renderVQ() {
+        clearInterval(vTmr);
+        vT = 30;
+        const q = QS[vIdx];
+        document.getElementById('vik-tag').textContent = q.s;
+        document.getElementById('vik-q').innerHTML = q.q;
+        tickV();
+        vTmr = setInterval(tickV, 1000);
+        const opts = document.getElementById('vik-opts');
+        opts.innerHTML = '';
+        const L = ['A','B','C','D'];
+        q.o.forEach((opt, i) => {
+          const d = document.createElement('div');
+          d.className = 'opt';
+          d.innerHTML = `<span class="opt-ltr">${L[i]}</span><span>${opt}</span>`;
+          d.onclick = () => answerV(i, d);
+          opts.appendChild(d);
+        });
+        renderVDots();
+        renderMathNow('vik-q');
+        renderMathNow('vik-opts');
+      }
+      function tickV() {
+        const el = document.getElementById('vik-timer');
+        if (!el) return;
+        el.textContent = vT;
+        el.style.color = vT <= 10 ? 'var(--error)' : vT <= 20 ? 'var(--warning)' : 'var(--accent)';
+        if (vT <= 0) { answerV(-1, null); return; }
+        vT--;
+      }
+      function answerV(i, el) {
+        clearInterval(vTmr);
+        const correct = i === QS[vIdx].a;
+        if (correct) vScore++;
+        vRes.push(correct);
+        if (el) {
+          el.classList.add(correct ? 'correct' : 'wrong');
+          if (!correct) {
+            document.querySelectorAll('#vik-opts .opt')[QS[vIdx].a]?.classList.add('correct');
+          }
+        }
+        setTimeout(() => {
+          if (vIdx < QS.length - 1) { vIdx++; renderVQ(); }
+          else showResults(vScore, QS.length);
+        }, 800);
+      }
+      function renderVDots() {
+        const c = document.getElementById('vik-dots');
+        c.innerHTML = '';
+        QS.forEach((_, i) => {
+          const d = document.createElement('div');
+          d.style.cssText = `width:8px;height:8px;border-radius:50%;flex-shrink:0;transition:background 0.3s;background:${
+            i < vRes.length ? (vRes[i] ? 'var(--success)' : 'var(--error)') :
+            i === vIdx ? 'var(--accent)' : 'var(--border-glass)'
+          }`;
+          c.appendChild(d);
+        });
+      }
+
+      function showResults(score, total) {
+        clearInterval(vTmr);
+        document.getElementById('diag-ui').style.display = 'none';
+        document.getElementById('vik-ui').style.display  = 'none';
+        document.getElementById('res-ui').style.display  = 'block';
+        const pct = Math.round((score / total) * 100);
+        document.getElementById('res-pct').textContent = pct + '%';
+        document.getElementById('res-ok').textContent  = score;
+        document.getElementById('res-no').textContent  = total - score;
+        const lvl = pct >= 90 ? 'Əla' : pct >= 70 ? 'Yaxşı' : pct >= 50 ? 'Orta' : 'Zəif';
+        document.getElementById('res-lvl').textContent = lvl;
+        document.getElementById('res-msg').textContent =
+          pct >= 90 ? '🏆 Əla nəticə! DİM-ə hazırsınız!' :
+          pct >= 70 ? '✅ Yaxşı nəticə! Bir az daha çalışın.' :
+          pct >= 50 ? '📚 Orta nəticə. Nəzəriyyəni təkrar edin.' :
+          '💪 Zəif nəticə. Başdan öyrənin.';
+        const ring = document.getElementById('res-ring');
+        ring.style.borderColor =
+          pct >= 90 ? 'var(--success)' : pct >= 70 ? 'var(--accent-blue)' :
+          pct >= 50 ? 'var(--warning)' : 'var(--error)';
+        document.getElementById('res-ring').querySelector('.score-val').style.color =
+          pct >= 70 ? 'var(--success)' : 'var(--accent)';
+        document.getElementById('res-ui').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        try { var _p={points:score,maxPoints:total,timeSpentSeconds:0};window.parent.postMessage({type:'SCORE_UPDATE',payload:_p},'*');if(pct>=50)window.parent.postMessage({type:'LESSON_COMPLETE',payload:_p},'*'); } catch(e){}
+      }
+
+      function resetAssessment() {
+        document.getElementById('diag-ui').style.display = 'none';
+        document.getElementById('vik-ui').style.display  = 'none';
+        document.getElementById('res-ui').style.display  = 'none';
+      }
+    </script>
+  </body>
+</html>

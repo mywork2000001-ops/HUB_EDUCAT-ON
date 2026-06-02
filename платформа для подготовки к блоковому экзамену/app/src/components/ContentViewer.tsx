@@ -104,7 +104,7 @@ export default function ContentViewer({
       <div className="flex-1 rounded-xl overflow-hidden border border-border bg-white min-h-[70vh]">
         <iframe
           ref={iframeRef}
-          src={urlPath}
+          src={urlPath.replace(/^\//, '')}
           title={title}
           sandbox="allow-scripts allow-same-origin allow-forms"
           className="w-full h-full min-h-[70vh]"

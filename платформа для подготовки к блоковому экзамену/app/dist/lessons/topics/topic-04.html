@@ -1,0 +1,1879 @@
+<!doctype html>
+<html lang="az">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+    <meta name="theme-color" content="#0f172a" />
+    <meta name="color-scheme" content="dark light" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
+    <title>Mövzu 4 — Həndəsənin Əsas Anlayışları</title>
+    <style>
+      :root {
+        --bg-dark: #0f172a;
+        --bg-card: rgba(255, 255, 255, 0.05);
+        --bg-glass: rgba(255, 255, 255, 0.08);
+        --border-glass: rgba(255, 255, 255, 0.15);
+        --text-primary: #e8e8f0;
+        --text-secondary: #a0a0b8;
+        --accent: #6366f1;
+        --accent-dim: rgba(99, 102, 241, 0.18);
+        --accent-warm: #ff6b6b;
+        --accent-blue: #4dabf7;
+        --accent-blue-dim: rgba(77, 171, 247, 0.18);
+        --success: #51cf66;
+        --error: #ff6b6b;
+        --warning: #fcc419;
+      }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      body {
+        font-family: "Segoe UI", system-ui, sans-serif;
+        background: var(--bg-dark);
+        color: var(--text-primary);
+        min-height: 100vh;
+        overflow-x: hidden;
+        line-height: 1.65;
+      }
+      .bg {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: -1;
+        background:
+          radial-gradient(
+            ellipse at 30% 20%,
+            rgba(99, 102, 241, 0.07) 0%,
+            transparent 55%
+          ),
+          radial-gradient(
+            ellipse at 70% 80%,
+            rgba(77, 171, 247, 0.07) 0%,
+            transparent 55%
+          );
+      }
+      .bg::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: repeating-linear-gradient(
+          0deg,
+          transparent,
+          transparent 44px,
+          rgba(255, 255, 255, 0.018) 44px,
+          rgba(255, 255, 255, 0.018) 45px
+        );
+        animation: bgScroll 25s linear infinite;
+      }
+      @keyframes bgScroll {
+        to {
+          transform: translateY(45px);
+        }
+      }
+      nav {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        background: rgba(15, 15, 26, 0.9);
+        backdrop-filter: blur(24px);
+        border-bottom: 1px solid var(--border-glass);
+        z-index: 1000;
+        padding: 0 20px;
+      }
+      .nav-inner {
+        max-width: 1100px;
+        margin: 0 auto;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        height: 62px;
+      }
+      .logo {
+        font-size: 1.05rem;
+        font-weight: 800;
+        background: linear-gradient(135deg, var(--accent), var(--accent-blue));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        cursor: pointer;
+        user-select: none;
+      }
+      .nav-links {
+        display: flex;
+        gap: 2px;
+        list-style: none;
+      }
+      .nav-links a {
+        color: var(--text-secondary);
+        text-decoration: none;
+        padding: 8px 14px;
+        border-radius: 9px;
+        transition: all 0.25s;
+        font-size: 0.85rem;
+        font-weight: 500;
+        cursor: pointer;
+        border: none;
+        background: transparent;
+        display: block;
+      }
+      .nav-links a:hover {
+        color: var(--text-primary);
+        background: var(--bg-glass);
+      }
+      .nav-links a.active {
+        background: var(--accent-dim);
+        color: var(--accent);
+      }
+      .hamburger {
+        display: none;
+        background: none;
+        border: 1px solid var(--border-glass);
+        color: var(--text-primary);
+        font-size: 1.3rem;
+        cursor: pointer;
+        padding: 8px 12px;
+        border-radius: 9px;
+        transition: all 0.2s;
+      }
+      .hamburger:hover {
+        background: var(--bg-glass);
+      }
+      .mob-nav {
+        display: none;
+        position: fixed;
+        top: 62px;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(10, 10, 20, 0.97);
+        backdrop-filter: blur(24px);
+        z-index: 999;
+        padding: 24px 20px;
+        overflow-y: auto;
+        flex-direction: column;
+        gap: 6px;
+      }
+      .mob-nav.open {
+        display: flex;
+      }
+      .mob-nav a {
+        color: var(--text-secondary);
+        text-decoration: none;
+        padding: 16px 20px;
+        border-radius: 14px;
+        font-size: 1.05rem;
+        font-weight: 500;
+        transition: all 0.2s;
+        border: 1px solid transparent;
+      }
+      .mob-nav a.active {
+        background: var(--accent-dim);
+        color: var(--accent);
+        border-color: rgba(99, 102, 241, 0.25);
+      }
+      .mob-nav a:hover {
+        background: var(--bg-glass);
+        color: var(--text-primary);
+      }
+      section {
+        display: none;
+        padding: 80px 20px 48px;
+        max-width: 1000px;
+        margin: 0 auto;
+      }
+      section.active {
+        display: block;
+        animation: fadeUp 0.35s ease;
+      }
+      @keyframes fadeUp {
+        from {
+          opacity: 0;
+          transform: translateY(14px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      .card {
+        background: var(--bg-card);
+        backdrop-filter: blur(20px);
+        border: 1px solid var(--border-glass);
+        border-radius: 18px;
+        padding: 22px;
+        margin-bottom: 18px;
+      }
+      .card-title {
+        font-size: 1.25rem;
+        font-weight: 700;
+        margin-bottom: 16px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .card-title .icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 11px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.2rem;
+        flex-shrink: 0;
+      }
+      .hero {
+        text-align: center;
+        padding: 110px 20px 64px;
+      }
+      .hero h1 {
+        font-size: clamp(1.9rem, 5vw, 3rem);
+        font-weight: 800;
+        margin-bottom: 18px;
+        background: linear-gradient(
+          135deg,
+          var(--accent),
+          var(--accent-blue),
+          var(--accent-warm)
+        );
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        line-height: 1.15;
+      }
+      .hero p {
+        font-size: 1.05rem;
+        color: var(--text-secondary);
+        max-width: 600px;
+        margin: 0 auto 36px;
+        line-height: 1.7;
+      }
+      .hero-btns {
+        display: flex;
+        gap: 14px;
+        justify-content: center;
+        flex-wrap: wrap;
+      }
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        padding: 13px 28px;
+        border-radius: 11px;
+        border: none;
+        font-size: 0.95rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.25s;
+        min-height: 46px;
+      }
+      .btn-primary {
+        background: linear-gradient(135deg, var(--accent), var(--accent-blue));
+        color: #fff;
+      }
+      .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 28px rgba(99, 102, 241, 0.35);
+      }
+      .btn-secondary {
+        background: var(--bg-glass);
+        color: var(--text-primary);
+        border: 1px solid var(--border-glass);
+      }
+      .btn-secondary:hover {
+        background: var(--bg-card);
+      }
+      .btn:disabled {
+        opacity: 0.45;
+        cursor: not-allowed;
+        transform: none !important;
+      }
+      .feat-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+        gap: 14px;
+      }
+      .feat-card {
+        background: var(--bg-glass);
+        border: 1px solid var(--border-glass);
+        border-radius: 14px;
+        padding: 18px 14px;
+        text-align: center;
+      }
+      .feat-card .fi {
+        font-size: 2rem;
+        margin-bottom: 8px;
+      }
+      .feat-card h3 {
+        font-size: 0.9rem;
+        font-weight: 700;
+        margin-bottom: 4px;
+      }
+      .feat-card p {
+        color: var(--text-secondary);
+        font-size: 0.78rem;
+      }
+      .slide-wrap {
+        background: var(--bg-glass);
+        border: 1px solid var(--border-glass);
+        border-radius: 16px;
+        padding: 18px;
+      }
+      .slide-meta {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 12px;
+      }
+      .slide-meta span {
+        font-size: 0.85rem;
+        color: var(--text-secondary);
+      }
+      .slide-dots {
+        display: flex;
+        gap: 5px;
+        flex-wrap: wrap;
+      }
+      .slide-dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background: var(--border-glass);
+        cursor: pointer;
+        transition: all 0.2s;
+        flex-shrink: 0;
+      }
+      .slide-dot.active {
+        background: var(--accent);
+        transform: scale(1.2);
+      }
+      .slide-track {
+        min-height: 220px;
+      }
+      .slide {
+        display: none;
+        padding: 14px 4px;
+        animation: slideIn 0.3s ease;
+      }
+      .slide.active {
+        display: block;
+      }
+      @keyframes slideIn {
+        from {
+          opacity: 0;
+          transform: translateX(12px);
+        }
+        to {
+          opacity: 1;
+          transform: translateX(0);
+        }
+      }
+      .slide h3 {
+        font-size: 1.15rem;
+        color: var(--accent);
+        margin-bottom: 16px;
+        font-weight: 700;
+      }
+      .slide p {
+        color: var(--text-secondary);
+        line-height: 1.8;
+        margin-bottom: 10px;
+        font-size: 0.93rem;
+      }
+      .slide-nav {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 16px;
+        gap: 10px;
+      }
+      .def-box {
+        background: rgba(99, 102, 241, 0.08);
+        border-left: 4px solid var(--accent);
+        border-radius: 0 12px 12px 0;
+        padding: 14px 16px;
+        margin: 12px 0;
+        font-size: 0.92rem;
+        color: var(--text-secondary);
+        line-height: 1.7;
+      }
+      .def-box strong {
+        color: var(--text-primary);
+      }
+      .info-box {
+        background: rgba(77, 171, 247, 0.08);
+        border-left: 4px solid var(--accent-blue);
+        border-radius: 0 12px 12px 0;
+        padding: 14px 16px;
+        margin: 12px 0;
+        font-size: 0.9rem;
+        color: var(--text-secondary);
+        line-height: 1.7;
+      }
+      .warn-box {
+        background: rgba(252, 196, 25, 0.08);
+        border-left: 4px solid var(--warning);
+        border-radius: 0 12px 12px 0;
+        padding: 12px 16px;
+        margin: 12px 0;
+        font-size: 0.88rem;
+        color: var(--text-secondary);
+        line-height: 1.65;
+      }
+      .warn-box strong {
+        color: var(--warning);
+      }
+      .formula-box {
+        background: var(--bg-glass);
+        border: 1px solid var(--border-glass);
+        border-radius: 12px;
+        padding: 16px;
+        margin: 14px 0;
+        text-align: center;
+        overflow-x: auto;
+        font-size: 0.95rem;
+        line-height: 1.8;
+      }
+      .rule-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 7px;
+        margin: 12px 0;
+      }
+      .rule-item {
+        background: var(--bg-glass);
+        border: 1px solid var(--border-glass);
+        border-radius: 9px;
+        padding: 9px 13px;
+        font-size: 0.84rem;
+        color: var(--text-secondary);
+        line-height: 1.6;
+      }
+      .rule-item strong {
+        color: var(--text-primary);
+      }
+      .svg-wrap {
+        display: flex;
+        justify-content: center;
+        margin: 14px 0;
+      }
+      .svg-wrap svg {
+        max-width: 100%;
+        height: auto;
+      }
+      .angle-tag {
+        display: inline-block;
+        font-size: 0.7rem;
+        font-weight: 700;
+        padding: 2px 8px;
+        border-radius: 10px;
+        margin: 2px 3px 2px 0;
+      }
+      .tag-acute {
+        background: rgba(81, 207, 102, 0.15);
+        color: var(--success);
+      }
+      .tag-right {
+        background: rgba(99, 102, 241, 0.15);
+        color: var(--accent);
+      }
+      .tag-obtuse {
+        background: rgba(252, 196, 25, 0.15);
+        color: var(--warning);
+      }
+      .tag-straight {
+        background: rgba(255, 107, 107, 0.15);
+        color: var(--error);
+      }
+      .problem-card {
+        background: var(--bg-card);
+        border: 1px solid var(--border-glass);
+        border-radius: 16px;
+        padding: 24px;
+        margin-bottom: 18px;
+      }
+      .problem-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 14px;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+      .problem-num {
+        background: var(--accent-dim);
+        color: var(--accent);
+        padding: 4px 14px;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: 700;
+      }
+      .problem-topic {
+        color: var(--text-secondary);
+        font-size: 0.8rem;
+      }
+      .problem-text {
+        font-size: 0.97rem;
+        margin-bottom: 16px;
+        line-height: 1.8;
+        color: var(--text-primary);
+      }
+      .sol-btn {
+        background: var(--accent-dim);
+        color: var(--accent);
+        border: 1px solid rgba(99, 102, 241, 0.4);
+        padding: 9px 20px;
+        border-radius: 9px;
+        cursor: pointer;
+        font-weight: 600;
+        transition: all 0.25s;
+        font-size: 0.88rem;
+        min-height: 40px;
+      }
+      .sol-btn:hover {
+        background: var(--accent);
+        color: #fff;
+      }
+      .solution {
+        display: none;
+        margin-top: 16px;
+        padding: 16px 18px;
+        background: rgba(99, 102, 241, 0.05);
+        border-left: 3px solid var(--accent);
+        border-radius: 0 12px 12px 0;
+      }
+      .solution.open {
+        display: block;
+        animation: fadeDn 0.3s ease;
+      }
+      @keyframes fadeDn {
+        from {
+          opacity: 0;
+        }
+        to {
+          opacity: 1;
+        }
+      }
+      .solution p {
+        margin-bottom: 8px;
+        color: var(--text-secondary);
+        font-size: 0.9rem;
+        line-height: 1.7;
+      }
+      .solution strong {
+        color: var(--accent);
+      }
+      .quiz-wrap {
+        background: var(--bg-card);
+        border: 1px solid var(--border-glass);
+        border-radius: 18px;
+        padding: 28px;
+      }
+      .quiz-progress {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 22px;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+      .prog-bar {
+        flex: 1;
+        height: 7px;
+        background: var(--bg-glass);
+        border-radius: 4px;
+        margin: 0 14px;
+        overflow: hidden;
+        min-width: 80px;
+      }
+      .prog-fill {
+        height: 100%;
+        background: linear-gradient(90deg, var(--accent), var(--accent-blue));
+        border-radius: 4px;
+        transition: width 0.5s ease;
+      }
+      .quiz-q {
+        font-size: 1.05rem;
+        margin-bottom: 22px;
+        padding: 18px;
+        background: var(--bg-glass);
+        border-radius: 12px;
+        border-left: 4px solid var(--accent);
+        line-height: 1.75;
+      }
+      .quiz-opts {
+        display: grid;
+        gap: 10px;
+      }
+      .opt {
+        background: var(--bg-glass);
+        border: 2px solid var(--border-glass);
+        border-radius: 12px;
+        padding: 14px 18px;
+        cursor: pointer;
+        transition: all 0.25s;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        font-size: 0.9rem;
+        min-height: 52px;
+      }
+      .opt:hover {
+        border-color: var(--accent);
+        background: var(--accent-dim);
+      }
+      .opt.correct {
+        border-color: var(--success);
+        background: rgba(81, 207, 102, 0.15);
+      }
+      .opt.wrong {
+        border-color: var(--error);
+        background: rgba(255, 107, 107, 0.15);
+      }
+      .opt.disabled {
+        pointer-events: none;
+        opacity: 0.65;
+      }
+      .opt-ltr {
+        width: 32px;
+        height: 32px;
+        border-radius: 8px;
+        background: var(--bg-card);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        flex-shrink: 0;
+        font-size: 0.85rem;
+      }
+      .quiz-nav-row {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 20px;
+        gap: 10px;
+      }
+      .expl-box {
+        display: none;
+        margin-top: 16px;
+        padding: 14px 16px;
+        border-radius: 11px;
+        border-left: 4px solid;
+        font-size: 0.88rem;
+        color: var(--text-secondary);
+        line-height: 1.65;
+      }
+      .results-wrap {
+        text-align: center;
+        padding: 32px 16px;
+      }
+      .score-ring {
+        width: 172px;
+        height: 172px;
+        border-radius: 50%;
+        background: conic-gradient(
+          var(--accent) calc(var(--score) * 3.6deg),
+          var(--bg-glass) 0
+        );
+        margin: 0 auto 24px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+      }
+      .score-ring::before {
+        content: "";
+        position: absolute;
+        width: 144px;
+        height: 144px;
+        background: var(--bg-dark);
+        border-radius: 50%;
+      }
+      .score-val {
+        position: relative;
+        font-size: 2.4rem;
+        font-weight: 800;
+        color: var(--accent);
+      }
+      .score-msg {
+        font-size: 1.3rem;
+        font-weight: 700;
+        margin-bottom: 24px;
+      }
+      .breakdown {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 12px;
+        max-width: 420px;
+        margin: 0 auto 24px;
+      }
+      .breakdown-item {
+        background: var(--bg-glass);
+        padding: 14px;
+        border-radius: 10px;
+      }
+      .breakdown-val {
+        font-size: 1.35rem;
+        font-weight: 700;
+        color: var(--accent);
+      }
+      .breakdown-lbl {
+        font-size: 0.78rem;
+        color: var(--text-secondary);
+      }
+      .vik-timer {
+        font-size: 2.2rem;
+        font-weight: 900;
+        transition: color 0.3s;
+      }
+      @media (max-width: 768px) {
+        .hamburger {
+          display: block;
+        }
+        .nav-links {
+          display: none;
+        }
+        section {
+          padding: 72px 14px 40px;
+        }
+        .hero {
+          padding: 90px 14px 52px;
+        }
+        .rule-grid {
+          grid-template-columns: 1fr;
+        }
+        .feat-grid {
+          grid-template-columns: repeat(2, 1fr);
+        }
+        .quiz-wrap {
+          padding: 18px;
+        }
+      }
+      @media (max-width: 480px) {
+        .slide-wrap {
+          padding: 14px;
+        }
+        .quiz-q {
+          font-size: 0.95rem;
+          padding: 14px;
+        }
+        .opt {
+          font-size: 0.85rem;
+          padding: 12px 14px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="bg"></div>
+
+    <nav>
+      <div class="nav-inner">
+        <span class="logo" onclick="showSection('home')"
+          >📐 Mövzu 4 — Həndəsənin Əsas Anlayışları</span
+        >
+        <ul class="nav-links">
+          <li><a class="active" data-sec="home">Ana səhifə</a></li>
+          <li><a data-sec="theory">Nəzəriyyə</a></li>
+          <li><a data-sec="examples">Misallar</a></li>
+          <li><a data-sec="assessment">Qiymətləndirmə</a></li>
+        </ul>
+        <button
+          class="hamburger"
+          id="ham"
+          onclick="toggleMobNav()"
+          aria-label="Menyu"
+        >
+          ☰
+        </button>
+      </div>
+    </nav>
+
+    <div class="mob-nav" id="mob-nav">
+      <a data-sec="home">🏠 Ana səhifə</a>
+      <a data-sec="theory">📖 Nəzəriyyə</a>
+      <a data-sec="examples">✏️ Misallar</a>
+      <a data-sec="assessment">📋 Qiymətləndirmə</a>
+    </div>
+
+    <!-- HOME -->
+    <section id="home" class="active">
+      <div class="hero">
+        <h1>Həndəsənin Əsas Anlayışları</h1>
+        <p>
+          DR.Math · §1–§10. Nöqtə · Düz xətt · Bucaqlar · Paralel xətlər ·
+          Üçbucaq · Çevrə · Perimetr · Sahə
+        </p>
+        <div class="hero-btns">
+          <button class="btn btn-primary" onclick="showSection('theory')">
+            📖 Dərsi Başla
+          </button>
+          <button class="btn btn-secondary" onclick="showSection('assessment')">
+            🔍 Bilikləri Yoxla
+          </button>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">
+          <span class="icon" style="background: var(--accent-dim)">🎯</span>Bu
+          mövzuda öyrənəcəksiniz
+        </div>
+        <div class="feat-grid">
+          <div class="feat-card">
+            <div class="fi">📍</div>
+            <h3 style="color: var(--accent)">Nöqtə &amp; Xətt</h3>
+            <p>Nöqtə, düz xətt, şüa, kəsim anlayışları</p>
+          </div>
+          <div class="feat-card">
+            <div class="fi">∠</div>
+            <h3 style="color: var(--accent-blue)">Bucaqlar</h3>
+            <p>Kəskin, düz, küt, düz, tam dövr</p>
+          </div>
+          <div class="feat-card">
+            <div class="fi">∥</div>
+            <h3 style="color: var(--accent-warm)">Paralel xətlər</h3>
+            <p>Kəsən düz xətt, bucaq cütləri</p>
+          </div>
+          <div class="feat-card">
+            <div class="fi">🔺</div>
+            <h3 style="color: var(--warning)">Üçbucaq</h3>
+            <p>Növlər, bucaqların cəmi, xassələr</p>
+          </div>
+          <div class="feat-card">
+            <div class="fi">⭕</div>
+            <h3 style="color: var(--success)">Çevrə</h3>
+            <p>Radius, diametr, vətər, toxunan</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- THEORY -->
+    <section id="theory">
+      <div class="card">
+        <div class="card-title">
+          <span class="icon" style="background: var(--accent-dim)">📖</span
+          >Həndəsənin Əsas Anlayışları — §1–§10
+        </div>
+        <p style="color: var(--text-secondary); margin-bottom: 16px">
+          Həndəsə DİM-in əsas fənlərindən biridir. Bütün anlayışları dəqiq
+          bilin.
+        </p>
+        <div class="slide-wrap">
+          <div class="slide-meta">
+            <span
+              >Bölmə <strong id="snum">1</strong> /
+              <strong id="stotal">10</strong></span
+            >
+            <div class="slide-dots" id="sdots"></div>
+          </div>
+          <div class="slide-track" id="strack"></div>
+          <div class="slide-nav">
+            <button class="btn btn-secondary" onclick="prevSlide()">
+              ← Əvvəlki
+            </button>
+            <button class="btn btn-primary" onclick="nextSlide()" id="snext">
+              Növbəti →
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- EXAMPLES -->
+    <section id="examples">
+      <div class="card">
+        <div class="card-title">
+          <span class="icon" style="background: var(--accent-blue-dim)">✏️</span
+          >Həll edilmiş misallar
+        </div>
+        <p style="color: var(--text-secondary); margin-bottom: 20px">
+          DİM tipli həndəsə məsələləri — addım-addım həll ilə.
+        </p>
+      </div>
+      <div id="ex-wrap"></div>
+    </section>
+
+    <!-- ASSESSMENT -->
+    <section id="assessment">
+      <div class="card">
+        <div class="card-title">
+          <span class="icon" style="background: var(--accent-blue-dim)">📋</span
+          >Qiymətləndirmə — 20 sual
+        </div>
+        <p style="color: var(--text-secondary); margin-bottom: 20px">
+          Diaqnostik test (izahatla) və ya sürət viktorinası seçin.
+        </p>
+        <div
+          class="feat-grid"
+          style="grid-template-columns: repeat(auto-fit, minmax(220px, 1fr))"
+        >
+          <div class="feat-card" style="padding: 24px; cursor: default">
+            <div class="fi">🔍</div>
+            <h3 style="color: var(--accent); margin-bottom: 8px">
+              Diaqnostik Test
+            </h3>
+            <p style="margin-bottom: 16px">
+              20 sual · hər sualdan sonra izahat
+            </p>
+            <button
+              class="btn btn-primary"
+              onclick="startDiag()"
+              style="width: 100%"
+            >
+              Testi Başla
+            </button>
+          </div>
+          <div class="feat-card" style="padding: 24px; cursor: default">
+            <div class="fi">⚡</div>
+            <h3 style="color: var(--accent-blue); margin-bottom: 8px">
+              Sürət Viktorinası
+            </h3>
+            <p style="margin-bottom: 16px">20 sual · sual başına 30 saniyə</p>
+            <button
+              class="btn btn-primary"
+              onclick="startViktorina()"
+              style="
+                width: 100%;
+                background: linear-gradient(
+                  135deg,
+                  var(--accent-blue),
+                  #7c3aed
+                );
+              "
+            >
+              Başla ⚡
+            </button>
+          </div>
+        </div>
+      </div>
+      <div id="diag-ui" style="display: none">
+        <div class="quiz-wrap">
+          <div class="quiz-progress">
+            <span style="font-size: 0.87rem; white-space: nowrap"
+              >Sual <strong id="dq-n">1</strong>/<strong id="dq-tot"
+                >20</strong
+              ></span
+            >
+            <div class="prog-bar">
+              <div class="prog-fill" id="dq-bar" style="width: 0%"></div>
+            </div>
+            <span
+              id="dq-score"
+              style="
+                font-size: 0.87rem;
+                color: var(--success);
+                font-weight: 700;
+                white-space: nowrap;
+              "
+              >0 ✓</span
+            >
+          </div>
+          <div class="quiz-q" id="dq-q"></div>
+          <div class="quiz-opts" id="dq-opts"></div>
+          <div class="expl-box" id="dq-expl"></div>
+          <div class="quiz-nav-row">
+            <button
+              class="btn btn-secondary"
+              onclick="prevDiag()"
+              id="dq-prev"
+              disabled
+            >
+              ← Geri
+            </button>
+            <button
+              class="btn btn-primary"
+              onclick="nextDiag()"
+              id="dq-next"
+              disabled
+            >
+              İrəli →
+            </button>
+          </div>
+        </div>
+      </div>
+      <div id="vik-ui" style="display: none">
+        <div class="quiz-wrap">
+          <div style="text-align: center; margin-bottom: 16px">
+            <div class="vik-timer" id="vik-timer">30</div>
+            <div
+              style="display: flex; gap: 4px; margin-top: 10px"
+              id="vik-dots"
+            ></div>
+          </div>
+          <div
+            style="
+              display: inline-block;
+              background: var(--accent-dim);
+              color: var(--accent);
+              border-radius: 20px;
+              padding: 3px 12px;
+              font-size: 0.72rem;
+              font-weight: 700;
+              margin-bottom: 12px;
+            "
+            id="vik-tag"
+          ></div>
+          <div class="quiz-q" id="vik-q"></div>
+          <div class="quiz-opts" id="vik-opts"></div>
+        </div>
+      </div>
+      <div id="res-ui" style="display: none">
+        <div class="quiz-wrap">
+          <div class="results-wrap">
+            <div
+              style="
+                font-size: 0.9rem;
+                color: var(--text-secondary);
+                margin-bottom: 10px;
+              "
+            >
+              Nəticəniz
+            </div>
+            <div class="score-ring" id="res-ring">
+              <div class="score-val" id="res-pct">0%</div>
+            </div>
+            <div class="score-msg" id="res-msg"></div>
+            <div class="breakdown">
+              <div class="breakdown-item">
+                <div class="breakdown-val" id="res-ok">0</div>
+                <div class="breakdown-lbl">Düzgün</div>
+              </div>
+              <div class="breakdown-item">
+                <div class="breakdown-val" id="res-no">0</div>
+                <div class="breakdown-lbl">Səhv</div>
+              </div>
+              <div class="breakdown-item">
+                <div class="breakdown-val" id="res-lvl">—</div>
+                <div class="breakdown-lbl">Səviyyə</div>
+              </div>
+            </div>
+            <div
+              style="
+                display: flex;
+                gap: 12px;
+                justify-content: center;
+                flex-wrap: wrap;
+              "
+            >
+              <button class="btn btn-primary" onclick="resetAssessment()">
+                Yenidən cəhd et
+              </button>
+              <button class="btn btn-secondary" onclick="showSection('theory')">
+                Nəzəriyyəyə qayıt
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <script>
+MathJax = {
+  tex: {
+    inlineMath: [['$', '$']],
+    displayMath: [['$$', '$$']],
+    processEscapes: true,
+    processEnvironments: true
+  },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre'] },
+  startup: {
+    typeset: false,
+    ready() {
+      MathJax.startup.defaultReady();
+      const trk = document.getElementById('strack');
+      if (trk) MathJax.typesetPromise([trk]).catch(console.error);
+    }
+  }
+};
+</script>
+    <script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+    <script>
+      function showSection(id) {
+        document
+          .querySelectorAll("section")
+          .forEach((s) => s.classList.remove("active"));
+        document
+          .querySelectorAll("[data-sec]")
+          .forEach((a) => a.classList.remove("active"));
+        document.getElementById(id).classList.add("active");
+        document
+          .querySelectorAll(`[data-sec="${id}"]`)
+          .forEach((a) => a.classList.add("active"));
+        if (id === "examples") renderExamples();
+        if (id === "assessment") resetAssessment();
+        document.getElementById("mob-nav").classList.remove("open");
+        window.scrollTo(0, 0);
+        setTimeout(() => {
+          const sec = document.getElementById(id);
+          if (window.MathJax) MathJax.typesetPromise([sec]).catch(console.error);
+        }, 100);
+      }
+      document.querySelectorAll("[data-sec]").forEach((a) =>
+        a.addEventListener("click", (e) => {
+          e.preventDefault();
+          showSection(a.dataset.sec);
+        }),
+      );
+      function toggleMobNav() {
+        document.getElementById("mob-nav").classList.toggle("open");
+      }
+      document.addEventListener("click", (e) => {
+        const mn = document.getElementById("mob-nav");
+        if (!mn.contains(e.target) && e.target.id !== "ham")
+          mn.classList.remove("open");
+      });
+
+      /* ══════════════════════════════════════════════════════════
+   SLIDES — Theory content
+   ══════════════════════════════════════════════════════════ */
+      const slides = [
+        {
+          title: "§1. Nöqtə. Düz xətt. Şüa. Kəsim",
+          html: String.raw`
+      <div class="def-box"><strong>Nöqtə (A, B, C…)</strong> — həndəsənin ilkin anlayışı; ölçüsü yoxdur, yalnız mövqeyi var.</div>
+      <div class="def-box"><strong>Düz xətt (a, b, c…)</strong> — sonsuz uzunluqlu, iki istiqamətdə sonsuz uzanan xətt. Bir xəttdən keçən ixtiyari iki nöqtə həmişə həmin xəttə məxsusdur.</div>
+      <div class="svg-wrap">
+        <svg viewBox="0 0 340 60" width="340" height="60" aria-label="Düz xətt, şüa, kəsim diaqramı">
+          <line x1="10" y1="20" x2="330" y2="20" stroke="#6366f1" stroke-width="2"/>
+          <text x="5" y="14" fill="#a0a0b8" font-size="11">←</text>
+          <text x="318" y="14" fill="#a0a0b8" font-size="11">→</text>
+          <text x="165" y="14" fill="#a0a0b8" font-size="10" text-anchor="middle">düz xətt</text>
+          <line x1="10" y1="45" x2="240" y2="45" stroke="#4dabf7" stroke-width="2" marker-end="url(#arr)"/>
+          <circle cx="10" cy="45" r="3" fill="#4dabf7"/>
+          <text x="165" y="40" fill="#a0a0b8" font-size="10" text-anchor="middle">şüa (başlanğıc nöqtəsi var)</text>
+          <defs><marker id="arr" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#4dabf7"/></marker></defs>
+        </svg>
+      </div>
+      <div class="rule-grid">
+        <div class="rule-item"><strong>Şüa [OA)</strong> — başlanğıc nöqtəsi O, bir istiqamətdə sonsuz uzanır. Uzunluğu yoxdur.</div>
+        <div class="rule-item"><strong>Kəsim [AB]</strong> — iki nöqtə arasındakı parça. Uzunluğu var: $|AB|$.</div>
+        <div class="rule-item"><strong>Aksioma:</strong> İki fərqli nöqtədən yalnız bir düz xətt keçir.</div>
+        <div class="rule-item"><strong>Yarım düz xətt:</strong> Bir nöqtə ilə düz xətt iki şüaya bölünür.</div>
+      </div>
+      <div class="warn-box"><strong>Qeyd:</strong> Kəsim yazılışı: $AB$ (uzunluq) və ya $[AB]$ (parça). Şüa: $(OA$ və ya $\overrightarrow{OA}$). Düz xətt: $\overleftrightarrow{AB}$.</div>`,
+        },
+        {
+          title: "§2. Bucaq. Bucağın növləri",
+          html: String.raw`
+      <div class="def-box"><strong>Bucaq</strong> — bir nöqtədən çıxan iki şüa tərəfindən əmələ gəlir. Nöqtə <em>təpə</em>, şüalar isə <em>tərəflər</em>dir.<br>
+      Yazılış: ∠BAC (B, A, C nöqtələri; A — təpə) və ya sadəcə ∠A.</div>
+      <div class="svg-wrap">
+        <svg viewBox="0 0 320 130" width="320" height="130" aria-label="Kəskin, düz, küt, düz bucaqlar">
+          <g transform="translate(10,20)">
+            <line x1="40" y1="90" x2="85" y2="20" stroke="#51cf66" stroke-width="2"/>
+            <line x1="40" y1="90" x2="100" y2="90" stroke="#51cf66" stroke-width="2"/>
+            <path d="M55,90 A15,15 0 0,0 47,76" fill="none" stroke="#51cf66" stroke-width="1.5"/>
+            <text x="40" y="110" fill="#51cf66" font-size="10" text-anchor="middle">Kəskin &lt;90°</text>
+          </g>
+          <g transform="translate(80,20)">
+            <line x1="40" y1="90" x2="40" y2="20" stroke="#6366f1" stroke-width="2"/>
+            <line x1="40" y1="90" x2="100" y2="90" stroke="#6366f1" stroke-width="2"/>
+            <rect x="40" y="72" width="18" height="18" fill="none" stroke="#6366f1" stroke-width="1.5"/>
+            <text x="55" y="110" fill="#6366f1" font-size="10" text-anchor="middle">Düz = 90°</text>
+          </g>
+          <g transform="translate(160,20)">
+            <line x1="40" y1="90" x2="15" y2="30" stroke="#fcc419" stroke-width="2"/>
+            <line x1="40" y1="90" x2="110" y2="90" stroke="#fcc419" stroke-width="2"/>
+            <path d="M58,90 A18,18 0 0,0 30,57" fill="none" stroke="#fcc419" stroke-width="1.5"/>
+            <text x="55" y="110" fill="#fcc419" font-size="10" text-anchor="middle">Küt 90°–180°</text>
+          </g>
+          <g transform="translate(235,20)">
+            <line x1="10" y1="70" x2="100" y2="70" stroke="#ff6b6b" stroke-width="2"/>
+            <circle cx="55" cy="70" r="3" fill="#ff6b6b"/>
+            <path d="M70,70 A15,15 0 0,0 40,70" fill="none" stroke="#ff6b6b" stroke-width="1.5"/>
+            <text x="55" y="110" fill="#ff6b6b" font-size="10" text-anchor="middle">Düz = 180°</text>
+          </g>
+        </svg>
+      </div>
+      <div class="rule-grid">
+        <div class="rule-item"><span class="angle-tag tag-acute">Kəskin</span> 0° &lt; α &lt; 90°</div>
+        <div class="rule-item"><span class="angle-tag tag-right">Düz bucaq</span> α = 90°</div>
+        <div class="rule-item"><span class="angle-tag tag-obtuse">Küt</span> 90° &lt; α &lt; 180°</div>
+        <div class="rule-item"><span class="angle-tag tag-straight">Düz</span> α = 180° (yarım dövr)</div>
+        <div class="rule-item"><strong>Tam dövr:</strong> α = 360°</div>
+        <div class="rule-item"><strong>Reflex:</strong> 180° &lt; α &lt; 360°</div>
+      </div>
+      <div class="formula-box">Bucağın ölçü vahidi: <strong>dərəcə (°)</strong><br>
+      1° = 60′ (dəqiqə) &nbsp;|&nbsp; 1′ = 60″ (saniyə)<br>
+      $1\text{ rad} = \dfrac{180°}{\pi} \approx 57.3°$ &nbsp;|&nbsp; π rad = 180°</div>`,
+        },
+        {
+          title: "§3. Şaquli və qonşu bucaqlar. Bucağın yarıbölənı",
+          html: String.raw`
+      <div class="def-box"><strong>Qonşu bucaqlar</strong> — ümumi tərəfi olan, digər tərəfləri bir-birinin davamı olan iki bucaq. Cəmləri $180°$-dir.</div>
+      <div class="formula-box">∠1 + ∠2 = 180° (qonşu bucaqlar — supplementar)</div>
+      <div class="def-box"><strong>Şaquli bucaqlar</strong> — iki kəsişən düz xəttdə qarşılıqlı bucaqlar. Bərabərdirlər.</div>
+      <div class="svg-wrap">
+        <svg viewBox="0 0 200 160" width="200" height="160" aria-label="Şaquli bucaqlar diaqramı">
+          <line x1="20" y1="140" x2="180" y2="20" stroke="#6366f1" stroke-width="2"/>
+          <line x1="20" y1="20" x2="180" y2="140" stroke="#4dabf7" stroke-width="2"/>
+          <text x="100" y="78" fill="#a0a0b8" font-size="11" text-anchor="middle">O</text>
+          <text x="50" y="55" fill="#6366f1" font-size="11">α</text>
+          <text x="145" y="110" fill="#6366f1" font-size="11">α</text>
+          <text x="145" y="55" fill="#fcc419" font-size="11">β</text>
+          <text x="50" y="110" fill="#fcc419" font-size="11">β</text>
+        </svg>
+      </div>
+      <div class="rule-grid">
+        <div class="rule-item"><strong>Şaquli bucaqlar:</strong> α = α, β = β<br>α + β = 180°</div>
+        <div class="rule-item"><strong>Yarıbölən:</strong> Bucağı iki bərabər hissəyə bölən şüa.<br>∠AOB-nin yarıbölən: OC şüası, ∠AOC = ∠COB</div>
+      </div>
+      <div class="warn-box"><strong>DİM taktikası:</strong> İki xətt kəsişdikdə 4 bucaq əmələ gəlir: iki cüt şaquli. Həmişə α + β = 180° istifadə et.</div>
+      <div class="formula-box"><strong>Hesablama nümunəsi:</strong><br>
+      ∠1 = 3x + 10°, ∠2 = x + 50° (qonşu) → (3x+10)+(x+50) = 180<br>
+      4x = 120 → x = 30° → ∠1 = 100°, ∠2 = 80°</div>`,
+        },
+        {
+          title: "§4. Paralel düz xətlər. Kəsən düz xətt",
+          html: String.raw`
+      <div class="def-box"><strong>Paralel xətlər</strong> (a ∥ b) — eyni müstəvidə kəsişməyən iki düz xətt.</div>
+      <div class="svg-wrap">
+        <svg viewBox="0 0 300 160" width="300" height="160" aria-label="Paralel xətləri kəsən düz xətt">
+          <line x1="20" y1="40" x2="280" y2="40" stroke="#6366f1" stroke-width="2"/>
+          <line x1="20" y1="110" x2="280" y2="110" stroke="#6366f1" stroke-width="2"/>
+          <line x1="60" y1="10" x2="220" y2="160" stroke="#ff6b6b" stroke-width="2"/>
+          <text x="285" y="44" fill="#6366f1" font-size="11">a</text>
+          <text x="285" y="114" fill="#6366f1" font-size="11">b</text>
+          <text x="225" y="160" fill="#ff6b6b" font-size="11">c</text>
+          <text x="120" y="35" fill="#fcc419" font-size="11">1</text>
+          <text x="143" y="35" fill="#4dabf7" font-size="11">2</text>
+          <text x="120" y="130" fill="#fcc419" font-size="11">5</text>
+          <text x="143" y="130" fill="#4dabf7" font-size="11">6</text>
+          <text x="143" y="55" fill="#51cf66" font-size="11">3</text>
+          <text x="120" y="105" fill="#51cf66" font-size="11">7</text>
+        </svg>
+      </div>
+      <div class="rule-grid">
+        <div class="rule-item"><strong>Müvafiq bucaqlar</strong> (uyğun): bərabərdir<br>∠1 = ∠5, ∠2 = ∠6, ∠3 = ∠7…</div>
+        <div class="rule-item"><strong>Növbəli daxili bucaqlar:</strong> bərabərdir<br>∠3 = ∠5 (alternativ interior)</div>
+        <div class="rule-item"><strong>Birgə daxili bucaqlar:</strong> cəmləri 180°<br>∠3 + ∠6 = 180°</div>
+        <div class="rule-item"><strong>Şaquli xətt:</strong> a ⊥ b — aralarındakı bucaq 90°</div>
+      </div>
+      <div class="info-box"><strong>Paralellik əlaməti:</strong> Müvafiq bucaqlar bərabər olarsa xətlər paraleldir. Məs.: ∠1 = ∠5 ⇒ a ∥ b.</div>
+      <div class="warn-box"><strong>DİM taktikası:</strong> a ∥ b verilsə, müvafiq/növbəli bucaqları bərabər, birgə daxili bucaqların cəmini 180° götür.</div>`,
+        },
+        {
+          title: "§5. Üçbucaq — növlər, xassələr",
+          html: String.raw`
+      <div class="def-box"><strong>Üçbucaq △ABC</strong> — üç nöqtə (A, B, C) və bu nöqtələri birləşdirən üç kəsimdən ibarət fiqur.</div>
+      <div class="formula-box"><strong>Üçbucağın bucaqlarının cəmi:</strong> α + β + γ = 180°</div>
+      <p><strong>Bucaqlarına görə növlər:</strong></p>
+      <div class="rule-grid">
+        <div class="rule-item"><span class="angle-tag tag-acute">İtibucaqlı</span> Bütün bucaqlar kəskin (&lt; 90°)</div>
+        <div class="rule-item"><span class="angle-tag tag-right">Düzbucaqlı</span> Bir bucaq = 90°; hipotenuz ən böyük tərəfdir</div>
+        <div class="rule-item"><span class="angle-tag tag-obtuse">Küt bucaqlı</span> Bir bucaq &gt; 90°</div>
+      </div>
+      <p style="margin-top:12px;"><strong>Tərəflərinə görə növlər:</strong></p>
+      <div class="rule-grid">
+        <div class="rule-item"><strong>Bərabərtərəfli:</strong> a = b = c → bütün bucaqlar 60°</div>
+        <div class="rule-item"><strong>Bərabər ikiüzlü:</strong> a = b → ∠A = ∠B (əsas bucaqlar bərabər)</div>
+        <div class="rule-item"><strong>İxtiyari:</strong> Bütün tərəflər fərqli</div>
+        <div class="rule-item"><strong>Xarici bucaq teoremi:</strong> ∠<sub>xarici</sub> = ∠<sub>1</sub> + ∠<sub>2</sub> (qonşu olmayan iki daxili bucağın cəmi)</div>
+      </div>
+      <div class="info-box"><strong>Üçbucaq bərabərsizliyi:</strong> İstənilən iki tərəfin cəmi üçüncüdən böyükdür: a + b &gt; c, b + c &gt; a, a + c &gt; b.</div>
+      <div class="warn-box"><strong>DİM taktikası:</strong> Bir bucaq verilsə, qalan iki bucağın cəmini 180°-dən çıx. Bərabər ikiüzlü üçbucaqda əsas bucaqlar həmişə bərabərdir.</div>`,
+        },
+        {
+          title: "§6. Çevrə. Dairə. Əsas elementlər",
+          html: String.raw`
+      <div class="def-box"><strong>Çevrə</strong> — mərkəzdən bərabər məsafədə olan nöqtələrin cəmi (yalnız kənar). <strong>Dairə</strong> — çevrə və onun daxili hissəsi.</div>
+      <div class="svg-wrap">
+        <svg viewBox="0 0 260 180" width="260" height="180" aria-label="Çevrə elementləri: radius, diametr, vətər, toxunan">
+          <circle cx="130" cy="90" r="70" fill="none" stroke="#6366f1" stroke-width="2"/>
+          <circle cx="130" cy="90" r="3" fill="#6366f1"/>
+          <text x="133" y="87" fill="#6366f1" font-size="11">O</text>
+          <line x1="130" y1="90" x2="200" y2="90" stroke="#4dabf7" stroke-width="2"/>
+          <text x="162" y="83" fill="#4dabf7" font-size="10">r</text>
+          <line x1="60" y1="90" x2="200" y2="90" stroke="#51cf66" stroke-width="2" stroke-dasharray="4"/>
+          <text x="108" y="107" fill="#51cf66" font-size="10">d = 2r</text>
+          <line x1="75" y1="50" x2="195" y2="118" stroke="#fcc419" stroke-width="2"/>
+          <text x="95" y="48" fill="#fcc419" font-size="10">vətər</text>
+          <line x1="60" y1="20" x2="60" y2="165" stroke="#ff6b6b" stroke-width="1.5" stroke-dasharray="3"/>
+          <text x="2" y="100" fill="#ff6b6b" font-size="10">toxunan</text>
+        </svg>
+      </div>
+      <div class="rule-grid">
+        <div class="rule-item"><strong>Radius $r$:</strong> Mərkəzdən çevrəyə qədər məsafə</div>
+        <div class="rule-item"><strong>Diametr $d = 2r$:</strong> Mərkəzdən keçən vətər; ən böyük vətər</div>
+        <div class="rule-item"><strong>Vətər:</strong> Çevrənin iki nöqtəsini birləşdirən kəsim</div>
+        <div class="rule-item"><strong>Toxunan:</strong> Çevrəyə yalnız bir nöqtədə toxunan düz xətt; radiusa $\perp$</div>
+        <div class="rule-item"><strong>Yay (qövs):</strong> Çevrənin bir hissəsi</div>
+        <div class="rule-item"><strong>Sektor:</strong> İki radius + qövsdən ibarət fiqur</div>
+      </div>
+      <div class="formula-box">Çevrənin uzunluğu: $C = 2\pi r = \pi d$<br>
+      Dairənin sahəsi: $S = \pi r^2$<br>
+      $\pi \approx 3.14159\ldots \approx \dfrac{22}{7}$</div>`,
+        },
+        {
+          title: "§7. Düzgün fiqurlar. Simmetriya",
+          html: String.raw`
+      <div class="def-box"><strong>Düzgün çoxbucaqlı</strong> — bütün tərəfləri bərabər, bütün daxili bucaqları bərabər olan çoxbucaqlı.</div>
+      <div class="rule-grid">
+        <div class="rule-item"><strong>Düzgün üçbucaq:</strong> 3 tərəf, hər bucaq $60°$, $S=\dfrac{a^2\sqrt{3}}{4}$</div>
+        <div class="rule-item"><strong>Kvadrat:</strong> 4 tərəf, hər bucaq $90°$, $S=a^2$, $d=a\sqrt{2}$</div>
+        <div class="rule-item"><strong>Düzgün altıbucaqlı:</strong> 6 tərəf, hər bucaq $120°$, $S=\dfrac{3a^2\sqrt{3}}{2}$</div>
+        <div class="rule-item"><strong>$n$-bölümlü düzgün çoxbucaqlı:</strong> Hər bucaq $\dfrac{(n-2)\cdot180°}{n}$</div>
+      </div>
+      <p style="margin-top:14px;"><strong>Simmetriya növləri:</strong></p>
+      <div class="rule-grid">
+        <div class="rule-item"><strong>Ox simmetriyası:</strong> Figura ox boyunca qatlandıqda üst-üstə düşür.<br>Nümunə: isosceles üçbucaq, kvadrat</div>
+        <div class="rule-item"><strong>Mərkəz simmetriyası:</strong> Mərkəz nöqtə ətrafında $180°$ fırlandıqda üst-üstə düşür.<br>Nümunə: kvadrat, düzgün altıbucaqlı</div>
+      </div>
+      <div class="info-box"><strong>Simmetriya əlaməti (DİM):</strong> Figura simmetrikdirsə, bərabər müvafiq elementlər axtarın — bucaqlar, tərəflər, diaqonallar.</div>
+      <div class="formula-box">$n$-lü düzgün çoxbucaqlının bucaqlar cəmi: $(n-2)\cdot 180°$<br>
+      Nümunə: $n=6$: $(6-2)\cdot180°=720°$ → hər bucaq $120°$</div>`,
+        },
+        {
+          title: "§8. Perimetr. Sahə — əsas düsturlar",
+          html: String.raw`
+      <p><strong>Perimetr (P)</strong> — fiqurun bütün tərəflərinin uzunluqlarının cəmi.</p>
+      <div class="rule-grid">
+        <div class="rule-item"><strong>Üçbucaq:</strong> $P = a + b + c$</div>
+        <div class="rule-item"><strong>Düzbucaqlı:</strong> $P = 2(a+b)$</div>
+        <div class="rule-item"><strong>Kvadrat:</strong> $P = 4a$</div>
+        <div class="rule-item"><strong>Düzgün çoxbucaqlı:</strong> $P = n \cdot a$</div>
+        <div class="rule-item"><strong>Çevrə:</strong> $C = 2\pi r$</div>
+        <div class="rule-item"><strong>Romb:</strong> $P = 4a$</div>
+      </div>
+      <p style="margin-top:14px;"><strong>Sahə (S):</strong></p>
+      <div class="rule-grid">
+        <div class="rule-item"><strong>Düzbucaqlı:</strong> $S = a \cdot b$</div>
+        <div class="rule-item"><strong>Kvadrat:</strong> $S = a^2 = \dfrac{d^2}{2}$</div>
+        <div class="rule-item"><strong>Üçbucaq:</strong> $S = \dfrac{1}{2} a \cdot h_a$</div>
+        <div class="rule-item"><strong>Paraleloqram:</strong> $S = a \cdot h$</div>
+        <div class="rule-item"><strong>Trapeziya:</strong> $S = \dfrac{(a+b)}{2}\cdot h$</div>
+        <div class="rule-item"><strong>Dairə:</strong> $S = \pi r^2$</div>
+      </div>
+      <div class="formula-box"><strong>Heron düsturu</strong> (üçbucaq, tərəfləri ilə):<br>
+      $s = \dfrac{a+b+c}{2}$, &nbsp; $S = \sqrt{s(s-a)(s-b)(s-c)}$</div>
+      <div class="warn-box"><strong>Qeyd:</strong> Sahə düzgün vahidlə verilməlidir: sm² → m² çevirmək üçün $\div 10000$ edin.</div>`,
+        },
+        {
+          title: "§9. Koordinat müstəvisi. Məsafə. Orta nöqtə",
+          html: String.raw`
+      <div class="def-box"><strong>Koordinat müstəvisi</strong> — $Ox$ (iks oxu) və $Oy$ (iqrek oxu) iki perpendikulyar düz xətt. Nöqtə: $A(x_A;\,y_A)$.</div>
+      <div class="svg-wrap">
+        <svg viewBox="0 0 220 160" width="220" height="160" aria-label="Koordinat müstəvisi">
+          <line x1="10" y1="80" x2="210" y2="80" stroke="#4dabf7" stroke-width="1.5" marker-end="url(#arx)"/>
+          <line x1="110" y1="150" x2="110" y2="10" stroke="#4dabf7" stroke-width="1.5" marker-end="url(#ary)"/>
+          <text x="214" y="84" fill="#4dabf7" font-size="11">x</text>
+          <text x="114" y="8" fill="#4dabf7" font-size="11">y</text>
+          <circle cx="160" cy="45" r="4" fill="#6366f1"/>
+          <text x="164" y="42" fill="#6366f1" font-size="10">A(x,y)</text>
+          <line x1="160" y1="80" x2="160" y2="45" stroke="#6366f1" stroke-width="1" stroke-dasharray="3"/>
+          <line x1="110" y1="45" x2="160" y2="45" stroke="#6366f1" stroke-width="1" stroke-dasharray="3"/>
+          <defs>
+            <marker id="arx" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#4dabf7"/></marker>
+            <marker id="ary" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#4dabf7"/></marker>
+          </defs>
+        </svg>
+      </div>
+      <div class="formula-box"><strong>İki nöqtə arasında məsafə:</strong><br>
+      $d(A,B) = \sqrt{(x_B - x_A)^2 + (y_B - y_A)^2}$</div>
+      <div class="formula-box"><strong>Kəsimin orta nöqtəsi $M$:</strong><br>
+      $M = \left(\dfrac{x_A + x_B}{2};\; \dfrac{y_A + y_B}{2}\right)$</div>
+      <div class="rule-grid">
+        <div class="rule-item"><strong>I kvadrant:</strong> $x>0$, $y>0$</div>
+        <div class="rule-item"><strong>II kvadrant:</strong> $x<0$, $y>0$</div>
+        <div class="rule-item"><strong>III kvadrant:</strong> $x<0$, $y<0$</div>
+        <div class="rule-item"><strong>IV kvadrant:</strong> $x>0$, $y<0$</div>
+      </div>
+      <div class="warn-box"><strong>DİM taktikası:</strong> Koordinat məsələlərini çəkin — vizual görüntü səhvləri azaldır.</div>`,
+        },
+        {
+          title: "§10. DİM-ə hazırlıq: Həndəsə taktikası",
+          html: String.raw`
+      <p><strong>Ən çox düşən həndəsə mövzuları:</strong></p>
+      <div class="rule-grid">
+        <div class="rule-item"><strong>Bucaq hesablamaları:</strong> Şaquli, qonşu, paralel xətt bucaqları — yarı sual bu tiplidir</div>
+        <div class="rule-item"><strong>Üçbucaq bucaqları:</strong> Cəm 180°, xarici bucaq teoremi — ən tez-tez düşən</div>
+        <div class="rule-item"><strong>Çevrə:</strong> Radius, diametr, vətər münasibəti — çox düşür</div>
+        <div class="rule-item"><strong>Sahə/perimetr:</strong> Düzbucaqlı, üçbucaq, dairə — həmişə var</div>
+      </div>
+      <p style="margin-top:14px;"><strong>Əsas strategiyalar:</strong></p>
+      <div class="def-box">
+        <strong>1. Fiquru çəkin.</strong> Verilmiş məlumatları yazın. Axtarılan kəmiyyəti işarələyin.<br>
+        <strong>2. Bütün münasibətləri yazın.</strong> Şaquli/qonşu bucaqlar, paralel xətt xassələri, üçbucaq cəmi.<br>
+        <strong>3. Tənlik qurun.</strong> Bilinməyən bucaq/tərəf üçün $x$ götürün.<br>
+        <strong>4. Yoxlayın.</strong> Nəticə məntiqlidi? (Bucaq 0°-180° arasında, tərəf müsbət?)
+      </div>
+      <div class="info-box"><strong>Tez-tez düşən xəta:</strong> Xarici bucaq teoremi — xarici bucaq TƏK qonşu olmayan bucaqların cəmidir, 3 daxili bucağın cəmi deyil!</div>
+      <div class="formula-box"><strong>Yadda saxlayın:</strong><br>
+      Düzbucaqlı üçbucaqda: $a^2 + b^2 = c^2$ (Pifaqor teoremi)<br>
+      Xüsusi: $3:4:5$, $5:12:13$, $8:15:17$, $7:24:25$</div>
+      <div class="warn-box"><strong>DİM taktikası:</strong> Əgər fiqurun hissələri verilmişsə, bütöv sahəsini hesabla, sonra çıx. Bu üsul mürəkkəb fiqurların sahəsini asanlaşdırır.</div>`,
+        },
+      ];
+
+      let sIdx = 0;
+      function renderSlides() {
+        const trk = document.getElementById("strack");
+        const dots = document.getElementById("sdots");
+        document.getElementById("snum").textContent = sIdx + 1;
+        document.getElementById("stotal").textContent = slides.length;
+        trk.innerHTML = "";
+        dots.innerHTML = "";
+        slides.forEach((s, i) => {
+          const d = document.createElement("div");
+          d.className = "slide" + (i === sIdx ? " active" : "");
+          d.innerHTML = `<h3>📌 ${s.title}</h3>${s.html}`;
+          trk.appendChild(d);
+          const dot = document.createElement("div");
+          dot.className = "slide-dot" + (i === sIdx ? " active" : "");
+          dot.onclick = () => {
+            sIdx = i;
+            renderSlides();
+          };
+          dots.appendChild(dot);
+        });
+        document.getElementById("snext").textContent =
+          sIdx === slides.length - 1 ? "Misallara keç →" : "Növbəti →";
+        if (window.MathJax) MathJax.typesetPromise([trk]).catch(console.error);
+      }
+      function nextSlide() {
+        if (sIdx < slides.length - 1) {
+          sIdx++;
+          renderSlides();
+        } else showSection("examples");
+      }
+      function prevSlide() {
+        if (sIdx > 0) {
+          sIdx--;
+          renderSlides();
+        }
+      }
+      renderSlides();
+
+      /* ════════ EXAMPLES ════════ */
+      const EXAMPLES = [
+        {
+          num: 1,
+          topic: "§3 Şaquli bucaqlar",
+          title: "Kəsişən xətlərdə bucağın tapılması",
+          q: "İki düz xətt kəsişir. Onlardan biri ilə əmələ gələn bir bucaq ∠1 = 3x + 10° və onun qonşusu ∠2 = x + 50°-dir. ∠1 necə dərəcədir?",
+          a: '<p>Qonşu bucaqların cəmi 180°-dir:</p><p>(3x+10)+(x+50) = 180</p><p>4x+60 = 180 → 4x = 120 → x = 30°</p><p>∠1 = 3(30)+10 = <strong>100°</strong></p><p><strong style="color:var(--accent)">Cavab: 100°</strong></p>',
+        },
+        {
+          num: 2,
+          topic: "§5 Üçbucaq",
+          title: "Xarici bucaq teoremi ilə hesablama",
+          q: "△ABC-də ∠A = 40°, ∠B = 65°. C köşəsindəki xarici bucaq neçə dərəcədir?",
+          a: '<p>Daxili ∠C = 180° − 40° − 65° = 75°</p><p>Xarici bucaq = 180° − 75° = 105°</p><p>Yoxlama: xarici bucaq = ∠A + ∠B = 40°+65° = 105° ✓</p><p><strong style="color:var(--accent)">Cavab: 105°</strong></p>',
+        },
+        {
+          num: 3,
+          topic: "§4 Paralel xətlər",
+          title: "Paralel xətlər və kəsən düz xətt",
+          q: "a ∥ b. Kəsən xətt c ilə müvafiq bucaq ∠1 = 2x + 15° və ∠5 = 3x − 25°-dir. x tapın.",
+          a: "<p>Paralel xətlərdə müvafiq bucaqlar bərabərdir: ∠1 = ∠5</p><p>2x+15 = 3x−25 → x = 40°</p><p>∠1 = 2(40)+15 = <strong>95°</strong></p>",
+        },
+        {
+          num: 4,
+          topic: "§6 Çevrə",
+          title: "Çevrə — diametr, vətər, toxunan",
+          q: "Mərkəzi $O$ olan çevrənin radiusu $5$ sm-dir. $AB$ vətəri $6$ sm-dir. $O$ nöqtəsindən $AB$-yə qədər məsafəni tapın.",
+          a: "<p>$O$-dan vətərə endirilən perpendikulyar onu iki bərabər hissəyə bölür: $AM = 3$ sm</p><p>$OM^2 + AM^2 = OA^2$ (Pifaqor)</p><p>$OM^2 = 5^2 - 3^2 = 25 - 9 = 16$</p><p>$OM = \\mathbf{4}$ sm</p>",
+        },
+        {
+          num: 5,
+          topic: "§8 Sahə",
+          title: "Mürəkkəb fiqurun sahəsi",
+          q: "$8\\times6$ sm ölçülü düzbucaqlıdan 4 sm tərəfli kvadrat kəsilmişdir. Qalan fiqurun sahəsi nəçədir?",
+          a: "<p>Düzbucaqlı sahəsi: $S_1 = 8 \\times 6 = 48$ sm²</p><p>Kvadrat sahəsi: $S_2 = 4^2 = 16$ sm²</p><p>Qalan: $S = 48 - 16 = \\mathbf{32}$ sm²</p>",
+        },
+        {
+          num: 6,
+          topic: "§9 Koordinat",
+          title: "İki nöqtə arasında məsafə",
+          q: "$A(1; 2)$ və $B(4; 6)$ nöqtələri arasında məsafəni tapın.",
+          a: "<p>$d = \\sqrt{(4-1)^2 + (6-2)^2} = \\sqrt{9+16} = \\sqrt{25} = \\mathbf{5}$</p>",
+        },
+      ];
+
+      function renderExamples() {
+        const w = document.getElementById("ex-wrap");
+        if (w.dataset.done) return;
+        w.dataset.done = "1";
+        EXAMPLES.forEach((ex) => {
+          const d = document.createElement("div");
+          d.className = "problem-card";
+          d.innerHTML = `<div class="problem-header"><span class="problem-num">Misal ${ex.num}</span><span class="problem-topic">${ex.topic}</span></div>
+      <div class="problem-text"><strong>${ex.title}</strong><br><br>${ex.q}</div>
+      <button class="sol-btn" onclick="toggleSol(this)">Həlli göstər ▼</button>
+      <div class="solution">${ex.a}</div>`;
+          w.appendChild(d);
+        });
+        if (window.MathJax) MathJax.typesetPromise([w]).catch(console.error);
+      }
+      function toggleSol(btn) {
+        const s = btn.nextElementSibling;
+        s.classList.toggle("open");
+        btn.textContent = s.classList.contains("open")
+          ? "Həlli gizlət ▲"
+          : "Həlli göstər ▼";
+      }
+
+      /* ════════ QUESTIONS ════════ */
+      const QS = [
+        {
+          s: "§1",
+          q: "İki nöqtədən neçə düz xətt keçir?",
+          o: ["Yalnız bir", "İki", "Üç", "Sonsuz sayda"],
+          a: 0,
+          e: "Aksioma: İki fərqli nöqtədən yalnız bir düz xətt keçir.",
+        },
+        {
+          s: "§2",
+          q: "$135°$-lik bucaq hansı növdəndir?",
+          o: ["Küt", "Kəskin", "Düz", "Tam dövr"],
+          a: 0,
+          e: "90° < 135° < 180° olduğundan küt bucaqdır.",
+        },
+        {
+          s: "§2",
+          q: "Düz bucaq neçə dərəcədir?",
+          o: ["90°", "180°", "360°", "45°"],
+          a: 0,
+          e: "Düz bucaq tam olaraq 90°-dir.",
+        },
+        {
+          s: "§3",
+          q: "Qonşu bucaqların cəmi nəçədir?",
+          o: ["180°", "90°", "360°", "270°"],
+          a: 0,
+          e: "Qonşu bucaqlar supplementardır: cəmləri 180°-dir.",
+        },
+        {
+          s: "§3",
+          q: "Bir bucaq $70°$ olarsa, onun şaquli bucağı neçədir?",
+          o: ["70°", "110°", "90°", "180°"],
+          a: 0,
+          e: "Şaquli bucaqlar bərabərdir: 70°.",
+        },
+        {
+          s: "§3",
+          q: "$\\angle 1 = 2x+10°$, qonşusu $\\angle 2 = 4x-10°$. $x$ tapın.",
+          o: ["30°", "20°", "25°", "40°"],
+          a: 0,
+          e: "2x+10+4x-10=180 → 6x=180 → x=30°.",
+        },
+        {
+          s: "§4",
+          q: "Paralel xətlərdə müvafiq bucaqlar hansı xüsusiyyətə malikdir?",
+          o: ["Bərabərdir", "Cəmləri 180°-dir", "Şaqulidirlər", "Toplayıcıdır"],
+          a: 0,
+          e: "Paralel xətlərdə müvafiq (uyğun) bucaqlar bərabərdir.",
+        },
+        {
+          s: "§4",
+          q: "$a\\parallel b$. Birgə daxili bucaqlar $\\alpha$ və $\\beta$. $\\alpha + \\beta = ?$",
+          o: ["180°", "90°", "360°", "$\\alpha$"],
+          a: 0,
+          e: "Birgə daxili (co-interior) bucaqların cəmi 180°-dir.",
+        },
+        {
+          s: "§5",
+          q: "$\\triangle ABC$-də $\\angle A = 50°$, $\\angle B = 70°$. $\\angle C$ nəçədir?",
+          o: ["60°", "80°", "50°", "70°"],
+          a: 0,
+          e: "180° - 50° - 70° = 60°.",
+        },
+        {
+          s: "§5",
+          q: "Bərabərtərəfli üçbucaqda hər bucaq neçə dərəcədir?",
+          o: ["60°", "90°", "45°", "120°"],
+          a: 0,
+          e: "3 bərabər bucaq: 180°÷3 = 60°.",
+        },
+        {
+          s: "§5",
+          q: "Üçbucaqda xarici bucaq = ?",
+          o: [
+            "Qonşu olmayan iki daxili bucağın cəmi",
+            "Bütün daxili bucaqların cəmi",
+            "Qonşu daxili bucaqdan böyük",
+            "Heç biri",
+          ],
+          a: 0,
+          e: "Xarici bucaq teoremi: xarici bucaq qonşu olmayan iki daxili bucağın cəminə bərabərdir.",
+        },
+        {
+          s: "§5",
+          q: "Düzbucaqlı üçbucaqda hipotenuz $10$, bir katet $6$. İkinci katet nəçədir?",
+          o: ["8", "7", "9", "6"],
+          a: 0,
+          e: "c²=a²+b²: 10²=6²+b² → b²=64 → b=8.",
+        },
+        {
+          s: "§6",
+          q: "Çevrənin radiusu $7$ sm. Diametr nəçədir?",
+          o: ["14 sm", "7 sm", "21 sm", "3.5 sm"],
+          a: 0,
+          e: "d = 2r = 2×7 = 14 sm.",
+        },
+        {
+          s: "§6",
+          q: "Diametr çevrənin ən uzun vətəridir — bu müddəa:",
+          o: [
+            "Düzgündür",
+            "Yanlışdır",
+            "Yalnız bəzən düzgündür",
+            "Sübut edilmir",
+          ],
+          a: 0,
+          e: "Diametr mərkəzdən keçən vətərdir və ən böyük vətərdir — doğrudur.",
+        },
+        {
+          s: "§6",
+          q: "Toxunan xətt radiusa necə münasibətdədir?",
+          o: ["Perpendikulyardır", "Paraleldir", "Bərabərdir", "Bucaqlıdır"],
+          a: 0,
+          e: "Toxunan toxunma nöqtəsindən keçən radiusa perpendikulyardır.",
+        },
+        {
+          s: "§8",
+          q: "$5\\times4$ sm düzbucaqlının perimetri nəçədir?",
+          o: ["18 sm", "20 sm", "40 sm", "9 sm"],
+          a: 0,
+          e: "P = 2(5+4) = 2×9 = 18 sm.",
+        },
+        {
+          s: "§8",
+          q: "Tərəfi $6$ sm olan kvadratın diaqonalı nəçədir?",
+          o: ["$6\\sqrt{2}$ sm", "$12$ sm", "$6$ sm", "$3\\sqrt{2}$ sm"],
+          a: 0,
+          e: "d = a√2 = 6√2 sm.",
+        },
+        {
+          s: "§8",
+          q: "Radiusu $r$ olan dairənin sahəsi:",
+          o: ["$\\pi r^2$", "$2\\pi r$", "$\\pi r$", "$4\\pi r^2$"],
+          a: 0,
+          e: "Dairənin sahəsi S = πr².",
+        },
+        {
+          s: "§9",
+          q: "$A(0;0)$ və $B(3;4)$ arasında məsafə:",
+          o: ["5", "7", "√7", "4"],
+          a: 0,
+          e: "d=√(3²+4²)=√(9+16)=√25=5.",
+        },
+        {
+          s: "§9",
+          q: "$A(2;4)$ və $B(6;8)$ kəsiminin orta nöqtəsi:",
+          o: ["$(4;6)$", "$(8;12)$", "$(2;4)$", "$(3;5)$"],
+          a: 0,
+          e: "M=((2+6)/2, (4+8)/2)=(4,6).",
+        },
+      ];
+
+      let dIdx = 0,
+        dScore = 0,
+        dAns = [];
+      function startDiag() {
+        dIdx = 0;
+        dScore = 0;
+        dAns = new Array(QS.length).fill(null);
+        document.getElementById("diag-ui").style.display = "block";
+        document.getElementById("vik-ui").style.display = "none";
+        document.getElementById("res-ui").style.display = "none";
+        renderDQ();
+        document
+          .getElementById("diag-ui")
+          .scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+      function renderDQ() {
+        const q = QS[dIdx];
+        document.getElementById("dq-n").textContent = dIdx + 1;
+        document.getElementById("dq-tot").textContent = QS.length;
+        document.getElementById("dq-score").textContent = dScore + " ✓";
+        document.getElementById("dq-bar").style.width =
+          (dIdx / QS.length) * 100 + "%";
+        document.getElementById("dq-expl").style.display = "none";
+        document.getElementById("dq-next").disabled = dAns[dIdx] === null;
+        document.getElementById("dq-prev").disabled = dIdx === 0;
+        document.getElementById("dq-q").innerHTML = q.q;
+        const opts = document.getElementById("dq-opts");
+        opts.innerHTML = "";
+        const L = ["A", "B", "C", "D"];
+        q.o.forEach((opt, i) => {
+          const div = document.createElement("div");
+          div.className = "opt";
+          if (dAns[dIdx] !== null) {
+            div.classList.add("disabled");
+            if (i === q.a) div.classList.add("correct");
+            else if (i === dAns[dIdx]) div.classList.add("wrong");
+          }
+          div.innerHTML = `<span class="opt-ltr">${L[i]}</span><span>${opt}</span>`;
+          div.addEventListener("click", () => selectDQ(i));
+          opts.appendChild(div);
+        });
+        renderMathNow("dq-q");
+        renderMathNow("dq-opts");
+      }
+      function selectDQ(i) {
+        if (dAns[dIdx] !== null) return;
+        dAns[dIdx] = i;
+        if (i === QS[dIdx].a) dScore++;
+        document.getElementById("dq-next").disabled = false;
+        document.getElementById("dq-score").textContent = dScore + " ✓";
+        const ex = document.getElementById("dq-expl");
+        ex.style.display = "block";
+        const ok = i === QS[dIdx].a;
+        ex.style.background = ok
+          ? "rgba(81,207,102,.09)"
+          : "rgba(255,107,107,.09)";
+        ex.style.borderLeftColor = ok ? "var(--success)" : "var(--error)";
+        ex.innerHTML =
+          (ok
+            ? '<strong style="color:var(--success)">✓ Düzgün!</strong> '
+            : '<strong style="color:var(--error)">✗ Səhv.</strong> Düzgün: <strong>' +
+              QS[dIdx].o[QS[dIdx].a] +
+              "</strong>. ") + QS[dIdx].e;
+        if (window.MathJax) MathJax.typesetPromise([ex]).catch(console.error);
+        renderDQ();
+      }
+      function nextDiag() {
+        if (dIdx < QS.length - 1) {
+          dIdx++;
+          renderDQ();
+        } else showResults(dScore, QS.length);
+      }
+      function prevDiag() {
+        if (dIdx > 0) {
+          dIdx--;
+          renderDQ();
+        }
+      }
+
+      let vIdx = 0,
+        vScore = 0,
+        vTmr = null,
+        vT = 30,
+        vRes = [];
+      function startViktorina() {
+        vIdx = 0;
+        vScore = 0;
+        vRes = [];
+        document.getElementById("diag-ui").style.display = "none";
+        document.getElementById("vik-ui").style.display = "block";
+        document.getElementById("res-ui").style.display = "none";
+        renderVQ();
+        document
+          .getElementById("vik-ui")
+          .scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+      function renderVQ() {
+        clearInterval(vTmr);
+        vT = 30;
+        const q = QS[vIdx];
+        document.getElementById("vik-tag").textContent = q.s;
+        document.getElementById("vik-q").innerHTML = q.q;
+        tickV();
+        vTmr = setInterval(tickV, 1000);
+        const opts = document.getElementById("vik-opts");
+        opts.innerHTML = "";
+        const L = ["A", "B", "C", "D"];
+        q.o.forEach((opt, i) => {
+          const d = document.createElement("div");
+          d.className = "opt";
+          d.innerHTML = `<span class="opt-ltr">${L[i]}</span><span>${opt}</span>`;
+          d.onclick = () => answerV(i, d);
+          opts.appendChild(d);
+        });
+        renderVDots();
+        renderMathNow("vik-q");
+        renderMathNow("vik-opts");
+      }
+      function tickV() {
+        const el = document.getElementById("vik-timer");
+        el.textContent = vT;
+        el.style.color = vT <= 10 ? "var(--error)" : "var(--warning)";
+        if (vT-- <= 0) {
+          clearInterval(vTmr);
+          answerV(-1, null);
+        }
+      }
+      function renderVDots() {
+        const el = document.getElementById("vik-dots");
+        el.innerHTML = "";
+        QS.forEach((_, i) => {
+          const d = document.createElement("div");
+          d.style.cssText = `flex:1;height:5px;border-radius:3px;background:${i < vIdx ? (vRes[i] ? "var(--success)" : "var(--error)") : i === vIdx ? "var(--accent)" : "var(--border-glass)"}`;
+          el.appendChild(d);
+        });
+      }
+      function answerV(idx, btn) {
+        clearInterval(vTmr);
+        const q = QS[vIdx];
+        document
+          .querySelectorAll("#vik-opts .opt")
+          .forEach((b) => (b.style.pointerEvents = "none"));
+        const ok = idx === q.a;
+        if (btn) btn.classList.add(ok ? "correct" : "wrong");
+        if (!ok && idx !== -1)
+          document
+            .querySelectorAll("#vik-opts .opt")
+            [q.a]?.classList.add("correct");
+        if (ok) vScore++;
+        vRes.push(ok);
+        setTimeout(() => {
+          vIdx++;
+          if (vIdx >= QS.length) {
+            showResults(vScore, QS.length);
+            return;
+          }
+          renderVQ();
+        }, 900);
+      }
+      function showResults(score, total) {
+        document.getElementById("diag-ui").style.display = "none";
+        document.getElementById("vik-ui").style.display = "none";
+        document.getElementById("res-ui").style.display = "block";
+        const pct = Math.round((score / total) * 100);
+        document.getElementById("res-ring").style.setProperty("--score", pct);
+        document.getElementById("res-pct").textContent = pct + "%";
+        document.getElementById("res-ok").textContent = score;
+        document.getElementById("res-no").textContent = total - score;
+        let lv, msg;
+        if (pct >= 90) {
+          lv = "Əla";
+          msg = "🏆 Əla! Həndəsə anlayışlarını mükəmməl bilirsiniz!";
+        } else if (pct >= 70) {
+          lv = "Yaxşı";
+          msg = "👍 Yaxşı! Bir neçə bölməni təkrarlayın.";
+        } else if (pct >= 50) {
+          lv = "Kafi";
+          msg = "📚 Nəzəriyyəni yenidən oxuyun.";
+        } else {
+          lv = "Zəif";
+          msg = "💡 Bütün bölmələri əvvəldən keçin.";
+        }
+        document.getElementById("res-lvl").textContent = lv;
+        document.getElementById("res-msg").innerHTML = msg;
+        document
+          .getElementById("res-ui")
+          .scrollIntoView({ behavior: "smooth" });
+        try { var _p={points:score,maxPoints:total,timeSpentSeconds:0};window.parent.postMessage({type:"SCORE_UPDATE",payload:_p},"*");if(pct>=50)window.parent.postMessage({type:"LESSON_COMPLETE",payload:_p},"*"); } catch(e){}
+      }
+      function resetAssessment() {
+        ["diag-ui", "vik-ui", "res-ui"].forEach(
+          (id) => (document.getElementById(id).style.display = "none"),
+        );
+        clearInterval(vTmr);
+      }
+      function renderMathNow(id) {
+        const el = document.getElementById(id);
+        if (el && window.MathJax) MathJax.typesetPromise([el]).catch(console.error);
+      }
+    </script>
+  </body>
+</html>
