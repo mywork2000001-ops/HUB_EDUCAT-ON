@@ -769,7 +769,10 @@
         }
       }
     </style>
-  </head>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" crossorigin="anonymous">
+  <script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" crossorigin="anonymous"></script>
+</head>
   <body>
     <div class="bg"></div>
 
@@ -1075,26 +1078,6 @@
     </section>
 
     <script>
-MathJax = {
-  tex: {
-    inlineMath: [['$', '$']],
-    displayMath: [['$$', '$$']],
-    processEscapes: true,
-    processEnvironments: true
-  },
-  options: { skipHtmlTags: ['script','noscript','style','textarea','pre'] },
-  startup: {
-    typeset: false,
-    ready() {
-      MathJax.startup.defaultReady();
-      const trk = document.getElementById('strack');
-      if (trk) MathJax.typesetPromise([trk]).catch(console.error);
-    }
-  }
-};
-</script>
-<script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
-    <script>
       function showSection(id) {
         document
           .querySelectorAll("section")
@@ -1111,7 +1094,7 @@ MathJax = {
         document.getElementById("mob-nav").classList.remove("open");
         window.scrollTo(0, 0);
         setTimeout(() => {
-          if (window.MathJax) MathJax.typesetPromise([document.getElementById(id)]).catch(console.error);
+          renderMathInElement(document.getElementById(id), K);
         }, 100);
       }
       document.querySelectorAll("[data-sec]").forEach((a) =>
@@ -1401,7 +1384,7 @@ MathJax = {
         });
         document.getElementById("snext").textContent =
           sIdx === slides.length - 1 ? "Misallara keç →" : "Növbəti →";
-        if (window.MathJax) MathJax.typesetPromise([trk]).catch(console.error);
+        renderMathInElement(trk, K);
       }
       function nextSlide() {
         if (sIdx < slides.length - 1) {
@@ -1476,7 +1459,7 @@ MathJax = {
       <div class="solution">${ex.a}</div>`;
           w.appendChild(d);
         });
-        if (window.MathJax) MathJax.typesetPromise([w]).catch(console.error);
+        renderMathInElement(w, K);
       }
       function toggleSol(btn) {
         const s = btn.nextElementSibling;
@@ -1728,7 +1711,7 @@ MathJax = {
             : '<strong style="color:var(--error)">✗ Səhv.</strong> Düzgün: <strong>' +
               QS[dIdx].o[QS[dIdx].a] +
               "</strong>. ") + QS[dIdx].e;
-        if (window.MathJax) MathJax.typesetPromise([ex]).catch(console.error);
+        renderMathInElement(ex, K);
         renderDQ();
       }
       function nextDiag() {
@@ -1860,10 +1843,7 @@ MathJax = {
         );
         clearInterval(vTmr);
       }
-      function renderMathNow(id) {
-        const el = document.getElementById(id);
-        if (el && window.MathJax) MathJax.typesetPromise([el]).catch(console.error);
-      }
+      const K={delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false},{left:'\(',right:'\)',display:false},{left:'\[',right:'\]',display:true}],throwOnError:false};function renderMathNow(id){const el=document.getElementById(id);if(el)renderMathInElement(el,K);}
     </script>
   </body>
 </html>

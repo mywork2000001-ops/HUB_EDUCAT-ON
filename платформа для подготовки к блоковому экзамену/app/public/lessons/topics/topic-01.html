@@ -866,7 +866,10 @@
         }
       }
     </style>
-  </head>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" crossorigin="anonymous">
+  <script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" crossorigin="anonymous"></script>
+</head>
   <body>
     <div class="bg"></div>
 
@@ -1173,27 +1176,6 @@
     </section>
 
     <script>
-MathJax = {
-  tex: {
-    inlineMath: [['$', '$']],
-    displayMath: [['$$', '$$']],
-    processEscapes: true,
-    processEnvironments: true
-  },
-  options: { skipHtmlTags: ['script','noscript','style','textarea','pre'] },
-  startup: {
-    typeset: false,
-    ready() {
-      MathJax.startup.defaultReady();
-      // İlk slaydn riyazi məzmununu MathJax yüklənən kimi render et
-      const trk = document.getElementById('strack');
-      if (trk) MathJax.typesetPromise([trk]).catch(console.error);
-    }
-  }
-};
-</script>
-<script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
-    <script>
       /* ── NAV ── */
       function showSection(id) {
         document
@@ -1212,7 +1194,7 @@ MathJax = {
         window.scrollTo(0, 0);
         setTimeout(() => {
           const _el = document.getElementById(id);
-          if (_el && window.MathJax) MathJax.typesetPromise([_el]).catch(console.error);
+          renderMathInElement(_el, K);
         }, 100);
       }
       document.querySelectorAll("[data-sec]").forEach((a) =>
@@ -1493,7 +1475,7 @@ MathJax = {
         });
         document.getElementById("snext").textContent =
           sIdx === slides.length - 1 ? "Misallara keç →" : "Növbəti →";
-        if (window.MathJax) MathJax.typesetPromise([trk]).catch(console.error);
+        renderMathInElement(trk, K);
         // Eratosfen ələyi (yalnız bir dəfə)
         const sv = document.getElementById("sieve");
         if (sv && !sv.dataset.done) {
@@ -1584,7 +1566,7 @@ MathJax = {
       <div class="solution">${ex.a}</div>`;
           w.appendChild(d);
         });
-        if (window.MathJax) MathJax.typesetPromise([w]).catch(console.error);
+        renderMathInElement(w, K);
       }
       function toggleSol(btn) {
         const s = btn.nextElementSibling;
@@ -1811,7 +1793,7 @@ MathJax = {
             : '<strong style="color:var(--error)">✗ Səhv.</strong> Düzgün: <strong>' +
               QS[dIdx].o[QS[dIdx].a] +
               "</strong>. ") + QS[dIdx].e;
-        if (window.MathJax) MathJax.typesetPromise([ex]).catch(console.error);
+        renderMathInElement(ex, K);
         renderDQ();
       }
       function nextDiag() {
@@ -1944,10 +1926,7 @@ MathJax = {
         );
         clearInterval(vTmr);
       }
-      function renderMathNow(id) {
-        const el = document.getElementById(id);
-        if (el && window.MathJax) MathJax.typesetPromise([el]).catch(console.error);
-      }
+      const K={delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false},{left:'\(',right:'\)',display:false},{left:'\[',right:'\]',display:true}],throwOnError:false};function renderMathNow(id){const el=document.getElementById(id);if(el)renderMathInElement(el,K);}
     </script>
   </body>
 </html>

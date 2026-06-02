@@ -36,8 +36,8 @@
         overflow-x: hidden;
         line-height: 1.65;
       }
-      .MathJax { font-size: 1.05em !important; }
-      mjx-container[display="true"] { overflow-x: auto; padding: 6px 0; }
+      .katex { font-size: 1.05em !important; }
+      .katex-display { overflow-x: auto; padding: 6px 0; }
       .bg {
         position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;
         background:
@@ -293,7 +293,10 @@
         .opt { font-size: 0.85rem; padding: 12px 14px; }
       }
     </style>
-  </head>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" crossorigin="anonymous">
+  <script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" crossorigin="anonymous"></script>
+</head>
   <body>
     <div class="bg"></div>
 
@@ -601,15 +604,6 @@
     </section>
 
     <script>
-      window.MathJax = {
-        tex: { inlineMath: [['\\(','\\)']], displayMath: [['\\[','\\]']], packages: {'[+]': ['ams']} },
-        options: { skipHtmlTags: ['script','noscript','style','textarea','pre'] },
-        startup: { typeset: false },
-      };
-    </script>
-    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" id="MathJax-script" async></script>
-
-    <script>
       // ─── Navigation ───────────────────────────────────────────────────────────
       function showSection(id) {
         document.querySelectorAll('section').forEach(s => s.classList.remove('active'));
@@ -629,8 +623,7 @@
         const sol = btn.nextElementSibling;
         sol.classList.toggle('open');
         btn.textContent = sol.classList.contains('open') ? '🙈 Həlli gizlə' : '💡 Həlli göstər';
-        if (sol.classList.contains('open') && window.MathJax)
-          MathJax.typesetPromise([sol]).catch(console.error);
+        if (sol.classList.contains('open')) renderMathInElement(sol, K);
       }
 
       // ─── Theory Slides ────────────────────────────────────────────────────────
@@ -1037,7 +1030,7 @@ Katet \(a\) → hipotenuz \(a\sqrt{2}\) &nbsp;·&nbsp; Katet \(a=\dfrac{d}{\sqrt
           dots.appendChild(dot);
         });
         updateSlideUI();
-        MathJax.startup.promise.then(() => MathJax.typesetPromise([track]));
+        renderMathInElement(track, K);
       }
       function goSlide(n) {
         document.querySelectorAll('.slide')[curSlide].classList.remove('active');
@@ -1054,10 +1047,7 @@ Katet \(a\) → hipotenuz \(a\sqrt{2}\) &nbsp;·&nbsp; Katet \(a=\dfrac{d}{\sqrt
         document.getElementById('next-btn').textContent = curSlide === SLIDES.length - 1 ? '✓ Bitdi' : 'İrəli →';
       }
 
-      function renderMathNow(id) {
-        const el = document.getElementById(id);
-        if (el && window.MathJax) MathJax.typesetPromise([el]).catch(console.error);
-      }
+      const K={delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false},{left:'\(',right:'\)',display:false},{left:'\[',right:'\]',display:true}],throwOnError:false};function renderMathNow(id){const el=document.getElementById(id);if(el)renderMathInElement(el,K);}
 
       // ─── Questions ────────────────────────────────────────────────────────────
       const QS = [
@@ -1177,7 +1167,7 @@ Katet \(a\) → hipotenuz \(a\sqrt{2}\) &nbsp;·&nbsp; Katet \(a=\dfrac{d}{\sqrt
           : '<strong style="color:var(--error)">✗ Səhv.</strong> Düzgün: <strong>' + QS[dIdx].o[QS[dIdx].a] + '</strong>. ')
           + QS[dIdx].e;
         renderDQ();
-        if (window.MathJax) MathJax.typesetPromise([ex]).catch(console.error);
+        renderMathInElement(ex, K);
       }
       function nextDiag() {
         if (dIdx < QS.length - 1) { dIdx++; renderDQ(); }
@@ -1288,9 +1278,9 @@ Katet \(a\) → hipotenuz \(a\sqrt{2}\) &nbsp;·&nbsp; Katet \(a=\dfrac{d}{\sqrt
         document.getElementById('res-ui').style.display  = 'none';
       }
 
-      document.addEventListener('DOMContentLoaded', () => {
+      document.addEventListener('DOMContentLoaded',()=>{
         buildSlides();
-        MathJax.startup.promise.then(() => MathJax.typesetPromise([document.body]));
+        renderMathInElement(document.body, K);
       });
     </script>
   </body>
