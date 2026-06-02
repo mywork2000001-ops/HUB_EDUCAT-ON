@@ -345,7 +345,17 @@ export const TOPICS: Topic[] = [
       ru: 'Линейные, квадратные, рациональные неравенства; системы',
       en: 'Linear, quadratic, rational inequalities; systems',
     },
-    lessons: [],
+    lessons: [
+      {
+        id: 'topic-12-main',
+        topicId: 'topic-12',
+        type: 'theory',
+        title: { az: 'Bərabərsizliklər — tam dərs', ru: 'Неравенства — полный урок', en: 'Inequalities — full lesson' },
+        url_path: '/lessons/topics/topic-12.html',
+        estimatedMinutes: 45,
+        questionCount: 20,
+      },
+    ],
   },
 
   {
@@ -364,7 +374,17 @@ export const TOPICS: Topic[] = [
       ru: 'Арифметическая и геометрическая прогрессии, вычисление сумм',
       en: 'Arithmetic and geometric progressions, sum calculation',
     },
-    lessons: [],
+    lessons: [
+      {
+        id: 'topic-13-main',
+        topicId: 'topic-13',
+        type: 'theory',
+        title: { az: 'Ədədi ardıcıllıqlar. Silsilələr — tam dərs', ru: 'Числовые последовательности. Прогрессии — полный урок', en: 'Sequences & Progressions — full lesson' },
+        url_path: '/lessons/topics/topic-13.html',
+        estimatedMinutes: 45,
+        questionCount: 20,
+      },
+    ],
   },
 
   {
@@ -383,7 +403,17 @@ export const TOPICS: Topic[] = [
       ru: 'Виды многоугольников, периметр, площадь, правильные многоугольники',
       en: 'Types of polygons, perimeter, area, regular polygons',
     },
-    lessons: [],
+    lessons: [
+      {
+        id: 'topic-14-main',
+        topicId: 'topic-14',
+        type: 'theory',
+        title: { az: 'Çoxbucaqlılar — tam dərs', ru: 'Многоугольники — полный урок', en: 'Polygons — full lesson' },
+        url_path: '/lessons/topics/topic-14.html',
+        estimatedMinutes: 45,
+        questionCount: 20,
+      },
+    ],
   },
 
   {
@@ -398,11 +428,21 @@ export const TOPICS: Topic[] = [
       en: 'Quadrilaterals',
     },
     description: {
-      az: 'Paralel­kenar, düzbucaqlı, romb, kvadrat, trapesiya; sahə',
+      az: 'Paraleloqram, düzbucaqlı, romb, kvadrat, trapesiya; sahə',
       ru: 'Параллелограмм, прямоугольник, ромб, квадрат, трапеция; площадь',
       en: 'Parallelogram, rectangle, rhombus, square, trapezoid; area',
     },
-    lessons: [],
+    lessons: [
+      {
+        id: 'topic-15-main',
+        topicId: 'topic-15',
+        type: 'theory',
+        title: { az: 'Dördbucaqlılar — tam dərs', ru: 'Четырёхугольники — полный урок', en: 'Quadrilaterals — full lesson' },
+        url_path: '/lessons/topics/topic-15.html',
+        estimatedMinutes: 45,
+        questionCount: 20,
+      },
+    ],
   },
 
   {
@@ -421,7 +461,17 @@ export const TOPICS: Topic[] = [
       ru: 'Понятие функции, график, свойства, основные виды функций',
       en: 'Concept of function, graph, properties, main types of functions',
     },
-    lessons: [],
+    lessons: [
+      {
+        id: 'topic-16-main',
+        topicId: 'topic-16',
+        type: 'theory',
+        title: { az: 'Funksiyalar — tam dərs', ru: 'Функции — полный урок', en: 'Functions — full lesson' },
+        url_path: '/lessons/topics/topic-16.html',
+        estimatedMinutes: 50,
+        questionCount: 20,
+      },
+    ],
   },
 
   {

@@ -256,11 +256,12 @@
       .results-wrap { text-align: center; padding: 20px 0; }
       .score-ring {
         width: 160px; height: 160px; border-radius: 50%;
-        border: 8px solid var(--accent); display: flex; align-items: center;
+        background: conic-gradient(var(--accent) calc(var(--score, 0) * 3.6deg), var(--bg-glass) 0);
+        display: flex; align-items: center;
         justify-content: center; margin: 0 auto 24px; position: relative;
       }
       .score-ring::before {
-        content: ""; position: absolute; width: 144px; height: 144px;
+        content: ""; position: absolute; width: 130px; height: 130px;
         background: var(--bg-dark); border-radius: 50%;
       }
       .score-val { position: relative; font-size: 2.4rem; font-weight: 800; color: var(--accent); }
@@ -1066,9 +1067,7 @@ $$x_1 = S \\cdot \\frac{a}{a+b+c}, \quad x_2 = S \\cdot \\frac{b}{a+b+c}, \quad 
           pct >= 50 ? '📚 Orta nəticə. Nəzəriyyəni təkrar edin.' :
           '💪 Zəif nəticə. Başdan öyrənin.';
         const ring = document.getElementById('res-ring');
-        ring.style.borderColor =
-          pct >= 90 ? 'var(--success)' : pct >= 70 ? 'var(--accent-blue)' :
-          pct >= 50 ? 'var(--warning)' : 'var(--error)';
+        ring.style.setProperty('--score', pct);
         document.getElementById('res-ring').querySelector('.score-val').style.color =
           pct >= 70 ? 'var(--success)' : 'var(--accent)';
         document.getElementById('res-ui').scrollIntoView({ behavior: 'smooth', block: 'start' });

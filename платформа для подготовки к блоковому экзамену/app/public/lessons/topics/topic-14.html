@@ -1,0 +1,687 @@
+<!doctype html>
+<html lang="az">
+<head>
+  <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <meta name="theme-color" content="#0f172a"/>
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin/>
+  <title>Mövzu 14 — Çoxbucaqlılar</title>
+  <style>
+    :root{--bg-dark:#0f0f1a;--bg-card:rgba(255,255,255,0.05);--bg-glass:rgba(255,255,255,0.08);--border-glass:rgba(255,255,255,0.15);--text-primary:#e8e8f0;--text-secondary:#a0a0b8;--accent:#f59f00;--accent-dim:rgba(245,159,0,0.18);--accent-warm:#ff6b6b;--accent-blue:#4dabf7;--accent-blue-dim:rgba(77,171,247,0.18);--success:#51cf66;--error:#ff6b6b;--warning:#fcc419;}
+    *{margin:0;padding:0;box-sizing:border-box;}
+    body{font-family:"Segoe UI",system-ui,sans-serif;background:var(--bg-dark);color:var(--text-primary);min-height:100vh;overflow-x:hidden;line-height:1.65;}
+    .katex{font-size:1.05em!important;}.katex-display{overflow-x:auto;padding:6px 0;}
+    .bg{position:fixed;top:0;left:0;width:100%;height:100%;z-index:-1;background:radial-gradient(ellipse at 30% 20%,rgba(245,159,0,0.07) 0%,transparent 55%),radial-gradient(ellipse at 70% 80%,rgba(77,171,247,0.07) 0%,transparent 55%);}
+    .bg::before{content:"";position:absolute;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 44px,rgba(255,255,255,0.018) 44px,rgba(255,255,255,0.018) 45px);animation:bgScroll 25s linear infinite;}
+    @keyframes bgScroll{to{transform:translateY(45px);}}
+    nav{position:fixed;top:0;left:0;right:0;background:rgba(15,15,26,0.9);backdrop-filter:blur(24px);border-bottom:1px solid var(--border-glass);z-index:1000;padding:0 20px;}
+    .nav-inner{max-width:1100px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;height:62px;}
+    .logo{font-size:1.05rem;font-weight:800;background:linear-gradient(135deg,var(--accent),var(--accent-blue));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;cursor:pointer;user-select:none;}
+    .nav-links{display:flex;gap:2px;list-style:none;}
+    .nav-links a{color:var(--text-secondary);text-decoration:none;padding:8px 14px;border-radius:9px;transition:all 0.25s;font-size:0.85rem;font-weight:500;cursor:pointer;border:none;background:transparent;display:block;}
+    .nav-links a:hover{color:var(--text-primary);background:var(--bg-glass);}
+    .nav-links a.active{background:var(--accent-dim);color:var(--accent);}
+    .hamburger{display:none;background:none;border:1px solid var(--border-glass);color:var(--text-primary);font-size:1.3rem;cursor:pointer;padding:8px 12px;border-radius:9px;}
+    .mob-nav{display:none;position:fixed;top:62px;left:0;right:0;bottom:0;background:rgba(10,10,20,0.97);backdrop-filter:blur(24px);z-index:999;padding:24px 20px;overflow-y:auto;flex-direction:column;gap:6px;}
+    .mob-nav.open{display:flex;}
+    .mob-nav a{color:var(--text-secondary);text-decoration:none;padding:16px 20px;border-radius:14px;font-size:1.05rem;font-weight:500;transition:all 0.2s;border:1px solid transparent;}
+    .mob-nav a.active{background:var(--accent-dim);color:var(--accent);border-color:rgba(245,159,0,0.25);}
+    .mob-nav a:hover{background:var(--bg-glass);color:var(--text-primary);}
+    section{display:none;padding:80px 20px 48px;max-width:1000px;margin:0 auto;}
+    section.active{display:block;animation:fadeUp 0.35s ease;}
+    @keyframes fadeUp{from{opacity:0;transform:translateY(14px);}to{opacity:1;transform:translateY(0);}}
+    .card{background:var(--bg-card);backdrop-filter:blur(20px);border:1px solid var(--border-glass);border-radius:18px;padding:22px;margin-bottom:18px;}
+    .card-title{font-size:1.25rem;font-weight:700;margin-bottom:16px;display:flex;align-items:center;gap:10px;}
+    .card-title .icon{width:40px;height:40px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0;}
+    .hero{text-align:center;padding:110px 20px 64px;}
+    .hero h1{font-size:clamp(1.9rem,5vw,3rem);font-weight:800;margin-bottom:18px;background:linear-gradient(135deg,var(--accent),var(--accent-blue),var(--accent-warm));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1.15;}
+    .hero p{color:var(--text-secondary);font-size:1.05rem;margin-bottom:32px;}
+    .hero-btns{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;}
+    .btn{padding:11px 24px;border-radius:12px;border:none;font-size:0.95rem;font-weight:600;cursor:pointer;transition:all 0.25s;}
+    .btn-primary{background:linear-gradient(135deg,var(--accent),#d68000);color:#fff;box-shadow:0 4px 18px rgba(245,159,0,0.35);}
+    .btn-primary:hover{transform:translateY(-2px);box-shadow:0 6px 22px rgba(245,159,0,0.45);}
+    .btn-secondary{background:var(--bg-glass);color:var(--text-primary);border:1px solid var(--border-glass);}
+    .btn-secondary:hover{background:rgba(255,255,255,0.12);}
+    .feat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:14px;}
+    .feat-card{background:var(--bg-glass);border:1px solid var(--border-glass);border-radius:14px;padding:18px;text-align:center;}
+    .feat-card .fi{font-size:2rem;margin-bottom:10px;}
+    .feat-card h3{font-size:0.95rem;font-weight:700;margin-bottom:6px;}
+    .feat-card p{font-size:0.82rem;color:var(--text-secondary);}
+    .svg-wrap{display:flex;justify-content:center;margin:16px 0;flex-wrap:wrap;gap:16px;}.svg-wrap svg{max-width:100%;height:auto;}
+    .poly-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px;margin:16px 0;}
+    .poly-card{background:var(--bg-glass);border:1px solid var(--border-glass);border-radius:12px;padding:14px;text-align:center;}
+    .poly-card h4{font-size:0.88rem;font-weight:700;margin-bottom:6px;color:var(--accent);}
+    .poly-card p{font-size:0.78rem;color:var(--text-secondary);}
+    .slide-wrap{background:var(--bg-glass);border:1px solid var(--border-glass);border-radius:14px;padding:22px;}
+    .slide-meta{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;flex-wrap:wrap;gap:10px;}
+    .slide-dots{display:flex;gap:6px;flex-wrap:wrap;}
+    .slide-dot{width:9px;height:9px;border-radius:50%;background:var(--border-glass);cursor:pointer;transition:all 0.2s;}
+    .slide-dot.active{background:var(--accent);transform:scale(1.3);}
+    .slide-track{min-height:260px;}.slide{display:none;}.slide.active{display:block;animation:fadeUp 0.28s ease;}
+    .slide h3{font-size:1.1rem;font-weight:700;margin-bottom:14px;color:var(--accent);}
+    .slide-nav{display:flex;gap:12px;justify-content:flex-end;margin-top:20px;}
+    .rule-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin:14px 0;}
+    .rule-card{background:var(--bg-card);border:1px solid var(--border-glass);border-radius:12px;padding:14px;}
+    .rule-card h4{font-size:0.9rem;font-weight:700;margin-bottom:8px;}
+    .rule-card p{font-size:0.85rem;color:var(--text-secondary);}
+    .formula-box{background:var(--accent-dim);border:1px solid rgba(245,159,0,0.3);border-radius:12px;padding:16px;margin:14px 0;font-size:0.92rem;line-height:1.7;}
+    .info-box{background:rgba(77,171,247,0.1);border-left:3px solid var(--accent-blue);border-radius:0 10px 10px 0;padding:12px 16px;margin:12px 0;font-size:0.88rem;}
+    .warn-box{background:rgba(252,196,25,0.1);border-left:3px solid var(--warning);border-radius:0 10px 10px 0;padding:12px 16px;margin:12px 0;font-size:0.88rem;}
+    .problem-card{background:var(--bg-card);border:1px solid var(--border-glass);border-radius:16px;padding:20px;margin-bottom:16px;}
+    .problem-header{display:flex;gap:10px;align-items:center;margin-bottom:12px;}
+    .problem-num{background:var(--accent-dim);color:var(--accent);font-size:0.78rem;font-weight:700;padding:3px 10px;border-radius:20px;}
+    .problem-topic{background:var(--bg-glass);color:var(--text-secondary);font-size:0.78rem;padding:3px 10px;border-radius:20px;}
+    .problem-text{font-size:0.95rem;margin-bottom:14px;line-height:1.7;}
+    .sol-btn{background:var(--bg-glass);border:1px solid var(--border-glass);color:var(--text-secondary);padding:8px 18px;border-radius:9px;font-size:0.85rem;cursor:pointer;transition:all 0.2s;}
+    .sol-btn:hover{background:rgba(255,255,255,0.12);color:var(--text-primary);}
+    .solution{display:none;margin-top:14px;padding:14px;background:var(--bg-glass);border-radius:12px;font-size:0.9rem;line-height:1.75;}
+    .solution.open{display:block;animation:fadeUp 0.25s ease;}
+    .quiz-wrap{background:var(--bg-card);border:1px solid var(--border-glass);border-radius:18px;padding:26px;margin-bottom:18px;}
+    .quiz-progress{display:flex;align-items:center;gap:14px;margin-bottom:20px;}
+    .prog-bar{flex:1;height:6px;background:var(--bg-glass);border-radius:3px;}
+    .prog-fill{height:100%;border-radius:3px;background:linear-gradient(90deg,var(--accent),var(--accent-blue));transition:width 0.35s;}
+    .quiz-q{font-size:1.04rem;font-weight:600;line-height:1.6;padding:16px;background:var(--bg-glass);border-radius:12px;margin-bottom:16px;}
+    .quiz-opts{display:flex;flex-direction:column;gap:10px;}
+    .opt{display:flex;align-items:center;gap:12px;padding:14px 18px;border:1px solid var(--border-glass);border-radius:12px;cursor:pointer;transition:all 0.2s;font-size:0.93rem;}
+    .opt:hover:not(.disabled){border-color:var(--accent);background:var(--accent-dim);}
+    .opt.correct{border-color:var(--success);background:rgba(81,207,102,0.12);}
+    .opt.wrong{border-color:var(--error);background:rgba(255,107,107,0.12);}
+    .opt.disabled{cursor:default;}
+    .opt-ltr{width:28px;height:28px;border-radius:8px;background:var(--bg-glass);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:0.82rem;flex-shrink:0;}
+    .expl-box{margin-top:14px;padding:14px;border-radius:12px;border-left:4px solid;font-size:0.88rem;line-height:1.6;display:none;}
+    .quiz-nav-row{display:flex;justify-content:space-between;margin-top:18px;}
+    .results-wrap{text-align:center;padding:20px 0;}
+    .score-ring{width:160px;height:160px;border-radius:50%;background:conic-gradient(var(--accent) calc(var(--score,0)*3.6deg),var(--bg-glass) 0);display:flex;align-items:center;justify-content:center;margin:0 auto 24px;position:relative;}
+    .score-ring::before{content:"";position:absolute;width:130px;height:130px;background:var(--bg-dark);border-radius:50%;}
+    .score-val{position:relative;font-size:2.4rem;font-weight:800;color:var(--accent);}
+    .score-msg{font-size:1.3rem;font-weight:700;margin-bottom:24px;}
+    .breakdown{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;max-width:420px;margin:0 auto 24px;}
+    .breakdown-item{background:var(--bg-glass);padding:14px;border-radius:10px;}
+    .breakdown-val{font-size:1.35rem;font-weight:700;color:var(--accent);}
+    .breakdown-lbl{font-size:0.78rem;color:var(--text-secondary);}
+    .vik-timer{font-size:2.2rem;font-weight:900;transition:color 0.3s;}
+    @media(max-width:768px){.hamburger{display:block;}.nav-links{display:none;}section{padding:72px 14px 40px;}.hero{padding:90px 14px 52px;}.rule-grid{grid-template-columns:1fr;}.feat-grid{grid-template-columns:repeat(2,1fr);}.quiz-wrap{padding:18px;}}
+    @media(max-width:480px){.slide-wrap{padding:14px;}.quiz-q{font-size:0.95rem;padding:14px;}.opt{font-size:0.85rem;padding:12px 14px;}}
+  </style>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" crossorigin="anonymous">
+  <script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" crossorigin="anonymous"></script>
+</head>
+<body>
+<div class="bg"></div>
+<nav>
+  <div class="nav-inner">
+    <span class="logo" onclick="showSection('home')">🔷 Mövzu 14 — Çoxbucaqlılar</span>
+    <ul class="nav-links">
+      <li><a class="active" data-sec="home">Ana səhifə</a></li>
+      <li><a data-sec="theory">Nəzəriyyə</a></li>
+      <li><a data-sec="examples">Misallar</a></li>
+      <li><a data-sec="assessment">Qiymətləndirmə</a></li>
+    </ul>
+    <button class="hamburger" id="ham" onclick="toggleMobNav()" aria-label="Menyu">☰</button>
+  </div>
+</nav>
+<div class="mob-nav" id="mob-nav">
+  <a data-sec="home">🏠 Ana səhifə</a>
+  <a data-sec="theory">📖 Nəzəriyyə</a>
+  <a data-sec="examples">✏️ Misallar</a>
+  <a data-sec="assessment">📋 Qiymətləndirmə</a>
+</div>
+
+<section id="home" class="active">
+  <div class="hero">
+    <h1>Çoxbucaqlılar</h1>
+    <p>DR.Math · §1–§6 · Dördbucaqlılar · Düzgün çoxbucaqlılar · Perimetr · Sahə</p>
+    <div class="hero-btns">
+      <button class="btn btn-primary" onclick="showSection('theory')">📖 Dərsi Başla</button>
+      <button class="btn btn-secondary" onclick="showSection('assessment')">🔍 Bilikləri Yoxla</button>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title"><div class="icon" style="background:var(--accent-dim)">📚</div>Bu mövzuda nə öyrənəcəksiniz?</div>
+    <div class="feat-grid">
+      <div class="feat-card"><div class="fi">▭</div><h3>Paralel·kenar</h3><p>Xassələri, diaqonallar, sahə</p></div>
+      <div class="feat-card"><div class="fi">◻</div><h3>Düzbucaqlı, Romb, Kvadrat</h3><p>Xüsusi dördbucaqlılar</p></div>
+      <div class="feat-card"><div class="fi">⌂</div><h3>Trapeziya</h3><p>Ortaxətt, sahə düsturu</p></div>
+      <div class="feat-card"><div class="fi">⬡</h3><h3>Düzgün çoxbucaqlılar</h3><p>n bucaqlının sahəsi, perimetri</p></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title"><div class="icon" style="background:var(--accent-dim)">💡</div>Mövzunun əhəmiyyəti</div>
+    <p style="color:var(--text-secondary);font-size:0.93rem;line-height:1.75">DİM-də hər il <strong style="color:var(--accent)">5–7 sual</strong> dördbucaqlılar mövzusundan çıxır. Paralel·kenar, romb, trapeziya — mütləq bilinməlidir.</p>
+  </div>
+</section>
+
+<section id="theory">
+  <div class="card">
+    <div class="card-title"><div class="icon" style="background:var(--accent-dim)">📖</div>Nəzəriyyə</div>
+    <div class="slide-wrap">
+      <div class="slide-meta">
+        <div class="slide-dots" id="dots"></div>
+        <span style="font-size:0.82rem;color:var(--text-secondary)" id="slide-counter">1 / 16</span>
+      </div>
+      <div class="slide-track" id="slide-track"></div>
+      <div class="slide-nav">
+        <button class="btn btn-secondary" id="prev-btn" onclick="changeSlide(-1)">← Geri</button>
+        <button class="btn btn-primary" id="next-btn" onclick="changeSlide(1)">İrəli →</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="examples">
+  <div class="card">
+    <div class="card-title"><div class="icon" style="background:var(--accent-dim)">✏️</div>İşlənmiş misallar</div>
+    <p style="color:var(--text-secondary);font-size:0.88rem;margin-bottom:18px">Hər misalı özünüz həll etməyə çalışın, sonra həlli açın.</p>
+
+    <div class="problem-card">
+      <div class="problem-header"><span class="problem-num">Misal 1</span><span class="problem-topic">Paralel·kenar sahəsi</span></div>
+      <div class="problem-text">Paralel·kenarın əsası 8 sm, ona uyğun hündürlük 5 sm-dir. Sahəni tapın.</div>
+      <button class="sol-btn" onclick="toggleSol(this)">💡 Həlli göstər</button>
+      <div class="solution">
+        <strong>Düstur:</strong> \(S = a \cdot h\)<br><br>
+        \(S = 8 \cdot 5 = 40 \text{ sm}^2\)<br><br>
+        <strong>Cavab:</strong> \(\boxed{40 \text{ sm}^2}\)
+      </div>
+    </div>
+
+    <div class="problem-card">
+      <div class="problem-header"><span class="problem-num">Misal 2</span><span class="problem-topic">Romb diaqonalları</span></div>
+      <div class="problem-text">Rombun diaqonalları 6 sm və 8 sm-dir. Sahəsini tapın.</div>
+      <button class="sol-btn" onclick="toggleSol(this)">💡 Həlli göstər</button>
+      <div class="solution">
+        <strong>Düstur:</strong> \(S = \dfrac{d_1 \cdot d_2}{2}\)<br><br>
+        \(S = \dfrac{6 \cdot 8}{2} = 24 \text{ sm}^2\)<br><br>
+        <strong>Cavab:</strong> \(\boxed{24 \text{ sm}^2}\)
+      </div>
+    </div>
+
+    <div class="problem-card">
+      <div class="problem-header"><span class="problem-num">Misal 3</span><span class="problem-topic">Trapeziya sahəsi</span></div>
+      <div class="problem-text">Traperiyanın əsasları 10 sm və 6 sm, hündürlüyü 4 sm-dir. Sahəni tapın.</div>
+      <button class="sol-btn" onclick="toggleSol(this)">💡 Həlli göstər</button>
+      <div class="solution">
+        <strong>Düstur:</strong> \(S = \dfrac{(a+b) \cdot h}{2}\)<br><br>
+        \(S = \dfrac{(10+6) \cdot 4}{2} = \dfrac{64}{2} = 32 \text{ sm}^2\)<br><br>
+        <strong>Cavab:</strong> \(\boxed{32 \text{ sm}^2}\)
+      </div>
+    </div>
+
+    <div class="problem-card">
+      <div class="problem-header"><span class="problem-num">Misal 4</span><span class="problem-topic">Düzbucaqlı diaqonalı</span></div>
+      <div class="problem-text">Düzbucaqlının tərəfləri 5 sm və 12 sm-dir. Diaqonalını tapın.</div>
+      <button class="sol-btn" onclick="toggleSol(this)">💡 Həlli göstər</button>
+      <div class="solution">
+        <strong>Pifaqor teoremi:</strong> \(d = \sqrt{a^2 + b^2}\)<br><br>
+        \(d = \sqrt{5^2 + 12^2} = \sqrt{25 + 144} = \sqrt{169} = 13 \text{ sm}\)<br><br>
+        <strong>Cavab:</strong> \(\boxed{d = 13 \text{ sm}}\)
+      </div>
+    </div>
+
+    <div class="problem-card">
+      <div class="problem-header"><span class="problem-num">Misal 5</span><span class="problem-topic">Düzgün altıbucaqlı</span></div>
+      <div class="problem-text">Düzgün altıbucaqlının tərəfi 4 sm-dir. Sahəsini tapın.</div>
+      <button class="sol-btn" onclick="toggleSol(this)">💡 Həlli göstər</button>
+      <div class="solution">
+        <strong>Düstur:</strong> \(S = \dfrac{3\sqrt{3}}{2} a^2\)<br><br>
+        \(S = \dfrac{3\sqrt{3}}{2} \cdot 16 = 24\sqrt{3} \approx 41.6 \text{ sm}^2\)<br><br>
+        <strong>Cavab:</strong> \(\boxed{24\sqrt{3} \text{ sm}^2}\)
+      </div>
+    </div>
+
+    <div class="problem-card">
+      <div class="problem-header"><span class="problem-num">Misal 6</span><span class="problem-topic">DİM — trapeziya ortaxətti</span></div>
+      <div class="problem-text">Traperiyanın əsasları 7 sm və 13 sm-dir. Ortaxəttinin uzunluğunu tapın.</div>
+      <button class="sol-btn" onclick="toggleSol(this)">💡 Həlli göstər</button>
+      <div class="solution">
+        <strong>Ortaxətt:</strong> \(m = \dfrac{a+b}{2}\)<br><br>
+        \(m = \dfrac{7+13}{2} = 10 \text{ sm}\)<br><br>
+        <strong>Cavab:</strong> \(\boxed{10 \text{ sm}}\)
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="assessment">
+  <div class="card">
+    <div class="card-title"><div class="icon" style="background:var(--accent-dim)">📋</div>Qiymətləndirmə</div>
+    <p style="color:var(--text-secondary);font-size:0.88rem;margin-bottom:22px">20 sual · DİM səviyyəsi · Anlıq cavab + izah</p>
+    <div style="display:flex;gap:12px;flex-wrap:wrap">
+      <button class="btn btn-primary" onclick="startDiag()">📝 Testi Başla</button>
+      <button class="btn btn-secondary" onclick="startViktorina()">⚡ Viktorina (30s/sual)</button>
+    </div>
+  </div>
+  <div id="diag-ui" style="display:none">
+    <div class="quiz-wrap">
+      <div class="quiz-progress">
+        <span style="font-size:0.85rem;color:var(--text-secondary)">Sual <span id="dq-n">1</span>/<span id="dq-tot">20</span></span>
+        <div class="prog-bar"><div class="prog-fill" id="dq-bar" style="width:0%"></div></div>
+        <span style="font-size:0.85rem;color:var(--success)" id="dq-score">0 ✓</span>
+      </div>
+      <div class="quiz-q" id="dq-q"></div>
+      <div class="quiz-opts" id="dq-opts"></div>
+      <div class="expl-box" id="dq-expl"></div>
+      <div class="quiz-nav-row">
+        <button class="btn btn-secondary" id="dq-prev" onclick="prevDiag()" disabled>← Əvvəlki</button>
+        <button class="btn btn-primary" id="dq-next" onclick="nextDiag()" disabled>Növbəti →</button>
+      </div>
+    </div>
+  </div>
+  <div id="vik-ui" style="display:none">
+    <div class="quiz-wrap">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+        <span style="font-size:0.82rem;padding:3px 12px;background:var(--accent-dim);color:var(--accent);border-radius:20px;font-weight:700" id="vik-tag">§1</span>
+        <div class="vik-timer" id="vik-timer">30</div>
+      </div>
+      <div style="display:flex;gap:4px;flex-wrap:wrap;margin-bottom:16px" id="vik-dots"></div>
+      <div class="quiz-q" id="vik-q"></div>
+      <div class="quiz-opts" id="vik-opts"></div>
+    </div>
+  </div>
+  <div id="res-ui" style="display:none">
+    <div class="quiz-wrap results-wrap">
+      <div class="score-ring" id="res-ring"><span class="score-val" id="res-pct">0%</span></div>
+      <div class="score-msg" id="res-msg"></div>
+      <span style="font-size:1.05rem;font-weight:700;color:var(--text-secondary)" id="res-lvl"></span>
+      <div class="breakdown" style="margin-top:20px">
+        <div class="breakdown-item"><div class="breakdown-val" id="res-ok">0</div><div class="breakdown-lbl">Düzgün</div></div>
+        <div class="breakdown-item"><div class="breakdown-val" id="res-no">0</div><div class="breakdown-lbl">Yanlış</div></div>
+        <div class="breakdown-item"><div class="breakdown-val">20</div><div class="breakdown-lbl">Cəmi</div></div>
+      </div>
+      <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:10px">
+        <button class="btn btn-primary" onclick="startDiag()">🔄 Yenidən cəhd et</button>
+        <button class="btn btn-secondary" onclick="resetAssessment()">✕ Bağla</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+function showSection(id){document.querySelectorAll('section').forEach(s=>s.classList.remove('active'));document.querySelectorAll('.nav-links a,.mob-nav a').forEach(a=>a.classList.toggle('active',a.dataset.sec===id));const sec=document.getElementById(id);if(sec){sec.classList.add('active');window.scrollTo({top:0,behavior:'smooth'});}closeMobNav();}
+document.querySelectorAll('[data-sec]').forEach(a=>a.addEventListener('click',()=>showSection(a.dataset.sec)));
+function toggleMobNav(){document.getElementById('mob-nav').classList.toggle('open');}
+function closeMobNav(){document.getElementById('mob-nav').classList.remove('open');}
+function toggleSol(btn){const sol=btn.nextElementSibling;sol.classList.toggle('open');btn.textContent=sol.classList.contains('open')?'🙈 Həlli gizlə':'💡 Həlli göstər';if(sol.classList.contains('open'))renderMathInElement(sol,K);}
+
+const SLIDES=[
+  {title:'§1.1 Çoxbucaqlı anlayışı',html:`
+<p><strong>Çoxbucaqlı</strong> — bir müstəvidə yerləşən, qonşu olmayan tərəfləri kəsişməyən qapalı qırıq xəttdir.</p>
+<div class="formula-box">
+<strong>n bucaqlının:</strong><br>
+Bucaqların cəmi: \((n-2) \cdot 180°\)<br>
+Diaqonalların sayı: \(\dfrac{n(n-3)}{2}\)
+</div>
+<div class="svg-wrap">
+  <svg viewBox="0 0 400 140" aria-label="Üçbucaq, dördbucaqlı, beşbucaqlı, altıbucaqlı">
+    <!-- Triangle -->
+    <polygon points="50,120 90,40 130,120" fill="rgba(245,159,0,0.15)" stroke="var(--accent)" stroke-width="2"/>
+    <text x="90" y="135" text-anchor="middle" fill="var(--accent)" font-size="11">n=3, 180°</text>
+    <!-- Quadrilateral -->
+    <polygon points="155,120 155,45 230,45 230,120" fill="rgba(77,171,247,0.15)" stroke="#4dabf7" stroke-width="2"/>
+    <text x="192" y="135" text-anchor="middle" fill="#4dabf7" font-size="11">n=4, 360°</text>
+    <!-- Pentagon -->
+    <polygon points="290,120 260,75 280,35 330,35 350,75" fill="rgba(81,207,102,0.15)" stroke="#51cf66" stroke-width="2"/>
+    <text x="305" y="135" text-anchor="middle" fill="#51cf66" font-size="11">n=5, 540°</text>
+  </svg>
+</div>
+<div class="rule-grid">
+  <div class="rule-card"><h4>n=4: dördbucaqlı</h4><p>Bucaqlar cəmi: (4−2)·180° = 360°<br>Diaqonal: 4(4−3)/2 = 2</p></div>
+  <div class="rule-card"><h4>n=6: altıbucaqlı</h4><p>Bucaqlar cəmi: (6−2)·180° = 720°<br>Diaqonal: 6·3/2 = 9</p></div>
+</div>`},
+
+  {title:'§2.1 Paralel·kenar — tərif və xassələr',html:`
+<p><strong>Paralel·kenar</strong> — qarşılıqlı tərəfləri paralel olan dördbucaqlıdır.</p>
+<div class="svg-wrap">
+  <svg viewBox="0 0 300 160" aria-label="Paralel·kenar ABCD: AB∥CD, AD∥BC, diaqonallar O nöqtəsində kəsişir">
+    <polygon points="40,130 90,40 260,40 210,130" fill="rgba(245,159,0,0.12)" stroke="var(--accent)" stroke-width="2"/>
+    <!-- diagonals -->
+    <line x1="40" y1="130" x2="260" y2="40" stroke="#4dabf7" stroke-width="1.5" stroke-dasharray="5,3"/>
+    <line x1="90" y1="40" x2="210" y2="130" stroke="#4dabf7" stroke-width="1.5" stroke-dasharray="5,3"/>
+    <!-- height -->
+    <line x1="140" y1="40" x2="140" y2="130" stroke="var(--success)" stroke-width="1.5" stroke-dasharray="3,2"/>
+    <rect x="133" y="123" width="10" height="10" fill="none" stroke="var(--success)" stroke-width="1.2"/>
+    <!-- labels -->
+    <text x="30" y="145" fill="var(--text-primary)" font-size="12" font-weight="bold">A</text>
+    <text x="82" y="32" fill="var(--text-primary)" font-size="12" font-weight="bold">B</text>
+    <text x="265" y="32" fill="var(--text-primary)" font-size="12" font-weight="bold">C</text>
+    <text x="215" y="145" fill="var(--text-primary)" font-size="12" font-weight="bold">D</text>
+    <text x="150" y="90" fill="#4dabf7" font-size="11">O</text>
+    <circle cx="150" cy="85" r="3" fill="#4dabf7"/>
+    <text x="140" y="55" fill="var(--success)" font-size="10">h</text>
+    <!-- parallel marks -->
+    <text x="150" y="35" text-anchor="middle" fill="var(--accent)" font-size="9">∥</text>
+    <text x="115" y="95" fill="var(--accent)" font-size="9">∥</text>
+  </svg>
+</div>
+<div class="formula-box">
+<strong>Xassələri:</strong><br>
+• Qarşılıqlı tərəflər bərabər: AB=CD, AD=BC<br>
+• Qarşılıqlı bucaqlar bərabər: ∠A=∠C, ∠B=∠D<br>
+• Qonşu bucaqlar tamamlayır: ∠A+∠B=180°<br>
+• Diaqonallar <strong>orta nöqtəsindən</strong> kəsişir: AO=OC, BO=OD
+</div>`},
+
+  {title:'§2.2 Paralel·kenar — sahə düsturu',html:`
+<div class="formula-box">
+<strong>Sahə düsturları:</strong><br>
+\(S = a \cdot h_a\) (əsas × hündürlük)<br>
+\(S = a \cdot b \cdot \sin\alpha\) (iki tərəf × bucağın sinusu)<br>
+\(S = \dfrac{d_1 \cdot d_2 \cdot \sin\varphi}{2}\) (diaqonallar × aralarındakı bucaq)
+</div>
+<div class="rule-grid">
+  <div class="rule-card"><h4>Nümunə 1</h4><p>a=8, h=5: S=40 sm²</p></div>
+  <div class="rule-card"><h4>Nümunə 2</h4><p>a=6, b=8, ∠A=30°: S=6·8·sin30°=24 sm²</p></div>
+  <div class="rule-card"><h4>Xüsusi hal</h4><p>∠A=90° → paralel·kenar = düzbucaqlı → S=a·b</p></div>
+  <div class="rule-card"><h4>DİM taktikası</h4><p>h üçün: düz bucağın kateti olduğunu unutma. h=b·sin∠A</p></div>
+</div>
+<div class="info-box"><strong>Perimetr:</strong> P = 2(a+b). Qonşu tərəflərin cəmini ikiləşdir.</div>`},
+
+  {title:'§3.1 Düzbucaqlı',html:`
+<p><strong>Düzbucaqlı</strong> — hər bucağı 90° olan paralel·kenar.</p>
+<div class="svg-wrap">
+  <svg viewBox="0 0 280 180" aria-label="Düzbucaqlı ABCD, diaqonallar AC=BD, düz bucaqlar">
+    <rect x="40" y="40" width="200" height="120" fill="rgba(77,171,247,0.12)" stroke="#4dabf7" stroke-width="2"/>
+    <!-- right angle marks -->
+    <rect x="40" y="140" width="12" height="12" fill="none" stroke="#4dabf7" stroke-width="1.5"/>
+    <rect x="228" y="140" width="12" height="12" fill="none" stroke="#4dabf7" stroke-width="1.5"/>
+    <rect x="228" y="40" width="12" height="12" fill="none" stroke="#4dabf7" stroke-width="1.5"/>
+    <rect x="40" y="40" width="12" height="12" fill="none" stroke="#4dabf7" stroke-width="1.5"/>
+    <!-- diagonals -->
+    <line x1="40" y1="40" x2="240" y2="160" stroke="var(--accent)" stroke-width="1.5" stroke-dasharray="5,3"/>
+    <line x1="240" y1="40" x2="40" y2="160" stroke="var(--accent)" stroke-width="1.5" stroke-dasharray="5,3"/>
+    <!-- labels -->
+    <text x="28" y="35" fill="var(--text-primary)" font-size="12" font-weight="bold">A</text>
+    <text x="245" y="35" fill="var(--text-primary)" font-size="12" font-weight="bold">B</text>
+    <text x="245" y="172" fill="var(--text-primary)" font-size="12" font-weight="bold">C</text>
+    <text x="28" y="172" fill="var(--text-primary)" font-size="12" font-weight="bold">D</text>
+    <text x="140" y="105" text-anchor="middle" fill="var(--accent)" font-size="10">d=d</text>
+    <text x="140" y="118" text-anchor="middle" fill="var(--accent)" font-size="9">AC=BD</text>
+    <!-- dimensions -->
+    <text x="140" y="35" text-anchor="middle" fill="#4dabf7" font-size="11">a</text>
+    <text x="255" y="105" text-anchor="middle" fill="#4dabf7" font-size="11">b</text>
+  </svg>
+</div>
+<div class="formula-box">
+<strong>Xassələr:</strong><br>
+• Bütün bucaqlar 90°<br>
+• Diaqonallar bərabər: \(d_1 = d_2 = \sqrt{a^2+b^2}\)<br>
+• Diaqonallar orta nöqtədə kəsişir<br><br>
+<strong>Sahə:</strong> \(S = a \cdot b\) &nbsp;·&nbsp; <strong>Perimetr:</strong> \(P = 2(a+b)\) &nbsp;·&nbsp; <strong>Diaqonal:</strong> \(d = \sqrt{a^2+b^2}\)
+</div>`},
+
+  {title:'§3.2 Romb',html:`
+<p><strong>Romb</strong> — bütün tərəfləri bərabər olan paralel·kenar.</p>
+<div class="svg-wrap">
+  <svg viewBox="0 0 260 180" aria-label="Romb ABCD: bütün tərəflər bərabər, diaqonallar perpendikulyar kəsişir">
+    <polygon points="130,20 230,90 130,160 30,90" fill="rgba(81,207,102,0.12)" stroke="#51cf66" stroke-width="2"/>
+    <!-- diagonals -->
+    <line x1="30" y1="90" x2="230" y2="90" stroke="var(--accent)" stroke-width="2"/>
+    <line x1="130" y1="20" x2="130" y2="160" stroke="var(--accent)" stroke-width="2"/>
+    <!-- right angle at center -->
+    <rect x="122" y="82" width="12" height="12" fill="none" stroke="var(--accent)" stroke-width="1.5"/>
+    <!-- labels -->
+    <text x="130" y="12" text-anchor="middle" fill="var(--text-primary)" font-size="12" font-weight="bold">A</text>
+    <text x="240" y="94" fill="var(--text-primary)" font-size="12" font-weight="bold">B</text>
+    <text x="130" y="174" text-anchor="middle" fill="var(--text-primary)" font-size="12" font-weight="bold">C</text>
+    <text x="16" y="94" fill="var(--text-primary)" font-size="12" font-weight="bold">D</text>
+    <text x="135" y="80" fill="var(--accent)" font-size="10">O</text>
+    <text x="80" y="86" fill="#fcc419" font-size="10">d₁</text>
+    <text x="135" y="50" fill="#fcc419" font-size="10">d₂</text>
+    <!-- equal side marks -->
+    <text x="84" y="54" fill="#51cf66" font-size="10">a</text>
+    <text x="176" y="54" fill="#51cf66" font-size="10">a</text>
+    <text x="84" y="130" fill="#51cf66" font-size="10">a</text>
+    <text x="176" y="130" fill="#51cf66" font-size="10">a</text>
+  </svg>
+</div>
+<div class="formula-box">
+<strong>Xassələr:</strong><br>
+• Bütün 4 tərəf bərabər: a=b=c=d<br>
+• Diaqonallar <strong>perpendikulyar</strong> kəsişir (90°)<br>
+• Diaqonallar bucaqları ikiyə bölür<br><br>
+<strong>Sahə:</strong> \(S = \dfrac{d_1 \cdot d_2}{2}\) &nbsp; (diaqonallar vasitəsilə)<br>
+\(S = a^2 \cdot \sin\alpha\) &nbsp; (tərəf × bucağın sinusu)<br>
+<strong>Tərəf:</strong> \(a = \dfrac{\sqrt{d_1^2+d_2^2}}{2}\)
+</div>`},
+
+  {title:'§3.3 Kvadrat',html:`
+<p><strong>Kvadrat</strong> — həm romb, həm düzbucaqlı olan paralel·kenar. Bütün tərəfləri bərabər, bütün bucaqları 90°.</p>
+<div class="svg-wrap">
+  <svg viewBox="0 0 220 180" aria-label="Kvadrat ABCD: bütün tərəflər a, diaqonal d=a√2">
+    <rect x="40" y="30" width="140" height="140" fill="rgba(255,107,107,0.12)" stroke="var(--error)" stroke-width="2"/>
+    <!-- right angle marks -->
+    <rect x="40" y="148" width="12" height="12" fill="none" stroke="var(--error)" stroke-width="1.5"/>
+    <rect x="168" y="148" width="12" height="12" fill="none" stroke="var(--error)" stroke-width="1.5"/>
+    <rect x="168" y="30" width="12" height="12" fill="none" stroke="var(--error)" stroke-width="1.5"/>
+    <rect x="40" y="30" width="12" height="12" fill="none" stroke="var(--error)" stroke-width="1.5"/>
+    <!-- diagonals -->
+    <line x1="40" y1="30" x2="180" y2="170" stroke="var(--accent)" stroke-width="1.5" stroke-dasharray="5,3"/>
+    <line x1="180" y1="30" x2="40" y2="170" stroke="var(--accent)" stroke-width="1.5" stroke-dasharray="5,3"/>
+    <!-- labels -->
+    <text x="28" y="25" fill="var(--text-primary)" font-size="12" font-weight="bold">A</text>
+    <text x="185" y="25" fill="var(--text-primary)" font-size="12" font-weight="bold">B</text>
+    <text x="185" y="178" fill="var(--text-primary)" font-size="12" font-weight="bold">C</text>
+    <text x="28" y="178" fill="var(--text-primary)" font-size="12" font-weight="bold">D</text>
+    <!-- side labels -->
+    <text x="110" y="22" text-anchor="middle" fill="var(--error)" font-size="11" font-weight="bold">a</text>
+    <text x="195" y="103" fill="var(--error)" font-size="11" font-weight="bold">a</text>
+    <text x="105" y="90" text-anchor="middle" fill="var(--accent)" font-size="10">d=a√2</text>
+  </svg>
+</div>
+<div class="formula-box">
+<strong>Sahə:</strong> \(S = a^2\) &nbsp;·&nbsp; <strong>Perimetr:</strong> \(P = 4a\)<br>
+<strong>Diaqonal:</strong> \(d = a\sqrt{2}\) &nbsp;·&nbsp; \(a = \dfrac{d}{\sqrt{2}} = \dfrac{d\sqrt{2}}{2}\)<br>
+<strong>Daxili çevrə radiusu:</strong> \(r = \dfrac{a}{2}\)<br>
+<strong>Xarici çevrə radiusu:</strong> \(R = \dfrac{a\sqrt{2}}{2}\)
+</div>`},
+
+  {title:'§4.1 Trapeziya',html:`
+<p><strong>Trapeziya</strong> — yalnız bir cüt qarşılıqlı tərəfi paralel olan dördbucaqlı.</p>
+<div class="svg-wrap">
+  <svg viewBox="0 0 320 170" aria-label="Trapeziya ABCD: AB∥CD, AB böyük əsas, CD kiçik əsas, h hündürlük">
+    <polygon points="30,140 290,140 230,50 90,50" fill="rgba(245,159,0,0.12)" stroke="var(--accent)" stroke-width="2"/>
+    <!-- height -->
+    <line x1="160" y1="50" x2="160" y2="140" stroke="var(--success)" stroke-width="1.5" stroke-dasharray="4,3"/>
+    <rect x="153" y="132" width="10" height="10" fill="none" stroke="var(--success)" stroke-width="1.2"/>
+    <!-- labels -->
+    <text x="15" y="155" fill="var(--text-primary)" font-size="12" font-weight="bold">A</text>
+    <text x="295" y="155" fill="var(--text-primary)" font-size="12" font-weight="bold">B</text>
+    <text x="235" y="42" fill="var(--text-primary)" font-size="12" font-weight="bold">C</text>
+    <text x="78" y="42" fill="var(--text-primary)" font-size="12" font-weight="bold">D</text>
+    <text x="160" y="148" text-anchor="middle" fill="var(--accent)" font-size="13" font-weight="bold">a (böyük əsas)</text>
+    <text x="160" y="42" text-anchor="middle" fill="var(--accent-warm)" font-size="13" font-weight="bold">b (kiçik əsas)</text>
+    <text x="170" y="98" fill="var(--success)" font-size="12" font-weight="bold">h</text>
+    <!-- parallel marks -->
+    <text x="160" y="135" text-anchor="middle" fill="var(--text-secondary)" font-size="9">∥</text>
+    <text x="160" y="56" text-anchor="middle" fill="var(--text-secondary)" font-size="9">∥</text>
+  </svg>
+</div>
+<div class="formula-box">
+<strong>Sahə:</strong> \(S = \dfrac{(a+b) \cdot h}{2}\)<br><br>
+<strong>Ortaxətt:</strong> \(m = \dfrac{a+b}{2}\) — iki əsasın ortası, tərəflərin orta nöqtələrini birləşdirir<br>
+\(S = m \cdot h\) (ortaxətt × hündürlük)
+</div>`},
+
+  {title:'§4.2 Xüsusi trapeziyalar',html:`
+<div class="svg-wrap">
+  <svg viewBox="0 0 420 150" aria-label="Sol: bərabəryanlı trapeziya, sağ: düzbucaqlı trapeziya">
+    <!-- Isosceles trapezoid -->
+    <polygon points="40,130 200,130 170,40 70,40" fill="rgba(204,93,232,0.12)" stroke="#cc5de8" stroke-width="2"/>
+    <text x="120" y="148" text-anchor="middle" fill="#cc5de8" font-size="11">Bərabəryanlı</text>
+    <text x="60" y="88" fill="#cc5de8" font-size="9">c=d</text>
+    <text x="165" y="88" fill="#cc5de8" font-size="9">c=d</text>
+    <!-- Right trapezoid -->
+    <polygon points="240,130 400,130 400,40 280,40" fill="rgba(77,171,247,0.12)" stroke="#4dabf7" stroke-width="2"/>
+    <rect x="240" y="120" width="12" height="12" fill="none" stroke="#4dabf7" stroke-width="1.5"/>
+    <rect x="388" y="120" width="12" height="12" fill="none" stroke="#4dabf7" stroke-width="1.5"/>
+    <rect x="388" y="40" width="12" height="12" fill="none" stroke="#4dabf7" stroke-width="1.5"/>
+    <text x="330" y="148" text-anchor="middle" fill="#4dabf7" font-size="11">Düzbucaqlı (2 düz bucaq)</text>
+  </svg>
+</div>
+<div class="rule-grid">
+  <div class="rule-card"><h4>Bərabəryanlı trapeziya</h4><p>Yan tərəflər bərabər: c=d.<br>Əsas bucaqlar bərabər: ∠A=∠B.<br>Diaqonallar bərabər: AC=BD.</p></div>
+  <div class="rule-card"><h4>Düzbucaqlı trapeziya</h4><p>İki düz bucaq var.<br>Bir yan tərəf ⊥ əsaslara.<br>Həmin tərəf = hündürlük.</p></div>
+  <div class="rule-card"><h4>Ortaxətt xassəsi</h4><p>Ortaxətt ∥ əsaslara.<br>m = (a+b)/2<br>S = m·h</p></div>
+  <div class="rule-card"><h4>DİM taktikası</h4><p>Trapeziyadan üçbucaq ayırın: yan tərəf, hündürlük, alt parça — Pifaqor!</p></div>
+</div>`},
+
+  {title:'§5.1 Düzgün çoxbucaqlılar',html:`
+<p><strong>Düzgün çoxbucaqlı</strong> — bütün tərəfləri bərabər VƏ bütün bucaqları bərabər olan çoxbucaqlı.</p>
+<div class="svg-wrap">
+  <svg viewBox="0 0 400 140" aria-label="Düzgün üçbucaq, kvadrat, beşbucaqlı, altıbucaqlı">
+    <!-- Equilateral triangle -->
+    <polygon points="60,125 100,55 140,125" fill="rgba(81,207,102,0.15)" stroke="#51cf66" stroke-width="2"/>
+    <text x="100" y="140" text-anchor="middle" fill="#51cf66" font-size="10">n=3</text>
+    <!-- Square -->
+    <polygon points="165,55 215,55 215,125 165,125" fill="rgba(77,171,247,0.15)" stroke="#4dabf7" stroke-width="2"/>
+    <text x="190" y="140" text-anchor="middle" fill="#4dabf7" font-size="10">n=4</text>
+    <!-- Pentagon -->
+    <polygon points="270,120 248,75 275,38 310,38 335,75" fill="rgba(245,159,0,0.15)" stroke="var(--accent)" stroke-width="2"/>
+    <text x="292" y="140" text-anchor="middle" fill="var(--accent)" font-size="10">n=5</text>
+    <!-- Hexagon -->
+    <polygon points="380,100 365,75 380,50 410,50 425,75 410,100" fill="rgba(204,93,232,0.15)" stroke="#cc5de8" stroke-width="2"/>
+    <text x="395" y="115" text-anchor="middle" fill="#cc5de8" font-size="10">n=6</text>
+  </svg>
+</div>
+<div class="formula-box">
+<strong>Bir bucağın ölçüsü:</strong> \(\dfrac{(n-2) \cdot 180°}{n}\)<br><br>
+<strong>Sahə</strong> (tərəf a):\(S = \dfrac{na^2}{4} \cot\dfrac{\pi}{n}\)<br><br>
+<strong>Daxili çevrə radiusu:</strong> \(r = \dfrac{a}{2}\cot\dfrac{\pi}{n}\)<br>
+<strong>Xarici çevrə radiusu:</strong> \(R = \dfrac{a}{2\sin(\pi/n)}\)
+</div>`},
+
+  {title:'§5.2 Düzgün altıbucaqlı (DİM-də çox çıxır)',html:`
+<div class="svg-wrap">
+  <svg viewBox="0 0 260 230" aria-label="Düzgün altıbucaqlı ABCDEF: tərəf a, apofema r, radius R=a">
+    <polygon points="130,25 215,72 215,168 130,215 45,168 45,72" fill="rgba(245,159,0,0.12)" stroke="var(--accent)" stroke-width="2.5"/>
+    <!-- center -->
+    <circle cx="130" cy="120" r="3" fill="var(--accent)"/>
+    <!-- radii -->
+    <line x1="130" y1="120" x2="215" y2="72" stroke="#4dabf7" stroke-width="1.5" stroke-dasharray="4,2"/>
+    <line x1="130" y1="120" x2="130" y2="25" stroke="#4dabf7" stroke-width="1.5" stroke-dasharray="4,2"/>
+    <!-- apothem -->
+    <line x1="130" y1="120" x2="172" y2="120" stroke="var(--success)" stroke-width="1.5"/>
+    <text x="155" y="115" fill="var(--success)" font-size="10">r</text>
+    <!-- labels -->
+    <text x="130" y="14" text-anchor="middle" fill="var(--text-primary)" font-size="11">A</text>
+    <text x="225" y="68" fill="var(--text-primary)" font-size="11">B</text>
+    <text x="225" y="175" fill="var(--text-primary)" font-size="11">C</text>
+    <text x="130" y="228" text-anchor="middle" fill="var(--text-primary)" font-size="11">D</text>
+    <text x="28" y="175" fill="var(--text-primary)" font-size="11">E</text>
+    <text x="28" y="68" fill="var(--text-primary)" font-size="11">F</text>
+    <text x="175" y="55" fill="#4dabf7" font-size="10">R=a</text>
+    <!-- side label -->
+    <text x="180" y="50" text-anchor="middle" fill="var(--accent)" font-size="11" font-weight="bold">a</text>
+  </svg>
+</div>
+<div class="formula-box">
+<strong>Düzgün altıbucaqlı (tərəf = a):</strong><br>
+Radius R = a (radius = tərəf!)<br>
+Apofema (daxili radius): \(r = \dfrac{a\sqrt{3}}{2}\)<br>
+<strong>Sahə:</strong> \(S = \dfrac{3\sqrt{3}}{2}a^2 = 6 \cdot \dfrac{a^2\sqrt{3}}{4}\) (6 bərabərtərəfli üçbucaq)<br>
+<strong>Perimetr:</strong> \(P = 6a\)
+</div>
+<div class="info-box"><strong>Mühüm:</strong> Düzgün altıbucaqlı = 6 bərabərtərəfli üçbucaqdan ibarət. DİM-də bu ən çox istifadə olunan faktdır!</div>`},
+
+  {title:'§6 Dördbucaqlıların müqayisəsi',html:`
+<div class="svg-wrap">
+  <svg viewBox="0 0 420 200" aria-label="Dördbucaqlılar iyerarxiyası: ümumidən xüsusiyə">
+    <!-- hierarchy boxes -->
+    <rect x="155" y="8" width="110" height="30" rx="6" fill="rgba(245,159,0,0.2)" stroke="var(--accent)" stroke-width="1.5"/>
+    <text x="210" y="28" text-anchor="middle" fill="var(--accent)" font-size="11" font-weight="bold">Paralel·kenar</text>
+    <!-- arrows down -->
+    <line x1="150" y1="38" x2="90" y2="68" stroke="var(--text-secondary)" stroke-width="1.5"/>
+    <line x1="210" y1="38" x2="210" y2="68" stroke="var(--text-secondary)" stroke-width="1.5"/>
+    <line x1="270" y1="38" x2="330" y2="68" stroke="var(--text-secondary)" stroke-width="1.5"/>
+    <!-- level 2 -->
+    <rect x="40" y="68" width="100" height="30" rx="6" fill="rgba(77,171,247,0.2)" stroke="#4dabf7" stroke-width="1.5"/>
+    <text x="90" y="88" text-anchor="middle" fill="#4dabf7" font-size="11" font-weight="bold">Düzbucaqlı</text>
+    <rect x="160" y="68" width="100" height="30" rx="6" fill="rgba(81,207,102,0.2)" stroke="#51cf66" stroke-width="1.5"/>
+    <text x="210" y="88" text-anchor="middle" fill="#51cf66" font-size="11" font-weight="bold">Romb</text>
+    <rect x="280" y="68" width="100" height="30" rx="6" fill="rgba(204,93,232,0.2)" stroke="#cc5de8" stroke-width="1.5"/>
+    <text x="330" y="88" text-anchor="middle" fill="#cc5de8" font-size="11" font-weight="bold">Bərabəryanlı</text>
+    <!-- arrows to square -->
+    <line x1="90" y1="98" x2="165" y2="128" stroke="var(--text-secondary)" stroke-width="1.5"/>
+    <line x1="210" y1="98" x2="210" y2="128" stroke="var(--text-secondary)" stroke-width="1.5"/>
+    <!-- level 3 -->
+    <rect x="135" y="128" width="150" height="30" rx="6" fill="rgba(255,107,107,0.2)" stroke="var(--error)" stroke-width="2"/>
+    <text x="210" y="148" text-anchor="middle" fill="var(--error)" font-size="12" font-weight="bold">Kvadrat</text>
+    <text x="210" y="190" text-anchor="middle" fill="var(--text-secondary)" font-size="10">(düzbucaqlı + romb = kvadrat)</text>
+  </svg>
+</div>
+<div class="rule-grid">
+  <div class="rule-card"><h4>Parall. → Düzbucaqlı</h4><p>Hər bucaq 90° olduqda.<br>+: diaqonallar bərabər</p></div>
+  <div class="rule-card"><h4>Parall. → Romb</h4><p>Bütün tərəflər bərabər olduqda.<br>+: diaqonallar ⊥</p></div>
+  <div class="rule-card"><h4>Romb + Düzbucaqlı = Kvadrat</h4><p>Hər iki xüsusiyyət birləşir.</p></div>
+  <div class="rule-card"><h4>Trapeziya ≠ Parallelogram</h4><p>Trapeziyada yalnız bir cüt paralel tərəf var.</p></div>
+</div>`},
+];
+
+const QS=[
+  {s:'§2',q:'Paralel·kenarın əsası 10 sm, hündürlüyü 6 sm-dir. Sahəsi neçədir?',o:['60 sm²','32 sm²','16 sm²','120 sm²'],a:0,e:'S = a·h = 10·6 = 60 sm².'},
+  {s:'§3',q:'Rombun diaqonalları 8 sm və 10 sm-dir. Sahəsi neçədir?',o:['40 sm²','80 sm²','20 sm²','45 sm²'],a:0,e:'S = d₁·d₂/2 = 8·10/2 = 40 sm².'},
+  {s:'§3',q:'Düzbucaqlının tərəfləri 3 sm və 4 sm-dir. Diaqonalı neçədir?',o:['5 sm','7 sm','12 sm','6 sm'],a:0,e:'d = √(3²+4²) = √(9+16) = √25 = 5 sm.'},
+  {s:'§4',q:'Traperiyanın əsasları 5 sm və 9 sm, hündürlüyü 4 sm-dir. Sahəsi neçədir?',o:['28 sm²','56 sm²','14 sm²','24 sm²'],a:0,e:'S = (a+b)/2 · h = (5+9)/2 · 4 = 7·4 = 28 sm².'},
+  {s:'§4',q:'Traperiyanın əsasları 6 sm və 14 sm-dir. Ortaxətti neçədir?',o:['10 sm','20 sm','8 sm','7 sm'],a:0,e:'m = (6+14)/2 = 10 sm.'},
+  {s:'§3',q:'Kvadratın tərəfi 5 sm-dir. Diaqonalı neçədir?',o:['\\(5\\sqrt{2}\\) sm','10 sm','\\(5\\sqrt{3}\\) sm','25 sm'],a:0,e:'d = a√2 = 5√2 sm.'},
+  {s:'§3',q:'Kvadratın diaqonalı 8 sm-dir. Sahəsi neçədir?',o:['32 sm²','64 sm²','16 sm²','24 sm²'],a:0,e:'S = d²/2 = 64/2 = 32 sm².'},
+  {s:'§2',q:'Paralel·kenarın iki tərəfi 5 sm və 7 sm-dir. Perimetri neçədir?',o:['24 sm','35 sm','12 sm','14 sm'],a:0,e:'P = 2(a+b) = 2(5+7) = 24 sm.'},
+  {s:'§5',q:'Düzgün altıbucaqlının tərəfi 6 sm-dir. Xarici çevrənin radiusu neçədir?',o:['6 sm','3 sm','12 sm','\\(3\\sqrt{3}\\) sm'],a:0,e:'Düzgün altıbucaqlıda R = a. R = 6 sm.'},
+  {s:'§1',q:'n bucaqlının daxili bucaqlarının cəmi 1080°-dirsə, n neçədir?',o:['8','6','9','7'],a:0,e:'(n-2)·180 = 1080 → n-2=6 → n=8. Səkkizbucaqlı.'},
+  {s:'§3',q:'Rombun tərəfi 5 sm, bir bucağı 60°-dir. Sahəsi neçədir?',o:['\\(\\dfrac{25\\sqrt{3}}{2}\\) sm²','25 sm²','\\(25\\sqrt{3}\\) sm²','12.5 sm²'],a:0,e:'S = a²·sin∠A = 25·sin60° = 25·(√3/2) = 25√3/2 sm².'},
+  {s:'§4',q:'Bərabəryanlı traperiyanın tərəfləri: əsaslar 4 sm, 10 sm, yan tərəf 5 sm. Sahəsi neçədir?',o:['24 sm²','28 sm²','35 sm²','40 sm²'],a:0,e:'Hündürlük: h=√(5²-3²)=4 sm. S=(4+10)/2·4=28 sm².'},
+  {s:'§2',q:'Paralel·kenarın iki qonşu bucaqları 70° və 110°-dir. Bu bərabərlik doğrudur?',o:['Bəli, ∠A+∠B=180° həmişə','Xeyr, ∠A=∠B olmalıdır','Yalnız düzbucaqlıda','Rombda xeyr'],a:0,e:'Paralel·kenarın qonşu bucaqlarının cəmi 180°-dir.'},
+  {s:'§5',q:'Düzgün üçbucağın tərəfi a-dır. Sahəsi hansıdır?',o:['\\(\\dfrac{a^2\\sqrt{3}}{4}\\)','\\(\\dfrac{a^2}{2}\\)','\\(a^2\\sqrt{3}\\)','\\(\\dfrac{a^2\\sqrt{3}}{2}\\)'],a:0,e:'Düzgün üçbucaq (bərabərtərəfli): S = a²√3/4.'},
+  {s:'§3',q:'Düzbucaqlının sahəsi 24 sm², bir tərəfi 6 sm-dir. Digər tərəfi neçədir?',o:['4 sm','3 sm','6 sm','8 sm'],a:0,e:'S = a·b → 24 = 6·b → b = 4 sm.'},
+  {s:'§4',q:'DİM: Traperiyanın əsasları a=12, b=6, yan tərəfləri 5 sm-dir (bərabəryanlı). Sahəsi neçədir?',o:['45 sm²','54 sm²','36 sm²','48 sm²'],a:0,e:'Hündürlük: fərq = (12-6)/2=3. h=√(5²-3²)=4. S=(12+6)/2·4=36 sm².'},
+  {s:'§2',q:'Paralel·kenarın diaqonalları d₁=6 sm, d₂=8 sm, aralarındakı bucaq 90°-dir. Sahəsi neçədir?',o:['24 sm²','48 sm²','12 sm²','30 sm²'],a:0,e:'S=d₁·d₂·sin90°/2=6·8·1/2=24 sm².'},
+  {s:'§1',q:'n-bucaqlının diaqonallarının sayı 35-dirsə, n neçədir?',o:['10','9','8','12'],a:0,e:'n(n-3)/2=35 → n(n-3)=70 → n=10 (10·7=70) ✓.'},
+  {s:'§5',q:'Düzgün altıbucaqlının tərəfi 4 sm-dir. Sahəsi neçədir?',o:['\\(24\\sqrt{3}\\) sm²','\\(48\\sqrt{3}\\) sm²','\\(12\\sqrt{3}\\) sm²','48 sm²'],a:0,e:'S=3√3/2·a²=3√3/2·16=24√3 sm².'},
+  {s:'§3',q:'DİM: Kvadratın sahəsi 50 sm²-dir. Diaqonalı neçədir?',o:['10 sm','\\(5\\sqrt{2}\\) sm','\\(5\\sqrt{3}\\) sm','7 sm'],a:0,e:'a²=50 → a=5√2. d=a√2=5√2·√2=10 sm.'},
+];
+
+let curSlide=0;
+function buildSlides(){
+  const track=document.getElementById('slide-track'),dots=document.getElementById('dots');
+  track.innerHTML='';dots.innerHTML='';
+  SLIDES.forEach((s,i)=>{
+    const div=document.createElement('div');div.className='slide'+(i===0?' active':'');
+    div.innerHTML=`<h3>${s.title}</h3>${s.html}`;track.appendChild(div);
+    const dot=document.createElement('div');dot.className='slide-dot'+(i===0?' active':'');dot.onclick=()=>goSlide(i);dots.appendChild(dot);
+  });
+  updateSlideUI();renderMathInElement(track,K);
+}
+function goSlide(n){
+  document.querySelectorAll('.slide')[curSlide].classList.remove('active');
+  document.querySelectorAll('.slide-dot')[curSlide].classList.remove('active');
+  curSlide=Math.max(0,Math.min(n,SLIDES.length-1));
+  document.querySelectorAll('.slide')[curSlide].classList.add('active');
+  document.querySelectorAll('.slide-dot')[curSlide].classList.add('active');
+  updateSlideUI();
+  renderMathInElement(document.querySelectorAll('.slide')[curSlide],K);
+}
+function changeSlide(d){goSlide(curSlide+d);}
+function updateSlideUI(){
+  document.getElementById('slide-counter').textContent=`${curSlide+1} / ${SLIDES.length}`;
+  document.getElementById('prev-btn').disabled=curSlide===0;
+  document.getElementById('next-btn').textContent=curSlide===SLIDES.length-1?'✓ Bitdi':'İrəli →';
+}
+const K={delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false},{left:'\\(',right:'\\)',display:false},{left:'\\[',right:'\\]',display:true}],throwOnError:false};
+function renderMathNow(id){const el=document.getElementById(id);if(el)renderMathInElement(el,K);}
+let dIdx=0,dScore=0,dAns=[];
+function startDiag(){dIdx=0;dScore=0;dAns=new Array(QS.length).fill(null);document.getElementById('diag-ui').style.display='block';document.getElementById('vik-ui').style.display='none';document.getElementById('res-ui').style.display='none';renderDQ();document.getElementById('diag-ui').scrollIntoView({behavior:'smooth',block:'start'});}
+function renderDQ(){const q=QS[dIdx];document.getElementById('dq-n').textContent=dIdx+1;document.getElementById('dq-tot').textContent=QS.length;document.getElementById('dq-score').textContent=dScore+' ✓';document.getElementById('dq-bar').style.width=(dIdx/QS.length)*100+'%';document.getElementById('dq-expl').style.display='none';document.getElementById('dq-next').disabled=dAns[dIdx]===null;document.getElementById('dq-prev').disabled=dIdx===0;document.getElementById('dq-q').innerHTML=q.q;const opts=document.getElementById('dq-opts');opts.innerHTML='';const L=['A','B','C','D'];q.o.forEach((opt,i)=>{const div=document.createElement('div');div.className='opt';if(dAns[dIdx]!==null){div.classList.add('disabled');if(i===q.a)div.classList.add('correct');else if(i===dAns[dIdx])div.classList.add('wrong');}div.innerHTML=`<span class="opt-ltr">${L[i]}</span><span>${opt}</span>`;div.addEventListener('click',()=>selectDQ(i));opts.appendChild(div);});renderMathNow('dq-q');renderMathNow('dq-opts');}
+function selectDQ(i){if(dAns[dIdx]!==null)return;dAns[dIdx]=i;if(i===QS[dIdx].a)dScore++;document.getElementById('dq-next').disabled=false;document.getElementById('dq-score').textContent=dScore+' ✓';const ex=document.getElementById('dq-expl');ex.style.display='block';const ok=i===QS[dIdx].a;ex.style.background=ok?'rgba(81,207,102,.09)':'rgba(255,107,107,.09)';ex.style.borderLeftColor=ok?'var(--success)':'var(--error)';ex.innerHTML=(ok?'<strong style="color:var(--success)">✓ Düzgün!</strong> ':'<strong style="color:var(--error)">✗ Səhv.</strong> Düzgün: <strong>'+QS[dIdx].o[QS[dIdx].a]+'</strong>. ')+QS[dIdx].e;renderDQ();renderMathInElement(ex,K);}
+function nextDiag(){if(dIdx<QS.length-1){dIdx++;renderDQ();}else showResults(dScore,QS.length);}
+function prevDiag(){if(dIdx>0){dIdx--;renderDQ();}}
+let vIdx=0,vScore=0,vTmr=null,vT=30,vRes=[];
+function startViktorina(){vIdx=0;vScore=0;vRes=[];document.getElementById('diag-ui').style.display='none';document.getElementById('vik-ui').style.display='block';document.getElementById('res-ui').style.display='none';renderVQ();document.getElementById('vik-ui').scrollIntoView({behavior:'smooth',block:'start'});}
+function renderVQ(){clearInterval(vTmr);vT=30;const q=QS[vIdx];document.getElementById('vik-tag').textContent=q.s;document.getElementById('vik-q').innerHTML=q.q;tickV();vTmr=setInterval(tickV,1000);const opts=document.getElementById('vik-opts');opts.innerHTML='';const L=['A','B','C','D'];q.o.forEach((opt,i)=>{const d=document.createElement('div');d.className='opt';d.innerHTML=`<span class="opt-ltr">${L[i]}</span><span>${opt}</span>`;d.onclick=()=>answerV(i,d);opts.appendChild(d);});renderVDots();renderMathNow('vik-q');renderMathNow('vik-opts');}
+function tickV(){const el=document.getElementById('vik-timer');if(!el)return;el.textContent=vT;el.style.color=vT<=10?'var(--error)':vT<=20?'var(--warning)':'var(--accent)';if(vT<=0){answerV(-1,null);return;}vT--;}
+function answerV(i,el){clearInterval(vTmr);document.querySelectorAll('#vik-opts .opt').forEach(o=>o.classList.add('disabled'));const correct=i===QS[vIdx].a;if(correct)vScore++;vRes.push(correct);document.querySelectorAll('#vik-opts .opt')[QS[vIdx].a]?.classList.add('correct');if(el&&!correct)el.classList.add('wrong');setTimeout(()=>{if(vIdx<QS.length-1){vIdx++;renderVQ();}else showResults(vScore,QS.length);},1000);}
+function renderVDots(){const c=document.getElementById('vik-dots');c.innerHTML='';QS.forEach((_,i)=>{const d=document.createElement('div');d.style.cssText=`width:8px;height:8px;border-radius:50%;flex-shrink:0;transition:background 0.3s;background:${i<vRes.length?(vRes[i]?'var(--success)':'var(--error)'):i===vIdx?'var(--accent)':'var(--border-glass)'}`;c.appendChild(d);});}
+function showResults(score,total){clearInterval(vTmr);document.getElementById('diag-ui').style.display='none';document.getElementById('vik-ui').style.display='none';document.getElementById('res-ui').style.display='block';const pct=Math.round((score/total)*100);document.getElementById('res-pct').textContent=pct+'%';document.getElementById('res-ok').textContent=score;document.getElementById('res-no').textContent=total-score;const lvl=pct>=90?'Əla':pct>=70?'Yaxşı':pct>=50?'Orta':'Zəif';document.getElementById('res-lvl').textContent=lvl;document.getElementById('res-msg').textContent=pct>=90?'🏆 Əla nəticə! DİM-ə hazırsınız!':pct>=70?'✅ Yaxşı nəticə! Bir az daha çalışın.':pct>=50?'📚 Orta nəticə. Nəzəriyyəni təkrar edin.':'💪 Zəif nəticə. Başdan öyrənin.';document.getElementById('res-ring').style.setProperty('--score',pct);document.getElementById('res-ui').scrollIntoView({behavior:'smooth',block:'start'});try{var _p={points:score,maxPoints:total,timeSpentSeconds:0};window.parent.postMessage({type:'SCORE_UPDATE',payload:_p},'*');if(pct>=50)window.parent.postMessage({type:'LESSON_COMPLETE',payload:_p},'*');}catch(e){}}
+function resetAssessment(){document.getElementById('diag-ui').style.display='none';document.getElementById('vik-ui').style.display='none';document.getElementById('res-ui').style.display='none';}
+document.addEventListener('DOMContentLoaded',()=>{buildSlides();renderMathInElement(document.body,K);});
+</script>
+</body>
+</html>
