@@ -36,8 +36,8 @@
         overflow-x: hidden;
         line-height: 1.65;
       }
-      .MathJax { font-size: 1.05em !important; }
-      mjx-container[display="true"] { overflow-x: auto; padding: 6px 0; }
+      .katex { font-size: 1.05em !important; }
+      .katex-display { overflow-x: auto; padding: 6px 0; }
       .bg {
         position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;
         background:
@@ -256,11 +256,12 @@
       .results-wrap { text-align: center; padding: 20px 0; }
       .score-ring {
         width: 160px; height: 160px; border-radius: 50%;
-        border: 8px solid var(--accent); display: flex; align-items: center;
+        background: conic-gradient(var(--accent) calc(var(--score, 0) * 3.6deg), var(--bg-glass) 0);
+        display: flex; align-items: center;
         justify-content: center; margin: 0 auto 24px; position: relative;
       }
       .score-ring::before {
-        content: ""; position: absolute; width: 144px; height: 144px;
+        content: ""; position: absolute; width: 130px; height: 130px;
         background: var(--bg-dark); border-radius: 50%;
       }
       .score-val { position: relative; font-size: 2.4rem; font-weight: 800; color: var(--accent); }
@@ -288,7 +289,10 @@
         .opt { font-size: 0.85rem; padding: 12px 14px; }
       }
     </style>
-  </head>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" crossorigin="anonymous">
+  <script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" crossorigin="anonymous"></script>
+</head>
   <body>
     <div class="bg"></div>
 
@@ -481,26 +485,6 @@
     </section>
 
     <script>
-MathJax = {
-  tex: {
-    inlineMath: [['$', '$']],
-    displayMath: [['$$', '$$']],
-    processEscapes: true,
-    processEnvironments: true
-  },
-  options: { skipHtmlTags: ['script','noscript','style','textarea','pre'] },
-  startup: {
-    typeset: false,
-    ready() {
-      MathJax.startup.defaultReady();
-      const trk = document.getElementById('strack');
-      if (trk) MathJax.typesetPromise([trk]).catch(console.error);
-    }
-  }
-};
-</script>
-    <script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
-    <script>
       /* ════ NAV ════ */
       function showSection(id) {
         document.querySelectorAll('section').forEach(s => s.classList.remove('active'));
@@ -518,10 +502,7 @@ MathJax = {
         a.addEventListener('click', () => showSection(a.dataset.sec));
       });
 
-      function renderMathNow(id) {
-        const el = document.getElementById(id);
-        if (el && window.MathJax) MathJax.typesetPromise([el]).catch(console.error);
-      }
+      const K={delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false},{left:'\(',right:'\)',display:false},{left:'\[',right:'\]',display:true}],throwOnError:false};function renderMathNow(id){const el=document.getElementById(id);if(el)renderMathInElement(el,K);}
 
       /* ════ SLIDES ════ */
       const slides = [
@@ -711,7 +692,7 @@ $$x_1 = S \\cdot \\frac{a}{a+b+c}, \quad x_2 = S \\cdot \\frac{b}{a+b+c}, \quad 
         });
         document.getElementById('snext').textContent =
           sIdx === slides.length - 1 ? 'Misallara keç →' : 'Növbəti →';
-        if (window.MathJax) MathJax.typesetPromise([trk]).catch(console.error);
+        renderMathInElement(trk, K);
       }
       function nextSlide() {
         if (sIdx < slides.length - 1) { sIdx++; renderSlides(); }
@@ -785,7 +766,7 @@ $$x_1 = S \\cdot \\frac{a}{a+b+c}, \quad x_2 = S \\cdot \\frac{b}{a+b+c}, \quad 
 <div class="solution">${ex.a}</div>`;
           w.appendChild(d);
         });
-        if (window.MathJax) MathJax.typesetPromise([w]).catch(console.error);
+        renderMathInElement(w, K);
       }
       function toggleSol(btn) {
         const s = btn.nextElementSibling;
@@ -805,22 +786,22 @@ $$x_1 = S \\cdot \\frac{a}{a+b+c}, \quad x_2 = S \\cdot \\frac{b}{a+b+c}, \quad 
         {
           s: '§1',
           q: '$\\frac{3}{5}$ kəsirini faizlə ifadə edin.',
-          o: ['60%', '35%', '53%', '30%'],
-          a: 0,
+          o: ['35%', '60%', '53%', '30%'],
+          a: 1,
           e: '$\\frac{3}{5} = \\frac{60}{100} = 60\\%$',
         },
         {
           s: '§1',
           q: '2 saatı 45 dəqiqəyə nisbəti necədir?',
-          o: ['8 : 3', '4 : 1', '3 : 8', '2 : 1'],
-          a: 0,
+          o: ['3 : 8', '4 : 1', '8 : 3', '2 : 1'],
+          a: 2,
           e: '2 saat = 120 dəq. 120:45 = 8:3.',
         },
         {
           s: '§2',
           q: '$\\frac{4}{6} = \\frac{x}{15}$ bərabərliyindən $x$ tapın.',
-          o: ['10', '8', '12', '6'],
-          a: 0,
+          o: ['6', '8', '12', '10'],
+          a: 3,
           e: 'Çarpaz vurun: $6x = 60$ → $x = 10$.',
         },
         {
@@ -833,22 +814,22 @@ $$x_1 = S \\cdot \\frac{a}{a+b+c}, \quad x_2 = S \\cdot \\frac{b}{a+b+c}, \quad 
         {
           s: '§3',
           q: '$7 : x = 14 : 10$ tənasübündən $x$ tapın.',
-          o: ['5', '4', '7', '6'],
-          a: 0,
+          o: ['4', '5', '7', '6'],
+          a: 1,
           e: '$7 \\times 10 = 14x$ → $x = 70/14 = 5$.',
         },
         {
           s: '§4',
           q: '$\\frac{a}{b} = \\frac{3}{5}$ olarsa, $\\frac{a+b}{b}$ nədir?',
-          o: ['$\\frac{8}{5}$', '$\\frac{3}{8}$', '$\\frac{5}{3}$', '$\\frac{3}{5}$'],
-          a: 0,
+          o: ['$\\frac{5}{3}$', '$\\frac{3}{8}$', '$\\frac{8}{5}$', '$\\frac{3}{5}$'],
+          a: 2,
           e: 'Toplama xassəsi: $\\frac{a+b}{b} = \\frac{3+5}{5} = \\frac{8}{5}$.',
         },
         {
           s: '§5',
           q: '480-in 35%-i nədir?',
-          o: ['168', '160', '172', '150'],
-          a: 0,
+          o: ['150', '160', '172', '168'],
+          a: 3,
           e: '$480 \\times 0{,}35 = 168$.',
         },
         {
@@ -861,22 +842,22 @@ $$x_1 = S \\cdot \\frac{a}{a+b+c}, \quad x_2 = S \\cdot \\frac{b}{a+b+c}, \quad 
         {
           s: '§6',
           q: 'Bir ədədin 24%-i 60-dır. Həmin ədəd nədir?',
-          o: ['250', '240', '200', '260'],
-          a: 0,
+          o: ['240', '250', '200', '260'],
+          a: 1,
           e: '$x = \\frac{60}{0{,}24} = 250$.',
         },
         {
           s: '§6',
           q: '900 manatın 12,5%-i nədir?',
-          o: ['112,5', '100', '125', '90'],
-          a: 0,
+          o: ['125', '100', '112,5', '90'],
+          a: 2,
           e: '$\\frac{1}{8} = 12{,}5\\%$. $900 \\div 8 = 112{,}5$.',
         },
         {
           s: '§7',
           q: 'Qiymət 800 manatdan 1000 manata qalxdı. Artım neçə faizdir?',
-          o: ['25%', '20%', '30%', '15%'],
-          a: 0,
+          o: ['15%', '20%', '30%', '25%'],
+          a: 3,
           e: '$\\frac{1000-800}{800} \\times 100 = \\frac{200}{800} \\times 100 = 25\\%$.',
         },
         {
@@ -889,22 +870,22 @@ $$x_1 = S \\cdot \\frac{a}{a+b+c}, \quad x_2 = S \\cdot \\frac{b}{a+b+c}, \quad 
         {
           s: '§8',
           q: 'Bir ədəd əvvəl 10% artdı, sonra 10% azaldı. Ümumi nəticə:',
-          o: ['1% azalma', 'Dəyişmədi', '1% artım', '2% azalma'],
-          a: 0,
+          o: ['Dəyişmədi', '1% azalma', '1% artım', '2% azalma'],
+          a: 1,
           e: '$1{,}1 \\times 0{,}9 = 0{,}99$ → 1% azalma.',
         },
         {
           s: '§8',
           q: 'Əmək haqqı 30% artdı, sonra 20% azaldı. Çoxalma əmsalı:',
-          o: ['1,04', '0,96', '1,10', '0,90'],
-          a: 0,
+          o: ['1,10', '0,96', '1,04', '0,90'],
+          a: 2,
           e: '$1{,}3 \\times 0{,}8 = 1{,}04$ → 4% artım.',
         },
         {
           s: '§8',
           q: '1000 manat iki il boyunca hər il 5% artırıldı. Son məbləğ:',
-          o: ['1102,5', '1100', '1050', '1210'],
-          a: 0,
+          o: ['1210', '1100', '1050', '1102,5'],
+          a: 3,
           e: '$1000 \\times 1{,}05^2 = 1000 \\times 1{,}1025 = 1102{,}5$.',
         },
         {
@@ -917,22 +898,22 @@ $$x_1 = S \\cdot \\frac{a}{a+b+c}, \quad x_2 = S \\cdot \\frac{b}{a+b+c}, \quad 
         {
           s: '§10',
           q: 'Üç şərik 2:3:5 nisbətində 1000 manat qazandı. Ən böyük pay:',
-          o: ['500', '300', '200', '400'],
-          a: 0,
+          o: ['300', '500', '200', '400'],
+          a: 1,
           e: 'Cəm: 10. Böyük pay: $\\frac{5}{10} \\times 1000 = 500$.',
         },
         {
           s: '§6',
           q: 'Bir sinifin 45%-i qızlardan ibarətdir. Oğlanların faizi:',
-          o: ['55%', '45%', '50%', '40%'],
-          a: 0,
+          o: ['50%', '45%', '55%', '40%'],
+          a: 2,
           e: '$100\\% - 45\\% = 55\\%$.',
         },
         {
           s: '§7',
           q: 'Qiymət 500-dən 400-ə düşdü. Azalma neçə faizdir?',
-          o: ['20%', '25%', '15%', '10%'],
-          a: 0,
+          o: ['10%', '25%', '15%', '20%'],
+          a: 3,
           e: '$\\frac{500-400}{500} \\times 100 = \\frac{100}{500} \\times 100 = 20\\%$.',
         },
       ];
@@ -991,7 +972,7 @@ $$x_1 = S \\cdot \\frac{a}{a+b+c}, \quad x_2 = S \\cdot \\frac{b}{a+b+c}, \quad 
           : '<strong style="color:var(--error)">✗ Səhv.</strong> Düzgün: <strong>' + QS[dIdx].o[QS[dIdx].a] + '</strong>. ')
           + QS[dIdx].e;
         renderDQ();
-        if (window.MathJax) MathJax.typesetPromise([ex]).catch(console.error);
+        renderMathInElement(ex, K);
       }
       function nextDiag() {
         if (dIdx < QS.length - 1) { dIdx++; renderDQ(); }
@@ -1086,9 +1067,7 @@ $$x_1 = S \\cdot \\frac{a}{a+b+c}, \quad x_2 = S \\cdot \\frac{b}{a+b+c}, \quad 
           pct >= 50 ? '📚 Orta nəticə. Nəzəriyyəni təkrar edin.' :
           '💪 Zəif nəticə. Başdan öyrənin.';
         const ring = document.getElementById('res-ring');
-        ring.style.borderColor =
-          pct >= 90 ? 'var(--success)' : pct >= 70 ? 'var(--accent-blue)' :
-          pct >= 50 ? 'var(--warning)' : 'var(--error)';
+        ring.style.setProperty('--score', pct);
         document.getElementById('res-ring').querySelector('.score-val').style.color =
           pct >= 70 ? 'var(--success)' : 'var(--accent)';
         document.getElementById('res-ui').scrollIntoView({ behavior: 'smooth', block: 'start' });

@@ -490,7 +490,17 @@ export const TOPICS: Topic[] = [
       ru: 'Sin, cos, tg, ctg; уравнения, неравенства, графики',
       en: 'Sin, cos, tan, cot; equations, inequalities, graphs',
     },
-    lessons: [],
+    lessons: [
+      {
+        id: 'topic-17-main',
+        topicId: 'topic-17',
+        type: 'theory',
+        title: { az: 'Trigonometrik funksiyalar — tam dərs', ru: 'Тригонометрические функции — полный урок', en: 'Trigonometric Functions — full lesson' },
+        url_path: '/lessons/topics/topic-17.html',
+        estimatedMinutes: 50,
+        questionCount: 20,
+      },
+    ],
   },
 
   // ── КНИГА 2 ── темы 18–28 ─────────────────────────────────────────────────

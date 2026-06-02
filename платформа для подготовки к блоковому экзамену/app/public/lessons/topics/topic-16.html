@@ -816,7 +816,8 @@ function showTab(id, btn) {
   document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
   document.getElementById(id).classList.add('active');
   btn.classList.add('active');
-  if (id === 'test' && !qsBuilt) buildQs();
+  const K16={delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}],throwOnError:false};
+  if (id === 'test' && !qsBuilt) { buildQs(); setTimeout(()=>renderMathInElement(document.getElementById('test'),K16),50); }
   if (id === 'viktorina' && !vkBuilt) buildVk();
 }
 
@@ -903,7 +904,7 @@ const QS = [
    e:'Viyeta: x₁+x₂ = 5, x₁·x₂ = 6 → x = 2 və x = 3. Yoxlama: 4−10+6=0 ✓, 9−15+6=0 ✓.'},
 
   {s:13, q:'y = 2x² + 3x − 2 funksiyasının kökləri hansıdır?',
-   o:['x = 0.5 və x = −2','x = 1 və x = −2','x = 2 və x = 0.5','x = −1 və x = 2'], a:0,
+   o:['x = 1 və x = −2','x = 0.5 və x = −2','x = 2 və x = 0.5','x = −1 və x = 2'], a:1,
    e:'D = 9 + 16 = 25. x = (−3 ± 5)/4. x₁ = 2/4 = 0.5, x₂ = −8/4 = −2.'},
 
   {s:14, q:'Qrafikin Ox oxundan yuxarı olan hissəsi funksiyanın nə olduğunu göstərir?',
@@ -984,6 +985,7 @@ function renderVk() {
         ${q.o.map((opt, j) => `<button class="opt-btn" id="vb-${j}" onclick="answerVk(${j})">${String.fromCharCode(65+j)}) ${opt}</button>`).join('')}
       </div>
     </div>`;
+  renderMathInElement(document.getElementById('vk-panel'),{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}],throwOnError:false});
   vkTimer = setInterval(() => {
     vkSec--;
     const el = document.getElementById('vk-sec');

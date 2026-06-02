@@ -36,8 +36,8 @@
         overflow-x: hidden;
         line-height: 1.65;
       }
-      .MathJax { font-size: 1.05em !important; }
-      mjx-container[display="true"] { overflow-x: auto; padding: 6px 0; }
+      .katex { font-size: 1.05em !important; }
+      .katex-display { overflow-x: auto; padding: 6px 0; }
       .bg {
         position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;
         background:
@@ -256,11 +256,12 @@
       .results-wrap { text-align: center; padding: 20px 0; }
       .score-ring {
         width: 160px; height: 160px; border-radius: 50%;
-        border: 8px solid var(--accent); display: flex; align-items: center;
+        background: conic-gradient(var(--accent) calc(var(--score, 0) * 3.6deg), var(--bg-glass) 0);
+        display: flex; align-items: center;
         justify-content: center; margin: 0 auto 24px; position: relative;
       }
       .score-ring::before {
-        content: ""; position: absolute; width: 144px; height: 144px;
+        content: ""; position: absolute; width: 130px; height: 130px;
         background: var(--bg-dark); border-radius: 50%;
       }
       .score-val { position: relative; font-size: 2.4rem; font-weight: 800; color: var(--accent); }
@@ -288,7 +289,10 @@
         .opt { font-size: 0.85rem; padding: 12px 14px; }
       }
     </style>
-  </head>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" crossorigin="anonymous">
+  <script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" crossorigin="anonymous"></script>
+</head>
   <body>
     <div class="bg"></div>
 
@@ -580,15 +584,11 @@
     </section>
 
     <script>
-      // ─── MathJax ──────────────────────────────────────────────────────────
-      window.MathJax = {
-        tex: { inlineMath: [['\\(','\\)']], displayMath: [['\\[','\\]']], packages: {'[+]': ['ams']} },
+      },
         options: { skipHtmlTags: ['script','noscript','style','textarea','pre'] },
         startup: { typeset: false },
       };
     </script>
-    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" id="MathJax-script" async></script>
-
     <script>
       // ─── Navigation ───────────────────────────────────────────────────────
       function showSection(id) {
@@ -613,8 +613,7 @@
         const sol = btn.nextElementSibling;
         sol.classList.toggle('open');
         btn.textContent = sol.classList.contains('open') ? '🙈 Həlli gizlə' : '💡 Həlli göstər';
-        if (sol.classList.contains('open') && window.MathJax)
-          MathJax.typesetPromise([sol]).catch(console.error);
+        if (sol.classList.contains('open')) renderMathInElement(sol, K);
       }
 
       // ─── Theory Slides ────────────────────────────────────────────────────
@@ -732,7 +731,7 @@ Misal: \(27^{-1/3} = \dfrac{1}{\sqrt[3]{27}} = \dfrac{1}{3}\)
           dots.appendChild(dot);
         });
         updateSlideUI();
-        MathJax.startup.promise.then(() => MathJax.typesetPromise([track]));
+        renderMathInElement(track, K);
       }
       function goSlide(n) {
         document.querySelectorAll('.slide')[curSlide].classList.remove('active');
@@ -750,10 +749,7 @@ Misal: \(27^{-1/3} = \dfrac{1}{\sqrt[3]{27}} = \dfrac{1}{3}\)
       }
 
       // ─── Math rendering helper ─────────────────────────────────────────────
-      function renderMathNow(id) {
-        const el = document.getElementById(id);
-        if (el && window.MathJax) MathJax.typesetPromise([el]).catch(console.error);
-      }
+      const K={delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false},{left:'\(',right:'\)',display:false},{left:'\[',right:'\]',display:true}],throwOnError:false};function renderMathNow(id){const el=document.getElementById(id);if(el)renderMathInElement(el,K);}
 
       // ─── Questions ────────────────────────────────────────────────────────
       const QS = [
@@ -767,21 +763,21 @@ Misal: \(27^{-1/3} = \dfrac{1}{\sqrt[3]{27}} = \dfrac{1}{3}\)
         {
           s: '§3',
           q: '\\(2^3 \\cdot 2^{-5}\\) = ?',
-          o: ['\\(2^{-2}\\)', '\\(2^{2}\\)', '\\(2^{-3}\\)', '\\(2^{8}\\)'],
-          a: 0,
+          o: ['\\(2^{2}\\)', '\\(2^{-2}\\)', '\\(2^{-3}\\)', '\\(2^{8}\\)'],
+          a: 1,
           e: '\\(2^{3+(-5)} = 2^{-2} = \\dfrac{1}{4}\\).',
         },
         {
           s: '§3',
           q: '\\((3^2)^3\\) = ?',
-          o: ['\\(3^{6}\\)', '\\(3^{5}\\)', '\\(3^{9}\\)', '\\(3^{1}\\)'],
-          a: 0,
+          o: ['\\(3^{9}\\)', '\\(3^{5}\\)', '\\(3^{6}\\)', '\\(3^{1}\\)'],
+          a: 2,
           e: '\\((3^2)^3 = 3^{2 \\times 3} = 3^6 = 729\\).',
         },
         {
           s: '§3',
           q: '\\(a^0\\) = ? &nbsp;(\\(a \\neq 0\\))',
-          o: ['1', '0', '\\(a\\)', '\\(\\infty\\)'],
+          o: ['\\(\\infty\\)', '0', '\\(a\\)', '1'],
           a: 0,
           e: 'Sıfırdan fərqli hər ədədin sıfır üstü 1-ə bərabərdir.',
         },
@@ -789,56 +785,56 @@ Misal: \(27^{-1/3} = \dfrac{1}{\sqrt[3]{27}} = \dfrac{1}{3}\)
           s: '§3',
           q: '\\(4^{-2}\\) = ?',
           o: ['\\(\\dfrac{1}{16}\\)', '\\(-8\\)', '16', '\\(-16\\)'],
-          a: 0,
+          a: 3,
           e: '\\(4^{-2} = \\dfrac{1}{4^2} = \\dfrac{1}{16}\\).',
         },
         {
           s: '§5',
           q: '\\(\\sqrt{75}\\) = ?',
-          o: ['\\(5\\sqrt{3}\\)', '\\(3\\sqrt{5}\\)', '15', '\\(5\\sqrt{15}\\)'],
-          a: 0,
+          o: ['\\(3\\sqrt{5}\\)', '\\(5\\sqrt{3}\\)', '15', '\\(5\\sqrt{15}\\)'],
+          a: 1,
           e: '\\(\\sqrt{75} = \\sqrt{25 \\cdot 3} = 5\\sqrt{3}\\).',
         },
         {
           s: '§5',
           q: '\\(\\sqrt{18} \\cdot \\sqrt{2}\\) = ?',
-          o: ['6', '\\(3\\sqrt{2}\\)', '\\(\\sqrt{20}\\)', '9'],
+          o: ['\\(\\sqrt{20}\\)', '\\(3\\sqrt{2}\\)', '6', '9'],
           a: 0,
           e: '\\(\\sqrt{18} \\cdot \\sqrt{2} = \\sqrt{36} = 6\\).',
         },
         {
           s: '§5',
           q: '\\(\\dfrac{\\sqrt{3}}{\\sqrt{12}}\\) = ?',
-          o: ['\\(\\dfrac{1}{2}\\)', '\\(\\dfrac{1}{4}\\)', '2', '\\(\\dfrac{\\sqrt{3}}{3}\\)'],
-          a: 0,
+          o: ['\\(\\dfrac{\\sqrt{3}}{3}\\)', '\\(\\dfrac{1}{4}\\)', '2', '\\(\\dfrac{1}{2}\\)'],
+          a: 2,
           e: '\\(\\dfrac{\\sqrt{3}}{\\sqrt{12}} = \\sqrt{\\dfrac{3}{12}} = \\sqrt{\\dfrac{1}{4}} = \\dfrac{1}{2}\\).',
         },
         {
           s: '§5',
           q: 'Məxrəci rasionallaşdırın: \\(\\dfrac{1}{\\sqrt{5}}\\) = ?',
           o: ['\\(\\dfrac{\\sqrt{5}}{5}\\)', '\\(\\dfrac{5}{\\sqrt{5}}\\)', '\\(\\sqrt{5}\\)', '\\(\\dfrac{1}{5}\\)'],
-          a: 0,
+          a: 3,
           e: '\\(\\dfrac{1}{\\sqrt{5}} \\cdot \\dfrac{\\sqrt{5}}{\\sqrt{5}} = \\dfrac{\\sqrt{5}}{5}\\).',
         },
         {
           s: '§4',
           q: '\\(8^{2/3}\\) = ?',
-          o: ['4', '2', '8', '6'],
-          a: 0,
+          o: ['2', '4', '8', '6'],
+          a: 1,
           e: '\\(8^{2/3} = (\\sqrt[3]{8})^2 = 2^2 = 4\\).',
         },
         {
           s: '§4',
           q: '\\(27^{-1/3}\\) = ?',
-          o: ['\\(\\dfrac{1}{3}\\)', '\\(-3\\)', '3', '\\(-\\dfrac{1}{3}\\)'],
-          a: 0,
+          o: ['3', '\\(-3\\)', '\\(\\dfrac{1}{3}\\)', '\\(-\\dfrac{1}{3}\\)'],
+          a: 2,
           e: '\\(27^{-1/3} = \\dfrac{1}{27^{1/3}} = \\dfrac{1}{\\sqrt[3]{27}} = \\dfrac{1}{3}\\).',
         },
         {
           s: '§3',
           q: '\\((2x^3)^4\\) = ?',
-          o: ['\\(16x^{12}\\)', '\\(8x^7\\)', '\\(2x^{12}\\)', '\\(16x^7\\)'],
-          a: 0,
+          o: ['\\(16x^7\\)', '\\(8x^7\\)', '\\(2x^{12}\\)', '\\(16x^{12}\\)'],
+          a: 3,
           e: '\\(2^4 \\cdot x^{3 \\times 4} = 16x^{12}\\).',
         },
         {
@@ -851,49 +847,49 @@ Misal: \(27^{-1/3} = \dfrac{1}{\sqrt[3]{27}} = \dfrac{1}{3}\)
         {
           s: '§5',
           q: '\\((\\sqrt{5}+2)(\\sqrt{5}-2)\\) = ?',
-          o: ['1', '3', '7', '5'],
-          a: 0,
+          o: ['3', '1', '7', '5'],
+          a: 1,
           e: '\\((\\sqrt{5})^2 - 2^2 = 5 - 4 = 1\\). Konyuqat düsturu: \\((a+b)(a-b)=a^2-b^2\\).',
         },
         {
           s: '§5',
           q: '\\(\\sqrt{\\sqrt{81}}\\) = ?',
-          o: ['3', '9', '81', '\\(\\sqrt{3}\\)'],
+          o: ['81', '9', '3', '\\(\\sqrt{3}\\)'],
           a: 0,
           e: '\\(\\sqrt{81} = 9\\), sonra \\(\\sqrt{9} = 3\\).',
         },
         {
           s: '§5',
           q: '\\(\\sqrt{2} + \\sqrt{8}\\) = ?',
-          o: ['\\(3\\sqrt{2}\\)', '\\(2\\sqrt{2}\\)', '\\(\\sqrt{10}\\)', '4'],
-          a: 0,
+          o: ['4', '\\(2\\sqrt{2}\\)', '\\(\\sqrt{10}\\)', '\\(3\\sqrt{2}\\)'],
+          a: 2,
           e: '\\(\\sqrt{8} = \\sqrt{4 \\cdot 2} = 2\\sqrt{2}\\), yəni \\(\\sqrt{2} + 2\\sqrt{2} = 3\\sqrt{2}\\).',
         },
         {
           s: '§3',
           q: 'Əgər \\(2^x = 16\\) olarsa, \\(x\\) = ?',
           o: ['4', '3', '8', '2'],
-          a: 0,
+          a: 3,
           e: '\\(16 = 2^4\\), yəni \\(x = 4\\).',
         },
         {
           s: '§5',
           q: '\\(\\sqrt{12} - \\sqrt{3}\\) = ?',
-          o: ['\\(\\sqrt{3}\\)', '3', '\\(\\sqrt{6}\\)', '\\(2\\sqrt{3}\\)'],
-          a: 0,
+          o: ['3', '\\(\\sqrt{3}\\)', '\\(\\sqrt{6}\\)', '\\(2\\sqrt{3}\\)'],
+          a: 1,
           e: '\\(\\sqrt{12} = 2\\sqrt{3}\\), yəni \\(2\\sqrt{3} - \\sqrt{3} = \\sqrt{3}\\).',
         },
         {
           s: '§4',
           q: '\\(4^{0{,}5} + 9^{0{,}5}\\) = ?',
-          o: ['5', '6', '7', '\\(\\sqrt{13}\\)'],
-          a: 0,
+          o: ['7', '6', '5', '\\(\\sqrt{13}\\)'],
+          a: 2,
           e: '\\(4^{0{,}5} = \\sqrt{4} = 2\\), \\(9^{0{,}5} = \\sqrt{9} = 3\\), \\(2+3=5\\).',
         },
         {
           s: '§5',
           q: 'DİM: \\(\\dfrac{\\sqrt{50} - \\sqrt{8}}{\\sqrt{2}}\\) = ?',
-          o: ['3', '\\(2\\sqrt{2}\\)', '4', '\\(\\sqrt{2}\\)'],
+          o: ['\\(\\sqrt{2}\\)', '\\(2\\sqrt{2}\\)', '4', '3'],
           a: 0,
           e: '\\(\\sqrt{50}=5\\sqrt{2}\\), \\(\\sqrt{8}=2\\sqrt{2}\\). \\(\\dfrac{5\\sqrt{2}-2\\sqrt{2}}{\\sqrt{2}} = \\dfrac{3\\sqrt{2}}{\\sqrt{2}} = 3\\).',
         },
@@ -953,7 +949,7 @@ Misal: \(27^{-1/3} = \dfrac{1}{\sqrt[3]{27}} = \dfrac{1}{3}\)
           : '<strong style="color:var(--error)">✗ Səhv.</strong> Düzgün: <strong>' + QS[dIdx].o[QS[dIdx].a] + '</strong>. ')
           + QS[dIdx].e;
         renderDQ();
-        if (window.MathJax) MathJax.typesetPromise([ex]).catch(console.error);
+        renderMathInElement(ex, K);
       }
       function nextDiag() {
         if (dIdx < QS.length - 1) { dIdx++; renderDQ(); }
@@ -1048,9 +1044,7 @@ Misal: \(27^{-1/3} = \dfrac{1}{\sqrt[3]{27}} = \dfrac{1}{3}\)
           pct >= 50 ? '📚 Orta nəticə. Nəzəriyyəni təkrar edin.' :
           '💪 Zəif nəticə. Başdan öyrənin.';
         const ring = document.getElementById('res-ring');
-        ring.style.borderColor =
-          pct >= 90 ? 'var(--success)' : pct >= 70 ? 'var(--accent-blue)' :
-          pct >= 50 ? 'var(--warning)' : 'var(--error)';
+        ring.style.setProperty('--score', pct);
         document.getElementById('res-ring').querySelector('.score-val').style.color =
           pct >= 70 ? 'var(--success)' : 'var(--accent)';
         document.getElementById('res-ui').scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -1064,9 +1058,9 @@ Misal: \(27^{-1/3} = \dfrac{1}{\sqrt[3]{27}} = \dfrac{1}{3}\)
       }
 
       // ─── Init ─────────────────────────────────────────────────────────────
-      document.addEventListener('DOMContentLoaded', () => {
+      document.addEventListener('DOMContentLoaded',()=>{
         buildSlides();
-        MathJax.startup.promise.then(() => MathJax.typesetPromise([document.body]));
+        renderMathInElement(document.body, K);
       });
     </script>
   </body>

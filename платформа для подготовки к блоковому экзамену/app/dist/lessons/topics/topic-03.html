@@ -40,13 +40,10 @@
         overflow-x: hidden;
         line-height: 1.65;
       }
-      .MathJax {
+      .katex {
         font-size: 1.1em !important;
       }
-      mjx-container[display="true"] {
-        overflow-x: auto;
-        padding: 6px 0;
-      }
+      .katex-display { overflow-x: auto; padding: 6px 0; }
       .bg {
         position: fixed;
         top: 0;
@@ -786,7 +783,10 @@
         }
       }
     </style>
-  </head>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" crossorigin="anonymous">
+  <script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" crossorigin="anonymous"></script>
+</head>
   <body>
     <div class="bg"></div>
 
@@ -1091,26 +1091,6 @@
     </section>
 
     <script>
-MathJax = {
-  tex: {
-    inlineMath: [['$', '$']],
-    displayMath: [['$$', '$$']],
-    processEscapes: true,
-    processEnvironments: true
-  },
-  options: { skipHtmlTags: ['script','noscript','style','textarea','pre'] },
-  startup: {
-    typeset: false,
-    ready() {
-      MathJax.startup.defaultReady();
-      const trk = document.getElementById('strack');
-      if (trk) MathJax.typesetPromise([trk]).catch(console.error);
-    }
-  }
-};
-</script>
-    <script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
-    <script>
       function showSection(id) {
         document
           .querySelectorAll("section")
@@ -1127,7 +1107,7 @@ MathJax = {
         document.getElementById("mob-nav").classList.remove("open");
         window.scrollTo(0, 0);
         setTimeout(() => {
-          if (window.MathJax) MathJax.typesetPromise([document.getElementById(id)]).catch(console.error);
+          renderMathInElement(document.getElementById(id), K);
         }, 100);
       }
       document.querySelectorAll("[data-sec]").forEach((a) =>
@@ -1361,7 +1341,7 @@ MathJax = {
         });
         document.getElementById("snext").textContent =
           sIdx === slides.length - 1 ? "Misallara keç →" : "Növbəti →";
-        if (window.MathJax) MathJax.typesetPromise([trk]).catch(console.error);
+        renderMathInElement(trk, K);
       }
       function nextSlide() {
         if (sIdx < slides.length - 1) {
@@ -1436,7 +1416,7 @@ MathJax = {
       <div class="solution">${ex.a}</div>`;
           w.appendChild(d);
         });
-        if (window.MathJax) MathJax.typesetPromise([w]).catch(console.error);
+        renderMathInElement(w, K);
       }
       function toggleSol(btn) {
         const s = btn.nextElementSibling;
@@ -1459,36 +1439,36 @@ MathJax = {
           s: "§2",
           q: "$\\dfrac{60}{84}$ kəsrini sadələşdirin.",
           o: [
-            "$\\dfrac{5}{7}$",
             "$\\dfrac{6}{7}$",
+            "$\\dfrac{5}{7}$",
             "$\\dfrac{4}{7}$",
             "$\\dfrac{3}{4}$",
           ],
-          a: 0,
+          a: 1,
           e: "ƏBOB(60,84)=12. 60÷12=5, 84÷12=7 → 5/7.",
         },
         {
           s: "§3",
           q: "$3\\dfrac{2}{5}$-ni düzgün olmayan kəsirə çevirin.",
           o: [
-            "$\\dfrac{17}{5}$",
-            "$\\dfrac{13}{5}$",
             "$\\dfrac{16}{5}$",
+            "$\\dfrac{13}{5}$",
+            "$\\dfrac{17}{5}$",
             "$\\dfrac{32}{5}$",
           ],
-          a: 0,
+          a: 2,
           e: "3×5+2=17. Cavab: 17/5.",
         },
         {
           s: "§3",
           q: "$\\dfrac{23}{6}$-nı qarışıq ədəd kimi yazın.",
           o: [
-            "$3\\dfrac{5}{6}$",
+            "$3\\dfrac{1}{6}$",
             "$4\\dfrac{1}{6}$",
             "$2\\dfrac{5}{6}$",
-            "$3\\dfrac{1}{6}$",
+            "$3\\dfrac{5}{6}$",
           ],
-          a: 0,
+          a: 3,
           e: "23÷6=3 qalıq 5. Cavab: 3⅚.",
         },
         {
@@ -1507,34 +1487,34 @@ MathJax = {
           s: "§5",
           q: "$\\dfrac{2}{3}+\\dfrac{3}{4}=?$",
           o: [
-            "$\\dfrac{17}{12}$",
             "$\\dfrac{5}{7}$",
+            "$\\dfrac{17}{12}$",
             "$\\dfrac{5}{12}$",
             "$1\\dfrac{5}{12}$",
           ],
-          a: 0,
+          a: 1,
           e: "ƏKOB(3,4)=12. 8/12+9/12=17/12.",
         },
         {
           s: "§5",
           q: "$2\\dfrac{3}{4}-1\\dfrac{5}{6}=?$",
           o: [
-            "$\\dfrac{11}{12}$",
-            "$1\\dfrac{1}{12}$",
             "$\\dfrac{5}{12}$",
+            "$1\\dfrac{1}{12}$",
+            "$\\dfrac{11}{12}$",
             "$\\dfrac{7}{12}$",
           ],
-          a: 0,
+          a: 2,
           e: "11/4-11/6: ƏKOB=12. 33/12-22/12=11/12.",
         },
         {
           s: "§6",
           q: "$\\dfrac{5}{6}\\times\\dfrac{9}{10}=?$",
           o: [
-            "$\\dfrac{3}{4}$",
+            "$\\dfrac{15}{16}$",
             "$\\dfrac{5}{9}$",
             "$\\dfrac{4}{5}$",
-            "$\\dfrac{15}{16}$",
+            "$\\dfrac{3}{4}$",
           ],
           a: 0,
           e: "5×9=45, 6×10=60. 45/60=3/4.",
@@ -1548,28 +1528,28 @@ MathJax = {
             "$\\dfrac{32}{75}$",
             "$\\dfrac{5}{6}$",
           ],
-          a: 0,
+          a: 3,
           e: "4/5 × 15/8 = 60/40 = 3/2.",
         },
         {
           s: "§7",
           q: "$1\\dfrac{1}{2}\\div2\\dfrac{1}{4}=?$",
           o: [
-            "$\\dfrac{2}{3}$",
             "$\\dfrac{3}{2}$",
+            "$\\dfrac{2}{3}$",
             "$\\dfrac{4}{9}$",
             "$1\\dfrac{1}{3}$",
           ],
-          a: 0,
+          a: 1,
           e: "3/2 ÷ 9/4 = 3/2 × 4/9 = 12/18 = 2/3.",
         },
         {
           s: "§8",
           q: "$0.625$ adi kəsir kimi nədir?",
           o: [
-            "$\\dfrac{5}{8}$",
-            "$\\dfrac{3}{5}$",
             "$\\dfrac{6}{10}$",
+            "$\\dfrac{3}{5}$",
+            "$\\dfrac{5}{8}$",
             "$\\dfrac{7}{8}$",
           ],
           a: 0,
@@ -1579,40 +1559,40 @@ MathJax = {
           s: "§8",
           q: "$0.\\overline{3}$ adi kəsirə bərabərdir:",
           o: [
-            "$\\dfrac{1}{3}$",
+            "$\\dfrac{33}{100}$",
             "$\\dfrac{3}{10}$",
             "$\\dfrac{1}{4}$",
-            "$\\dfrac{33}{100}$",
+            "$\\dfrac{1}{3}$",
           ],
-          a: 0,
+          a: 2,
           e: "x=0.333... → 10x=3.333... → 9x=3 → x=1/3.",
         },
         {
           s: "§8",
           q: "$2.4\\times0.05=?$",
           o: ["$0.12$", "$1.2$", "$0.012$", "$12$"],
-          a: 0,
+          a: 3,
           e: "24×5=120. Toplam onluq yer=3. Cavab: 0.120=0.12.",
         },
         {
           s: "§8",
           q: "$7.2\\div0.9=?$",
-          o: ["$8$", "$0.8$", "$80$", "$0.08$"],
+          o: ["$0.8$", "$8$", "$80$", "$0.08$"],
           a: 0,
           e: "72÷9=8.",
         },
         {
           s: "§8",
           q: "$\\dfrac{7}{16}$ onluq kəsir kimi:",
-          o: ["$0.4375$", "$0.435$", "$0.4315$", "$0.475$"],
-          a: 0,
+          o: ["$0.4315$", "$0.435$", "$0.4375$", "$0.475$"],
+          a: 1,
           e: "7÷16=0.4375.",
         },
         {
           s: "§9",
           q: "Bir ədədin $\\dfrac{4}{7}$-si 36-dır. Ədəd nəçədir?",
-          o: ["$63$", "$56$", "$45$", "$72$"],
-          a: 0,
+          o: ["$72$", "$56$", "$45$", "$63$"],
+          a: 2,
           e: "x×4/7=36 → x=36×7/4=63.",
         },
         {
@@ -1624,38 +1604,38 @@ MathJax = {
             "$\\dfrac{1}{5}$",
             "$\\dfrac{2}{15}$",
           ],
-          a: 0,
+          a: 3,
           e: "1/3+2/5=5/15+6/15=11/15. Qalan: 1-11/15=4/15.",
         },
         {
           s: "§4",
           q: "Hansı kəsir ən böyükdür? $\\dfrac{3}{5},\\;\\dfrac{5}{8},\\;\\dfrac{7}{10}$",
           o: [
-            "$\\dfrac{7}{10}$",
             "$\\dfrac{5}{8}$",
+            "$\\dfrac{7}{10}$",
             "$\\dfrac{3}{5}$",
             "Hamısı bərabər",
           ],
-          a: 0,
+          a: 1,
           e: "Ümumi məxrəc 40: 24/40, 25/40, 28/40. Ən böyük 28/40=7/10.",
         },
         {
           s: "§6",
           q: "$\\left(\\dfrac{2}{3}\\right)^3=?$",
           o: [
-            "$\\dfrac{8}{27}$",
-            "$\\dfrac{6}{9}$",
             "$\\dfrac{2}{9}$",
+            "$\\dfrac{6}{9}$",
+            "$\\dfrac{8}{27}$",
             "$\\dfrac{4}{9}$",
           ],
-          a: 0,
+          a: 2,
           e: "(2/3)³=2³/3³=8/27.",
         },
         {
           s: "§9",
           q: "İki ədədin nisbəti $3:5$, cəmləri $40$-dır. Böyük ədəd nəçədir?",
-          o: ["$25$", "$15$", "$20$", "$30$"],
-          a: 0,
+          o: ["$30$", "$15$", "$20$", "$25$"],
+          a: 3,
           e: "3x+5x=40 → x=5. Böyük: 5×5=25.",
         },
       ];
@@ -1723,7 +1703,7 @@ MathJax = {
             : '<strong style="color:var(--error)">✗ Səhv.</strong> Düzgün: <strong>' +
               QS[dIdx].o[QS[dIdx].a] +
               "</strong>. ") + QS[dIdx].e;
-        if (window.MathJax) MathJax.typesetPromise([ex]).catch(console.error);
+        renderMathInElement(ex, K);
         renderDQ();
       }
       function nextDiag() {
@@ -1855,10 +1835,7 @@ MathJax = {
         );
         clearInterval(vTmr);
       }
-      function renderMathNow(id) {
-        const el = document.getElementById(id);
-        if (el && window.MathJax) MathJax.typesetPromise([el]).catch(console.error);
-      }
+      const K={delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false},{left:'\(',right:'\)',display:false},{left:'\[',right:'\]',display:true}],throwOnError:false};function renderMathNow(id){const el=document.getElementById(id);if(el)renderMathInElement(el,K);}
     </script>
   </body>
 </html>

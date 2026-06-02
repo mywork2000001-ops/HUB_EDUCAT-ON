@@ -922,7 +922,7 @@ function showTab(id, btn) {
   document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
   document.getElementById(id).classList.add('active');
   btn.classList.add('active');
-  if (id === 'test' && !qsBuilt) buildQs();
+  if (id === 'test' && !qsBuilt) { buildQs(); setTimeout(()=>renderMathInElement(document.getElementById('test'),{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}],throwOnError:false}),50); }
   if (id === 'viktorina' && !vkBuilt) buildVk();
 }
 
@@ -971,7 +971,7 @@ const QS = [
    e:'S = a · b · sin α = 5 · 8 · 0,5 = 20 sm².'},
 
   {s:4, q:'Düzbucaqlının tərəfləri a = 6 sm, b = 8 sm. Diaqonalı?',
-   o:['10 sm','12 sm','14 sm','48 sm'], a:0,
+   o:['48 sm','12 sm','14 sm','10 sm'], a:3,
    e:'d = √(a² + b²) = √(36 + 64) = √100 = 10 sm.'},
 
   {s:4, q:'Düzbucaqlıda sahə S = 48 sm², bir tərəf a = 8 sm. Digər tərəf b = ?',
@@ -1104,6 +1104,7 @@ function renderVk() {
         ${q.o.map((opt, j) => `<button class="opt-btn" id="vb-${j}" onclick="answerVk(${j})">${String.fromCharCode(65+j)}) ${opt}</button>`).join('')}
       </div>
     </div>`;
+  renderMathInElement(document.getElementById('vk-panel'),{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}],throwOnError:false});
   vkTimer = setInterval(() => {
     vkSec--;
     const el = document.getElementById('vk-sec');
