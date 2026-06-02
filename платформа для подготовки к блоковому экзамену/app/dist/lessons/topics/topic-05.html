@@ -1,0 +1,669 @@
+<!doctype html>
+<html lang="az">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+    <meta name="theme-color" content="#0f172a" />
+    <meta name="color-scheme" content="dark light" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
+    <title>Mövzu 5 — Nisbət. Tənasüb. Faiz</title>
+        <style>
+      :root {
+        --bg-dark: #0f172a;
+        --bg-card: rgba(255, 255, 255, 0.05);
+        --bg-glass: rgba(255, 255, 255, 0.08);
+        --border-glass: rgba(255, 255, 255, 0.15);
+        --text-primary: #e8e8f0;
+        --text-secondary: #a0a0b8;
+        --accent: #06b6d4;
+        --accent-dim: rgba(6, 182, 212, 0.18);
+        --accent-warm: #ff6b6b;
+        --accent-blue: #4dabf7;
+        --accent-blue-dim: rgba(77, 171, 247, 0.18);
+        --success: #51cf66;
+        --error: #ff6b6b;
+        --warning: #fcc419;
+      }
+    </style>
+    <link rel="stylesheet" href="topic-shared-a.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" crossorigin="anonymous">
+  <script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" crossorigin="anonymous"></script>
+  <!-- JSXGraph -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jsxgraph@1.9.3/distrib/jsxgraph.css" crossorigin="anonymous"/>
+  <script src="https://cdn.jsdelivr.net/npm/jsxgraph@1.9.3/distrib/jsxgraphcore.js" crossorigin="anonymous"></script>
+  <!-- function-plot (includes d3 v7) -->
+  <script src="https://cdn.jsdelivr.net/npm/d3@7/dist/d3.min.js" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/function-plot@1/dist/function-plot.js" crossorigin="anonymous"></script>
+</head>
+  <body>
+    <div class="bg"></div>
+
+    <nav>
+      <div class="nav-inner">
+        <span class="logo" onclick="showSection('home')">💯 Mövzu 5 — Nisbət · Tənasüb · Faiz</span>
+        <ul class="nav-links">
+          <li><a class="active" data-sec="home">Ana səhifə</a></li>
+          <li><a data-sec="theory">Nəzəriyyə</a></li>
+          <li><a data-sec="examples">Misallar</a></li>
+          <li><a data-sec="assessment">Qiymətləndirmə</a></li>
+        </ul>
+        <button class="hamburger" id="ham" onclick="toggleMobNav()" aria-label="Menyu">☰</button>
+      </div>
+    </nav>
+
+    <div class="mob-nav" id="mob-nav">
+      <a data-sec="home">🏠 Ana səhifə</a>
+      <a data-sec="theory">📖 Nəzəriyyə</a>
+      <a data-sec="examples">✏️ Misallar</a>
+      <a data-sec="assessment">📋 Qiymətləndirmə</a>
+    </div>
+
+    <!-- HOME -->
+    <section id="home" class="active">
+      <div class="hero">
+        <h1>Nisbət · Tənasüb · Faiz</h1>
+        <p>DR.Math · §1–§10. Nisbət · Bərabər nisbətlər · Tənasüb · Tənasübün xassələri · Faiz · Artım/azalma · Mürəkkəb faiz</p>
+        <div class="hero-btns">
+          <button class="btn btn-primary" onclick="showSection('theory')">📖 Dərsi Başla</button>
+          <button class="btn btn-secondary" onclick="showSection('assessment')">🔍 Bilikləri Yoxla</button>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">
+          <span class="icon" style="background:var(--accent-dim)">🎯</span>Bu mövzuda öyrənəcəksiniz
+        </div>
+        <div class="feat-grid">
+          <div class="feat-card">
+            <div class="fi">➗</div>
+            <h3 style="color:var(--accent)">Nisbət</h3>
+            <p>İki kəmiyyətin bölünməsi, sadələşdirmə</p>
+          </div>
+          <div class="feat-card">
+            <div class="fi">⚖️</div>
+            <h3 style="color:var(--accent-blue)">Tənasüb</h3>
+            <p>Bərabər nisbətlər, əsas xassə</p>
+          </div>
+          <div class="feat-card">
+            <div class="fi">💯</div>
+            <h3 style="color:var(--accent-warm)">Faiz</h3>
+            <p>Yüzdən bir hissə, hesablama</p>
+          </div>
+          <div class="feat-card">
+            <div class="fi">📈</div>
+            <h3 style="color:var(--warning)">Artım/Azalma</h3>
+            <p>Faizlə dəyişmə, çoxalma əmsalı</p>
+          </div>
+          <div class="feat-card">
+            <div class="fi">🔄</div>
+            <h3 style="color:var(--success)">Mürəkkəb Faiz</h3>
+            <p>Ardıcıl faiz dəyişmələri, əmsal</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- THEORY -->
+    <section id="theory">
+      <div class="card">
+        <div class="card-title">
+          <span class="icon" style="background:var(--accent-dim)">📖</span>Nisbət. Tənasüb. Faiz — §1–§10
+        </div>
+        <p style="color:var(--text-secondary);margin-bottom:16px">
+          DİM-in hər variantında 3–5 faiz məsələsi olur. Bu anlayışları mükəmməl bilin.
+        </p>
+        <div class="slide-wrap">
+          <div class="slide-meta">
+            <span>Bölmə <strong id="snum">1</strong> / <strong id="stotal">10</strong></span>
+            <div class="slide-dots" id="sdots"></div>
+          </div>
+          <div class="slide-track" id="strack"></div>
+          <div class="slide-nav">
+            <button class="btn btn-secondary" onclick="prevSlide()">← Əvvəlki</button>
+            <button class="btn btn-primary" onclick="nextSlide()" id="snext">Növbəti →</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- EXAMPLES -->
+    <section id="examples">
+      <div class="card">
+        <div class="card-title">
+          <span class="icon" style="background:var(--accent-blue-dim)">✏️</span>Həll edilmiş misallar
+        </div>
+        <p style="color:var(--text-secondary);margin-bottom:20px">
+          DİM tipli nisbət, tənasüb və faiz məsələləri — addım-addım həll ilə.
+        </p>
+      </div>
+      <div id="ex-wrap"></div>
+    </section>
+
+    <!-- ASSESSMENT -->
+    <section id="assessment">
+      <div class="card">
+        <div class="card-title">
+          <span class="icon" style="background:var(--accent-blue-dim)">📋</span>Qiymətləndirmə — 20 sual
+        </div>
+        <p style="color:var(--text-secondary);margin-bottom:20px">Diaqnostik test (izahatla) və ya sürət viktorinası seçin.</p>
+        <div class="feat-grid" style="grid-template-columns:repeat(auto-fit,minmax(220px,1fr))">
+          <div class="feat-card" style="padding:24px;cursor:default">
+            <div class="fi">🔍</div>
+            <h3 style="color:var(--accent);margin-bottom:8px">Diaqnostik Test</h3>
+            <p style="margin-bottom:16px">20 sual · hər sualdan sonra izahat</p>
+            <button class="btn btn-primary" onclick="startDiag()" style="width:100%">Testi Başla</button>
+          </div>
+          <div class="feat-card" style="padding:24px;cursor:default">
+            <div class="fi">⚡</div>
+            <h3 style="color:var(--accent-blue);margin-bottom:8px">Sürət Viktorinası</h3>
+            <p style="margin-bottom:16px">20 sual · sual başına 30 saniyə</p>
+            <button class="btn btn-primary" onclick="startViktorina()"
+              style="width:100%;background:linear-gradient(135deg,var(--accent-blue),#7c3aed)">
+              Başla ⚡
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div id="diag-ui" style="display:none">
+        <div class="quiz-wrap">
+          <div class="quiz-progress">
+            <span style="font-size:0.87rem;white-space:nowrap">Sual <strong id="dq-n">1</strong>/<strong id="dq-tot">20</strong></span>
+            <div class="prog-bar"><div class="prog-fill" id="dq-bar" style="width:0%"></div></div>
+            <span id="dq-score" style="font-size:0.87rem;color:var(--success);font-weight:700;white-space:nowrap">0 ✓</span>
+          </div>
+          <div class="quiz-q" id="dq-q"></div>
+          <div class="quiz-opts" id="dq-opts"></div>
+          <div class="expl-box" id="dq-expl"></div>
+          <div class="quiz-nav-row">
+            <button class="btn btn-secondary" onclick="prevDiag()" id="dq-prev" disabled>← Geri</button>
+            <button class="btn btn-primary" onclick="nextDiag()" id="dq-next" disabled>İrəli →</button>
+          </div>
+        </div>
+      </div>
+
+      <div id="vik-ui" style="display:none">
+        <div class="quiz-wrap">
+          <div style="text-align:center;margin-bottom:16px">
+            <div class="vik-timer" id="vik-timer">30</div>
+            <div style="display:flex;gap:4px;margin-top:10px" id="vik-dots"></div>
+          </div>
+          <div style="display:inline-block;background:var(--accent-dim);color:var(--accent);
+            border-radius:20px;padding:3px 12px;font-size:0.72rem;font-weight:700;margin-bottom:12px"
+            id="vik-tag"></div>
+          <div class="quiz-q" id="vik-q"></div>
+          <div class="quiz-opts" id="vik-opts"></div>
+        </div>
+      </div>
+
+      <div id="res-ui" style="display:none">
+        <div class="quiz-wrap">
+          <div class="results-wrap">
+            <div style="font-size:0.9rem;color:var(--text-secondary);margin-bottom:10px">Nəticəniz</div>
+            <div class="score-ring" id="res-ring">
+              <div class="score-val" id="res-pct">0%</div>
+            </div>
+            <div class="score-msg" id="res-msg"></div>
+            <div class="breakdown">
+              <div class="breakdown-item">
+                <div class="breakdown-val" id="res-ok">0</div>
+                <div class="breakdown-lbl">Düzgün</div>
+              </div>
+              <div class="breakdown-item">
+                <div class="breakdown-val" id="res-no">0</div>
+                <div class="breakdown-lbl">Səhv</div>
+              </div>
+              <div class="breakdown-item">
+                <div class="breakdown-val" id="res-lvl">—</div>
+                <div class="breakdown-lbl">Səviyyə</div>
+              </div>
+            </div>
+            <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
+              <button class="btn btn-primary" onclick="resetAssessment()">Yenidən cəhd et</button>
+              <button class="btn btn-secondary" onclick="showSection('theory')">Nəzəriyyəyə qayıt</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+        <script>
+
+      /* ════ NAV ════ */
+      function showSection(id) {
+        document.querySelectorAll('section').forEach(s => s.classList.remove('active'));
+        document.querySelectorAll('[data-sec]').forEach(a => a.classList.remove('active'));
+        document.getElementById(id).classList.add('active');
+        document.querySelectorAll(`[data-sec="${id}"]`).forEach(a => a.classList.add('active'));
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        if (id === 'examples') renderExamples();
+        document.getElementById('mob-nav').classList.remove('open');
+      }
+      function toggleMobNav() {
+        document.getElementById('mob-nav').classList.toggle('open');
+      }
+      document.querySelectorAll('[data-sec]').forEach(a => {
+        a.addEventListener('click', () => showSection(a.dataset.sec));
+      });
+
+      const K={delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false},{left:'\\(',right:'\\)',display:false},{left:'\\[',right:'\\]',display:true}],throwOnError:false};function renderMathNow(id){const el=document.getElementById(id);if(el)renderMathInElement(el,K);}
+
+      /* ════ SLIDES ════ */
+      const slides = [
+        {
+          title: '§1 Nisbət anlayışı',
+          html: `
+<p>İki həmcins kəmiyyətin <strong>eyni vahidlə</strong> bölünməsinə onların <strong>nisbəti</strong> deyilir.</p>
+<div class="formula-box">
+$$a : b = \\frac{a}{b}, \\quad b \\neq 0$$
+<br>Nisbət ölçüsüz (dimensionless) bir ədəddir.
+</div>
+<div class="rule-grid">
+  <div class="rule-card"><h4>Sadələşdirmə</h4><p>$\\frac{a}{b} = \\frac{a \\div k}{b \\div k}$ — hər ikisini OBOB-a bölün</p></div>
+  <div class="rule-card"><h4>Vahidlər</h4><p>Müxtəlif vahidlər varsa, əvvəl çevirin: 1 km = 1000 m</p></div>
+  <div class="rule-card"><h4>Ardıcıl nisbət</h4><p>$a : b : c$ — üç kəmiyyətin nisbəti</p></div>
+</div>
+<div class="info-box"><strong>Nümunə:</strong> 12 sm ilə 4 dm nisbəti — əvvəl çevir: 12 sm : 40 sm = 12/40 = <strong>3/10</strong></div>
+<div class="warn-box"><strong>Diqqət:</strong> Nisbəti hər zaman sadə (ixtisara gətirilmiş) formada yazın. $8:12 = 2:3$.</div>`,
+        },
+        {
+          title: '§2 Bərabər nisbətlər',
+          html: `
+<p>İki nisbət <strong>bərabərdir</strong>, əgər onlar eyni dəyərə malikdirsə:</p>
+<div class="formula-box">
+$$\\frac{a}{b} = \\frac{c}{d} \\iff a \\cdot d = b \\cdot c$$
+</div>
+<p style="margin:12px 0">Bu, <strong>çarpaz vurma</strong> (cross-multiplication) qaydası adlanır.</p>
+<div class="rule-grid">
+  <div class="rule-card"><h4>Yoxlama</h4><p>$\\frac{3}{4} = \\frac{9}{12}$? → $3 \\times 12 = 36$, $4 \\times 9 = 36$ ✓</p></div>
+  <div class="rule-card"><h4>Tənliklə</h4><p>$\\frac{x}{5} = \\frac{6}{15}$ → $15x = 30$ → $x = 2$</p></div>
+</div>
+<div class="info-box">Bərabər nisbətlər hər ikisini eyni ədədə vurduqda (və ya böldükdə) alınır: $\\frac{2}{3} = \\frac{4}{6} = \\frac{6}{9}$</div>`,
+        },
+        {
+          title: '§3 Tənasüb anlayışı',
+          html: `
+<p><strong>Tənasüb</strong> — iki nisbətin bərabərliyi: $a : b = c : d$ və ya $\\dfrac{a}{b} = \\dfrac{c}{d}$</p>
+<div class="formula-box">
+<strong>Elementlər:</strong><br>
+$a, d$ — <span style="color:var(--accent)">həddlər (extremes)</span> — kənar üzvlər<br>
+$b, c$ — <span style="color:var(--accent-blue)">orta üzvlər (means)</span><br><br>
+<strong>Əsas xassə:</strong> $a \\cdot d = b \\cdot c$ (kənarların hasili = ortaların hasili)
+</div>
+<div class="rule-grid">
+  <div class="rule-card"><h4>Bilinməyəni tap</h4><p>$3 : x = 6 : 10$ → $x = \\frac{3 \\times 10}{6} = 5$</p></div>
+  <div class="rule-card"><h4>Yoxlama</h4><p>$3 : 5 = 6 : 10$ → $3 \\times 10 = 30$, $5 \\times 6 = 30$ ✓</p></div>
+</div>
+<div class="warn-box"><strong>DİM xəbərdarlığı:</strong> Tənasübdə $b = 0$ və ya $d = 0$ ola bilməz!</div>`,
+        },
+        {
+          title: '§4 Tənasübün xassələri',
+          html: `
+<p>Tənasübü dəyişdirməyən çevrilmələr:</p>
+<div class="formula-box">
+Əgər $\\dfrac{a}{b} = \\dfrac{c}{d}$ olarsa:<br><br>
+<strong>1. Ters çevirme:</strong> $\\dfrac{b}{a} = \\dfrac{d}{c}$<br>
+<strong>2. Yerlərini dəyiş:</strong> $\\dfrac{a}{c} = \\dfrac{b}{d}$<br>
+<strong>3. Toplama xassəsi:</strong> $\\dfrac{a+b}{b} = \\dfrac{c+d}{d}$<br>
+<strong>4. Çıxma xassəsi:</strong> $\\dfrac{a-b}{b} = \\dfrac{c-d}{d}$
+</div>
+<div class="info-box"><strong>Birləşmiş tənasüb (componendo-dividendo):</strong><br>
+$\\dfrac{a}{b} = \\dfrac{c}{d} \\implies \\dfrac{a+b}{a-b} = \\dfrac{c+d}{c-d}$</div>
+<div class="warn-box"><strong>DİM taktikası:</strong> Xassə 3 (toplama) çox işlənir: $\\dfrac{a}{b} = \\dfrac{c}{d} = \\dfrac{a+c}{b+d}$ (alternation)</div>`,
+        },
+        {
+          title: '§5 Faiz anlayışı',
+          html: `
+<p><strong>Faiz (%)</strong> — bir kəmiyyətin 100-dən bir hissəsi.</p>
+<div class="formula-box">
+$1\\% = \\dfrac{1}{100} = 0{,}01$<br><br>
+<strong>Faizin tapılması:</strong> $P\\% = \\dfrac{P}{100} \\times A$<br><br>
+<strong>Faizi tapmaq:</strong> $P = \\dfrac{\\text{hissə}}{\\text{tam}} \\times 100$
+</div>
+<div class="rule-grid">
+  <div class="rule-card"><h4>Faizi tapmaq</h4><p>200-ün 30%-i = $\\frac{30}{100} \\times 200 = 60$</p></div>
+  <div class="rule-card"><h4>Tam kəmiyyəti tapmaq</h4><p>60, 200-ün neçə %-i? → $\\frac{60}{200} \\times 100 = 30\\%$</p></div>
+  <div class="rule-card"><h4>Əsas ədədi tapmaq</h4><p>60 ədədin 30%-i. Tam = $\\frac{60}{0{,}30} = 200$</p></div>
+</div>
+<div class="info-box"><strong>Sürətli üsul:</strong> $P\\%$ tapmaq üçün ədədi $P$-yə vurub 100-ə bölün.</div>`,
+        },
+        {
+          title: '§6 Faiz hesablamaları — üç əsas tip',
+          html: `
+<div class="rule-grid">
+  <div class="rule-card">
+    <h4 style="color:var(--accent)">Tip 1: Hissəni tap</h4>
+    <p>$A$-nın $P\\%$-i:<br>$\\text{Hissə} = A \\times \\dfrac{P}{100}$</p>
+  </div>
+  <div class="rule-card">
+    <h4 style="color:var(--accent-blue)">Tip 2: Faizi tap</h4>
+    <p>$B$, $A$-nın neçə %-i?<br>$P = \\dfrac{B}{A} \\times 100$</p>
+  </div>
+  <div class="rule-card">
+    <h4 style="color:var(--accent-warm)">Tip 3: Tam ədədi tap</h4>
+    <p>$B$, $A$-nın $P\\%$-idir:<br>$A = \\dfrac{B}{P} \\times 100$</p>
+  </div>
+</div>
+<div class="formula-box">
+<strong>Əsas tənlik:</strong><br>
+$$\\frac{\\text{Hissə}}{\\text{Tam}} = \\frac{P}{100}$$
+</div>
+<div class="warn-box"><strong>Diqqət:</strong> "X ədədin 20%-i 15-dir" — burada tam (X) axtarılır: $X = \\frac{15}{0{,}20} = 75$</div>`,
+        },
+        {
+          title: '§7 Artım və azalma (Percentage change)',
+          html: `
+<p>Bir kəmiyyət faizlə artır və ya azalırsa:</p>
+<div class="formula-box">
+<strong>P% artım:</strong> $A_{yeni} = A \\times \\left(1 + \\dfrac{P}{100}\\right) = A \\times k$<br><br>
+<strong>P% azalma:</strong> $A_{yeni} = A \\times \\left(1 - \\dfrac{P}{100}\\right) = A \\times k$<br><br>
+Burada $k$ — <strong>çoxalma əmsalı</strong>dır.
+</div>
+<div class="rule-grid">
+  <div class="rule-card"><h4>20% artım</h4><p>$k = 1{,}20$ → 500 × 1,20 = <strong>600</strong></p></div>
+  <div class="rule-card"><h4>15% azalma</h4><p>$k = 0{,}85$ → 400 × 0,85 = <strong>340</strong></p></div>
+  <div class="rule-card"><h4>Dəyişmə faizi</h4><p>$\\Delta\\% = \\dfrac{yeni - köhnə}{köhnə} \\times 100$</p></div>
+</div>
+<div class="info-box"><strong>Sürətli çevirmə:</strong> 30% artım = ×1,3; 30% azalma = ×0,7; 50% azalma = ×0,5</div>`,
+        },
+        {
+          title: '§8 Ardıcıl faiz dəyişmələri (Mürəkkəb faiz)',
+          html: `
+<p>Əgər kəmiyyət ardıcıl olaraq bir neçə dəfə dəyişirsə:</p>
+<div class="formula-box">
+$A_{son} = A_0 \\times k_1 \\times k_2 \\times \\ldots \\times k_n$<br><br>
+Misal: Əvvəlcə 20% artım, sonra 10% azalma:<br>
+$A_{son} = A_0 \\times 1{,}2 \\times 0{,}9 = A_0 \\times 1{,}08$<br>
+→ Ümumi artım: <strong>8%</strong>
+</div>
+<div class="rule-grid">
+  <div class="rule-card"><h4>Eyni faiz, n dəfə</h4><p>$A_{son} = A_0 \\times k^n$<br>10% artım, 3 il: ×$1{,}1^3 = 1{,}331$</p></div>
+  <div class="rule-card"><h4>Əhəmiyyətli xəta</h4><p>20% artıb 20% azalsa, sıfıra gəlmir: $1{,}2 \\times 0{,}8 = 0{,}96$ → 4% itirildi!</p></div>
+</div>
+<div class="warn-box"><strong>DİM klassiki:</strong> "Qiymət 10% artdı, sonra 10% azaldı" — nəticə 1% itkidir: $1{,}1 \\times 0{,}9 = 0{,}99$</div>`,
+        },
+        {
+          title: '§9 Faiz məsələlərinin həll alqoritmi',
+          html: `
+<p>DİM tipli faiz məsələlərini 4 addımda həll edin:</p>
+<div class="rule-grid">
+  <div class="rule-card"><h4>1. Verilənlər</h4><p>Tam, hissə, faiz — hansını axtarırsınız?</p></div>
+  <div class="rule-card"><h4>2. Əmsal</h4><p>Artım → k > 1; azalma → k &lt; 1</p></div>
+  <div class="rule-card"><h4>3. Tənlik</h4><p>Əsas tənliyi qurun, bilinməyəni tapın</p></div>
+  <div class="rule-card"><h4>4. Yoxlama</h4><p>Cavabı yerinə qoyun, doğrudurmu?</p></div>
+</div>
+<div class="formula-box">
+<strong>Tez-tez lazım olan faizlər (əzbərləyin):</strong><br>
+$\\frac{1}{2} = 50\\%$, $\\frac{1}{4} = 25\\%$, $\\frac{1}{5} = 20\\%$, $\\frac{1}{8} = 12{,}5\\%$<br>
+$\\frac{1}{3} \\approx 33{,}3\\%$, $\\frac{2}{3} \\approx 66{,}7\\%$, $\\frac{3}{4} = 75\\%$
+</div>
+<div class="info-box"><strong>Yadda saxlayın:</strong> DİM-də faiz məsələlərinin çoxu ardıcıl dəyişmə ilə bağlıdır — çoxalma əmsallarını vurun!</div>`,
+        },
+        {
+          title: '§10 DİM taktikası — nisbət, tənasüb, faiz',
+          html: `
+<div class="rule-grid">
+  <div class="rule-card"><h4 style="color:var(--accent)">Nisbət məsələsi</h4><p>$a : b = m : n$ → $a = km$, $b = kn$. $a + b$ verilirsə $k$ tapın.</p></div>
+  <div class="rule-card"><h4 style="color:var(--accent-blue)">Tənasüb məsələsi</h4><p>Çarpaz vurun: $\frac{a}{b} = \frac{c}{d}$ → $ad = bc$. Bir bilinməyən qalır.</p></div>
+  <div class="rule-card"><h4 style="color:var(--accent-warm)">Faiz məsələsi</h4><p>Çoxalma əmsalı ilə həll edin. Heç vaxt "faiz toplamayın" — çarpın!</p></div>
+</div>
+<div class="formula-box">
+<strong>Bölüşdürmə məsələsi:</strong> $S$ cəmini $a:b:c$ nisbətində böl:<br>
+$$x_1 = S \\cdot \\frac{a}{a+b+c}, \quad x_2 = S \\cdot \\frac{b}{a+b+c}, \quad x_3 = S \\cdot \\frac{c}{a+b+c}$$
+</div>
+<div class="warn-box"><strong>Tez-tez düşən xəta:</strong> "20% artıb 25% azaldı" — addımla hesabla: $1{,}2 \\times 0{,}75 = 0{,}9$ → 10% azalma, yox 5%!</div>
+<div class="info-box"><strong>Son məsləhət:</strong> Faiz məsələlərini həmişə kəsir (0,xx) kimi yazın, % işarəsi ilə işləmə — xəta şansı azalar.</div>`,
+        },
+      ];
+
+      let sIdx = 0;
+      function renderSlides() {
+        const trk  = document.getElementById('strack');
+        const dots = document.getElementById('sdots');
+        document.getElementById('snum').textContent   = sIdx + 1;
+        document.getElementById('stotal').textContent = slides.length;
+        trk.innerHTML = '';
+        dots.innerHTML = '';
+        slides.forEach((s, i) => {
+          const d = document.createElement('div');
+          d.className = 'slide' + (i === sIdx ? ' active' : '');
+          d.innerHTML = `<h3>📌 ${s.title}</h3>${s.html}`;
+          trk.appendChild(d);
+          const dot = document.createElement('div');
+          dot.className = 'slide-dot' + (i === sIdx ? ' active' : '');
+          dot.onclick = () => { sIdx = i; renderSlides(); };
+          dots.appendChild(dot);
+        });
+        document.getElementById('snext').textContent =
+          sIdx === slides.length - 1 ? 'Misallara keç →' : 'Növbəti →';
+        renderMathInElement(trk, K);
+      }
+      function nextSlide() {
+        if (sIdx < slides.length - 1) { sIdx++; renderSlides(); }
+        else showSection('examples');
+      }
+      function prevSlide() {
+        if (sIdx > 0) { sIdx--; renderSlides(); }
+      }
+      renderSlides();
+
+      /* ════ EXAMPLES ════ */
+      const EXAMPLES = [
+        {
+          num: 1,
+          topic: '§1 Nisbət',
+          title: 'Nisbətin sadələşdirilməsi',
+          q: '450 q ilə 1,5 kq nisbətini tapın.',
+          a: '<p>Vahidləri eyniləşdir: 1,5 kq = 1500 q</p><p>Nisbət: $\\frac{450}{1500} = \\frac{450 \\div 150}{1500 \\div 150} = \\frac{3}{10}$</p><p><strong style="color:var(--accent)">Cavab: 3 : 10</strong></p>',
+        },
+        {
+          num: 2,
+          topic: '§3 Tənasüb',
+          title: 'Bilinməyəni tap',
+          q: '$x : 8 = 15 : 24$ tənasübündə $x$ tapın.',
+          a: '<p>Əsas xassə: kənarlar × kənarlar = ortalar × ortalar</p><p>$x \\cdot 24 = 8 \\cdot 15$</p><p>$24x = 120$</p><p>$x = 5$</p><p><strong style="color:var(--accent)">Cavab: x = 5</strong></p>',
+        },
+        {
+          num: 3,
+          topic: '§5–6 Faiz',
+          title: 'Üç tip faiz hesablaması',
+          q: '(a) 350-nin 40%-i; (b) 84, 350-nin neçə %-i; (c) bir ədədin 35%-i 70-dir, ədədi tapın.',
+          a: '<p><strong>(a)</strong> $350 \\times 0{,}40 = \\mathbf{140}$</p><p><strong>(b)</strong> $\\frac{84}{350} \\times 100 = \\mathbf{24\\%}$</p><p><strong>(c)</strong> $x = \\frac{70}{0{,}35} = \\mathbf{200}$</p>',
+        },
+        {
+          num: 4,
+          topic: '§7 Artım/azalma',
+          title: 'Çoxalma əmsalı',
+          q: 'Malın qiyməti 2400 manatdır. Əvvəlcə 25% endirim edildi, sonra 10% artırıldı. Son qiymət nədir?',
+          a: '<p>25% azalma: $k_1 = 0{,}75$</p><p>10% artım: $k_2 = 1{,}10$</p><p>$2400 \\times 0{,}75 \\times 1{,}10 = 2400 \\times 0{,}825 = \\mathbf{1980}$ manat</p><p><strong style="color:var(--accent)">Cavab: 1980 manat</strong></p>',
+        },
+        {
+          num: 5,
+          topic: '§8 Ardıcıl dəyişmə',
+          title: 'Ümumi dəyişmə faizini tap',
+          q: 'Əmək haqqı birinci ildə 20% artdı, ikinci ildə 15% azaldı. Ümumi dəyişmə neçə faizdir?',
+          a: '<p>$k = 1{,}20 \\times 0{,}85 = 1{,}02$</p><p>Ümumi: $+2\\%$ artım</p><p><strong style="color:var(--accent)">Cavab: 2% artım</strong></p>',
+        },
+        {
+          num: 6,
+          topic: '§10 Bölüşdürmə',
+          title: 'Nisbətə görə bölüşdürmə',
+          q: '630 manатı 2 : 3 : 4 nisbətində bölüşdürün.',
+          a: '<p>Cəm: $2 + 3 + 4 = 9$ hissə</p><p>1 hissə: $630 \\div 9 = 70$ manat</p><p>$2 \\times 70 = 140$ manat; $3 \\times 70 = 210$ manat; $4 \\times 70 = 280$ manat</p><p>Yoxlama: $140 + 210 + 280 = 630$ ✓</p><p><strong style="color:var(--accent)">Cavab: 140 : 210 : 280</strong></p>',
+        },
+      ];
+
+      function renderExamples() {
+        const w = document.getElementById('ex-wrap');
+        if (w.dataset.done) return;
+        w.dataset.done = '1';
+        EXAMPLES.forEach(ex => {
+          const d = document.createElement('div');
+          d.className = 'problem-card';
+          d.innerHTML = `
+<div class="problem-header">
+  <span class="problem-num">Misal ${ex.num}</span>
+  <span class="problem-topic">${ex.topic}</span>
+</div>
+<div class="problem-text"><strong>${ex.title}</strong><br><br>${ex.q}</div>
+<button class="sol-btn" onclick="toggleSol(this)">Həlli göstər ▼</button>
+<div class="solution">${ex.a}</div>`;
+          w.appendChild(d);
+        });
+        renderMathInElement(w, K);
+      }
+      function toggleSol(btn) {
+        const s = btn.nextElementSibling;
+        s.classList.toggle('open');
+        btn.textContent = s.classList.contains('open') ? 'Həlli gizlət ▲' : 'Həlli göstər ▼';
+      }
+
+      /* ════ QUESTIONS ════ */
+      const QS = [
+        {
+          s: '§1',
+          q: '36 sm ilə 1,2 m nisbəti nədir?',
+          o: ['3 : 10', '1 : 3', '3 : 4', '1 : 4'],
+          a: 0,
+          e: '1,2 m = 120 sm. Nisbət: 36/120 = 3/10.',
+        },
+        {
+          s: '§1',
+          q: '$\\frac{3}{5}$ kəsirini faizlə ifadə edin.',
+          o: ['35%', '60%', '53%', '30%'],
+          a: 1,
+          e: '$\\frac{3}{5} = \\frac{60}{100} = 60\\%$',
+        },
+        {
+          s: '§1',
+          q: '2 saatı 45 dəqiqəyə nisbəti necədir?',
+          o: ['3 : 8', '4 : 1', '8 : 3', '2 : 1'],
+          a: 2,
+          e: '2 saat = 120 dəq. 120:45 = 8:3.',
+        },
+        {
+          s: '§2',
+          q: '$\\frac{4}{6} = \\frac{x}{15}$ bərabərliyindən $x$ tapın.',
+          o: ['6', '8', '12', '10'],
+          a: 3,
+          e: 'Çarpaz vurun: $6x = 60$ → $x = 10$.',
+        },
+        {
+          s: '§3',
+          q: '$5 : 8 = 20 : x$ tənasübündən $x$ tapın.',
+          o: ['32', '20', '25', '40'],
+          a: 0,
+          e: '$5x = 8 \\times 20 = 160$ → $x = 32$.',
+        },
+        {
+          s: '§3',
+          q: '$7 : x = 14 : 10$ tənasübündən $x$ tapın.',
+          o: ['4', '5', '7', '6'],
+          a: 1,
+          e: '$7 \\times 10 = 14x$ → $x = 70/14 = 5$.',
+        },
+        {
+          s: '§4',
+          q: '$\\frac{a}{b} = \\frac{3}{5}$ olarsa, $\\frac{a+b}{b}$ nədir?',
+          o: ['$\\frac{5}{3}$', '$\\frac{3}{8}$', '$\\frac{8}{5}$', '$\\frac{3}{5}$'],
+          a: 2,
+          e: 'Toplama xassəsi: $\\frac{a+b}{b} = \\frac{3+5}{5} = \\frac{8}{5}$.',
+        },
+        {
+          s: '§5',
+          q: '480-in 35%-i nədir?',
+          o: ['150', '160', '172', '168'],
+          a: 3,
+          e: '$480 \\times 0{,}35 = 168$.',
+        },
+        {
+          s: '§5',
+          q: '56 ədədi 320-nin neçə faizidir?',
+          o: ['17,5%', '15%', '20%', '18%'],
+          a: 0,
+          e: '$\\frac{56}{320} \\times 100 = 17{,}5\\%$.',
+        },
+        {
+          s: '§6',
+          q: 'Bir ədədin 24%-i 60-dır. Həmin ədəd nədir?',
+          o: ['240', '250', '200', '260'],
+          a: 1,
+          e: '$x = \\frac{60}{0{,}24} = 250$.',
+        },
+        {
+          s: '§6',
+          q: '900 manatın 12,5%-i nədir?',
+          o: ['125', '100', '112,5', '90'],
+          a: 2,
+          e: '$\\frac{1}{8} = 12{,}5\\%$. $900 \\div 8 = 112{,}5$.',
+        },
+        {
+          s: '§7',
+          q: 'Qiymət 800 manatdan 1000 manata qalxdı. Artım neçə faizdir?',
+          o: ['15%', '20%', '30%', '25%'],
+          a: 3,
+          e: '$\\frac{1000-800}{800} \\times 100 = \\frac{200}{800} \\times 100 = 25\\%$.',
+        },
+        {
+          s: '§7',
+          q: '600 manat 20% azaldı. Yeni qiymət nədir?',
+          o: ['480', '500', '520', '540'],
+          a: 0,
+          e: '$600 \\times 0{,}80 = 480$.',
+        },
+        {
+          s: '§8',
+          q: 'Bir ədəd əvvəl 10% artdı, sonra 10% azaldı. Ümumi nəticə:',
+          o: ['Dəyişmədi', '1% azalma', '1% artım', '2% azalma'],
+          a: 1,
+          e: '$1{,}1 \\times 0{,}9 = 0{,}99$ → 1% azalma.',
+        },
+        {
+          s: '§8',
+          q: 'Əmək haqqı 30% artdı, sonra 20% azaldı. Çoxalma əmsalı:',
+          o: ['1,10', '0,96', '1,04', '0,90'],
+          a: 2,
+          e: '$1{,}3 \\times 0{,}8 = 1{,}04$ → 4% artım.',
+        },
+        {
+          s: '§8',
+          q: '1000 manat iki il boyunca hər il 5% artırıldı. Son məbləğ:',
+          o: ['1210', '1100', '1050', '1102,5'],
+          a: 3,
+          e: '$1000 \\times 1{,}05^2 = 1000 \\times 1{,}1025 = 1102{,}5$.',
+        },
+        {
+          s: '§10',
+          q: '420 manатı 3 : 4 nisbətində bölün. Böyük hissə nədir?',
+          o: ['240', '180', '210', '220'],
+          a: 0,
+          e: 'Cəm: 7 hissə. 1 hissə = 60. Böyük: $4 \\times 60 = 240$.',
+        },
+        {
+          s: '§10',
+          q: 'Üç şərik 2:3:5 nisbətində 1000 manat qazandı. Ən böyük pay:',
+          o: ['300', '500', '200', '400'],
+          a: 1,
+          e: 'Cəm: 10. Böyük pay: $\\frac{5}{10} \\times 1000 = 500$.',
+        },
+        {
+          s: '§6',
+          q: 'Bir sinifin 45%-i qızlardan ibarətdir. Oğlanların faizi:',
+          o: ['50%', '45%', '55%', '40%'],
+          a: 2,
+          e: '$100\\% - 45\\% = 55\\%$.',
+        },
+        {
+          s: '§7',
+          q: 'Qiymət 500-dən 400-ə düşdü. Azalma neçə faizdir?',
+          o: ['10%', '25%', '15%', '20%'],
+          a: 3,
+          e: '$\\frac{500-400}{500} \\times 100 = \\frac{100}{500} \\times 100 = 20\\%$.',
+        },
+      ];
+    </script>
+    <script src="topic-shared-a.js"></script>
+  </body>

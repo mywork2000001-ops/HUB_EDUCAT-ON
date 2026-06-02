@@ -1,0 +1,965 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Funksiyalar — Tam Dərs</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css"/>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
+  onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}]})"></script>
+
+    <style>
+      :root {
+        --accent: #6366f1;
+        --accent-dim: rgba(99,102,241,0.18);
+      }
+    </style>
+    <link rel="stylesheet" href="topic-shared-b.css" />
+    <style>
+.btn-ghost {
+      background:rgba(99,102,241,.1);border:1px solid rgba(99,102,241,.25);color:var(--accent)
+    }
+.axis {
+      stroke:#475569;stroke-width:1.5
+    }
+.axis-label {
+      fill:#94a3b8;font-size:12px
+    }
+.grid-line {
+      stroke:#1e293b;stroke-width:1
+    }
+.func-line {
+      stroke-width:2.5;fill:none
+    }
+</style>
+  <!-- JSXGraph -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jsxgraph@1.9.3/distrib/jsxgraph.css" crossorigin="anonymous"/>
+  <script src="https://cdn.jsdelivr.net/npm/jsxgraph@1.9.3/distrib/jsxgraphcore.js" crossorigin="anonymous"></script>
+  <!-- function-plot (includes d3 v7) -->
+  <script src="https://cdn.jsdelivr.net/npm/d3@7/dist/d3.min.js" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/function-plot@1/dist/function-plot.js" crossorigin="anonymous"></script>
+</head>
+<body>
+
+<header class="lesson-header">
+  <div class="badge"><span>📊</span> Mövzu 16</div>
+  <h1>Funksiyalar</h1>
+  <p>Anlayış · Xətti funksiya · Kvadratik funksiya · Hiperbol · Qrafiklər · Xassələr</p>
+</header>
+
+<nav class="tab-nav" role="tablist">
+  <button class="tab-btn active" role="tab" onclick="showTab('theory',this)">
+    <span class="t-icon">📖</span>Nəzəriyyə
+  </button>
+  <button class="tab-btn" role="tab" onclick="showTab('test',this)">
+    <span class="t-icon">📝</span>Test
+  </button>
+  <button class="tab-btn" role="tab" onclick="showTab('viktorina',this)">
+    <span class="t-icon">⚡</span>Viktorina
+  </button>
+</nav>
+
+<!-- ══════════════════════ THEORY ══════════════════════════ -->
+<section id="theory" class="section active">
+<div class="progress-bar"><div class="progress-fill" id="theory-progress" style="width:0%"></div></div>
+  <div class="slide-ctrl">
+    <span class="slide-info">Slayd <strong id="s-cur">1</strong> / <strong id="s-tot">?</strong></span>
+    <div class="slide-ctrl-btns">
+      <button class="btn btn-ghost" onclick="prevSlide()">&#8592; Əvvəlki</button>
+      <button class="btn btn-primary" id="s-next" onclick="nextSlide()">Növbəti &#8594;</button>
+    </div>
+  </div>
+
+
+<!-- Slide 1 -->
+<div class="slide" data-slide="1">
+  <span class="slide-num">SLAYD 1 / 15</span>
+  <h2>§1. Funksiya anlayışı</h2>
+  <div class="def-box">
+    <strong>Tərif</strong>
+    <p>Əgər <span class="hl">X</span> çoxluğunun hər elementinə <span class="hl">Y</span> çoxluğundan yalnız bir element uyğun gəlirsə, bu uyğunluğa <span class="hl">funksiya</span> deyilir.<br>
+    Yazılışı: <strong>y = f(x)</strong></p>
+  </div>
+  <h3>Əsas terminlər</h3>
+  <ul class="prop-list">
+    <li><strong>Arqument (x)</strong> — müstəqil dəyişən; X çoxluğunun elementi</li>
+    <li><strong>Funksiya qiyməti f(x)</strong> — x-ə uyğun y dəyəri</li>
+    <li><strong>Tərif oblastı D(f)</strong> — x-in bütün icazə verilən dəyərləri çoxluğu</li>
+    <li><strong>Dəyərlər çoxluğu E(f)</strong> — y-in qəbul etdiyi bütün dəyərlər</li>
+  </ul>
+  <div class="formula-box">
+    <div class="formula-label">Funksiya şərti</div>
+    <div class="formula-main">\(\forall x \in D(f)\;\; \exists!\, y \in E(f): y = f(x)\)</div>
+    <div class="formula-note">Hər x-ə yalnız bir y uyğun gəlməlidir (unikallıq şərti)</div>
+  </div>
+  <div class="svg-wrap">
+    <svg viewBox="0 0 380 160" aria-label="Funksiya — iki çoxluq arasında ox qrafiki">
+      <!-- X set -->
+      <ellipse cx="90" cy="80" rx="70" ry="60" fill="rgba(99,102,241,.08)" stroke="#6366f1" stroke-width="1.5"/>
+      <text x="90" y="22" text-anchor="middle" fill="#6366f1" font-size="13" font-weight="700">X (Tərif oblastı)</text>
+      <circle cx="75" cy="55" r="4" fill="#6366f1"/>
+      <circle cx="95" cy="80" r="4" fill="#6366f1"/>
+      <circle cx="80" cy="105" r="4" fill="#6366f1"/>
+      <text x="60" y="59" fill="#94a3b8" font-size="12">x₁</text>
+      <text x="100" y="84" fill="#94a3b8" font-size="12">x₂</text>
+      <text x="65" y="109" fill="#94a3b8" font-size="12">x₃</text>
+      <!-- Y set -->
+      <ellipse cx="290" cy="80" rx="70" ry="60" fill="rgba(34,197,94,.06)" stroke="#22c55e" stroke-width="1.5"/>
+      <text x="290" y="22" text-anchor="middle" fill="#22c55e" font-size="13" font-weight="700">Y (Dəyərlər)</text>
+      <circle cx="280" cy="55" r="4" fill="#22c55e"/>
+      <circle cx="295" cy="80" r="4" fill="#22c55e"/>
+      <circle cx="278" cy="105" r="4" fill="#22c55e"/>
+      <text x="288" y="59" fill="#94a3b8" font-size="12">y₁</text>
+      <text x="303" y="84" fill="#94a3b8" font-size="12">y₂</text>
+      <text x="286" y="109" fill="#94a3b8" font-size="12">y₃</text>
+      <!-- Arrows -->
+      <line x1="82" y1="55" x2="272" y2="55" stroke="#f59e0b" stroke-width="1.5" marker-end="url(#arrF)"/>
+      <line x1="99" y1="80" x2="286" y2="80" stroke="#f59e0b" stroke-width="1.5" marker-end="url(#arrF)"/>
+      <line x1="87" y1="105" x2="269" y2="105" stroke="#f59e0b" stroke-width="1.5" marker-end="url(#arrF)"/>
+      <defs>
+        <marker id="arrF" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
+          <path d="M0,0 L6,3 L0,6 Z" fill="#f59e0b"/>
+        </marker>
+      </defs>
+      <text x="185" y="46" text-anchor="middle" fill="#f59e0b" font-size="11" font-weight="700">f(x)</text>
+    </svg>
+  </div>
+</div>
+
+<!-- Slide 2 -->
+<div class="slide" data-slide="2">
+  <span class="slide-num">SLAYD 2 / 15</span>
+  <h2>§2. Koordinat müstəvisi və funksiya qrafiki</h2>
+  <div class="def-box">
+    <strong>Funksiya qrafiki</strong>
+    <p>y = f(x) funksiyasının qrafiki — (x; f(x)) koordinatlı bütün nöqtələrin həndəsi yeridir.</p>
+  </div>
+  <h3>Koordinat müstəvisi elementləri</h3>
+  <ul>
+    <li><span class="hl">Ox</span> — absis oxu (üfüqi), <span class="hl">Oy</span> — ordinat oxu (şaquli)</li>
+    <li>Kəsişmə nöqtəsi — başlanğıc nöqtəsi <strong>O(0; 0)</strong></li>
+    <li>Koordinatlar: (x; y) — əvvəl üfüqi, sonra şaquli</li>
+  </ul>
+  <div class="svg-wrap">
+    <svg viewBox="0 0 300 260" aria-label="Koordinat müstəvisi, ox və oy oxları, nöqtə A(3,2)">
+      <!-- Grid -->
+      <line x1="30" y1="10" x2="30" y2="250" class="axis"/>
+      <line x1="10" y1="130" x2="290" y2="130" class="axis"/>
+      <!-- Grid lines -->
+      <g stroke="#1e2d45" stroke-width="1">
+        <line x1="70" y1="10" x2="70" y2="250"/><line x1="110" y1="10" x2="110" y2="250"/>
+        <line x1="150" y1="10" x2="150" y2="250"/><line x1="190" y1="10" x2="190" y2="250"/>
+        <line x1="230" y1="10" x2="230" y2="250"/><line x1="270" y1="10" x2="270" y2="250"/>
+        <line x1="10" y1="50" x2="290" y2="50"/><line x1="10" y1="90" x2="290" y2="90"/>
+        <line x1="10" y1="170" x2="290" y2="170"/><line x1="10" y1="210" x2="290" y2="210"/>
+      </g>
+      <!-- Tick labels -->
+      <text x="68" y="144" fill="#475569" font-size="10" text-anchor="middle">1</text>
+      <text x="108" y="144" fill="#475569" font-size="10" text-anchor="middle">2</text>
+      <text x="148" y="144" fill="#475569" font-size="10" text-anchor="middle">3</text>
+      <text x="188" y="144" fill="#475569" font-size="10" text-anchor="middle">4</text>
+      <text x="228" y="144" fill="#475569" font-size="10" text-anchor="middle">5</text>
+      <text x="20" y="132" fill="#475569" font-size="10" text-anchor="middle">0</text>
+      <text x="20" y="92" fill="#475569" font-size="10" text-anchor="middle">1</text>
+      <text x="20" y="52" fill="#475569" font-size="10" text-anchor="middle">2</text>
+      <text x="20" y="172" fill="#475569" font-size="10" text-anchor="middle">-1</text>
+      <!-- Axis arrows -->
+      <polygon points="290,127 284,133 284,123" fill="#475569"/>
+      <polygon points="33,10 27,16 39,16" fill="#475569"/>
+      <!-- Axis labels -->
+      <text x="288" y="125" fill="#94a3b8" font-size="13" font-weight="700">x</text>
+      <text x="34" y="12" fill="#94a3b8" font-size="13" font-weight="700">y</text>
+      <!-- Point A(3,2) -->
+      <line x1="150" y1="50" x2="150" y2="130" stroke="#6366f1" stroke-width="1.5" stroke-dasharray="4,3"/>
+      <line x1="30" y1="50" x2="150" y2="50" stroke="#6366f1" stroke-width="1.5" stroke-dasharray="4,3"/>
+      <circle cx="150" cy="50" r="6" fill="#6366f1"/>
+      <text x="158" y="44" fill="#6366f1" font-size="12" font-weight="700">A(3; 2)</text>
+      <!-- Point B(-1,-1) -->
+      <circle cx="-10" cy="170" r="5" fill="#f59e0b"/>
+    </svg>
+  </div>
+</div>
+
+<!-- Slide 3 -->
+<div class="slide" data-slide="3">
+  <span class="slide-num">SLAYD 3 / 15</span>
+  <h2>§3. Xətti funksiya — y = kx + b</h2>
+  <div class="def-box">
+    <strong>Tərif</strong>
+    <p><span class="hl">Xətti funksiya</span> — y = kx + b formasında yazılan funksiyadır (k ≠ 0).<br>
+    Qrafiki — <strong>düz xətt</strong>dir.</p>
+  </div>
+  <h3>Əmsalların mənası</h3>
+  <ul class="prop-list">
+    <li><strong>k</strong> — meyl əmsalı (angle coefficient): xəttin maillik bucağını müəyyən edir</li>
+    <li><strong>b</strong> — Oy oxunu kəsmə nöqtəsi: y = b nöqtəsindən keçir (x=0)</li>
+  </ul>
+  <div class="formula-box">
+    <div class="formula-label">Standart forma</div>
+    <div class="formula-main">y = k · x + b</div>
+    <div class="formula-note">k — meyl əmsalı; b — sərbəst həd; tərif oblastı: \(D(f) = \mathbb{R}\)</div>
+  </div>
+  <div class="svg-wrap">
+    <svg viewBox="0 0 360 240" aria-label="Xətti funksiya y = 2x + 1 qrafiki, meyl əmsalı k=2, kəsmə b=1">
+      <!-- Axes -->
+      <line x1="20" y1="120" x2="340" y2="120" class="axis"/>
+      <line x1="180" y1="10" x2="180" y2="230" class="axis"/>
+      <polygon points="340,117 334,123 334,113" fill="#475569"/>
+      <polygon points="183,10 177,16 189,16" fill="#475569"/>
+      <text x="338" y="113" fill="#94a3b8" font-size="12" font-weight="700">x</text>
+      <text x="185" y="12" fill="#94a3b8" font-size="12" font-weight="700">y</text>
+      <!-- Grid -->
+      <g stroke="#1e2d45" stroke-width="1">
+        <line x1="140" y1="10" x2="140" y2="230"/><line x1="220" y1="10" x2="220" y2="230"/>
+        <line x1="260" y1="10" x2="260" y2="230"/><line x1="100" y1="10" x2="100" y2="230"/>
+        <line x1="20" y1="80" x2="340" y2="80"/><line x1="20" y1="160" x2="340" y2="160"/>
+      </g>
+      <!-- Tick labels -->
+      <text x="140" y="133" fill="#475569" font-size="10" text-anchor="middle">-1</text>
+      <text x="220" y="133" fill="#475569" font-size="10" text-anchor="middle">1</text>
+      <text x="260" y="133" fill="#475569" font-size="10" text-anchor="middle">2</text>
+      <text x="170" y="83" fill="#475569" font-size="10" text-anchor="end">1</text>
+      <text x="170" y="163" fill="#475569" font-size="10" text-anchor="end">-1</text>
+      <!-- y = 2x + 1  -->
+      <!-- when x=-2: y=-3 → (100, 120+3*40=240-too high) let's use scale 40px per unit -->
+      <!-- x=-2: y=-3 → (100, 240) but clip; x=-1: y=-1 → (140, 160); x=0: y=1 → (180,80); x=1: y=3 → (220, 0) clip -->
+      <!-- Better: use (-1,-1) to (1,3): (140,160) to (220, 0) -->
+      <line x1="110" y1="200" x2="270" y2="0" stroke="#6366f1" stroke-width="2.5"/>
+      <!-- b=1 point on y-axis -->
+      <circle cx="180" cy="80" r="5" fill="#22c55e"/>
+      <text x="190" y="78" fill="#22c55e" font-size="11">(0; 1) → b=1</text>
+      <!-- Slope annotation -->
+      <line x1="180" y1="80" x2="220" y2="80" stroke="#f59e0b" stroke-width="1.5" stroke-dasharray="4,3"/>
+      <line x1="220" y1="80" x2="220" y2="0" stroke="#f59e0b" stroke-width="1.5" stroke-dasharray="4,3"/>
+      <text x="225" y="42" fill="#f59e0b" font-size="11">Δy = 2</text>
+      <text x="195" y="95" fill="#f59e0b" font-size="11">Δx = 1</text>
+      <!-- Label -->
+      <text x="240" y="30" fill="#6366f1" font-size="13" font-weight="700">y = 2x + 1</text>
+    </svg>
+  </div>
+</div>
+
+<!-- Slide 4 -->
+<div class="slide" data-slide="4">
+  <span class="slide-num">SLAYD 4 / 15</span>
+  <h2>§4. Meyl əmsalının rolu (k)</h2>
+  <h3>k-nın işarəsinə görə qrafik</h3>
+  <ul class="prop-list">
+    <li><span class="hl-g">k &gt; 0</span> → xətt soldan sağa <strong>yuxarı</strong> gedir (artan funksiya)</li>
+    <li><span class="hl-r">k &lt; 0</span> → xətt soldan sağa <strong>aşağı</strong> gedir (azalan funksiya)</li>
+    <li><span class="hl-y">k = 0</span> → xətt üfüqidir: y = b (sabit funksiya)</li>
+  </ul>
+  <h3>|k|-nin qiyməti nə verir?</h3>
+  <ul>
+    <li>|k| böyük → xətt dik (böyük mail bucağı)</li>
+    <li>|k| kiçik → xətt yatıq (kiçik mail bucağı)</li>
+    <li>k = tan α, burada α — xəttin Ox oxu ilə düzgün istiqamətdə əmələ gətirdiyi bucaq</li>
+  </ul>
+  <div class="svg-wrap">
+    <svg viewBox="0 0 380 220" aria-label="Müxtəlif k dəyərləri üçün xətti funksiya qrafiklər">
+      <!-- Axes -->
+      <line x1="10" y1="110" x2="370" y2="110" class="axis"/>
+      <line x1="190" y1="10" x2="190" y2="210" class="axis"/>
+      <text x="368" y="106" fill="#94a3b8" font-size="12">x</text>
+      <text x="194" y="12" fill="#94a3b8" font-size="12">y</text>
+      <!-- k=2 (steep, increasing) -->
+      <line x1="150" y1="190" x2="230" y2="30" stroke="#22c55e" stroke-width="2.5"/>
+      <text x="232" y="28" fill="#22c55e" font-size="11" font-weight="700">k=2 (artan)</text>
+      <!-- k=0.5 (gentle, increasing) -->
+      <line x1="100" y1="160" x2="370" y2="25" stroke="#6366f1" stroke-width="2.5"/>
+      <text x="344" y="18" fill="#6366f1" font-size="11" font-weight="700">k=½</text>
+      <!-- k=-1 (decreasing) -->
+      <line x1="60" y1="30" x2="340" y2="190" stroke="#ef4444" stroke-width="2.5"/>
+      <text x="310" y="200" fill="#ef4444" font-size="11" font-weight="700">k=-1 (azalan)</text>
+      <!-- k=0 horizontal -->
+      <line x1="10" y1="75" x2="370" y2="75" stroke="#f59e0b" stroke-width="2" stroke-dasharray="6,3"/>
+      <text x="370" y="70" fill="#f59e0b" font-size="11" text-anchor="end">k=0 (y=b)</text>
+      <!-- Origin -->
+      <circle cx="190" cy="110" r="3" fill="#94a3b8"/>
+    </svg>
+  </div>
+</div>
+
+<!-- Slide 5 -->
+<div class="slide" data-slide="5">
+  <span class="slide-num">SLAYD 5 / 15</span>
+  <h2>§5. Xətti funksiyanın qrafiki — cədvəl üsulu</h2>
+  <p>y = f(x) = 2x − 4 funksiyasının qrafikini qurmaq üçün ən azı <strong>2 nöqtə</strong> kifayətdir. Ən sadəsi: <em>ox kəsmələri</em>.</p>
+  <h3>Addımlar</h3>
+  <ol>
+    <li>x = 0 qoy → y = 2·0 − 4 = −4 → nöqtə <strong>A(0; −4)</strong></li>
+    <li>y = 0 qoy → 0 = 2x − 4 → x = 2 → nöqtə <strong>B(2; 0)</strong></li>
+    <li>A və B nöqtələrini birləşdir</li>
+  </ol>
+  <div class="formula-box">
+    <div class="formula-label">Qiymət cədvəli: y = 2x − 4</div>
+    <div class="formula-main" style="font-size:.95rem">
+      x: −1 &nbsp; 0 &nbsp; 1 &nbsp; 2 &nbsp; 3<br>
+      y: −6 &nbsp;−4 &nbsp;−2 &nbsp; 0 &nbsp; 2
+    </div>
+  </div>
+  <div class="svg-wrap">
+    <svg viewBox="0 0 300 240" aria-label="y=2x-4 funksiyasının qrafiki, ox kəsmə nöqtələri">
+      <line x1="20" y1="120" x2="280" y2="120" class="axis"/>
+      <line x1="80" y1="10" x2="80" y2="230" class="axis"/>
+      <text x="278" y="116" fill="#94a3b8" font-size="12">x</text>
+      <text x="84" y="12" fill="#94a3b8" font-size="12">y</text>
+      <!-- Grid -->
+      <g stroke="#1e2d45" stroke-width="1">
+        <line x1="120" y1="10" x2="120" y2="230"/><line x1="160" y1="10" x2="160" y2="230"/>
+        <line x1="200" y1="10" x2="200" y2="230"/><line x1="240" y1="10" x2="240" y2="230"/>
+        <line x1="20" y1="80" x2="280" y2="80"/><line x1="20" y1="160" x2="280" y2="160"/>
+        <line x1="20" y1="200" x2="280" y2="200"/>
+      </g>
+      <!-- Tick labels -->
+      <text x="120" y="133" fill="#475569" font-size="10" text-anchor="middle">1</text>
+      <text x="160" y="133" fill="#475569" font-size="10" text-anchor="middle">2</text>
+      <text x="200" y="133" fill="#475569" font-size="10" text-anchor="middle">3</text>
+      <text x="72" y="83" fill="#475569" font-size="10" text-anchor="end">1</text>
+      <text x="72" y="163" fill="#475569" font-size="10" text-anchor="end">-1</text>
+      <text x="72" y="203" fill="#475569" font-size="10" text-anchor="end">-2</text>
+      <!-- y=2x-4: at x=0: y=-4 → (80, 120+160) too low. Scale: 40px/unit. y=-4 → (80, 280), y=0 at x=2 → (160, 120) -->
+      <!-- Let scale = 30px/unit: y=-4 → (80, 240); x=2 → (160,120); x=-1→(40,180)  -->
+      <line x1="40" y1="178" x2="240" y2="18" stroke="#6366f1" stroke-width="2.5"/>
+      <!-- A(0,-4) and B(2,0) -->
+      <circle cx="80" cy="240" r="6" fill="#ef4444"/>
+      <text x="88" y="238" fill="#ef4444" font-size="11" font-weight="700">A(0;−4)</text>
+      <circle cx="160" cy="120" r="6" fill="#22c55e"/>
+      <text x="168" y="116" fill="#22c55e" font-size="11" font-weight="700">B(2; 0)</text>
+      <text x="215" y="28" fill="#6366f1" font-size="11" font-weight="700">y = 2x − 4</text>
+    </svg>
+  </div>
+</div>
+
+<!-- Slide 6 -->
+<div class="slide" data-slide="6">
+  <span class="slide-num">SLAYD 6 / 15</span>
+  <h2>§6. Kvadratik funksiya — y = ax²</h2>
+  <div class="def-box">
+    <strong>Tərif</strong>
+    <p><span class="hl">Kvadratik funksiya</span> — y = ax² + bx + c (a ≠ 0) formasındakı funksiyadır.<br>
+    Qrafiki — <strong>paraboladır</strong>.</p>
+  </div>
+  <h3>Aparıcı əmsal a-nın rolu</h3>
+  <ul class="prop-list">
+    <li><span class="hl-g">a &gt; 0</span> → parabola <strong>aşağı açıqdır</strong> (∪ şəkilli), minimum nöqtəsi var</li>
+    <li><span class="hl-r">a &lt; 0</span> → parabola <strong>yuxarı açıqdır</strong> (∩ şəkilli), maksimum nöqtəsi var</li>
+    <li>|a| böyük → parabola dar; |a| kiçik → parabola geniş</li>
+  </ul>
+  <div class="svg-wrap">
+    <svg viewBox="0 0 360 220" aria-label="a>0 üçün ∪ parabola, a<0 üçün ∩ parabola">
+      <!-- Axes -->
+      <line x1="10" y1="110" x2="350" y2="110" class="axis"/>
+      <line x1="180" y1="10" x2="180" y2="210" class="axis"/>
+      <text x="348" y="106" fill="#94a3b8" font-size="12">x</text>
+      <text x="184" y="12" fill="#94a3b8" font-size="12">y</text>
+      <!-- y = x² (a>0): points: x=-3:y=9→(90,20), x=-2:y=4→(120,70), x=-1:y=1→(150,100), x=0:y=0→(180,110), x=1→(210,100), x=2→(240,70), x=3→(270,20) -->
+      <!-- Scale: center (180,110), 1 unit = 30px -->
+      <polyline points="90,20 120,70 150,100 180,110 210,100 240,70 270,20"
+        stroke="#22c55e" stroke-width="2.5" fill="none"/>
+      <text x="255" y="16" fill="#22c55e" font-size="12" font-weight="700">y = x² (a&gt;0)</text>
+      <!-- y = -0.5x²: x=-4→-8; x=-3→-4.5; x=-2→-2; x=-1→-0.5; x=0→0 -->
+      <!-- (60,230) too low; use y=-x²/2: x=0→0(180,110); x=1→-0.5(210,125); x=2→-2(240,170); x=3→-4.5(270,245 clip) -->
+      <polyline points="90,10 120,50 150,82 180,110 210,138 240,170 270,212"
+        stroke="#ef4444" stroke-width="2.5" fill="none"/>
+      <text x="240" y="220" fill="#ef4444" font-size="12" font-weight="700">y = −x² (a&lt;0)</text>
+      <!-- Vertex label -->
+      <circle cx="180" cy="110" r="5" fill="#f59e0b"/>
+      <text x="188" y="107" fill="#f59e0b" font-size="11">Təpə (0;0)</text>
+    </svg>
+  </div>
+</div>
+
+<!-- Slide 7 -->
+<div class="slide" data-slide="7">
+  <span class="slide-num">SLAYD 7 / 15</span>
+  <h2>§7. Parabolanın təpəsi və simmetriya oxu</h2>
+  <p>y = ax² + bx + c üçün:</p>
+  <div class="formula-box">
+    <div class="formula-label">Simmetriya oxu (x₀)</div>
+    <div class="formula-main">x₀ = −b / (2a)</div>
+    <div class="formula-note">Parabola bu düz xəttə görə simmetrikdir: x = x₀</div>
+  </div>
+  <div class="formula-box">
+    <div class="formula-label">Təpə nöqtəsinin koordinatları</div>
+    <div class="formula-main">T(x₀ ; y₀),  y₀ = f(x₀) = c − b² / (4a)</div>
+    <div class="formula-note">a&gt;0: T minimaldır; a&lt;0: T maksimumdur</div>
+  </div>
+  <h3>Misal: y = x² − 4x + 3</h3>
+  <p>a = 1, b = −4, c = 3</p>
+  <p>x₀ = −(−4) / (2·1) = 4/2 = <span class="hl-g">2</span></p>
+  <p>y₀ = 2² − 4·2 + 3 = 4 − 8 + 3 = <span class="hl-g">−1</span></p>
+  <p>Təpə: <strong>T(2; −1)</strong>, simmetriya oxu: <strong>x = 2</strong></p>
+  <div class="svg-wrap">
+    <svg viewBox="0 0 320 220" aria-label="y = x² − 4x + 3, təpə T(2,-1), simmetriya oxu x=2">
+      <line x1="20" y1="110" x2="300" y2="110" class="axis"/>
+      <line x1="90" y1="10" x2="90" y2="210" class="axis"/>
+      <!-- x=2 symmetry axis -->
+      <line x1="170" y1="10" x2="170" y2="210" stroke="#f59e0b" stroke-width="1.5" stroke-dasharray="5,3"/>
+      <text x="172" y="14" fill="#f59e0b" font-size="11">x = 2</text>
+      <!-- Grid -->
+      <g stroke="#1e2d45" stroke-width="1">
+        <line x1="130" y1="10" x2="130" y2="210"/><line x1="170" y1="10" x2="170" y2="210"/>
+        <line x1="210" y1="10" x2="210" y2="210"/><line x1="250" y1="10" x2="250" y2="210"/>
+        <line x1="20" y1="70" x2="300" y2="70"/><line x1="20" y1="150" x2="300" y2="150"/>
+      </g>
+      <!-- Tick labels (1unit = 40px) -->
+      <text x="130" y="122" fill="#475569" font-size="10" text-anchor="middle">1</text>
+      <text x="170" y="122" fill="#475569" font-size="10" text-anchor="middle">2</text>
+      <text x="210" y="122" fill="#475569" font-size="10" text-anchor="middle">3</text>
+      <text x="250" y="122" fill="#475569" font-size="10" text-anchor="middle">4</text>
+      <text x="82" y="74" fill="#475569" font-size="10" text-anchor="end">1</text>
+      <!-- y = x²-4x+3: x=0→3(90,110-120=-10 clip), x=1→0(130,110), x=2→-1(170,150), x=3→0(210,110), x=4→3(250,110-120=-10 clip) -->
+      <!-- Scale: center(90,110), 1unit=40px. x=0:y=3→(90,110-120) clip. Shift origin to (90,110). -->
+      <!-- points: x=1→y=0:(130,110); x=2→y=-1:(170,150); x=3→y=0:(210,110); x=0→y=3:(90,-10)clip; x=4→y=3:(250,-10)clip -->
+      <!-- Use partial: from x=0.5 to x=3.5 -->
+      <polyline points="110,94 130,110 150,138 170,150 190,138 210,110 230,94 250,66"
+        stroke="#6366f1" stroke-width="2.5" fill="none"/>
+      <!-- Root points (y=0): x=1 and x=3 -->
+      <circle cx="130" cy="110" r="5" fill="#22c55e"/>
+      <circle cx="210" cy="110" r="5" fill="#22c55e"/>
+      <text x="118" y="104" fill="#22c55e" font-size="10">(1;0)</text>
+      <text x="214" y="104" fill="#22c55e" font-size="10">(3;0)</text>
+      <!-- Vertex T(2,-1) -->
+      <circle cx="170" cy="150" r="6" fill="#ef4444"/>
+      <text x="178" y="165" fill="#ef4444" font-size="11" font-weight="700">T(2; −1)</text>
+      <text x="255" y="70" fill="#6366f1" font-size="10">y=x²−4x+3</text>
+    </svg>
+  </div>
+</div>
+
+<!-- Slide 8 -->
+<div class="slide" data-slide="8">
+  <span class="slide-num">SLAYD 8 / 15</span>
+  <h2>§8. Kvadratik funksiyanın xassələri</h2>
+  <table class="info-table">
+    <thead>
+      <tr><th>Xassə</th><th>a &gt; 0 (∪)</th><th>a &lt; 0 (∩)</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Simmetriya oxu</td><td colspan="2">x = −b/(2a)</td></tr>
+      <tr><td>Təpə nöqtəsi</td><td>Minimum (aşağı)</td><td>Maksimum (yuxarı)</td></tr>
+      <tr><td>Artan aralıq</td><td>(x₀; +∞)</td><td>(−∞; x₀)</td></tr>
+      <tr><td>Azalan aralıq</td><td>(−∞; x₀)</td><td>(x₀; +∞)</td></tr>
+      <tr><td>Dəyərlər çoxluğu</td><td>[y₀; +∞)</td><td>(−∞; y₀]</td></tr>
+      <tr><td>Tərif oblastı</td><td colspan="2">\(D(f) = \mathbb{R}\) (bütün həqiqi ədədlər)</td></tr>
+    </tbody>
+  </table>
+  <div class="formula-box">
+    <div class="formula-label">Diskriminant — köklərin tapılması</div>
+    <div class="formula-main">D = b² − 4ac</div>
+    <div class="formula-note">D &gt; 0: iki kök | D = 0: bir kök | D &lt; 0: kök yoxdur</div>
+  </div>
+</div>
+
+<!-- Slide 9 -->
+<div class="slide" data-slide="9">
+  <span class="slide-num">SLAYD 9 / 15</span>
+  <h2>§9. Hiperbol — y = k/x</h2>
+  <div class="def-box">
+    <strong>Tərif</strong>
+    <p><span class="hl">Hiperbol</span> — y = k/x (k ≠ 0) funksiyasının qrafikidir.<br>
+    Tərif oblastı: <strong>\(D(f) = \mathbb{R} \setminus \{0\}\)</strong>, yəni x ≠ 0.</p>
+  </div>
+  <h3>Asimptotlar</h3>
+  <ul class="prop-list">
+    <li>Üfüqi asimptot: <strong>y = 0</strong> (Ox oxu) — qrafikə yaxınlaşır, amma toxunmur</li>
+    <li>Şaquli asimptot: <strong>x = 0</strong> (Oy oxu) — qrafikə yaxınlaşır, amma toxunmur</li>
+  </ul>
+  <div class="formula-box">
+    <div class="formula-label">k-nın işarəsi</div>
+    <div class="formula-main">k &gt; 0: I, III rüblər &nbsp;&nbsp;&nbsp; k &lt; 0: II, IV rüblər</div>
+  </div>
+  <div class="svg-wrap">
+    <svg viewBox="0 0 360 220" aria-label="y=1/x (k>0) və y=-1/x (k<0) hiperbol qrafikləri">
+      <line x1="10" y1="110" x2="350" y2="110" class="axis"/>
+      <line x1="180" y1="10" x2="180" y2="210" class="axis"/>
+      <text x="348" y="106" fill="#94a3b8" font-size="12">x</text>
+      <text x="184" y="12" fill="#94a3b8" font-size="12">y</text>
+      <!-- Asimptots (dashed) -->
+      <line x1="180" y1="10" x2="180" y2="210" stroke="#475569" stroke-width="1.5" stroke-dasharray="4,3"/>
+      <!-- y=1/x, k>0: scale 40px/unit; x=0.5→y=2→(200,30); x=1→y=1→(220,70); x=2→y=0.5→(260,90); x=3→y=0.33→(300,97) -->
+      <!-- negative: x=-0.5→y=-2→(160,190); x=-1→y=-1→(140,150); x=-2→y=-0.5→(100,130); x=-3→y=-0.33→(60,123) -->
+      <polyline points="195,20 200,30 210,50 220,70 240,90 260,100 280,105 300,108"
+        stroke="#22c55e" stroke-width="2.5" fill="none"/>
+      <polyline points="160,200 165,190 170,170 160,150 140,130 120,120 100,115 60,112"
+        stroke="#22c55e" stroke-width="2.5" fill="none"/>
+      <text x="304" y="103" fill="#22c55e" font-size="11" font-weight="700">y=1/x (k&gt;0)</text>
+      <!-- y=-1/x, k<0: I,III become II,IV -->
+      <polyline points="195,200 200,190 210,170 220,150 240,130 260,120 280,115 300,112"
+        stroke="#ef4444" stroke-width="2.5" fill="none"/>
+      <polyline points="160,20 165,30 170,50 160,70 140,90 120,100 100,105 60,108"
+        stroke="#ef4444" stroke-width="2.5" fill="none"/>
+      <text x="296" y="125" fill="#ef4444" font-size="11" font-weight="700">y=−1/x (k&lt;0)</text>
+    </svg>
+  </div>
+</div>
+
+<!-- Slide 10 -->
+<div class="slide" data-slide="10">
+  <span class="slide-num">SLAYD 10 / 15</span>
+  <h2>§10. Hiperbolun xassələri</h2>
+  <ul class="prop-list">
+    <li>Tərif oblastı: <strong>D(f) = (−∞; 0) ∪ (0; +∞)</strong></li>
+    <li>Dəyərlər çoxluğu: <strong>E(f) = (−∞; 0) ∪ (0; +∞)</strong></li>
+    <li>Tek funksiya: <strong>f(−x) = −f(x)</strong> → mərkəz simmetriyası (O(0;0) ilə)</li>
+    <li>k &gt; 0: I, III rüblərdə; <strong>azalır</strong> hər rübdə ayrılıqda</li>
+    <li>k &lt; 0: II, IV rüblərdə; <strong>azalır</strong> hər rübdə ayrılıqda</li>
+  </ul>
+  <div class="formula-box">
+    <div class="formula-label">Ümumi formula</div>
+    <div class="formula-main">y = k / x,  &nbsp; k ≠ 0,  &nbsp; x ≠ 0</div>
+    <div class="formula-note">y · x = k = const (sabit — hiperbolun tərifi)</div>
+  </div>
+  <h3>Nümunə: y = 12/x</h3>
+  <table class="info-table">
+    <thead><tr><th>x</th><th>1</th><th>2</th><th>3</th><th>4</th><th>6</th><th>12</th></tr></thead>
+    <tbody><tr><td>y</td><td>12</td><td>6</td><td>4</td><td>3</td><td>2</td><td>1</td></tr></tbody>
+  </table>
+</div>
+
+<!-- Slide 11 -->
+<div class="slide" data-slide="11">
+  <span class="slide-num">SLAYD 11 / 15</span>
+  <h2>§11. Funksiyanın tək/cüt olması</h2>
+  <div class="def-box">
+    <strong>Cüt funksiya</strong>
+    <p>f(−x) = f(x) bütün x ∈ D(f) üçün keçərlidirsə, funksiya <span class="hl-g">cütdür</span>.<br>
+    Qrafik <strong>Oy oxuna</strong> görə simmetrikdir. Misal: y = x², y = |x|</p>
+  </div>
+  <div class="def-box">
+    <strong>Tək funksiya</strong>
+    <p>f(−x) = −f(x) bütün x ∈ D(f) üçün keçərlidirsə, funksiya <span class="hl-r">tək</span>dir.<br>
+    Qrafik <strong>O(0;0) nöqtəsinə</strong> görə simmetrikdir. Misal: y = x³, y = x, y = 1/x</p>
+  </div>
+  <h3>Yoxlama üsulu</h3>
+  <ul>
+    <li>f(−x) hesabla</li>
+    <li>f(−x) = f(x) → cüt funksiya</li>
+    <li>f(−x) = −f(x) → tək funksiya</li>
+    <li>Nə biri, nə digəri → nə tək, nə cüt</li>
+  </ul>
+  <div class="svg-wrap">
+    <svg viewBox="0 0 380 160" aria-label="Cüt funksiya Oy oxuna simmetrik, tək funksiya mərkəzə simmetrik">
+      <!-- Left: even y=x² -->
+      <line x1="10" y1="80" x2="180" y2="80" class="axis"/>
+      <line x1="95" y1="10" x2="95" y2="150" class="axis"/>
+      <polyline points="35,140 55,100 75,70 95,150 115,70 135,100 155,140"
+        stroke="#22c55e" stroke-width="2.5" fill="none"/>
+      <!-- fixed: y=x², centered at (95,150): x=-3→(95-3*20,150-9*10)=(35,60); let scale 20px/unit, y scale 10px -->
+      <polyline points="35,60 55,100 75,130 95,150 115,130 135,100 155,60"
+        stroke="#22c55e" stroke-width="2.5" fill="none"/>
+      <text x="95" y="155" text-anchor="middle" fill="#22c55e" font-size="11" font-weight="700">y = x² (cüt)</text>
+      <line x1="95" y1="10" x2="95" y2="150" stroke="#22c55e" stroke-width="1.5" stroke-dasharray="5,3" opacity=".5"/>
+      <!-- Right: odd y=x³ -->
+      <line x1="190" y1="80" x2="370" y2="80" class="axis"/>
+      <line x1="280" y1="10" x2="280" y2="150" class="axis"/>
+      <!-- y=x³: scale 20px x, 8px y. x=-2→(240,80+64)=(240,144); x=-1→(260,88); x=0→(280,80); x=1→(300,72); x=2→(320,16) -->
+      <polyline points="240,144 250,121 260,89 280,80 300,71 310,39 320,16"
+        stroke="#ef4444" stroke-width="2.5" fill="none"/>
+      <text x="280" y="155" text-anchor="middle" fill="#ef4444" font-size="11" font-weight="700">y = x³ (tək)</text>
+      <circle cx="280" cy="80" r="4" fill="#f59e0b"/>
+    </svg>
+  </div>
+</div>
+
+<!-- Slide 12 -->
+<div class="slide" data-slide="12">
+  <span class="slide-num">SLAYD 12 / 15</span>
+  <h2>§12. Funksiyanın artması/azalması (monotoniklik)</h2>
+  <div class="def-box">
+    <strong>Artan funksiya</strong>
+    <p>X ⊂ D(f) aralığında: x₁ &lt; x₂ ⇒ f(x₁) &lt; f(x₂) — hər böyük x-ə böyük y uyğundur.</p>
+  </div>
+  <div class="def-box">
+    <strong>Azalan funksiya</strong>
+    <p>X ⊂ D(f) aralığında: x₁ &lt; x₂ ⇒ f(x₁) &gt; f(x₂) — hər böyük x-ə kiçik y uyğundur.</p>
+  </div>
+  <h3>Xətti funksiyanın monotonikliyi</h3>
+  <ul class="prop-list">
+    <li>k &gt; 0 → bütün \(\mathbb{R}\)-də <span class="hl-g">artar</span></li>
+    <li>k &lt; 0 → bütün \(\mathbb{R}\)-də <span class="hl-r">azalar</span></li>
+  </ul>
+  <h3>Kvadratik funksiyanın monotonikliyi (a &gt; 0)</h3>
+  <ul class="prop-list">
+    <li>(−∞; x₀) aralığında — <span class="hl-r">azalar</span></li>
+    <li>(x₀; +∞) aralığında — <span class="hl-g">artar</span></li>
+    <li>x₀ nöqtəsində — <strong>minimum</strong> (ymin = y₀)</li>
+  </ul>
+</div>
+
+<!-- Slide 13 -->
+<div class="slide" data-slide="13">
+  <span class="slide-num">SLAYD 13 / 15</span>
+  <h2>§13. Funksiyaların sıfır nöqtələri</h2>
+  <div class="def-box">
+    <strong>Funksiyanın sıfır nöqtəsi (kökü)</strong>
+    <p>f(x) = 0 tənliyinin hər bir həlli — funksiyanın <span class="hl">sıfır nöqtəsidir</span>.<br>
+    Qrafi üzərindəki Ox oxu ilə kəsişmə nöqtəsidir.</p>
+  </div>
+  <h3>Sıfır nöqtəsi tapılır</h3>
+  <table class="info-table">
+    <thead><tr><th>Funksiya</th><th>Sıfır nöqtəsi</th><th>Tapma üsulu</th></tr></thead>
+    <tbody>
+      <tr><td>y = kx + b</td><td>x = −b/k</td><td>kx + b = 0</td></tr>
+      <tr><td>y = ax² + bx + c</td><td>x₁, x₂ (D≥0)</td><td>$x = \dfrac{-b \pm \sqrt{D}}{2a}$</td></tr>
+      <tr><td>y = k/x</td><td>Sıfır nöqtəsi yoxdur</td><td>k/x = 0 həll olunmur</td></tr>
+    </tbody>
+  </table>
+  <div class="formula-box">
+    <div class="formula-label">Viyetanın teoremi</div>
+    <div class="formula-main">x₁ + x₂ = −b/a &nbsp;&nbsp; x₁ · x₂ = c/a</div>
+    <div class="formula-note">ax² + bx + c = a(x − x₁)(x − x₂) — cəm və hasili bilsək kökləri tapa bilərik</div>
+  </div>
+</div>
+
+<!-- Slide 14 -->
+<div class="slide" data-slide="14">
+  <span class="slide-num">SLAYD 14 / 15</span>
+  <h2>§14. Funksiyanın qrafik üzrə tədqiqi</h2>
+  <p>Qrafik oxunarsa aşağıdakıları müəyyən etmək olar:</p>
+  <ul class="prop-list">
+    <li><strong>Tərif oblastı</strong> — qrafikin x oxu boyunca uzandığı aralıq</li>
+    <li><strong>Dəyərlər çoxluğu</strong> — qrafikin y oxu boyunca uzandığı aralıq</li>
+    <li><strong>Sıfır nöqtələri</strong> — qrafikin Ox oxunu kəsdiyi x dəyərləri</li>
+    <li><strong>Müsbət/mənfi aralıqlar</strong> — qrafikin Ox-dan yuxarı/aşağı olduğu yerlər</li>
+    <li><strong>Artan/azalan aralıqlar</strong> — soldan sağa yuxarı/aşağı gediş</li>
+    <li><strong>Ekstremumlar</strong> — lokal minimum və maksimum nöqtələri</li>
+  </ul>
+  <div class="formula-box">
+    <div class="formula-label">İşarə sxemi (y-in müsbətliyi)</div>
+    <div class="formula-main" style="font-size:.9rem">
+      x:  −∞ ────x₁──── x₂ ──── +∞<br>
+      y:   (+) &nbsp;(−) &nbsp; (+)
+    </div>
+    <div class="formula-note">x₁, x₂ — sıfır nöqtələri; parabola a&gt;0 üçün</div>
+  </div>
+</div>
+
+<!-- Slide 15 -->
+<div class="slide" data-slide="15">
+  <span class="slide-num">SLAYD 15 / 15</span>
+  <h2>§15. Əsas funksiya növləri — müqayisəli cədvəl</h2>
+  <table class="info-table">
+    <thead>
+      <tr><th>Funksiya</th><th>Qrafik</th><th>D(f)</th><th>Tək/cüt</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="hl">y = kx + b</span></td>
+        <td>Düz xətt</td>
+        <td>ℝ</td>
+        <td>k≠0,b=0: tək</td>
+      </tr>
+      <tr>
+        <td><span class="hl-g">y = ax²</span></td>
+        <td>Parabola (∪ ya ∩)</td>
+        <td>ℝ</td>
+        <td>Cüt</td>
+      </tr>
+      <tr>
+        <td><span class="hl-g">y = ax²+bx+c</span></td>
+        <td>Parabola</td>
+        <td>ℝ</td>
+        <td>b=0: cüt; b≠0: heç biri</td>
+      </tr>
+      <tr>
+        <td><span class="hl-r">y = k/x</span></td>
+        <td>Hiperbol</td>
+        <td>\(\mathbb{R}\setminus\{0\}\)</td>
+        <td>Tək</td>
+      </tr>
+      <tr>
+        <td><span class="hl-y">y = |x|</span></td>
+        <td>V-şəkilli xətt</td>
+        <td>ℝ</td>
+        <td>Cüt</td>
+      </tr>
+      <tr>
+        <td><span class="hl-y">y = √x</span></td>
+        <td>Yarım parabola</td>
+        <td>[0; +∞)</td>
+        <td>Nə tək, nə cüt</td>
+      </tr>
+    </tbody>
+  </table>
+  <div class="def-box" style="margin-top:14px">
+    <strong>Yadda saxla</strong>
+    <p>Hər funksiyanın <em>tərif oblastı</em> (D), <em>dəyərlər çoxluğu</em> (E), <em>sıfır nöqtələri</em> və <em>monotonikliyi</em> — DİM-in əsas suallarıdır.</p>
+  </div>
+</div>
+
+  <div class="slide-ctrl" style="margin-top:18px">
+    <div class="slide-ctrl-btns" style="width:100%;justify-content:space-between">
+      <button class="btn btn-ghost" onclick="prevSlide()">&#8592; Əvvəlki</button>
+      <button class="btn btn-primary" id="s-next2" onclick="nextSlide()">Növbəti &#8594;</button>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════ TEST ════════════════════════════ -->
+<section id="test" class="section">
+  <div id="qs-panel"></div>
+  <div id="qs-result">
+    <div class="score-ring" id="qs-ring"><span id="qs-pct">0%</span></div>
+    <div class="result-title" id="qs-title">Nəticə</div>
+    <div class="result-sub" id="qs-sub"></div>
+    <button class="btn btn-primary" onclick="restartQs()">Yenidən başla</button>
+  </div>
+</section>
+
+<!-- ═══════════════════════ VİKTORİNA ══════════════════════ -->
+<section id="viktorina" class="section">
+  <div id="vk-panel"></div>
+  <div id="vk-result">
+    <div class="score-ring" id="vk-ring"><span id="vk-pct">0%</span></div>
+    <div class="result-title" id="vk-title">Viktorina nəticəsi</div>
+    <div class="result-sub" id="vk-sub"></div>
+    <button class="btn btn-primary" onclick="restartVk()">Yenidən oyna</button>
+  </div>
+</section>
+
+<!-- ═══════════════════════ SCRIPT ══════════════════════════ -->
+<script>
+function showTab(id, btn) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  btn.classList.add('active');
+  const K16={delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}],throwOnError:false};
+  if (id === 'test' && !qsBuilt) { buildQs(); setTimeout(()=>renderMathInElement(document.getElementById('test'),K16),50); }
+  if (id === 'viktorina' && !vkBuilt) buildVk();
+}
+
+(function(){
+  const slides = document.querySelectorAll('.slide');
+  const fill = document.getElementById('theory-progress');
+  const total = slides.length;
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.dataset.seen = '1'; });
+    let maxSeen = 0;
+    slides.forEach((s, i) => { if (s.dataset.seen) maxSeen = i + 1; });
+    fill.style.width = (maxSeen / total * 100) + '%';
+  }, {threshold: 0.4});
+  slides.forEach(s => io.observe(s));
+})();
+
+const QS = [
+  {s:1, q:'Funksiyada hər x-ə neçə y dəyəri uyğun gəlməlidir?',
+   o:['İki','Üç','Yalnız bir','İstənilən qədər'], a:2,
+   e:'Funksiyanın tərifi: hər x-ə yalnız bir (unikal) y uyğun gəlməlidir.'},
+
+  {s:1, q:'y = f(x) funksiyasında x-in bütün icazə verilən dəyərləri çoxluğu nədir?',
+   o:['Dəyərlər çoxluğu E(f)','Tərif oblastı D(f)','Qrafik','Arqument'], a:1,
+   e:'Tərif oblastı D(f) — x-in qəbul edə biləcəyi bütün dəyərlər çoxluğudur.'},
+
+  {s:3, q:'y = 3x − 5 funksiyasının qrafiki nədir?',
+   o:['Parabola','Hiperbol','Düz xətt','Çevrə'], a:2,
+   e:'y = kx + b (k≠0) xətti funksiyanın qrafiki həmişə düz xəttdir.'},
+
+  {s:3, q:'y = kx + b funksiyasında b nəyi ifadə edir?',
+   o:['Meyl əmsalını','Ox ilə kəsmə bucağını','Oy oxunu kəsmə nöqtəsinin ordinatını','Tərif oblastını'], a:2,
+   e:'b — xəttin Oy oxunu kəsdiyi nöqtənin y koordinatıdır. x=0 qoyduqda y = b alınır.'},
+
+  {s:4, q:'y = −2x + 1 funksiyasının qrafiki hansı istiqamətə gedir?',
+   o:['Soldan sağa yuxarı','Soldan sağa aşağı','Üfüqi','Şaquli'], a:1,
+   e:'k = −2 < 0 olduğundan funksiya azalır, yəni qrafik soldan sağa aşağı gedir.'},
+
+  {s:5, q:'y = 4x − 8 funksiyasının Ox oxunu kəsdiyi nöqtə (sıfır nöqtəsi) hansıdır?',
+   o:['x = −2','x = 0','x = 2','x = 4'], a:2,
+   e:'y = 0 qoysaq: 4x − 8 = 0 → x = 2. Sıfır nöqtəsi x = 2.'},
+
+  {s:6, q:'y = ax² + bx + c funksiyasının qrafiki nədir?',
+   o:['Düz xətt','Hiperbol','Parabola','Yarım çevrə'], a:2,
+   e:'Kvadratik funksiyanın qrafiki paraboladır.'},
+
+  {s:6, q:'Kvadratik funksiyanın aparıcı əmsalı a > 0 olduqda parabola hansı şəkildədir?',
+   o:['∩ şəkilli (yuxarı açıq)','∪ şəkilli (aşağı açıq)','Düz','Əyri'], a:1,
+   e:'a > 0: parabola ∪ şəkillənir (aşağı açıqdır), minimum nöqtəsi var.'},
+
+  {s:7, q:'y = x² − 6x + 5 funksiyasının simmetriya oxu hansıdır?',
+   o:['x = 1','x = 3','x = 5','x = −3'], a:1,
+   e:'x₀ = −b/(2a) = −(−6)/(2·1) = 6/2 = 3. Simmetriya oxu: x = 3.'},
+
+  {s:7, q:'y = 2x² − 4x + 1 funksiyasının təpə nöqtəsinin x koordinatı?',
+   o:['x = −1','x = 0','x = 1','x = 2'], a:2,
+   e:'x₀ = −b/(2a) = −(−4)/(2·2) = 4/4 = 1.'},
+
+  {s:8, q:'D = b² − 4ac = 0 olduqda kvadratik funksiyanın neçə sıfır nöqtəsi var?',
+   o:['Sıfır','Bir','İki','Üç'], a:1,
+   e:'D = 0 → kəsr sıfır verir: x = −b/(2a), yəni yalnız bir (tək) kök. Parabola Ox oxuna toxunur.'},
+
+  {s:9, q:'y = 5/x funksiyasının tərif oblastı hansıdır?',
+   o:['Bütün həqiqi ədədlər','x ≠ 0','x > 0','x ≥ 0'], a:1,
+   e:'y = k/x-də məxrəc sıfır ola bilməz: x ≠ 0. \\(D(f) = \\mathbb{R} \\setminus \\{0\\}\\).'},
+
+  {s:9, q:'y = 3/x funksiyasının qrafiki hansı rüblərdədir?',
+   o:['I, II rüblər','II, IV rüblər','I, III rüblər','III, IV rüblər'], a:2,
+   e:'k = 3 > 0 olduqda hiperbol I və III rüblərdə yerləşir.'},
+
+  {s:11, q:'f(x) = x⁴ − 3x² + 1 funksiyası hansı növdür?',
+   o:['Tək funksiya','Cüt funksiya','Nə tək, nə cüt','Monoton'], a:1,
+   e:'f(−x) = (−x)⁴ − 3(−x)² + 1 = x⁴ − 3x² + 1 = f(x) → cüt funksiyadır.'},
+
+  {s:11, q:'y = x³ funksiyası üçün f(−x) = ?',
+   o:['f(x)','−f(x)','2f(x)','0'], a:1,
+   e:'f(−x) = (−x)³ = −x³ = −f(x) → tək funksiyadır.'},
+
+  {s:12, q:'y = x² funksiyası x > 0 aralığında necədir?',
+   o:['Azalır','Sabit qalır','Artar','Dönər'], a:2,
+   e:'a = 1 > 0, x₀ = 0. x > x₀ = 0 olduğundan (0; +∞) aralığında artar.'},
+
+  {s:13, q:'y = x² − 5x + 6 funksiyasının sıfır nöqtələri?',
+   o:['x = 1 və x = 6','x = 2 və x = 3','x = −2 və x = −3','x = 5 və x = 6'], a:1,
+   e:'Viyeta: x₁+x₂ = 5, x₁·x₂ = 6 → x = 2 və x = 3. Yoxlama: 4−10+6=0 ✓, 9−15+6=0 ✓.'},
+
+  {s:13, q:'y = 2x² + 3x − 2 funksiyasının kökləri hansıdır?',
+   o:['x = 1 və x = −2','x = 0.5 və x = −2','x = 2 və x = 0.5','x = −1 və x = 2'], a:1,
+   e:'D = 9 + 16 = 25. x = (−3 ± 5)/4. x₁ = 2/4 = 0.5, x₂ = −8/4 = −2.'},
+
+  {s:14, q:'Qrafikin Ox oxundan yuxarı olan hissəsi funksiyanın nə olduğunu göstərir?',
+   o:['Azalma aralığını','Müsbət dəyərlər aralığını','Sıfır nöqtəsini','Tərif oblastını'], a:1,
+   e:'y > 0 olduğu aralıq — funksiyanın müsbət olduğu yerdir. Qrafi Ox-dan yuxarıdadır.'},
+
+  {s:15, q:'y = √x funksiyasının tərif oblastı nədir?',
+   o:['ℝ (bütün həqiqi ədədlər)','x > 0','x ≥ 0','x ≠ 0'], a:2,
+   e:'Kök altı mənfi ola bilməz: x ≥ 0. D(f) = [0; +∞).'},
+];
+
+let qsBuilt = false, qsAnswered = [], qsScore = 0;
+function buildQs() {
+  qsBuilt = true;
+  qsAnswered = new Array(QS.length).fill(false);
+  qsScore = 0;
+  const panel = document.getElementById('qs-panel');
+  panel.innerHTML = QS.map((q, i) => `
+    <div class="q-card" id="qc-${i}">
+      <div class="q-num">Sual ${i+1} / ${QS.length}</div>
+      <div class="q-text">${q.q}</div>
+      <div class="opts">
+        ${q.o.map((opt, j) => `<button class="opt-btn" onclick="answerQs(${i},${j})">${String.fromCharCode(65+j)}) ${opt}</button>`).join('')}
+      </div>
+      <div class="q-expl" id="expl-${i}">${q.e}</div>
+    </div>`).join('') +
+    `<button class="btn btn-primary" style="margin-top:10px" onclick="finishQs()">Nəticəni gör ▶</button>`;
+}
+function answerQs(qi, oi) {
+  if (qsAnswered[qi]) return;
+  qsAnswered[qi] = true;
+  const card = document.getElementById('qc-' + qi);
+  card.querySelectorAll('.opt-btn').forEach((b, j) => {
+    b.disabled = true;
+    if (j === QS[qi].a) b.classList.add('correct');
+    else if (j === oi) b.classList.add('wrong');
+  });
+  if (oi === QS[qi].a) qsScore++;
+  document.getElementById('expl-' + qi).classList.add('show');
+}
+function finishQs() {
+  const pct = Math.round(qsScore / QS.length * 100);
+  const ring = document.getElementById('qs-ring');
+  ring.style.setProperty('--score', pct);
+  document.getElementById('qs-pct').textContent = pct + '%';
+  document.getElementById('qs-title').textContent =
+    pct >= 90 ? '🏆 Əla!' : pct >= 70 ? '✅ Yaxşı!' : pct >= 50 ? '📚 Orta' : '💪 Davam et';
+  document.getElementById('qs-sub').textContent = `${qsScore} / ${QS.length} düzgün (${pct}%)`;
+  document.getElementById('qs-panel').style.display = 'none';
+  document.getElementById('qs-result').classList.add('show');
+  notify(pct);
+}
+function restartQs() {
+  document.getElementById('qs-result').classList.remove('show');
+  document.getElementById('qs-panel').style.display = '';
+  qsBuilt = false; buildQs();
+}
+
+let vkBuilt = false, vkIdx = 0, vkScore = 0, vkTimer = null, vkSec = 30, vkStreak = 0, vkQs = [];
+function buildVk() {
+  vkBuilt = true;
+  vkQs = [...QS].sort(() => Math.random() - 0.5).slice(0, 10);
+  vkIdx = 0; vkScore = 0; vkStreak = 0;
+  renderVk();
+}
+function renderVk() {
+  if (vkIdx >= vkQs.length) { endVk(); return; }
+  clearInterval(vkTimer);
+  vkSec = 30;
+  const q = vkQs[vkIdx];
+  document.getElementById('vk-panel').innerHTML = `
+    <div class="vk-timer" id="vk-sec">${vkSec}</div>
+    <div class="vk-streak">Seriya: ${'🔥'.repeat(Math.min(vkStreak,5))} ${vkStreak}</div>
+    <div class="q-card">
+      <div class="q-num">Sual ${vkIdx+1} / ${vkQs.length} · Bal: ${vkScore}</div>
+      <div class="q-text">${q.q}</div>
+      <div class="opts">
+        ${q.o.map((opt, j) => `<button class="opt-btn" id="vb-${j}" onclick="answerVk(${j})">${String.fromCharCode(65+j)}) ${opt}</button>`).join('')}
+      </div>
+    </div>`;
+  renderMathInElement(document.getElementById('vk-panel'),{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}],throwOnError:false});
+  vkTimer = setInterval(() => {
+    vkSec--;
+    const el = document.getElementById('vk-sec');
+    if (el) { el.textContent = vkSec; if (vkSec <= 10) el.style.color = 'var(--error)'; }
+    if (vkSec <= 0) { clearInterval(vkTimer); vkStreak = 0; vkIdx++; renderVk(); }
+  }, 1000);
+}
+function answerVk(oi) {
+  clearInterval(vkTimer);
+  const q = vkQs[vkIdx];
+  document.querySelectorAll('[id^=vb-]').forEach((b, j) => {
+    b.disabled = true;
+    if (j === q.a) b.classList.add('correct');
+    else if (j === oi) b.classList.add('wrong');
+  });
+  if (oi === q.a) { vkScore++; vkStreak++; } else vkStreak = 0;
+  setTimeout(() => { vkIdx++; renderVk(); }, 900);
+}
+function endVk() {
+  const pct = Math.round(vkScore / vkQs.length * 100);
+  document.getElementById('vk-ring').style.setProperty('--score', pct);
+  document.getElementById('vk-pct').textContent = pct + '%';
+  document.getElementById('vk-title').textContent =
+    pct >= 90 ? '🏆 Şampion!' : pct >= 70 ? '⚡ Sürətli!' : pct >= 50 ? '📈 Yaxşı' : '💪 Davam et';
+  document.getElementById('vk-sub').textContent = `${vkScore} / ${vkQs.length} · ${pct}%`;
+  document.getElementById('vk-panel').innerHTML = '';
+  document.getElementById('vk-result').classList.add('show');
+  notify(pct);
+}
+function restartVk() {
+  document.getElementById('vk-result').classList.remove('show');
+  vkBuilt = false; buildVk();
+}
+function notify(pct) {
+  try {
+    window.parent.postMessage({ type: 'SCORE_UPDATE', topicId: 'topic-16', score: pct }, '*');
+    if (pct >= 70) window.parent.postMessage({ type: 'LESSON_COMPLETE', topicId: 'topic-16', score: pct }, '*');
+  } catch(e) {}
+}
+/* ── Slide navigation ─────────────────────────────────── */
+const _sls = Array.from(document.querySelectorAll('#theory .slide'));
+let _si = 0;
+function _upd() {
+  _sls.forEach((s,i) => s.classList.toggle('active', i === _si));
+  const c=document.getElementById('s-cur'), t=document.getElementById('s-tot');
+  if(c) c.textContent=_si+1;
+  if(t) t.textContent=_sls.length;
+  const fill=document.getElementById('theory-progress');
+  if(fill) fill.style.width=((_si+1)/_sls.length*100)+'%';
+  const nb=document.getElementById('s-next');
+  const nb2=document.getElementById('s-next2');
+  const last=_si===_sls.length-1;
+  if(nb)  nb.textContent  = last ? 'Testi Başla →' : 'Növbəti →';
+  if(nb2) nb2.textContent = last ? 'Testi Başla →' : 'Növbəti →';
+  document.getElementById('theory').scrollIntoView({behavior:'smooth',block:'start'});
+}
+function prevSlide() { if(_si>0){--_si;_upd();} }
+function nextSlide() {
+  if(_si<_sls.length-1){++_si;_upd();}
+  else { const tb=document.querySelector('.tab-btn:nth-child(2)'); if(tb) showTab('test',tb); }
+}
+_upd();
+
+</script>
+</body>
+</html>

@@ -1,0 +1,526 @@
+<!doctype html>
+<html lang="az">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Statistika — Tam Dərs</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css" />
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
+      onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}],throwOnError:false})"></script>
+    
+    <link rel="stylesheet" href="topic-shared-b.css" />
+    
+    <!-- JSXGraph -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jsxgraph@1.9.3/distrib/jsxgraph.css" crossorigin="anonymous"/>
+  <script src="https://cdn.jsdelivr.net/npm/jsxgraph@1.9.3/distrib/jsxgraphcore.js" crossorigin="anonymous"></script>
+  <!-- function-plot (includes d3 v7) -->
+  <script src="https://cdn.jsdelivr.net/npm/d3@7/dist/d3.min.js" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/function-plot@1/dist/function-plot.js" crossorigin="anonymous"></script>
+</head>
+  <body>
+    <header class="lesson-header">
+      <div class="badge"><span>〰️</span> Mövzu 23</div>
+      <h1>Statistika</h1>
+      <p>Orta · Mediana · Moda · Dispersiya · Qrafiklər · Qutu diaqramı</p>
+    </header>
+
+    <nav class="tab-nav" role="tablist">
+      <button class="tab-btn active" role="tab" onclick="showTab('theory',this)"><span class="t-icon">📖</span>Nəzəriyyə</button>
+      <button class="tab-btn" role="tab" onclick="showTab('test',this)"><span class="t-icon">📝</span>Test</button>
+      <button class="tab-btn" role="tab" onclick="showTab('viktorina',this)"><span class="t-icon">⚡</span>Viktorina</button>
+    </nav>
+
+    <!-- ══════════════════════ THEORY ══════════════════════════ -->
+    <section id="theory" class="section active">
+      <div class="progress-bar"><div class="progress-fill" id="theory-progress" style="width:0%"></div></div>
+  <div class="slide-ctrl">
+    <span class="slide-info">Slayd <strong id="s-cur">1</strong> / <strong id="s-tot">?</strong></span>
+    <div class="slide-ctrl-btns">
+      <button class="btn btn-ghost" onclick="prevSlide()">&#8592; Əvvəlki</button>
+      <button class="btn btn-primary" id="s-next" onclick="nextSlide()">Növbəti &#8594;</button>
+    </div>
+  </div>
+
+
+      <!-- Slide 1 -->
+      <div class="slide" data-slide="1">
+        <span class="slide-num">SLAYD 1 / 11</span>
+        <h2>§1. Statistik məlumatlar: populyasiya və seçmə</h2>
+        <div class="def-box">
+          <strong>Ümumi məcmu (Populyasiya)</strong>
+          <p>Tədqiq edilən bütün elementlərin çoxluğuna <span class="hl">ümumi məcmu</span> deyilir. Məs: bir şəhərin bütün şagirdləri.</p>
+        </div>
+        <div class="def-box">
+          <strong>Seçmə (Nümunə)</strong>
+          <p>Ümumi məcmudan seçilmiş müəyyən sayda elementin çoxluğuna <span class="hl">seçmə</span> deyilir. Seçmə ümumi məcmunu təmsil etməlidir.</p>
+        </div>
+        <h3>Məlumat növləri</h3>
+        <ul class="prop-list">
+          <li><strong>Kəmiyyət (say):</strong> ölçülə bilən — boy, çəki, yaş, qiymət</li>
+          <li><strong>Keyfiyyət (kateqoriya):</strong> ölçülməyən — rəng, cins, fənn seçimi</li>
+          <li><strong>Fasiləsiz:</strong> istənilən dəyər ala bilən — boy (170.5 sm)</li>
+          <li><strong>Diskret:</strong> yalnız tam dəyər — şagird sayı (25, 26...)</li>
+        </ul>
+      </div>
+
+      <!-- Slide 2 -->
+      <div class="slide" data-slide="2">
+        <span class="slide-num">SLAYD 2 / 11</span>
+        <h2>§2. Tezlik cədvəli və nisbi tezlik</h2>
+        <div class="def-box">
+          <strong>Tezlik (frekans)</strong>
+          <p>Hər bir dəyərin neçə dəfə təkrarlandığını göstərən kəmiyyətə <span class="hl">tezlik</span> deyilir.</p>
+        </div>
+        <div class="formula-box">
+          <div class="formula-label">Nisbi tezlik</div>
+          <div class="formula-main">$$f_i = \frac{n_i}{n}$$</div>
+          <div class="formula-note">nᵢ — i-ci dəyərin tezliyi; n — ümumi müşahidə sayı. Bütün nisbi tezliklərin cəmi = 1.</div>
+        </div>
+        <h3>Nümunə: Sınaq nəticələri</h3>
+        <table class="info-table">
+          <thead><tr><th>Qiymət</th><th>2</th><th>3</th><th>4</th><th>5</th><th>Cəmi</th></tr></thead>
+          <tbody>
+            <tr><td>Tezlik (nᵢ)</td><td>3</td><td>8</td><td>12</td><td>7</td><td>30</td></tr>
+            <tr><td>Nisbi tezlik (fᵢ)</td><td>0.10</td><td>0.27</td><td>0.40</td><td>0.23</td><td>1.00</td></tr>
+          </tbody>
+        </table>
+        <p>Histoqramda sütunların hündürlüyü tezliyə (və ya nisbi tezliyə) mütənasibdir.</p>
+      </div>
+
+      <!-- Slide 3 -->
+      <div class="slide" data-slide="3">
+        <span class="slide-num">SLAYD 3 / 11</span>
+        <h2>§3. Ədədi orta (Arifmetik orta)</h2>
+        <div class="formula-box">
+          <div class="formula-label">Arifmetik orta</div>
+          <div class="formula-main">$$\bar{x} = \frac{\sum_{i=1}^{n} x_i}{n} = \frac{x_1 + x_2 + \cdots + x_n}{n}$$</div>
+          <div class="formula-note">n — müşahidə sayı; xᵢ — i-ci dəyər</div>
+        </div>
+        <h3>Nümunə</h3>
+        <p>Məlumat dəsti: 4, 7, 2, 9, 3, 5, 8, 6</p>
+        <p>n = 8, Σxᵢ = 4+7+2+9+3+5+8+6 = 44</p>
+        <p><span class="hl-g">x̄ = 44/8 = 5.5</span></p>
+        <div class="def-box">
+          <strong>Xassələr</strong>
+          <p>• Orta bütün dəyərləri nəzərə alır<br/>
+          • Ekstremal dəyərlərə həssasdır (çox böyük/kiçik dəyərlər ortanı əyir)<br/>
+          • Σ(xᵢ − x̄) = 0 — sapmaların cəmi həmişə sıfırdır</p>
+        </div>
+      </div>
+
+      <!-- Slide 4 -->
+      <div class="slide" data-slide="4">
+        <span class="slide-num">SLAYD 4 / 11</span>
+        <h2>§4. Mediana</h2>
+        <div class="def-box">
+          <strong>Mediana tərifi</strong>
+          <p>Sıralanmış məlumat dəstinin ortasındakı dəyərə <span class="hl">mediana</span> deyilir. Mediana məlumatı iki bərabər hissəyə bölür.</p>
+        </div>
+        <div class="formula-box">
+          <div class="formula-label">Mediana hesablanması</div>
+          <div class="formula-main">n tək isə: Me = x₍(n+1)/2₎<br/>n cüt isə: Me = (x₍n/2₎ + x₍n/2+1₎) / 2</div>
+          <div class="formula-note">Əvvəlcə məlumat kiçikdən böyüyə sıralanmalıdır!</div>
+        </div>
+        <h3>Nümunə 1 (n tək = 7)</h3>
+        <p>Sıralanmış: 2, 4, 5, <span class="hl-g">7</span>, 8, 10, 12 → Me = x₄ = <span class="hl-g">7</span></p>
+        <h3>Nümunə 2 (n cüt = 6)</h3>
+        <p>Sıralanmış: 3, 5, <span class="hl-g">6, 8</span>, 11, 14 → Me = (6+8)/2 = <span class="hl-g">7</span></p>
+        <div class="def-box">
+          <strong>Orta ilə fərq</strong>
+          <p>Mediana ekstremal dəyərlərə daha az həssasdır. Gəlir statistikasında medianan orta gəlirdən daha real mənzərə verir.</p>
+        </div>
+      </div>
+
+      <!-- Slide 5 -->
+      <div class="slide" data-slide="5">
+        <span class="slide-num">SLAYD 5 / 11</span>
+        <h2>§5. Moda</h2>
+        <div class="def-box">
+          <strong>Moda tərifi</strong>
+          <p>Məlumat dəstində ən çox təkrarlanan dəyərə <span class="hl">moda (Mo)</span> deyilir.</p>
+        </div>
+        <h3>Nümunə 1: Bir moda (unimodal)</h3>
+        <p>Dəst: 2, 4, 4, 5, 6, 4, 7, 8 → <span class="hl-g">Mo = 4</span> (3 dəfə)</p>
+        <h3>Nümunə 2: İki moda (bimodal)</h3>
+        <p>Dəst: 1, 2, 2, 3, 4, 4, 5 → <span class="hl-g">Mo = 2 və 4</span> (hər biri 2 dəfə)</p>
+        <h3>Nümunə 3: Moda yoxdur</h3>
+        <p>Dəst: 1, 2, 3, 4, 5 → hər dəyər 1 dəfə — <span class="hl-r">moda yoxdur</span></p>
+        <table class="info-table">
+          <thead><tr><th>Göstərici</th><th>Üstünlük</th><th>Çatışmazlıq</th></tr></thead>
+          <tbody>
+            <tr><td>Orta (x̄)</td><td>Hamı ilə işlər</td><td>Ekstremalara həssas</td></tr>
+            <tr><td>Mediana</td><td>Ekstremalara davamlı</td><td>Tam məlumat istifadə etmir</td></tr>
+            <tr><td>Moda</td><td>Ən çox rast gəlinən</td><td>Bəzən mövcud olmur</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Slide 6 -->
+      <div class="slide" data-slide="6">
+        <span class="slide-num">SLAYD 6 / 11</span>
+        <h2>§6. Aralıq (Range)</h2>
+        <div class="formula-box">
+          <div class="formula-label">Aralıq</div>
+          <div class="formula-main">$$R = x_{\max} - x_{\min}$$</div>
+          <div class="formula-note">Ən böyük ilə ən kiçik dəyər arasındakı fərq — yayılmanın ən sadə ölçüsü</div>
+        </div>
+        <h3>Nümunə</h3>
+        <p>Dəst: 12, 7, 3, 19, 5, 14, 8</p>
+        <p>x_max = 19, x_min = 3 → <span class="hl-g">R = 19 − 3 = 16</span></p>
+        <div class="def-box">
+          <strong>Limitlər</strong>
+          <p>Aralıq hesablamaq asandır, amma yalnız iki ekstremal dəyərə əsaslanır — digər dəyərləri nəzərə almır. Buna görə dispersiya və standart sapma daha informativdir.</p>
+        </div>
+      </div>
+
+      <!-- Slide 7 -->
+      <div class="slide" data-slide="7">
+        <span class="slide-num">SLAYD 7 / 11</span>
+        <h2>§7. Dispersiya və Standart Sapma</h2>
+        <div class="formula-box">
+          <div class="formula-label">Dispersiya (variance)</div>
+          <div class="formula-main">$$\sigma^2 = \frac{\sum_{i=1}^{n}(x_i - \bar{x})^2}{n}$$</div>
+          <div class="formula-note">Hər dəyərin ortadan kvadratik sapmasının ortası</div>
+        </div>
+        <div class="formula-box">
+          <div class="formula-label">Standart sapma</div>
+          <div class="formula-main">$$\sigma = \sqrt{\sigma^2} = \sqrt{\frac{\sum(x_i - \bar{x})^2}{n}}$$</div>
+          <div class="formula-note">Orijinal ölçü vahidindədir — dispersiyadan daha rahat şərh edilir</div>
+        </div>
+        <h3>Hesablama nümunəsi</h3>
+        <p>Dəst: 2, 4, 4, 4, 5, 5, 7, 9. x̄ = 40/8 = 5.</p>
+        <p>Σ(xᵢ−x̄)² = (2−5)²+(4−5)²+(4−5)²+(4−5)²+(5−5)²+(5−5)²+(7−5)²+(9−5)²</p>
+        <p>= 9+1+1+1+0+0+4+16 = 32</p>
+        <p>σ² = 32/8 = 4 → <span class="hl-g">σ = √4 = 2</span></p>
+      </div>
+
+      <!-- Slide 8 -->
+      <div class="slide" data-slide="8">
+        <span class="slide-num">SLAYD 8 / 11</span>
+        <h2>§8. Çəkili orta</h2>
+        <div class="formula-box">
+          <div class="formula-label">Çəkili (ağırlıqlı) orta</div>
+          <div class="formula-main">$$\bar{x} = \frac{\sum_{i=1}^{k} x_i \cdot n_i}{\sum_{i=1}^{k} n_i} = \frac{\sum x_i \cdot n_i}{n}$$</div>
+          <div class="formula-note">nᵢ — i-ci dəyərin tezliyi (çəkisi)</div>
+        </div>
+        <h3>Nümunə: Qiymətlər cədvəli</h3>
+        <table class="info-table">
+          <thead><tr><th>Qiymət (xᵢ)</th><th>Tezlik (nᵢ)</th><th>xᵢ · nᵢ</th></tr></thead>
+          <tbody>
+            <tr><td>2</td><td>3</td><td>6</td></tr>
+            <tr><td>3</td><td>8</td><td>24</td></tr>
+            <tr><td>4</td><td>12</td><td>48</td></tr>
+            <tr><td>5</td><td>7</td><td>35</td></tr>
+            <tr><td><strong>Cəmi</strong></td><td><strong>30</strong></td><td><strong>113</strong></td></tr>
+          </tbody>
+        </table>
+        <p><span class="hl-g">x̄ = 113/30 ≈ 3.77</span></p>
+      </div>
+
+      <!-- Slide 9 -->
+      <div class="slide" data-slide="9">
+        <span class="slide-num">SLAYD 9 / 11</span>
+        <h2>§9. Qutu diaqramı (Box Plot): Kvartillər</h2>
+        <div class="def-box">
+          <strong>Kvartillər</strong>
+          <p><span class="hl">Q1</span> (1-ci kvartil) — alt 25% həddi · <span class="hl">Q2</span> (mediana) — orta 50% həddi · <span class="hl">Q3</span> (3-cü kvartil) — üst 75% həddi</p>
+        </div>
+        <div class="formula-box">
+          <div class="formula-label">Kvartillərarası aralıq (IQR)</div>
+          <div class="formula-main">$$IQR = Q_3 - Q_1$$</div>
+          <div class="formula-note">IQR ortadakı 50% məlumatı əhatə edir. Anomal dəyər (outlier): x &lt; Q1−1.5·IQR və ya x &gt; Q3+1.5·IQR</div>
+        </div>
+        <div class="svg-wrap">
+          <svg viewBox="0 0 380 130" aria-label="Qutu diaqramı: minimum, Q1, mediana (Q2), Q3, maksimum">
+            <!-- Axis line -->
+            <line x1="20" y1="80" x2="360" y2="80" stroke="#475569" stroke-width="1.5"/>
+            <!-- Min whisker: 30 -->
+            <line x1="60" y1="68" x2="60" y2="92" stroke="#f97316" stroke-width="2"/>
+            <line x1="60" y1="80" x2="120" y2="80" stroke="#f97316" stroke-width="2"/>
+            <!-- Q1 box start: 120 -->
+            <!-- Q3 box end: 260 -->
+            <rect x="120" y="55" width="140" height="50" fill="rgba(99,102,241,0.2)" stroke="#6366f1" stroke-width="2"/>
+            <!-- Mediana line: 190 -->
+            <line x1="190" y1="55" x2="190" y2="105" stroke="#f97316" stroke-width="3"/>
+            <!-- Max whisker: 320 -->
+            <line x1="260" y1="80" x2="320" y2="80" stroke="#f97316" stroke-width="2"/>
+            <line x1="320" y1="68" x2="320" y2="92" stroke="#f97316" stroke-width="2"/>
+            <!-- Labels -->
+            <text x="60" y="50" text-anchor="middle" fill="#94a3b8" font-size="11">Min</text>
+            <text x="120" y="50" text-anchor="middle" fill="#6366f1" font-size="11">Q1</text>
+            <text x="190" y="50" text-anchor="middle" fill="#f97316" font-size="12" font-weight="700">Q2 (Me)</text>
+            <text x="260" y="50" text-anchor="middle" fill="#6366f1" font-size="11">Q3</text>
+            <text x="320" y="50" text-anchor="middle" fill="#94a3b8" font-size="11">Max</text>
+            <!-- IQR brace -->
+            <text x="190" y="120" text-anchor="middle" fill="#22c55e" font-size="11" font-weight="700">IQR = Q3 − Q1</text>
+          </svg>
+        </div>
+      </div>
+
+      <!-- Slide 10 -->
+      <div class="slide" data-slide="10">
+        <span class="slide-num">SLAYD 10 / 11</span>
+        <h2>§10. Qrafik oxunuşu: Sütunlu, dairəvi, histoqram</h2>
+        <h3>Sütunlu diaqram (Bar chart)</h3>
+        <p>Kateqoriyalar arası müqayisə üçün. Hər kateqoriya üçün bir sütun, hündürlük tezliyi göstərir.</p>
+        <div class="svg-wrap">
+          <svg viewBox="0 0 340 180" aria-label="Sütunlu diaqram: 4 fənn üzrə şagird sayı">
+            <!-- Axes -->
+            <line x1="40" y1="20" x2="40" y2="150" stroke="#475569" stroke-width="1.5"/>
+            <line x1="40" y1="150" x2="320" y2="150" stroke="#475569" stroke-width="1.5"/>
+            <!-- Bars -->
+            <rect x="55" y="60" width="45" height="90" fill="rgba(249,115,22,0.7)" rx="3"/>
+            <rect x="120" y="40" width="45" height="110" fill="rgba(99,102,241,0.7)" rx="3"/>
+            <rect x="185" y="80" width="45" height="70" fill="rgba(34,197,94,0.7)" rx="3"/>
+            <rect x="250" y="50" width="45" height="100" fill="rgba(245,158,11,0.7)" rx="3"/>
+            <!-- Labels -->
+            <text x="77" y="55" text-anchor="middle" fill="#f97316" font-size="10" font-weight="700">18</text>
+            <text x="142" y="35" text-anchor="middle" fill="#6366f1" font-size="10" font-weight="700">22</text>
+            <text x="207" y="75" text-anchor="middle" fill="#22c55e" font-size="10" font-weight="700">14</text>
+            <text x="272" y="45" text-anchor="middle" fill="#f59e0b" font-size="10" font-weight="700">20</text>
+            <text x="77" y="165" text-anchor="middle" fill="#94a3b8" font-size="10">Riyaziyyat</text>
+            <text x="142" y="165" text-anchor="middle" fill="#94a3b8" font-size="10">Fizika</text>
+            <text x="207" y="165" text-anchor="middle" fill="#94a3b8" font-size="10">Kimya</text>
+            <text x="272" y="165" text-anchor="middle" fill="#94a3b8" font-size="10">Tarix</text>
+            <!-- Y-axis ticks -->
+            <text x="35" y="155" text-anchor="end" fill="#94a3b8" font-size="9">0</text>
+            <text x="35" y="100" text-anchor="end" fill="#94a3b8" font-size="9">10</text>
+            <text x="35" y="45" text-anchor="end" fill="#94a3b8" font-size="9">20</text>
+          </svg>
+        </div>
+        <h3>Dairəvi diaqram (Pie chart)</h3>
+        <p>Bütünün hissələrə bölünməsi üçün istifadə olunur. Hər sektor nisbi tezliyə mütənasibdir: sektor bucağı = 360° × fᵢ.</p>
+        <h3>Histoqram</h3>
+        <p>Fasiləsiz məlumatlar üçün (intervallar üzrə). Sütunlar arasında boşluq yoxdur. Sahəsi nisbi tezliyə mütənasibdir.</p>
+      </div>
+
+      <!-- Slide 11 -->
+      <div class="slide" data-slide="11">
+        <span class="slide-num">SLAYD 11 / 11</span>
+        <h2>§11. Tezlik histoqramı SVG nümunəsi və xülasə</h2>
+        <div class="svg-wrap">
+          <svg viewBox="0 0 360 200" aria-label="Tezlik histoqramı: xüsusi aralıqlar üzrə müşahidə paylanması">
+            <!-- Axes -->
+            <line x1="40" y1="20" x2="40" y2="160" stroke="#475569" stroke-width="1.5"/>
+            <line x1="40" y1="160" x2="340" y2="160" stroke="#475569" stroke-width="1.5"/>
+            <!-- Bars (no gaps — histogram) -->
+            <rect x="40" y="120" width="60" height="40" fill="rgba(249,115,22,0.6)" stroke="#f97316" stroke-width="1"/>
+            <rect x="100" y="80" width="60" height="80" fill="rgba(249,115,22,0.75)" stroke="#f97316" stroke-width="1"/>
+            <rect x="160" y="40" width="60" height="120" fill="rgba(249,115,22,0.9)" stroke="#f97316" stroke-width="1"/>
+            <rect x="220" y="70" width="60" height="90" fill="rgba(249,115,22,0.75)" stroke="#f97316" stroke-width="1"/>
+            <rect x="280" y="110" width="60" height="50" fill="rgba(249,115,22,0.6)" stroke="#f97316" stroke-width="1"/>
+            <!-- X labels -->
+            <text x="70" y="175" text-anchor="middle" fill="#94a3b8" font-size="10">[10-20)</text>
+            <text x="130" y="175" text-anchor="middle" fill="#94a3b8" font-size="10">[20-30)</text>
+            <text x="190" y="175" text-anchor="middle" fill="#94a3b8" font-size="10">[30-40)</text>
+            <text x="250" y="175" text-anchor="middle" fill="#94a3b8" font-size="10">[40-50)</text>
+            <text x="310" y="175" text-anchor="middle" fill="#94a3b8" font-size="10">[50-60)</text>
+            <!-- Tezlik labels -->
+            <text x="70" y="115" text-anchor="middle" fill="#fff" font-size="10" font-weight="700">4</text>
+            <text x="130" y="75" text-anchor="middle" fill="#fff" font-size="10" font-weight="700">8</text>
+            <text x="190" y="35" text-anchor="middle" fill="#fff" font-size="10" font-weight="700">12</text>
+            <text x="250" y="65" text-anchor="middle" fill="#fff" font-size="10" font-weight="700">9</text>
+            <text x="310" y="105" text-anchor="middle" fill="#fff" font-size="10" font-weight="700">5</text>
+            <!-- Y axis label -->
+            <text x="35" y="162" text-anchor="end" fill="#94a3b8" font-size="9">0</text>
+            <text x="35" y="120" text-anchor="end" fill="#94a3b8" font-size="9">4</text>
+            <text x="35" y="80" text-anchor="end" fill="#94a3b8" font-size="9">8</text>
+            <text x="35" y="40" text-anchor="end" fill="#94a3b8" font-size="9">12</text>
+            <text x="190" y="195" text-anchor="middle" fill="#f97316" font-size="11" font-weight="700">Tezlik histoqramı</text>
+          </svg>
+        </div>
+        <h3>Xülasə cədvəli</h3>
+        <table class="info-table">
+          <thead><tr><th>Göstərici</th><th>Düstur</th><th>Açıqlama</th></tr></thead>
+          <tbody>
+            <tr><td>Orta x̄</td><td>Σxᵢ/n</td><td>Bütün dəyərlərin cəmi/sayı</td></tr>
+            <tr><td>Mediana</td><td>Sıralanmış orta</td><td>50% hüdud</td></tr>
+            <tr><td>Moda</td><td>Ən tez rast gələn</td><td>Ən yüksək tezlik</td></tr>
+            <tr><td>Aralıq R</td><td>x_max − x_min</td><td>Yayılma ölçüsü</td></tr>
+            <tr><td>Dispersiya σ²</td><td>Σ(xᵢ−x̄)²/n</td><td>Kvadratik sapma</td></tr>
+            <tr><td>St. sapma σ</td><td>√σ²</td><td>Orijinal vahiddə yayılma</td></tr>
+            <tr><td>IQR</td><td>Q3 − Q1</td><td>Ortadakı 50%</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════ TEST ════════════════════════════ -->
+    <section id="test" class="section">
+      <div id="qs-panel"></div>
+      <div id="qs-result">
+        <div class="score-ring" id="qs-ring"><span id="qs-pct">0%</span></div>
+        <div class="result-title" id="qs-title">Nəticə</div>
+        <div class="result-sub" id="qs-sub"></div>
+        <button class="btn btn-primary" onclick="restartQs()">Yenidən başla</button>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════ VİKTORİNA ══════════════════════ -->
+    <section id="viktorina" class="section">
+      <div class="vk-timer" id="vk-time">30</div>
+      <div class="vk-streak">Sıra: <span id="vk-streak">0</span></div>
+      <div id="vk-panel"></div>
+      <div id="vk-result">
+        <div class="score-ring" id="vk-ring"><span id="vk-pct">0%</span></div>
+        <div class="result-title" id="vk-title">Viktorina nəticəsi</div>
+        <div class="result-sub" id="vk-sub"></div>
+        <button class="btn btn-primary" onclick="restartVk()">Yenidən oyna</button>
+      </div>
+    </section>
+
+    <script>
+      function showTab(id, btn) {
+        document.querySelectorAll(".section").forEach(s => s.classList.remove("active"));
+        document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
+        document.getElementById(id).classList.add("active");
+        btn.classList.add("active");
+        const KD = {delimiters:[{left:"$$",right:"$$",display:true},{left:"$",right:"$",display:false}],throwOnError:false};
+        if (id === "test" && !qsBuilt) { buildQs(); setTimeout(() => renderMathInElement(document.getElementById("test"), KD), 50); }
+        if (id === "viktorina" && !vkBuilt) buildVk();
+      }
+
+      (function() {
+        const slides = document.querySelectorAll(".slide");
+        const fill = document.getElementById("theory-progress");
+        const total = slides.length;
+        const io = new IntersectionObserver(entries => {
+          entries.forEach(e => { if (e.isIntersecting) e.target.dataset.seen = "1"; });
+          let maxSeen = 0;
+          slides.forEach((s, i) => { if (s.dataset.seen) maxSeen = i + 1; });
+          fill.style.width = (maxSeen / total) * 100 + "%";
+        }, {threshold: 0.4});
+        slides.forEach(s => io.observe(s));
+      })();
+
+      const QS = [
+        {q:"Məlumat dəsti: 3, 7, 5, 9, 1. Arifmetik orta nədir?",o:["4","5","6","7"],a:1,e:"Σ = 3+7+5+9+1 = 25, n=5. x̄ = 25/5 = 5."},
+        {q:"Sıralanmış dəst: 2, 4, 6, 8, 10. Mediana nədir?",o:["4","5","6","7"],a:2,e:"n=5 (tək), orta element: x₃ = 6."},
+        {q:"Dəst: 3, 5, 5, 7, 7, 7, 9. Moda nədir?",o:["3","5","7","9"],a:2,e:"7 üç dəfə təkrarlanır — ən çox təkrarlanan dəyər."},
+        {q:"Dəst: 4, 8, 2, 15, 6. Aralıq (Range) nədir?",o:["11","13","9","15"],a:1,e:"R = x_max − x_min = 15 − 2 = 13."},
+        {q:"Dəst: 2, 4, 4, 4, 5, 5, 7, 9 üçün x̄ = 5. Dispersiya nədir?",o:["2","4","8","16"],a:1,e:"Σ(xᵢ−5)² = 9+1+1+1+0+0+4+16 = 32. σ² = 32/8 = 4."},
+        {q:"σ² = 9 olduqda standart sapma σ = ?",o:["81","9","3","4.5"],a:2,e:"σ = √σ² = √9 = 3."},
+        {q:"Sıralanmış dəst: 1, 3, 5, 7, 9, 11. Mediana nədir?",o:["5","6","7","5.5"],a:1,e:"n=6 (cüt). Me = (x₃+x₄)/2 = (5+7)/2 = 6."},
+        {q:"Tezlik cədvəlindəki bütün nisbi tezliklərin cəmi nəçədir?",o:["n","0","1","100"],a:2,e:"Bütün nisbi tezliklərin cəmi həmişə 1-ə (100%-ə) bərabərdir."},
+        {q:"Çəkili orta hesablanarkən tezlik nəyi göstərir?",o:["Dəyərin kvadratını","Hər dəyərin neçə dəfə baş verdiyini","Maksimum dəyəri","Mediana mövqeyini"],a:1,e:"Çəkili ortada hər dəyər öz tezliyi (nᵢ) ilə vurularaq nəzərə alınır."},
+        {q:"IQR = Q3 − Q1 nəyi ölçür?",o:["Tam aralığı","Ortadakı 50% məlumatın yayılmasını","Standart sapmanı","Medianadan sapmanı"],a:1,e:"IQR ortadakı 50%-i əhatə edir: Q1-dən Q3-ə qədər olan interval."},
+        {q:"Qiymətlər: 2(×3), 3(×8), 4(×12), 5(×7). Çəkili orta nədir?",o:["3.5","3.77","4.0","3.25"],a:1,e:"Σ(xᵢ·nᵢ) = 6+24+48+35=113. n=30. x̄ = 113/30 ≈ 3.77."},
+        {q:"Histoqramda sütunlar arasında boşluq var mı?",o:["Həmişə var","Yoxdur — fasiləsiz məlumatı göstərir","Bəzən var","Yalnız cüt sütunlarda var"],a:1,e:"Histoqramda sütunlar bitişikdir — fasiləsiz məlumatın intervallar üzrə paylanmasını göstərir."},
+        {q:"Dəst: 10, 20, 30, 40, 50. Standart sapma nədir?",o:["10","14.14","20","15.81"],a:1,e:"x̄=30. Σ(xᵢ−30)²=400+100+0+100+400=1000. σ²=200. σ=√200≈14.14."},
+        {q:"Anomal dəyər (outlier) hansı şərtlə müəyyən edilir?",o:["x > x̄ + σ","x < Q1−1.5·IQR və ya x > Q3+1.5·IQR","x > x̄ + R","x < Mediana"],a:1,e:"Tukey qaydası: x < Q1−1.5·IQR veya x > Q3+1.5·IQR olduqda anomal dəyərdir."},
+        {q:"Dəst: 1, 2, 3, 100. Orta və mediana hansı birini daha yaxşı təmsil edir?",o:["Orta","Mediana","Moda","İkisi eynidir"],a:1,e:"100 ekstremal dəyərdir, ortanı kəskin artırır. Mediana (orta dəyər 2.5) daha real mənzərə verir."},
+        {q:"Dairəvi diaqramda bir sektor məlumatın 25%-ni göstərirsə, onun bucağı neçədir?",o:["25°","45°","90°","180°"],a:2,e:"Sektor bucağı = 360° × nisbi tezlik = 360° × 0.25 = 90°."},
+        {q:"Sıralanmış dəst: 5, 8, 12, 15, 20, 25, 30. Q1 və Q3 hansılardır?",o:["Q1=8, Q3=25","Q1=8, Q3=20","Q1=5, Q3=30","Q1=12, Q3=20"],a:0,e:"n=7. Q1 = x₂ = 8 (alt 25%), Q3 = x₆ = 25 (üst 25%)."},
+        {q:"Bir sinifin orta balı 78, digərinin 82-dir. 20 şagirdlik sinif üçün birləşmiş orta nədir?",o:["80","78","81","79"],a:0,e:"Hər sinifdə 20 şagird: Σ = 20×78 + 20×82 = 1560+1640 = 3200. n=40. x̄ = 3200/40 = 80."},
+        {q:"Müşahidə sayı artdıqca nə baş verir?",o:["Dispersiya artır","Seçmə ortası ümumi məcmu ortasına yaxınlaşır","Mediana yox olur","Moda çoxalır"],a:1,e:"Böyük ədədlər qanunu: n artdıqca seçmə xarakteristikası populyasiya xarakteristikasına yaxınlaşır."},
+        {q:"Standart sapmanın sıfır olması nə deməkdir?",o:["Məlumat yoxdur","Bütün dəyərlər ortaya bərabərdir","Mediana sıfırdır","Aralıq sıfırdır"],a:1,e:"σ = 0 bütün dəyərlərin eyni olduğunu göstərir — heç bir yayılma yoxdur."},
+      ];
+
+      let qsBuilt = false, qsAnswered = [], qsScore = 0;
+      function buildQs() {
+        qsBuilt = true;
+        qsAnswered = new Array(QS.length).fill(false);
+        qsScore = 0;
+        const panel = document.getElementById("qs-panel");
+        panel.innerHTML = QS.map((q, i) => `
+          <div class="q-card" id="qc-${i}">
+            <div class="q-num">Sual ${i+1} / ${QS.length}</div>
+            <div class="q-text">${q.q}</div>
+            <div class="opts">${q.o.map((opt, j) => `<button class="opt-btn" onclick="answerQs(${i},${j})">${String.fromCharCode(65+j)}) ${opt}</button>`).join("")}</div>
+            <div class="q-expl" id="expl-${i}">${q.e}</div>
+          </div>`).join("") +
+          `<button class="btn btn-primary" style="margin-top:10px" onclick="finishQs()">Nəticəni gör ▶</button>`;
+      }
+      function answerQs(qi, oi) {
+        if (qsAnswered[qi]) return;
+        qsAnswered[qi] = true;
+        document.getElementById("qc-"+qi).querySelectorAll(".opt-btn").forEach((b, j) => {
+          b.disabled = true;
+          if (j === QS[qi].a) b.classList.add("correct");
+          else if (j === oi) b.classList.add("wrong");
+        });
+        if (oi === QS[qi].a) qsScore++;
+        document.getElementById("expl-"+qi).classList.add("show");
+      }
+      function finishQs() {
+        const pct = Math.round((qsScore / QS.length) * 100);
+        document.getElementById("qs-ring").style.setProperty("--score", pct);
+        document.getElementById("qs-pct").textContent = pct + "%";
+        document.getElementById("qs-title").textContent = pct >= 90 ? "🏆 Əla!" : pct >= 70 ? "✅ Yaxşı!" : pct >= 50 ? "📚 Orta" : "💪 Davam et";
+        document.getElementById("qs-sub").textContent = `${qsScore} / ${QS.length} düzgün (${pct}%)`;
+        document.getElementById("qs-panel").style.display = "none";
+        document.getElementById("qs-result").classList.add("show");
+        notify(pct);
+      }
+      function restartQs() {
+        document.getElementById("qs-result").classList.remove("show");
+        document.getElementById("qs-panel").style.display = "";
+        qsBuilt = false;
+        buildQs();
+      }
+
+      let vkBuilt = false, vkIdx = 0, vkScore = 0, vkTimer = null, vkSec = 30, vkStreak = 0, vkQs = [];
+      function buildVk() {
+        vkBuilt = true;
+        vkQs = [...QS].sort(() => Math.random() - 0.5).slice(0, 10);
+        vkIdx = 0; vkScore = 0; vkStreak = 0;
+        renderVk();
+      }
+      function renderVk() {
+        if (vkIdx >= vkQs.length) { endVk(); return; }
+        clearInterval(vkTimer);
+        vkSec = 30;
+        const q = vkQs[vkIdx];
+        document.getElementById("vk-panel").innerHTML = `
+          <div class="vk-timer" id="vk-sec">${vkSec}</div>
+          <div class="vk-streak">Seriya: ${"🔥".repeat(Math.min(vkStreak,5))} ${vkStreak}</div>
+          <div class="q-card">
+            <div class="q-num">Sual ${vkIdx+1}/${vkQs.length} · Bal: ${vkScore}</div>
+            <div class="q-text">${q.q}</div>
+            <div class="opts">${q.o.map((opt, j) => `<button class="opt-btn" id="vb-${j}" onclick="answerVk(${j})">${String.fromCharCode(65+j)}) ${opt}</button>`).join("")}</div>
+          </div>`;
+        const KD = {delimiters:[{left:"$$",right:"$$",display:true},{left:"$",right:"$",display:false}],throwOnError:false};
+        renderMathInElement(document.getElementById("vk-panel"), KD);
+        vkTimer = setInterval(() => {
+          vkSec--;
+          const el = document.getElementById("vk-sec");
+          if (el) { el.textContent = vkSec; if (vkSec <= 10) el.style.color = "var(--error)"; }
+          if (vkSec <= 0) { clearInterval(vkTimer); vkStreak = 0; vkIdx++; renderVk(); }
+        }, 1000);
+      }
+      function answerVk(oi) {
+        clearInterval(vkTimer);
+        const q = vkQs[vkIdx];
+        document.querySelectorAll("[id^=vb-]").forEach((b, j) => {
+          b.disabled = true;
+          if (j === q.a) b.classList.add("correct");
+          else if (j === oi) b.classList.add("wrong");
+        });
+        if (oi === q.a) { vkScore++; vkStreak++; } else vkStreak = 0;
+        setTimeout(() => { vkIdx++; renderVk(); }, 900);
+      }
+      function endVk() {
+        const pct = Math.round((vkScore / vkQs.length) * 100);
+        document.getElementById("vk-ring").style.setProperty("--score", pct);
+        document.getElementById("vk-pct").textContent = pct + "%";
+        document.getElementById("vk-title").textContent = pct >= 90 ? "🏆 Şampion!" : pct >= 70 ? "⚡ Sürətli!" : pct >= 50 ? "📈 Yaxşı" : "💪 Davam et";
+        document.getElementById("vk-sub").textContent = `${vkScore}/${vkQs.length} · ${pct}%`;
+        document.getElementById("vk-panel").innerHTML = "";
+        document.getElementById("vk-result").classList.add("show");
+        notify(pct);
+      }
+      function restartVk() {
+        document.getElementById("vk-result").classList.remove("show");
+        vkBuilt = false;
+        buildVk();
+      }
+      function notify(pct) {
+        try {
+          window.parent.postMessage({type:"SCORE_UPDATE",topicId:"topic-23",score:pct},"*");
+          if (pct >= 70) window.parent.postMessage({type:"LESSON_COMPLETE",topicId:"topic-23",score:pct},"*");
+        } catch(e) {}
+      }
+    </script>
+  </body>
+</html>
