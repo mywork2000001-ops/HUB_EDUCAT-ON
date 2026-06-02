@@ -1,0 +1,448 @@
+<!doctype html>
+<html lang="az">
+<head>
+  <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <meta name="theme-color" content="#0f172a"/><meta name="color-scheme" content="dark light"/>
+  <meta name="apple-mobile-web-app-capable" content="yes"/>
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+  <meta name="mobile-web-app-capable" content="yes"/>
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin/>
+  <title>Mövzu 10 — Tənliklər sistemi</title>
+  <style>
+    :root{--bg-dark:#0f0f1a;--bg-card:rgba(255,255,255,0.05);--bg-glass:rgba(255,255,255,0.08);--border-glass:rgba(255,255,255,0.15);--text-primary:#e8e8f0;--text-secondary:#a0a0b8;--accent:#20c997;--accent-dim:rgba(32,201,151,0.18);--accent-warm:#38d9a9;--accent-blue:#4dabf7;--accent-blue-dim:rgba(77,171,247,0.18);--success:#51cf66;--error:#ff6b6b;--warning:#fcc419;}
+    *{margin:0;padding:0;box-sizing:border-box;}
+    body{font-family:"Segoe UI",system-ui,sans-serif;background:var(--bg-dark);color:var(--text-primary);min-height:100vh;overflow-x:hidden;line-height:1.65;}
+    .MathJax{font-size:1.05em!important;}mjx-container[display="true"]{overflow-x:auto;padding:6px 0;}
+    .bg{position:fixed;top:0;left:0;width:100%;height:100%;z-index:-1;background:radial-gradient(ellipse at 30% 20%,rgba(32,201,151,0.07) 0%,transparent 55%),radial-gradient(ellipse at 70% 80%,rgba(77,171,247,0.07) 0%,transparent 55%);}
+    .bg::before{content:"";position:absolute;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 44px,rgba(255,255,255,0.018) 44px,rgba(255,255,255,0.018) 45px);animation:bgScroll 25s linear infinite;}
+    @keyframes bgScroll{to{transform:translateY(45px);}}
+    nav{position:fixed;top:0;left:0;right:0;background:rgba(15,15,26,0.9);backdrop-filter:blur(24px);border-bottom:1px solid var(--border-glass);z-index:1000;padding:0 20px;}
+    .nav-inner{max-width:1100px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;height:62px;}
+    .logo{font-size:1.05rem;font-weight:800;background:linear-gradient(135deg,var(--accent),var(--accent-blue));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;cursor:pointer;user-select:none;}
+    .nav-links{display:flex;gap:2px;list-style:none;}
+    .nav-links a{color:var(--text-secondary);text-decoration:none;padding:8px 14px;border-radius:9px;transition:all 0.25s;font-size:0.85rem;font-weight:500;cursor:pointer;border:none;background:transparent;display:block;}
+    .nav-links a:hover{color:var(--text-primary);background:var(--bg-glass);}
+    .nav-links a.active{background:var(--accent-dim);color:var(--accent);}
+    .hamburger{display:none;background:none;border:1px solid var(--border-glass);color:var(--text-primary);font-size:1.3rem;cursor:pointer;padding:8px 12px;border-radius:9px;}
+    .hamburger:hover{background:var(--bg-glass);}
+    .mob-nav{display:none;position:fixed;top:62px;left:0;right:0;bottom:0;background:rgba(10,10,20,0.97);backdrop-filter:blur(24px);z-index:999;padding:24px 20px;overflow-y:auto;flex-direction:column;gap:6px;}
+    .mob-nav.open{display:flex;}
+    .mob-nav a{color:var(--text-secondary);text-decoration:none;padding:16px 20px;border-radius:14px;font-size:1.05rem;font-weight:500;transition:all 0.2s;border:1px solid transparent;}
+    .mob-nav a.active{background:var(--accent-dim);color:var(--accent);border-color:rgba(32,201,151,0.25);}
+    .mob-nav a:hover{background:var(--bg-glass);color:var(--text-primary);}
+    section{display:none;padding:80px 20px 48px;max-width:1000px;margin:0 auto;}
+    section.active{display:block;animation:fadeUp 0.35s ease;}
+    @keyframes fadeUp{from{opacity:0;transform:translateY(14px);}to{opacity:1;transform:translateY(0);}}
+    .card{background:var(--bg-card);backdrop-filter:blur(20px);border:1px solid var(--border-glass);border-radius:18px;padding:22px;margin-bottom:18px;}
+    .card-title{font-size:1.25rem;font-weight:700;margin-bottom:16px;display:flex;align-items:center;gap:10px;}
+    .card-title .icon{width:40px;height:40px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0;}
+    .hero{text-align:center;padding:110px 20px 64px;}
+    .hero h1{font-size:clamp(1.9rem,5vw,3rem);font-weight:800;margin-bottom:18px;background:linear-gradient(135deg,var(--accent),var(--accent-blue),var(--accent-warm));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1.15;}
+    .hero p{color:var(--text-secondary);font-size:1.05rem;margin-bottom:32px;}
+    .hero-btns{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;}
+    .btn{padding:11px 24px;border-radius:12px;border:none;font-size:0.95rem;font-weight:600;cursor:pointer;transition:all 0.25s;}
+    .btn-primary{background:linear-gradient(135deg,var(--accent),#0ca678);color:#fff;box-shadow:0 4px 18px rgba(32,201,151,0.35);}
+    .btn-primary:hover{transform:translateY(-2px);box-shadow:0 6px 22px rgba(32,201,151,0.45);}
+    .btn-secondary{background:var(--bg-glass);color:var(--text-primary);border:1px solid var(--border-glass);}
+    .btn-secondary:hover{background:rgba(255,255,255,0.12);}
+    .feat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:14px;}
+    .feat-card{background:var(--bg-glass);border:1px solid var(--border-glass);border-radius:14px;padding:18px;text-align:center;}
+    .feat-card .fi{font-size:2rem;margin-bottom:10px;}
+    .feat-card h3{font-size:0.95rem;font-weight:700;margin-bottom:6px;}
+    .feat-card p{font-size:0.82rem;color:var(--text-secondary);}
+    .svg-wrap{display:flex;justify-content:center;margin:16px 0;}.svg-wrap svg{max-width:100%;height:auto;}
+    .slide-wrap{background:var(--bg-glass);border:1px solid var(--border-glass);border-radius:14px;padding:22px;}
+    .slide-meta{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;flex-wrap:wrap;gap:10px;}
+    .slide-dots{display:flex;gap:6px;flex-wrap:wrap;}
+    .slide-dot{width:9px;height:9px;border-radius:50%;background:var(--border-glass);cursor:pointer;transition:all 0.2s;}
+    .slide-dot.active{background:var(--accent);transform:scale(1.3);}
+    .slide-track{min-height:260px;}.slide{display:none;}.slide.active{display:block;animation:fadeUp 0.28s ease;}
+    .slide h3{font-size:1.1rem;font-weight:700;margin-bottom:14px;color:var(--accent);}
+    .slide-nav{display:flex;gap:12px;justify-content:flex-end;margin-top:20px;}
+    .rule-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin:14px 0;}
+    .rule-card{background:var(--bg-card);border:1px solid var(--border-glass);border-radius:12px;padding:14px;}
+    .rule-card h4{font-size:0.9rem;font-weight:700;margin-bottom:8px;}
+    .rule-card p{font-size:0.85rem;color:var(--text-secondary);}
+    .formula-box{background:var(--accent-dim);border:1px solid rgba(32,201,151,0.3);border-radius:12px;padding:16px;margin:14px 0;font-size:0.92rem;line-height:1.7;}
+    .info-box{background:rgba(77,171,247,0.1);border-left:3px solid var(--accent-blue);border-radius:0 10px 10px 0;padding:12px 16px;margin:12px 0;font-size:0.88rem;}
+    .warn-box{background:rgba(252,196,25,0.1);border-left:3px solid var(--warning);border-radius:0 10px 10px 0;padding:12px 16px;margin:12px 0;font-size:0.88rem;}
+    .problem-card{background:var(--bg-card);border:1px solid var(--border-glass);border-radius:16px;padding:20px;margin-bottom:16px;}
+    .problem-header{display:flex;gap:10px;align-items:center;margin-bottom:12px;}
+    .problem-num{background:var(--accent-dim);color:var(--accent);font-size:0.78rem;font-weight:700;padding:3px 10px;border-radius:20px;}
+    .problem-topic{background:var(--bg-glass);color:var(--text-secondary);font-size:0.78rem;padding:3px 10px;border-radius:20px;}
+    .problem-text{font-size:0.95rem;margin-bottom:14px;line-height:1.7;}
+    .sol-btn{background:var(--bg-glass);border:1px solid var(--border-glass);color:var(--text-secondary);padding:8px 18px;border-radius:9px;font-size:0.85rem;cursor:pointer;transition:all 0.2s;}
+    .sol-btn:hover{background:rgba(255,255,255,0.12);color:var(--text-primary);}
+    .solution{display:none;margin-top:14px;padding:14px;background:var(--bg-glass);border-radius:12px;font-size:0.9rem;line-height:1.75;}
+    .solution.open{display:block;animation:fadeUp 0.25s ease;}
+    .quiz-wrap{background:var(--bg-card);border:1px solid var(--border-glass);border-radius:18px;padding:26px;margin-bottom:18px;}
+    .quiz-progress{display:flex;align-items:center;gap:14px;margin-bottom:20px;}
+    .prog-bar{flex:1;height:6px;background:var(--bg-glass);border-radius:3px;}
+    .prog-fill{height:100%;border-radius:3px;background:linear-gradient(90deg,var(--accent),var(--accent-blue));transition:width 0.35s;}
+    .quiz-q{font-size:1.04rem;font-weight:600;line-height:1.6;padding:16px;background:var(--bg-glass);border-radius:12px;margin-bottom:16px;}
+    .quiz-opts{display:flex;flex-direction:column;gap:10px;}
+    .opt{display:flex;align-items:center;gap:12px;padding:14px 18px;border:1px solid var(--border-glass);border-radius:12px;cursor:pointer;transition:all 0.2s;font-size:0.93rem;}
+    .opt:hover:not(.disabled){border-color:var(--accent);background:var(--accent-dim);}
+    .opt.correct{border-color:var(--success);background:rgba(81,207,102,0.12);}
+    .opt.wrong{border-color:var(--error);background:rgba(255,107,107,0.12);}
+    .opt.disabled{cursor:default;}
+    .opt-ltr{width:28px;height:28px;border-radius:8px;background:var(--bg-glass);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:0.82rem;flex-shrink:0;}
+    .expl-box{margin-top:14px;padding:14px;border-radius:12px;border-left:4px solid;font-size:0.88rem;line-height:1.6;display:none;}
+    .quiz-nav-row{display:flex;justify-content:space-between;margin-top:18px;}
+    .results-wrap{text-align:center;padding:20px 0;}
+    .score-ring{width:160px;height:160px;border-radius:50%;border:8px solid var(--accent);display:flex;align-items:center;justify-content:center;margin:0 auto 24px;position:relative;}
+    .score-ring::before{content:"";position:absolute;width:144px;height:144px;background:var(--bg-dark);border-radius:50%;}
+    .score-val{position:relative;font-size:2.4rem;font-weight:800;color:var(--accent);}
+    .score-msg{font-size:1.3rem;font-weight:700;margin-bottom:24px;}
+    .breakdown{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;max-width:420px;margin:0 auto 24px;}
+    .breakdown-item{background:var(--bg-glass);padding:14px;border-radius:10px;}
+    .breakdown-val{font-size:1.35rem;font-weight:700;color:var(--accent);}
+    .breakdown-lbl{font-size:0.78rem;color:var(--text-secondary);}
+    .vik-timer{font-size:2.2rem;font-weight:900;transition:color 0.3s;}
+    @media(max-width:768px){.hamburger{display:block;}.nav-links{display:none;}section{padding:72px 14px 40px;}.hero{padding:90px 14px 52px;}.rule-grid{grid-template-columns:1fr;}.feat-grid{grid-template-columns:repeat(2,1fr);}.quiz-wrap{padding:18px;}}
+    @media(max-width:480px){.slide-wrap{padding:14px;}.quiz-q{font-size:0.95rem;padding:14px;}.opt{font-size:0.85rem;padding:12px 14px;}}
+  </style>
+</head>
+<body>
+<div class="bg"></div>
+<nav>
+  <div class="nav-inner">
+    <span class="logo" onclick="showSection('home')">🔗 Mövzu 10 — Tənliklər sistemi</span>
+    <ul class="nav-links">
+      <li><a class="active" data-sec="home">Ana səhifə</a></li>
+      <li><a data-sec="theory">Nəzəriyyə</a></li>
+      <li><a data-sec="examples">Misallar</a></li>
+      <li><a data-sec="assessment">Qiymətləndirmə</a></li>
+    </ul>
+    <button class="hamburger" id="ham" onclick="toggleMobNav()" aria-label="Menyu">☰</button>
+  </div>
+</nav>
+<div class="mob-nav" id="mob-nav">
+  <a data-sec="home">🏠 Ana səhifə</a>
+  <a data-sec="theory">📖 Nəzəriyyə</a>
+  <a data-sec="examples">✏️ Misallar</a>
+  <a data-sec="assessment">📋 Qiymətləndirmə</a>
+</div>
+
+<section id="home" class="active">
+  <div class="hero">
+    <h1>Tənliklər sistemi</h1>
+    <p>DR.Math · §1–§5. İki məchullu sistem · Əvəzetmə · Toplama · Tətbiq məsələləri</p>
+    <div class="hero-btns">
+      <button class="btn btn-primary" onclick="showSection('theory')">📖 Dərsi Başla</button>
+      <button class="btn btn-secondary" onclick="showSection('assessment')">🔍 Bilikləri Yoxla</button>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title"><div class="icon" style="background:var(--accent-dim)">📚</div>Bu mövzuda nə öyrənəcəksiniz?</div>
+    <div class="feat-grid">
+      <div class="feat-card"><div class="fi">🔗</div><h3>Sistem anlayışı</h3><p>Həll növləri: bir, sıfır, sonsuz</p></div>
+      <div class="feat-card"><div class="fi">🔄</div><h3>Əvəzetmə üsulu</h3><p>Bir dəyişəni digəri ilə ifadə et</p></div>
+      <div class="feat-card"><div class="fi">➕</div><h3>Toplama üsulu</h3><p>Tənlikləri toplayıb bir məchulu yox et</p></div>
+      <div class="feat-card"><div class="fi">📊</div><h3>Qrafik üsul</h3><p>Düz xətlərin kəsişməsi = həll</p></div>
+      <div class="feat-card"><div class="fi">🧩</div><h3>Tətbiq məsələləri</h3><p>Yaş, qiymət, sürət, qarışıq</p></div>
+      <div class="feat-card"><div class="fi">🎯</div><h3>DİM məsələləri</h3><p>20 sual — orta çətinlik</p></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title"><div class="icon" style="background:var(--accent-dim)">💡</div>Mövzunun əhəmiyyəti</div>
+    <p style="color:var(--text-secondary);font-size:0.93rem;line-height:1.75">DİM-də <strong style="color:var(--accent)">4–5 sual</strong> tənliklər sisteminə aiddir. Tətbiq məsələlərini sistemə çevirə bilmək DİM-in ən vacib bacarıqlarından biridir.</p>
+  </div>
+</section>
+
+<section id="theory">
+  <div class="card">
+    <div class="card-title"><div class="icon" style="background:var(--accent-dim)">📖</div>Nəzəriyyə</div>
+    <div class="slide-wrap">
+      <div class="slide-meta">
+        <div class="slide-dots" id="dots"></div>
+        <span style="font-size:0.82rem;color:var(--text-secondary)" id="slide-counter">1 / 5</span>
+      </div>
+      <div class="slide-track" id="slide-track"></div>
+      <div class="slide-nav">
+        <button class="btn btn-secondary" id="prev-btn" onclick="changeSlide(-1)">← Geri</button>
+        <button class="btn btn-primary" id="next-btn" onclick="changeSlide(1)">İrəli →</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="examples">
+  <div class="card">
+    <div class="card-title"><div class="icon" style="background:var(--accent-dim)">✏️</div>İşlənmiş misallar</div>
+    <p style="color:var(--text-secondary);font-size:0.88rem;margin-bottom:18px">Hər misalı özünüz həll etməyə çalışın, sonra həlli açın.</p>
+
+    <div class="problem-card">
+      <div class="problem-header"><span class="problem-num">Misal 1</span><span class="problem-topic">Əvəzetmə üsulu — §2</span></div>
+      <div class="problem-text">Həll edin: \(\begin{cases}y=2x+1\\x+y=7\end{cases}\)</div>
+      <button class="sol-btn" onclick="toggleSol(this)">💡 Həlli göstər</button>
+      <div class="solution">
+        <strong>Addım 1.</strong> \(y=2x+1\)-i ikinci tənliyə əvəz edirik:<br>
+        \(x+(2x+1)=7\)<br>
+        \(3x+1=7\)<br>
+        \(x=2\)<br><br>
+        <strong>Addım 2.</strong> \(y\)-i tapırıq:<br>
+        \(y=2\cdot2+1=5\)<br><br>
+        <strong>Cavab:</strong> \(\boxed{x=2,\quad y=5}\)
+      </div>
+    </div>
+
+    <div class="problem-card">
+      <div class="problem-header"><span class="problem-num">Misal 2</span><span class="problem-topic">Toplama (eliminasiya) üsulu — §3</span></div>
+      <div class="problem-text">Həll edin: \(\begin{cases}2x+3y=12\\4x-3y=6\end{cases}\)</div>
+      <button class="sol-btn" onclick="toggleSol(this)">💡 Həlli göstər</button>
+      <div class="solution">
+        <strong>Addım 1.</strong> Tənlikləri toplayırıq (\(3y\) ixtisar olur):<br>
+        \(6x=18\Rightarrow x=3\)<br><br>
+        <strong>Addım 2.</strong> \(x=3\)-ü birinci tənliyə əvəz edirik:<br>
+        \(2(3)+3y=12\Rightarrow 3y=6\Rightarrow y=2\)<br><br>
+        <strong>Cavab:</strong> \(\boxed{x=3,\quad y=2}\)
+      </div>
+    </div>
+
+    <div class="problem-card">
+      <div class="problem-header"><span class="problem-num">Misal 3</span><span class="problem-topic">Həll yoxdur — §1</span></div>
+      <div class="problem-text">Həll edin: \(\begin{cases}2x+y=5\\4x+2y=8\end{cases}\)</div>
+      <button class="sol-btn" onclick="toggleSol(this)">💡 Həlli göstər</button>
+      <div class="solution">
+        <strong>Addım 1.</strong> Birinci tənliyi 2-yə vururuq:<br>
+        \(4x+2y=10\)<br><br>
+        <strong>Addım 2.</strong> İkinci tənlikdən çıxırıq:<br>
+        \((4x+2y)-(4x+2y)=10-8\)<br>
+        \(0=2\) — <strong style="color:var(--error)">ziddiyyət!</strong><br><br>
+        <strong>Cavab:</strong> <strong>Həll yoxdur</strong> (paralel düz xətlər)
+        <div class="info-box">Əmsallar mütənasib, sabitlər mütənasib deyil → sistem uyğunsuz.</div>
+      </div>
+    </div>
+
+    <div class="problem-card">
+      <div class="problem-header"><span class="problem-num">Misal 4</span><span class="problem-topic">Sonsuz həll — §1</span></div>
+      <div class="problem-text">Həll edin: \(\begin{cases}x+2y=6\\2x+4y=12\end{cases}\)</div>
+      <button class="sol-btn" onclick="toggleSol(this)">💡 Həlli göstər</button>
+      <div class="solution">
+        <strong>İkinci tənlik</strong> birincinin 2 mislidir:<br>
+        \(2(x+2y)=2\cdot6=12\) ✓<br><br>
+        Hər iki tənlik eyni düz xətti təsvir edir → <strong>sonsuz həll</strong>.<br><br>
+        <strong>Ümumi həll:</strong> \(x=6-2t\), \(y=t\), istənilən \(t\in\mathbb{R}\) üçün.
+      </div>
+    </div>
+
+    <div class="problem-card">
+      <div class="problem-header"><span class="problem-num">Misal 5</span><span class="problem-topic">Yaş məsələsi — §5</span></div>
+      <div class="problem-text">Atanın yaşı oğlunun yaşından 28 yaş böyükdür. 4 ildən sonra atanın yaşı oğlunun yaşının 3 mislinə bərabər olacaq. Oğlun indi neçə yaşı var?</div>
+      <button class="sol-btn" onclick="toggleSol(this)">💡 Həlli göstər</button>
+      <div class="solution">
+        <strong>Addım 1.</strong> Dəyişənlər: oğul = \(x\), ata = \(y\)<br>
+        \(\begin{cases}y=x+28\\y+4=3(x+4)\end{cases}\)<br><br>
+        <strong>Addım 2.</strong> İkinci tənliyi açırıq: \(y+4=3x+12\Rightarrow y=3x+8\)<br><br>
+        <strong>Addım 3.</strong> Əvəz edirik: \(x+28=3x+8\Rightarrow 2x=20\Rightarrow x=10\)<br><br>
+        <strong>Cavab:</strong> Oğlun yaşı \(\boxed{10}\)
+      </div>
+    </div>
+
+    <div class="problem-card">
+      <div class="problem-header"><span class="problem-num">Misal 6</span><span class="problem-topic">DİM tipli — qiymət məsələsi</span></div>
+      <div class="problem-text">3 kitab + 2 dəftər = 13 manat. 1 kitab + 4 dəftər = 9 manat. Bir kitabın qiyməti neçədir?</div>
+      <button class="sol-btn" onclick="toggleSol(this)">💡 Həlli göstər</button>
+      <div class="solution">
+        <strong>Sistem:</strong> \(\begin{cases}3k+2d=13\\k+4d=9\end{cases}\)<br><br>
+        <strong>Addım 1.</strong> İkinci tənliyi 3-ə vururuq: \(3k+12d=27\)<br>
+        Birincini çıxırıq: \(10d=14\Rightarrow d=1{,}4\) manat<br><br>
+        <strong>Addım 2.</strong> \(k=9-4(1{,}4)=9-5{,}6=3{,}4\) manat<br><br>
+        <strong>Cavab:</strong> Bir kitab \(\boxed{3{,}4}\) manat
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="assessment">
+  <div class="card">
+    <div class="card-title"><div class="icon" style="background:var(--accent-dim)">📋</div>Qiymətləndirmə</div>
+    <p style="color:var(--text-secondary);font-size:0.88rem;margin-bottom:22px">20 sual · DİM səviyyəsi · Anlıq cavab + izah</p>
+    <div style="display:flex;gap:12px;flex-wrap:wrap">
+      <button class="btn btn-primary" onclick="startDiag()">📝 Testi Başla</button>
+      <button class="btn btn-secondary" onclick="startViktorina()">⚡ Viktorina (30s/sual)</button>
+    </div>
+  </div>
+  <div id="diag-ui" style="display:none">
+    <div class="quiz-wrap">
+      <div class="quiz-progress">
+        <span style="font-size:0.85rem;color:var(--text-secondary)">Sual <span id="dq-n">1</span>/<span id="dq-tot">20</span></span>
+        <div class="prog-bar"><div class="prog-fill" id="dq-bar" style="width:0%"></div></div>
+        <span style="font-size:0.85rem;color:var(--success)" id="dq-score">0 ✓</span>
+      </div>
+      <div class="quiz-q" id="dq-q"></div>
+      <div class="quiz-opts" id="dq-opts"></div>
+      <div class="expl-box" id="dq-expl"></div>
+      <div class="quiz-nav-row">
+        <button class="btn btn-secondary" id="dq-prev" onclick="prevDiag()" disabled>← Əvvəlki</button>
+        <button class="btn btn-primary" id="dq-next" onclick="nextDiag()" disabled>Növbəti →</button>
+      </div>
+    </div>
+  </div>
+  <div id="vik-ui" style="display:none">
+    <div class="quiz-wrap">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+        <span style="font-size:0.82rem;padding:3px 12px;background:var(--accent-dim);color:var(--accent);border-radius:20px;font-weight:700" id="vik-tag">§1</span>
+        <div class="vik-timer" id="vik-timer">30</div>
+      </div>
+      <div style="display:flex;gap:4px;flex-wrap:wrap;margin-bottom:16px" id="vik-dots"></div>
+      <div class="quiz-q" id="vik-q"></div>
+      <div class="quiz-opts" id="vik-opts"></div>
+    </div>
+  </div>
+  <div id="res-ui" style="display:none">
+    <div class="quiz-wrap results-wrap">
+      <div class="score-ring" id="res-ring"><span class="score-val" id="res-pct">0%</span></div>
+      <div class="score-msg" id="res-msg"></div>
+      <span style="font-size:1.05rem;font-weight:700;color:var(--text-secondary)" id="res-lvl"></span>
+      <div class="breakdown" style="margin-top:20px">
+        <div class="breakdown-item"><div class="breakdown-val" id="res-ok">0</div><div class="breakdown-lbl">Düzgün</div></div>
+        <div class="breakdown-item"><div class="breakdown-val" id="res-no">0</div><div class="breakdown-lbl">Yanlış</div></div>
+        <div class="breakdown-item"><div class="breakdown-val">20</div><div class="breakdown-lbl">Cəmi</div></div>
+      </div>
+      <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:10px">
+        <button class="btn btn-primary" onclick="startDiag()">🔄 Yenidən cəhd et</button>
+        <button class="btn btn-secondary" onclick="resetAssessment()">✕ Bağla</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],packages:{'[+]':['ams']}},options:{skipHtmlTags:['script','noscript','style','textarea','pre']},startup:{typeset:false}};
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" id="MathJax-script" async></script>
+<script>
+function showSection(id){document.querySelectorAll('section').forEach(s=>s.classList.remove('active'));document.querySelectorAll('.nav-links a,.mob-nav a').forEach(a=>a.classList.toggle('active',a.dataset.sec===id));const sec=document.getElementById(id);if(sec){sec.classList.add('active');window.scrollTo({top:0,behavior:'smooth'});}closeMobNav();}
+document.querySelectorAll('[data-sec]').forEach(a=>a.addEventListener('click',()=>showSection(a.dataset.sec)));
+function toggleMobNav(){document.getElementById('mob-nav').classList.toggle('open');}
+function closeMobNav(){document.getElementById('mob-nav').classList.remove('open');}
+function toggleSol(btn){const sol=btn.nextElementSibling;sol.classList.toggle('open');btn.textContent=sol.classList.contains('open')?'🙈 Həlli gizlə':'💡 Həlli göstər';if(sol.classList.contains('open')&&window.MathJax)MathJax.typesetPromise([sol]).catch(console.error);}
+
+const SLIDES=[
+  {title:'§1 Tənliklər sistemi — anlayış',html:`
+<p><strong>Tənliklər sistemi</strong> — eyni vaxtda ödənilməli olan iki (və ya daha çox) tənlik toplusudur.</p>
+<div class="formula-box">
+<strong>İki məchullu xətti sistem:</strong><br>
+\(\begin{cases}a_1x+b_1y=c_1\\a_2x+b_2y=c_2\end{cases}\)<br><br>
+<strong>Həll növləri:</strong><br>
+• <strong>Tək həll</strong> — düz xətlər kəsişir (əmsallar mütənasib deyil)<br>
+• <strong>Həll yoxdur</strong> — düz xətlər paralel (əmsallar mütənasib, sabitlər yox)<br>
+• <strong>Sonsuz həll</strong> — düz xətlər üst-üstə düşür (hamı mütənasib)
+</div>
+<div class="rule-grid">
+  <div class="rule-card"><h4>Tək həll şərti</h4><p>\(\dfrac{a_1}{a_2}\neq\dfrac{b_1}{b_2}\)</p></div>
+  <div class="rule-card"><h4>Həll yoxdur</h4><p>\(\dfrac{a_1}{a_2}=\dfrac{b_1}{b_2}\neq\dfrac{c_1}{c_2}\)</p></div>
+  <div class="rule-card"><h4>Sonsuz həll</h4><p>\(\dfrac{a_1}{a_2}=\dfrac{b_1}{b_2}=\dfrac{c_1}{c_2}\)</p></div>
+</div>`},
+  {title:'§2 Əvəzetmə üsulu',html:`
+<p><strong>Əvəzetmə üsulu</strong> — bir tənlikdən bir dəyişəni ifadə edib digər tənliyə əvəz etmək.</p>
+<div class="formula-box">
+<strong>Alqoritm:</strong><br>
+1. Bir tənlikdən \(x\) (və ya \(y\)) dəyişənini ifadə et<br>
+2. Bu ifadəni digər tənliyə əvəz et<br>
+3. Bir məchullu tənliyi həll et<br>
+4. Tapılan dəyəri geri əvəz edib ikinci məcbulu tap<br>
+5. Yoxlama: hər iki tənliyi ödəyir?
+</div>
+<div class="rule-grid">
+  <div class="rule-card"><h4>Misal</h4><p>\(\begin{cases}y=x+3\\2x+y=9\end{cases}\)<br>Əvəz: \(2x+(x+3)=9\Rightarrow x=2\), \(y=5\)</p></div>
+  <div class="rule-card"><h4>Nə vaxt istifadə et?</h4><p>Bir tənlikdə əmsal 1 (və ya -1) varsa — əvəzetmə sürətlidir.</p></div>
+</div>`},
+  {title:'§3 Toplama (eliminasiya) üsulu',html:`
+<p><strong>Toplama üsulu</strong> — tənlikləri toplayıb bir dəyişəni yox etmək.</p>
+<div class="formula-box">
+<strong>Alqoritm:</strong><br>
+1. Bir dəyişənin əmsallarını mütənasib et (lazımsa tənliyi ədədə vur)<br>
+2. Tənlikləri topla (və ya çıx) — bir dəyişən ixtisar olur<br>
+3. Bir məchullu tənliyi həll et<br>
+4. Tapılan dəyəri geri əvəz edib ikinci məcbulu tap
+</div>
+<div class="rule-grid">
+  <div class="rule-card"><h4>Misal</h4><p>\(\begin{cases}3x+2y=11\\3x-y=5\end{cases}\)<br>Çıxırıq: \(3y=6\Rightarrow y=2\), \(x=3\)</p></div>
+  <div class="rule-card"><h4>Nə vaxt istifadə et?</h4><p>Hər iki tənlikdə eyni əmsal görünsə — toplama (eliminasiya) sürətlidir.</p></div>
+</div>
+<div class="warn-box"><strong>Diqqət:</strong> Vurduğunuz ədədin işarəsinə diqqət edin — mənfiyə vurmaq işarəni dəyişir!</div>`},
+  {title:'§4 Qrafik interpretasiya',html:`
+<p>İki məchullu tənliklər sistemi iki düz xətti ifadə edir. Həll — bu xətlərin kəsişmə nöqtəsidir.</p>
+<div class="svg-wrap">
+  <svg viewBox="0 0 280 180" width="280" aria-label="İki düz xətt: kəsişmə nöqtəsi (2,3)">
+    <line x1="20" y1="160" x2="260" y2="20" stroke="#20c997" stroke-width="2"/>
+    <line x1="20" y1="60" x2="260" y2="140" stroke="#4dabf7" stroke-width="2"/>
+    <circle cx="140" cy="90" r="5" fill="#fcc419"/>
+    <text x="148" y="86" fill="#fcc419" font-size="11" font-weight="bold">(x,y)</text>
+    <text x="240" y="18" fill="#20c997" font-size="10">xətt 1</text>
+    <text x="240" y="138" fill="#4dabf7" font-size="10">xətt 2</text>
+    <line x1="30" y1="90" x2="250" y2="90" stroke="rgba(255,255,255,0.2)" stroke-width="1"/>
+    <line x1="140" y1="20" x2="140" y2="170" stroke="rgba(255,255,255,0.2)" stroke-width="1"/>
+  </svg>
+</div>
+<div class="rule-grid">
+  <div class="rule-card"><h4>Kəsişir → tək həll</h4><p>Kəsişmə nöqtəsi həlldir.</p></div>
+  <div class="rule-card"><h4>Paralel → həll yoxdur</h4><p>Kəsişmə nöqtəsi yoxdur.</p></div>
+  <div class="rule-card"><h4>Üst-üstə → sonsuz həll</h4><p>Bütün nöqtələr həlldir.</p></div>
+</div>`},
+  {title:'§5 Tətbiq məsələləri',html:`
+<p>Məsələni sistemə çevirmək üçün: <strong>bilinməyənlərə ad verin → tənlikləri qurun → həll edin → yoxlayın.</strong></p>
+<div class="formula-box">
+<strong>Məsələ növləri:</strong><br>
+• <strong>Yaş məsələsi:</strong> "indi" və "N ildən sonra/əvvəl"<br>
+• <strong>Qiymət məsələsi:</strong> miqdar × qiymət = məbləğ<br>
+• <strong>Sürət məsələsi:</strong> sürət × vaxt = məsafə<br>
+• <strong>Qarışıq məsələsi:</strong> konsentrasiya × miqdar = maddə miqdarı
+</div>
+<div class="rule-grid">
+  <div class="rule-card"><h4>Yaş taktikası</h4><p>"indi" → \(x\) və \(y\). "N il sonra" → \(x+N\) və \(y+N\).</p></div>
+  <div class="rule-card"><h4>Sürət taktikası</h4><p>Eyni məsafə: \(v_1\cdot t_1=v_2\cdot t_2\). Birlikdə: \((v_1+v_2)\cdot t=d\).</p></div>
+</div>
+<div class="info-box"><strong>DİM taktikası:</strong> Cavabı yoxlayın — həm məsafə/qiymət/yaş şərtlərini ödəyirmi?</div>`},
+];
+
+const QS=[
+  {s:'§2',q:'\\(\\begin{cases}y=x+3\\\\x+y=7\\end{cases}\\) sisteminin həlli?',o:['\\(x=2,y=5\\)','\\(x=3,y=4\\)','\\(x=4,y=3\\)','\\(x=1,y=6\\)'],a:0,e:'\\(x+(x+3)=7\\Rightarrow 2x=4\\Rightarrow x=2\\), \\(y=5\\).'},
+  {s:'§3',q:'\\(\\begin{cases}x+y=8\\\\x-y=2\\end{cases}\\) sisteminin həlli?',o:['\\(x=5,y=3\\)','\\(x=3,y=5\\)','\\(x=6,y=2\\)','\\(x=4,y=4\\)'],a:0,e:'Toplayırıq: \\(2x=10\\Rightarrow x=5\\). \\(y=8-5=3\\).'},
+  {s:'§3',q:'\\(\\begin{cases}2x+y=7\\\\x-y=2\\end{cases}\\) — \\(x\\)-in qiyməti?',o:['3','2','4','5'],a:0,e:'Toplayırıq: \\(3x=9\\Rightarrow x=3\\).'},
+  {s:'§1',q:'\\(\\begin{cases}x+2y=4\\\\2x+4y=8\\end{cases}\\) sisteminin həll sayı?',o:['Sonsuz','1','0','2'],a:0,e:'İkinci tənlik birincinin 2 mislidir — eyni düz xətt → sonsuz həll.'},
+  {s:'§1',q:'\\(\\begin{cases}x+y=3\\\\x+y=5\\end{cases}\\) sisteminin həll sayı?',o:['0','1','Sonsuz','2'],a:0,e:'\\(3\\neq 5\\) — ziddiyyət → həll yoxdur.'},
+  {s:'§2',q:'\\(\\begin{cases}y=3x\\\\2x+y=15\\end{cases}\\) — \\(x\\) neçədir?',o:['3','5','2','4'],a:0,e:'\\(2x+3x=15\\Rightarrow 5x=15\\Rightarrow x=3\\).'},
+  {s:'§2',q:'\\(\\begin{cases}y=2x-1\\\\3x+y=9\\end{cases}\\) — \\(x\\) neçədir?',o:['2','3','1','4'],a:0,e:'\\(3x+(2x-1)=9\\Rightarrow 5x=10\\Rightarrow x=2\\).'},
+  {s:'§3',q:'\\(\\begin{cases}3x+2y=13\\\\3x-y=4\\end{cases}\\) — \\(y\\) neçədir?',o:['3','4','2','5'],a:0,e:'Çıxırıq: \\(3y=9\\Rightarrow y=3\\).'},
+  {s:'§5',q:'İki ədədin cəmi 20, fərqi 4-dür. Böyük ədəd neçədir?',o:['12','10','14','8'],a:0,e:'\\(x+y=20\\), \\(x-y=4\\). Toplayırıq: \\(2x=24\\Rightarrow x=12\\).'},
+  {s:'§5',q:'Oğlun yaşı atanın yaşının 1/3-ü, cəmləri 40-dır. Oğlun yaşı?',o:['10','12','8','15'],a:0,e:'\\(y=x/3\\), \\(x+y=40\\Rightarrow x+x/3=40\\Rightarrow 4x/3=40\\Rightarrow x=30\\), \\(y=10\\).'},
+  {s:'§3',q:'\\(\\begin{cases}x+2y=7\\\\2x+y=8\\end{cases}\\) — \\(x+y\\) neçədir?',o:['5','6','7','8'],a:0,e:'Tənlikləri toplayırıq: \\(3x+3y=15\\Rightarrow x+y=5\\).'},
+  {s:'§2',q:'\\(\\begin{cases}2x+3y=12\\\\x=3\\end{cases}\\) — \\(y\\) neçədir?',o:['2','3','4','1'],a:0,e:'\\(2(3)+3y=12\\Rightarrow 3y=6\\Rightarrow y=2\\).'},
+  {s:'§1',q:'Əmsallar nisbəti bərabər, sabitlər nisbəti fərqli olarsa — sistem necədir?',o:['Həll yoxdur','Tək həll','Sonsuz həll','Belirsiz'],a:0,e:'Düz xətlər paralel — kəsişmir → həll yoxdur.'},
+  {s:'§3',q:'\\(\\begin{cases}5x-2y=1\\\\5x+3y=16\\end{cases}\\) — \\(y\\) neçədir?',o:['3','2','4','5'],a:0,e:'Çıxırıq: \\(-5y=-15\\Rightarrow y=3\\).'},
+  {s:'§2',q:'\\(\\begin{cases}y=x^2\\\\y=x+2\\end{cases}\\) sisteminin həll sayı?',o:['2','1','0','Sonsuz'],a:0,e:'\\(x^2=x+2\\Rightarrow x^2-x-2=0\\Rightarrow (x-2)(x+1)=0\\Rightarrow\\) 2 həll.'},
+  {s:'§5',q:'2 qələm + 3 dəftər = 7 manat. 4 qələm + 1 dəftər = 9 manat. Bir qələmin qiyməti?',o:['2 manat','1 manat','3 manat','2.5 manat'],a:0,e:'\\(2k+3d=7\\), \\(4k+d=9\\Rightarrow d=9-4k\\). Əvəz: \\(2k+3(9-4k)=7\\Rightarrow -10k=-20\\Rightarrow k=2\\).'},
+  {s:'§3',q:'\\(\\begin{cases}x+y=10\\\\2x-y=5\\end{cases}\\) — \\(x\\) neçədir?',o:['5','3','7','4'],a:0,e:'Toplayırıq: \\(3x=15\\Rightarrow x=5\\).'},
+  {s:'§2',q:'\\(\\begin{cases}x=2y+1\\\\3x-y=13\\end{cases}\\) — \\(y\\) neçədir?',o:['2','3','1','4'],a:0,e:'\\(3(2y+1)-y=13\\Rightarrow 5y=10\\Rightarrow y=2\\).'},
+  {s:'§5',q:'DİM: Sürətli qatar 120 km/s, yavaş qatar 80 km/s. Eyni anda əks istiqamətdən hərəkət edirlər. 2 saata nə qədər yol qət edərlər?',o:['400 km','300 km','480 km','240 km'],a:0,e:'Cəm sürət \\(200\\) km/s. \\(200\\times 2=400\\) km.'},
+  {s:'§3',q:'DİM: \\(\\begin{cases}ax+by=c\\\\ax+by=d\\end{cases}\\), \\(c\\neq d\\). Bu sistemin həllinə aid hansı fikir doğrudur?',o:['Həll yoxdur','Bir həll var','Sonsuz həll var','Cavab bilinmir'],a:0,e:'Hər iki tənliyin sol tərəfi eyni, sağ tərəfi fərqlidir (\\(c\\neq d\\)) → ziddiyyət → həll yoxdur.'},
+];
+
+let curSlide=0;
+function buildSlides(){const track=document.getElementById('slide-track'),dots=document.getElementById('dots');track.innerHTML='';dots.innerHTML='';SLIDES.forEach((s,i)=>{const div=document.createElement('div');div.className='slide'+(i===0?' active':'');div.innerHTML=`<h3>${s.title}</h3>${s.html}`;track.appendChild(div);const dot=document.createElement('div');dot.className='slide-dot'+(i===0?' active':'');dot.onclick=()=>goSlide(i);dots.appendChild(dot);});updateSlideUI();MathJax.startup.promise.then(()=>MathJax.typesetPromise([track]));}
+function goSlide(n){document.querySelectorAll('.slide')[curSlide].classList.remove('active');document.querySelectorAll('.slide-dot')[curSlide].classList.remove('active');curSlide=Math.max(0,Math.min(n,SLIDES.length-1));document.querySelectorAll('.slide')[curSlide].classList.add('active');document.querySelectorAll('.slide-dot')[curSlide].classList.add('active');updateSlideUI();}
+function changeSlide(d){goSlide(curSlide+d);}
+function updateSlideUI(){document.getElementById('slide-counter').textContent=`${curSlide+1} / ${SLIDES.length}`;document.getElementById('prev-btn').disabled=curSlide===0;document.getElementById('next-btn').textContent=curSlide===SLIDES.length-1?'✓ Bitdi':'İrəli →';}
+function renderMathNow(id){const el=document.getElementById(id);if(el&&window.MathJax)MathJax.typesetPromise([el]).catch(console.error);}
+let dIdx=0,dScore=0,dAns=[];
+function startDiag(){dIdx=0;dScore=0;dAns=new Array(QS.length).fill(null);document.getElementById('diag-ui').style.display='block';document.getElementById('vik-ui').style.display='none';document.getElementById('res-ui').style.display='none';renderDQ();document.getElementById('diag-ui').scrollIntoView({behavior:'smooth',block:'start'});}
+function renderDQ(){const q=QS[dIdx];document.getElementById('dq-n').textContent=dIdx+1;document.getElementById('dq-tot').textContent=QS.length;document.getElementById('dq-score').textContent=dScore+' ✓';document.getElementById('dq-bar').style.width=(dIdx/QS.length)*100+'%';document.getElementById('dq-expl').style.display='none';document.getElementById('dq-next').disabled=dAns[dIdx]===null;document.getElementById('dq-prev').disabled=dIdx===0;document.getElementById('dq-q').innerHTML=q.q;const opts=document.getElementById('dq-opts');opts.innerHTML='';const L=['A','B','C','D'];q.o.forEach((opt,i)=>{const div=document.createElement('div');div.className='opt';if(dAns[dIdx]!==null){div.classList.add('disabled');if(i===q.a)div.classList.add('correct');else if(i===dAns[dIdx])div.classList.add('wrong');}div.innerHTML=`<span class="opt-ltr">${L[i]}</span><span>${opt}</span>`;div.addEventListener('click',()=>selectDQ(i));opts.appendChild(div);});renderMathNow('dq-q');renderMathNow('dq-opts');}
+function selectDQ(i){if(dAns[dIdx]!==null)return;dAns[dIdx]=i;if(i===QS[dIdx].a)dScore++;document.getElementById('dq-next').disabled=false;document.getElementById('dq-score').textContent=dScore+' ✓';const ex=document.getElementById('dq-expl');ex.style.display='block';const ok=i===QS[dIdx].a;ex.style.background=ok?'rgba(81,207,102,.09)':'rgba(255,107,107,.09)';ex.style.borderLeftColor=ok?'var(--success)':'var(--error)';ex.innerHTML=(ok?'<strong style="color:var(--success)">✓ Düzgün!</strong> ':'<strong style="color:var(--error)">✗ Səhv.</strong> Düzgün: <strong>'+QS[dIdx].o[QS[dIdx].a]+'</strong>. ')+QS[dIdx].e;renderDQ();if(window.MathJax)MathJax.typesetPromise([ex]).catch(console.error);}
+function nextDiag(){if(dIdx<QS.length-1){dIdx++;renderDQ();}else showResults(dScore,QS.length);}
+function prevDiag(){if(dIdx>0){dIdx--;renderDQ();}}
+let vIdx=0,vScore=0,vTmr=null,vT=30,vRes=[];
+function startViktorina(){vIdx=0;vScore=0;vRes=[];document.getElementById('diag-ui').style.display='none';document.getElementById('vik-ui').style.display='block';document.getElementById('res-ui').style.display='none';renderVQ();document.getElementById('vik-ui').scrollIntoView({behavior:'smooth',block:'start'});}
+function renderVQ(){clearInterval(vTmr);vT=30;const q=QS[vIdx];document.getElementById('vik-tag').textContent=q.s;document.getElementById('vik-q').innerHTML=q.q;tickV();vTmr=setInterval(tickV,1000);const opts=document.getElementById('vik-opts');opts.innerHTML='';const L=['A','B','C','D'];q.o.forEach((opt,i)=>{const d=document.createElement('div');d.className='opt';d.innerHTML=`<span class="opt-ltr">${L[i]}</span><span>${opt}</span>`;d.onclick=()=>answerV(i,d);opts.appendChild(d);});renderVDots();renderMathNow('vik-q');renderMathNow('vik-opts');}
+function tickV(){const el=document.getElementById('vik-timer');if(!el)return;el.textContent=vT;el.style.color=vT<=10?'var(--error)':vT<=20?'var(--warning)':'var(--accent)';if(vT<=0){answerV(-1,null);return;}vT--;}
+function answerV(i,el){clearInterval(vTmr);document.querySelectorAll('#vik-opts .opt').forEach(o=>o.classList.add('disabled'));const correct=i===QS[vIdx].a;if(correct)vScore++;vRes.push(correct);document.querySelectorAll('#vik-opts .opt')[QS[vIdx].a]?.classList.add('correct');if(el&&!correct)el.classList.add('wrong');setTimeout(()=>{if(vIdx<QS.length-1){vIdx++;renderVQ();}else showResults(vScore,QS.length);},1000);}
+function renderVDots(){const c=document.getElementById('vik-dots');c.innerHTML='';QS.forEach((_,i)=>{const d=document.createElement('div');d.style.cssText=`width:8px;height:8px;border-radius:50%;flex-shrink:0;transition:background 0.3s;background:${i<vRes.length?(vRes[i]?'var(--success)':'var(--error)'):i===vIdx?'var(--accent)':'var(--border-glass)'}`;c.appendChild(d);});}
+function showResults(score,total){clearInterval(vTmr);document.getElementById('diag-ui').style.display='none';document.getElementById('vik-ui').style.display='none';document.getElementById('res-ui').style.display='block';const pct=Math.round((score/total)*100);document.getElementById('res-pct').textContent=pct+'%';document.getElementById('res-ok').textContent=score;document.getElementById('res-no').textContent=total-score;const lvl=pct>=90?'Əla':pct>=70?'Yaxşı':pct>=50?'Orta':'Zəif';document.getElementById('res-lvl').textContent=lvl;document.getElementById('res-msg').textContent=pct>=90?'🏆 Əla nəticə! DİM-ə hazırsınız!':pct>=70?'✅ Yaxşı nəticə! Bir az daha çalışın.':pct>=50?'📚 Orta nəticə. Nəzəriyyəni təkrar edin.':'💪 Zəif nəticə. Başdan öyrənin.';const ring=document.getElementById('res-ring');ring.style.borderColor=pct>=90?'var(--success)':pct>=70?'var(--accent-blue)':pct>=50?'var(--warning)':'var(--error)';document.getElementById('res-ring').querySelector('.score-val').style.color=pct>=70?'var(--success)':'var(--accent)';document.getElementById('res-ui').scrollIntoView({behavior:'smooth',block:'start'});try{var _p={points:score,maxPoints:total,timeSpentSeconds:0};window.parent.postMessage({type:'SCORE_UPDATE',payload:_p},'*');if(pct>=50)window.parent.postMessage({type:'LESSON_COMPLETE',payload:_p},'*');}catch(e){}}
+function resetAssessment(){document.getElementById('diag-ui').style.display='none';document.getElementById('vik-ui').style.display='none';document.getElementById('res-ui').style.display='none';}
+document.addEventListener('DOMContentLoaded',()=>{buildSlides();MathJax.startup.promise.then(()=>MathJax.typesetPromise([document.body]));});
+</script>
+</body>
+</html>
