@@ -200,7 +200,17 @@ export const TOPICS: Topic[] = [
       ru: 'Признаки треугольников, подобие, теорема Пифагора, площадь',
       en: 'Triangle congruence, similarity, Pythagorean theorem, area',
     },
-    lessons: [],
+    lessons: [
+      {
+        id: 'topic-07-main',
+        topicId: 'topic-07',
+        type: 'theory',
+        title: { az: 'Üçbucaqlar — tam dərs', ru: 'Треугольники — полный урок', en: 'Triangles — full lesson' },
+        url_path: '/lessons/topics/topic-07.html',
+        estimatedMinutes: 45,
+        questionCount: 20,
+      },
+    ],
   },
 
   {
