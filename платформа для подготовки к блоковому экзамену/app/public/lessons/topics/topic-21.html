@@ -1,4 +1,4 @@
-<!doctype html>
+﻿<!doctype html>
 <html lang="az">
   <head>
     <meta charset="UTF-8" />
@@ -98,9 +98,14 @@
       <div class="progress-bar">
         <div class="progress-fill" id="theory-progress" style="width: 0%"></div>
       </div>
-
-      <!-- Slide 1 -->
-      <div class="slide" data-slide="1">
+      <div class="slide-ctrl">
+        <span class="slide-info">Slayd <strong id="s-cur">1</strong> / <strong id="s-tot">?</strong></span>
+        <div class="slide-ctrl-btns">
+          <button class="btn btn-ghost" onclick="prevSlide()">&#8592; Əvvəlki</button>
+          <button class="btn btn-primary" id="s-next" onclick="nextSlide()">Növbəti &#8594;</button>
+        </div>
+      </div>
+<div class="slide" data-slide="1">
         <span class="slide-num">SLAYD 1 / 12</span>
         <h2>§1. Kombinatorikanın Əsas Vurma Qaydası</h2>
         <div class="def-box">
@@ -569,6 +574,27 @@
         }, { threshold: 0.4 });
         slides.forEach(s => io.observe(s));
       })();
+      /* ── Slide navigation ─────────────────────────────────── */
+      const _sls = Array.from(document.querySelectorAll('#theory .slide'));
+      let _si = 0;
+      function _upd() {
+        _sls.forEach((s,i) => s.classList.toggle('active', i === _si));
+        const c=document.getElementById('s-cur'), t=document.getElementById('s-tot');
+        if(c) c.textContent=_si+1;
+        if(t) t.textContent=_sls.length;
+        const fill=document.getElementById('theory-progress');
+        if(fill) fill.style.width=((_si+1)/_sls.length*100)+'%';
+        const nb=document.getElementById('s-next');
+        const last=_si===_sls.length-1;
+        if(nb) nb.textContent = last ? 'Testi Başla →' : 'Növbəti →';
+      }
+      function prevSlide() { if(_si>0){--_si;_upd();} }
+      function nextSlide() {
+        if(_si<_sls.length-1){++_si;_upd();}
+        else { const tb=document.querySelector('.tab-btn:nth-child(2)'); if(tb) showTab('test',tb); }
+      }
+      _upd();
+
 
       const QS = [
         {

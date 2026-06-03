@@ -1,4 +1,4 @@
-<!doctype html>
+﻿<!doctype html>
 <html lang="az">
   <head>
     <meta charset="UTF-8" />
@@ -370,6 +370,27 @@
         }, {threshold: 0.4});
         slides.forEach(s => io.observe(s));
       })();
+      /* ── Slide navigation ─────────────────────────────────── */
+      const _sls = Array.from(document.querySelectorAll('#theory .slide'));
+      let _si = 0;
+      function _upd() {
+        _sls.forEach((s,i) => s.classList.toggle('active', i === _si));
+        const c=document.getElementById('s-cur'), t=document.getElementById('s-tot');
+        if(c) c.textContent=_si+1;
+        if(t) t.textContent=_sls.length;
+        const fill=document.getElementById('theory-progress');
+        if(fill) fill.style.width=((_si+1)/_sls.length*100)+'%';
+        const nb=document.getElementById('s-next');
+        const last=_si===_sls.length-1;
+        if(nb) nb.textContent = last ? 'Testi Başla →' : 'Növbəti →';
+      }
+      function prevSlide() { if(_si>0){--_si;_upd();} }
+      function nextSlide() {
+        if(_si<_sls.length-1){++_si;_upd();}
+        else { const tb=document.querySelector('.tab-btn:nth-child(2)'); if(tb) showTab('test',tb); }
+      }
+      _upd();
+
 
       const QS = [
         {q:"52 kartlı dəstdən 1 kart çəkilir. Tuzun çıxma ehtimalı nədir?",o:["1/52","1/13","1/4","4/13"],a:1,e:"4 tuz var, 52 kart. P = 4/52 = 1/13."},
