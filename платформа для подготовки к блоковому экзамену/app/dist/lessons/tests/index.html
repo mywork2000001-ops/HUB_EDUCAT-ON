@@ -426,6 +426,14 @@ const H2 = [
 ];
 
 // ══════════════════════════════════════════════
+//  Available test files (populated as created)
+// ══════════════════════════════════════════════
+const AVAILABLE = new Set([
+  'p1-s01-t1',
+  'p1-s01-t2',
+]);
+
+// ══════════════════════════════════════════════
 //  Progress
 // ══════════════════════════════════════════════
 const SK = 'dim_test_progress_v2';
@@ -433,6 +441,7 @@ function loadProg(){ try{return JSON.parse(localStorage.getItem(SK)||'{}')}catch
 const PROG = loadProg();
 
 function isDone(id){ return !!(PROG[id]&&PROG[id].completed) }
+function isAvail(id){ return AVAILABLE.has(id) }
 function getScore(id){ return PROG[id]&&PROG[id].score }
 
 // ══════════════════════════════════════════════
@@ -442,21 +451,35 @@ function buildSubCard(part, secNum, t, accentClass){
   const id = `p${part}-s${String(secNum).padStart(2,'0')}-t${t.t}`;
   const file = id + '.html';
   const done = isDone(id);
+  const avail = isAvail(id);
   const sc = getScore(id);
 
   const card = document.createElement('a');
-  card.className = 'sub-card' + (done?' done':' locked');
-  card.href = file;
-  if(!done) card.removeAttribute('href');
+  if(done){
+    card.className = 'sub-card done';
+    card.href = file;
+  } else if(avail){
+    card.className = 'sub-card';
+    card.href = file;
+  } else {
+    card.className = 'sub-card locked';
+  }
 
   const chipPage = `<span class="chip chip-p">səh.${t.page}</span>`;
-  const chipStatus = done ? `<span class="chip chip-ok">✓ Tamamlandı</span>` : `<span class="chip chip-lock">Hazırlanır</span>`;
-  const scoreLbl = sc ? `<span class="score-lbl">${sc.points}/${sc.max}</span>` : '';
+  let chipStatus, scoreLbl = '';
+  if(done){
+    chipStatus = `<span class="chip chip-ok">✓ Tamamlandı</span>`;
+    if(sc) scoreLbl = `<span class="score-lbl">${sc.points}/${sc.max}</span>`;
+  } else if(avail){
+    chipStatus = `<span class="chip chip-p" style="color:var(--p1);border-color:rgba(249,115,22,.4);background:rgba(249,115,22,.08)">▶ Başla</span>`;
+  } else {
+    chipStatus = `<span class="chip chip-lock">Hazırlanır</span>`;
+  }
 
   card.innerHTML = `
     <div class="sc-top">
       <span class="sc-num">${id.toUpperCase()}</span>
-      <span class="sc-status">${done?'✅':'🔒'}</span>
+      <span class="sc-status">${done?'✅':avail?'▶':'🔒'}</span>
     </div>
     <div class="sc-title">${t.title}</div>
     <div class="sc-meta">${chipPage}${chipStatus}${scoreLbl}</div>`;
