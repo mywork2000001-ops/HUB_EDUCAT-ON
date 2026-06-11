@@ -1,0 +1,874 @@
+<!doctype html>
+<html lang="az">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Natural ədədlərin sadə vuruqlara ayrılışı. ƏBOB. ƏKOB</title>
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        font-family:
+          system-ui,
+          -apple-system,
+          sans-serif;
+        background: #0f172a;
+        color: #e2e8f0;
+        min-height: 100vh;
+      }
+      .exam-header {
+        background: #1e293b;
+        border-bottom: 1px solid #334155;
+        padding: 12px 16px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        position: sticky;
+        top: 0;
+        z-index: 10;
+      }
+      .exam-title {
+        font-weight: 700;
+        font-size: 13px;
+        color: #f97316;
+        line-height: 1.3;
+      }
+      .timer {
+        font-size: 18px;
+        font-weight: 800;
+        font-variant-numeric: tabular-nums;
+        background: #0f172a;
+        padding: 4px 12px;
+        border-radius: 8px;
+        border: 1px solid #334155;
+        color: #e2e8f0;
+        white-space: nowrap;
+      }
+      .timer.warn {
+        color: #f97316;
+      }
+      .timer.danger {
+        color: #ef4444;
+        animation: pulse 1s infinite;
+      }
+      @keyframes pulse {
+        0%,
+        100% {
+          opacity: 1;
+        }
+        50% {
+          opacity: 0.4;
+        }
+      }
+      .prog-bar {
+        height: 4px;
+        background: #1e293b;
+      }
+      .prog-fill {
+        height: 100%;
+        background: #f97316;
+        transition: width 0.3s;
+      }
+      .body {
+        max-width: 700px;
+        margin: 0 auto;
+        padding: 28px 16px;
+      }
+      .start {
+        text-align: center;
+        padding: 40px 20px;
+      }
+      .start h2 {
+        font-size: 22px;
+        font-weight: 800;
+        color: #f97316;
+        margin-bottom: 6px;
+      }
+      .start .section-tag {
+        font-size: 12px;
+        color: #64748b;
+        margin-bottom: 14px;
+        background: #1e293b;
+        display: inline-block;
+        padding: 4px 10px;
+        border-radius: 20px;
+      }
+      .start p {
+        color: #94a3b8;
+        font-size: 14px;
+        margin-bottom: 20px;
+      }
+      .info-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 12px;
+        margin: 20px 0;
+      }
+      .info-card {
+        background: #1e293b;
+        border-radius: 10px;
+        padding: 14px;
+        text-align: center;
+      }
+      .info-card .val {
+        font-size: 24px;
+        font-weight: 800;
+        color: #f97316;
+      }
+      .info-card .lbl {
+        font-size: 11px;
+        color: #94a3b8;
+        margin-top: 3px;
+      }
+      .note {
+        font-size: 12px;
+        color: #475569;
+        margin-bottom: 24px;
+      }
+      .q-panel {
+        display: none;
+      }
+      .q-counter {
+        font-size: 12px;
+        color: #94a3b8;
+        margin-bottom: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+      .q-text {
+        font-size: 16px;
+        line-height: 1.7;
+        font-weight: 500;
+        margin-bottom: 22px;
+        color: #f1f5f9;
+      }
+      .options {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+      .opt {
+        background: #1e293b;
+        border: 1.5px solid #334155;
+        border-radius: 10px;
+        padding: 12px 16px;
+        text-align: left;
+        cursor: pointer;
+        transition: all 0.15s;
+        font-size: 14px;
+        color: #e2e8f0;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        width: 100%;
+      }
+      .opt:hover {
+        background: rgba(249, 115, 22, 0.08);
+        border-color: rgba(249, 115, 22, 0.4);
+      }
+      .opt.sel {
+        background: rgba(249, 115, 22, 0.15);
+        border-color: #f97316;
+        color: #f97316;
+        font-weight: 600;
+      }
+      .opt.correct {
+        background: rgba(34, 197, 94, 0.15);
+        border-color: #22c55e;
+        color: #22c55e;
+        font-weight: 600;
+      }
+      .opt.wrong {
+        background: rgba(239, 68, 68, 0.12);
+        border-color: #ef4444;
+        color: #ef4444;
+      }
+      .opt-lbl {
+        width: 26px;
+        height: 26px;
+        background: #334155;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 11px;
+        font-weight: 700;
+        flex-shrink: 0;
+      }
+      .opt.sel .opt-lbl {
+        background: #f97316;
+        color: #0f172a;
+      }
+      .opt.correct .opt-lbl {
+        background: #22c55e;
+        color: #0f172a;
+      }
+      .opt.wrong .opt-lbl {
+        background: #ef4444;
+        color: #fff;
+      }
+      .feedback {
+        margin-top: 14px;
+        padding: 12px 14px;
+        border-radius: 10px;
+        font-size: 13px;
+        line-height: 1.6;
+        display: none;
+      }
+      .feedback.ok {
+        background: rgba(34, 197, 94, 0.1);
+        border: 1px solid rgba(34, 197, 94, 0.3);
+        color: #86efac;
+      }
+      .feedback.ng {
+        background: rgba(239, 68, 68, 0.08);
+        border: 1px solid rgba(239, 68, 68, 0.3);
+        color: #fca5a5;
+      }
+      .nav {
+        display: flex;
+        gap: 10px;
+        margin-top: 24px;
+        flex-wrap: wrap;
+      }
+      .btn {
+        padding: 10px 20px;
+        border-radius: 8px;
+        border: none;
+        cursor: pointer;
+        font-size: 13px;
+        font-weight: 600;
+        transition: all 0.15s;
+      }
+      .btn-outline {
+        background: transparent;
+        border: 1.5px solid #475569;
+        color: #94a3b8;
+      }
+      .btn-outline:hover {
+        border-color: #94a3b8;
+        color: #e2e8f0;
+      }
+      .btn-primary {
+        background: #f97316;
+        color: #fff;
+      }
+      .btn-primary:hover {
+        background: #ea6c0e;
+      }
+      .btn-primary:disabled {
+        background: #475569;
+        cursor: not-allowed;
+      }
+      .q-dots {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 4px;
+        margin-top: 16px;
+      }
+      .dot {
+        width: 22px;
+        height: 22px;
+        border-radius: 4px;
+        background: #1e293b;
+        border: 1px solid #334155;
+        font-size: 9px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        color: #64748b;
+        transition: all 0.1s;
+      }
+      .dot.correct {
+        background: rgba(34, 197, 94, 0.2);
+        border-color: #22c55e;
+        color: #22c55e;
+      }
+      .dot.wrong {
+        background: rgba(239, 68, 68, 0.15);
+        border-color: #ef4444;
+        color: #ef4444;
+      }
+      .dot.current {
+        background: #f97316;
+        color: #fff;
+        font-weight: 700;
+      }
+      .result {
+        display: none;
+        text-align: center;
+        padding: 32px 20px;
+      }
+      .score-ring {
+        width: 130px;
+        height: 130px;
+        border-radius: 50%;
+        border: 10px solid #1e293b;
+        margin: 0 auto 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 26px;
+        font-weight: 800;
+        position: relative;
+      }
+      .score-ring::before {
+        content: "";
+        position: absolute;
+        inset: -10px;
+        border-radius: 50%;
+        background: conic-gradient(#f97316 calc(var(--p, 0) * 1%), #1e293b 0);
+        z-index: -1;
+      }
+      .res-title {
+        font-size: 22px;
+        font-weight: 800;
+        margin-bottom: 6px;
+      }
+      .res-sub {
+        color: #94a3b8;
+        font-size: 14px;
+        margin-bottom: 20px;
+      }
+      .res-actions {
+        display: flex;
+        gap: 10px;
+        justify-content: center;
+        flex-wrap: wrap;
+      }
+      .review {
+        text-align: left;
+        margin-top: 28px;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+      .ri {
+        background: #1e293b;
+        border-radius: 8px;
+        padding: 12px 14px;
+        border-left: 4px solid;
+      }
+      .ri.ok {
+        border-color: #22c55e;
+      }
+      .ri.ng {
+        border-color: #ef4444;
+      }
+      .rq {
+        font-size: 13px;
+        color: #cbd5e1;
+        margin-bottom: 5px;
+      }
+      .ra {
+        font-size: 12px;
+        margin-bottom: 3px;
+      }
+      .ra .ok-a {
+        color: #22c55e;
+      }
+      .ra .ng-a {
+        color: #ef4444;
+      }
+      .re {
+        font-size: 11px;
+        color: #64748b;
+        margin-top: 3px;
+      }
+      .hidden {
+        display: none !important;
+      }
+      @media (max-width: 480px) {
+        .info-grid {
+          grid-template-columns: 1fr 1fr;
+        }
+        .q-text {
+          font-size: 14px;
+        }
+        .exam-title {
+          font-size: 11px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="exam-header hidden" id="hdr">
+      <div class="exam-title">
+        📝 Natural ədədlər — Sadə vuruqlara ayrılış. ƏBOB. ƏKOB
+      </div>
+      <div class="timer" id="tmr">40:00</div>
+    </div>
+    <div class="prog-bar">
+      <div class="prog-fill" id="pg" style="width: 0%"></div>
+    </div>
+
+    <div class="body">
+      <div class="start" id="start">
+        <div class="section-tag">Hissə I · Bölmə 1 · Mövzu 4</div>
+        <h2>Sadə vuruqlara ayrılış. ƏBOB. ƏKOB</h2>
+        <p>
+          DİM test bankından 30 sual — sadə vuruqlara ayrılış, ƏBOB, ƏKOB,
+          bölən sayı, ƏBOB·ƏKOB = a·b düsturu
+        </p>
+        <div class="info-grid">
+          <div class="info-card">
+            <div class="val">30</div>
+            <div class="lbl">Sual sayı</div>
+          </div>
+          <div class="info-card">
+            <div class="val">40</div>
+            <div class="lbl">Dəqiqə</div>
+          </div>
+          <div class="info-card">
+            <div class="val">★★★</div>
+            <div class="lbl">Çətinlik</div>
+          </div>
+        </div>
+        <p class="note">Hər suala cavab verdikdən sonra izahı görəcəksiniz.</p>
+        <button
+          class="btn btn-primary"
+          onclick="startTest()"
+          style="padding: 14px 40px; font-size: 15px"
+        >
+          Testi başla
+        </button>
+      </div>
+
+      <div class="q-panel" id="qpanel">
+        <div class="q-counter">
+          <span id="qnum">Sual 1 / 30</span><span id="qscore">0 / 0</span>
+        </div>
+        <div class="q-text" id="qtext"></div>
+        <div class="options" id="opts"></div>
+        <div class="feedback" id="fb"></div>
+        <div class="nav">
+          <button class="btn btn-outline" onclick="prevQ()" id="btnPrev">
+            ← Əvvəlki
+          </button>
+          <button
+            class="btn btn-primary"
+            onclick="nextQ()"
+            id="btnNext"
+            disabled
+          >
+            Növbəti →
+          </button>
+          <button
+            class="btn btn-primary hidden"
+            onclick="showResult()"
+            id="btnFinish"
+          >
+            Nəticəni gör
+          </button>
+        </div>
+        <div class="q-dots" id="dots"></div>
+      </div>
+
+      <div class="result" id="result">
+        <div class="score-ring" id="ring"><span id="ringTxt"></span></div>
+        <div class="res-title" id="resTitle"></div>
+        <div class="res-sub" id="resSub"></div>
+        <div class="res-actions">
+          <button class="btn btn-outline" onclick="restartTest()">
+            Yenidən başla
+          </button>
+          <button
+            class="btn btn-primary"
+            onclick="window.parent.postMessage({ type: 'CLOSE_LESSON' }, '*')"
+          >
+            Geri qayıt
+          </button>
+        </div>
+        <div class="review" id="review"></div>
+      </div>
+    </div>
+
+    <script>
+      const QS = [
+        {
+          q: "360 ədədinin sadə vuruqlara ayrılışı hansıdır?",
+          o: ["2³·3²·5", "2³·3·5²", "2⁴·3²·5", "2²·3²·5²", "2³·3³·5"],
+          a: 0,
+          e: "360 = 8·45 = 8·9·5 = 2³·3²·5.",
+        },
+        {
+          q: "180 ədədinin sadə vuruqlara ayrılışı hansıdır?",
+          o: ["2²·3²·5", "2³·3²·5", "2²·3·5²", "2·3²·5²", "2²·3³·5"],
+          a: 0,
+          e: "180 = 4·45 = 4·9·5 = 2²·3²·5.",
+        },
+        {
+          q: "ƏBOB(24, 36)-ı tapın.",
+          o: ["6", "8", "12", "4", "3"],
+          a: 2,
+          e: "24 = 2³·3, 36 = 2²·3². ƏBOB = 2²·3 = 12.",
+        },
+        {
+          q: "ƏKOB(8, 12)-ni tapın.",
+          o: ["4", "12", "24", "48", "96"],
+          a: 2,
+          e: "8 = 2³, 12 = 2²·3. ƏKOB = 2³·3 = 24.",
+        },
+        {
+          q: "ƏBOB(a, b) = 6 və ƏKOB(a, b) = 36 olduqda, a = 12 isə b-ni tapın.",
+          o: ["6", "12", "18", "24", "36"],
+          a: 2,
+          e: "a·b = ƏBOB·ƏKOB = 6·36 = 216. b = 216 ÷ 12 = 18.",
+        },
+        {
+          q: "2⁴·3²·5 ədədinin neçə natural bölən var?",
+          o: ["15", "18", "20", "24", "30"],
+          a: 4,
+          e: "Bölən sayı = (4+1)·(2+1)·(1+1) = 5·3·2 = 30.",
+        },
+        {
+          q: "ƏBOB(72, 48)-i tapın.",
+          o: ["6", "12", "24", "36", "48"],
+          a: 2,
+          e: "72 = 2³·3², 48 = 2⁴·3. ƏBOB = 2³·3 = 24.",
+        },
+        {
+          q: "ƏKOB(15, 25)-i tapın.",
+          o: ["5", "15", "25", "75", "150"],
+          a: 3,
+          e: "15 = 3·5, 25 = 5². ƏKOB = 3·5² = 75.",
+        },
+        {
+          q: "ƏBOB(a, b) = 4 və ƏKOB(a, b) = 120 olduqda, a = 24 isə b-ni tapın.",
+          o: ["10", "15", "20", "30", "40"],
+          a: 2,
+          e: "a·b = ƏBOB·ƏKOB = 4·120 = 480. b = 480 ÷ 24 = 20.",
+        },
+        {
+          q: "ƏBOB(84, 126)-i tapın.",
+          o: ["14", "21", "42", "28", "7"],
+          a: 2,
+          e: "84 = 2²·3·7, 126 = 2·3²·7. ƏBOB = 2·3·7 = 42.",
+        },
+        {
+          q: "ƏKOB(4, 6, 10)-u tapın.",
+          o: ["30", "60", "120", "20", "12"],
+          a: 1,
+          e: "4 = 2², 6 = 2·3, 10 = 2·5. ƏKOB = 2²·3·5 = 60.",
+        },
+        {
+          q: "360 = 2³·3²·5 ədədinin neçə natural bölən var?",
+          o: ["20", "24", "28", "30", "36"],
+          a: 1,
+          e: "Bölən sayı = (3+1)·(2+1)·(1+1) = 4·3·2 = 24.",
+        },
+        {
+          q: "ƏBOB(180, 270)-i tapın.",
+          o: ["18", "30", "45", "90", "135"],
+          a: 3,
+          e: "180 = 2²·3²·5, 270 = 2·3³·5. ƏBOB = 2·3²·5 = 90.",
+        },
+        {
+          q: "İki ədədin hasili 2016, ƏBOB-u 12-dir. ƏKOB-u tapın.",
+          o: ["48", "84", "120", "168", "252"],
+          a: 3,
+          e: "ƏKOB = a·b ÷ ƏBOB = 2016 ÷ 12 = 168.",
+        },
+        {
+          q: "ƏKOB(a, b) = 60 və ƏBOB(a, b) = 5 olan iki natural ədədin (a, b) neçə sırasız cütü mövcuddur?",
+          o: ["1", "2", "3", "4", "6"],
+          a: 1,
+          e: "a = 5s, b = 5t, ƏOB(s,t)=1, ƏKT(s,t)=12. 12=2²·3; sırasız cütlər: (s,t)=(1,12)→(5,60) və (3,4)→(15,20). Cəmi 2 cüt.",
+        },
+        {
+          q: "2310 ədədinin sadə vuruqlara ayrılışı hansıdır?",
+          o: ["2·3·5·7·11", "2²·3·5·7·11", "2·3·5·7·13", "2·3²·5·7·11", "2·3·5²·7·11"],
+          a: 0,
+          e: "2310 = 2·3·5·7·11 (ardıcıl 5 sadə ədədin hasili).",
+        },
+        {
+          q: "ƏBOB(a, b) = 8 və ƏKOB(a, b) = 96 olduqda, a = 32 isə b-ni tapın.",
+          o: ["12", "16", "24", "32", "48"],
+          a: 2,
+          e: "a·b = ƏBOB·ƏKOB = 8·96 = 768. b = 768 ÷ 32 = 24.",
+        },
+        {
+          q: "18 və 24-ün hər ikisinə tam bölünən ən kiçik natural ədədi tapın.",
+          o: ["36", "48", "72", "96", "144"],
+          a: 2,
+          e: "18 = 2·3², 24 = 2³·3. ƏKOB = 2³·3² = 72.",
+        },
+        {
+          q: "ƏBOB(2³·3², 2²·3⁴)-ı tapın.",
+          o: ["12", "18", "24", "36", "72"],
+          a: 3,
+          e: "Hər sadə ədədin minimal qüvvəti: min(3,2)=2, min(2,4)=2. ƏBOB = 2²·3² = 36.",
+        },
+        {
+          q: "a = 2²·3·7² və b = 2·3²·7 olduqda ƏKOB(a, b)-ni tapın.",
+          o: ["882", "1764", "2646", "3528", "1323"],
+          a: 1,
+          e: "Hər sadə ədədin maksimal qüvvəti: max(2,1)=2, max(1,2)=2, max(2,1)=2. ƏKOB = 2²·3²·7² = 4·9·49 = 1764.",
+        },
+        {
+          q: "İki natural ədədin hasili 360, ƏBOB-u 6-dır. ƏKOB-u tapın.",
+          o: ["30", "45", "60", "90", "120"],
+          a: 2,
+          e: "ƏKOB = a·b ÷ ƏBOB = 360 ÷ 6 = 60.",
+        },
+        {
+          q: "ƏKOB(a, b) ÷ ƏBOB(a, b) = 15 olduqda, ƏBOB = 6 isə ƏKOB-u tapın.",
+          o: ["45", "60", "75", "90", "105"],
+          a: 3,
+          e: "ƏKOB = 15 · ƏBOB = 15 · 6 = 90.",
+        },
+        {
+          q: "İki ədədin ƏBOB-u 12, ƏKOB-u 180-dir. Bir ədəd 36 olduqda digərini tapın.",
+          o: ["45", "48", "60", "72", "90"],
+          a: 2,
+          e: "a·b = ƏBOB·ƏKOB = 12·180 = 2160. b = 2160 ÷ 36 = 60.",
+        },
+        {
+          q: "n = 2^a · 3^b · 5^c (a, b, c ≥ 1) olan ədədin 24 böləninin olduğu bilinir. a + b + c-nin mümkün olan minimum qiymətini tapın.",
+          o: ["3", "4", "5", "6", "8"],
+          a: 3,
+          e: "(a+1)(b+1)(c+1) = 24. Minimum üçün (a+1, b+1, c+1) = (2,3,4) ⟹ a=1, b=2, c=3. a+b+c = 6.",
+        },
+        {
+          q: "ƏBOB(a, 12) = 4 və ƏKOB(a, 12) = 60 olduqda a-nı tapın.",
+          o: ["10", "15", "20", "24", "30"],
+          a: 2,
+          e: "a·12 = ƏBOB·ƏKOB = 4·60 = 240. a = 240 ÷ 12 = 20.",
+        },
+        {
+          q: "120-nin 6-ya tam bölünən neçə natural böləninin var?",
+          o: ["4", "6", "8", "10", "12"],
+          a: 1,
+          e: "6·d bölən olsun, d | (120÷6) = 20. 20 = 2²·5; d-nin bölən sayı = (2+1)(1+1) = 6.",
+        },
+        {
+          q: "ƏBOB(n, 36) = 9 olan ən kiçik iki rəqəmli natural n ədədini tapın.",
+          o: ["9", "18", "27", "36", "45"],
+          a: 2,
+          e: "n = 9k, ƏOB(k, 4) = 1. İki rəqəmli: n=18 → ƏBOB(18,36)=18≠9. n=27 → ƏBOB(27,36)=9 ✓.",
+        },
+        {
+          q: "1-dən 100-ə qədər (daxil) 4-ə tam bölünən, lakin 6-ya tam bölünməyən natural ədədlərin sayı neçədir?",
+          o: ["15", "16", "17", "18", "19"],
+          a: 2,
+          e: "4-ə bölünənlər: ⌊100/4⌋ = 25. Həm 4-ə həm 6-ya (yəni 12-yə) bölünənlər: ⌊100/12⌋ = 8. Cavab: 25 − 8 = 17.",
+        },
+        {
+          q: "İki natural ədədin ƏBOB-u 14, ƏKOB-u 168-dir. Bu iki ədədin cəminin minimum qiyməti hansıdır?",
+          o: ["70", "84", "98", "112", "182"],
+          a: 2,
+          e: "a = 14s, b = 14t, ƏOB(s,t)=1, ƏKT(s,t)=12. (s,t)=(3,4)→(42,56), cəm=98; (s,t)=(1,12)→(14,168), cəm=182. Minimum=98.",
+        },
+        {
+          q: "a = 2⁴·3²·5·7 olduqda a-nın neçə tək natural böləninin var?",
+          o: ["8", "10", "12", "15", "18"],
+          a: 2,
+          e: "Tək bölənlər 2-nin qüvvəsini istisna edir. 3²·5·7-nin bölən sayı = (2+1)(1+1)(1+1) = 12.",
+        },
+      ];
+
+      let cur = 0,
+        answers = Array(QS.length).fill(-1),
+        answered = Array(QS.length).fill(false);
+      let timerID,
+        secs = 40 * 60,
+        correct = 0;
+
+      function startTest() {
+        document.getElementById("start").style.display = "none";
+        document.getElementById("qpanel").style.display = "block";
+        document.getElementById("hdr").classList.remove("hidden");
+        buildDots();
+        showQ(0);
+        timerID = setInterval(tick, 1000);
+        updateTimer();
+      }
+
+      function tick() {
+        secs--;
+        updateTimer();
+        if (secs <= 0) {
+          clearInterval(timerID);
+          showResult();
+        }
+      }
+
+      function updateTimer() {
+        const m = Math.floor(secs / 60),
+          s = secs % 60;
+        const el = document.getElementById("tmr");
+        el.textContent =
+          (m < 10 ? "0" : "") + m + ":" + (s < 10 ? "0" : "") + s;
+        el.className =
+          "timer" + (secs < 300 ? " danger" : secs < 600 ? " warn" : "");
+      }
+
+      function buildDots() {
+        const c = document.getElementById("dots");
+        c.innerHTML = "";
+        QS.forEach((_, i) => {
+          const d = document.createElement("div");
+          d.className = "dot" + (i === 0 ? " current" : "");
+          d.textContent = i + 1;
+          d.onclick = () => {
+            if (answered[i]) showQ(i);
+          };
+          c.appendChild(d);
+        });
+      }
+
+      function showQ(i) {
+        cur = i;
+        const q = QS[i];
+        document.getElementById("qnum").textContent =
+          "Sual " + (i + 1) + " / " + QS.length;
+        document.getElementById("qtext").textContent = q.q;
+        const oc = document.getElementById("opts");
+        oc.innerHTML = "";
+        q.o.forEach((opt, j) => {
+          const b = document.createElement("button");
+          b.className = "opt";
+          if (answered[i]) {
+            if (j === q.a) b.className = "opt correct";
+            else if (answers[i] === j) b.className = "opt wrong";
+          } else if (answers[i] === j) b.className = "opt sel";
+          b.innerHTML = `<span class="opt-lbl">${["A", "B", "C", "D", "E"][j]}</span>${opt}`;
+          if (!answered[i]) b.onclick = () => selectOpt(j);
+          oc.appendChild(b);
+        });
+        const fb = document.getElementById("fb");
+        if (answered[i]) {
+          fb.style.display = "block";
+          const ok = answers[i] === q.a;
+          fb.className = "feedback " + (ok ? "ok" : "ng");
+          fb.textContent =
+            (ok
+              ? "✓ Düzdür! "
+              : "✗ Səhv! Düzgün cavab: " +
+                ["A", "B", "C", "D", "E"][q.a] +
+                ". ") + q.e;
+        } else {
+          fb.style.display = "none";
+        }
+        document.getElementById("btnPrev").style.display =
+          i === 0 ? "none" : "";
+        const isLast = i === QS.length - 1;
+        const nxt = document.getElementById("btnNext"),
+          fin = document.getElementById("btnFinish");
+        if (isLast) {
+          nxt.classList.add("hidden");
+          if (answered[i]) fin.classList.remove("hidden");
+          else fin.classList.add("hidden");
+        } else {
+          nxt.classList.remove("hidden");
+          fin.classList.add("hidden");
+          nxt.disabled = !answered[i];
+        }
+        updateDots();
+        updateScore();
+        document.getElementById("pg").style.width =
+          ((i + 1) / QS.length) * 100 + "%";
+      }
+
+      function selectOpt(j) {
+        if (answered[cur]) return;
+        answers[cur] = j;
+        answered[cur] = true;
+        if (j === QS[cur].a) correct++;
+        showQ(cur);
+      }
+
+      function nextQ() {
+        if (cur < QS.length - 1) showQ(cur + 1);
+      }
+      function prevQ() {
+        if (cur > 0) showQ(cur - 1);
+      }
+
+      function updateDots() {
+        document.querySelectorAll(".dot").forEach((d, i) => {
+          d.className = "dot";
+          if (answered[i])
+            d.className += " " + (answers[i] === QS[i].a ? "correct" : "wrong");
+          if (i === cur) d.className += " current";
+        });
+      }
+
+      function updateScore() {
+        const done = answered.filter(Boolean).length;
+        document.getElementById("qscore").textContent = correct + " / " + done;
+      }
+
+      function showResult() {
+        clearInterval(timerID);
+        document.getElementById("qpanel").style.display = "none";
+        document.getElementById("result").style.display = "block";
+        const pct = Math.round((correct / QS.length) * 100);
+        document.getElementById("ring").style.setProperty("--p", pct);
+        document.getElementById("ringTxt").textContent =
+          correct + "/" + QS.length;
+        document.getElementById("resTitle").textContent =
+          pct >= 80
+            ? "Əla nəticə! 🎉"
+            : pct >= 60
+              ? "Yaxşı cəhd! 💪"
+              : "Daha çox təkrar lazımdır 📚";
+        document.getElementById("resSub").textContent =
+          "Düzgün cavab: " + correct + " / " + QS.length + " (" + pct + "%)";
+        const rv = document.getElementById("review");
+        rv.innerHTML =
+          '<div style="font-weight:700;margin-bottom:12px;color:#94a3b8">Sualların icmalı:</div>';
+        QS.forEach((q, i) => {
+          const ok = answers[i] === q.a;
+          const d = document.createElement("div");
+          d.className = "ri " + (ok ? "ok" : "ng");
+          d.innerHTML = `<div class="rq">${i + 1}. ${q.q}</div>
+      <div class="ra">${ok ? '<span class="ok-a">✓ Düzgün</span>' : '<span class="ng-a">✗ Sizin: ' + ["A", "B", "C", "D", "E"][answers[i]] + '</span> → <span class="ok-a">Düzgün: ' + ["A", "B", "C", "D", "E"][q.a] + "</span>"}</div>
+      <div class="re">${q.e}</div>`;
+          rv.appendChild(d);
+        });
+        try {
+          const key = "dim_test_progress_v2";
+          const p = JSON.parse(localStorage.getItem(key) || "{}");
+          p["p1-s01-t4"] = {
+            completed: true,
+            score: { points: correct, max: QS.length },
+            date: new Date().toISOString(),
+          };
+          localStorage.setItem(key, JSON.stringify(p));
+          window.parent.postMessage(
+            {
+              type: "LESSON_COMPLETE",
+              payload: {
+                itemId: "p1-s01-t4",
+                points: correct,
+                maxPoints: QS.length,
+              },
+            },
+            "*",
+          );
+        } catch (e) {}
+      }
+
+      function restartTest() {
+        cur = 0;
+        answers = Array(QS.length).fill(-1);
+        answered = Array(QS.length).fill(false);
+        correct = 0;
+        secs = 40 * 60;
+        document.getElementById("result").style.display = "none";
+        document.getElementById("qpanel").style.display = "block";
+        buildDots();
+        showQ(0);
+        clearInterval(timerID);
+        timerID = setInterval(tick, 1000);
+        updateTimer();
+      }
+    </script>
+  </body>
+</html>
