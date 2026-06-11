@@ -1,4 +1,251 @@
 GLOBAL EDU-PLATFORM ORCHESTRATOR
+════════════════════════════════════════════════════════════════════
+ 0. LIVE PROJECT GRAPH  (актуально на 2026-06-11)
+════════════════════════════════════════════════════════════════════
+
+ROOT: C:/Users/Administrator/Documents/Claude/Projects/
+│
+├── index.html                          ← MASTER HUB (2-card: P001 + P002)
+├── CLAUDE.md                           ← Этот файл
+├── README.md
+├── factory_manifest.json               ← Curriculum map, 28 planned chapters
+│
+├── ── PYTHON AUTOMATION SCRIPTS (14) ──────────────────────────────
+│   ├── extract_code.py
+│   ├── fix_a0.py / fix_a0_multiline.py
+│   ├── fix_katex.py / fix_katex2.py / fix_katex_delimiters.py
+│   ├── fix_type_b_css.py / fix_type_b_dedup.py
+│   ├── inject_images.py
+│   ├── lesson_gen.py
+│   ├── migrate_to_katex.py
+│   ├── optimize_topics.py
+│   ├── rebuild_batch_c1.py
+│   └── rebuild_lessons.py
+│
+├── scripts/                            ← Все Python-скрипты автоматизации (16 файлов)
+│   ├── extract_code.py / lesson_gen.py / rebuild_lessons.py
+│   ├── fix_a0.py / fix_katex.py / fix_katex2.py / fix_katex_delimiters.py
+│   ├── fix_type_b_css.py / fix_type_b_dedup.py / fix_a0_multiline.py
+│   ├── inject_images.py / migrate_to_katex.py / optimize_topics.py
+│   ├── rebuild_batch_c1.py / generate_lessons.py / global_parser.py
+│   └── gen_lessons_p002.ps1
+│
+├── _Shared_Core/                       ← ОБЩЕЕ ЯДРО (все проекты)
+│   ├── style.css                       ← Глобальные стили, CSS-переменные, dark/light
+│   ├── script.js                       ← Утилиты, i18n, навигация
+│   ├── textbook_engine.js              ← Движок P002 (4-Pillar)
+│   ├── textbook_template.html          ← Шаблон для новых Movzu
+│   ├── quiz-engine.js                  ← MCQ-движок (P001/P003 тесты)
+│   └── quiz.css                        ← Стили викторин
+│
+├── P001_Math_5_DIM/                    ═══ ПРОЕКТ 1: DİM Тест-банк ═══
+│   ├── index.html                      ← Лендинг P001
+│   └── 5dim_sinif_testi2025/
+│       ├── index.html
+│       ├── Lesson-1.html … Lesson-17.html   (17 уроков ✅ COMPLETE)
+│       ├── script.js
+│       ├── style.css
+│       └── assets/img/                 ← ~1 190 WebP/PNG изображений
+│           └── p[lesson]_[type]_[N].webp
+│
+├── P002_Math_5_Darslik/               ═══ ПРОЕКТ 2: Учебник (4-Pillar) ═══
+│   ├── index.html                      ← Лендинг P002
+│   ├── math-5-class-1/                 ← Глава 1
+│   │   ├── index.html
+│   │   └── lesson-1.html … lesson-11.html
+│   ├── math-5-class-2/ … math-5-class-8/   (8 глав × 11 уроков = 88 файлов)
+│   └── [каждая глава содержит index.html + lesson-1..11.html]
+│
+├── P003_Block_Exam/                    ═══ ПРОЕКТ 3 (P003) ═══
+    │
+    ├── source_books/                   ← Исходные материалы
+    │   ├── Riyaziyyat Test bank 2025-ci il 1-ci hissə.pdf
+    │   ├── Riyaziyyat Test bank 2025-ci il 2-ci hissə.pdf
+    │   ├── DIM_2025_INDEX.html
+    │   └── Revane/
+    │
+    ├── scripts/                        ← Генерация контента P003
+    │   ├── generate_dim_tests.py
+    │   ├── render_pages.py
+    │   └── pg_imgs/
+    │
+    └── app/                            ← REACT/VITE ПРИЛОЖЕНИЕ
+        ├── package.json                ← React 19, Vite, TS, TailwindCSS, Radix-UI
+        ├── vite.config.ts
+        ├── tailwind.config.js
+        ├── index.html                  ← Vite entry point
+        │
+        ├── src/
+        │   ├── main.tsx / App.tsx
+        │   ├── app/Router.tsx
+        │   ├── pages/  (10 страниц)
+        │   │   ├── DashboardPage.tsx
+        │   │   ├── TopicsPage.tsx / TopicDetailPage.tsx / TopicLessonPage.tsx
+        │   │   ├── TestsPage.tsx / TestViewPage.tsx
+        │   │   ├── ProofsPage.tsx / ProofViewPage.tsx
+        │   │   └── SituationalPage.tsx / SituationalViewPage.tsx
+        │   ├── components/
+        │   │   ├── ContentViewer.tsx / Layout.tsx
+        │   │   └── ui/  (60+ Radix-UI компонентов)
+        │   ├── context/LangContext.tsx  ← AZ / RU / EN переключение
+        │   ├── hooks/use-mobile.ts
+        │   ├── services/ProgressService.ts
+        │   ├── data/
+        │   │   ├── topics.ts           ← 28 тем (содержимое)
+        │   │   ├── tests.ts            ← Тест-вопросы
+        │   │   ├── proofs.ts           ← Математические доказательства
+        │   │   └── situational.ts      ← Ситуационные задачи
+        │   ├── types/index.ts
+        │   └── lib/utils.ts
+        │
+        ├── public/lessons/             ← СТАТИЧЕСКИЕ HTML-УРОКИ
+        │   ├── topics/
+        │   │   ├── index.html          ← Каталог 28 тем
+        │   │   ├── topic-01.html … topic-28.html   (28 тем ✅)
+        │   │   ├── topic-shared-a.css / .js
+        │   │   └── topic-shared-b.css
+        │   ├── tests/
+        │   │   ├── index.html          ← Каталог тестов
+        │   │   ├── p1-s01-t1.html      ← Тест 1 [РАЗБЛОКИРОВАН]
+        │   │   ├── p1-s01-t2.html      ← Тест 2 [РАЗБЛОКИРОВАН]
+        │   │   ├── p1-s01-t3.html
+        │   │   ├── test-dim-mixed.html
+        │   │   ├── test-variant-1.html / test-variant-2.html
+        │   │   └── [8 тест-файлов всего]
+        │   ├── proofs/
+        │   │   ├── index.html
+        │   │   ├── proof-pythagoras.html
+        │   │   ├── proof-triangle-angles.html
+        │   │   └── proof-vieta.html
+        │   └── situational/
+        │       ├── index.html
+        │       ├── sit-bag.html / sit-magaza.html / sit-mesafe.html
+        │       └── [4 ситуационных задачи]
+        │
+        └── dist/                       ← Сборка Vite (продакшн)
+            ├── index.html
+            └── assets/ (CSS + JS бандлы)
+
+├── P004_TAIM_2026/                     ═══ ПРОЕКТ 4 (P004): TAİM 2026 ═══
+│   Назначение: Платформа для подготовки к MİQ (аттестация педагогов)
+│   Аудитория: Учителя Азербайджана | AZ + RU | PWA | Offline
+│   Авторы: Ferid Hesenov, Aysel Balasova, Sola Mustafayeva
+│   Источник: TAİM TEST BANK 2026 (PDF 312 стр., OCR)
+│
+├── index.html              ← Главный дашборд (47 уроков, учительская панель)
+├── quiz.html               ← Конструктор квиза
+│
+├── ── ТЕСТ-ФАЙЛЫ (47 тестов) ─────────────────────────────────────
+│   ├── test-1.html … test-38.html      ← Тематические тесты
+│   │   │  Структура: var CONFIG = { topicAz, topicRu, sectionAz,
+│   │   │    sectionRu, totalTimeMin, _k (XOR-зашифр.), questions[] }
+│   │   │  + <script src="engine.js">
+│   │   ├── I  BÖLMƏ — Hüquqi Savadlılıq         (test-1)
+│   │   ├── II BÖLMƏ — Metodiki Savadlılıq        (test-2 … test-30)
+│   │   │   ├── 2.1.1 İnteqrasiya                (test-2)
+│   │   │   ├── 2.1.2 XXI əsr kompetensiyaları   (test-3)
+│   │   │   ├── 2.x.x … 2.x.x (прочие темы)     (test-4 … test-30)
+│   │   └── III BÖLMƏ — Pedaqoji Savadlılıq      (test-31 … test-38)
+│   │       ├── Psixi teoriyalar (Gardner, Piaget, Vygotsky…)
+│   │       └── SEL, bullying prevention, classroom mgmt
+│   │
+│   ├── test-fs1.html … test-fs6.html   ← Fəsil sınaqları (главы)
+│   └── test-us1.html … test-us3.html   ← Ümumi sınaqlar (итоговые)
+│
+├── ── ДВИЖОК ──────────────────────────────────────────────────────
+│   ├── engine.js           ← Единый движок v4 (obfuscated, 34.8 KB)
+│   │   │  • XOR-дешифровка CONFIG._k (KEY: 8 bytes)
+│   │   │  • Двуязычный UI (AZ/RU toggle)
+│   │   │  • Таймер с анимацией (красная граница < 60 с)
+│   │   │  • Сохранение/возобновление (localStorage, 24 ч)
+│   │   │  • Порог сдачи: 70%
+│   │   │  • Генерация сертификата (printable window)
+│   │   │  • История результатов (taim_history, max 200)
+│   │   └── • Review-режим после завершения
+│   ├── protect.js          ← Защита (F12, Ctrl+U/S/P, DevTools) [obfusc.]
+│   ├── convert.js          ← Batch-конвертер форматов (Node.js)
+│   ├── rekey.js            ← Шифровальщик ответов → CONFIG._k
+│   ├── make-icons.js       ← Генератор PWA-иконок
+│   └── sw.js               ← Service Worker (cache: taim-v12)
+│
+├── style.css               ← Единая таблица стилей (тёмная тема #1e3c72)
+├── manifest.json           ← PWA манифест (standalone, AZ, education)
+├── icons/
+│   ├── icon-192.png        ← PWA иконка 192×192 (any + maskable)
+│   └── icon-512.png        ← PWA иконка 512×512 (any + maskable)
+│
+├── Folder/                 ← Данные и источники
+│   ├── taim_test_bank_2026.json   ← OCR-ответы (313 стр, 47 секций)
+│   ├── parse_answers.py           ← Структура всех ключей ответов
+│   ├── answer_keys_hires.txt      ← OCR страниц 304–305
+│   ├── answer_pages.txt           ← Маркеры 312 страниц
+│   └── pdf_text.txt               ← Плейсхолдер
+│   └── [TAİM TEST BANK 2026.pdf   ← НЕ в git: >100 MB]
+│   └── [Images/ page_001..312.png ← НЕ в git: excluded]
+│
+├── README.md
+├── CLAUDE.md
+└── .gitignore              ← Исключает PDF + Images/
+
+УЧИТЕЛЬСКАЯ ПАНЕЛЬ P004:
+  Пароль (localStorage): "Test2026"
+  Возможности: рейтинги (0=locked, 1–3=done), сброс прогресса,
+               смена пароля, история тестов (taim_history)
+
+────────────────────────────────────────────────────────────────────
+ МАТРИЦА СТАТУСОВ (на 2026-06-11)
+────────────────────────────────────────────────────────────────────
+
+  Проект │ Компонент              │ Статус   │ Кол-во файлов
+─────────┼────────────────────────┼──────────┼───────────────
+  P001   │ DİM Уроки              │ ✅ DONE   │ 17/17 уроков
+  P001   │ Изображения            │ ✅ DONE   │ ~1 190 WebP
+  P002   │ Главы учебника         │ ⚠️ PART   │ 8 глав, 88 уроков
+  P003   │ Темы (topics)          │ ✅ DONE   │ 28/28 HTML
+  P003   │ Тесты (tests)          │ 🔄 WIP    │ 2 разблокировано
+  P003   │ Доказательства (proofs)│ 🔄 WIP    │ 3 HTML
+  P003   │ Ситуационные задачи    │ 🔄 WIP    │ 3 HTML
+  P003   │ React App (src/)       │ ✅ BUILD  │ dist/ готов
+  P004   │ Тесты (test-1..38)     │ ✅ DONE   │ 38 тест-HTML
+  P004   │ Fəsil sınaqları        │ ✅ DONE   │ 6 (fs1–fs6)
+  P004   │ Ümumi sınaqlar         │ ✅ DONE   │ 3 (us1–us3)
+  P004   │ PWA / offline          │ ✅ DONE   │ sw.js v12, manifest
+─────────┴────────────────────────┴──────────┴───────────────
+
+────────────────────────────────────────────────────────────────────
+ ТЕХНОЛОГИЧЕСКИЙ СТЕК
+────────────────────────────────────────────────────────────────────
+
+  P003 App      │ Технология
+────────────────┼────────────────────────────────────────────────
+  UI Framework  │ React 19 + TypeScript
+  Build Tool    │ Vite
+  Стили         │ TailwindCSS 3 + CSS Variables (dark/light)
+  Компоненты    │ Radix-UI (60+ примитивов)
+  Роутинг       │ React Router 7
+  Формы         │ React Hook Form + Zod
+  Графики       │ Recharts
+  Уведомления   │ Sonner (toast)
+  Темы          │ next-themes
+  Иконки        │ Lucide React
+  Математика    │ KaTeX (primary) + MathJax (fallback) + MathML (a11y)
+  Языки         │ AZ / RU / EN (LangContext.tsx)
+────────────────┴────────────────────────────────────────────────
+
+  P004 App      │ Технология
+────────────────┼────────────────────────────────────────────────
+  Frontend      │ HTML5, CSS3, Vanilla JS (без фреймворков)
+  Движок        │ engine.js v4 (единый для всех 47 тестов)
+  Шифрование    │ XOR-шифр ответов (rekey.js → CONFIG._k)
+  Безопасность  │ protect.js (блок F12/DevTools/PrintScreen)
+  PWA           │ Service Worker (taim-v12), manifest.json
+  Хранилище     │ localStorage (прогресс, история, учитель)
+  Языки         │ AZ / RU (bilingual toggle в каждом тесте)
+  Сертификат    │ Генерация при ≥70% (printable window)
+  Данные        │ OCR из PDF → parse_answers.py → JSON
+────────────────┴────────────────────────────────────────────────
+
+════════════════════════════════════════════════════════════════════
 
 1. IDENTITY & MISSION
    You are the Lead Systems Architect & Automation Engineer.
@@ -344,6 +591,8 @@ GLOBAL EDU-PLATFORM ORCHESTRATOR
 35. PROJECT INVENTORY
     P001_Math_5_DIM: DİM 2025 test bank. Exactly 17 lessons (Lesson-1 → Lesson-17). MCQ engine only.
     P002_Math_5_Darslik: Interactive textbook. 4-Pillar system (Theory · Practice · Evaluation · Gamification). Files: Movzu-18.html → Movzu-N.html. Engine: \_Shared_Core/textbook_engine.js. Template: \_Shared_Core/textbook_template.html.
+    P003_Block_Exam (платформа для подготовки к блоковому экзамену): React/Vite/TS app. 28 topics ✅, tests WIP, proofs WIP, situational WIP. Path: Projects/платформа для подготовки к блоковому экзамену/app/
+    P004_TAİM_2026: Standalone PWA platform for MİQ teacher certification. 47 tests (38 topic + 6 chapter + 3 final), ~1500+ questions, AZ+RU bilingual, engine.js v4, XOR-encrypted answers, offline-ready (sw.js v12). Path: Projects/P004_TAIM_2026/
 36. LESSON STRUCTURE (P002: 4-Pillar + Trainer System)
     Each Movzu-X.html follows the 4-Pillar architecture with 5 interactive modules:
     plain

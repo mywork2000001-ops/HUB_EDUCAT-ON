@@ -1,0 +1,565 @@
+﻿<!doctype html>
+<html lang="az">
+<head>
+  <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <meta name="theme-color" content="#0f172a"/><meta name="color-scheme" content="dark light"/>
+  <meta name="apple-mobile-web-app-capable" content="yes"/>
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+  <meta name="mobile-web-app-capable" content="yes"/>
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin/>
+  <title>Mövzu 10 — Tənliklər sistemi</title>
+      <style>
+      :root{--bg-dark:#0f0f1a;--bg-card:rgba(255,255,255,0.05);--bg-glass:rgba(255,255,255,0.08);--border-glass:rgba(255,255,255,0.15);--text-primary:#e8e8f0;--text-secondary:#a0a0b8;--accent:#20c997;--accent-dim:rgba(32,201,151,0.18);--accent-warm:#38d9a9;--accent-blue:#4dabf7;--accent-blue-dim:rgba(77,171,247,0.18);--success:#51cf66;--error:#ff6b6b;--warning:#fcc419;}
+    </style>
+    <link rel="stylesheet" href="topic-shared-a.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" crossorigin="anonymous">
+  <script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" crossorigin="anonymous"></script>
+  <!-- JSXGraph -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jsxgraph@1.9.3/distrib/jsxgraph.css" crossorigin="anonymous"/>
+  <script src="https://cdn.jsdelivr.net/npm/jsxgraph@1.9.3/distrib/jsxgraphcore.js" crossorigin="anonymous"></script>
+  <!-- function-plot (includes d3 v7) -->
+  <script src="https://cdn.jsdelivr.net/npm/d3@7/dist/d3.min.js" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/function-plot@1/dist/function-plot.js" crossorigin="anonymous"></script>
+</head>
+<body>
+<div class="bg"></div>
+<nav>
+  <div class="nav-inner">
+    <span class="logo" onclick="showSection('home')">🔗 Mövzu 10 — Tənliklər sistemi</span>
+    <ul class="nav-links">
+      <li><a class="active" data-sec="home">Ana səhifə</a></li>
+      <li><a data-sec="theory">Nəzəriyyə</a></li>
+      <li><a data-sec="examples">Misallar</a></li>
+      <li><a data-sec="assessment">Qiymətləndirmə</a></li>
+    </ul>
+    <button class="hamburger" id="ham" onclick="toggleMobNav()" aria-label="Menyu">☰</button>
+  </div>
+</nav>
+<div class="mob-nav" id="mob-nav">
+  <a data-sec="home">🏠 Ana səhifə</a>
+  <a data-sec="theory">📖 Nəzəriyyə</a>
+  <a data-sec="examples">✏️ Misallar</a>
+  <a data-sec="assessment">📋 Qiymətləndirmə</a>
+</div>
+
+<section id="home" class="active">
+  <div class="hero">
+    <h1>Tənliklər sistemi</h1>
+    <p>DR.Math · §1–§5. İki məchullu sistem · Əvəzetmə · Toplama · Tətbiq məsələləri</p>
+    <div class="hero-btns">
+      <button class="btn btn-primary" onclick="showSection('theory')">📖 Dərsi Başla</button>
+      <button class="btn btn-secondary" onclick="showSection('assessment')">🔍 Bilikləri Yoxla</button>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title"><div class="icon" style="background:var(--accent-dim)">📚</div>Bu mövzuda nə öyrənəcəksiniz?</div>
+    <div class="feat-grid">
+      <div class="feat-card"><div class="fi">🔗</div><h3>Sistem anlayışı</h3><p>Həll növləri: bir, sıfır, sonsuz</p></div>
+      <div class="feat-card"><div class="fi">🔄</div><h3>Əvəzetmə üsulu</h3><p>Bir dəyişəni digəri ilə ifadə et</p></div>
+      <div class="feat-card"><div class="fi">➕</div><h3>Toplama üsulu</h3><p>Tənlikləri toplayıb bir məchulu yox et</p></div>
+      <div class="feat-card"><div class="fi">📊</div><h3>Qrafik üsul</h3><p>Düz xətlərin kəsişməsi = həll</p></div>
+      <div class="feat-card"><div class="fi">🧩</div><h3>Tətbiq məsələləri</h3><p>Yaş, qiymət, sürət, qarışıq</p></div>
+      <div class="feat-card"><div class="fi">🎯</div><h3>DİM məsələləri</h3><p>20 sual — orta çətinlik</p></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title"><div class="icon" style="background:var(--accent-dim)">💡</div>Mövzunun əhəmiyyəti</div>
+    <p style="color:var(--text-secondary);font-size:0.93rem;line-height:1.75">DİM-də <strong style="color:var(--accent)">4–5 sual</strong> tənliklər sisteminə aiddir. Tətbiq məsələlərini sistemə çevirə bilmək DİM-in ən vacib bacarıqlarından biridir.</p>
+  </div>
+</section>
+
+<section id="theory">
+  <div class="card">
+    <div class="card-title"><div class="icon" style="background:var(--accent-dim)">📖</div>Nəzəriyyə</div>
+    <div class="slide-wrap">
+      <div class="slide-meta">
+        <div class="slide-dots" id="dots"></div>
+        <span style="font-size:0.82rem;color:var(--text-secondary)" id="slide-counter">1 / 16</span>
+      </div>
+      <div class="slide-track" id="slide-track"></div>
+      <div class="slide-nav">
+        <button class="btn btn-secondary" id="prev-btn" onclick="changeSlide(-1)">← Geri</button>
+        <button class="btn btn-primary" id="next-btn" onclick="changeSlide(1)">İrəli →</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="examples">
+  <div class="card">
+    <div class="card-title"><div class="icon" style="background:var(--accent-dim)">✏️</div>İşlənmiş misallar</div>
+    <p style="color:var(--text-secondary);font-size:0.88rem;margin-bottom:18px">Hər misalı özünüz həll etməyə çalışın, sonra həlli açın.</p>
+
+    <div class="problem-card">
+      <div class="problem-header"><span class="problem-num">Misal 1</span><span class="problem-topic">Əvəzetmə üsulu — §2</span></div>
+      <div class="problem-text">Həll edin: \(\begin{cases}y=2x+1\\x+y=7\end{cases}\)</div>
+      <button class="sol-btn" onclick="toggleSol(this)">💡 Həlli göstər</button>
+      <div class="solution">
+        <strong>Addım 1.</strong> \(y=2x+1\)-i ikinci tənliyə əvəz edirik:<br>
+        \(x+(2x+1)=7\)<br>
+        \(3x+1=7\)<br>
+        \(x=2\)<br><br>
+        <strong>Addım 2.</strong> \(y\)-i tapırıq:<br>
+        \(y=2\cdot2+1=5\)<br><br>
+        <strong>Cavab:</strong> \(\boxed{x=2,\quad y=5}\)
+      </div>
+    </div>
+
+    <div class="problem-card">
+      <div class="problem-header"><span class="problem-num">Misal 2</span><span class="problem-topic">Toplama (eliminasiya) üsulu — §3</span></div>
+      <div class="problem-text">Həll edin: \(\begin{cases}2x+3y=12\\4x-3y=6\end{cases}\)</div>
+      <button class="sol-btn" onclick="toggleSol(this)">💡 Həlli göstər</button>
+      <div class="solution">
+        <strong>Addım 1.</strong> Tənlikləri toplayırıq (\(3y\) ixtisar olur):<br>
+        \(6x=18\Rightarrow x=3\)<br><br>
+        <strong>Addım 2.</strong> \(x=3\)-ü birinci tənliyə əvəz edirik:<br>
+        \(2(3)+3y=12\Rightarrow 3y=6\Rightarrow y=2\)<br><br>
+        <strong>Cavab:</strong> \(\boxed{x=3,\quad y=2}\)
+      </div>
+    </div>
+
+    <div class="problem-card">
+      <div class="problem-header"><span class="problem-num">Misal 3</span><span class="problem-topic">Həll yoxdur — §1</span></div>
+      <div class="problem-text">Həll edin: \(\begin{cases}2x+y=5\\4x+2y=8\end{cases}\)</div>
+      <button class="sol-btn" onclick="toggleSol(this)">💡 Həlli göstər</button>
+      <div class="solution">
+        <strong>Addım 1.</strong> Birinci tənliyi 2-yə vururuq:<br>
+        \(4x+2y=10\)<br><br>
+        <strong>Addım 2.</strong> İkinci tənlikdən çıxırıq:<br>
+        \((4x+2y)-(4x+2y)=10-8\)<br>
+        \(0=2\) — <strong style="color:var(--error)">ziddiyyət!</strong><br><br>
+        <strong>Cavab:</strong> <strong>Həll yoxdur</strong> (paralel düz xətlər)
+        <div class="info-box">Əmsallar mütənasib, sabitlər mütənasib deyil → sistem uyğunsuz.</div>
+      </div>
+    </div>
+
+    <div class="problem-card">
+      <div class="problem-header"><span class="problem-num">Misal 4</span><span class="problem-topic">Sonsuz həll — §1</span></div>
+      <div class="problem-text">Həll edin: \(\begin{cases}x+2y=6\\2x+4y=12\end{cases}\)</div>
+      <button class="sol-btn" onclick="toggleSol(this)">💡 Həlli göstər</button>
+      <div class="solution">
+        <strong>İkinci tənlik</strong> birincinin 2 mislidir:<br>
+        \(2(x+2y)=2\cdot6=12\) ✓<br><br>
+        Hər iki tənlik eyni düz xətti təsvir edir → <strong>sonsuz həll</strong>.<br><br>
+        <strong>Ümumi həll:</strong> \(x=6-2t\), \(y=t\), istənilən \(t\in\mathbb{R}\) üçün.
+      </div>
+    </div>
+
+    <div class="problem-card">
+      <div class="problem-header"><span class="problem-num">Misal 5</span><span class="problem-topic">Yaş məsələsi — §5</span></div>
+      <div class="problem-text">Atanın yaşı oğlunun yaşından 28 yaş böyükdür. 4 ildən sonra atanın yaşı oğlunun yaşının 3 mislinə bərabər olacaq. Oğlun indi neçə yaşı var?</div>
+      <button class="sol-btn" onclick="toggleSol(this)">💡 Həlli göstər</button>
+      <div class="solution">
+        <strong>Addım 1.</strong> Dəyişənlər: oğul = \(x\), ata = \(y\)<br>
+        \(\begin{cases}y=x+28\\y+4=3(x+4)\end{cases}\)<br><br>
+        <strong>Addım 2.</strong> İkinci tənliyi açırıq: \(y+4=3x+12\Rightarrow y=3x+8\)<br><br>
+        <strong>Addım 3.</strong> Əvəz edirik: \(x+28=3x+8\Rightarrow 2x=20\Rightarrow x=10\)<br><br>
+        <strong>Cavab:</strong> Oğlun yaşı \(\boxed{10}\)
+      </div>
+    </div>
+
+    <div class="problem-card">
+      <div class="problem-header"><span class="problem-num">Misal 6</span><span class="problem-topic">DİM tipli — qiymət məsələsi</span></div>
+      <div class="problem-text">3 kitab + 2 dəftər = 13 manat. 1 kitab + 4 dəftər = 9 manat. Bir kitabın qiyməti neçədir?</div>
+      <button class="sol-btn" onclick="toggleSol(this)">💡 Həlli göstər</button>
+      <div class="solution">
+        <strong>Sistem:</strong> \(\begin{cases}3k+2d=13\\k+4d=9\end{cases}\)<br><br>
+        <strong>Addım 1.</strong> İkinci tənliyi 3-ə vururuq: \(3k+12d=27\)<br>
+        Birincini çıxırıq: \(10d=14\Rightarrow d=1{,}4\) manat<br><br>
+        <strong>Addım 2.</strong> \(k=9-4(1{,}4)=9-5{,}6=3{,}4\) manat<br><br>
+        <strong>Cavab:</strong> Bir kitab \(\boxed{3{,}4}\) manat
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="assessment">
+  <div class="card">
+    <div class="card-title"><div class="icon" style="background:var(--accent-dim)">📋</div>Qiymətləndirmə</div>
+    <p style="color:var(--text-secondary);font-size:0.88rem;margin-bottom:22px">20 sual · DİM səviyyəsi · Anlıq cavab + izah</p>
+    <div style="display:flex;gap:12px;flex-wrap:wrap">
+      <button class="btn btn-primary" onclick="startDiag()">📝 Testi Başla</button>
+      <button class="btn btn-secondary" onclick="startViktorina()">⚡ Viktorina (30s/sual)</button>
+    </div>
+  </div>
+  <div id="diag-ui" style="display:none">
+    <div class="quiz-wrap">
+      <div class="quiz-progress">
+        <span style="font-size:0.85rem;color:var(--text-secondary)">Sual <span id="dq-n">1</span>/<span id="dq-tot">20</span></span>
+        <div class="prog-bar"><div class="prog-fill" id="dq-bar" style="width:0%"></div></div>
+        <span style="font-size:0.85rem;color:var(--success)" id="dq-score">0 ✓</span>
+      </div>
+      <div class="quiz-q" id="dq-q"></div>
+      <div class="quiz-opts" id="dq-opts"></div>
+      <div class="expl-box" id="dq-expl"></div>
+      <div class="quiz-nav-row">
+        <button class="btn btn-secondary" id="dq-prev" onclick="prevDiag()" disabled>← Əvvəlki</button>
+        <button class="btn btn-primary" id="dq-next" onclick="nextDiag()" disabled>Növbəti →</button>
+      </div>
+    </div>
+  </div>
+  <div id="vik-ui" style="display:none">
+    <div class="quiz-wrap">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+        <span style="font-size:0.82rem;padding:3px 12px;background:var(--accent-dim);color:var(--accent);border-radius:20px;font-weight:700" id="vik-tag">§1</span>
+        <div class="vik-timer" id="vik-timer">30</div>
+      </div>
+      <div style="display:flex;gap:4px;flex-wrap:wrap;margin-bottom:16px" id="vik-dots"></div>
+      <div class="quiz-q" id="vik-q"></div>
+      <div class="quiz-opts" id="vik-opts"></div>
+    </div>
+  </div>
+  <div id="res-ui" style="display:none">
+    <div class="quiz-wrap results-wrap">
+      <div class="score-ring" id="res-ring"><span class="score-val" id="res-pct">0%</span></div>
+      <div class="score-msg" id="res-msg"></div>
+      <span style="font-size:1.05rem;font-weight:700;color:var(--text-secondary)" id="res-lvl"></span>
+      <div class="breakdown" style="margin-top:20px">
+        <div class="breakdown-item"><div class="breakdown-val" id="res-ok">0</div><div class="breakdown-lbl">Düzgün</div></div>
+        <div class="breakdown-item"><div class="breakdown-val" id="res-no">0</div><div class="breakdown-lbl">Yanlış</div></div>
+        <div class="breakdown-item"><div class="breakdown-val">20</div><div class="breakdown-lbl">Cəmi</div></div>
+      </div>
+      <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:10px">
+        <button class="btn btn-primary" onclick="startDiag()">🔄 Yenidən cəhd et</button>
+        <button class="btn btn-secondary" onclick="resetAssessment()">✕ Bağla</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+function showSection(id){document.querySelectorAll('section').forEach(s=>s.classList.remove('active'));document.querySelectorAll('.nav-links a,.mob-nav a').forEach(a=>a.classList.toggle('active',a.dataset.sec===id));const sec=document.getElementById(id);if(sec){sec.classList.add('active');window.scrollTo({top:0,behavior:'smooth'});}closeMobNav();}
+document.querySelectorAll('[data-sec]').forEach(a=>a.addEventListener('click',()=>showSection(a.dataset.sec)));
+function toggleMobNav(){document.getElementById('mob-nav').classList.toggle('open');}
+function closeMobNav(){document.getElementById('mob-nav').classList.remove('open');}
+function toggleSol(btn){const sol=btn.nextElementSibling;sol.classList.toggle('open');btn.textContent=sol.classList.contains('open')?'🙈 Həlli gizlə':'💡 Həlli göstər';if(sol.classList.contains('open'))renderMathInElement(sol,K);}
+
+const SLIDES=[
+  {title:'§1.1 Sistem anlayışı',html:`
+<p><strong>Tənliklər sistemi</strong> — eyni vaxtda ödənilməli olan iki (və ya daha çox) tənlik toplusudur. Həll — hər iki tənliyi ödəyən <strong>sıralı cüt \((x,y)\)</strong>-dir.</p>
+<div class="formula-box">
+<strong>İki məchullu xətti sistem:</strong><br>
+\(\begin{cases}a_1x+b_1y=c_1\\a_2x+b_2y=c_2\end{cases}\)<br><br>
+<strong>Həll \((x_0,y_0)\)</strong> o deməkdir ki:<br>
+\(a_1x_0+b_1y_0=c_1\) <em>və eyni zamanda</em> \(a_2x_0+b_2y_0=c_2\)
+</div>
+<div class="rule-grid">
+  <div class="rule-card"><h4>Həndəsi məna</h4><p>Hər tənlik bir düz xətti ifadə edir. Həll = bu iki xəttin kəsişmə nöqtəsi \((x_0,y_0)\).</p></div>
+  <div class="rule-card"><h4>Yoxlama qaydası</h4><p>Tapılan \((x,y)\)-i HƏR İKİ tənliyə əvəz et. Hər ikisi doğrudursa — həll düzgündür.</p></div>
+  <div class="rule-card"><h4>DİM nüansı</h4><p>Bəzən \(x+y\), \(x\cdot y\) və ya \(x-y\) soruşulur — sistemi tam həll etmədən alınan xüsusi üsulları bil.</p></div>
+</div>
+<div class="info-box"><strong>Nümunə:</strong> \((2,5)\) — \(\begin{cases}2+5=7\checkmark\\2\cdot2+5=9\checkmark\end{cases}\) — həlldir.</div>`},
+
+  {title:'§1.2 Həllin növləri',html:`
+<p>İki xətti tənlik sistemi üç vəziyyətdən birini yaradır. Bunu əmsalların nisbəti ilə müəyyən etmək olar.</p>
+<div class="formula-box">
+\(\begin{cases}a_1x+b_1y=c_1\\a_2x+b_2y=c_2\end{cases}\)<br><br>
+<strong>Tək həll:</strong> \(\dfrac{a_1}{a_2}\neq\dfrac{b_1}{b_2}\) — xətlər kəsişir<br><br>
+<strong>Həll yoxdur:</strong> \(\dfrac{a_1}{a_2}=\dfrac{b_1}{b_2}\neq\dfrac{c_1}{c_2}\) — xətlər paralel<br><br>
+<strong>Sonsuz həll:</strong> \(\dfrac{a_1}{a_2}=\dfrac{b_1}{b_2}=\dfrac{c_1}{c_2}\) — eyni xətt
+</div>
+<div class="rule-grid">
+  <div class="rule-card"><h4>Kəsişən xətlər</h4><p>Tək həll. Əmsalların nisbəti bərabər deyil. DİM-də ən çox bu hal.</p></div>
+  <div class="rule-card"><h4>Paralel xətlər</h4><p>Həll yoxdur (uyğunsuz sistem). Tənlikləri toplasaq ziddiyyət alırıq: \(0=k\), \(k\neq0\).</p></div>
+  <div class="rule-card"><h4>Üst-üstə xətlər</h4><p>Sonsuz həll. Bir tənlik digərinin mislidir. Tənlikləri toplasaq eyni: \(0=0\).</p></div>
+</div>
+<div class="warn-box"><strong>DİM tələsi:</strong> \(\begin{cases}2x+4y=6\\x+2y=3\end{cases}\) — sonsuz həll! İkinci tənlik birincinin yarısıdır.</div>`},
+
+  {title:'§2.1 Əvəzetmə üsulu: alqoritm',html:`
+<p><strong>Əvəzetmə üsulu</strong> — bir tənlikdən bir dəyişəni ifadə edib digər tənliyə əvəz etmək. 4 addım:</p>
+<div class="formula-box">
+<strong>Addım 1.</strong> Bir tənlikdən bir dəyişəni ifadə et.<br>
+\(\quad y = \dfrac{c_1 - a_1 x}{b_1}\)<br><br>
+<strong>Addım 2.</strong> Bu ifadəni <em>digər</em> tənliyə əvəz et → bir məchullu tənlik alınır.<br><br>
+<strong>Addım 3.</strong> Bir məchullu tənliyi həll et — \(x_0\) tapılır.<br><br>
+<strong>Addım 4.</strong> \(x_0\)-ı 1-ci addımın ifadəsinə əvəz et → \(y_0\) tapılır. Yoxla!
+</div>
+<div class="rule-grid">
+  <div class="rule-card"><h4>Nümunə</h4><p>\(\begin{cases}y=2x+1\\x+y=7\end{cases}\)<br>Əvəz: \(x+(2x+1)=7\)<br>\(3x=6\Rightarrow x=2\)<br>\(y=2(2)+1=5\)</p></div>
+  <div class="rule-card"><h4>Nə vaxt seç?</h4><p>Bir tənlikdə \(x\) və ya \(y\)-nin əmsalı \(\pm1\) olduqda — əvəzetmə ən sürətli üsuldur.</p></div>
+</div>
+<div class="info-box"><strong>Qayda:</strong> Əvəz etdikdən sonra alınan tənlikdə yalnız <em>bir</em> məchul qalmalıdır. Əgər hər ikisi qalırsa — əvəzetmə səhv edilib.</div>`},
+
+  {title:'§2.2 Əvəzetmə üsulu: nümunələr',html:`
+<p>İki tam işlənmiş nümunə — əvəzetmə üsulunun tətbiqi.</p>
+<div class="formula-box">
+<strong>Nümunə 1.</strong> \(\begin{cases}x-y=3\\2x+3y=16\end{cases}\)<br><br>
+Addım 1: \(x=y+3\)<br>
+Addım 2: \(2(y+3)+3y=16\Rightarrow 2y+6+3y=16\Rightarrow 5y=10\Rightarrow y=2\)<br>
+Addım 3: \(x=2+3=5\)<br>
+<strong>Cavab: \(x=5,\;y=2\)</strong>
+</div>
+<div class="formula-box">
+<strong>Nümunə 2.</strong> \(\begin{cases}3x+y=11\\x+4y=8\end{cases}\)<br><br>
+Addım 1: İkinci tənlikdən: \(x=8-4y\)<br>
+Addım 2: \(3(8-4y)+y=11\Rightarrow 24-12y+y=11\Rightarrow -11y=-13\Rightarrow y=\dfrac{13}{11}\)<br>
+Addım 3: \(x=8-4\cdot\dfrac{13}{11}=\dfrac{88-52}{11}=\dfrac{36}{11}\)<br>
+<strong>Cavab: \(\left(\dfrac{36}{11},\;\dfrac{13}{11}\right)\)</strong>
+</div>
+<div class="warn-box"><strong>Diqqət:</strong> Hər zaman hər iki tənliyi ödəyib-ödəmədiyini yoxla. DİM-də yoxlama addımı xalı qoruyur.</div>`},
+
+  {title:'§3.1 Toplama üsulu: alqoritm',html:`
+<p><strong>Toplama (eliminasiya) üsulu</strong> — bir dəyişəni yox etmək üçün tənlikləri uyğun mislərə vurub toplamaq.</p>
+<div class="formula-box">
+<strong>Addım 1.</strong> Hansı dəyişəni yox etmək istədiyini seç (məsələn \(y\)).<br><br>
+<strong>Addım 2.</strong> \(y\)-nin əmsallarının ən kiçik ortaq misli (ƏKOM) tapılır.<br>
+\(\quad\) Birinci tənliyi \(k_1\)-ə, ikincini \(k_2\)-yə vur ki, \(|b_1 k_1|=|b_2 k_2|\).<br><br>
+<strong>Addım 3.</strong> Tənlikləri topla (eyni işarəli əmsallar üçün çıxart) → \(y\) yox olur.<br><br>
+<strong>Addım 4.</strong> Alınan bir məchullu tənliyi həll et → \(x_0\). Sonra \(y_0\)-ı tap.
+</div>
+<div class="rule-grid">
+  <div class="rule-card"><h4>Nümunə</h4><p>\(\begin{cases}2x+3y=12\\4x-3y=6\end{cases}\)<br>Topla: \(6x=18\Rightarrow x=3\)<br>\(2(3)+3y=12\Rightarrow y=2\)</p></div>
+  <div class="rule-card"><h4>Nə vaxt seç?</h4><p>Hər iki tənlikdə eyni əmsal varsa (və ya asanlıqla yaratmaq mümkündürsə) — toplama daha sürətlidir.</p></div>
+</div>
+<div class="warn-box"><strong>İşarə tələsi:</strong> Çıxartma zamanı bütün işarələri dəyişdirməyi unutma: \((a-b)-(c-d)=a-b-c+d\).</div>`},
+
+  {title:'§3.2 Toplama üsulu: nümunələr',html:`
+<p>İki tam işlənmiş nümunə — toplama üsulunun tətbiqi.</p>
+<div class="formula-box">
+<strong>Nümunə 1.</strong> \(\begin{cases}3x+2y=13\\2x-5y=4\end{cases}\)<br><br>
+\(x\)-i yox etmək üçün: ×2 və ×3:<br>
+\(\begin{cases}6x+4y=26\\6x-15y=12\end{cases}\)<br>
+Çıxart: \(19y=14\Rightarrow y=\dfrac{14}{19}\)... Bu halda əvəzetmə daha rahatdır.<br>
+Alternativ — \(y\)-i yox et: ×5 və ×2:<br>
+\(\begin{cases}15x+10y=65\\4x-10y=8\end{cases}\Rightarrow 19x=73\Rightarrow x=\dfrac{73}{19}\)
+</div>
+<div class="formula-box">
+<strong>Nümunə 2 (DİM tipli).</strong> \(\begin{cases}x+y=10\\x-y=4\end{cases}\)<br><br>
+Topla: \(2x=14\Rightarrow x=7\)<br>
+Çıxart: \(2y=6\Rightarrow y=3\)<br>
+<strong>Cavab: \(x=7,\;y=3\)</strong><br><br>
+<em>Bonus:</em> \(x\cdot y=21\), \(x^2-y^2=(x+y)(x-y)=10\cdot4=40\) — sistem qurmadan!
+</div>
+<div class="info-box"><strong>DİM fəndi:</strong> \(x+y\) və \(x-y\) verilsə — \(x=(S+D)/2\), \(y=(S-D)/2\) düsturunu istifadə et.</div>`},
+
+  {title:'§4.1 Qrafik üsulu',html:`
+<p><strong>Qrafik üsul</strong> — hər tənliyi düz xətt kimi çəkib kəsişmə nöqtəsini tapmaq. DİM-də nəzəri anlayış kimi vacibdir.</p>
+<div class="svg-wrap">
+  <svg viewBox="0 0 300 200" width="300" aria-label="İki düz xətt kəsişir, kəsişmə nöqtəsi (3,4) işarələnib">
+    <line x1="10" y1="190" x2="290" y2="190" stroke="rgba(255,255,255,0.25)" stroke-width="1"/>
+    <line x1="150" y1="10" x2="150" y2="195" stroke="rgba(255,255,255,0.25)" stroke-width="1"/>
+    <line x1="10" y1="170" x2="290" y2="30" stroke="#20c997" stroke-width="2.5"/>
+    <line x1="10" y1="50" x2="290" y2="150" stroke="#4dabf7" stroke-width="2.5"/>
+    <circle cx="183" cy="97" r="6" fill="#fcc419" stroke="#fff" stroke-width="1.5"/>
+    <text x="192" y="93" fill="#fcc419" font-size="12" font-weight="bold">(x₀,y₀)</text>
+    <text x="252" y="28" fill="#20c997" font-size="11">xətt 1</text>
+    <text x="252" y="148" fill="#4dabf7" font-size="11">xətt 2</text>
+  </svg>
+</div>
+<div class="formula-box">
+<strong>Alqoritm:</strong><br>
+1. Hər tənliyi \(y=mx+b\) formasına gətir<br>
+2. Hər xətt üçün 2 nöqtə tap (x=0 və y=0)<br>
+3. Xətləri çəki kəsişmə nöqtəsini oxu<br>
+4. Koordinatları hər iki tənliyə əvəz et — yoxla
+</div>
+<div class="info-box"><strong>DİM tətbiqi:</strong> Qrafik üsul DİM-də "neçə həll var?" tipli suallar üçün vacibdir. Kəsişmə sayı = həll sayı.</div>`},
+
+  {title:'§4.2 Xüsusi hallar: paralel və üst-üstə xətlər',html:`
+<p>Bəzən sistem "həll yoxdur" və ya "sonsuz həll" cavabı verir. Bunları cəbri yolla da tapmaq olar.</p>
+<div class="formula-box">
+<strong>Paralel xətlər — həll yoxdur:</strong><br>
+\(\begin{cases}2x+4y=6\\x+2y=5\end{cases}\)<br>
+İkincini ×2: \(2x+4y=10\). Amma birincidə \(=6\). \(6\neq10\) → ziddiyyət \(0=4\).
+</div>
+<div class="formula-box">
+<strong>Üst-üstə xətlər — sonsuz həll:</strong><br>
+\(\begin{cases}3x-6y=9\\x-2y=3\end{cases}\)<br>
+İkincini ×3: \(3x-6y=9\) — eynidir! → \(0=0\) → sonsuz həll.<br>
+Ümumi həll: \(x=2y+3\), \(y\in\mathbb{R}\) istənilən ədəd.
+</div>
+<div class="rule-grid">
+  <div class="rule-card"><h4>Cəbri yoxlama</h4><p>Toplama/çıxartmadan sonra \(0=k\) \((k\neq0)\) → həll yoxdur.<br>\(0=0\) → sonsuz həll.</p></div>
+  <div class="rule-card"><h4>Əmsal nisbəti</h4><p>Paralel: \(\frac{a_1}{a_2}=\frac{b_1}{b_2}\neq\frac{c_1}{c_2}\)<br>Üst-üstə: \(\frac{a_1}{a_2}=\frac{b_1}{b_2}=\frac{c_1}{c_2}\)</p></div>
+</div>
+<div class="warn-box"><strong>DİM tələsi:</strong> "Sistemin həlli neçədir?" sualında 0, 1, ∞ seçimlərini diqqətlə oxu. Cəbri yoxlama etmədən cavab vermə.</div>`},
+
+  {title:'§5.1 Biri xətti, biri kvadrat sistem',html:`
+<p>Bir tənlik xətti, digəri kvadrat olduqda sistem <strong>0, 1 və ya 2</strong> həll verə bilər.</p>
+<div class="formula-box">
+<strong>Sistem:</strong> \(\begin{cases}y=ax+b\\y=cx^2+dx+e\end{cases}\)<br><br>
+<strong>Üsul:</strong> Birinci tənliyi ikinciyə əvəz et:<br>
+\(ax+b=cx^2+dx+e\)<br>
+\(cx^2+(d-a)x+(e-b)=0\)<br><br>
+Diskriminant: \(D=(d-a)^2-4c(e-b)\)<br>
+\(D>0\): 2 həll &emsp; \(D=0\): 1 həll &emsp; \(D<0\): həll yoxdur
+</div>
+<div class="rule-grid">
+  <div class="rule-card"><h4>Nümunə</h4><p>\(\begin{cases}y=x+2\\y=x^2\end{cases}\)<br>\(x^2=x+2\Rightarrow x^2-x-2=0\)<br>\((x-2)(x+1)=0\)<br>\(x=2\) və \(x=-1\)<br>2 həll: \((2,4)\) və \((-1,1)\)</p></div>
+  <div class="rule-card"><h4>Qrafik məna</h4><p>Düz xətt parabola ilə 0, 1 (toxunuş) və ya 2 nöqtədə kəsişir.</p></div>
+</div>
+<div class="info-box"><strong>DİM:</strong> Toxunuş halı (\(D=0\)) — diskriminant sıfırdır, bu da "tək ortaq nöqtə" deməkdir.</div>`},
+
+  {title:'§5.2 İki kvadrat tənlik sistemi',html:`
+<p>Simmetrik sistemlər xüsusi əvəzetmə fəndləri ilə həll olunur.</p>
+<div class="formula-box">
+<strong>Tip 1 — cəm/hasil fəndli sistem:</strong><br>
+\(\begin{cases}x+y=s\\xy=p\end{cases}\)<br>
+Bu sistemin həlləri \(x\) və \(y\) — Viet düsturunun tərsinə görə<br>
+\(t^2-st+p=0\) tənliyinin kökləridir.
+</div>
+<div class="formula-box">
+<strong>Nümunə.</strong> \(\begin{cases}x+y=5\\xy=6\end{cases}\)<br>
+\(t^2-5t+6=0\Rightarrow (t-2)(t-3)=0\)<br>
+\(\Rightarrow\{x=2,y=3\}\) və ya \(\{x=3,y=2\}\)
+</div>
+<div class="rule-grid">
+  <div class="rule-card"><h4>Tip 2 — kvadrat cəm</h4><p>\(x^2+y^2=(x+y)^2-2xy\)<br>Cəm və hasil bilindikcə istifadə et.</p></div>
+  <div class="rule-card"><h4>Tip 3 — simmetrik</h4><p>\(\begin{cases}x^2+y=a\\y^2+x=a\end{cases}\)<br>Çıxart: \((x^2-y^2)-(x-y)=0\)<br>\((x-y)(x+y-1)=0\)</p></div>
+</div>
+<div class="warn-box"><strong>Diqqət:</strong> \(\{x=2,y=3\}\) və \(\{x=3,y=2\}\) — fərqli həllərdir, amma simmetrik sistemdə hər ikisi qəbul edilir.</div>`},
+
+  {title:'§6.1 Məsələ üçün sistem qurma',html:`
+<p>İki məchullu, iki şərtli məsələlər sistem qurmaqla həll olunur. Strategiya:</p>
+<div class="formula-box">
+<strong>4 mərhələ:</strong><br>
+1. <strong>Məchulları müəyyən et:</strong> "Nəyi tapmaq lazımdır?" — bunlara \(x\) və \(y\) de.<br>
+2. <strong>Şərtləri cümlə-cümlə tənliyə çevir:</strong> Hər "şərt" bir tənlik verir.<br>
+3. <strong>Sistemi həll et:</strong> Əvəzetmə və ya toplama üsulu.<br>
+4. <strong>Yoxla:</strong> Alınan dəyərlər məsələnin mənasına uygunmu?
+</div>
+<div class="rule-grid">
+  <div class="rule-card"><h4>Yaş şablonu</h4><p>"İndi" → \(x\) və \(y\).<br>"N il sonra" → \(x+N\) və \(y+N\).<br>"N il əvvəl" → \(x-N\) və \(y-N\).</p></div>
+  <div class="rule-card"><h4>Qiymət şablonu</h4><p>Miqdar × Qiymət = Məbləğ.<br>\(n_1 x + n_2 y = M_1\)<br>\(m_1 x + m_2 y = M_2\)</p></div>
+  <div class="rule-card"><h4>Sürət şablonu</h4><p>Məsafə = Sürət × Vaxt.<br>Birlikdə: \((v_1+v_2)t=d\)<br>Əks: \(v_1 t_1 = v_2 t_2\)</p></div>
+</div>
+<div class="warn-box"><strong>Tez-tez səhv:</strong> "Oğlun yaşı atanın 3 mislidir" → \(y=3x\), amma "3 il sonra" → \(y+3=3(x+3)\) — bu fərqlidir!</div>`},
+
+  {title:'§6.2 Məsələ nümunələri',html:`
+<p>Üç klassik DİM məsələ növü — sistem quraraq həll.</p>
+<div class="formula-box">
+<strong>Yaş məsələsi.</strong> Atanın yaşı oğlunun 4 mislidir. 6 ildən sonra ata oğlundan 22 yaş böyük olacaq. Oğlun indi neçə yaşı var?<br><br>
+Sistem: \(\begin{cases}a=4o\\a+6-(o+6)=22\end{cases}\Rightarrow a-o=22\Rightarrow 4o-o=22\Rightarrow o=\dfrac{22}{3}\)<br>
+<em>Hm — tam ədəd çıxmır, yəni məsələni yenidən oxu. Düzgün şərt: "5 ildən sonra"</em><br>
+Düzgün: \(\begin{cases}a=4o\\(a+5)-(o+5)=22\end{cases}\Rightarrow a-o=22\Rightarrow 3o=22\)... Cavab: \(o=8\), \(a=32\).
+</div>
+<div class="formula-box">
+<strong>Qarışıq məsələsi.</strong> 40%-li və 10%-li məhluldan 25%-li 60 litr hazırla.<br>
+\(\begin{cases}x+y=60\\0{,}4x+0{,}1y=0{,}25\cdot60=15\end{cases}\)<br>
+\(y=60-x\): \(0{,}4x+0{,}1(60-x)=15\Rightarrow 0{,}3x=9\Rightarrow x=30\), \(y=30\)
+</div>
+<div class="info-box"><strong>Sürət məsələsi fəndi:</strong> İki qatar əks yönlə hərəkət edərsə cəm sürəti toplanır; eyni yönlə olarsa fərq götürülür.</div>`},
+
+  {title:'§7.1 Xətti sistem: Kramer qaydası',html:`
+<p><strong>Kramer qaydası</strong> — determinant (matris) metodu ilə sistemi həll etmək. DİM-in ali tipli suallarında görünür.</p>
+<div class="formula-box">
+<strong>Sistem:</strong> \(\begin{cases}a_1x+b_1y=c_1\\a_2x+b_2y=c_2\end{cases}\)<br><br>
+<strong>Əsas determinant:</strong> \(D=\begin{vmatrix}a_1&b_1\\a_2&b_2\end{vmatrix}=a_1b_2-a_2b_1\)<br><br>
+\(D_x=\begin{vmatrix}c_1&b_1\\c_2&b_2\end{vmatrix}=c_1b_2-c_2b_1\qquad D_y=\begin{vmatrix}a_1&c_1\\a_2&c_2\end{vmatrix}=a_1c_2-a_2c_1\)<br><br>
+\(x=\dfrac{D_x}{D},\quad y=\dfrac{D_y}{D}\quad (D\neq0)\)
+</div>
+<div class="rule-grid">
+  <div class="rule-card"><h4>Nümunə</h4><p>\(\begin{cases}2x+3y=7\\x-y=1\end{cases}\)<br>\(D=2(-1)-1(3)=-5\)<br>\(D_x=7(-1)-1(3)=-10\)<br>\(D_y=2(1)-1(7)=-5\)<br>\(x=2,\;y=1\)</p></div>
+  <div class="rule-card"><h4>\(D=0\) halı</h4><p>\(D=0\): ya həll yoxdur, ya sonsuz həll. \(D_x=D_y=0\) → sonsuz. \(D_x\neq0\) → yoxdur.</p></div>
+</div>
+<div class="info-box"><strong>DİM notu:</strong> Kramer qaydası böyük əmsallı sistemlər üçün əvəzetmədən daha az səhv verir. Əmsalları diqqətlə yaz.</div>`},
+
+  {title:'§7.2 Parametrli sistemlər',html:`
+<p>Sistemdə \(a\) parametri varsa — müxtəlif \(a\) dəyərləri üçün həll növünü müəyyən etmək lazımdır.</p>
+<div class="formula-box">
+<strong>Nümunə.</strong> \(\begin{cases}ax+2y=4\\3x+ay=6\end{cases}\)<br><br>
+\(D=a\cdot a-3\cdot2=a^2-6\)<br><br>
+\(D\neq0\Leftrightarrow a^2\neq6\Leftrightarrow a\neq\pm\sqrt{6}\) → tək həll<br>
+\(D=0\Leftrightarrow a=\pm\sqrt{6}\) → ya həll yoxdur, ya sonsuz<br><br>
+\(a=\sqrt{6}\): \(D_x=4a-12=4\sqrt{6}-12\neq0\) → həll yoxdur<br>
+\(a=-\sqrt{6}\): Yoxla — \(D_x=0\) → sonsuz həll
+</div>
+<div class="rule-grid">
+  <div class="rule-card"><h4>Alqoritm</h4><p>1. \(D\)-ni tap<br>2. \(D=0\) halını tap<br>3. Bu \(a\)-lar üçün \(D_x\) yoxla<br>4. Qalan \(a\) üçün tək həll</p></div>
+  <div class="rule-card"><h4>DİM tipik sual</h4><p>"Hansı \(a\) üçün sistemin tək həlli var?" → \(D\neq0\) şərtini tap.</p></div>
+</div>
+<div class="warn-box"><strong>Tez-tez xəta:</strong> \(D=0\) olduqda sistemi həll etmədən "sonsuz həll var" demə — \(D_x\) yoxlamasını mütləq et.</div>`},
+
+  {title:'§8.1 DİM tipli mürəkkəb sistemlər',html:`
+<p>Qeyri-xətti sistemlər — ağıllı dəyişən əvəzetmələri ilə sadələşdirilir.</p>
+<div class="formula-box">
+<strong>Tip 1 — bölmə fəndi:</strong><br>
+\(\begin{cases}x+y=5\\x^2+y^2=13\end{cases}\)<br>
+\(x^2+y^2=(x+y)^2-2xy=25-2xy=13\Rightarrow xy=6\)<br>
+Viet: \(t^2-5t+6=0\Rightarrow t=2\) və \(t=3\)<br>
+Həll: \((2,3)\) və \((3,2)\)
+</div>
+<div class="formula-box">
+<strong>Tip 2 — köməkçi dəyişən:</strong><br>
+\(\begin{cases}\dfrac{1}{x}+\dfrac{1}{y}=5\\\dfrac{1}{x}-\dfrac{1}{y}=1\end{cases}\)<br>
+\(u=\dfrac{1}{x},\;v=\dfrac{1}{y}\): \(\begin{cases}u+v=5\\u-v=1\end{cases}\Rightarrow u=3,v=2\)<br>
+\(x=\dfrac{1}{3},\;y=\dfrac{1}{2}\)
+</div>
+<div class="info-box"><strong>Fənd kataloquu:</strong> \(\frac{1}{x}\to u\), \(\sqrt{x}\to u\), \(x+y\to s\), \(xy\to p\), \(x^2+y^2=(x+y)^2-2xy\).</div>`},
+
+  {title:'§8.2 DİM hazırlıq — tipik suallar və tələlər',html:`
+<p>DİM-də tənliklər sistemi mövzusundan ən çox çıxan suallar və tez-tez düşülən tələlər.</p>
+<div class="rule-grid">
+  <div class="rule-card"><h4>Tip 1: \(x+y\) soruş</h4><p>\(\begin{cases}3x+3y=18\end{cases}\Rightarrow x+y=6\). Sistemi tam həll etmə — bölmə kifayətdir.</p></div>
+  <div class="rule-card"><h4>Tip 2: Həll sayı</h4><p>Əmsal nisbətlərini yoxla. \(\frac{a_1}{a_2}=\frac{b_1}{b_2}\neq\frac{c_1}{c_2}\) → 0.</p></div>
+  <div class="rule-card"><h4>Tip 3: Parametr</h4><p>\(D=0\) şərtini tap. \(a=\pm\sqrt{...}\) formasında cavab ola bilər.</p></div>
+  <div class="rule-card"><h4>Tip 4: Söz məsələsi</h4><p>Sistem qur. Miqdar mənfi ola bilməz — "fiziki mənasını" yoxla.</p></div>
+</div>
+<div class="formula-box">
+<strong>Ən çox düşülən tələlər:</strong><br>
+• Toplama üsulunda işarə səhvi — çıxartmada hər termi dəyiş<br>
+• "Sonsuz həll" ilə "istənilən say həll" eynidir — fərqli deyil<br>
+• Parametrli sistemdə \(D=0\) → həll yoxdur deyib keçmə, \(D_x\) yoxla<br>
+• Söz məsələsini sisteme çevirdikdən sonra yoxlamadan cavab yazma
+</div>
+<div class="info-box"><strong>Vaxt taktikası:</strong> Əvvəlcə əmsallar nisbətini yoxla (3 saniyə). Tək həll aydındırsa əvəzetmə/toplama seç. Mürəkkəb görünürsə köməkçi dəyişən düşün.</div>`},
+];
+
+const QS=[
+  {s:'§2',q:'\\(\\begin{cases}y=x+3\\\\x+y=7\\end{cases}\\) sisteminin həlli?',o:['\\(x=2,y=5\\)','\\(x=3,y=4\\)','\\(x=4,y=3\\)','\\(x=1,y=6\\)'],a:0,e:'\\(x+(x+3)=7\\Rightarrow 2x=4\\Rightarrow x=2\\), \\(y=5\\).'},
+  {s:'§3',q:'\\(\\begin{cases}x+y=8\\\\x-y=2\\end{cases}\\) sisteminin həlli?',o:['\\(x=3,y=5\\)','\\(x=5,y=3\\)','\\(x=6,y=2\\)','\\(x=4,y=4\\)'],a:1,e:'Toplayırıq: \\(2x=10\\Rightarrow x=5\\). \\(y=8-5=3\\).'},
+  {s:'§3',q:'\\(\\begin{cases}2x+y=7\\\\x-y=2\\end{cases}\\) — \\(x\\)-in qiyməti?',o:['4','2','3','5'],a:2,e:'Toplayırıq: \\(3x=9\\Rightarrow x=3\\).'},
+  {s:'§1',q:'\\(\\begin{cases}x+2y=4\\\\2x+4y=8\\end{cases}\\) sisteminin həll sayı?',o:['2','1','0','Sonsuz'],a:3,e:'İkinci tənlik birincinin 2 mislidir — eyni düz xətt → sonsuz həll.'},
+  {s:'§1',q:'\\(\\begin{cases}x+y=3\\\\x+y=5\\end{cases}\\) sisteminin həll sayı?',o:['0','1','Sonsuz','2'],a:0,e:'\\(3\\neq 5\\) — ziddiyyət → həll yoxdur.'},
+  {s:'§2',q:'\\(\\begin{cases}y=3x\\\\2x+y=15\\end{cases}\\) — \\(x\\) neçədir?',o:['5','3','2','4'],a:1,e:'\\(2x+3x=15\\Rightarrow 5x=15\\Rightarrow x=3\\).'},
+  {s:'§2',q:'\\(\\begin{cases}y=2x-1\\\\3x+y=9\\end{cases}\\) — \\(x\\) neçədir?',o:['1','3','2','4'],a:2,e:'\\(3x+(2x-1)=9\\Rightarrow 5x=10\\Rightarrow x=2\\).'},
+  {s:'§3',q:'\\(\\begin{cases}3x+2y=13\\\\3x-y=4\\end{cases}\\) — \\(y\\) neçədir?',o:['5','4','2','3'],a:3,e:'Çıxırıq: \\(3y=9\\Rightarrow y=3\\).'},
+  {s:'§5',q:'İki ədədin cəmi 20, fərqi 4-dür. Böyük ədəd neçədir?',o:['12','10','14','8'],a:0,e:'\\(x+y=20\\), \\(x-y=4\\). Toplayırıq: \\(2x=24\\Rightarrow x=12\\).'},
+  {s:'§5',q:'Oğlun yaşı atanın yaşının 1/3-ü, cəmləri 40-dır. Oğlun yaşı?',o:['12','10','8','15'],a:1,e:'\\(y=x/3\\), \\(x+y=40\\Rightarrow x+x/3=40\\Rightarrow 4x/3=40\\Rightarrow x=30\\), \\(y=10\\).'},
+  {s:'§3',q:'\\(\\begin{cases}x+2y=7\\\\2x+y=8\\end{cases}\\) — \\(x+y\\) neçədir?',o:['7','6','5','8'],a:2,e:'Tənlikləri toplayırıq: \\(3x+3y=15\\Rightarrow x+y=5\\).'},
+  {s:'§2',q:'\\(\\begin{cases}2x+3y=12\\\\x=3\\end{cases}\\) — \\(y\\) neçədir?',o:['1','3','4','2'],a:3,e:'\\(2(3)+3y=12\\Rightarrow 3y=6\\Rightarrow y=2\\).'},
+  {s:'§1',q:'Əmsallar nisbəti bərabər, sabitlər nisbəti fərqli olarsa — sistem necədir?',o:['Həll yoxdur','Tək həll','Sonsuz həll','Belirsiz'],a:0,e:'Düz xətlər paralel — kəsişmir → həll yoxdur.'},
+  {s:'§3',q:'\\(\\begin{cases}5x-2y=1\\\\5x+3y=16\\end{cases}\\) — \\(y\\) neçədir?',o:['2','3','4','5'],a:1,e:'Çıxırıq: \\(-5y=-15\\Rightarrow y=3\\).'},
+  {s:'§2',q:'\\(\\begin{cases}y=x^2\\\\y=x+2\\end{cases}\\) sisteminin həll sayı?',o:['0','1','2','Sonsuz'],a:2,e:'\\(x^2=x+2\\Rightarrow x^2-x-2=0\\Rightarrow (x-2)(x+1)=0\\Rightarrow\\) 2 həll.'},
+  {s:'§5',q:'2 qələm + 3 dəftər = 7 manat. 4 qələm + 1 dəftər = 9 manat. Bir qələmin qiyməti?',o:['2.5 manat','1 manat','3 manat','2 manat'],a:3,e:'\\(2k+3d=7\\), \\(4k+d=9\\Rightarrow d=9-4k\\). Əvəz: \\(2k+3(9-4k)=7\\Rightarrow -10k=-20\\Rightarrow k=2\\).'},
+  {s:'§3',q:'\\(\\begin{cases}x+y=10\\\\2x-y=5\\end{cases}\\) — \\(x\\) neçədir?',o:['5','3','7','4'],a:0,e:'Toplayırıq: \\(3x=15\\Rightarrow x=5\\).'},
+  {s:'§2',q:'\\(\\begin{cases}x=2y+1\\\\3x-y=13\\end{cases}\\) — \\(y\\) neçədir?',o:['3','2','1','4'],a:1,e:'\\(3(2y+1)-y=13\\Rightarrow 5y=10\\Rightarrow y=2\\).'},
+  {s:'§5',q:'DİM: Sürətli qatar 120 km/s, yavaş qatar 80 km/s. Eyni anda əks istiqamətdən hərəkət edirlər. 2 saata nə qədər yol qət edərlər?',o:['480 km','300 km','400 km','240 km'],a:2,e:'Cəm sürət \\(200\\) km/s. \\(200\\times 2=400\\) km.'},
+  {s:'§3',q:'DİM: \\(\\begin{cases}ax+by=c\\\\ax+by=d\\end{cases}\\), \\(c\\neq d\\). Bu sistemin həllinə aid hansı fikir doğrudur?',o:['Cavab bilinmir','Bir həll var','Sonsuz həll var','Həll yoxdur'],a:3,e:'Hər iki tənliyin sol tərəfi eyni, sağ tərəfi fərqlidir (\\(c\\neq d\\)) → ziddiyyət → həll yoxdur.'},
+  {s:'§3',q:'\\(\\begin{cases}x-2y=1\\\\3x+y=17\\end{cases}\\) — \\(x\\) neçədir?',o:['3','4','5','6'],a:2,e:'Birincidən \\(x=1+2y\\). Əvəz: \\(3(1+2y)+y=17\\Rightarrow3+7y=17\\Rightarrow y=2\\). \\(x=1+4=5\\). Yoxlama: \\(5-4=1\\) ✓; \\(15+2=17\\) ✓.'},
+  {s:'§4',q:'\\(\\begin{cases}x^2+y^2=13\\\\x+y=5\\end{cases}\\) — \\(x\\cdot y\\) nədir?',o:['6','8','4','12'],a:0,e:'\\((x+y)^2=x^2+2xy+y^2\\Rightarrow25=13+2xy\\Rightarrow2xy=12\\Rightarrow xy=6\\). Yoxlama: \\(x=2,y=3\\): \\(4+9=13\\) ✓; \\(2+3=5\\) ✓.'},
+  {s:'§2',q:'\\(\\begin{cases}y=x^2-1\\\\y=x+1\\end{cases}\\) sisteminin həllərinin \\(x\\) qiymətlərinin cəmi?',o:['0','1','2','3'],a:1,e:'\\(x^2-1=x+1\\Rightarrow x^2-x-2=0\\Rightarrow(x-2)(x+1)=0\\Rightarrow x=2\\) və \\(x=-1\\). Cəm: \\(2+(-1)=1\\).'},
+  {s:'§3',q:'\\(\\begin{cases}3x-2y=5\\\\6x-4y=10\\end{cases}\\) sisteminin həll sayı?',o:['0','1','2','Sonsuz'],a:3,e:'İkinci tənlik birincinin 2 mislidir (\\(2\\times\\) birinci = ikinci). Eyni düz xətt → sonsuz həll.'},
+  {s:'§5',q:'DİM: İki ədədin cəmi 9, fərqi 3-dür. Böyük ədəd neçədir?',o:['5','6','7','8'],a:1,e:'\\(x+y=9\\), \\(x-y=3\\). Toplayırıq: \\(2x=12\\Rightarrow x=6\\), \\(y=3\\). Böyük ədəd: 6. Yoxlama: \\(6+3=9\\) ✓; \\(6-3=3\\) ✓.'},
+  {s:'§2',q:'\\(\\begin{cases}x+y=7\\\\3x-y=9\\end{cases}\\) — \\(x\\) neçədir?',o:['3','4','5','2'],a:1,e:'Toplayırıq: \\(4x=16\\Rightarrow x=4\\). \\(y=7-4=3\\). Yoxlama: \\(12-3=9\\) ✓.'},
+  {s:'§3',q:'DİM: \\(\\begin{cases}2x+y=10\\\\x-2y=0\\end{cases}\\) — \\(x+y\\) nədir?',o:['6','7','8','9'],a:0,e:'İkincidən \\(x=2y\\). Əvəz: \\(4y+y=10\\Rightarrow y=2\\), \\(x=4\\). \\(x+y=6\\). Yoxlama: \\(8+2=10\\) ✓; \\(4-4=0\\) ✓.'},
+  {s:'§5',q:'DİM: Bir ədədin rəqəmlərinin cəmi 9-dur. Rəqəmlər yerlərini dəyişdikdə alınan ədəd əslindən 27 çoxdur. Ədəd neçədir?',o:['36','45','63','54'],a:0,e:'Onluqlar rəqəmi \\(a\\), birlik \\(b\\): \\(a+b=9\\), \\((10b+a)-(10a+b)=27\\Rightarrow 9(b-a)=27\\Rightarrow b-a=3\\). \\(a+b=9,\\ b-a=3\\Rightarrow b=6,\\ a=3\\). Ədəd: \\(10a+b=36\\). Yoxlama: \\(63-36=27\\) ✓.'},
+  {s:'§3',q:'DİM: \\(\\begin{cases}4x+2y=14\\\\3x-2y=7\\end{cases}\\) — \\(x+y\\) nədir?',o:['2','3','4','5'],a:2,e:'Toplayırıq: \\(7x=21\\Rightarrow x=3\\). \\(4(3)+2y=14\\Rightarrow2y=2\\Rightarrow y=1\\). \\(x+y=4\\). Yoxlama: \\(12+2=14\\) ✓; \\(9-2=7\\) ✓.'},
+  {s:'§3',q:'DİM: \\(\\begin{cases}2x+3y=13\\\\5x-3y=1\\end{cases}\\) — \\(x\\) neçədir?',o:['1','2','3','4'],a:1,e:'Toplayırıq: \\(7x=14\\Rightarrow x=2\\). \\(y=(13-4)/3=3\\). Yoxlama: \\(4+9=13\\) ✓; \\(10-9=1\\) ✓.'},
+];
+
+let curSlide=0;
+function buildSlides(){const track=document.getElementById('slide-track'),dots=document.getElementById('dots');track.innerHTML='';dots.innerHTML='';SLIDES.forEach((s,i)=>{const div=document.createElement('div');div.className='slide'+(i===0?' active':'');div.innerHTML=`<h3>${s.title}</h3>${s.html}`;track.appendChild(div);const dot=document.createElement('div');dot.className='slide-dot'+(i===0?' active':'');dot.onclick=()=>goSlide(i);dots.appendChild(dot);});updateSlideUI();renderMathInElement(track,K);}
+function goSlide(n){document.querySelectorAll('.slide')[curSlide].classList.remove('active');document.querySelectorAll('.slide-dot')[curSlide].classList.remove('active');curSlide=Math.max(0,Math.min(n,SLIDES.length-1));document.querySelectorAll('.slide')[curSlide].classList.add('active');document.querySelectorAll('.slide-dot')[curSlide].classList.add('active');updateSlideUI();}
+function changeSlide(d){goSlide(curSlide+d);}
+function updateSlideUI(){document.getElementById('slide-counter').textContent=`${curSlide+1} / ${SLIDES.length}`;document.getElementById('prev-btn').disabled=curSlide===0;document.getElementById('next-btn').textContent=curSlide===SLIDES.length-1?'✓ Bitdi':'İrəli →';}
+let dIdx=0,dScore=0,dAns=[];
+function startDiag(){dIdx=0;dScore=0;dAns=new Array(QS.length).fill(null);document.getElementById('diag-ui').style.display='block';document.getElementById('vik-ui').style.display='none';document.getElementById('res-ui').style.display='none';renderDQ();document.getElementById('diag-ui').scrollIntoView({behavior:'smooth',block:'start'});}
+function renderDQ(){const q=QS[dIdx];document.getElementById('dq-n').textContent=dIdx+1;document.getElementById('dq-tot').textContent=QS.length;document.getElementById('dq-score').textContent=dScore+' ✓';document.getElementById('dq-bar').style.width=(dIdx/QS.length)*100+'%';document.getElementById('dq-expl').style.display='none';document.getElementById('dq-next').disabled=dAns[dIdx]===null;document.getElementById('dq-prev').disabled=dIdx===0;document.getElementById('dq-q').innerHTML=q.q;const opts=document.getElementById('dq-opts');opts.innerHTML='';const L=['A','B','C','D'];q.o.forEach((opt,i)=>{const div=document.createElement('div');div.className='opt';if(dAns[dIdx]!==null){div.classList.add('disabled');if(i===q.a)div.classList.add('correct');else if(i===dAns[dIdx])div.classList.add('wrong');}div.innerHTML=`<span class="opt-ltr">${L[i]}</span><span>${opt}</span>`;div.addEventListener('click',()=>selectDQ(i));opts.appendChild(div);});renderMathNow('dq-q');renderMathNow('dq-opts');}
+function selectDQ(i){if(dAns[dIdx]!==null)return;dAns[dIdx]=i;if(i===QS[dIdx].a)dScore++;document.getElementById('dq-next').disabled=false;document.getElementById('dq-score').textContent=dScore+' ✓';const ex=document.getElementById('dq-expl');ex.style.display='block';const ok=i===QS[dIdx].a;ex.style.background=ok?'rgba(81,207,102,.09)':'rgba(255,107,107,.09)';ex.style.borderLeftColor=ok?'var(--success)':'var(--error)';ex.innerHTML=(ok?'<strong style="color:var(--success)">✓ Düzgün!</strong> ':'<strong style="color:var(--error)">✗ Səhv.</strong> Düzgün: <strong>'+QS[dIdx].o[QS[dIdx].a]+'</strong>. ')+QS[dIdx].e;renderDQ();renderMathInElement(ex,K);}
+function nextDiag(){if(dIdx<QS.length-1){dIdx++;renderDQ();}else showResults(dScore,QS.length);}
+function prevDiag(){if(dIdx>0){dIdx--;renderDQ();}}
+let vIdx=0,vScore=0,vTmr=null,vT=30,vRes=[];
+function startViktorina(){vIdx=0;vScore=0;vRes=[];document.getElementById('diag-ui').style.display='none';document.getElementById('vik-ui').style.display='block';document.getElementById('res-ui').style.display='none';renderVQ();document.getElementById('vik-ui').scrollIntoView({behavior:'smooth',block:'start'});}
+function renderVQ(){clearInterval(vTmr);vT=30;const q=QS[vIdx];document.getElementById('vik-tag').textContent=q.s;document.getElementById('vik-q').innerHTML=q.q;tickV();vTmr=setInterval(tickV,1000);const opts=document.getElementById('vik-opts');opts.innerHTML='';const L=['A','B','C','D'];q.o.forEach((opt,i)=>{const d=document.createElement('div');d.className='opt';d.innerHTML=`<span class="opt-ltr">${L[i]}</span><span>${opt}</span>`;d.onclick=()=>answerV(i,d);opts.appendChild(d);});renderVDots();renderMathNow('vik-q');renderMathNow('vik-opts');}
+function tickV(){const el=document.getElementById('vik-timer');if(!el)return;el.textContent=vT;el.style.color=vT<=10?'var(--error)':vT<=20?'var(--warning)':'var(--accent)';if(vT<=0){answerV(-1,null);return;}vT--;}
+function answerV(i,el){clearInterval(vTmr);document.querySelectorAll('#vik-opts .opt').forEach(o=>o.classList.add('disabled'));const correct=i===QS[vIdx].a;if(correct)vScore++;vRes.push(correct);document.querySelectorAll('#vik-opts .opt')[QS[vIdx].a]?.classList.add('correct');if(el&&!correct)el.classList.add('wrong');setTimeout(()=>{if(vIdx<QS.length-1){vIdx++;renderVQ();}else showResults(vScore,QS.length);},1000);}
+function renderVDots(){const c=document.getElementById('vik-dots');c.innerHTML='';QS.forEach((_,i)=>{const d=document.createElement('div');d.style.cssText=`width:8px;height:8px;border-radius:50%;flex-shrink:0;transition:background 0.3s;background:${i<vRes.length?(vRes[i]?'var(--success)':'var(--error)'):i===vIdx?'var(--accent)':'var(--border-glass)'}`;c.appendChild(d);});}
+function showResults(score,total){clearInterval(vTmr);document.getElementById('diag-ui').style.display='none';document.getElementById('vik-ui').style.display='none';document.getElementById('res-ui').style.display='block';const pct=Math.round((score/total)*100);document.getElementById('res-pct').textContent=pct+'%';document.getElementById('res-ok').textContent=score;document.getElementById('res-no').textContent=total-score;const lvl=pct>=90?'Əla':pct>=70?'Yaxşı':pct>=50?'Orta':'Zəif';document.getElementById('res-lvl').textContent=lvl;document.getElementById('res-msg').textContent=pct>=90?'🏆 Əla nəticə! DİM-ə hazırsınız!':pct>=70?'✅ Yaxşı nəticə! Bir az daha çalışın.':pct>=50?'📚 Orta nəticə. Nəzəriyyəni təkrar edin.':'💪 Zəif nəticə. Başdan öyrənin.';const ring=document.getElementById('res-ring');ring.style.setProperty('--score',pct);document.getElementById('res-ring').querySelector('.score-val').style.color=pct>=70?'var(--success)':'var(--accent)';document.getElementById('res-ui').scrollIntoView({behavior:'smooth',block:'start'});try{var _p={points:score,maxPoints:total,timeSpentSeconds:0};window.parent.postMessage({type:'SCORE_UPDATE',payload:_p},'*');if(pct>=50)window.parent.postMessage({type:'LESSON_COMPLETE',payload:_p},'*');}catch(e){}}
+function resetAssessment(){document.getElementById('diag-ui').style.display='none';document.getElementById('vik-ui').style.display='none';document.getElementById('res-ui').style.display='none';}
+document.addEventListener('DOMContentLoaded',()=>{buildSlides();renderMathInElement(document.body,K);});
+</script>
+    <script src="topic-shared-a.js"></script>
+</body>
+</html>

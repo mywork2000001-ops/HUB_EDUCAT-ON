@@ -1,0 +1,188 @@
+/* topic-shared-a.js — quiz engine for Type A topics (01-14)
+   Requires: QS array (30 questions) defined before this script loads. */
+
+/* ── Diagnostic (all 30 questions, with explanation) ─────────────── */
+let dIdx = 0, dScore = 0, dAns = [];
+
+function startDiag() {
+  dIdx = 0; dScore = 0;
+  dAns = new Array(QS.length).fill(null);
+  document.getElementById("diag-ui").style.display = "block";
+  document.getElementById("vik-ui").style.display  = "none";
+  document.getElementById("res-ui").style.display  = "none";
+  renderDQ();
+  document.getElementById("diag-ui").scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
+function renderDQ() {
+  const q = QS[dIdx];
+  document.getElementById("dq-n").textContent     = dIdx + 1;
+  document.getElementById("dq-tot").textContent   = QS.length;
+  document.getElementById("dq-score").textContent = dScore + " ✓";
+  document.getElementById("dq-bar").style.width   = (dIdx / QS.length) * 100 + "%";
+  document.getElementById("dq-expl").style.display = "none";
+  document.getElementById("dq-next").disabled = dAns[dIdx] === null;
+  document.getElementById("dq-prev").disabled = dIdx === 0;
+  document.getElementById("dq-q").innerHTML = q.q;
+  const opts = document.getElementById("dq-opts");
+  opts.innerHTML = "";
+  const L = ["A", "B", "C", "D"];
+  q.o.forEach((opt, i) => {
+    const div = document.createElement("div");
+    div.className = "opt";
+    if (dAns[dIdx] !== null) {
+      div.classList.add("disabled");
+      if (i === q.a) div.classList.add("correct");
+      else if (i === dAns[dIdx]) div.classList.add("wrong");
+    }
+    div.innerHTML = `<span class="opt-ltr">${L[i]}</span><span>${opt}</span>`;
+    div.addEventListener("click", () => selectDQ(i));
+    opts.appendChild(div);
+  });
+  renderMathNow("dq-q");
+  renderMathNow("dq-opts");
+}
+
+function selectDQ(i) {
+  if (dAns[dIdx] !== null) return;
+  dAns[dIdx] = i;
+  if (i === QS[dIdx].a) dScore++;
+  document.getElementById("dq-next").disabled = false;
+  document.getElementById("dq-score").textContent = dScore + " ✓";
+  const ex  = document.getElementById("dq-expl");
+  const ok  = i === QS[dIdx].a;
+  ex.style.display = "block";
+  ex.style.background      = ok ? "rgba(81,207,102,.09)" : "rgba(255,107,107,.09)";
+  ex.style.borderLeftColor = ok ? "var(--success)" : "var(--error)";
+  ex.innerHTML = (ok
+    ? '<strong style="color:var(--success)">✓ Düzgün!</strong> '
+    : '<strong style="color:var(--error)">✗ Səhv.</strong> Düzgün: <strong>' +
+      QS[dIdx].o[QS[dIdx].a] + "</strong>. ") + QS[dIdx].e;
+  renderMathInElement(ex, K);
+  renderDQ();
+}
+
+function nextDiag() {
+  if (dIdx < QS.length - 1) { dIdx++; renderDQ(); }
+  else showResults(dScore, QS.length);
+}
+function prevDiag() {
+  if (dIdx > 0) { dIdx--; renderDQ(); }
+}
+
+/* ── Viktorina (20 random questions, 30-sec timer each) ───────────── */
+let vIdx = 0, vScore = 0, vTmr = null, vT = 30, vRes = [], VQ = [];
+
+function startViktorina() {
+  vIdx = 0; vScore = 0; vRes = [];
+  /* shuffle QS and pick 20 random questions */
+  VQ = [...QS].sort(() => Math.random() - 0.5).slice(0, 20);
+  document.getElementById("diag-ui").style.display = "none";
+  document.getElementById("vik-ui").style.display  = "block";
+  document.getElementById("res-ui").style.display  = "none";
+  renderVQ();
+  document.getElementById("vik-ui").scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
+function renderVQ() {
+  clearInterval(vTmr);
+  vT = 30;
+  const q = VQ[vIdx];
+  document.getElementById("vik-tag").textContent = q.s;
+  document.getElementById("vik-q").innerHTML = q.q;
+  tickV();
+  vTmr = setInterval(tickV, 1000);
+  const opts = document.getElementById("vik-opts");
+  opts.innerHTML = "";
+  const L = ["A", "B", "C", "D"];
+  q.o.forEach((opt, i) => {
+    const d = document.createElement("div");
+    d.className = "opt";
+    d.innerHTML = `<span class="opt-ltr">${L[i]}</span><span>${opt}</span>`;
+    d.onclick = () => answerV(i, d);
+    opts.appendChild(d);
+  });
+  renderVDots();
+  renderMathNow("vik-q");
+  renderMathNow("vik-opts");
+}
+
+function tickV() {
+  const el = document.getElementById("vik-timer");
+  el.textContent  = vT;
+  el.style.color  = vT <= 10 ? "var(--error)" : "var(--warning)";
+  if (vT-- <= 0) { clearInterval(vTmr); answerV(-1, null); }
+}
+
+function renderVDots() {
+  const el = document.getElementById("vik-dots");
+  el.innerHTML = "";
+  VQ.forEach((_, i) => {
+    const d = document.createElement("div");
+    d.style.cssText = `flex:1;height:5px;border-radius:3px;background:${
+      i < vIdx ? (vRes[i] ? "var(--success)" : "var(--error)")
+               : i === vIdx ? "var(--accent)" : "var(--border-glass)"}`;
+    el.appendChild(d);
+  });
+}
+
+function answerV(idx, btn) {
+  clearInterval(vTmr);
+  const q = VQ[vIdx];
+  document.querySelectorAll("#vik-opts .opt").forEach(b => b.style.pointerEvents = "none");
+  const ok = idx === q.a;
+  if (btn) btn.classList.add(ok ? "correct" : "wrong");
+  if (!ok && idx !== -1) document.querySelectorAll("#vik-opts .opt")[q.a]?.classList.add("correct");
+  if (ok) vScore++;
+  vRes.push(ok);
+  setTimeout(() => {
+    vIdx++;
+    if (vIdx >= VQ.length) { showResults(vScore, VQ.length); return; }
+    renderVQ();
+  }, 900);
+}
+
+/* ── Results ──────────────────────────────────────────────────────── */
+function showResults(score, total) {
+  document.getElementById("diag-ui").style.display = "none";
+  document.getElementById("vik-ui").style.display  = "none";
+  document.getElementById("res-ui").style.display  = "block";
+  const pct = Math.round((score / total) * 100);
+  document.getElementById("res-ring").style.setProperty("--score", pct);
+  document.getElementById("res-pct").textContent = pct + "%";
+  document.getElementById("res-ok").textContent  = score;
+  document.getElementById("res-no").textContent  = total - score;
+  let lv, msg;
+  if      (pct >= 90) { lv = "Əla";   msg = "🏆 Əla! Mövzunu mükəmməl bilirsiniz!"; }
+  else if (pct >= 70) { lv = "Yaxşı"; msg = "👍 Yaxşı! Bir neçə bölməni təkrarlayın."; }
+  else if (pct >= 50) { lv = "Kafi";  msg = "📚 Nəzəriyyəni yenidən oxuyun."; }
+  else                { lv = "Zəif";  msg = "💡 Bütün bölmələri əvvəldən keçin."; }
+  document.getElementById("res-lvl").textContent = lv;
+  document.getElementById("res-msg").innerHTML   = msg;
+  document.getElementById("res-ui").scrollIntoView({ behavior: "smooth" });
+  try {
+    const _p = { points: score, maxPoints: total, timeSpentSeconds: 0 };
+    window.parent.postMessage({ type: "SCORE_UPDATE",    payload: _p }, "*");
+    if (pct >= 50) window.parent.postMessage({ type: "LESSON_COMPLETE", payload: _p }, "*");
+  } catch(e) {}
+}
+
+function resetAssessment() {
+  ["diag-ui","vik-ui","res-ui"].forEach(id => document.getElementById(id).style.display = "none");
+  clearInterval(vTmr);
+}
+
+/* ── KaTeX config ─────────────────────────────────────────────────── */
+const K = {
+  delimiters: [
+    { left: "$$", right: "$$", display: true  },
+    { left: "$",  right: "$",  display: false },
+    { left: "\\(", right: "\\)", display: false },
+    { left: "\\[", right: "\\]", display: true  },
+  ],
+  throwOnError: false,
+};
+function renderMathNow(id) {
+  const el = document.getElementById(id);
+  if (el) renderMathInElement(el, K);
+}

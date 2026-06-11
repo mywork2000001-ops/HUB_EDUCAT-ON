@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Viktorina — TAİM MİQ 2026</title>
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#1e3c72">
+  <link rel="icon" type="image/png" href="icons/icon-192.png">
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .builder-card { background:#fff; border-radius:10px; padding:22px; box-shadow:0 2px 8px rgba(0,0,0,.07); margin-bottom:18px; }
+    .builder-card h3 { color:#2a5298; font-size:16px; margin-bottom:14px; }
+    .stats-bar { display:flex; gap:12px; flex-wrap:wrap; margin-bottom:18px; padding:14px 18px; background:#fff; border-radius:10px; box-shadow:0 2px 8px rgba(0,0,0,.07); justify-content:space-around; }
+    .stat-pill { text-align:center; min-width:70px; }
+    .stat-pill .sv { font-size:22px; font-weight:700; color:#2a5298; }
+    .stat-pill .sl { font-size:11px; color:#888; text-transform:uppercase; letter-spacing:.4px; }
+    .time-chip { display:inline-flex; align-items:center; gap:5px; background:#fff3cd; padding:7px 16px; border-radius:20px; font-size:15px; font-weight:700; color:#856404; }
+    .ctrl-row { display:flex; gap:8px; margin-bottom:10px; flex-wrap:wrap; }
+    .lesson-list { max-height:360px; overflow-y:auto; border:1px solid #e9ecef; border-radius:8px; }
+    .group-header { background:#f4f6f9; padding:6px 14px; font-size:11px; font-weight:700; color:#6c757d; text-transform:uppercase; letter-spacing:.5px; border-bottom:1px solid #e9ecef; position:sticky; top:0; z-index:1; }
+    .lesson-item { display:flex; align-items:center; gap:10px; padding:9px 14px; border-bottom:1px solid #f4f4f4; cursor:pointer; transition:background .12s; }
+    .lesson-item:last-child { border-bottom:none; }
+    .lesson-item:hover { background:#f8f9fa; }
+    .lesson-item input[type=checkbox] { width:17px; height:17px; cursor:pointer; accent-color:#2a5298; flex-shrink:0; }
+    .lesson-item label { cursor:pointer; flex:1; font-size:13px; line-height:1.4; -webkit-user-select:none; user-select:none; }
+    .lesson-num { font-weight:700; color:#2a5298; font-size:11px; margin-right:4px; }
+    .lesson-qs { font-size:11px; color:#888; white-space:nowrap; background:#f0f4ff; padding:2px 7px; border-radius:10px; }
+    .q-count-row { display:flex; align-items:center; gap:12px; margin-bottom:14px; flex-wrap:wrap; }
+    .q-count-row label { font-size:14px; font-weight:600; color:#333; }
+    .q-count-row input[type=number] { width:90px; padding:9px 12px; border:2px solid #dee2e6; border-radius:8px; font-size:20px; font-weight:700; color:#2a5298; text-align:center; outline:none; font-family:inherit; -moz-appearance:textfield; }
+    .q-count-row input[type=number]::-webkit-outer-spin-button,
+    .q-count-row input[type=number]::-webkit-inner-spin-button { -webkit-appearance:none; }
+    .q-count-row input[type=number]:focus { border-color:#2a5298; }
+    .q-max-lbl { font-size:13px; color:#888; }
+    .range-wrap { margin-bottom:14px; }
+    .range-wrap input[type=range] { width:100%; accent-color:#2a5298; cursor:pointer; }
+    .err-box { background:#f8d7da; border:1px solid #f5c6cb; border-radius:8px; padding:12px 16px; color:#721c24; font-size:14px; margin-top:10px; display:none; }
+    .loading-box { text-align:center; padding:60px 20px; background:#fff; border-radius:10px; box-shadow:0 2px 8px rgba(0,0,0,.07); }
+    .spin { font-size:48px; display:inline-block; animation:spin 1s linear infinite; }
+    @keyframes spin { to { transform:rotate(360deg); } }
+  </style>
+</head>
+<body>
+
+  <!-- Lang switch -->
+  <div class="lang-switch">
+    <button class="lang-btn active" id="lbAZ" onclick="setLang('az')">AZ</button>
+    <button class="lang-btn" id="lbRU" onclick="setLang('ru')">RU</button>
+  </div>
+
+  <!-- ── BUILDER SCREEN ─────────────────────────────── -->
+  <div id="builderScreen">
+    <div class="miq-header">
+      <h1>🎯 <span id="hdrTitle">VİKTORİNA</span></h1>
+      <p id="hdrSub">Mövzuları seçin, sual sayını təyin edin</p>
+    </div>
+    <div class="container">
+      <a href="index.html" class="back-link" id="backLinkEl">← Ana səhifə</a>
+
+      <!-- Stats -->
+      <div class="stats-bar">
+        <div class="stat-pill">
+          <div class="sv" id="statTopics">0</div>
+          <div class="sl" id="statTopicsL">Mövzu</div>
+        </div>
+        <div class="stat-pill">
+          <div class="sv" id="statAvail">0</div>
+          <div class="sl" id="statAvailL">Mövcud sual</div>
+        </div>
+        <div class="stat-pill">
+          <div class="sv" id="statSel">—</div>
+          <div class="sl" id="statSelL">Seçilmiş sual</div>
+        </div>
+        <div class="stat-pill">
+          <div class="time-chip" id="statTime">⏱ 0 dəq</div>
+        </div>
+      </div>
+
+      <!-- Settings -->
+      <div class="builder-card">
+        <h3 id="paramTitle">⚙️ Parametrlər</h3>
+        <div class="q-count-row">
+          <label id="qCountLabel">Sual sayı:</label>
+          <input type="number" id="qCountInp" min="1" value="20" oninput="onCountChange()">
+          <span class="q-max-lbl" id="qMaxLbl">/ max 0</span>
+        </div>
+        <div class="range-wrap">
+          <input type="range" id="qRange" min="1" max="1" value="20" oninput="onRangeChange(this.value)">
+        </div>
+        <div id="errMsg" class="err-box"></div>
+        <button class="btn" id="quizStartBtn" onclick="startQuiz()" disabled
+          style="width:100%;margin-top:12px;font-size:16px;padding:14px;">
+          ▶ <span id="startBtnTxt">Viktorinaya Başla</span>
+        </button>
+      </div>
+
+      <!-- Lesson list -->
+      <div class="builder-card">
+        <h3 id="listTitle">📚 Mövzular</h3>
+        <div class="ctrl-row">
+          <button class="btn btn-secondary" onclick="selectAll(true)"
+            style="font-size:12px;padding:7px 16px;">✔ <span id="selAllTxt">Hamısını seç</span></button>
+          <button class="btn btn-secondary" onclick="selectAll(false)"
+            style="font-size:12px;padding:7px 16px;">✕ <span id="clrAllTxt">Hamısını sil</span></button>
+        </div>
+        <div class="lesson-list" id="lessonList"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── LOADING SCREEN ─────────────────────────────── -->
+  <div id="loadingScreen" class="hidden">
+    <div class="miq-header">
+      <h1>🎯 VİKTORİNA</h1>
+    </div>
+    <div class="container">
+      <div class="loading-box">
+        <div class="spin">⚙️</div>
+        <p id="loadingTxt" style="margin-top:18px;font-size:16px;color:#555;font-weight:600;">
+          Suallar yüklənir...
+        </p>
+        <p id="loadingProg" style="margin-top:6px;font-size:13px;color:#888;"></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── QUIZ ENGINE TARGET ─────────────────────────── -->
+  <div id="app" class="hidden"></div>
+
+  <script>
+  'use strict';
+
+  /* ── Lesson data ─────────────────────────────────── */
+  const LESSONS = [
+    { file:'test-1.html',   num:'1.1.1–1.1.4', az:'Hüquqi savadlılıq',                      ru:'Правовая грамотность',                  icon:'📋', qs:30  },
+    { file:'test-2.html',   num:'2.1.1',        az:'İnteqrasiya',                             ru:'Интеграция',                            icon:'🔗', qs:44  },
+    { file:'test-3.html',   num:'2.1.2',        az:'XXI əsrin kompetensiyaları',              ru:'Компетенции XXI века',                  icon:'🌐', qs:30  },
+    { file:'test-4.html',   num:'2.1.3',        az:'Təfəkkürün növləri',                      ru:'Виды мышления',                         icon:'🧠', qs:60  },
+    { file:'test-5.html',   num:'2.1.4',        az:'Metakognitiv bacarıqlar',                 ru:'Метакогнитивные навыки',                icon:'🎯', qs:30  },
+    { file:'test-6.html',   num:'2.1.5',        az:'Bilik və fəaliyyət növləri',              ru:'Виды знаний и деятельности',            icon:'📊', qs:40  },
+    { file:'test-7.html',   num:'2.1.6',        az:'Blumun idrak taksonomiyası',              ru:'Таксономия Блума',                      icon:'🎓', qs:40  },
+    { file:'test-8.html',   num:'2.1.7',        az:'Webb Dərin bilik səviyyələri',            ru:'Уровни знаний Вебба',                   icon:'📐', qs:35  },
+    { file:'test-9.html',   num:'2.1.8',        az:'Tədrisin forma və modelləri',             ru:'Формы и модели обучения',               icon:'🔬', qs:55  },
+    { file:'test-10.html',  num:'2.1.9',        az:'Tədrisin strategiya və texnikaları',      ru:'Стратегии и техники обучения',          icon:'📖', qs:65  },
+    { file:'test-11.html',  num:'2.1.10',       az:'İllik və gündəlik planlaşdırma',          ru:'Планирование: годовое и ежедневное',    icon:'📅', qs:40  },
+    { file:'test-12.html',  num:'2.1.11',       az:'Şagirdyönümlü (interaktiv) təlim',       ru:'Ученикоориентированное обучение',       icon:'👥', qs:40  },
+    { file:'test-13.html',  num:'2.1.12',       az:'Müəllimin fasilitasiya bacarığı',         ru:'Навыки фасилитации учителя',            icon:'🤝', qs:20  },
+    { file:'test-14.html',  num:'2.1.13',       az:'Fərdiləşdirilmiş təlim',                 ru:'Дифференцированное обучение',           icon:'🎨', qs:50  },
+    { file:'test-15.html',  num:'2.1.14',       az:'Öyrənmə tərzi',                          ru:'Стили обучения',                        icon:'💡', qs:20  },
+    { file:'test-16.html',  num:'2.1.15',       az:'Rəqəmsal vasitələr və süni intellekt',   ru:'Цифровые инструменты и ИИ',             icon:'💻', qs:20  },
+    { file:'test-17.html',  num:'2.1.16',       az:'Dizayn düşüncəsi',                       ru:'Дизайн-мышление',                       icon:'✏️', qs:25  },
+    { file:'test-fs1.html', num:'FS 1',         az:'Fəsil sınağı 1',                         ru:'Раздельный тест 1',                     icon:'🧪', qs:20  },
+    { file:'test-fs2.html', num:'FS 2',         az:'Fəsil sınağı 2',                         ru:'Раздельный тест 2',                     icon:'🧪', qs:20  },
+    { file:'test-18.html',  num:'2.2.1',        az:'Qiymətləndirmənin növləri',              ru:'Виды оценивания',                       icon:'📝', qs:160 },
+    { file:'test-19.html',  num:'3.1.1',        az:'Müasir pedaqoji yanaşmalar',             ru:'Современные педагогические подходы',    icon:'🏫', qs:40  },
+    { file:'test-20.html',  num:'3.1.2',        az:'Şəxsiyyətin formalaşması',               ru:'Формирование личности',                 icon:'👤', qs:20  },
+    { file:'test-21.html',  num:'3.1.3',        az:'H.Qardner: Çoxnövlü zəka',              ru:'Г.Гарднер: Множественный интеллект',    icon:'🧩', qs:55  },
+    { file:'test-22.html',  num:'3.1.4',        az:'J.Piaje: Zehni inkişaf',                 ru:'Ж.Пиаже: Умственное развитие',          icon:'🔄', qs:45  },
+    { file:'test-23.html',  num:'3.1.5',        az:'L.Viqotski: Yaxın inkişaf zonası',       ru:'Л.Выготский: ЗБР',                      icon:'📈', qs:35  },
+    { file:'test-24.html',  num:'3.1.6',        az:'K.Dvek: Düşüncə tərzi',                 ru:'К.Двек: Типы мышления',                 icon:'💪', qs:35  },
+    { file:'test-25.html',  num:'3.1.7',        az:'L.Kolberq: Mənəvi inkişaf',             ru:'Л.Кольберг: Нравственное развитие',     icon:'⚖️', qs:40  },
+    { file:'test-26.html',  num:'3.1.8',        az:'R.Qanye: Öyrənmənin şərtləri',          ru:'Р.Ганье: Условия обучения',             icon:'📚', qs:30  },
+    { file:'test-27.html',  num:'3.1.9',        az:'D.Qoulman: Emosional zəka',             ru:'Д.Гоулман: Эмоциональный интеллект',    icon:'❤️', qs:40  },
+    { file:'test-28.html',  num:'3.1.10',       az:'K.Yunq: Psixoloji tiplər',              ru:'К.Юнг: Психологические типы',           icon:'🌀', qs:30  },
+    { file:'test-29.html',  num:'3.1.11',       az:'A.Bandura: Sosial öyrənmə',             ru:'А.Бандура: Социальное обучение',        icon:'👁️', qs:20  },
+    { file:'test-30.html',  num:'3.1.12',       az:'J.Bruner: Koqnitiv öyrənmə',            ru:'Дж.Брунер: Когнитивное обучение',       icon:'🔑', qs:30  },
+    { file:'test-31.html',  num:'3.1.13',       az:'K.Rocers: Şəxsiyyətyönümlü yanaşma',   ru:'К.Роджерс: Личностно-ориент. подход',   icon:'🌱', qs:35  },
+    { file:'test-fs3.html', num:'FS 3',         az:'Fəsil sınağı 3',                         ru:'Раздельный тест 3',                     icon:'🧪', qs:20  },
+    { file:'test-fs4.html', num:'FS 4',         az:'Fəsil sınağı 4',                         ru:'Раздельный тест 4',                     icon:'🧪', qs:20  },
+    { file:'test-32.html',  num:'3.2.1',        az:'Sosial-emosional öyrənmə (CASEL)',       ru:'Социально-эмоц. обучение (CASEL)',      icon:'🤲', qs:20  },
+    { file:'test-33.html',  num:'3.2.2',        az:'Səmərəli öyrənmə mühiti',               ru:'Эффективная среда обучения',            icon:'🏛️', qs:20  },
+    { file:'test-34.html',  num:'3.2.3',        az:'Pozitiv intizam',                        ru:'Позитивная дисциплина',                 icon:'✅', qs:20  },
+    { file:'test-35.html',  num:'3.2.4',        az:'Sinfin idarəedilməsi',                  ru:'Управление классом',                    icon:'📋', qs:50  },
+    { file:'test-36.html',  num:'3.2.5',        az:'Müəllim-şagird münasibətləri',          ru:'Отношения учитель-ученик',              icon:'🤝', qs:25  },
+    { file:'test-37.html',  num:'3.2.6',        az:'Şagird davranışının idarəolunması',     ru:'Управление поведением учеников',        icon:'📏', qs:25  },
+    { file:'test-38.html',  num:'3.2.7',        az:'Qısnama (bullinq)',                      ru:'Буллинг',                               icon:'🛡️', qs:30  },
+    { file:'test-fs5.html', num:'FS 5',         az:'Fəsil sınağı 5',                         ru:'Раздельный тест 5',                     icon:'🧪', qs:20  },
+    { file:'test-fs6.html', num:'FS 6',         az:'Fəsil sınağı 6',                         ru:'Раздельный тест 6',                     icon:'🧪', qs:20  },
+    { file:'test-us1.html', num:'ÜS 1',         az:'Ümumi sınaq 1',                          ru:'Общий тест 1',                          icon:'🏆', qs:20  },
+    { file:'test-us2.html', num:'ÜS 2',         az:'Ümumi sınaq 2',                          ru:'Общий тест 2',                          icon:'🏆', qs:20  },
+    { file:'test-us3.html', num:'ÜS 3',         az:'Ümumi sınaq 3',                          ru:'Общий тест 3',                          icon:'🏆', qs:20  },
+  ];
+
+  const GROUPS = [
+    { az:'I Bölmə — Hüquqi savadlılıq',            ru:'Раздел I — Правовая грамотность',           from:0,  to:0  },
+    { az:'2.1 — Təlim prosesi',                     ru:'2.1 — Процесс обучения',                    from:1,  to:18 },
+    { az:'2.2 — Qiymətləndirmə',                    ru:'2.2 — Оценивание',                          from:19, to:19 },
+    { az:'3.1 — Psixoloji-pedaqoji nəzəriyyələr',   ru:'3.1 — Психолого-педагог. теории',           from:20, to:34 },
+    { az:'3.2 — Sinif mühiti',                      ru:'3.2 — Среда класса',                        from:35, to:43 },
+    { az:'Ümumi sınaqlar',                          ru:'Общие тесты',                               from:44, to:46 },
+  ];
+
+  /* ── Crypto ────────────────────────────────────────── */
+  const _KEY = [0x4A, 0x1F, 0x63, 0x2B, 0x77, 0x0E, 0x55, 0x3C];
+  function decryptK(b64, n) {
+    const raw = atob(b64);
+    return Array.from({length: n}, (_, i) => (raw.charCodeAt(i) ^ _KEY[i%8] ^ (i&0xFF)) - 65);
+  }
+  function encryptK(arr) {
+    const bytes = arr.map((a, i) => (a + 65) ^ _KEY[i%8] ^ (i&0xFF));
+    return btoa(String.fromCharCode(...bytes));
+  }
+
+  /* ── Extract CONFIG from HTML ──────────────────────── */
+  function extractConfig(html) {
+    const marker = 'var CONFIG =';
+    const pos = html.indexOf(marker);
+    if (pos === -1) return null;
+    const objStart = html.indexOf('{', pos + marker.length);
+    if (objStart === -1) return null;
+    let depth = 0, inStr = false, strCh = '', i = objStart;
+    while (i < html.length) {
+      const ch = html[i];
+      if (inStr) { if (ch === '\\') { i += 2; continue; } if (ch === strCh) inStr = false; }
+      else { if (ch === '"' || ch === "'") { inStr = true; strCh = ch; } else if (ch === '{') depth++; else if (ch === '}') { depth--; if (depth === 0) break; } }
+      i++;
+    }
+    try { return (new Function('return ' + html.slice(objStart, i + 1)))(); } catch(e) { return null; }
+  }
+
+  /* ── i18n ──────────────────────────────────────────── */
+  let lang = 'az';
+  const T = {
+    az: {
+      hdrSub:'Mövzuları seçin, sual sayını təyin edin',
+      back:'← Ana səhifə', topicsL:'Mövzu', availL:'Mövcud sual', selL:'Seçilmiş sual',
+      paramTitle:'⚙️ Parametrlər', qLbl:'Sual sayı:', listTitle:'📚 Mövzular',
+      selAll:'Hamısını seç', clrAll:'Hamısını sil', startBtn:'Viktorinaya Başla',
+      loading:'Suallar yüklənir...', min:'dəq',
+      errNoSel:'Ən azı bir mövzu seçin.',
+      errCount:'Sual sayı 1 ilə {max} arasında olmalıdır.',
+      errFetch:'Suallar yüklənərkən xəta baş verdi. Səhifəni yeniləyin.',
+    },
+    ru: {
+      hdrSub:'Выберите темы и укажите количество вопросов',
+      back:'← На главную', topicsL:'Темы', availL:'Доступно вопросов', selL:'Выбрано вопросов',
+      paramTitle:'⚙️ Параметры', qLbl:'Количество вопросов:', listTitle:'📚 Темы',
+      selAll:'Выбрать все', clrAll:'Снять все', startBtn:'Начать викторину',
+      loading:'Загрузка вопросов...', min:'мин',
+      errNoSel:'Выберите хотя бы одну тему.',
+      errCount:'Число вопросов должно быть от 1 до {max}.',
+      errFetch:'Ошибка загрузки вопросов. Обновите страницу.',
+    },
+  };
+  function u() { return T[lang]; }
+
+  function setLang(l) {
+    lang = l;
+    document.getElementById('lbAZ').classList.toggle('active', l === 'az');
+    document.getElementById('lbRU').classList.toggle('active', l === 'ru');
+    document.getElementById('hdrSub').textContent = u().hdrSub;
+    document.getElementById('backLinkEl').textContent = u().back;
+    document.getElementById('statTopicsL').textContent = u().topicsL;
+    document.getElementById('statAvailL').textContent = u().availL;
+    document.getElementById('statSelL').textContent = u().selL;
+    document.getElementById('paramTitle').textContent = u().paramTitle;
+    document.getElementById('qCountLabel').textContent = u().qLbl;
+    document.getElementById('listTitle').textContent = u().listTitle;
+    document.getElementById('selAllTxt').textContent = u().selAll;
+    document.getElementById('clrAllTxt').textContent = u().clrAll;
+    document.getElementById('startBtnTxt').textContent = u().startBtn;
+    document.getElementById('loadingTxt').textContent = u().loading;
+    buildList();
+    updateStats();
+  }
+
+  /* ── State ─────────────────────────────────────────── */
+  const selected = new Set();
+
+  /* ── Build lesson list ─────────────────────────────── */
+  function buildList() {
+    const container = document.getElementById('lessonList');
+    container.innerHTML = '';
+    GROUPS.forEach(g => {
+      const gh = document.createElement('div');
+      gh.className = 'group-header';
+      gh.textContent = g[lang];
+      container.appendChild(gh);
+      for (let i = g.from; i <= g.to; i++) {
+        const L = LESSONS[i];
+        const row = document.createElement('div');
+        row.className = 'lesson-item';
+        const cb = document.createElement('input');
+        cb.type = 'checkbox'; cb.id = 'cb_' + i; cb.checked = selected.has(i);
+        cb.addEventListener('change', () => { selected[cb.checked ? 'add' : 'delete'](i); updateStats(); });
+        const lbl = document.createElement('label');
+        lbl.htmlFor = 'cb_' + i;
+        lbl.innerHTML = `<span class="lesson-num">${L.num}</span>${L.icon} ${L[lang]}`;
+        const qs = document.createElement('span');
+        qs.className = 'lesson-qs'; qs.textContent = L.qs + 'Q';
+        row.appendChild(cb); row.appendChild(lbl); row.appendChild(qs);
+        row.addEventListener('click', e => { if (e.target.tagName !== 'INPUT') { cb.checked = !cb.checked; cb.dispatchEvent(new Event('change')); } });
+        container.appendChild(row);
+      }
+    });
+  }
+
+  /* ── Update stats ──────────────────────────────────── */
+  function updateStats() {
+    const totalQ = [...selected].reduce((s, i) => s + LESSONS[i].qs, 0);
+    const inp = document.getElementById('qCountInp');
+    const range = document.getElementById('qRange');
+    range.max = totalQ || 1;
+    inp.max = totalQ;
+    let count = parseInt(inp.value) || 0;
+    if (totalQ > 0 && count > totalQ) { count = totalQ; inp.value = totalQ; }
+    if (count < 1 && totalQ > 0) { count = 1; inp.value = 1; }
+    range.value = count;
+
+    const mins = count > 0 && totalQ > 0 ? Math.max(10, Math.ceil(count * 1.5)) : 0;
+    document.getElementById('statTopics').textContent = selected.size;
+    document.getElementById('statAvail').textContent = totalQ;
+    document.getElementById('statSel').textContent = (count > 0 && count <= totalQ) ? count : '—';
+    document.getElementById('statTime').textContent = '⏱ ' + (mins || '—') + (mins ? ' ' + u().min : '');
+    document.getElementById('qMaxLbl').textContent = '/ max ' + totalQ;
+    document.getElementById('quizStartBtn').disabled = !(selected.size > 0 && count >= 1 && count <= totalQ);
+    document.getElementById('errMsg').style.display = 'none';
+  }
+
+  function onCountChange() {
+    const range = document.getElementById('qRange');
+    range.value = document.getElementById('qCountInp').value;
+    updateStats();
+  }
+  function onRangeChange(v) {
+    document.getElementById('qCountInp').value = v;
+    updateStats();
+  }
+  function selectAll(v) {
+    LESSONS.forEach((_, i) => selected[v ? 'add' : 'delete'](i));
+    document.querySelectorAll('#lessonList input[type=checkbox]').forEach(cb => { cb.checked = v; });
+    updateStats();
+  }
+
+  /* ── Start quiz ─────────────────────────────────────── */
+  async function startQuiz() {
+    const totalQ = [...selected].reduce((s, i) => s + LESSONS[i].qs, 0);
+    const count = parseInt(document.getElementById('qCountInp').value);
+    if (selected.size === 0) { showErr(u().errNoSel); return; }
+    if (!count || count < 1 || count > totalQ) { showErr(u().errCount.replace('{max}', totalQ)); return; }
+
+    document.getElementById('builderScreen').classList.add('hidden');
+    document.getElementById('loadingScreen').classList.remove('hidden');
+    document.getElementById('loadingTxt').textContent = u().loading;
+
+    try {
+      const allQ = [];
+      const selArr = [...selected];
+      for (let fi = 0; fi < selArr.length; fi++) {
+        const L = LESSONS[selArr[fi]];
+        document.getElementById('loadingProg').textContent =
+          `${fi + 1} / ${selArr.length}  —  ${L[lang]}`;
+        const html = await fetch(L.file).then(r => r.text());
+        const config = extractConfig(html);
+        if (!config || !config._k || !config.questions?.length) continue;
+        const answers = decryptK(config._k, config.questions.length);
+        config.questions.forEach((q, qi) => allQ.push({ ...q, _c: answers[qi] }));
+      }
+
+      if (allQ.length === 0) throw new Error('empty');
+
+      // Fisher-Yates shuffle
+      for (let i = allQ.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [allQ[i], allQ[j]] = [allQ[j], allQ[i]];
+      }
+
+      const picked = allQ.slice(0, Math.min(count, allQ.length));
+      const correctArr = picked.map(q => q._c);
+      const cleanQ = picked.map(({ _c, ...rest }) => rest);
+
+      const n = selected.size;
+      const topicAz = n === 1 ? LESSONS[[...selected][0]].az : n + ' mövzu üzrə viktorina';
+      const topicRu = n === 1 ? LESSONS[[...selected][0]].ru : 'Викторина по ' + n + ' темам';
+
+      window.CONFIG = {
+        topicAz, topicRu,
+        sectionAz: 'TAİM MİQ — Viktorina',
+        sectionRu: 'TAİM MİQ — Викторина',
+        totalTimeMin: Math.max(10, Math.ceil(picked.length * 1.5)),
+        backLink: 'quiz.html',
+        _k: encryptK(correctArr),
+        questions: cleanQ,
+      };
+
+      document.getElementById('loadingScreen').classList.add('hidden');
+      document.getElementById('app').classList.remove('hidden');
+      const s = document.createElement('script');
+      s.src = 'engine.js';
+      document.head.appendChild(s);
+
+    } catch(e) {
+      document.getElementById('loadingScreen').classList.add('hidden');
+      document.getElementById('builderScreen').classList.remove('hidden');
+      showErr(u().errFetch);
+      console.error('Quiz load error:', e);
+    }
+  }
+
+  function showErr(msg) {
+    const el = document.getElementById('errMsg');
+    el.textContent = msg; el.style.display = 'block';
+  }
+
+  /* ── Init ───────────────────────────────────────────── */
+  LESSONS.forEach((_, i) => selected.add(i));
+  buildList();
+  updateStats();
+
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('./sw.js', {updateViaCache: 'none'})
+      .then(reg => {
+        reg.addEventListener('updatefound', () => {
+          const nw = reg.installing;
+          nw.addEventListener('statechange', () => {
+            if (nw.state === 'installed' && navigator.serviceWorker.controller) {
+              window.location.reload();
+            }
+          });
+        });
+      });
+    navigator.serviceWorker.addEventListener('controllerchange', () => {
+      window.location.reload();
+    });
+  }
+  </script>
+</body>
+</html>
