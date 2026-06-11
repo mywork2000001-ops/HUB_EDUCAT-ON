@@ -127,9 +127,10 @@ ROOT: C:/Users/Administrator/Documents/Claude/Projects/
         │   │   └── topic-shared-b.css
         │   ├── tests/
         │   │   ├── index.html          ← Каталог тестов
-        │   │   ├── p1-s01-t1.html      ← Тест 1 [РАЗБЛОКИРОВАН]
-        │   │   ├── p1-s01-t2.html      ← Тест 2 [РАЗБЛОКИРОВАН]
-        │   │   ├── p1-s01-t3.html
+        │   │   ├── p1-s01-t1.html      ← Тест 1 [РАЗБЛОКИРОВАН] Natural ədədlər: onluq say sistemi (30Q)
+        │   │   ├── p1-s01-t2.html      ← Тест 2 [РАЗБЛОКИРОВАН] Natural ədədlər: əməllər (30Q)
+        │   │   ├── p1-s01-t3.html      ← Тест 3 [РАЗБЛОКИРОВАН] Bölünmə əlamətləri. Qalıqlı bölmə (30Q)
+        │   │   ├── p1-s01-t4.html      ← Тест 4 [РАЗБЛОКИРОВАН] Sadə vuruqlar. ƏBOB. ƏKOB (30Q) — Секция 01 ЗАВЕРШЕНА
         │   │   ├── test-dim-mixed.html
         │   │   ├── test-variant-1.html / test-variant-2.html
         │   │   └── [8 тест-файлов всего]
@@ -214,18 +215,19 @@ ROOT: C:/Users/Administrator/Documents/Claude/Projects/
                смена пароля, история тестов (taim_history)
 
 ────────────────────────────────────────────────────────────────────
- МАТРИЦА СТАТУСОВ (на 2026-06-11)
+ МАТРИЦА СТАТУСОВ (на 2026-06-12)
 ────────────────────────────────────────────────────────────────────
 
   Проект │ Компонент              │ Статус    │ Кол-во файлов
 ─────────┼────────────────────────┼───────────┼───────────────
-  HUB    │ Master index.html      │ ✅ v4.0.0  │ data-driven PLATFORMS[]
-  P001   │ DİM Уроки              │ ✅ DONE    │ 17/17 уроков
+  HUB    │ Master index.html      │ ✅ v4.0.0  │ data-driven PLATFORMS[], "Məktəb proqramı"
+  P001   │ DİM Уроки              │ ✅ DONE    │ 17/17 уроков (Lesson-15 перестроен под std)
   P001   │ Изображения            │ ✅ DONE    │ ~1 190 WebP
+  P001   │ Стандарт урока         │ ✅        │ examData + STORAGE_KEY + script.js; 4 варианта A/B/C/D × 10Q; AZ/RU/EN
   P002   │ index.html (дашборд)   │ ✅ DONE    │ TAİM-style, AZ+RU
   P002   │ Главы учебника         │ ⚠️ PART    │ 8 глав, 88 уроков
   P003   │ Темы (topics)          │ ✅ DONE    │ 28/28 HTML
-  P003   │ Тесты (tests)          │ 🔄 WIP     │ 2 разблокировано
+  P003   │ Тесты (tests)          │ 🔄 WIP     │ 4 разблокировано (t1–t4, секция 01 ✅)
   P003   │ Доказательства (proofs)│ 🔄 WIP     │ 3 HTML
   P003   │ Ситуационные задачи    │ 🔄 WIP     │ 3 HTML
   P003   │ React App (src/)       │ ✅ BUILD   │ dist/ готов
@@ -635,7 +637,7 @@ ROOT: C:/Users/Administrator/Documents/Claude/Projects/
 35. PROJECT INVENTORY
     P001_Math_5_DIM: DİM 2025 test bank. Exactly 17 lessons (Lesson-1 → Lesson-17). MCQ engine only.
     P002_Math_5_Darslik: Interactive textbook. 4-Pillar system (Theory · Practice · Evaluation · Gamification). Files: Movzu-18.html → Movzu-N.html. Engine: \_Shared_Core/textbook_engine.js. Template: \_Shared_Core/textbook_template.html.
-    P003_Block_Exam (платформа для подготовки к блоковому экзамену): React/Vite/TS app. 28 topics ✅, tests WIP, proofs WIP, situational WIP. Path: Projects/платформа для подготовки к блоковому экзамену/app/
+    P003_Block_Exam: React/Vite/TS app. 28 topics ✅, tests WIP (секция 01 завершена: t1–t4, 30Q каждый), proofs WIP, situational WIP. Path: Projects/P003_Block_Exam/app/ AVAILABLE={p1-s01-t1..t4}
     P004_TAİM_2026: Standalone PWA platform for MİQ teacher certification. 47 tests (38 topic + 6 chapter + 3 final), ~1500+ questions, AZ+RU bilingual, engine.js v4, XOR-encrypted answers, offline-ready (sw.js v12). Path: Projects/P004_TAIM_2026/
 36. LESSON STRUCTURE (P002: 4-Pillar + Trainer System)
     Each Movzu-X.html follows the 4-Pillar architecture with 5 interactive modules:
