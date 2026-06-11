@@ -1,0 +1,898 @@
+<!doctype html>
+<html lang="az">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DİM 2025 — Viktorina</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    /* ── Quiz-specific overrides ─────────────────────────── */
+    .hidden { display: none !important; }
+
+    /* Lesson picker list */
+    .lesson-list {
+      max-height: 400px; overflow-y: auto;
+      border: 1px solid var(--border); border-radius: 10px;
+    }
+    .lesson-item {
+      display: flex; align-items: center; gap: 10px;
+      padding: 10px 14px; border-bottom: 1px solid var(--border);
+      cursor: pointer; transition: background .12s;
+    }
+    .lesson-item:last-child { border-bottom: none; }
+    .lesson-item:hover { background: var(--primary-light); }
+    .lesson-item input[type=checkbox] {
+      width: 17px; height: 17px; cursor: pointer;
+      accent-color: var(--primary); flex-shrink: 0;
+    }
+    .lesson-item label { cursor: pointer; flex: 1; font-size: 13px; line-height: 1.4; }
+    .lesson-qs {
+      font-size: 11px; white-space: nowrap; background: var(--primary-light);
+      color: var(--primary); padding: 2px 8px; border-radius: 10px; flex-shrink: 0;
+    }
+
+    /* Stats bar */
+    .stats-bar {
+      display: flex; gap: 8px; flex-wrap: wrap; justify-content: space-around;
+    }
+    .stat-pill { text-align: center; min-width: 70px; }
+    .stat-val { font-size: 24px; font-weight: 800; color: var(--primary); }
+    .stat-lbl { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: .05em; }
+
+    /* Q count input */
+    .q-count-row { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+    .q-count-row input[type=number] {
+      width: 90px; padding: 8px 10px;
+      border: 2px solid var(--border); border-radius: 8px;
+      font-size: 20px; font-weight: 700; color: var(--primary);
+      text-align: center; outline: none; font-family: inherit;
+      background: var(--bg);
+      -moz-appearance: textfield;
+    }
+    .q-count-row input[type=number]::-webkit-outer-spin-button,
+    .q-count-row input[type=number]::-webkit-inner-spin-button { -webkit-appearance: none; }
+    .q-count-row input[type=number]:focus { border-color: var(--primary); }
+    .q-max-lbl { font-size: 13px; color: var(--muted); }
+    .range-wrap { margin: 8px 0; }
+    .range-wrap input[type=range] { width: 100%; accent-color: var(--primary); cursor: pointer; }
+
+    /* Loading spinner */
+    .spin { display: inline-block; animation: spin 1s linear infinite; font-size: 48px; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* Quiz option buttons — extend existing .option */
+    .option-letter {
+      min-width: 28px; height: 28px; border-radius: 50%;
+      background: var(--border);
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 700; font-size: 12px; flex-shrink: 0;
+    }
+    .option.selected .option-letter { background: var(--primary); color: white; }
+    .option.correct .option-letter  { background: #22c55e; color: white; }
+    .option.wrong   .option-letter  { background: var(--danger); color: white; }
+    .option { cursor: pointer; }
+    .option:disabled, .option[data-disabled] { cursor: default; }
+
+    /* Question dot grid */
+    .q-dot {
+      width: 30px; height: 30px; border-radius: 50%;
+      border: 2px solid var(--border); background: var(--surface);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 10px; font-weight: 600; cursor: pointer;
+      transition: all .15s;
+    }
+    .q-dot.cur   { border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-light); }
+    .q-dot.ans   { background: var(--primary); border-color: var(--primary); color: white; }
+    .q-dot.ok    { background: #22c55e; border-color: #22c55e; color: white; }
+    .q-dot.fail  { background: var(--danger); border-color: var(--danger); color: white; }
+
+    /* Timer */
+    .timer-val { font-size: 22px; font-weight: 700; font-variant-numeric: tabular-nums; }
+    .timer-urgent { color: var(--danger); animation: blink 1s infinite; }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:.5} }
+
+    /* Error box */
+    .err-box {
+      padding: 10px 14px; border-radius: 8px; font-size: 13px;
+      background: rgba(239,68,68,.08); border: 1px solid rgba(239,68,68,.25);
+      color: #b91c1c; margin-top: 8px;
+    }
+
+    /* Section header */
+    .sec-hdr { font-size: 14px; font-weight: 700; margin-bottom: 12px; }
+  </style>
+</head>
+<body class="min-h-screen">
+
+  <!-- ── TOPBAR ─────────────────────────────────────────── -->
+  <header class="sticky top-0 z-50 backdrop-blur-md"
+    style="background: var(--surface); border-bottom: 1px solid var(--border)">
+    <div class="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between flex-wrap gap-2">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl flex items-center justify-center text-white font-bold text-base"
+          style="background: var(--primary)">🎯</div>
+        <div>
+          <h1 class="text-sm sm:text-base font-bold leading-tight" id="hdrTitle">Viktorina</h1>
+          <p class="text-xs" style="color: var(--muted)" id="hdrSub">DİM 2025 · Riyaziyyat · V sinif</p>
+        </div>
+      </div>
+      <div class="flex items-center gap-2">
+        <a href="index.html" class="btn-secondary text-sm px-3 py-2" id="backLink">← Siyahıya</a>
+        <div class="lang-selector">
+          <button onclick="setLang('az')" class="lang-btn active" id="lbAZ">AZ</button>
+          <button onclick="setLang('ru')" class="lang-btn" id="lbRU">RU</button>
+          <button onclick="setLang('en')" class="lang-btn" id="lbEN">EN</button>
+        </div>
+        <button onclick="toggleTheme()" class="tab px-3 py-2" aria-label="Dark mode">
+          <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-5xl mx-auto px-4 py-6">
+
+    <!-- ══ BUILDER SCREEN ═════════════════════════════════ -->
+    <div id="builderScreen">
+
+      <!-- Stats bar -->
+      <div class="card p-4 mb-4">
+        <div class="stats-bar">
+          <div class="stat-pill">
+            <div class="stat-val" id="statTopics">0</div>
+            <div class="stat-lbl" id="statTopicsL">Dərs</div>
+          </div>
+          <div class="stat-pill">
+            <div class="stat-val" id="statAvail">0</div>
+            <div class="stat-lbl" id="statAvailL">Mövcud sual</div>
+          </div>
+          <div class="stat-pill">
+            <div class="stat-val" id="statSel">—</div>
+            <div class="stat-lbl" id="statSelL">Seçilmiş sual</div>
+          </div>
+          <div class="stat-pill">
+            <div class="stat-val" id="statTime">—</div>
+            <div class="stat-lbl" id="statTimeL">Dəqiqə</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Parameters -->
+      <div class="card p-5 mb-4">
+        <div class="sec-hdr" id="paramTitle">⚙️ Parametrlər</div>
+        <div class="q-count-row mb-3">
+          <label class="font-semibold text-sm" id="qCountLabel">Sual sayı:</label>
+          <input type="number" id="qCountInp" min="1" value="20" oninput="onCountChange()" />
+          <span class="q-max-lbl" id="qMaxLbl">/ max 0</span>
+        </div>
+        <div class="range-wrap">
+          <input type="range" id="qRange" min="1" max="1" value="20" oninput="onRangeChange(this.value)" />
+        </div>
+        <div id="errMsg" class="err-box hidden"></div>
+        <button id="quizStartBtn" onclick="startQuiz()" disabled
+          class="btn-primary w-full mt-3 text-base py-3">
+          ▶ <span id="startBtnTxt">Viktorinaya Başla</span>
+        </button>
+      </div>
+
+      <!-- Lesson list -->
+      <div class="card p-5">
+        <div class="sec-hdr" id="listTitle">📚 Dərslər</div>
+        <div class="flex gap-2 mb-3 flex-wrap">
+          <button class="btn-secondary text-xs px-3 py-2" onclick="selectAll(true)">
+            ✔ <span id="selAllTxt">Hamısını seç</span>
+          </button>
+          <button class="btn-secondary text-xs px-3 py-2" onclick="selectAll(false)">
+            ✕ <span id="clrAllTxt">Hamısını sil</span>
+          </button>
+        </div>
+        <div class="lesson-list" id="lessonList"></div>
+      </div>
+    </div>
+
+    <!-- ══ LOADING SCREEN ═════════════════════════════════ -->
+    <div id="loadingScreen" class="hidden">
+      <div class="card p-12 text-center">
+        <div class="spin">⚙️</div>
+        <p class="mt-4 text-base font-semibold" id="loadingTxt">Suallar yüklənir...</p>
+        <p class="mt-1 text-sm" style="color:var(--muted)" id="loadingProg"></p>
+      </div>
+    </div>
+
+    <!-- ══ QUIZ SCREEN ════════════════════════════════════ -->
+    <div id="quizScreen" class="hidden">
+
+      <!-- Top bar -->
+      <div class="card p-3 mb-4 flex items-center justify-between flex-wrap gap-3">
+        <div class="timer-val" id="quizTimer">—</div>
+        <div class="flex items-center gap-3">
+          <span class="text-sm font-semibold" id="quizAnsCount"></span>
+          <div class="progress-bar" style="width:120px">
+            <div class="progress-fill" id="quizProgFill" style="width:0%"></div>
+          </div>
+          <span class="text-sm font-semibold" id="quizProgPct">0%</span>
+        </div>
+        <button onclick="finishQuiz(false)" class="btn-secondary text-sm px-3 py-2"
+          style="color:var(--danger)" id="btnFinishTop"></button>
+      </div>
+
+      <div class="grid lg:grid-cols-[200px_1fr] gap-4">
+
+        <!-- Dot grid sidebar -->
+        <aside class="card p-4">
+          <div class="sec-hdr" id="gridTitle">Sual gridi</div>
+          <div class="flex flex-wrap gap-2" id="quizDots"></div>
+        </aside>
+
+        <!-- Question -->
+        <div class="card p-5">
+          <div class="flex items-center gap-3 mb-4">
+            <span class="px-3 py-1 rounded-lg text-sm font-bold text-white"
+              style="background: var(--primary)" id="qBadge">1</span>
+            <span class="text-sm" style="color:var(--muted)" id="qMeta"></span>
+          </div>
+
+          <div class="fade-in" id="qContent">
+            <h2 class="text-base font-semibold leading-relaxed mb-4" id="qText"></h2>
+            <div id="qImage" class="mb-4 flex justify-center"></div>
+            <div class="space-y-2" id="qOptions"></div>
+          </div>
+
+          <div class="flex items-center justify-between mt-5 pt-4"
+            style="border-top:1px solid var(--border)">
+            <button onclick="prevQ()" class="btn-secondary text-sm" id="btnPrev"></button>
+            <button onclick="nextQ()" class="btn-primary text-sm" id="btnNext"></button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ RESULT SCREEN ══════════════════════════════════ -->
+    <div id="resultScreen" class="hidden">
+
+      <!-- Score circle -->
+      <div class="card p-6 mb-4 text-center">
+        <div class="w-20 h-20 rounded-full mx-auto mb-4 flex items-center justify-center text-2xl font-bold text-white"
+          id="resultCircle" style="background:var(--primary)">0%</div>
+        <h2 class="text-2xl font-bold mb-1" id="resultTitle">Nəticə</h2>
+        <p class="text-sm" style="color:var(--muted)" id="resultMsg"></p>
+      </div>
+
+      <!-- Counts -->
+      <div class="grid grid-cols-3 gap-4 mb-4">
+        <div class="card p-4 text-center">
+          <div class="text-2xl font-bold text-emerald-500" id="resCorrect">0</div>
+          <div class="text-xs" style="color:var(--muted)" id="resCorrectL">Düzgün</div>
+        </div>
+        <div class="card p-4 text-center">
+          <div class="text-2xl font-bold" style="color:var(--danger)" id="resWrong">0</div>
+          <div class="text-xs" style="color:var(--muted)" id="resWrongL">Səhv</div>
+        </div>
+        <div class="card p-4 text-center">
+          <div class="text-2xl font-bold" style="color:var(--warning)" id="resEmpty">0</div>
+          <div class="text-xs" style="color:var(--muted)" id="resEmptyL">Boş</div>
+        </div>
+      </div>
+
+      <div class="flex gap-3 flex-wrap justify-center mb-5">
+        <button onclick="showReview()" class="btn-primary" id="btnReview"></button>
+        <button onclick="backToBuilder()" class="btn-secondary" id="btnNewQuiz"></button>
+      </div>
+
+      <!-- Review (expanded on demand) -->
+      <div id="reviewWrap" class="hidden space-y-3"></div>
+    </div>
+
+  </main>
+
+  <script>
+  'use strict';
+
+  /* ══════════════════════════════════════════════════════
+     LESSON DATA
+  ══════════════════════════════════════════════════════ */
+  const LESSONS = [
+    { id:1,  file:'Lesson-1.html',  icon:'📊', qs:40,
+      az:'Natural ədədlərin yazılması və oxunması',
+      ru:'Запись и чтение натуральных чисел',
+      en:'Writing and reading natural numbers' },
+    { id:2,  file:'Lesson-2.html',  icon:'➕', qs:40,
+      az:'Natural ədədlərin toplanması və çıxılması',
+      ru:'Сложение и вычитание натуральных чисел',
+      en:'Addition and subtraction of natural numbers' },
+    { id:3,  file:'Lesson-3.html',  icon:'✖️', qs:40,
+      az:'Natural ədədlərin vurulması və bölünməsi',
+      ru:'Умножение и деление натуральных чисел',
+      en:'Multiplication and division of natural numbers' },
+    { id:4,  file:'Lesson-4.html',  icon:'🔢', qs:40,
+      az:'Adi kəsrlər',
+      ru:'Обыкновенные дроби',
+      en:'Common fractions' },
+    { id:5,  file:'Lesson-5.html',  icon:'⚖️', qs:40,
+      az:'Adi kəsrlərin müqayisəsi',
+      ru:'Сравнение обыкновенных дробей',
+      en:'Comparing common fractions' },
+    { id:6,  file:'Lesson-6.html',  icon:'➕', qs:40,
+      az:'Adi kəsrlərin toplanması və çıxılması',
+      ru:'Сложение и вычитание обыкновенных дробей',
+      en:'Addition and subtraction of fractions' },
+    { id:7,  file:'Lesson-7.html',  icon:'✖️', qs:40,
+      az:'Adi kəsrlərin vurulması və bölünməsi',
+      ru:'Умножение и деление обыкновенных дробей',
+      en:'Multiplication and division of fractions' },
+    { id:8,  file:'Lesson-8.html',  icon:'🔟', qs:40,
+      az:'Onluq kəsrlər',
+      ru:'Десятичные дроби',
+      en:'Decimal fractions' },
+    { id:9,  file:'Lesson-9.html',  icon:'🔀', qs:40,
+      az:'Adi və onluq kəsrlər (qarışıq əməllər)',
+      ru:'Обыкновенные и десятичные дроби (смешанные операции)',
+      en:'Common and decimal fractions (mixed operations)' },
+    { id:10, file:'Lesson-10.html', icon:'💯', qs:40,
+      az:'Faiz',
+      ru:'Проценты',
+      en:'Percentages' },
+    { id:11, file:'Lesson-11.html', icon:'📝', qs:40,
+      az:'Birinci yarımil üzrə yekunlaşdırıcı test',
+      ru:'Итоговый тест за первое полугодие',
+      en:'First semester final test' },
+    { id:12, file:'Lesson-12.html', icon:'⚡', qs:40,
+      az:'Tənliklər və bərabərsizliklər',
+      ru:'Уравнения и неравенства',
+      en:'Equations and inequalities' },
+    { id:13, file:'Lesson-13.html', icon:'🔷', qs:40,
+      az:'Müstəvi fiqurlar',
+      ru:'Плоские фигуры',
+      en:'Plane figures' },
+    { id:14, file:'Lesson-14.html', icon:'🎲', qs:40,
+      az:'Fəza fiqurları',
+      ru:'Пространственные фигуры',
+      en:'Spatial figures' },
+    { id:15, file:'Lesson-15.html', icon:'📈', qs:40,
+      az:'Statistika və məlumatların təsviri',
+      ru:'Статистика и описание данных',
+      en:'Statistics and data description' },
+    { id:16, file:'Lesson-16.html', icon:'🏆', qs:40,
+      az:'İkinci yarımil — yekunlaşdırıcı test',
+      ru:'Итоговый тест за второе полугодие',
+      en:'Second semester final test' },
+    { id:17, file:'Lesson-17.html', icon:'🎓', qs:40,
+      az:'İllik material — yekunlaşdırıcı test',
+      ru:'Годовой материал — итоговый тест',
+      en:'Annual material — final test' },
+  ];
+
+  /* ══════════════════════════════════════════════════════
+     EXTRACT examData FROM FETCHED HTML
+     examData uses numberLine(...) in image fields — we
+     pass a real implementation so images render correctly.
+  ══════════════════════════════════════════════════════ */
+  function _numberLine(min, max, step, points, labels) {
+    const w = 400, h = 80, pad = 30;
+    const scale = (w - 2 * pad) / (max - min);
+    const NS = 'http://www.w3.org/2000/svg';
+    let s = `<svg viewBox="0 0 ${w} ${h}" class="number-line" xmlns="${NS}">`;
+    s += `<line x1="${pad}" y1="${h/2}" x2="${w-pad}" y2="${h/2}" stroke="currentColor" stroke-width="2"/>`;
+    s += `<polygon points="${w-pad},${h/2} ${w-pad-8},${h/2-5} ${w-pad-8},${h/2+5}" fill="currentColor"/>`;
+    for (let v = min; v <= max; v += step) {
+      const x = pad + (v - min) * scale;
+      s += `<line x1="${x}" y1="${h/2-6}" x2="${x}" y2="${h/2+6}" stroke="currentColor" stroke-width="2"/>`;
+      s += `<text x="${x}" y="${h/2+22}" text-anchor="middle" font-size="12" fill="currentColor">${v}</text>`;
+    }
+    points.forEach((p, i) => {
+      const x = pad + (p - min) * scale;
+      s += `<circle cx="${x}" cy="${h/2}" r="5" fill="var(--primary)" stroke="white" stroke-width="2"/>`;
+      s += `<text x="${x}" y="${h/2-12}" text-anchor="middle" font-size="13" font-weight="bold" fill="var(--primary)">${labels[i]}</text>`;
+    });
+    return s + '</svg>';
+  }
+
+  function extractExamData(html) {
+    const marker = 'const examData =';
+    const pos = html.indexOf(marker);
+    if (pos === -1) return null;
+    const objStart = html.indexOf('{', pos + marker.length);
+    if (objStart === -1) return null;
+    let depth = 0, inStr = false, strCh = '', i = objStart;
+    while (i < html.length) {
+      const ch = html[i];
+      if (inStr) {
+        if (ch === '\\') { i += 2; continue; }
+        if (ch === strCh) inStr = false;
+      } else {
+        if (ch === '"' || ch === "'") { inStr = true; strCh = ch; }
+        else if (ch === '{') depth++;
+        else if (ch === '}') { depth--; if (depth === 0) break; }
+      }
+      i++;
+    }
+    try {
+      const fn = new Function('numberLine', 'return ' + html.slice(objStart, i + 1));
+      return fn(_numberLine);
+    } catch(e) { console.warn('Parse error in', e); return null; }
+  }
+
+  /* ══════════════════════════════════════════════════════
+     i18n
+  ══════════════════════════════════════════════════════ */
+  let lang = localStorage.getItem('dim2025_lang') || 'az';
+
+  const T = {
+    az: {
+      hdrTitle:'Viktorina', hdrSub:'DİM 2025 · Riyaziyyat · V sinif',
+      back:'← Siyahıya',
+      topicsL:'Dərs', availL:'Mövcud sual', selL:'Seçilmiş', timeL:'Dəqiqə',
+      paramTitle:'⚙️ Parametrlər', qLbl:'Sual sayı:',
+      listTitle:'📚 Dərslər',
+      selAll:'Hamısını seç', clrAll:'Hamısını sil',
+      startBtn:'Viktorinaya Başla',
+      loading:'Suallar yüklənir…',
+      errNoSel:'Ən azı bir dərs seçin.',
+      errCount:'Sual sayı 1 ilə {max} arasında olmalıdır.',
+      errFetch:'Xəta baş verdi. Lokal server üzərindən açın.',
+      gridTitle:'Sual gridi',
+      finishBtn:'✓ Bitir', prevBtn:'← Əvvəlki', nextBtn:'Növbəti →',
+      resultTitle:'Nəticə',
+      correctL:'Düzgün', wrongL:'Səhv', emptyL:'Boş',
+      reviewBtn:'Cavablara bax', newQuizBtn:'Yeni viktorina',
+      confirmFinish:'Viktorinayı bitirmək istədiyinizə əminsiniz?',
+      passMsg:'Keçdiniz 🎉', failMsg:'Cəhd edin 💪',
+    },
+    ru: {
+      hdrTitle:'Викторина', hdrSub:'DİM 2025 · Математика · 5 класс',
+      back:'← К списку',
+      topicsL:'Урок', availL:'Доступно', selL:'Выбрано', timeL:'Минут',
+      paramTitle:'⚙️ Параметры', qLbl:'Кол-во вопросов:',
+      listTitle:'📚 Уроки',
+      selAll:'Выбрать все', clrAll:'Снять все',
+      startBtn:'Начать викторину',
+      loading:'Загрузка вопросов…',
+      errNoSel:'Выберите хотя бы один урок.',
+      errCount:'Число вопросов: от 1 до {max}.',
+      errFetch:'Ошибка загрузки. Откройте через локальный сервер.',
+      gridTitle:'Сетка вопросов',
+      finishBtn:'✓ Завершить', prevBtn:'← Предыдущий', nextBtn:'Следующий →',
+      resultTitle:'Результат',
+      correctL:'Правильно', wrongL:'Неправильно', emptyL:'Пропущено',
+      reviewBtn:'Посмотреть ответы', newQuizBtn:'Новая викторина',
+      confirmFinish:'Завершить викторину?',
+      passMsg:'Сдали 🎉', failMsg:'Попробуйте ещё 💪',
+    },
+    en: {
+      hdrTitle:'Quiz', hdrSub:'DİM 2025 · Mathematics · Grade 5',
+      back:'← Back',
+      topicsL:'Lesson', availL:'Available', selL:'Selected', timeL:'Minutes',
+      paramTitle:'⚙️ Settings', qLbl:'Question count:',
+      listTitle:'📚 Lessons',
+      selAll:'Select all', clrAll:'Clear all',
+      startBtn:'Start Quiz',
+      loading:'Loading questions…',
+      errNoSel:'Select at least one lesson.',
+      errCount:'Count must be between 1 and {max}.',
+      errFetch:'Load error. Open via local server.',
+      gridTitle:'Question grid',
+      finishBtn:'✓ Finish', prevBtn:'← Previous', nextBtn:'Next →',
+      resultTitle:'Result',
+      correctL:'Correct', wrongL:'Wrong', emptyL:'Empty',
+      reviewBtn:'Review answers', newQuizBtn:'New quiz',
+      confirmFinish:'Finish the quiz?',
+      passMsg:'Passed 🎉', failMsg:'Keep trying 💪',
+    },
+  };
+  const t = () => T[lang];
+
+  /* ══════════════════════════════════════════════════════
+     STATE
+  ══════════════════════════════════════════════════════ */
+  const selected = new Set();
+  let quizQ      = [];   // [{text, options, correct (0-idx), image, lessonTitle, lessonIcon}]
+  let answers    = [];   // null | 0–4
+  let curIdx     = 0;
+  let timer      = null;
+  let timeLeft   = 0;
+  let finished   = false;
+
+  /* ══════════════════════════════════════════════════════
+     LANG / THEME
+  ══════════════════════════════════════════════════════ */
+  function setLang(l) {
+    lang = l;
+    localStorage.setItem('dim2025_lang', l);
+    ['AZ','RU','EN'].forEach(x =>
+      document.getElementById('lb'+x).classList.toggle('active', x.toLowerCase()===l));
+    applyLangStrings();
+    buildLessonList();
+    updateStats();
+    document.documentElement.lang = l;
+  }
+
+  function applyLangStrings() {
+    const ids = {
+      hdrTitle:'hdrTitle', hdrSub:'hdrSub', backLink:'back',
+      statTopicsL:'topicsL', statAvailL:'availL', statSelL:'selL', statTimeL:'timeL',
+      paramTitle:'paramTitle', qCountLabel:'qLbl',
+      listTitle:'listTitle', selAllTxt:'selAll', clrAllTxt:'clrAll',
+      startBtnTxt:'startBtn', loadingTxt:'loading',
+      gridTitle:'gridTitle',
+    };
+    Object.entries(ids).forEach(([el, key]) => {
+      const node = document.getElementById(el);
+      if (node && t()[key] !== undefined) node.textContent = t()[key];
+    });
+  }
+
+  function toggleTheme() {
+    const dark = document.documentElement.classList.toggle('dark');
+    localStorage.setItem('dim2025_theme', dark ? 'dark' : 'light');
+  }
+
+  /* ══════════════════════════════════════════════════════
+     BUILDER
+  ══════════════════════════════════════════════════════ */
+  function buildLessonList() {
+    const cont = document.getElementById('lessonList');
+    cont.innerHTML = '';
+    LESSONS.forEach((L, i) => {
+      const row = document.createElement('div');
+      row.className = 'lesson-item';
+      const cb = document.createElement('input');
+      cb.type = 'checkbox'; cb.id = 'cb_'+i; cb.checked = selected.has(i);
+      cb.addEventListener('change', () => {
+        selected[cb.checked ? 'add' : 'delete'](i);
+        updateStats();
+      });
+      const lbl = document.createElement('label');
+      lbl.htmlFor = 'cb_'+i;
+      lbl.innerHTML = `<span style="color:var(--primary);font-weight:700;font-size:11px;margin-right:4px">${L.id}.</span>${L.icon} ${L[lang]}`;
+      const pill = document.createElement('span');
+      pill.className = 'lesson-qs'; pill.textContent = '~'+L.qs+'Q';
+      row.appendChild(cb); row.appendChild(lbl); row.appendChild(pill);
+      row.addEventListener('click', e => {
+        if (e.target.tagName !== 'INPUT') { cb.checked = !cb.checked; cb.dispatchEvent(new Event('change')); }
+      });
+      cont.appendChild(row);
+    });
+  }
+
+  function updateStats() {
+    const totalQ = [...selected].reduce((s, i) => s + LESSONS[i].qs, 0);
+    const inp = document.getElementById('qCountInp');
+    const rng = document.getElementById('qRange');
+    rng.max = Math.max(1, totalQ);
+    inp.max  = totalQ;
+    let count = parseInt(inp.value) || 0;
+    if (totalQ > 0 && count > totalQ) { count = totalQ; inp.value = totalQ; }
+    if (count < 1 && totalQ > 0)      { count = 1;      inp.value = 1; }
+    rng.value = count;
+
+    const mins = (count > 0 && totalQ > 0) ? Math.max(5, Math.ceil(count * 1.5)) : 0;
+    document.getElementById('statTopics').textContent = selected.size;
+    document.getElementById('statAvail').textContent  = totalQ;
+    document.getElementById('statSel').textContent    = (count>0 && count<=totalQ) ? count : '—';
+    document.getElementById('statTime').textContent   = mins || '—';
+    document.getElementById('qMaxLbl').textContent    = '/ max '+totalQ;
+    document.getElementById('quizStartBtn').disabled  =
+      !(selected.size > 0 && count >= 1 && count <= totalQ);
+    hideErr();
+  }
+
+  function onCountChange() {
+    document.getElementById('qRange').value = document.getElementById('qCountInp').value;
+    updateStats();
+  }
+  function onRangeChange(v) {
+    document.getElementById('qCountInp').value = v;
+    updateStats();
+  }
+  function selectAll(v) {
+    LESSONS.forEach((_, i) => selected[v ? 'add' : 'delete'](i));
+    document.querySelectorAll('#lessonList input[type=checkbox]').forEach(cb => cb.checked = v);
+    updateStats();
+  }
+
+  /* ══════════════════════════════════════════════════════
+     START QUIZ — fetch + parse
+  ══════════════════════════════════════════════════════ */
+  const LETTER = {A:0, B:1, C:2, D:3, E:4};
+
+  async function startQuiz() {
+    const totalQ = [...selected].reduce((s, i) => s + LESSONS[i].qs, 0);
+    const count  = parseInt(document.getElementById('qCountInp').value);
+    if (selected.size === 0) { showErr(t().errNoSel); return; }
+    if (!count || count < 1 || count > totalQ) {
+      showErr(t().errCount.replace('{max}', totalQ)); return;
+    }
+
+    showScreen('loadingScreen');
+    document.getElementById('loadingTxt').textContent = t().loading;
+    document.getElementById('loadingProg').textContent = '';
+
+    try {
+      const pool = [];
+      const selArr = [...selected];
+      for (let fi = 0; fi < selArr.length; fi++) {
+        const L = LESSONS[selArr[fi]];
+        document.getElementById('loadingProg').textContent =
+          `${fi+1} / ${selArr.length}  —  ${L[lang]}`;
+        const html = await fetch(L.file).then(r => r.text());
+        const data = extractExamData(html);
+        if (!data || !Array.isArray(data.variants)) continue;
+        data.variants.forEach(v => {
+          (v.questions || []).forEach(q => {
+            if (!q.text || !q.options || !q.correct) return;
+            const ci = LETTER[q.correct];
+            if (ci === undefined) return;
+            pool.push({
+              text:       q.text,
+              options:    q.options,
+              correct:    ci,
+              image:      q.image || '',
+              lessonTitle: L[lang],
+              lessonIcon:  L.icon,
+            });
+          });
+        });
+      }
+
+      if (pool.length === 0) throw new Error('empty pool');
+
+      // Fisher-Yates shuffle
+      for (let i = pool.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i+1));
+        [pool[i], pool[j]] = [pool[j], pool[i]];
+      }
+
+      quizQ   = pool.slice(0, Math.min(count, pool.length));
+      answers = new Array(quizQ.length).fill(null);
+      curIdx  = 0;
+      finished = false;
+      timeLeft = Math.max(300, quizQ.length * 90);
+
+      showScreen('quizScreen');
+      startTimer();
+      renderQ();
+      renderDots();
+      updateBar();
+
+    } catch(e) {
+      console.error(e);
+      showScreen('builderScreen');
+      showErr(t().errFetch);
+    }
+  }
+
+  /* ══════════════════════════════════════════════════════
+     TIMER
+  ══════════════════════════════════════════════════════ */
+  function startTimer() {
+    if (timer) clearInterval(timer);
+    renderTimer();
+    timer = setInterval(() => {
+      if (timeLeft > 0) { timeLeft--; renderTimer(); }
+      else { clearInterval(timer); finishQuiz(true); }
+    }, 1000);
+  }
+
+  function renderTimer() {
+    const el = document.getElementById('quizTimer');
+    const m = String(Math.floor(timeLeft/60)).padStart(2,'0');
+    const s = String(timeLeft % 60).padStart(2,'0');
+    el.textContent = m+':'+s;
+    el.classList.toggle('timer-urgent', timeLeft < 60);
+  }
+
+  /* ══════════════════════════════════════════════════════
+     RENDER QUESTION
+  ══════════════════════════════════════════════════════ */
+  function renderQ() {
+    const q    = quizQ[curIdx];
+    const total = quizQ.length;
+    const LETTERS = ['A','B','C','D','E'];
+
+    document.getElementById('qBadge').textContent = curIdx+1;
+    document.getElementById('qMeta').textContent  =
+      `${curIdx+1} / ${total}  ·  ${q.lessonIcon} ${q.lessonTitle}`;
+
+    const qText = q.text[lang] || q.text.az;
+    document.getElementById('qText').textContent = qText;
+
+    const imgEl = document.getElementById('qImage');
+    imgEl.innerHTML = q.image || '';
+    imgEl.style.display = q.image ? '' : 'none';
+
+    const opts = q.options[lang] || q.options.az;
+    const optsCont = document.getElementById('qOptions');
+    optsCont.innerHTML = '';
+    opts.forEach((opt, i) => {
+      const btn = document.createElement('div');
+      btn.className = 'option';
+      btn.setAttribute('role', 'button');
+      btn.setAttribute('tabindex', '0');
+
+      const ua = answers[curIdx];
+      if (finished) {
+        if (i === q.correct)      btn.classList.add('correct');
+        else if (ua === i)        btn.classList.add('wrong');
+      } else {
+        if (ua === i)             btn.classList.add('selected');
+      }
+
+      btn.innerHTML = `<span class="option-letter">${LETTERS[i]}</span><span class="flex-1 text-sm">${opt}</span>`;
+
+      if (!finished) {
+        btn.addEventListener('click', () => pickAnswer(i));
+        btn.addEventListener('keydown', e => { if (e.key==='Enter'||e.key===' ') { e.preventDefault(); pickAnswer(i); } });
+      } else {
+        btn.style.cursor = 'default';
+      }
+      optsCont.appendChild(btn);
+    });
+
+    document.getElementById('btnPrev').textContent = t().prevBtn;
+    document.getElementById('btnPrev').disabled    = curIdx === 0;
+    document.getElementById('btnNext').textContent =
+      (curIdx === total-1) ? t().finishBtn : t().nextBtn;
+    document.getElementById('btnFinishTop').textContent = t().finishBtn;
+    document.getElementById('gridTitle').textContent    = t().gridTitle;
+  }
+
+  function pickAnswer(idx) {
+    answers[curIdx] = idx;
+    renderQ();
+    renderDots();
+    updateBar();
+  }
+
+  function prevQ() { if (curIdx > 0) { curIdx--; renderQ(); renderDots(); } }
+  function nextQ() {
+    if (curIdx < quizQ.length-1) { curIdx++; renderQ(); renderDots(); }
+    else finishQuiz(false);
+  }
+
+  /* ══════════════════════════════════════════════════════
+     DOTS
+  ══════════════════════════════════════════════════════ */
+  function renderDots() {
+    const cont = document.getElementById('quizDots');
+    cont.innerHTML = '';
+    quizQ.forEach((q, i) => {
+      const d = document.createElement('button');
+      d.className = 'q-dot';
+      d.textContent = i+1;
+      if (i === curIdx) d.classList.add('cur');
+      if (finished) {
+        if      (answers[i] === null)      {} // empty
+        else if (answers[i] === q.correct) d.classList.add('ok');
+        else                               d.classList.add('fail');
+      } else {
+        if (answers[i] !== null) d.classList.add('ans');
+      }
+      d.addEventListener('click', () => { curIdx = i; renderQ(); renderDots(); });
+      cont.appendChild(d);
+    });
+  }
+
+  /* ══════════════════════════════════════════════════════
+     PROGRESS BAR
+  ══════════════════════════════════════════════════════ */
+  function updateBar() {
+    const done = answers.filter(a => a !== null).length;
+    const pct  = Math.round(done / quizQ.length * 100);
+    document.getElementById('quizAnsCount').textContent = `${done} / ${quizQ.length}`;
+    document.getElementById('quizProgFill').style.width = pct + '%';
+    document.getElementById('quizProgPct').textContent  = pct + '%';
+  }
+
+  /* ══════════════════════════════════════════════════════
+     FINISH QUIZ
+  ══════════════════════════════════════════════════════ */
+  function finishQuiz(auto) {
+    if (!auto && !confirm(t().confirmFinish)) return;
+    if (timer) { clearInterval(timer); timer = null; }
+    finished = true;
+    renderQ(); renderDots();
+
+    let correct=0, wrong=0, empty=0;
+    quizQ.forEach((q,i) => {
+      const a = answers[i];
+      if (a === null)       empty++;
+      else if (a===q.correct) correct++;
+      else                  wrong++;
+    });
+    const total = quizQ.length;
+    const pct   = Math.round(correct / total * 100);
+
+    showScreen('resultScreen');
+    const circle = document.getElementById('resultCircle');
+    circle.textContent = pct+'%';
+    circle.style.background = pct>=70 ? '#22c55e' : pct>=50 ? 'var(--warning)' : 'var(--danger)';
+
+    document.getElementById('resultTitle').textContent = t().resultTitle;
+    document.getElementById('resultMsg').textContent   =
+      `${correct} / ${total}  ·  ${pct>=70 ? t().passMsg : t().failMsg}`;
+    document.getElementById('resCorrect').textContent  = correct;
+    document.getElementById('resWrong').textContent    = wrong;
+    document.getElementById('resEmpty').textContent    = empty;
+    document.getElementById('resCorrectL').textContent = t().correctL;
+    document.getElementById('resWrongL').textContent   = t().wrongL;
+    document.getElementById('resEmptyL').textContent   = t().emptyL;
+    document.getElementById('btnReview').textContent   = t().reviewBtn;
+    document.getElementById('btnNewQuiz').textContent  = t().newQuizBtn;
+    document.getElementById('reviewWrap').classList.add('hidden');
+  }
+
+  /* ══════════════════════════════════════════════════════
+     REVIEW
+  ══════════════════════════════════════════════════════ */
+  function showReview() {
+    const wrap = document.getElementById('reviewWrap');
+    wrap.classList.remove('hidden');
+    wrap.innerHTML = '';
+    const LETTERS = ['A','B','C','D','E'];
+    quizQ.forEach((q, i) => {
+      const ua   = answers[i];
+      const ok   = ua === q.correct;
+      const none = ua === null;
+      const opts = q.options[lang] || q.options.az;
+      const card = document.createElement('div');
+      card.className = 'card p-4';
+      card.style.borderLeft = `4px solid ${none ? 'var(--border)' : ok ? '#22c55e' : 'var(--danger)'}`;
+
+      const statusIcon = none ? '⬜' : ok ? '✅' : '❌';
+      const optsHtml = opts.map((o, oi) => {
+        let cls = 'text-sm px-2 py-1 rounded';
+        if (oi === q.correct) cls += ' font-bold text-emerald-600';
+        if (oi === ua && !ok) cls += ' text-red-500';
+        return `<div class="${cls}"><b>${LETTERS[oi]})</b> ${o}</div>`;
+      }).join('');
+
+      card.innerHTML = `
+        <p class="font-semibold text-sm mb-2">${statusIcon} Q${i+1}: ${q.text[lang]||q.text.az}</p>
+        ${q.image ? `<div class="mb-2 flex justify-center">${q.image}</div>` : ''}
+        <div class="mt-1 space-y-1">${optsHtml}</div>
+        <p class="text-xs mt-2" style="color:var(--muted)">
+          ${q.lessonIcon} ${q.lessonTitle}
+          ${!none && !ok ? ` · ${t().correctL}: ${LETTERS[q.correct]}) ${opts[q.correct]}` : ''}
+        </p>`;
+      wrap.appendChild(card);
+    });
+    wrap.scrollIntoView({ behavior:'smooth' });
+  }
+
+  /* ══════════════════════════════════════════════════════
+     HELPERS
+  ══════════════════════════════════════════════════════ */
+  function showScreen(id) {
+    ['builderScreen','loadingScreen','quizScreen','resultScreen']
+      .forEach(s => document.getElementById(s).classList.toggle('hidden', s!==id));
+  }
+  function showErr(msg) {
+    const el = document.getElementById('errMsg');
+    el.textContent = msg; el.classList.remove('hidden');
+  }
+  function hideErr() {
+    document.getElementById('errMsg').classList.add('hidden');
+  }
+  function backToBuilder() {
+    if (timer) { clearInterval(timer); timer = null; }
+    finished = false; quizQ = []; answers = [];
+    showScreen('builderScreen');
+  }
+
+  /* ══════════════════════════════════════════════════════
+     INIT
+  ══════════════════════════════════════════════════════ */
+  (function init() {
+    const theme = localStorage.getItem('dim2025_theme');
+    if (theme === 'dark') document.documentElement.classList.add('dark');
+    LESSONS.forEach((_, i) => selected.add(i));
+    setLang(lang);
+  })();
+
+  </script>
+</body>
+</html>
