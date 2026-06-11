@@ -9,24 +9,72 @@
   <style>
   /* ── Hero ─────────────────────────────────────────────────── */
   .hub-hero {
-    background: linear-gradient(135deg,#0f172a 0%,#1a3456 45%,#2d1b52 100%);
+    background:linear-gradient(135deg,#0f172a 0%,#1a3456 45%,#2d1b52 100%);
     position:relative; overflow:hidden;
   }
   .dark .hub-hero { background:linear-gradient(135deg,#020617 0%,#0c1a2e 45%,#180d2a 100%); }
   .hub-hero::after {
     content:''; position:absolute; inset:0; pointer-events:none;
-    background-image:radial-gradient(circle,rgba(255,255,255,0.04) 1px,transparent 1px);
+    background-image:radial-gradient(circle,rgba(255,255,255,.04) 1px,transparent 1px);
     background-size:24px 24px;
   }
   .orb { position:absolute; border-radius:50%; filter:blur(80px); pointer-events:none; }
-  .orb-1 { width:520px;height:520px;background:rgba(16,185,129,0.18);top:-160px;left:-100px; }
-  .orb-2 { width:520px;height:520px;background:rgba(139,92,246,0.18);top:-120px;right:-100px; }
-  .orb-3 { width:350px;height:350px;background:rgba(59,130,246,0.12);bottom:-80px;left:50%;transform:translateX(-50%); }
+  .orb-1 { width:520px;height:520px;background:rgba(16,185,129,.18);top:-160px;left:-100px; }
+  .orb-2 { width:520px;height:520px;background:rgba(139,92,246,.18);top:-120px;right:-100px; }
+  .orb-3 { width:350px;height:350px;background:rgba(59,130,246,.12);bottom:-80px;left:50%;transform:translateX(-50%); }
+
+  /* ── Clock ─────────────────────────────────────────────────── */
+  .clock-wrap {
+    display:flex; flex-direction:column; align-items:flex-end;
+    background:var(--surface-2); border:1px solid var(--border);
+    border-radius:10px; padding:.35rem .8rem; line-height:1.25;
+  }
+  .clock-time {
+    font-size:.95rem; font-weight:800; letter-spacing:.08em; color:var(--text);
+    font-variant-numeric:tabular-nums; font-family:'SF Mono','Fira Code','Consolas',monospace;
+  }
+  .clock-date { font-size:.6rem; font-weight:600; color:var(--muted); letter-spacing:.04em; }
+
+  /* ── About section ─────────────────────────────────────────── */
+  .about-sec { background:var(--surface-2); border-bottom:1px solid var(--border); }
+
+  .astats {
+    display:grid; grid-template-columns:repeat(4,1fr); gap:1rem;
+  }
+  .astat {
+    display:flex; flex-direction:column; align-items:center; gap:.4rem;
+    padding:1.4rem 1rem; text-align:center;
+    background:var(--surface); border:1px solid var(--border); border-radius:14px;
+    transition:border-color .2s;
+  }
+  .astat:hover { border-color:var(--primary); }
+  .astat-ico { font-size:1.6rem; line-height:1; }
+  .astat-num { font-size:1.7rem; font-weight:900; line-height:1; }
+  .astat-lbl { font-size:.67rem; font-weight:600; color:var(--muted); text-transform:uppercase; letter-spacing:.06em; }
+
+  .aud-grid { display:grid; grid-template-columns:1fr 1fr; gap:1.5rem; }
+  .aud-card {
+    background:var(--surface); border:1.5px solid var(--border); border-radius:16px;
+    padding:1.75rem; display:flex; flex-direction:column; gap:1rem;
+    transition:border-color .25s,box-shadow .25s;
+  }
+  .aud-card:hover { border-color:var(--ac); box-shadow:0 4px 20px var(--as); }
+  .aud-head { display:flex; align-items:flex-start; gap:.9rem; }
+  .aud-ico  {
+    width:2.8rem; height:2.8rem; border-radius:10px; font-size:1.3rem;
+    display:flex; align-items:center; justify-content:center;
+    background:var(--surface-2); flex-shrink:0;
+  }
+  .aud-name { font-size:1.05rem; font-weight:900; margin-bottom:.2rem; }
+  .aud-sub  { font-size:.78rem; color:var(--muted); line-height:1.5; }
+  .aud-list { display:flex; flex-direction:column; gap:.55rem; padding-left:.1rem; }
+  .aud-item { display:flex; align-items:flex-start; gap:.6rem; font-size:.8rem; line-height:1.55; color:var(--muted); }
+  .aud-dot  { width:7px; height:7px; border-radius:50%; flex-shrink:0; margin-top:.45rem; }
 
   /* ── Platform card ─────────────────────────────────────────── */
   .pcard {
     background:var(--surface); border:1.5px solid var(--border);
-    border-radius:18px; box-shadow:0 2px 16px rgba(0,0,0,0.06);
+    border-radius:18px; box-shadow:0 2px 16px rgba(0,0,0,.06);
     transition:transform .3s cubic-bezier(.34,1.56,.64,1),border-color .25s,box-shadow .3s;
     text-decoration:none; color:var(--text);
     display:flex; flex-direction:column; overflow:hidden; position:relative;
@@ -39,7 +87,6 @@
   .pcard .acc  { height:4px; background:var(--cg); flex-shrink:0; }
   .pcard .body { padding:1.5rem; display:flex; flex-direction:column; gap:1rem; flex:1; }
 
-  /* Lock overlay */
   .lock-ov {
     position:absolute;inset:0;z-index:10;backdrop-filter:blur(3px);
     background:rgba(255,255,255,.55); display:flex;align-items:center;justify-content:center;
@@ -52,19 +99,17 @@
     display:flex;align-items:center;gap:.4rem;
   }
 
-  /* Badges */
+  /* Badges, chips, tags */
   .bsm { font-size:.62rem;font-weight:700;padding:.2rem .6rem;border-radius:9999px; }
   .ba  { background:#d1fae5;color:#065f46; }
   .bw  { background:#fef3c7;color:#92400e; }
   .bc  { background:var(--surface-2);color:var(--muted); }
   .dark .ba { background:rgba(16,185,129,.15);color:#34d399; }
   .dark .bw { background:rgba(245,158,11,.15);color:#fbbf24; }
-
-  /* Chips & tags */
   .schip { display:inline-flex;align-items:center;gap:.3rem;padding:.22rem .65rem;border-radius:9999px;font-size:.68rem;font-weight:700; }
   .tag   { display:inline-flex;align-items:center;padding:.2rem .55rem;border-radius:9999px;font-size:.62rem;font-weight:700;background:var(--surface-2);color:var(--muted); }
 
-  /* Progress bar */
+  /* Progress */
   .prog      { height:3px;background:var(--surface-2);border-radius:9999px;overflow:hidden; }
   .prog-fill { height:100%;border-radius:9999px; }
 
@@ -77,19 +122,25 @@
   .ftab:hover { color:var(--text);border-color:var(--text); }
   .ftab.on    { background:var(--text);color:var(--surface);border-color:var(--text); }
 
-  /* Grid */
   .cards-grid { display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:1.5rem; }
 
-  /* Animations */
   @keyframes fadeUp { from{opacity:0;transform:translateY(18px)} to{opacity:1;transform:none} }
   .fu { animation:fadeUp .45s ease both; }
 
-  /* Responsive */
+  /* ── Responsive ─────────────────────────────────────────────── */
+  @media(max-width:900px) { .aud-grid { grid-template-columns:1fr; } }
   @media(max-width:768px) {
-    .cards-grid { grid-template-columns:1fr;gap:1rem; }
+    .cards-grid { grid-template-columns:1fr; gap:1rem; }
     .pcard:hover { transform:translateY(-3px); }
+    .astats { grid-template-columns:repeat(2,1fr); }
+    .clock-wrap { display:none; }
   }
-  @media(max-width:480px) { .pcard .body { padding:1.25rem; } }
+  @media(max-width:480px) {
+    .pcard .body { padding:1.25rem; }
+    .astats { gap:.75rem; }
+    .astat  { padding:1rem .75rem; }
+    .astat-num { font-size:1.4rem; }
+  }
   </style>
 </head>
 <body>
@@ -99,6 +150,7 @@
   style="background:rgba(var(--surface-rgb,255,255,255),.92);border-bottom:1px solid var(--border)">
   <div class="container">
     <div class="flex items-center justify-between py-3 gap-3">
+
       <a href="./index.html" class="flex items-center gap-3 no-underline">
         <div class="w-10 h-10 rounded-xl flex items-center justify-center text-white font-black text-sm flex-shrink-0"
           style="background:linear-gradient(135deg,#10b981,#6366f1)">IEN</div>
@@ -107,8 +159,15 @@
           <p class="text-xs" style="color:var(--muted)" id="siteTagline">Rəqəmsal Tədris Ekosistemi</p>
         </div>
       </a>
-      <div class="flex items-center gap-2">
-        <div class="hidden md:flex items-center gap-2 text-xs mr-2" style="color:var(--muted)">
+
+      <div class="flex items-center gap-3">
+        <!-- Live clock (Baku time UTC+4) -->
+        <div class="clock-wrap" id="clockWrap">
+          <span class="clock-time" id="clockTime">00:00:00</span>
+          <span class="clock-date" id="clockDate">—</span>
+        </div>
+        <!-- Stats -->
+        <div class="hidden lg:flex items-center gap-2 text-xs" style="color:var(--muted)">
           <span><b style="color:var(--text)" id="hdrN">4</b> <span id="hdrPL">platforma</span></span>
           <span style="opacity:.3">·</span>
           <span><b style="color:var(--text)">2 500+</b> <span id="hdrQL">sual</span></span>
@@ -167,6 +226,13 @@
   </div>
 </section>
 
+<!-- ── ABOUT ──────────────────────────────────────────────────── -->
+<section class="about-sec">
+  <div class="container py-14" id="aboutWrap">
+    <!-- rendered by renderAbout() -->
+  </div>
+</section>
+
 <!-- ── MAIN ───────────────────────────────────────────────────── -->
 <main class="container py-12">
   <div class="flex items-start justify-between flex-wrap gap-4 mb-8">
@@ -194,7 +260,7 @@
       </div>
       <div class="flex items-center gap-3">
         <span id="footerStack" style="font-size:.72rem">Tailwind · KaTeX · React · Vanilla JS · PWA</span>
-        <span class="badge badge-success" style="font-size:.6rem">v4.0.0</span>
+        <span class="badge badge-success" style="font-size:.6rem">v4.1.0</span>
       </div>
     </div>
   </div>
@@ -202,17 +268,113 @@
 
 <script src="./_Shared_Core/script.js"></script>
 <script>
-// ── Platform registry ────────────────────────────────────────
-// To add a new platform: append one object to this array.
+// ── About section data ────────────────────────────────────────
+const ABOUT = {
+  az: {
+    kicker:'Ekosistem haqqında',
+    title:'Niyə IEN?',
+    sub:'IEN — Azərbaycanda V sinif riyaziyyat üzrə DİM testlərinə, blok imtahana və MİQ müəllim attestasiyasına hazırlıq üçün vahid rəqəmsal ekosistemdir. PDF mənbələrdən interaktiv, çoxdilli, offline-dəstəkli platformalara çevrilir.',
+    stats:[
+      {ico:'📚', num:'2 500+', lbl:'Sual & tapşırıq'},
+      {ico:'🏛️', num:'4',      lbl:'Müstəqil platforma'},
+      {ico:'🌍', num:'3',      lbl:'Tədris dili'},
+      {ico:'📱', num:'PWA',    lbl:'Offline dəstək'},
+    ],
+    aud:[
+      {
+        icon:'🎒', name:'Şagirdlər üçün', color:'#6366f1',
+        sub:'5-ci sinif riyaziyyat üzrə DİM, blok imtahan və interaktiv dərslik',
+        items:[
+          {dot:'#10b981', html:'<b>P001 · DİM 2025 —</b> 17 test modulu, 340+ sual, anlıq qiymətləndirmə'},
+          {dot:'#6366f1', html:'<b>P002 · İnteraktiv Dərslik —</b> 4-sütunlu öyrənmə: Nəzəriyyə, Praktika, Test, Viktorina (8 fəsil, 88 dərs)'},
+          {dot:'#f59e0b', html:'<b>P003 · Blok İmtahan —</b> 28 mövzu, isbatlar, situasiya məsələləri (React 19 + TypeScript)'},
+        ],
+      },
+      {
+        icon:'👩‍🏫', name:'Müəllimlər üçün', color:'#e11d48',
+        sub:'MİQ (müəllim attestasiyası) imtahanına xüsusi hazırlıq platforması',
+        items:[
+          {dot:'#e11d48', html:'<b>P004 · TAİM 2026 —</b> 47 test, 1500+ sual: Hüquqi, Metodiki, Pedaqoji savadlılıq'},
+          {dot:'#9333ea', html:'<b>AZ + RU —</b> Tam ikidilli interfeys, XOR-şifrəli cavablar, sertifikat generasiyası'},
+          {dot:'#06b6d4', html:'<b>PWA Offline —</b> İnternetsiz işləyir, Android/iOS/Desktop-a quraşdırılır'},
+        ],
+      },
+    ],
+  },
+  ru: {
+    kicker:'Об экосистеме',
+    title:'Почему IEN?',
+    sub:'IEN — единая цифровая экосистема для подготовки к DİM, блоковому экзамену по математике 5-го класса и аттестации учителей (MİQ) в Азербайджане. Преобразует PDF-источники в интерактивные, многоязычные платформы.',
+    stats:[
+      {ico:'📚', num:'2 500+', lbl:'Вопросов и задач'},
+      {ico:'🏛️', num:'4',      lbl:'Независимых платформ'},
+      {ico:'🌍', num:'3',      lbl:'Языка обучения'},
+      {ico:'📱', num:'PWA',    lbl:'Поддержка офлайн'},
+    ],
+    aud:[
+      {
+        icon:'🎒', name:'Для учеников', color:'#6366f1',
+        sub:'Комплексная подготовка по математике 5-го класса: DİM, блоковый экзамен, учебник',
+        items:[
+          {dot:'#10b981', html:'<b>P001 · DİM 2025 —</b> 17 тестовых модулей, 340+ вопросов, мгновенная оценка'},
+          {dot:'#6366f1', html:'<b>P002 · Интерактивный учебник —</b> 4-колонное обучение: Теория, Практика, Тест, Викторина (8 глав, 88 уроков)'},
+          {dot:'#f59e0b', html:'<b>P003 · Блоковый экзамен —</b> 28 тем, доказательства, ситуационные задачи (React 19 + TypeScript)'},
+        ],
+      },
+      {
+        icon:'👩‍🏫', name:'Для учителей', color:'#e11d48',
+        sub:'Специализированная платформа для подготовки к аттестации MİQ',
+        items:[
+          {dot:'#e11d48', html:'<b>P004 · TAİM 2026 —</b> 47 тестов, 1500+ вопросов: Правовая, Методическая, Педагогическая грамотность'},
+          {dot:'#9333ea', html:'<b>АЗ + РУ —</b> Полный двуязычный интерфейс, зашифрованные ответы, генерация сертификата'},
+          {dot:'#06b6d4', html:'<b>PWA Offline —</b> Работает без интернета, устанавливается на Android/iOS/Desktop'},
+        ],
+      },
+    ],
+  },
+  en: {
+    kicker:'About the Ecosystem',
+    title:'Why IEN?',
+    sub:'IEN is a unified digital ecosystem for Grade 5 DİM math exams, block exam preparation, and MİQ teacher certification in Azerbaijan. Transforms PDF sources into interactive, multilingual, offline-ready platforms.',
+    stats:[
+      {ico:'📚', num:'2 500+', lbl:'Questions & tasks'},
+      {ico:'🏛️', num:'4',      lbl:'Independent platforms'},
+      {ico:'🌍', num:'3',      lbl:'Learning languages'},
+      {ico:'📱', num:'PWA',    lbl:'Offline support'},
+    ],
+    aud:[
+      {
+        icon:'🎒', name:'For Students', color:'#6366f1',
+        sub:'Comprehensive Grade 5 mathematics preparation: DİM, block exam, textbook',
+        items:[
+          {dot:'#10b981', html:'<b>P001 · DİM 2025 —</b> 17 test modules, 340+ questions, instant grading'},
+          {dot:'#6366f1', html:'<b>P002 · Interactive Textbook —</b> 4-pillar learning: Theory, Practice, Tests, Quiz (8 chapters, 88 lessons)'},
+          {dot:'#f59e0b', html:'<b>P003 · Block Exam —</b> 28 topics, proofs, situational problems (React 19 + TypeScript)'},
+        ],
+      },
+      {
+        icon:'👩‍🏫', name:'For Teachers', color:'#e11d48',
+        sub:'Specialized platform for MİQ teacher certification preparation',
+        items:[
+          {dot:'#e11d48', html:'<b>P004 · TAİM 2026 —</b> 47 tests, 1500+ questions: Legal, Methodological, Pedagogical literacy'},
+          {dot:'#9333ea', html:'<b>AZ + RU —</b> Full bilingual interface, encrypted answers, certificate generation'},
+          {dot:'#06b6d4', html:'<b>PWA Offline —</b> Works without internet, installable on Android/iOS/Desktop'},
+        ],
+      },
+    ],
+  },
+};
+
+// ── Platform registry ─────────────────────────────────────────
 const PLATFORMS = [
   {
     id:'p001', href:'./P001_Math_5_DIM/index.html',
     status:'active', audience:'student',
     c:'#10b981', c2:'#0ea5e9', cbg:'rgba(16,185,129,.12)', ctxt:'#065f46',
     iconBg:'linear-gradient(135deg,#10b981,#059669)', icon:'∑', progress:100,
-    meta: {az:'P001 · V Sinif · DİM',           ru:'P001 · V класс · DİM',     en:'P001 · Grade 5 · DİM'},
-    stats:{az:'17 test · 340+ sual',             ru:'17 тестов · 340+',         en:'17 tests · 340+'},
-    title:{az:'DİM 2025 Test Platforması',        ru:'Тестовая платформа DİM',   en:'DİM 2025 Test Platform'},
+    meta: {az:'P001 · V Sinif · DİM',          ru:'P001 · V класс · DİM',    en:'P001 · Grade 5 · DİM'},
+    stats:{az:'17 test · 340+ sual',            ru:'17 тестов · 340+',        en:'17 tests · 340+'},
+    title:{az:'DİM 2025 Test Platforması',       ru:'Тестовая платформа DİM',  en:'DİM 2025 Test Platform'},
     desc: {az:'DİM 2025 materialları əsasında 17 interaktiv test modulu. Anlıq qiymətləndirmə, 340+ sual.',
            ru:'17 интерактивных тестовых модулей по материалам DİM 2025. Мгновенная оценка, 340+ вопросов.',
            en:'17 interactive test modules based on DİM 2025 materials. Instant grading, 340+ questions.'},
@@ -224,9 +386,9 @@ const PLATFORMS = [
     status:'active', audience:'student',
     c:'#6366f1', c2:'#8b5cf6', cbg:'rgba(99,102,241,.12)', ctxt:'#4338ca',
     iconBg:'linear-gradient(135deg,#6366f1,#4f46e5)', icon:'📖', progress:65,
-    meta: {az:'P002 · V Sinif · Dərslik',       ru:'P002 · V класс · Учебник',  en:'P002 · Grade 5 · Textbook'},
-    stats:{az:'8 fəsil · 88 dərs',               ru:'8 глав · 88 уроков',        en:'8 chapters · 88 lessons'},
-    title:{az:'İnteraktiv Riyaziyyat Dərsliyi',  ru:'Интерактивный учебник',     en:'Interactive Math Textbook'},
+    meta: {az:'P002 · V Sinif · Dərslik',      ru:'P002 · V класс · Учебник', en:'P002 · Grade 5 · Textbook'},
+    stats:{az:'8 fəsil · 88 dərs',              ru:'8 глав · 88 уроков',       en:'8 chapters · 88 lessons'},
+    title:{az:'İnteraktiv Riyaziyyat Dərsliyi', ru:'Интерактивный учебник',    en:'Interactive Math Textbook'},
     desc: {az:'4 sütunlu öyrənmə: Nəzəriyyə, Tapşırıqlar, Testlər, Viktorina. 8 fəsil, 88 dərs.',
            ru:'4-колонная система: Теория, Задачи, Тесты, Викторина. 8 глав, 88 уроков.',
            en:'4-pillar system: Theory, Practice, Tests, Quiz. 8 chapters, 88 lessons.'},
@@ -238,9 +400,9 @@ const PLATFORMS = [
     status:'active', audience:'student',
     c:'#f59e0b', c2:'#ef4444', cbg:'rgba(245,158,11,.12)', ctxt:'#92400e',
     iconBg:'linear-gradient(135deg,#f59e0b,#d97706)', icon:'🎓', progress:80,
-    meta: {az:'P003 · DİM · Blok İmtahan',         ru:'P003 · DİM · Блок. экзамен',      en:'P003 · DİM · Block Exam'},
-    stats:{az:'28 mövzu · React/TS',                ru:'28 тем · React/TS',               en:'28 topics · React/TS'},
-    title:{az:'Blok İmtahanına Hazırlıq',           ru:'Подготовка к блоковому экзамену', en:'Block Exam Preparation'},
+    meta: {az:'P003 · DİM · Blok İmtahan',        ru:'P003 · DİM · Блок. экзамен',      en:'P003 · DİM · Block Exam'},
+    stats:{az:'28 mövzu · React/TS',               ru:'28 тем · React/TS',               en:'28 topics · React/TS'},
+    title:{az:'Blok İmtahanına Hazırlıq',          ru:'Подготовка к блоковому экзамену', en:'Block Exam Preparation'},
     desc: {az:'28 mövzu, testlər, isbatlar, situasiya məsələləri. React 19 + TypeScript. XP sistemi.',
            ru:'28 тем, тесты, доказательства, ситуационные задачи. React 19 + TypeScript.',
            en:'28 topics, tests, proofs, situational tasks. React 19 + TypeScript. XP system.'},
@@ -252,16 +414,16 @@ const PLATFORMS = [
     status:'active', audience:'teacher',
     c:'#e11d48', c2:'#9333ea', cbg:'rgba(225,29,72,.12)', ctxt:'#9f1239',
     iconBg:'linear-gradient(135deg,#e11d48,#be123c)', icon:'🏫', progress:100,
-    meta: {az:'P004 · MİQ · Müəllim Sertifikasiyası', ru:'P004 · MİQ · Сертификация',      en:'P004 · MİQ · Teacher Certification'},
-    stats:{az:'47 test · 1500+ sual',                 ru:'47 тестов · 1500+ вопросов',     en:'47 tests · 1500+ questions'},
-    title:{az:'TAİM Test Bank 2026',                  ru:'TAİM Банк тестов 2026',          en:'TAİM Test Bank 2026'},
+    meta: {az:'P004 · MİQ · Müəllim Sertifikasiyası', ru:'P004 · MİQ · Сертификация',     en:'P004 · MİQ · Teacher Certification'},
+    stats:{az:'47 test · 1500+ sual',                 ru:'47 тестов · 1500+ вопросов',    en:'47 tests · 1500+ questions'},
+    title:{az:'TAİM Test Bank 2026',                  ru:'TAİM Банк тестов 2026',         en:'TAİM Test Bank 2026'},
     desc: {az:'MİQ imtahanına hazırlıq: Hüquqi, Metodiki, Pedaqoji savadlılıq. AZ + RU. PWA offline.',
            ru:'Подготовка к MİQ: Правовая, Методическая, Педагогическая грамотность. PWA offline.',
            en:'MİQ exam prep: Legal, Methodological, Pedagogical literacy. AZ + RU. PWA offline.'},
     tags: ['👩‍🏫 MİQ', '🔒 Şifrəli', '📱 PWA', '🏆 Sertifikat'],
     cta:  {az:'Testlərə keç', ru:'К тестам', en:'Go to tests'},
   },
-  // ── Add future platforms below this line ──────────────────
+  // ── Add future platforms below ────────────────────────────
   {
     id:'p005', href:'#',
     status:'coming', audience:'student',
@@ -278,7 +440,7 @@ const PLATFORMS = [
   },
 ];
 
-// ── i18n strings ─────────────────────────────────────────────
+// ── i18n strings (static elements) ───────────────────────────
 const STR = {
   az:{
     siteTagline:'Rəqəmsal Tədris Ekosistemi',
@@ -318,15 +480,53 @@ const STR = {
   },
 };
 
-// ── State ────────────────────────────────────────────────────
+// ── State ─────────────────────────────────────────────────────
 let lang = localStorage.getItem('ien_lang') || 'az';
 let filter = 'all';
 
-// ── Card renderer ────────────────────────────────────────────
+// ── About renderer ────────────────────────────────────────────
+function renderAbout() {
+  const d = ABOUT[lang];
+  const statsHTML = d.stats.map(s => `
+    <div class="astat">
+      <span class="astat-ico">${s.ico}</span>
+      <span class="astat-num">${s.num}</span>
+      <span class="astat-lbl">${s.lbl}</span>
+    </div>`).join('');
+
+  const audHTML = d.aud.map(a => `
+    <div class="aud-card" style="--ac:${a.color};--as:${a.color}20">
+      <div class="aud-head">
+        <div class="aud-ico">${a.icon}</div>
+        <div>
+          <p class="aud-name">${a.name}</p>
+          <p class="aud-sub">${a.sub}</p>
+        </div>
+      </div>
+      <ul class="aud-list">
+        ${a.items.map(it => `
+        <li class="aud-item">
+          <span class="aud-dot" style="background:${it.dot}"></span>
+          <span>${it.html}</span>
+        </li>`).join('')}
+      </ul>
+    </div>`).join('');
+
+  document.getElementById('aboutWrap').innerHTML = `
+    <div class="text-center mb-10 fu">
+      <p class="text-xs font-bold uppercase tracking-widest mb-2" style="color:#10b981">${d.kicker}</p>
+      <h2 class="text-3xl font-black mb-3">${d.title}</h2>
+      <p class="max-w-2xl mx-auto text-base leading-relaxed" style="color:var(--muted)">${d.sub}</p>
+    </div>
+    <div class="astats mb-10 fu" style="animation-delay:.05s">${statsHTML}</div>
+    <div class="aud-grid fu" style="animation-delay:.1s">${audHTML}</div>`;
+}
+
+// ── Card renderer ─────────────────────────────────────────────
 function badgeHTML(status) {
   const s = STR[lang];
-  if (status === 'active')  return `<span class="bsm ba">${s.bA}</span>`;
-  if (status === 'wip')     return `<span class="bsm bw">${s.bW}</span>`;
+  if (status === 'active') return `<span class="bsm ba">${s.bA}</span>`;
+  if (status === 'wip')    return `<span class="bsm bw">${s.bW}</span>`;
   return `<span class="bsm bc">${s.bC}</span>`;
 }
 
@@ -334,11 +534,9 @@ function cardHTML(p, i) {
   const L = lang, locked = p.status === 'coming';
   const el = locked ? 'div' : 'a';
   const href = locked ? '' : `href="${p.href}"`;
-  const glow = p.c + '26'; // 15% alpha
-
   return `
 <${el} ${href} class="pcard${locked ? ' locked' : ''} fu"
-  style="--c:${p.c};--cs:${glow};--cg:linear-gradient(90deg,${p.c},${p.c2});animation-delay:${i * .07}s">
+  style="--c:${p.c};--cs:${p.c}26;--cg:linear-gradient(90deg,${p.c},${p.c2});animation-delay:${i * .07}s">
   ${locked ? `<div class="lock-ov"><div class="lock-pill">🔒 ${STR[L].bC}</div></div>` : ''}
   <div class="acc"></div>
   <div class="body">
@@ -360,12 +558,8 @@ function cardHTML(p, i) {
     <div style="display:flex;flex-wrap:wrap;gap:.35rem">
       ${p.tags.map(t => `<span class="tag">${t}</span>`).join('')}
     </div>
-    ${p.progress > 0 ? `
-    <div>
-      <div class="prog">
-        <div class="prog-fill" style="width:${p.progress}%;background:linear-gradient(90deg,${p.c},${p.c2})"></div>
-      </div>
-    </div>` : ''}
+    ${p.progress > 0 ? `<div class="prog"><div class="prog-fill"
+      style="width:${p.progress}%;background:linear-gradient(90deg,${p.c},${p.c2})"></div></div>` : ''}
     <div style="display:flex;align-items:center;gap:.5rem;margin-top:auto;padding-top:.25rem;color:${p.c}">
       <span style="font-size:.82rem;font-weight:800">${p.cta[L]}</span>
       <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
@@ -388,12 +582,34 @@ function setFilter(f) {
   renderCards();
 }
 
-// ── Init ─────────────────────────────────────────────────────
+// ── Clock (Baku time UTC+4) ───────────────────────────────────
+const MONTHS = {
+  az:['Yan','Fev','Mar','Apr','May','İyn','İyl','Avq','Sen','Okt','Noy','Dek'],
+  ru:['Янв','Фев','Мар','Апр','Май','Июн','Июл','Авг','Сен','Окт','Ноя','Дек'],
+  en:['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'],
+};
+function updateClock() {
+  const now = new Date(new Date().toLocaleString('en-US', {timeZone:'Asia/Baku'}));
+  const h = String(now.getHours()).padStart(2,'0');
+  const m = String(now.getMinutes()).padStart(2,'0');
+  const s = String(now.getSeconds()).padStart(2,'0');
+  const d = now.getDate();
+  const mo = MONTHS[lang][now.getMonth()];
+  const y = now.getFullYear();
+  document.getElementById('clockTime').textContent = `${h}:${m}:${s}`;
+  document.getElementById('clockDate').textContent = `${d} ${mo} ${y} · Bakı`;
+}
+
+// ── Init ──────────────────────────────────────────────────────
 onReady(() => {
   LangManager.init(STR);
   lang = LangManager.currentLang || lang;
+  renderAbout();
   renderCards();
   document.getElementById('yr').textContent = new Date().getFullYear();
+
+  updateClock();
+  setInterval(updateClock, 1000);
 
   function syncIcon() {
     const d = document.documentElement.classList.contains('dark');
@@ -409,7 +625,9 @@ onReady(() => {
   LangManager.cycle = () => {
     _lc();
     lang = LangManager.currentLang;
+    renderAbout();
     renderCards();
+    updateClock();
   };
 });
 </script>
