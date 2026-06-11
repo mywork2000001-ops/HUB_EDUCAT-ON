@@ -7,6 +7,7 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="style.css" />
+  <script src="../../_Shared_Core/certificate.js"></script>
   <style>
     /* ── Quiz-specific overrides ─────────────────────────── */
     .hidden { display: none !important; }
@@ -280,6 +281,10 @@
 
       <div class="flex gap-3 flex-wrap justify-center mb-5">
         <button onclick="showReview()" class="btn-primary" id="btnReview"></button>
+        <button onclick="openCertificate()" class="btn-primary" id="btnCert"
+          style="background:linear-gradient(135deg,#f59e0b,#d97706);display:none">
+          🏆 <span id="btnCertTxt">Sertifikat</span>
+        </button>
         <button onclick="backToBuilder()" class="btn-secondary" id="btnNewQuiz"></button>
       </div>
 
@@ -823,6 +828,15 @@
     document.getElementById('btnReview').textContent   = t().reviewBtn;
     document.getElementById('btnNewQuiz').textContent  = t().newQuizBtn;
     document.getElementById('reviewWrap').classList.add('hidden');
+
+    // Show certificate button if passed (≥60%)
+    const certBtn = document.getElementById('btnCert');
+    const certTxt = { az:'Sertifikat', ru:'Сертификат', en:'Certificate' };
+    certBtn.style.display = pct >= 60 ? '' : 'none';
+    document.getElementById('btnCertTxt').textContent = certTxt[lang] || 'Sertifikat';
+
+    // Store result for certificate
+    certBtn._result = { correct, total, pct };
   }
 
   /* ══════════════════════════════════════════════════════
@@ -861,6 +875,32 @@
       wrap.appendChild(card);
     });
     wrap.scrollIntoView({ behavior:'smooth' });
+  }
+
+  /* ══════════════════════════════════════════════════════
+     CERTIFICATE
+  ══════════════════════════════════════════════════════ */
+  function openCertificate() {
+    const btn = document.getElementById('btnCert');
+    const r   = btn._result || {};
+    // Build achievement label from selected lessons
+    const selLessons = LESSONS.filter(l => selectedIds.has(l.id));
+    const achTitle = selLessons.length === 1
+      ? selLessons[0][lang] || selLessons[0].az
+      : `${selLessons.length} ${lang==='ru' ? 'модулей' : lang==='en' ? 'modules' : 'modul'}`;
+    const name = prompt(
+      lang==='ru' ? 'Введите ваше имя:' : lang==='en' ? 'Enter your name:' : 'Adınızı daxil edin:'
+    );
+    if (!name) return;
+    EduCert.generate({
+      name,
+      platform:    'P001',
+      achievement: achTitle,
+      score:       r.correct,
+      total:       r.total,
+      percent:     r.pct,
+      lang,
+    });
   }
 
   /* ══════════════════════════════════════════════════════
