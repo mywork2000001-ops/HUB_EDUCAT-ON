@@ -1,9 +1,39 @@
 GLOBAL EDU-PLATFORM ORCHESTRATOR
 ════════════════════════════════════════════════════════════════════
- 0. LIVE PROJECT GRAPH  (актуально на 2026-06-11)
+ 0. LIVE PROJECT GRAPH  (актуально на 2026-06-12)
 ════════════════════════════════════════════════════════════════════
 
 ROOT: C:/Users/Administrator/Documents/Claude/Projects/
+│
+├── p005-eduhub/                        ═══ ПРОЕКТ 5 (P005): Unified PWA Ecosystem ═══
+│   Назначение: Единая экосистема с бэкендом — Hub для P001–P004 + Teacher Dashboard
+│   Стек: Next.js 16 + TypeScript + TailwindCSS 4 + Supabase + Vercel PWA
+│   Статус: 🔄 WIP — базовая структура готова, нужна настройка Supabase
+│   Path: Projects/p005-eduhub/
+│
+│   ├── src/app/
+│   │   ├── page.tsx                    ← Hub (4 карточки P001–P004)
+│   │   ├── auth/login/page.tsx         ← Страница входа учителя
+│   │   ├── dashboard/page.tsx          ← Teacher Dashboard (результаты)
+│   │   ├── api/results/route.ts        ← POST/GET результатов тестов
+│   │   └── api/auth/login/route.ts     ← Auth endpoint (Supabase)
+│   ├── src/components/
+│   │   └── ServiceWorkerRegistration.tsx
+│   ├── src/lib/supabase.ts             ← Supabase client (anon + admin)
+│   ├── public/
+│   │   ├── manifest.json               ← PWA манифест
+│   │   ├── sw.js                       ← Service Worker (cache-first + network-first)
+│   │   ├── icon-192.png / icon-512.png ← PWA иконки
+│   ├── supabase-schema.sql             ← SQL схема (results + teacher_profiles)
+│   ├── .env.local                      ← SUPABASE_URL + ANON_KEY + SERVICE_ROLE_KEY
+│   └── next.config.ts                  ← SW/manifest headers
+│
+│   СЛЕДУЮЩИЕ ШАГИ P005:
+│   1. Создать проект на supabase.com → скопировать ключи в .env.local
+│   2. Запустить supabase-schema.sql в SQL Editor
+│   3. Создать учителя через Supabase Auth → Authentication → Users
+│   4. Деплой на Vercel: vercel --prod (или GitHub auto-deploy)
+│   5. Подключить P001/P004 → POST /api/results после завершения теста
 │
 ├── index.html                          ← MASTER HUB v4.0.0
 │                                         Data-driven карточки из PLATFORMS[]
@@ -203,6 +233,9 @@ ROOT: C:/Users/Administrator/Documents/Claude/Projects/
   P004   │ Fəsil sınaqları        │ ✅ DONE    │ 6 (fs1–fs6)
   P004   │ Ümumi sınaqlar         │ ✅ DONE    │ 3 (us1–us3)
   P004   │ PWA / offline          │ ✅ DONE    │ sw.js v12, manifest
+  P005   │ Next.js PWA структура  │ 🔄 WIP     │ Hub + Auth + Dashboard + API
+  P005   │ Supabase backend       │ ⏳ PENDING │ нужны ключи в .env.local
+  P005   │ Vercel деплой          │ ⏳ PENDING │ после настройки Supabase
 ─────────┴────────────────────────┴───────────┴───────────────
 
  HUB АРХИТЕКТУРА index.html v4.0.0
