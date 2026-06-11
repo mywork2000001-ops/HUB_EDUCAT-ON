@@ -1,32 +1,32 @@
 import { NextRequest, NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabase";
 
+function noAdmin() {
+  return NextResponse.json({ error: "Server konfiqurasiyası xətası" }, { status: 500 });
+}
+
 export async function POST(req: NextRequest) {
+  if (!supabaseAdmin) return noAdmin();
   try {
-    const body = await req.json();
     const { student_name, student_class, platform, lesson_id, lesson_title,
-            score, total, percent, answers, started_at, finished_at } = body;
+            score, total, percent, answers, started_at, finished_at } = await req.json();
 
     if (!student_name || !platform || score === undefined || total === undefined) {
       return NextResponse.json({ error: "Məlumatlar natamamdır" }, { status: 400 });
-    }
-
-    if (!supabaseAdmin) {
-      return NextResponse.json({ error: "Server konfiqurasiyası xətası" }, { status: 500 });
     }
 
     const { data, error } = await supabaseAdmin
       .from("results")
       .insert({
         student_name,
-        student_class: student_class || "",
+        student_class: student_class ?? "",
         platform,
-        lesson_id: lesson_id || "",
-        lesson_title: lesson_title || "",
+        lesson_id: lesson_id ?? "",
+        lesson_title: lesson_title ?? "",
         score: Number(score),
         total: Number(total),
         percent: Number(percent),
-        answers: answers || {},
+        answers: answers ?? {},
         started_at,
         finished_at,
       })
@@ -34,23 +34,18 @@ export async function POST(req: NextRequest) {
       .single();
 
     if (error) throw error;
-
     return NextResponse.json({ ok: true, id: data.id });
-  } catch (err) {
-    console.error("Results API error:", err);
+  } catch {
     return NextResponse.json({ error: "Server xətası" }, { status: 500 });
   }
 }
 
 export async function GET(req: NextRequest) {
+  if (!supabaseAdmin) return noAdmin();
   try {
     const { searchParams } = new URL(req.url);
     const platform = searchParams.get("platform");
-    const limit = Number(searchParams.get("limit") || 50);
-
-    if (!supabaseAdmin) {
-      return NextResponse.json({ error: "Server konfiqurasiyası xətası" }, { status: 500 });
-    }
+    const limit = Math.min(Number(searchParams.get("limit") || 50), 200);
 
     let query = supabaseAdmin
       .from("results")
@@ -62,10 +57,8 @@ export async function GET(req: NextRequest) {
 
     const { data, error } = await query;
     if (error) throw error;
-
     return NextResponse.json({ results: data });
-  } catch (err) {
-    console.error("Results GET error:", err);
+  } catch {
     return NextResponse.json({ error: "Server xətası" }, { status: 500 });
   }
 }
