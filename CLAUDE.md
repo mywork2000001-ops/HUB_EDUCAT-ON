@@ -5,24 +5,15 @@ GLOBAL EDU-PLATFORM ORCHESTRATOR
 
 ROOT: C:/Users/Administrator/Documents/Claude/Projects/
 │
-├── index.html                          ← MASTER HUB (2-card: P001 + P002)
+├── index.html                          ← MASTER HUB v4.0.0
+│                                         Data-driven карточки из PLATFORMS[]
+│                                         Фильтры: Hamısı / Şagird / Müəllim
+│                                         Прогресс-бары, Coming Soon слот, hover-glow
+│                                         Добавить P005+ = 1 объект в PLATFORMS[]
 ├── CLAUDE.md                           ← Этот файл
-├── README.md
-├── factory_manifest.json               ← Curriculum map, 28 planned chapters
+├── .gitignore
 │
-├── ── PYTHON AUTOMATION SCRIPTS (14) ──────────────────────────────
-│   ├── extract_code.py
-│   ├── fix_a0.py / fix_a0_multiline.py
-│   ├── fix_katex.py / fix_katex2.py / fix_katex_delimiters.py
-│   ├── fix_type_b_css.py / fix_type_b_dedup.py
-│   ├── inject_images.py
-│   ├── lesson_gen.py
-│   ├── migrate_to_katex.py
-│   ├── optimize_topics.py
-│   ├── rebuild_batch_c1.py
-│   └── rebuild_lessons.py
-│
-├── scripts/                            ← Все Python-скрипты автоматизации (16 файлов)
+├── scripts/                            ← Все Python-скрипты автоматизации (17 файлов)
 │   ├── extract_code.py / lesson_gen.py / rebuild_lessons.py
 │   ├── fix_a0.py / fix_katex.py / fix_katex2.py / fix_katex_delimiters.py
 │   ├── fix_type_b_css.py / fix_type_b_dedup.py / fix_a0_multiline.py
@@ -196,21 +187,41 @@ ROOT: C:/Users/Administrator/Documents/Claude/Projects/
  МАТРИЦА СТАТУСОВ (на 2026-06-11)
 ────────────────────────────────────────────────────────────────────
 
-  Проект │ Компонент              │ Статус   │ Кол-во файлов
-─────────┼────────────────────────┼──────────┼───────────────
-  P001   │ DİM Уроки              │ ✅ DONE   │ 17/17 уроков
-  P001   │ Изображения            │ ✅ DONE   │ ~1 190 WebP
-  P002   │ Главы учебника         │ ⚠️ PART   │ 8 глав, 88 уроков
-  P003   │ Темы (topics)          │ ✅ DONE   │ 28/28 HTML
-  P003   │ Тесты (tests)          │ 🔄 WIP    │ 2 разблокировано
-  P003   │ Доказательства (proofs)│ 🔄 WIP    │ 3 HTML
-  P003   │ Ситуационные задачи    │ 🔄 WIP    │ 3 HTML
-  P003   │ React App (src/)       │ ✅ BUILD  │ dist/ готов
-  P004   │ Тесты (test-1..38)     │ ✅ DONE   │ 38 тест-HTML
-  P004   │ Fəsil sınaqları        │ ✅ DONE   │ 6 (fs1–fs6)
-  P004   │ Ümumi sınaqlar         │ ✅ DONE   │ 3 (us1–us3)
-  P004   │ PWA / offline          │ ✅ DONE   │ sw.js v12, manifest
-─────────┴────────────────────────┴──────────┴───────────────
+  Проект │ Компонент              │ Статус    │ Кол-во файлов
+─────────┼────────────────────────┼───────────┼───────────────
+  HUB    │ Master index.html      │ ✅ v4.0.0  │ data-driven PLATFORMS[]
+  P001   │ DİM Уроки              │ ✅ DONE    │ 17/17 уроков
+  P001   │ Изображения            │ ✅ DONE    │ ~1 190 WebP
+  P002   │ index.html (дашборд)   │ ✅ DONE    │ TAİM-style, AZ+RU
+  P002   │ Главы учебника         │ ⚠️ PART    │ 8 глав, 88 уроков
+  P003   │ Темы (topics)          │ ✅ DONE    │ 28/28 HTML
+  P003   │ Тесты (tests)          │ 🔄 WIP     │ 2 разблокировано
+  P003   │ Доказательства (proofs)│ 🔄 WIP     │ 3 HTML
+  P003   │ Ситуационные задачи    │ 🔄 WIP     │ 3 HTML
+  P003   │ React App (src/)       │ ✅ BUILD   │ dist/ готов
+  P004   │ Тесты (test-1..38)     │ ✅ DONE    │ 38 тест-HTML
+  P004   │ Fəsil sınaqları        │ ✅ DONE    │ 6 (fs1–fs6)
+  P004   │ Ümumi sınaqlar         │ ✅ DONE    │ 3 (us1–us3)
+  P004   │ PWA / offline          │ ✅ DONE    │ sw.js v12, manifest
+─────────┴────────────────────────┴───────────┴───────────────
+
+ HUB АРХИТЕКТУРА index.html v4.0.0
+────────────────────────────────────────────────────────────────────
+  Файл: Projects/index.html
+  Версия: v4.0.0 (2026-06-11)
+  Ключевой принцип: ВСЕ карточки рендерятся из PLATFORMS[] массива.
+
+  PLATFORMS[] — структура одной записи:
+    { id, href, status ('active'|'wip'|'coming'), audience ('student'|'teacher'|'both'),
+      c (primary color), c2 (secondary), cbg (chip bg), ctxt (chip text),
+      iconBg, icon, progress (0–100),
+      meta:{az,ru,en}, stats:{az,ru,en}, title:{az,ru,en},
+      desc:{az,ru,en}, tags:[], cta:{az,ru,en} }
+
+  ФИЛЬТРЫ: tabAll / tabStudent (audience='student') / tabTeacher (audience='teacher')
+  СТАТУСЫ: 'active' → зелёный badge | 'wip' → жёлтый | 'coming' → blur lock overlay
+  ЧТО ДОБАВИТЬ P005+: вписать 1 объект в конец PLATFORMS[].
+  LANG: LangManager.cycle() перерендеривает все карточки через renderCards().
 
 ────────────────────────────────────────────────────────────────────
  ТЕХНОЛОГИЧЕСКИЙ СТЕК
