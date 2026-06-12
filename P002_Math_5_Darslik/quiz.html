@@ -1,0 +1,737 @@
+<!doctype html>
+<html lang="az">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Riyaziyyat 5 — Viktorina</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/inter@5.0.0/index.min.css"/>
+  <style>
+    :root {
+      --bg: #0f172a; --surface: #1e293b; --surface2: #273348;
+      --border: #2a3f5c; --text: #f1f5f9; --muted: #64748b;
+      --accent: #6366f1; --success: #22c55e; --danger: #f43f5e;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Inter', system-ui, sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+
+    /* ── TOPBAR ── */
+    .topbar {
+      position: sticky; top: 0; z-index: 100; height: 60px;
+      background: rgba(15,23,42,0.96); backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between; padding: 0 1.25rem;
+    }
+    .tl { display: flex; align-items: center; gap: 0.75rem; }
+    .tl-icon { font-size: 1.6rem; line-height: 1; }
+    .tl-title { font-size: 1rem; font-weight: 800; }
+    .tl-sub { font-size: 0.68rem; color: var(--muted); margin-top: 0.1rem; }
+    .tr { display: flex; align-items: center; gap: 0.65rem; }
+    .lang-sw { display: flex; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
+    .lang-btn { background: none; border: none; color: var(--muted); font-size: 0.78rem; font-weight: 700; padding: 0.32rem 0.65rem; cursor: pointer; transition: all .15s; font-family: inherit; }
+    .lang-btn.on { background: var(--accent); color: #fff; }
+    .btn-link { background: var(--surface); border: 1px solid var(--border); color: var(--muted); font-size: 0.78rem; font-weight: 700; padding: 0.38rem 0.85rem; border-radius: 8px; cursor: pointer; font-family: inherit; transition: all .15s; text-decoration: none; display: inline-flex; align-items: center; gap: 0.4rem; }
+    .btn-link:hover { border-color: var(--accent); color: var(--accent); }
+
+    /* ── SCREENS ── */
+    .screen { display: none; padding: 2rem 1.25rem; max-width: 960px; margin: 0 auto; }
+    .screen.active { display: block; }
+
+    /* ── HOME ── */
+    .home-hdr { margin-bottom: 2rem; }
+    .home-title { font-size: 1.75rem; font-weight: 800; margin-bottom: 0.3rem; }
+    .home-sub { color: var(--muted); font-size: 0.9rem; }
+    .chapter-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 1rem; }
+    .ch-card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 14px; padding: 1.25rem; cursor: pointer;
+      transition: all .2s; position: relative; overflow: hidden;
+    }
+    .ch-card:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(0,0,0,.35); }
+    .ch-icon { font-size: 2rem; display: block; margin-bottom: 0.7rem; }
+    .ch-num { font-size: 0.63rem; font-weight: 700; text-transform: uppercase; letter-spacing: .07em; margin-bottom: 0.2rem; }
+    .ch-title { font-size: 0.92rem; font-weight: 700; line-height: 1.35; margin-bottom: 0.3rem; }
+    .ch-sub { font-size: 0.7rem; color: var(--muted); line-height: 1.4; }
+    .ch-qbadge { position: absolute; top: 0.75rem; right: 0.75rem; font-size: 0.62rem; font-weight: 700; padding: 0.15rem 0.5rem; border-radius: 999px; }
+
+    /* ── SETTINGS ── */
+    .back-link { color: var(--muted); font-size: 0.85rem; cursor: pointer; margin-bottom: 1.5rem; display: inline-flex; align-items: center; gap: 0.4rem; background: none; border: none; font-family: inherit; }
+    .back-link:hover { color: var(--text); }
+    .set-chapter { display: flex; align-items: center; gap: 1rem; background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 1.25rem; margin-bottom: 1.75rem; }
+    .set-ch-icon { font-size: 2.5rem; flex-shrink: 0; }
+    .set-ch-title { font-size: 1.15rem; font-weight: 800; }
+    .set-ch-sub { font-size: 0.78rem; color: var(--muted); margin-top: 0.2rem; }
+    .set-section { margin-bottom: 1.5rem; }
+    .set-label { font-size: 0.78rem; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); margin-bottom: 0.75rem; }
+    .chips { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+    .chip { background: var(--surface); border: 2px solid var(--border); color: var(--muted); font-size: 0.85rem; font-weight: 700; padding: 0.45rem 1.1rem; border-radius: 8px; cursor: pointer; font-family: inherit; transition: all .15s; }
+    .chip.on { border-color: var(--accent); color: var(--accent); background: rgba(99,102,241,.1); }
+    .start-btn { width: 100%; padding: 0.9rem; background: var(--accent); border: none; border-radius: 12px; color: #fff; font-size: 1rem; font-weight: 800; cursor: pointer; font-family: inherit; transition: all .15s; margin-top: 0.5rem; }
+    .start-btn:hover { background: #4f46e5; transform: translateY(-1px); }
+
+    /* ── QUIZ ── */
+    .quiz-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.25rem; }
+    .quiz-prog-lbl { font-size: 0.85rem; color: var(--muted); }
+    .quiz-timer { font-size: 0.95rem; font-weight: 700; background: var(--surface); border: 1px solid var(--border); padding: 0.32rem 0.8rem; border-radius: 8px; min-width: 70px; text-align: center; transition: all .3s; }
+    .quiz-timer.warn { border-color: var(--danger); color: var(--danger); }
+    .prog-bar { height: 5px; background: rgba(255,255,255,.07); border-radius: 3px; margin-bottom: 1.75rem; overflow: hidden; }
+    .prog-fill { height: 100%; background: linear-gradient(90deg, var(--accent), #818cf8); border-radius: 3px; transition: width .4s ease; }
+    .q-card { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 1.75rem 2rem; margin-bottom: 1.25rem; }
+    .q-lbl { font-size: 0.68rem; font-weight: 700; text-transform: uppercase; letter-spacing: .1em; color: var(--accent); margin-bottom: 0.65rem; }
+    .q-text { font-size: 1.05rem; font-weight: 600; line-height: 1.55; }
+    .opts { display: flex; flex-direction: column; gap: 0.55rem; }
+    .opt-btn {
+      background: var(--surface2); border: 2px solid var(--border);
+      border-radius: 10px; padding: 0.75rem 1rem; cursor: pointer;
+      font-size: 0.9rem; font-family: inherit; color: var(--text);
+      text-align: left; transition: all .15s;
+      display: flex; align-items: center; gap: 0.7rem;
+    }
+    .opt-btn:hover:not(:disabled) { border-color: var(--accent); background: rgba(99,102,241,.07); }
+    .opt-btn.sel { border-color: var(--accent); background: rgba(99,102,241,.12); color: var(--accent); }
+    .opt-btn.ok  { border-color: var(--success); background: rgba(34,197,94,.1);  color: var(--success); pointer-events: none; }
+    .opt-btn.bad { border-color: var(--danger);  background: rgba(244,63,94,.1);  color: var(--danger);  pointer-events: none; }
+    .opt-btn:disabled { pointer-events: none; }
+    .opt-letter { font-size: 0.7rem; font-weight: 800; width: 22px; height: 22px; border-radius: 50%; background: rgba(255,255,255,.08); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .quiz-nav { display: flex; justify-content: space-between; align-items: center; margin-top: 1rem; gap: 0.75rem; }
+    .nbtn { background: var(--surface); border: 1px solid var(--border); color: var(--text); font-size: 0.88rem; font-weight: 700; padding: 0.6rem 1.25rem; border-radius: 10px; cursor: pointer; font-family: inherit; transition: all .15s; }
+    .nbtn:hover:not(:disabled) { border-color: var(--accent); color: var(--accent); }
+    .nbtn.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+    .nbtn.primary:hover { background: #4f46e5; color: #fff; }
+    .nbtn:disabled { opacity: .3; cursor: default; pointer-events: none; }
+    .q-grid { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 1rem; }
+    .qg-dot { width: 28px; height: 28px; border-radius: 6px; border: 1px solid var(--border); background: var(--surface2); font-size: 0.7rem; font-weight: 700; color: var(--muted); cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all .15s; }
+    .qg-dot.ans { background: rgba(99,102,241,.2); border-color: var(--accent); color: var(--accent); }
+    .qg-dot.cur { background: var(--accent); border-color: var(--accent); color: #fff; }
+
+    /* ── RESULTS ── */
+    .res-card { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 2rem; text-align: center; margin-bottom: 1.5rem; }
+    .res-pct { font-size: 3.5rem; font-weight: 900; }
+    .res-fraction { font-size: 1rem; color: var(--muted); margin-top: 0.2rem; }
+    .res-verdict { font-size: 1.05rem; font-weight: 700; margin-top: 1rem; }
+    .stats-row { display: flex; gap: 0.75rem; justify-content: center; margin-top: 1.25rem; flex-wrap: wrap; }
+    .stat-chip { background: var(--surface2); border: 1px solid var(--border); border-radius: 10px; padding: 0.55rem 1.1rem; font-size: 0.82rem; min-width: 80px; text-align: center; }
+    .stat-val { font-size: 1.2rem; font-weight: 800; display: block; margin-bottom: 0.1rem; }
+    .stat-chip.g .stat-val { color: var(--success); }
+    .stat-chip.r .stat-val { color: var(--danger); }
+    .res-actions { display: flex; gap: 0.75rem; margin-bottom: 1.75rem; }
+    .res-actions .nbtn { flex: 1; text-align: center; justify-content: center; padding: 0.7rem; }
+    .review-title { font-size: 1rem; font-weight: 700; margin-bottom: 1rem; padding-bottom: 0.6rem; border-bottom: 1px solid var(--border); }
+    .review-item { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 0.9rem 1rem; margin-bottom: 0.6rem; }
+    .rv-q { font-size: 0.88rem; font-weight: 600; margin-bottom: 0.45rem; line-height: 1.4; }
+    .rv-tag { font-size: 0.78rem; font-weight: 600; padding: 0.22rem 0.6rem; border-radius: 6px; display: inline-block; margin-right: 0.35rem; }
+    .rv-tag.ok  { background: rgba(34,197,94,.15);  color: var(--success); }
+    .rv-tag.bad { background: rgba(244,63,94,.15);  color: var(--danger);  }
+    .rv-tag.crt { background: rgba(99,102,241,.15); color: var(--accent);  }
+
+    @media (max-width: 600px) {
+      .chapter-grid { grid-template-columns: 1fr 1fr; }
+      .home-title { font-size: 1.3rem; }
+      .q-card { padding: 1.2rem; }
+      .tl-sub { display: none; }
+      .res-actions { flex-direction: column; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<header class="topbar">
+  <div class="tl">
+    <span class="tl-icon">📐</span>
+    <div>
+      <div class="tl-title" id="tTitle">Riyaziyyat Viktorinası</div>
+      <div class="tl-sub" id="tSub">5-ci sinif · İnteraktiv Dərslik</div>
+    </div>
+  </div>
+  <div class="tr">
+    <div class="lang-sw">
+      <button class="lang-btn on" id="lbAZ" onclick="setLang('az')">AZ</button>
+      <button class="lang-btn"    id="lbRU" onclick="setLang('ru')">RU</button>
+    </div>
+    <a href="index.html"   class="btn-link">← Dərslik</a>
+    <a href="../index.html" class="btn-link">Hub</a>
+  </div>
+</header>
+
+<!-- HOME -->
+<div class="screen active" id="sHome">
+  <div class="home-hdr">
+    <h1 class="home-title" id="homeTitle">Viktorina Seç</h1>
+    <p  class="home-sub"   id="homeSub">8 fəsildən birini seçin və özünüzü yoxlayın</p>
+  </div>
+  <div class="chapter-grid" id="chGrid"></div>
+</div>
+
+<!-- SETTINGS -->
+<div class="screen" id="sSettings">
+  <button class="back-link" onclick="goHome()">← <span id="backTxt">Geri</span></button>
+  <div class="set-chapter" id="setCh"></div>
+  <div class="set-section">
+    <div class="set-label" id="qcLabel">Sual sayı</div>
+    <div class="chips" id="qcChips"></div>
+  </div>
+  <button class="start-btn" id="startBtn" onclick="startQuiz()">▶ Başla</button>
+</div>
+
+<!-- QUIZ -->
+<div class="screen" id="sQuiz">
+  <div class="quiz-top">
+    <div class="quiz-prog-lbl" id="qProgLbl">1 / 10</div>
+    <div class="quiz-timer"    id="qTimer">15:00</div>
+  </div>
+  <div class="prog-bar"><div class="prog-fill" id="progFill" style="width:0%"></div></div>
+  <div class="q-card">
+    <div class="q-lbl"  id="qLabel">SUAL</div>
+    <div class="q-text" id="qText"></div>
+  </div>
+  <div class="opts" id="optsList"></div>
+  <div class="q-grid" id="qGrid"></div>
+  <div class="quiz-nav">
+    <button class="nbtn" id="prevBtn" onclick="prevQ()" disabled>← <span id="prevTxt">Əvvəlki</span></button>
+    <button class="nbtn primary" id="nextBtn" onclick="handleNext()"><span id="nextTxt">Növbəti</span> →</button>
+  </div>
+</div>
+
+<!-- RESULTS -->
+<div class="screen" id="sResults">
+  <div class="res-card">
+    <div class="res-pct"     id="resPct"    style="color:var(--accent)">0%</div>
+    <div class="res-fraction" id="resFrac"></div>
+    <div class="res-verdict"  id="resVerdict"></div>
+    <div class="stats-row">
+      <div class="stat-chip g"><span class="stat-val" id="resOk">0</span><span id="resOkLbl">Doğru</span></div>
+      <div class="stat-chip r"><span class="stat-val" id="resBad">0</span><span id="resBadLbl">Səhv</span></div>
+      <div class="stat-chip">  <span class="stat-val" id="resTime">-</span><span id="resTimeLbl">Vaxt</span></div>
+    </div>
+  </div>
+  <div class="res-actions">
+    <button class="nbtn primary" id="retryBtn" onclick="startQuiz()">🔄 Yenidən</button>
+    <button class="nbtn"         id="homeBtn"  onclick="goHome()">◀ Fəsillər</button>
+  </div>
+  <div class="review-title" id="revTitle">Cavabların nəzərdən keçirilməsi</div>
+  <div id="revList"></div>
+</div>
+
+<script>
+/* ═══════════════════════════════════════════════════
+   DATA — 8 chapters, 8–12 questions each
+═══════════════════════════════════════════════════ */
+const CHAPTERS = [
+  {
+    id:'c1', icon:'🔢', color:'#f97316',
+    az:{num:'Fəsil 1', title:'Natural Ədədlər',    sub:'Hesab, müqayisə, ƏBOB, ƏKOB'},
+    ru:{num:'Глава 1', title:'Натуральные числа',   sub:'Счёт, сравнение, НОД, НОК'},
+    questions:[
+      {az:'2³ × 3² = ?', ru:'2³ × 3² = ?',
+        o:{az:['54','72','64','48'], ru:['54','72','64','48']}, a:1},
+      {az:'ƏBOB(12, 18) = ?', ru:'НОД(12, 18) = ?',
+        o:{az:['3','6','9','12'], ru:['3','6','9','12']}, a:1},
+      {az:'ƏKOB(4, 6) = ?', ru:'НОК(4, 6) = ?',
+        o:{az:['10','12','16','24'], ru:['10','12','16','24']}, a:1},
+      {az:'Hansı ədəd sadə ədəddir?', ru:'Какое число является простым?',
+        o:{az:['9','15','17','21'], ru:['9','15','17','21']}, a:2},
+      {az:'360-ın sadə vuruqlara ayrılışı hansıdır?', ru:'Разложение 360 на простые множители:',
+        o:{az:['2²·3²·5','2³·3²·5','2³·3·5²','2²·3³·5'], ru:['2²·3²·5','2³·3²·5','2³·3·5²','2²·3³·5']}, a:1},
+      {az:'12 ədədinin bölənlərinin sayı neçədir?', ru:'Сколько делителей у числа 12?',
+        o:{az:['4','5','6','8'], ru:['4','5','6','8']}, a:2},
+      {az:'ƏBOB(a,b)=6 və ƏKOB(a,b)=36 olduqda a×b = ?', ru:'НОД(a,b)=6 и НОК(a,b)=36, тогда a×b = ?',
+        o:{az:['42','108','216','288'], ru:['42','108','216','288']}, a:2},
+      {az:'√169 = ?', ru:'√169 = ?',
+        o:{az:['11','12','13','14'], ru:['11','12','13','14']}, a:2},
+      {az:'Hansı ədəd həm 3-ə, həm 4-ə bölünür?', ru:'Какое число делится и на 3, и на 4?',
+        o:{az:['18','20','24','28'], ru:['18','20','24','28']}, a:2},
+      {az:'7³ = ?', ru:'7³ = ?',
+        o:{az:['147','343','441','729'], ru:['147','343','441','729']}, a:1},
+      {az:'252 ədədi 9-a bölünürmü? (2+5+2=?)', ru:'Делится ли 252 на 9? (2+5+2=?)',
+        o:{az:['Bəli, 9-a bölünür','Xeyr, bölünmür','Bəli, amma başqa üsulla','Cavab yoxdur'], ru:['Да, делится на 9','Нет, не делится','Да, но по другой причине','Ответа нет']}, a:0},
+      {az:'45 ədədini sadə vuruqlara ayırın:', ru:'Разложите 45 на простые множители:',
+        o:{az:['3×15','5×9','3²×5','3×5²'], ru:['3×15','5×9','3²×5','3×5²']}, a:2},
+    ]
+  },
+  {
+    id:'c2', icon:'🍕', color:'#6366f1',
+    az:{num:'Fəsil 2', title:'Adi Kəsrlər',              sub:'Anlayış, əməliyyatlar, qarışıq ədədlər'},
+    ru:{num:'Глава 2', title:'Обыкновенные дроби',         sub:'Понятие, операции, смешанные числа'},
+    questions:[
+      {az:'1/2 + 1/3 = ?', ru:'1/2 + 1/3 = ?',
+        o:{az:['2/5','5/6','2/6','1/6'], ru:['2/5','5/6','2/6','1/6']}, a:1},
+      {az:'3/4 − 1/6 = ?', ru:'3/4 − 1/6 = ?',
+        o:{az:['2/3','7/12','1/4','5/12'], ru:['2/3','7/12','1/4','5/12']}, a:1},
+      {az:'2/3 × 3/4 = ?', ru:'2/3 × 3/4 = ?',
+        o:{az:['6/12','1/2','5/7','3/4'], ru:['6/12','1/2','5/7','3/4']}, a:1},
+      {az:'1/2 ÷ 1/4 = ?', ru:'1/2 ÷ 1/4 = ?',
+        o:{az:['1/8','1/2','2','4'], ru:['1/8','1/2','2','4']}, a:2},
+      {az:'12/18 kəsrini sadə formaya gətirin:', ru:'Сократите дробь 12/18:',
+        o:{az:['3/6','2/3','4/6','6/9'], ru:['3/6','2/3','4/6','6/9']}, a:1},
+      {az:'7/4 ədədini qarışıq ədəd kimi yazın:', ru:'Запишите 7/4 как смешанное число:',
+        o:{az:['1¾','2¼','1½','3¼'], ru:['1¾','2¼','1½','3¼']}, a:0},
+      {az:'Hansı kəsr daha böyükdür: 3/4 yoxsa 5/7?', ru:'Какая дробь больше: 3/4 или 5/7?',
+        o:{az:['5/7','3/4','Bərabərdir','Müəyyən edilmir'], ru:['5/7','3/4','Равны','Нельзя определить']}, a:1},
+      {az:'40-ın 3/8 hissəsi nədir?', ru:'3/8 от числа 40 = ?',
+        o:{az:['10','12','15','20'], ru:['10','12','15','20']}, a:2},
+      {az:'2½ + 1⅓ = ?', ru:'2½ + 1⅓ = ?',
+        o:{az:['3⅚','3⅔','4⅙','3½'], ru:['3⅚','3⅔','4⅙','3½']}, a:0},
+      {az:'5/6 × 12 = ?', ru:'5/6 × 12 = ?',
+        o:{az:['8','9','10','11'], ru:['8','9','10','11']}, a:2},
+      {az:'1 − 3/7 = ?', ru:'1 − 3/7 = ?',
+        o:{az:['2/7','3/7','4/7','5/7'], ru:['2/7','3/7','4/7','5/7']}, a:2},
+      {az:'1/3 + 1/4 + 1/6 = ?', ru:'1/3 + 1/4 + 1/6 = ?',
+        o:{az:['1/2','3/4','7/12','5/12'], ru:['1/2','3/4','7/12','5/12']}, a:1},
+    ]
+  },
+  {
+    id:'c3', icon:'🔟', color:'#14b8a6',
+    az:{num:'Fəsil 3', title:'Onluq Kəsrlər',            sub:'Yazılış, müqayisə, arifmetik əməliyyatlar'},
+    ru:{num:'Глава 3', title:'Десятичные дроби',           sub:'Запись, сравнение, арифметические действия'},
+    questions:[
+      {az:'1.5 × 4 = ?', ru:'1.5 × 4 = ?',
+        o:{az:['4.5','5.0','6.0','7.0'], ru:['4.5','5.0','6.0','7.0']}, a:2},
+      {az:'3.6 ÷ 0.6 = ?', ru:'3.6 ÷ 0.6 = ?',
+        o:{az:['0.6','6','60','0.06'], ru:['0.6','6','60','0.06']}, a:1},
+      {az:'0.1 × 0.1 = ?', ru:'0.1 × 0.1 = ?',
+        o:{az:['0.1','0.01','1','0.001'], ru:['0.1','0.01','1','0.001']}, a:1},
+      {az:'3.456 ədədini yüzdəliyə qədər yuvarlaqlaşdırın:', ru:'Округлите 3.456 до сотых:',
+        o:{az:['3.4','3.46','3.45','3.5'], ru:['3.4','3.46','3.45','3.5']}, a:1},
+      {az:'0.75 adi kəsr şəklində:', ru:'0.75 в виде обыкновенной дроби:',
+        o:{az:['3/5','4/5','3/4','7/5'], ru:['3/5','4/5','3/4','7/5']}, a:2},
+      {az:'5 ÷ 0.25 = ?', ru:'5 ÷ 0.25 = ?',
+        o:{az:['1.25','2','10','20'], ru:['1.25','2','10','20']}, a:3},
+      {az:'Ən böyük ədədi tapın: 0.5, 0.48, 0.502', ru:'Найдите наибольшее: 0.5, 0.48, 0.502',
+        o:{az:['0.48','0.5','0.502','Hamısı bərabər'], ru:['0.48','0.5','0.502','Все равны']}, a:2},
+      {az:'2.4 − 0.8 = ?', ru:'2.4 − 0.8 = ?',
+        o:{az:['1.4','1.6','1.8','2.0'], ru:['1.4','1.6','1.8','2.0']}, a:1},
+      {az:'0.3 × 0.3 = ?', ru:'0.3 × 0.3 = ?',
+        o:{az:['0.9','0.09','0.6','0.06'], ru:['0.9','0.09','0.6','0.06']}, a:1},
+      {az:'2.5 + 1.75 = ?', ru:'2.5 + 1.75 = ?',
+        o:{az:['3.0','4.0','4.25','3.75'], ru:['3.0','4.0','4.25','3.75']}, a:2},
+      {az:'1.2 × 0.5 = ?', ru:'1.2 × 0.5 = ?',
+        o:{az:['0.5','0.6','0.7','1.0'], ru:['0.5','0.6','0.7','1.0']}, a:1},
+      {az:'6.4 ÷ 0.8 = ?', ru:'6.4 ÷ 0.8 = ?',
+        o:{az:['0.8','8','80','0.08'], ru:['0.8','8','80','0.08']}, a:1},
+    ]
+  },
+  {
+    id:'c4', icon:'💯', color:'#f59e0b',
+    az:{num:'Fəsil 4', title:'Faizlər',                  sub:'Faiz anlayışı, hesablamalar, məsələlər'},
+    ru:{num:'Глава 4', title:'Проценты',                   sub:'Понятие процента, вычисления, задачи'},
+    questions:[
+      {az:'50-nin 20%-i nədir?', ru:'20% от 50 = ?',
+        o:{az:['5','8','10','15'], ru:['5','8','10','15']}, a:2},
+      {az:'15 ədədi 60-ın neçə faizini təşkil edir?', ru:'15 — это сколько процентов от 60?',
+        o:{az:['15%','20%','25%','30%'], ru:['15%','20%','25%','30%']}, a:2},
+      {az:'Qiymət 100-dən 115-ə qalxdı. Artım neçə faizdir?', ru:'Цена выросла со 100 до 115. Процент роста?',
+        o:{az:['10%','12%','15%','20%'], ru:['10%','12%','15%','20%']}, a:2},
+      {az:'90-ın 30%-i = ?', ru:'30% от 90 = ?',
+        o:{az:['27','30','18','9'], ru:['27','30','18','9']}, a:0},
+      {az:'75% adi kəsr kimi:', ru:'75% в виде обыкновенной дроби:',
+        o:{az:['2/3','3/4','4/5','7/10'], ru:['2/3','3/4','4/5','7/10']}, a:1},
+      {az:'200-ün 40%-i = ?', ru:'40% от 200 = ?',
+        o:{az:['60','70','80','90'], ru:['60','70','80','90']}, a:2},
+      {az:'0.35 neçə faizdir?', ru:'0.35 — это сколько процентов?',
+        o:{az:['3.5%','35%','350%','0.35%'], ru:['3.5%','35%','350%','0.35%']}, a:1},
+      {az:'12 hər hansı ədədin 30%-dirsə, həmin ədəd = ?', ru:'12 — это 30% некоторого числа. Найдите это число.',
+        o:{az:['30','36','40','48'], ru:['30','36','40','48']}, a:2},
+      {az:'1000-in 5%-i = ?', ru:'5% от 1000 = ?',
+        o:{az:['5','50','500','0.5'], ru:['5','50','500','0.5']}, a:1},
+      {az:'20% artımdan sonra qiymət 120-dir. İlkin qiymət = ?', ru:'После увеличения на 20% цена стала 120. Начальная цена?',
+        o:{az:['96','100','104','110'], ru:['96','100','104','110']}, a:1},
+    ]
+  },
+  {
+    id:'c5', icon:'🔡', color:'#a855f7',
+    az:{num:'Fəsil 5', title:'İfadələr. Tənliklər. Bərabərsizliklər', sub:'Dəyişənlər, tənliklər, bərabərsizliklər'},
+    ru:{num:'Глава 5', title:'Выражения. Уравнения. Неравенства',      sub:'Переменные, уравнения, неравенства'},
+    questions:[
+      {az:'x + 5 = 12, x = ?', ru:'x + 5 = 12, x = ?',
+        o:{az:['5','6','7','8'], ru:['5','6','7','8']}, a:2},
+      {az:'3x = 21, x = ?', ru:'3x = 21, x = ?',
+        o:{az:['6','7','8','9'], ru:['6','7','8','9']}, a:1},
+      {az:'x/4 = 3, x = ?', ru:'x/4 = 3, x = ?',
+        o:{az:['7','9','12','15'], ru:['7','9','12','15']}, a:2},
+      {az:'2x − 3 = 7, x = ?', ru:'2x − 3 = 7, x = ?',
+        o:{az:['2','4','5','7'], ru:['2','4','5','7']}, a:2},
+      {az:'Sadələşdirin: 2a + 3a = ?', ru:'Упростите: 2a + 3a = ?',
+        o:{az:['5','5a','6a','a⁵'], ru:['5','5a','6a','a⁵']}, a:1},
+      {az:'x = 3 olduqda 4x − 2 = ?', ru:'При x = 3 вычислите 4x − 2 = ?',
+        o:{az:['8','10','12','14'], ru:['8','10','12','14']}, a:1},
+      {az:'x/3 + 2 = 5, x = ?', ru:'x/3 + 2 = 5, x = ?',
+        o:{az:['3','6','9','12'], ru:['3','6','9','12']}, a:2},
+      {az:'5 − x = 2, x = ?', ru:'5 − x = 2, x = ?',
+        o:{az:['2','3','4','7'], ru:['2','3','4','7']}, a:1},
+      {az:'3(x + 4) ifadəsini açın:', ru:'Раскройте скобки: 3(x + 4) = ?',
+        o:{az:['3x+4','3x+7','3x+12','x+12'], ru:['3x+4','3x+7','3x+12','x+12']}, a:2},
+      {az:'x = −2 olduqda x² + 3 = ?', ru:'При x = −2 найдите x² + 3 = ?',
+        o:{az:['1','5','7','9'], ru:['1','5','7','9']}, a:2},
+      {az:'"x ən azı 5-dir" bərabərsizliyi:', ru:'"x не менее 5" записывается как:',
+        o:{az:['x>5','x<5','x≥5','x≤5'], ru:['x>5','x<5','x≥5','x≤5']}, a:2},
+      {az:'2x + 3 < 11 bərabərsizliyinin ən böyük tam həlli:', ru:'Наибольшее целое решение неравенства 2x + 3 < 11:',
+        o:{az:['2','3','4','5'], ru:['2','3','4','5']}, a:1},
+    ]
+  },
+  {
+    id:'c6', icon:'📐', color:'#10b981',
+    az:{num:'Fəsil 6', title:'Düzlemsal Fiqurlar',       sub:'Bucaqlar, sahə, perimetr, çoxbucaqlılar'},
+    ru:{num:'Глава 6', title:'Плоские фигуры',             sub:'Углы, площадь, периметр, многоугольники'},
+    questions:[
+      {az:'5×8 ölçülü düzbucaqlının sahəsi = ?', ru:'Площадь прямоугольника 5×8 = ?',
+        o:{az:['26','36','40','48'], ru:['26','36','40','48']}, a:2},
+      {az:'Tərəfi 6 olan kvadratın perimetri = ?', ru:'Периметр квадрата со стороной 6 = ?',
+        o:{az:['12','18','24','36'], ru:['12','18','24','36']}, a:2},
+      {az:'Əsası 10, hündürlüyü 6 olan üçbucağın sahəsi = ?', ru:'Площадь треугольника с основанием 10 и высотой 6 = ?',
+        o:{az:['16','30','60','80'], ru:['16','30','60','80']}, a:1},
+      {az:'Üçbucağın daxili bucaqlarının cəmi = ?', ru:'Сумма внутренних углов треугольника = ?',
+        o:{az:['90°','180°','270°','360°'], ru:['90°','180°','270°','360°']}, a:1},
+      {az:'Dördbucaqlının daxili bucaqlarının cəmi = ?', ru:'Сумма внутренних углов четырёхугольника = ?',
+        o:{az:['180°','270°','360°','540°'], ru:['180°','270°','360°','540°']}, a:2},
+      {az:'Radiusu 7 olan dairənin sahəsi = ?', ru:'Площадь круга с радиусом 7 = ?',
+        o:{az:['14π','28π','49π','98π'], ru:['14π','28π','49π','98π']}, a:2},
+      {az:'Düz bucaq neçə dərəcədir?', ru:'Прямой угол равен скольким градусам?',
+        o:{az:['45°','60°','90°','120°'], ru:['45°','60°','90°','120°']}, a:2},
+      {az:'Komplementar (tamamlayan) bucaqların cəmi = ?', ru:'Сумма дополнительных (комплементарных) углов = ?',
+        o:{az:['90°','180°','270°','360°'], ru:['90°','180°','270°','360°']}, a:0},
+      {az:'Supplementar (əlavə) bucaqların cəmi = ?', ru:'Сумма смежных (суплементарных) углов = ?',
+        o:{az:['90°','135°','180°','360°'], ru:['90°','135°','180°','360°']}, a:2},
+      {az:'Radiusu 5 olan dairənin çevrəsi = ?', ru:'Длина окружности с радиусом 5 = ?',
+        o:{az:['5π','10π','25π','50π'], ru:['5π','10π','25π','50π']}, a:1},
+    ]
+  },
+  {
+    id:'c7', icon:'📦', color:'#8b5cf6',
+    az:{num:'Fəsil 7', title:'Həcmli Fiqurlar',          sub:'Həcm, səthi sahəsi, prizmalar, silindr'},
+    ru:{num:'Глава 7', title:'Пространственные фигуры',    sub:'Объём, поверхность, призмы, цилиндр'},
+    questions:[
+      {az:'Tərəfi 3 olan kubun həcmi = ?', ru:'Объём куба со стороной 3 = ?',
+        o:{az:['9','18','27','36'], ru:['9','18','27','36']}, a:2},
+      {az:'4×5×6 ölçülü düzbucaqlı prizmanın həcmi = ?', ru:'Объём прямоугольной призмы 4×5×6 = ?',
+        o:{az:['60','80','120','150'], ru:['60','80','120','150']}, a:2},
+      {az:'Tərəfi 2 olan kubun tam səthi sahəsi = ?', ru:'Полная поверхность куба со стороной 2 = ?',
+        o:{az:['12','16','24','48'], ru:['12','16','24','48']}, a:2},
+      {az:'Kubun neçə üzü (face) var?', ru:'Сколько граней у куба?',
+        o:{az:['4','5','6','8'], ru:['4','5','6','8']}, a:2},
+      {az:'Kubun neçə guşəsi (vertex) var?', ru:'Сколько вершин у куба?',
+        o:{az:['6','8','10','12'], ru:['6','8','10','12']}, a:1},
+      {az:'Kubun neçə kənarı (edge) var?', ru:'Сколько рёбер у куба?',
+        o:{az:['8','10','12','14'], ru:['8','10','12','14']}, a:2},
+      {az:'Tərəfi 5 olan kubun həcmi = ?', ru:'Объём куба со стороной 5 = ?',
+        o:{az:['25','75','100','125'], ru:['25','75','100','125']}, a:3},
+      {az:'Üçbucaqlı prizmanın neçə üzü var?', ru:'Сколько граней у треугольной призмы?',
+        o:{az:['3','4','5','6'], ru:['3','4','5','6']}, a:2},
+      {az:'r=3, h=5 olan silindrin həcmi = ?', ru:'Объём цилиндра с r=3, h=5 = ?',
+        o:{az:['15π','30π','45π','90π'], ru:['15π','30π','45π','90π']}, a:2},
+      {az:'Həcmin ölçü vahidi hansıdır?', ru:'Единица измерения объёма:',
+        o:{az:['sm','sm²','sm³','sm⁴'], ru:['см','см²','см³','см⁴']}, a:2},
+    ]
+  },
+  {
+    id:'c8', icon:'📊', color:'#06b6d4',
+    az:{num:'Fəsil 8', title:'Statistika və Məlumatlar', sub:'Orta qiymət, median, moda, diaqramlar'},
+    ru:{num:'Глава 8', title:'Статистика и данные',        sub:'Среднее, медиана, мода, диаграммы'},
+    questions:[
+      {az:'4, 7, 8, 9, 7 ədədlərinin orta qiyməti = ?', ru:'Среднее арифметическое 4, 7, 8, 9, 7 = ?',
+        o:{az:['6','7','7.5','8'], ru:['6','7','7.5','8']}, a:1},
+      {az:'3, 5, 7, 9, 11 sırasının medianı = ?', ru:'Медиана ряда 3, 5, 7, 9, 11 = ?',
+        o:{az:['5','7','9','11'], ru:['5','7','9','11']}, a:1},
+      {az:'2, 4, 4, 6, 8 sırasının modası = ?', ru:'Мода ряда 2, 4, 4, 6, 8 = ?',
+        o:{az:['2','4','6','8'], ru:['2','4','6','8']}, a:1},
+      {az:'3, 8, 1, 6, 2 sırasının intervalı (fərqi) = ?', ru:'Размах ряда 3, 8, 1, 6, 2 = ?',
+        o:{az:['5','6','7','8'], ru:['5','6','7','8']}, a:2},
+      {az:'10, 20, 30 ədədlərinin orta qiyməti = ?', ru:'Среднее арифметическое 10, 20, 30 = ?',
+        o:{az:['15','20','25','30'], ru:['15','20','25','30']}, a:1},
+      {az:'1, 2, 3, 4, 5 sırasının medianı = ?', ru:'Медиана ряда 1, 2, 3, 4, 5 = ?',
+        o:{az:['2','3','4','5'], ru:['2','3','4','5']}, a:1},
+      {az:'Tam hissənin paylarını göstərən diaqram hansıdır?', ru:'Какая диаграмма показывает части целого?',
+        o:{az:['Sütun diaqramı','Xətt qrafiki','Dairə diaqramı','Nöqtə diaqramı'], ru:['Столбчатая','Линейная','Круговая','Точечная']}, a:2},
+      {az:'100, 200, 300, 400 ədədlərinin orta qiyməti = ?', ru:'Среднее арифметическое 100, 200, 300, 400 = ?',
+        o:{az:['200','250','300','350'], ru:['200','250','300','350']}, a:1},
+    ]
+  },
+];
+
+/* ═══════════════════════════════════════════════════
+   i18n
+═══════════════════════════════════════════════════ */
+const T = {
+  az:{
+    topTitle:'Riyaziyyat Viktorinası', topSub:'5-ci sinif · İnteraktiv Dərslik',
+    homeTitle:'Viktorina Seç', homeSub:'8 fəsildən birini seçin və özünüzü yoxlayın',
+    back:'Geri', qcLabel:'Sual sayı', start:'▶ Başla',
+    prev:'Əvvəlki', next:'Növbəti →', finish:'✓ Bitir',
+    qLbl:'SUAL', ok:'Doğru', bad:'Səhv', time:'Vaxt',
+    retry:'🔄 Yenidən', goHome:'◀ Fəsillər',
+    revTitle:'Cavabların nəzərdən keçirilməsi',
+    qProg:(n,t)=>`${n} / ${t}`,
+    verdict:(c,t)=>c>=t*.8?'Əla nəticə! 🎉':c>=t*.6?'Yaxşı nəticə 👍':'Daha çox məşq lazımdır 💪',
+    qBadge:(n)=>`${n} sual`,
+  },
+  ru:{
+    topTitle:'Математическая викторина', topSub:'5 класс · Интерактивный учебник',
+    homeTitle:'Выберите викторину', homeSub:'Выберите одну из 8 глав и проверьте себя',
+    back:'Назад', qcLabel:'Количество вопросов', start:'▶ Начать',
+    prev:'Назад', next:'Далее →', finish:'✓ Завершить',
+    qLbl:'ВОПРОС', ok:'Правильно', bad:'Неверно', time:'Время',
+    retry:'🔄 Снова', goHome:'◀ Главы',
+    revTitle:'Разбор ответов',
+    qProg:(n,t)=>`${n} / ${t}`,
+    verdict:(c,t)=>c>=t*.8?'Отличный результат! 🎉':c>=t*.6?'Хороший результат 👍':'Нужно больше практики 💪',
+    qBadge:(n)=>`${n} вопр.`,
+  },
+};
+
+/* ═══════════════════════════════════════════════════
+   STATE
+═══════════════════════════════════════════════════ */
+let lang = 'az';
+let selCh = null;        // selected chapter index
+let selCount = 10;
+let quizQs = [];
+let answers = [];
+let curIdx = 0;
+let timerLeft = 0;
+let timerTid = null;
+let tStart = 0;
+
+/* ═══════════════════════════════════════════════════
+   LANGUAGE
+═══════════════════════════════════════════════════ */
+function setLang(l) {
+  lang = l;
+  document.getElementById('lbAZ').classList.toggle('on', l==='az');
+  document.getElementById('lbRU').classList.toggle('on', l==='ru');
+  const t = T[lang];
+  document.getElementById('tTitle').textContent = t.topTitle;
+  document.getElementById('tSub').textContent   = t.topSub;
+  const active = document.querySelector('.screen.active');
+  if      (active.id==='sHome')     renderHome();
+  else if (active.id==='sSettings') renderSettings();
+  else if (active.id==='sQuiz')     renderQuestion();
+}
+
+/* ═══════════════════════════════════════════════════
+   SCREENS
+═══════════════════════════════════════════════════ */
+function show(id) {
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+/* ═══════════════════════════════════════════════════
+   HOME
+═══════════════════════════════════════════════════ */
+function goHome() {
+  clearTimer();
+  show('sHome');
+  renderHome();
+}
+
+function renderHome() {
+  const t = T[lang];
+  document.getElementById('homeTitle').textContent = t.homeTitle;
+  document.getElementById('homeSub').textContent   = t.homeSub;
+  document.getElementById('chGrid').innerHTML = CHAPTERS.map((ch,i)=>{
+    const info = ch[lang];
+    return `<div class="ch-card" onclick="selectChapter(${i})"
+      style="border-top:3px solid ${ch.color}">
+      <span class="ch-icon">${ch.icon}</span>
+      <div class="ch-num" style="color:${ch.color}">${info.num}</div>
+      <div class="ch-title">${info.title}</div>
+      <div class="ch-sub">${info.sub}</div>
+      <div class="ch-qbadge" style="background:${ch.color}22;color:${ch.color}">
+        ${t.qBadge(ch.questions.length)}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function selectChapter(idx) {
+  selCh = idx;
+  selCount = Math.min(10, CHAPTERS[idx].questions.length);
+  show('sSettings');
+  renderSettings();
+}
+
+/* ═══════════════════════════════════════════════════
+   SETTINGS
+═══════════════════════════════════════════════════ */
+function renderSettings() {
+  const t  = T[lang];
+  const ch = CHAPTERS[selCh];
+  const info = ch[lang];
+  document.getElementById('backTxt').textContent  = t.back;
+  document.getElementById('qcLabel').textContent  = t.qcLabel;
+  document.getElementById('startBtn').textContent = t.start;
+
+  document.getElementById('setCh').innerHTML = `
+    <div class="set-ch-icon">${ch.icon}</div>
+    <div>
+      <div class="set-ch-title">${info.title}</div>
+      <div class="set-ch-sub">${info.sub} · ${t.qBadge(ch.questions.length)}</div>
+    </div>`;
+
+  const total = ch.questions.length;
+  const counts = [5, 8, 10, total].filter((n,i,a) => n <= total && a.indexOf(n)===i).sort((a,b)=>a-b);
+  document.getElementById('qcChips').innerHTML = counts.map(n=>
+    `<button class="chip ${n===selCount?'on':''}" onclick="setCount(${n})">${n}</button>`
+  ).join('');
+}
+
+function setCount(n) {
+  selCount = n;
+  document.querySelectorAll('#qcChips .chip').forEach(b=>{
+    b.classList.toggle('on', +b.textContent===n);
+  });
+}
+
+/* ═══════════════════════════════════════════════════
+   QUIZ
+═══════════════════════════════════════════════════ */
+function shuffle(arr) {
+  const a=[...arr];
+  for(let i=a.length-1;i>0;i--){
+    const j=Math.floor(Math.random()*(i+1));
+    [a[i],a[j]]=[a[j],a[i]];
+  }
+  return a;
+}
+
+function startQuiz() {
+  clearTimer();
+  const pool = CHAPTERS[selCh].questions;
+  quizQs  = shuffle(pool).slice(0, selCount);
+  answers = new Array(quizQs.length).fill(-1);
+  curIdx  = 0;
+  timerLeft = selCount * 90;
+  tStart    = Date.now();
+  show('sQuiz');
+  startTimer();
+  renderQuestion();
+}
+
+function renderQuestion() {
+  const t = T[lang];
+  const q = quizQs[curIdx];
+  const n = curIdx + 1;
+  const total = quizQs.length;
+
+  document.getElementById('qProgLbl').textContent   = t.qProg(n, total);
+  document.getElementById('progFill').style.width   = (n/total*100)+'%';
+  document.getElementById('qLabel').textContent     = t.qLbl;
+  document.getElementById('qText').textContent      = q[lang];
+
+  const LETTERS = ['A','B','C','D'];
+  const opts = q.o[lang];
+  const answered = answers[curIdx] !== -1;
+  document.getElementById('optsList').innerHTML = opts.map((opt,i)=>{
+    let cls = 'opt-btn';
+    if (answered) {
+      if (i === q.a)                  cls += ' ok';
+      else if (i === answers[curIdx]) cls += ' bad';
+    } else if (i === answers[curIdx]) {
+      cls += ' sel';
+    }
+    return `<button class="${cls}" onclick="pickAnswer(${i})" ${answered?'disabled':''}>
+      <span class="opt-letter">${LETTERS[i]}</span>${opt}
+    </button>`;
+  }).join('');
+
+  // question grid dots
+  document.getElementById('qGrid').innerHTML = quizQs.map((_,i)=>{
+    let cls = 'qg-dot';
+    if (i===curIdx)        cls += ' cur';
+    else if (answers[i]!==-1) cls += ' ans';
+    return `<div class="${cls}" onclick="jumpTo(${i})">${i+1}</div>`;
+  }).join('');
+
+  document.getElementById('prevBtn').disabled = curIdx===0;
+  const isLast = curIdx===total-1;
+  const nBtn = document.getElementById('nextBtn');
+  nBtn.textContent = isLast ? t.finish : t.next;
+  nBtn.dataset.last = isLast ? '1' : '0';
+}
+
+function pickAnswer(i) {
+  if (answers[curIdx]!==-1) return;
+  answers[curIdx] = i;
+  renderQuestion();
+}
+
+function jumpTo(i) { curIdx=i; renderQuestion(); }
+function prevQ()  { if(curIdx>0){curIdx--;renderQuestion();} }
+
+function handleNext() {
+  const nBtn = document.getElementById('nextBtn');
+  if (nBtn.dataset.last==='1') showResults();
+  else { curIdx++; renderQuestion(); }
+}
+
+/* ═══════════════════════════════════════════════════
+   TIMER
+═══════════════════════════════════════════════════ */
+function startTimer() {
+  updateTimerDisplay();
+  timerTid = setInterval(()=>{
+    timerLeft--;
+    updateTimerDisplay();
+    if (timerLeft<=0) { clearTimer(); showResults(); }
+  }, 1000);
+}
+
+function clearTimer() {
+  if(timerTid){ clearInterval(timerTid); timerTid=null; }
+}
+
+function updateTimerDisplay() {
+  const el = document.getElementById('qTimer');
+  if(!el) return;
+  const m=Math.floor(timerLeft/60), s=timerLeft%60;
+  el.textContent = `${m}:${s.toString().padStart(2,'0')}`;
+  el.classList.toggle('warn', timerLeft<60);
+}
+
+/* ═══════════════════════════════════════════════════
+   RESULTS
+═══════════════════════════════════════════════════ */
+function showResults() {
+  clearTimer();
+  const t = T[lang];
+  const correct = answers.filter((a,i)=>a===quizQs[i].a).length;
+  const elapsed = Math.round((Date.now()-tStart)/1000);
+  const m=Math.floor(elapsed/60), s=elapsed%60;
+  const pct = Math.round(correct/quizQs.length*100);
+
+  show('sResults');
+  const col = pct>=80?'var(--success)':pct>=60?'#f59e0b':'var(--danger)';
+  document.getElementById('resPct').textContent    = pct+'%';
+  document.getElementById('resPct').style.color    = col;
+  document.getElementById('resFrac').textContent   = `${correct} / ${quizQs.length}`;
+  document.getElementById('resVerdict').textContent= t.verdict(correct, quizQs.length);
+  document.getElementById('resOk').textContent     = correct;
+  document.getElementById('resBad').textContent    = quizQs.length-correct;
+  document.getElementById('resTime').textContent   = `${m}:${s.toString().padStart(2,'0')}`;
+  document.getElementById('resOkLbl').textContent  = t.ok;
+  document.getElementById('resBadLbl').textContent = t.bad;
+  document.getElementById('resTimeLbl').textContent= t.time;
+  document.getElementById('retryBtn').textContent  = t.retry;
+  document.getElementById('homeBtn').textContent   = t.goHome;
+  document.getElementById('revTitle').textContent  = t.revTitle;
+
+  const LETTERS = ['A','B','C','D'];
+  document.getElementById('revList').innerHTML = quizQs.map((q,i)=>{
+    const isOk  = answers[i]===q.a;
+    const opts  = q.o[lang];
+    const your  = answers[i]>=0 ? `${LETTERS[answers[i]]}. ${opts[answers[i]]}` : '—';
+    const right = `${LETTERS[q.a]}. ${opts[q.a]}`;
+    return `<div class="review-item">
+      <div class="rv-q">${i+1}. ${q[lang]}</div>
+      ${isOk
+        ? `<span class="rv-tag ok">✓ ${right}</span>`
+        : `<span class="rv-tag bad">✗ ${your}</span><span class="rv-tag crt">→ ${right}</span>`
+      }
+    </div>`;
+  }).join('');
+}
+
+/* INIT */
+goHome();
+</script>
+</body>
+</html>
