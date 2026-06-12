@@ -395,7 +395,7 @@ const ABOUT = {
 const PLATFORMS = [
   {
     id:'p001', href:'./P001_Math_5_DIM/index.html',
-    status:'active', audience:'student',
+    status:'active', audience:'student', group:'school',
     c:'#10b981', c2:'#0ea5e9', cbg:'rgba(16,185,129,.12)', ctxt:'#047857',
     iconBg:'linear-gradient(135deg,#10b981,#059669)', icon:'∑', progress:100,
     meta: {az:'P001 · Məktəb · DİM',             ru:'P001 · Школа · DİM',      en:'P001 · School · DİM'},
@@ -409,7 +409,7 @@ const PLATFORMS = [
   },
   {
     id:'p002', href:'./P002_Math_5_Darslik/index.html',
-    status:'active', audience:'student',
+    status:'active', audience:'student', group:'school',
     c:'#6366f1', c2:'#8b5cf6', cbg:'rgba(99,102,241,.12)', ctxt:'#4f46e5',
     iconBg:'linear-gradient(135deg,#6366f1,#4f46e5)', icon:'📖', progress:65,
     meta: {az:'P002 · Məktəb · Dərslik',        ru:'P002 · Школа · Учебник',   en:'P002 · School · Textbook'},
@@ -423,7 +423,7 @@ const PLATFORMS = [
   },
   {
     id:'p003', href:'./P003_Block_Exam/app/dist/index.html',
-    status:'active', audience:'student',
+    status:'active', audience:'student', group:'exam',
     c:'#f59e0b', c2:'#ef4444', cbg:'rgba(245,158,11,.12)', ctxt:'#b45309',
     iconBg:'linear-gradient(135deg,#f59e0b,#d97706)', icon:'🎓', progress:80,
     meta: {az:'P003 · DİM · Blok İmtahan',        ru:'P003 · DİM · Блок. экзамен',      en:'P003 · DİM · Block Exam'},
@@ -437,7 +437,7 @@ const PLATFORMS = [
   },
   {
     id:'p004', href:'./P004_TAIM_2026/index.html',
-    status:'active', audience:'teacher',
+    status:'active', audience:'teacher', group:'teacher',
     c:'#e11d48', c2:'#9333ea', cbg:'rgba(225,29,72,.12)', ctxt:'#be123c',
     iconBg:'linear-gradient(135deg,#e11d48,#be123c)', icon:'🏫', progress:100,
     meta: {az:'P004 · MİQ · Müəllim Sertifikasiyası', ru:'P004 · MİQ · Сертификация',     en:'P004 · MİQ · Teacher Certification'},
@@ -595,11 +595,36 @@ function cardHTML(p, i) {
 </${el}>`;
 }
 
+const GROUP_LABELS = {
+  school:  {az:'🏫 Məktəb proqramı', ru:'🏫 Школьная программа', en:'🏫 School Curriculum'},
+  exam:    {az:'📋 Blok İmtahan',    ru:'📋 Блоковый экзамен',    en:'📋 Block Exam'},
+  teacher: {az:'👩‍🏫 Müəllim Sertifikasiyası', ru:'👩‍🏫 Сертификация учителей', en:'👩‍🏫 Teacher Certification'},
+};
+
+function groupDivider(key, isFirst) {
+  const label = GROUP_LABELS[key]?.[lang] || key;
+  return `<div style="grid-column:1/-1;display:flex;align-items:center;gap:.85rem;${isFirst ? '' : 'margin-top:1rem'}">
+    <span style="font-size:.72rem;font-weight:900;text-transform:uppercase;letter-spacing:.1em;white-space:nowrap;color:var(--muted)">${label}</span>
+    <div style="flex:1;height:1px;background:var(--border)"></div>
+  </div>`;
+}
+
 function renderCards() {
   const filtered = PLATFORMS.filter(p =>
     filter === 'all' || p.audience === filter || p.audience === 'both'
   );
-  document.getElementById('grid').innerHTML = filtered.map((p, i) => cardHTML(p, i)).join('');
+  let html = '';
+  let lastGroup = null;
+  let cardIdx = 0;
+  filtered.forEach(p => {
+    const g = p.group || null;
+    if (g !== lastGroup) {
+      if (g) html += groupDivider(g, lastGroup === null);
+      lastGroup = g;
+    }
+    html += cardHTML(p, cardIdx++);
+  });
+  document.getElementById('grid').innerHTML = html;
 }
 
 function setFilter(f) {
