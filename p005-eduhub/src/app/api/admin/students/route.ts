@@ -11,7 +11,6 @@ export async function GET(req: NextRequest) {
       select: {
         id: true, name: true, email: true, class_name: true,
         group_name: true, is_active: true, created_at: true,
-        display_password: true,
       },
     });
     return NextResponse.json({ students });
@@ -36,15 +35,12 @@ export async function POST(req: NextRequest) {
     const student = await db.student.create({
       data: {
         name, email: email.toLowerCase().trim(),
-        password: hashed, display_password: String(password),
-        class_name, group_name: group_name || null,
+        password: hashed, class_name, group_name: group_name || null,
       },
-      select: {
-        id: true, name: true, email: true, class_name: true,
-        group_name: true, is_active: true, display_password: true,
-      },
+      select: { id: true, name: true, email: true, class_name: true, group_name: true, is_active: true },
     });
-    return NextResponse.json({ student }, { status: 201 });
+    // Return plaintext password ONCE — never stored again
+    return NextResponse.json({ student, plainPassword: String(password) }, { status: 201 });
   } catch {
     return NextResponse.json({ error: "Server xətası" }, { status: 500 });
   }

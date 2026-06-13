@@ -6,26 +6,11 @@ type Student = {
   id: string; name: string; email: string;
   class_name: string; group_name: string | null;
   is_active: boolean; created_at: string;
-  display_password: string | null;
 };
 
 type Tab = "class" | "group" | "individual";
 
-function PasswordCell({ pw }: { pw: string | null }) {
-  const [show, setShow] = useState(false);
-  if (!pw) return <span className="text-slate-600 text-xs italic">—</span>;
-  return (
-    <div className="flex items-center gap-1">
-      <span className="text-xs font-mono text-slate-300 select-all">
-        {show ? pw : "•".repeat(pw.length)}
-      </span>
-      <button onClick={() => setShow(!show)}
-        className="text-slate-500 hover:text-slate-300 transition-colors text-xs ml-1 shrink-0">
-        {show ? "🙈" : "👁"}
-      </button>
-    </div>
-  );
-}
+type ResetModal = { student: Student; newPassword: string | null; loading: boolean };
 
 function printCredentials(students: Student[], groupLabel: string) {
   const rows = students.map((s) => `
@@ -33,7 +18,7 @@ function printCredentials(students: Student[], groupLabel: string) {
       <div class="school">EduHub — ${groupLabel}</div>
       <div class="name">${s.name}</div>
       <div class="row"><span class="label">E-poçt (ID):</span><span class="val">${s.email}</span></div>
-      <div class="row"><span class="label">Şifrə:</span><span class="val">${s.display_password ?? "—"}</span></div>
+      <div class="row"><span class="label">Şifrə:</span><span class="val">— (şifrəni şagirdə ayrıca verin)</span></div>
       <div class="row"><span class="label">Sinif:</span><span class="val">${s.class_name}${s.group_name ? ` · ${s.group_name}` : ""}</span></div>
       <div class="url">hub-educat-on.vercel.app/learn/login</div>
     </div>
@@ -69,6 +54,8 @@ export default function StudentsManagePage() {
   const [students, setStudents] = useState<Student[]>([]);
   const [tab, setTab]           = useState<Tab>("class");
   const [loading, setLoading]   = useState(true);
+  const [modal,   setModal]     = useState<ResetModal | null>(null);
+  const [copied,  setCopied]    = useState(false);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -79,6 +66,21 @@ export default function StudentsManagePage() {
   }, []);
 
   useEffect(() => { load(); }, [load]);
+
+  async function resetPassword(student: Student) {
+    setModal({ student, newPassword: null, loading: true });
+    const res  = await fetch(`/api/admin/students/${student.id}?action=reset-password`, { method: "PATCH" });
+    const data = await res.json();
+    setModal({ student, newPassword: data.plainPassword ?? null, loading: false });
+  }
+
+  function copyPassword() {
+    if (!modal?.newPassword) return;
+    navigator.clipboard.writeText(modal.newPassword).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    });
+  }
 
   const byClass = students.reduce<Record<string, Student[]>>((acc, s) => {
     (acc[s.class_name] ??= []).push(s);
@@ -109,15 +111,11 @@ export default function StudentsManagePage() {
             <p className="text-sm font-medium text-slate-200 truncate">{s.name}</p>
             <p className="text-xs text-slate-500 truncate">{s.class_name}{s.group_name ? ` · ${s.group_name}` : ""}</p>
           </div>
-          <div>
+          <div className="sm:col-span-2">
             <p className="text-xs text-slate-500 mb-0.5">E-poçt (ID)</p>
             <p className="text-xs font-mono text-indigo-300 select-all truncate">{s.email}</p>
           </div>
-          <div>
-            <p className="text-xs text-slate-500 mb-0.5">Şifrə</p>
-            <PasswordCell pw={s.display_password} />
-          </div>
-          <div className="flex items-center gap-2 justify-end">
+          <div className="flex items-center gap-2 justify-end flex-wrap">
             <span className={`text-xs px-2 py-0.5 rounded-full border ${
               s.is_active
                 ? "bg-green-900/30 text-green-400 border-green-800/50"
@@ -125,6 +123,10 @@ export default function StudentsManagePage() {
             }`}>
               {s.is_active ? "Aktiv" : "Deaktiv"}
             </span>
+            <button type="button" onClick={() => resetPassword(s)}
+              className="text-xs text-amber-500 hover:text-amber-300 px-2 py-1 rounded hover:bg-amber-950/30 transition-colors shrink-0">
+              🔑 Şifrə
+            </button>
             <Link href={`/dashboard/manage/students/${s.id}`}
               className="text-xs text-slate-500 hover:text-slate-300 px-2 py-1 rounded hover:bg-slate-800 transition-colors shrink-0">
               Düzəlt
@@ -232,6 +234,58 @@ export default function StudentsManagePage() {
           </div>
           <div className="bg-slate-900 rounded-xl border border-slate-800 overflow-hidden">
             {students.map((s) => <StudentRow key={s.id} s={s} />)}
+          </div>
+        </div>
+      )}
+
+      {/* ── Reset password modal ── */}
+      {modal && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+          onClick={(e) => { if (e.target === e.currentTarget) setModal(null); }}>
+          <div className="bg-slate-900 rounded-2xl border border-slate-800 p-6 w-full max-w-sm shadow-2xl">
+            <h3 className="text-base font-bold text-white mb-1">Şifrəni sıfırla</h3>
+            <p className="text-xs text-slate-500 mb-5">{modal.student.name} · {modal.student.email}</p>
+
+            {modal.loading ? (
+              <div className="py-8 text-center text-slate-500 text-sm">Yeni şifrə yaradılır…</div>
+            ) : modal.newPassword ? (
+              <>
+                <div className="bg-amber-900/20 border border-amber-700/40 rounded-xl px-4 py-3 mb-4">
+                  <p className="text-xs text-amber-500 mb-1.5">Yeni şifrə (bir dəfə göstərilir)</p>
+                  <div className="flex items-center gap-3">
+                    <p className="text-lg font-mono font-bold text-amber-300 tracking-widest select-all flex-1">
+                      {modal.newPassword}
+                    </p>
+                    <button type="button" onClick={copyPassword}
+                      className="text-xs text-slate-400 hover:text-white px-2.5 py-1.5 rounded-lg
+                                 bg-slate-800 hover:bg-slate-700 transition-colors whitespace-nowrap">
+                      {copied ? "✓ Kopyalandı" : "Kopyala"}
+                    </button>
+                  </div>
+                </div>
+                <p className="text-xs text-slate-600 mb-5 text-center">Şagirdə bu şifrəni ayrıca bildirin</p>
+                <button type="button" onClick={() => setModal(null)}
+                  className="w-full px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-sm font-medium transition-colors">
+                  Bağla
+                </button>
+              </>
+            ) : (
+              <>
+                <p className="text-sm text-slate-400 mb-5">
+                  Bu şagirdin şifrəsi avtomatik olaraq yenilənəcək. Köhnə şifrə artıq işləməyəcək.
+                </p>
+                <div className="flex gap-3">
+                  <button type="button" onClick={() => setModal(null)}
+                    className="flex-1 px-4 py-2.5 rounded-xl border border-slate-700 hover:bg-slate-800 text-slate-300 text-sm font-medium transition-colors">
+                    Ləğv et
+                  </button>
+                  <button type="button" onClick={() => resetPassword(modal.student)}
+                    className="flex-1 px-4 py-2.5 rounded-xl bg-amber-600 hover:bg-amber-500 text-white text-sm font-medium transition-colors">
+                    Yenilə
+                  </button>
+                </div>
+              </>
+            )}
           </div>
         </div>
       )}

@@ -6,7 +6,7 @@ import { checkRateLimit } from "@/lib/rate-limit";
 export async function POST(req: NextRequest) {
   // Rate-limit: max 5 attempts per IP per 10 minutes
   const ip  = req.headers.get("x-forwarded-for")?.split(",")[0].trim() ?? "unknown";
-  const rl  = checkRateLimit(`student-login:${ip}`, 5, 10 * 60 * 1000);
+  const rl  = await checkRateLimit(`student-login:${ip}`, 5, 10 * 60 * 1000);
   if (!rl.allowed) {
     return NextResponse.json(
       { error: `Çox sayda cəhd. ${rl.retryAfterSec} saniyə gözləyin.` },

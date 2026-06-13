@@ -3,13 +3,18 @@ import { db } from "@/lib/db";
 import { hashPassword } from "@/lib/student-auth";
 import { verifyTeacher } from "@/lib/verify-teacher";
 
+function randomPassword(len = 8): string {
+  const chars = "abcdefghjkmnpqrstuvwxyz23456789";
+  return Array.from({ length: len }, () => chars[Math.floor(Math.random() * chars.length)]).join("");
+}
+
 export async function GET(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   if (!(await verifyTeacher(req))) return NextResponse.json({ error: "Icazə yoxdur" }, { status: 401 });
   const { id } = await params;
   try {
     const student = await db.student.findUniqueOrThrow({
       where:  { id },
-      select: { id: true, name: true, email: true, class_name: true, group_name: true, is_active: true, display_password: true },
+      select: { id: true, name: true, email: true, class_name: true, group_name: true, is_active: true },
     });
     return NextResponse.json({ student });
   } catch {
@@ -20,7 +25,21 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
 export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   if (!(await verifyTeacher(req))) return NextResponse.json({ error: "Icazə yoxdur" }, { status: 401 });
 
-  const { id } = await params;
+  const { id }    = await params;
+  const { searchParams } = new URL(req.url);
+
+  // ?action=reset-password — generate random password, return plaintext once
+  if (searchParams.get("action") === "reset-password") {
+    const plain  = randomPassword();
+    const hashed = await hashPassword(plain);
+    try {
+      await db.student.update({ where: { id }, data: { password: hashed } });
+      return NextResponse.json({ ok: true, plainPassword: plain });
+    } catch {
+      return NextResponse.json({ error: "Şagird tapılmadı" }, { status: 404 });
+    }
+  }
+
   try {
     const body = await req.json();
     const data: Record<string, unknown> = {};
@@ -33,8 +52,7 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
     if (body.password) {
       if (String(body.password).length < 6)
         return NextResponse.json({ error: "Şifrə minimum 6 simvol olmalıdır" }, { status: 400 });
-      data.password         = await hashPassword(String(body.password));
-      data.display_password = String(body.password);
+      data.password = await hashPassword(String(body.password));
     }
 
     const student = await db.student.update({ where: { id }, data,
