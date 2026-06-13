@@ -1,6 +1,6 @@
 GLOBAL EDU-PLATFORM ORCHESTRATOR
 ════════════════════════════════════════════════════════════════════
- 0. LIVE PROJECT GRAPH  (актуально на 2026-06-13)
+ 0. LIVE PROJECT GRAPH  (актуально на 2026-06-14)
 ════════════════════════════════════════════════════════════════════
 
 ROOT: C:/Users/Administrator/Documents/Claude/Projects/
@@ -8,7 +8,7 @@ ROOT: C:/Users/Administrator/Documents/Claude/Projects/
 ├── p005-eduhub/                        ═══ ПРОЕКТ 5 (P005): Unified PWA Ecosystem ═══
 │   Назначение: Единая экосистема с бэкендом — Hub для P001–P004 + Teacher Dashboard
 │   Стек: Next.js 16 + TypeScript + TailwindCSS 4 + Supabase + Prisma 7 + Vercel PWA
-│   Статус: 🔄 WIP — архитектура готова, БД подключена, контент пустой
+│   Статус: ✅ LIVE — деплой на Vercel, БД подключена, интеграция P001–P004 готова
 │   Path: Projects/p005-eduhub/
 │
 │   SUPABASE (LIVE):
@@ -58,36 +58,47 @@ ROOT: C:/Users/Administrator/Documents/Claude/Projects/
 │   │   └── actions/resources.ts        ← createResource, togglePublished
 │   │
 │   ├── src/types/index.ts              ← Re-export Prisma типов
-│   ├── src/middleware.ts               ← Auth guard: /dashboard/:path*
+│   ├── src/proxy.ts                    ← Next.js 16 middleware (НЕ middleware.ts!): /dashboard/* + /learn/*
 │   ├── src/generated/prisma/           ← Авто-генерация Prisma 7 client
 │   ├── .env.local                      ← SUPABASE keys + DATABASE_URL (pooler)
 │   └── next.config.ts
 │
-│   ЧТО РАБОТАЕТ (2026-06-13):
+│   ЧТО РАБОТАЕТ (2026-06-14):
 │   ✅ /auth/login → вход ferid@eduhub.az
-│   ✅ /dashboard → реальные статы из Supabase (7 результатов, 4 шагирда, 63%)
+│   ✅ /dashboard → реальные статы из Supabase
 │   ✅ /dashboard/results → таблица результатов (finished_at, цвета по %)
 │   ✅ /dashboard/students → карточки шагирдов с агрегатами
-│   ✅ /dashboard/classes/grade-5 → выбор предмета
-│   ✅ /dashboard/classes/grade-5/math → 8 тем из Prisma БД
-│   ✅ /dashboard/classes/grade-5/math/[тема] → 30+ ресурсов (seed перезапущен)
+│   ✅ /dashboard/classes/grade-5 → выбор предмета (из БД, не хардкод)
+│   ✅ /dashboard/classes/grade-5/math → темы из Prisma БД
 │   ✅ /dashboard/classes/.../[resource] → iframe-плеер + кнопка "открыть в новой вкладке"
-│   ✅ Hub / → карточки P001-P004 ведут на реальные проекты (target="_blank")
-│   ✅ P001 → POST /api/results автоматически после завершения теста
+│   ✅ /dashboard/manage/subjects → добавление предметов по классам (12 пресетов)
+│   ✅ /dashboard/manage/students → шагирды + пароли (3 вкладки: sinif/qrup/fərdi) + печать карточек
+│   ✅ /dashboard/manage/teachers → список + добавление + удаление учителей (Supabase Auth Admin)
+│   ✅ /dashboard/manage/assignments → назначение тем классу/группе/индивидуально
+│   ✅ /dashboard/manage/settings → смена пароля учителя (верификация текущего + updateUserById)
+│   ✅ /learn → ученический интерфейс: логин, AZ/RU, только назначенные темы
+│   ✅ Hub / → карточки P001-P004, P005 активен (hub-educat-on.vercel.app)
+│   ✅ P001 → POST /api/results автоматически (sendToHub в script.js)
+│   ✅ P002 → POST /api/results через _Shared_Core/send-to-hub.js (60 уроков)
+│   ✅ P003 → POST /api/results через _Shared_Core/send-to-hub.js (4 теста)
 │   ✅ P004 → POST /api/results через /api/content/ P004_SYNC инжект
-│   ✅ Sidebar → показывает только grades из Prisma БД (grade-5, grade-6)
-│   ✅ Middleware → JWT валидация (exp + aud="authenticated")
-│   ✅ vercel.json → готов к деплою, CONTENT_BASE_URL для P001-P004 на CDN
+│   ✅ Sidebar → Фənlər · Şagirdlər · Müəllimlər · Tə'yinatlar · Tənzimləmələr
+│   ✅ proxy.ts → JWT валидация /dashboard/* + /learn/* (Next.js 16 = proxy.ts, не middleware.ts!)
+│   ✅ Vercel → задеплоен, CONTENT_BASE_URL=https://mywork2000001-ops.github.io/HUB_EDUCAT-ON
+│   ✅ Email-уведомления → код готов (nodemailer), GMAIL_USER + NOTIFY_EMAIL в Vercel
 │
-│   ЧТО СДЕЛАНО ДОПОЛНИТЕЛЬНО (2026-06-13 ночь):
-│   ✅ Grade 6 seed: 9 mövzu добавлено в Prisma (Fəsil 1–9), class-1/Lesson-1.html → content_url
-│   ✅ P2_6() helper в seed.ts для Grade 6 content URLs
+│   КЛЮЧЕВЫЕ ТЕХНИЧЕСКИЕ ДЕТАЛИ:
+│   • Next.js 16: middleware называется proxy.ts (export async function proxy), НЕ middleware.ts
+│   • Ученики: bcryptjs + jose JWT в eduhub-student-token cookie, STUDENT_JWT_SECRET env var
+│   • display_password: хранится открытым текстом в students таблице для отображения учителю
+│   • send-to-hub.js: monkey-patches showResults()/showResult() — работает без изменения логики
+│   • Vercel deploy: CLI не работает (>5000 файлов). Использовать REST API v13/deployments с gitSource
+│   • Vercel teamId: team_GqPN0ZvGk4tUA9Z0fmfSoGwa | projectId: prj_dgKcqYTpK2unDtHylZaikV8LYLF4
 │
 │   СЛЕДУЮЩИЕ ШАГИ P005:
-│   1. Настроить CONTENT_BASE_URL → GitHub Pages / CDN для Vercel production
-│   2. Деплой на Vercel: vercel --prod
-│   3. Проверить P001 sendToHub() через реальный тест
-│   4. Создать контент для Grade 6 Fəsil 2–9 (math-6-class-2..9)
+│   1. Активация Gmail: добавить GMAIL_APP_PASSWORD в Vercel (Google Account → Security → App Passwords)
+│   2. Создать контент для Grade 6 Fəsil 2–9 (math-6-class-2..9 HTML-уроки)
+│   3. Интегрировать P003 React App (src/) — добавить sendToHub в TestViewPage.tsx
 │
 ├── index.html                          ← MASTER HUB v4.0.0
 │                                         Data-driven карточки из PLATFORMS[]
@@ -111,7 +122,11 @@ ROOT: C:/Users/Administrator/Documents/Claude/Projects/
 │   ├── textbook_engine.js              ← Движок P002 (4-Pillar)
 │   ├── textbook_template.html          ← Шаблон для новых Movzu
 │   ├── quiz-engine.js                  ← MCQ-движок (P001/P003 тесты)
-│   └── quiz.css                        ← Стили викторин
+│   ├── quiz.css                        ← Стили викторин
+│   └── send-to-hub.js                  ← EduHub интеграция: monkey-patches showResults()/showResult()
+│                                          POST /api/results после завершения теста. Подключён в 60 P002
+│                                          уроках (../../_Shared_Core/send-to-hub.js) и 4 P003 тестах
+│                                          (абсолютный URL GitHub Pages). Читает имя из localStorage.
 │
 ├── P001_Math_5_DIM/                    ═══ ПРОЕКТ 1: DİM Тест-банк ═══
 │   ├── index.html                      ← Лендинг P001
@@ -286,29 +301,36 @@ ROOT: C:/Users/Administrator/Documents/Claude/Projects/
   P001   │ Изображения            │ ✅ DONE    │ ~1 190 WebP
   P001   │ Стандарт урока         │ ✅        │ examData + STORAGE_KEY + script.js; 4 варианта A/B/C/D × 10Q; AZ/RU/EN
   P002-5 │ index.html (дашборд)   │ ✅ DONE    │ TAİM-style, AZ+RU
-  P002-5 │ Главы учебника (5кл)   │ ⚠️ PART    │ 8 глав, 88 уроков (часть заполнена)
+  P002-5 │ Главы учебника (5кл)   │ ⚠️ PART    │ 8 глав, 59 уроков с контентом; интеграция P005 ✅
+  P002-5 │ EduHub интеграция      │ ✅ DONE    │ send-to-hub.js инжектирован в 59 уроков (showResults)
   P002-6 │ Структура (6кл)        │ 🔄 WIP     │ 8 глав созданы, только Class-1/Lesson-1 ✅
   P003   │ Темы (topics)          │ ✅ DONE    │ 28/28 HTML
   P003   │ Тесты (tests)          │ 🔄 WIP     │ 4 разблокировано (t1–t4, секция 01 ✅)
+  P003   │ EduHub интеграция      │ ✅ DONE    │ send-to-hub.js инжектирован в 4 теста (showResult)
   P003   │ Доказательства (proofs)│ 🔄 WIP     │ 3 HTML
   P003   │ Ситуационные задачи    │ 🔄 WIP     │ 3 HTML
-  P003   │ React App (src/)       │ ✅ BUILD   │ dist/ готов
+  P003   │ React App (src/)       │ ✅ BUILD   │ dist/ готов (TestViewPage без sendToHub — TODO)
   P004   │ Тесты (test-1..38)     │ ✅ DONE    │ 38 тест-HTML
   P004   │ Fəsil sınaqları        │ ✅ DONE    │ 6 (fs1–fs6)
   P004   │ Ümumi sınaqlar         │ ✅ DONE    │ 3 (us1–us3)
   P004   │ PWA / offline          │ ✅ DONE    │ sw.js v12, manifest
   P005   │ Архитектура (Prisma 7) │ ✅ DONE    │ schema+queries+components+routes+api/content
-  P005   │ Supabase БД            │ ✅ LIVE    │ Grade5+6 seed, 8 тем × 30+ ресурсов, 7 results
-  P005   │ Auth + Middleware       │ ✅ DONE    │ JWT валидация (exp+aud), cookie httpOnly
+  P005   │ Supabase БД            │ ✅ LIVE    │ Grade5+6 seed, 8 тем × 30+ ресурсов
+  P005   │ Auth + proxy.ts        │ ✅ DONE    │ Next.js 16: proxy.ts (не middleware.ts!)
+  P005   │ Ученики + JWT          │ ✅ DONE    │ bcryptjs + jose, eduhub-student-token, display_password
   P005   │ Curriculum routes      │ ✅ DONE    │ /classes/[grade]/[subject]/[topic]/[resource]
-  P005   │ Dashboard pages        │ ✅ DONE    │ /results + /students с реальными данными
-  P005   │ Resource viewer        │ ✅ DONE    │ iframe + "открыть в новой вкладке" + metadata
-  P005   │ Hub карточки           │ ✅ DONE    │ P001-P004 via /api/content/ (target="_blank")
-  P005   │ P001 → API интеграция  │ ✅ DONE    │ sendToHub() в script.js, POST /api/results
-  P005   │ P004 → API интеграция  │ ✅ DONE    │ P004_SYNC inject в api/content route
-  P005   │ Sidebar                │ ✅ DONE    │ динамические grades из Prisma (grade-5, grade-6)
+  P005   │ Управление шагирдами   │ ✅ DONE    │ 3-вкладочный UI, показ паролей, печать карточек
+  P005   │ Управление учителями   │ ✅ DONE    │ /manage/teachers, CRUD через Supabase Auth Admin
+  P005   │ Смена пароля           │ ✅ DONE    │ /manage/settings, верификация + updateUserById
+  P005   │ Назначения             │ ✅ DONE    │ /manage/assignments: class/group/student таргетинг
+  P005   │ P001 → API             │ ✅ DONE    │ sendToHub() в script.js
+  P005   │ P002 → API             │ ✅ DONE    │ send-to-hub.js monkey-patches showResults()
+  P005   │ P003 → API             │ ✅ DONE    │ send-to-hub.js инжектирован (4 теста)
+  P005   │ P004 → API             │ ✅ DONE    │ P004_SYNC inject в api/content route
+  P005   │ Gmail уведомления      │ ⚠️ HALF    │ nodemailer готов; GMAIL_USER+NOTIFY_EMAIL в Vercel
+  │      │                        │            │ нужно добавить GMAIL_APP_PASSWORD в Vercel вручную
   P005   │ Контент Grade 6        │ 🔄 WIP     │ 9 mövzu seeded; class-2..9 без content (нет HTML)
-  P005   │ Vercel деплой          │ ⏳ PENDING │ vercel.json готов, нужен CONTENT_BASE_URL
+  P005   │ Vercel деплой          │ ✅ LIVE    │ hub-educat-on.vercel.app (REST API deploy, не CLI)
 ─────────┴────────────────────────┴───────────┴───────────────
 
  HUB АРХИТЕКТУРА index.html v4.0.0
