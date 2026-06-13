@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
+import { LiveClock } from "@/components/ui/LiveClock";
 
 type GradeItem = { number: number; slug: string; label_az: string };
 
@@ -114,6 +115,11 @@ export function AppSidebar({ grades }: { grades: GradeItem[] }) {
 
       {/* Footer */}
       <div className="px-2 py-3 border-t border-slate-200 shrink-0 space-y-0.5">
+        {/* Live clock */}
+        <div className="flex items-center gap-2 px-3 py-2 rounded-lg">
+          <span className="text-base leading-none">🕐</span>
+          <LiveClock className="text-sm text-slate-600" showDate />
+        </div>
         {navLink("/dashboard/manage/settings", "⚙️", "Tənzimləmələr")}
         {navLink("/", "🏠", "Ana Səhifə")}
         <button onClick={handleLogout}

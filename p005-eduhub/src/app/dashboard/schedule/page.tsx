@@ -1,5 +1,7 @@
 import { db } from "@/lib/db";
 import Link from "next/link";
+import { LiveClock } from "@/components/ui/LiveClock";
+import { ScheduleQuickAdd } from "@/components/schedule/ScheduleQuickAdd";
 
 export const dynamic = "force-dynamic";
 
@@ -97,15 +99,19 @@ export default async function SchedulePage({
       <div className="mb-6 flex flex-col sm:flex-row sm:items-center gap-4">
         <div className="flex-1">
           <h1 className="text-2xl font-bold text-slate-900">Dərs Cədvəli</h1>
-          <p className="text-slate-400 text-sm mt-0.5">
+          <p className="text-slate-400 text-sm mt-0.5 flex items-center gap-2">
             Sinif/qruplara görə həftəlik cədvəl
             {isCurrentWeek && todayCount > 0 && (
-              <span className="ml-2 text-indigo-500 font-medium">· Bu gün {todayCount} dərs</span>
+              <span className="text-indigo-500 font-medium">· Bu gün {todayCount} dərs</span>
             )}
+            <LiveClock className="text-indigo-600 font-bold text-sm tabular-nums" showDate />
           </p>
         </div>
 
-        {/* Week navigation */}
+        {/* Quick add + week navigation */}
+        <div className="flex items-center gap-2 shrink-0 flex-wrap">
+          <ScheduleQuickAdd defaultDate={weekStart.toISOString().slice(0, 10)} />
+        </div>
         <div className="flex items-center gap-2 shrink-0">
           <Link href={`?week=${offset - 1}`}
             className="flex items-center gap-1.5 px-3 py-2 rounded-lg border border-slate-200 bg-white text-slate-600 hover:bg-slate-50 hover:border-slate-300 text-sm transition-colors shadow-sm">

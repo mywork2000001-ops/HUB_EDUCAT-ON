@@ -1,7 +1,13 @@
 "use client";
 import { useState, useEffect, useCallback } from "react";
 
-type Topic   = { id: number; title_az: string; grade_id: number; subject_id: number };
+type Topic = {
+  id: number; title_az: string; order_index: number;
+  grade_subject: {
+    grade:   { label_az: string };
+    subject: { label_az: string; slug: string };
+  };
+};
 type Student = { id: string; name: string; class_name: string; group_name: string | null };
 type Assignment = {
   id: number; class_name: string | null; group_name: string | null; student_id: string | null;
@@ -111,12 +117,27 @@ export default function AssignmentsPage() {
         <form onSubmit={handleSubmit} className="bg-white rounded-2xl border border-slate-200 shadow-sm p-5 mb-6 space-y-4">
           <h2 className="text-sm font-semibold text-slate-700">Yeni tə'yinat</h2>
 
-          {/* Topic */}
+          {/* Topic — grouped by Grade → Subject */}
           <div>
             <label className="block text-slate-600 text-xs font-medium mb-1">Mövzu</label>
             <select className={fd} value={form.item_id} onChange={(e) => setForm(f => ({ ...f, item_id: e.target.value }))} required>
               <option value="">Mövzu seçin…</option>
-              {topics.map((t) => <option key={t.id} value={t.id}>{t.title_az}</option>)}
+              {(() => {
+                const grouped: Record<string, Topic[]> = {};
+                for (const t of topics) {
+                  const key = `${t.grade_subject.grade.label_az} — ${t.grade_subject.subject.label_az}`;
+                  (grouped[key] ??= []).push(t);
+                }
+                return Object.entries(grouped).map(([group, items]) => (
+                  <optgroup key={group} label={group}>
+                    {items.map((t) => (
+                      <option key={t.id} value={t.id}>
+                        {t.order_index}. {t.title_az}
+                      </option>
+                    ))}
+                  </optgroup>
+                ));
+              })()}
             </select>
           </div>
 

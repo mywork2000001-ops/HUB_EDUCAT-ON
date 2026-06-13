@@ -6,6 +6,7 @@ import { getAssignedTopicIds, getStudentSchedule } from "@/server/queries/assign
 import { supabaseAdmin } from "@/lib/supabase";
 import { db } from "@/lib/db";
 import { LangToggle } from "@/components/student/LangToggle";
+import { LiveClock } from "@/components/ui/LiveClock";
 
 export const dynamic = "force-dynamic";
 
@@ -157,6 +158,8 @@ export default async function LearnPage({
               {student.class_name}{student.group_name ? ` · ${student.group_name}` : ""}
             </p>
           </div>
+
+          <LiveClock className="text-xs font-bold text-indigo-600 tabular-nums hidden sm:block" />
 
           <LangToggle lang={lang} />
 

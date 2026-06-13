@@ -24,8 +24,11 @@ export async function getCurriculumItems(gradeSlug: string, subjectSlug: string)
         },
       },
       include: {
-        children: { orderBy: { order_index: "asc" } },
-        _count:   { select: { resources: true } },
+        children: {
+          orderBy: { order_index: "asc" },
+          include: { _count: { select: { resources: true } } },
+        },
+        _count: { select: { resources: true } },
       },
       orderBy: { order_index: "asc" },
     });
