@@ -4,6 +4,7 @@ import { db } from "@/lib/db";
 async function getAvailableGrades() {
   try {
     return await db.grade.findMany({
+      where:   { number: { lte: 11 } },   // exclude Abiturient(12), Müəllim(13)
       orderBy: { number: "asc" },
       select: { number: true, slug: true, label_az: true },
     });
