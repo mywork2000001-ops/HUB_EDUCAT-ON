@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabase";
+import { sendResultNotification } from "@/lib/notify-email";
 
 const ALLOWED_ORIGINS = [
   "https://ferid-hesenov.github.io",
@@ -54,6 +55,18 @@ export async function POST(req: NextRequest) {
       .single();
 
     if (error) throw error;
+
+    // Fire-and-forget email notification (never blocks response)
+    void sendResultNotification({
+      student_name:  student_name,
+      student_class: student_class ?? "",
+      platform,
+      lesson_title:  lesson_title ?? "",
+      score:   Number(score),
+      total:   Number(total),
+      percent: Number(percent),
+    });
+
     return NextResponse.json({ ok: true, id: data.id }, { headers: cors });
   } catch {
     return NextResponse.json({ error: "Server xətası" }, { status: 500, headers: cors });

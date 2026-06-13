@@ -8,7 +8,11 @@ export async function GET(req: NextRequest) {
   try {
     const students = await db.student.findMany({
       orderBy: [{ class_name: "asc" }, { name: "asc" }],
-      select: { id: true, name: true, email: true, class_name: true, group_name: true, is_active: true, created_at: true },
+      select: {
+        id: true, name: true, email: true, class_name: true,
+        group_name: true, is_active: true, created_at: true,
+        display_password: true,
+      },
     });
     return NextResponse.json({ students });
   } catch {
@@ -28,10 +32,17 @@ export async function POST(req: NextRequest) {
     const existing = await db.student.findUnique({ where: { email: email.toLowerCase().trim() } });
     if (existing) return NextResponse.json({ error: "Bu e-poçt artıq mövcuddur" }, { status: 409 });
 
-    const hashed = await hashPassword(password);
+    const hashed  = await hashPassword(password);
     const student = await db.student.create({
-      data: { name, email: email.toLowerCase().trim(), password: hashed, class_name, group_name: group_name || null },
-      select: { id: true, name: true, email: true, class_name: true, group_name: true, is_active: true },
+      data: {
+        name, email: email.toLowerCase().trim(),
+        password: hashed, display_password: String(password),
+        class_name, group_name: group_name || null,
+      },
+      select: {
+        id: true, name: true, email: true, class_name: true,
+        group_name: true, is_active: true, display_password: true,
+      },
     });
     return NextResponse.json({ student }, { status: 201 });
   } catch {

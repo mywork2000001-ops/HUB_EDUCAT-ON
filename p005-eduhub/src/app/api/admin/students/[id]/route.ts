@@ -9,7 +9,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
   try {
     const student = await db.student.findUniqueOrThrow({
       where:  { id },
-      select: { id: true, name: true, email: true, class_name: true, group_name: true, is_active: true },
+      select: { id: true, name: true, email: true, class_name: true, group_name: true, is_active: true, display_password: true },
     });
     return NextResponse.json({ student });
   } catch {
@@ -33,7 +33,8 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
     if (body.password) {
       if (String(body.password).length < 6)
         return NextResponse.json({ error: "Şifrə minimum 6 simvol olmalıdır" }, { status: 400 });
-      data.password = await hashPassword(String(body.password));
+      data.password         = await hashPassword(String(body.password));
+      data.display_password = String(body.password);
     }
 
     const student = await db.student.update({ where: { id }, data,

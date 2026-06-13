@@ -95,7 +95,9 @@ export function AppSidebar({ grades }: { grades: GradeItem[] }) {
         {[
           { href: "/dashboard/manage/subjects",    icon: "📚", label: "Fənlər" },
           { href: "/dashboard/manage/students",    icon: "👥", label: "Şagirdlər" },
+          { href: "/dashboard/manage/teachers",    icon: "👨‍🏫", label: "Müəllimlər" },
           { href: "/dashboard/manage/assignments", icon: "📋", label: "Tə'yinatlar" },
+          { href: "/dashboard/manage/settings",       icon: "⚙️",  label: "Tənzimləmələr" },
         ].map((item) => (
           <Link
             key={item.href}
