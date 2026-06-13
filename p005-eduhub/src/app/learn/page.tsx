@@ -1,5 +1,7 @@
 import Link from "next/link";
+import { cookies } from "next/headers";
 import { db } from "@/lib/db";
+import { verifyStudentToken } from "@/lib/student-auth";
 
 async function getGrades() {
   try {
@@ -16,32 +18,39 @@ const GRADE_ICONS: Record<number, string> = {
 };
 
 export default async function LearnPage() {
-  const grades = await getGrades();
+  const jar    = await cookies();
+  const token  = jar.get("eduhub-student-token")?.value;
+  const student = token ? await verifyStudentToken(token) : null;
+  const grades  = await getGrades();
 
   return (
     <main className="min-h-screen bg-slate-950">
-      {/* Header */}
       <header className="border-b border-slate-800 bg-slate-950/95 backdrop-blur-sm sticky top-0 z-10">
         <div className="max-w-3xl mx-auto px-4 py-3 flex items-center justify-between">
           <div>
             <span className="text-lg font-bold text-indigo-400">EduHub</span>
-            <span className="ml-2 text-xs text-slate-500">Şagird Paneli</span>
+            {student && (
+              <span className="ml-2 text-xs text-slate-400">
+                {student.name} · {student.class_name}
+                {student.group_name && ` · ${student.group_name}`}
+              </span>
+            )}
           </div>
-          <Link
-            href="/auth/login"
-            className="text-xs text-slate-500 hover:text-slate-300 transition-colors"
-          >
-            Müəllim →
-          </Link>
+          <form action="/api/student/auth/logout" method="POST">
+            <button
+              type="submit"
+              className="text-xs text-slate-500 hover:text-red-400 transition-colors px-2 py-1"
+            >
+              Çıxış
+            </button>
+          </form>
         </div>
       </header>
 
       <div className="max-w-3xl mx-auto px-4 py-8">
         <div className="mb-8">
           <h1 className="text-2xl font-bold text-white">Sinif seçin</h1>
-          <p className="text-slate-400 text-sm mt-1">
-            Öyrənməyə başlamaq üçün sinifinizi seçin
-          </p>
+          <p className="text-slate-400 text-sm mt-1">Öyrənməyə başlamaq üçün sinifinizi seçin</p>
         </div>
 
         {grades.length === 0 ? (
@@ -64,17 +73,11 @@ export default async function LearnPage() {
                   {grade.label_az}
                 </span>
                 <span className="absolute top-3 right-3 text-slate-600 group-hover:text-indigo-400
-                                 transition-colors text-xs">
-                  →
-                </span>
+                                 transition-colors text-xs">→</span>
               </Link>
             ))}
           </div>
         )}
-
-        <div className="mt-12 text-center text-slate-600 text-xs">
-          PWA kimi yükləmək üçün brauzer menyusunda &ldquo;Ana ekrana əlavə et&rdquo; seçin
-        </div>
       </div>
     </main>
   );

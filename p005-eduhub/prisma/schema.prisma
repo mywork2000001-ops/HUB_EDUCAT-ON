@@ -62,6 +62,7 @@ model CurriculumItem {
   parent        CurriculumItem?  @relation("SubTopics", fields: [parent_id], references: [id])
   children      CurriculumItem[] @relation("SubTopics")
   resources     Resource[]
+  assignments   Assignment[]
 
   @@unique([grade_id, subject_id, slug])
   @@index([grade_id, subject_id, order_index])
@@ -99,5 +100,60 @@ model Resource {
   @@index([curriculum_id, type])
   @@index([type, is_published])
   @@map("resources")
+}
+
+// ─── NƏTICƏLƏR (Supabase vasitəsilə idarə olunur) ─────────────
+
+model Result {
+  id            String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  student_name  String
+  student_class String   @default("")
+  platform      String
+  lesson_id     String   @default("")
+  lesson_title  String   @default("")
+  score         Int
+  total         Int
+  percent       Int
+  answers       Json     @default("{}")
+  started_at    DateTime?
+  finished_at   DateTime?
+  created_at    DateTime @default(now())
+
+  @@map("results")
+}
+
+// ─── ŞAGIRDLƏR ────────────────────────────────────────────────
+
+model Student {
+  id         String   @id @default(cuid())
+  name       String
+  email      String   @unique
+  password   String
+  class_name String
+  group_name String?
+  is_active  Boolean  @default(true)
+  created_at DateTime @default(now())
+
+  assignments Assignment[]
+
+  @@map("students")
+}
+
+model Assignment {
+  id         Int      @id @default(autoincrement())
+  class_name String?
+  group_name String?
+  student_id String?
+  item_id    Int
+  due_date   DateTime?
+  note       String?
+  created_at DateTime @default(now())
+
+  item    CurriculumItem @relation(fields: [item_id], references: [id], onDelete: Cascade)
+  student Student?       @relation(fields: [student_id], references: [id], onDelete: SetNull)
+
+  @@index([class_name])
+  @@index([student_id])
+  @@map("assignments")
 }
 

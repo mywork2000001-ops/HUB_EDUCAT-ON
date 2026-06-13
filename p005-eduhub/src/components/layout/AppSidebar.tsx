@@ -87,6 +87,31 @@ export function AppSidebar({ grades }: { grades: GradeItem[] }) {
         })}
       </nav>
 
+      {/* Management section */}
+      <div className="p-2 border-t border-slate-800 shrink-0">
+        <p className="px-2 py-2 text-xs font-semibold uppercase tracking-widest text-slate-500">
+          İdarəetmə
+        </p>
+        {[
+          { href: "/dashboard/manage/students",    icon: "👥", label: "Şagirdlər" },
+          { href: "/dashboard/manage/assignments", icon: "📋", label: "Tə'yinatlar" },
+        ].map((item) => (
+          <Link
+            key={item.href}
+            href={item.href}
+            className={cn(
+              "flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition-colors",
+              pathname.startsWith(item.href)
+                ? "bg-slate-800 text-slate-200"
+                : "text-slate-500 hover:bg-slate-800 hover:text-slate-300",
+            )}
+          >
+            <span>{item.icon}</span>
+            <span>{item.label}</span>
+          </Link>
+        ))}
+      </div>
+
       {/* Footer links */}
       <div className="p-2 border-t border-slate-800 shrink-0">
         <Link
