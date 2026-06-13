@@ -31,16 +31,16 @@ export default async function LearnGradePage({ params }: Props) {
 
       <div className="max-w-3xl mx-auto px-4 py-6">
         <div className="mb-6">
-          <h1 className="text-xl font-bold text-white">{gradeLabel}</h1>
-          <p className="text-slate-400 text-sm mt-0.5">
+          <h1 className="text-xl font-bold text-slate-900">{gradeLabel}</h1>
+          <p className="text-slate-500 text-sm mt-0.5">
             {lang === "ru" ? "Выберите предмет" : "Fənn seçin"}
           </p>
         </div>
 
         {subjects.length === 0 ? (
-          <div className="py-16 rounded-2xl bg-slate-900 border border-slate-800 text-center">
+          <div className="py-16 rounded-2xl bg-slate-50 border border-slate-200 text-center">
             <p className="text-4xl mb-3">📚</p>
-            <p className="text-slate-400 text-sm">
+            <p className="text-slate-500 text-sm">
               {lang === "ru" ? "Предметы ещё не добавлены." : "Hələ fənn əlavə edilməyib."}
             </p>
           </div>
@@ -51,12 +51,12 @@ export default async function LearnGradePage({ params }: Props) {
                 key={sub.slug}
                 href={`/learn/${gradeSlug}/${sub.slug}`}
                 className="group flex flex-col items-center gap-3 p-5 rounded-2xl
-                           bg-slate-900 border border-slate-800
-                           hover:border-indigo-500/50 hover:bg-slate-800
+                           bg-white border border-slate-200 shadow-sm
+                           hover:border-indigo-300 hover:shadow-md hover:bg-indigo-50/30
                            transition-all active:scale-95 text-center"
               >
                 <span className="text-3xl">{sub.icon ?? "📚"}</span>
-                <span className="text-sm font-medium text-slate-300 group-hover:text-white leading-tight">
+                <span className="text-sm font-medium text-slate-700 group-hover:text-indigo-700 leading-tight">
                   {lang === "ru" ? sub.label_ru : sub.label_az}
                 </span>
               </Link>

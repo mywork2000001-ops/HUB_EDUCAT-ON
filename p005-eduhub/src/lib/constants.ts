@@ -13,13 +13,13 @@ export const RESOURCE_TYPE_LABELS: Record<ResourceType, Record<Lang, string>> = 
 };
 
 export const RESOURCE_TYPE_COLOR: Record<ResourceType, string> = {
-  LESSON:    "bg-blue-900/40 text-blue-300 border-blue-800/50",
-  TEST:      "bg-purple-900/40 text-purple-300 border-purple-800/50",
-  TAIM_TEST: "bg-orange-900/40 text-orange-300 border-orange-800/50",
-  BSQ:       "bg-red-900/40 text-red-300 border-red-800/50",
-  KSQ:       "bg-yellow-900/40 text-yellow-300 border-yellow-800/50",
-  WORKBOOK:  "bg-green-900/40 text-green-300 border-green-800/50",
-  VIDEO:     "bg-pink-900/40 text-pink-300 border-pink-800/50",
+  LESSON:    "bg-blue-100 text-blue-700 border-blue-200",
+  TEST:      "bg-purple-100 text-purple-700 border-purple-200",
+  TAIM_TEST: "bg-orange-100 text-orange-700 border-orange-200",
+  BSQ:       "bg-red-100 text-red-700 border-red-200",
+  KSQ:       "bg-yellow-100 text-yellow-700 border-yellow-200",
+  WORKBOOK:  "bg-green-100 text-green-700 border-green-200",
+  VIDEO:     "bg-pink-100 text-pink-700 border-pink-200",
 };
 
 export const GRADES = Array.from({ length: 11 }, (_, i) => ({
@@ -34,11 +34,14 @@ export const SUBJECTS: Array<{
   label_ru: string;
   icon: string;
 }> = [
-  { slug: "math",        label_az: "Riyaziyyat",      label_ru: "Математика",   icon: "📐" },
-  { slug: "informatics", label_az: "İnformatika",     label_ru: "Информатика",  icon: "💻" },
-  { slug: "physics",     label_az: "Fizika",          label_ru: "Физика",       icon: "⚛️" },
-  { slug: "chemistry",   label_az: "Kimya",           label_ru: "Химия",        icon: "🧪" },
-  { slug: "biology",     label_az: "Biologiya",       label_ru: "Биология",     icon: "🌿" },
-  { slug: "history",     label_az: "Tarix",           label_ru: "История",      icon: "📜" },
-  { slug: "language",    label_az: "Azərbaycan dili", label_ru: "Азерб. язык",  icon: "🗣️" },
+  { slug: "math",           label_az: "Riyaziyyat",        label_ru: "Математика",        icon: "📐" },
+  { slug: "informatics",    label_az: "İnformatika",       label_ru: "Информатика",       icon: "💻" },
+  { slug: "algorithmics",   label_az: "Alqoritmlər",       label_ru: "Алгоритмика",       icon: "🧩" },
+  { slug: "physics",        label_az: "Fizika",            label_ru: "Физика",            icon: "⚛️" },
+  { slug: "chemistry",      label_az: "Kimya",             label_ru: "Химия",             icon: "🧪" },
+  { slug: "biology",        label_az: "Biologiya",         label_ru: "Биология",          icon: "🌿" },
+  { slug: "history",        label_az: "Tarix",             label_ru: "История",           icon: "📜" },
+  { slug: "language",       label_az: "Azərbaycan dili",   label_ru: "Азерб. язык",       icon: "🗣️" },
+  { slug: "block-exam",     label_az: "Blok İmtahan",      label_ru: "Блок Экзамен",      icon: "📝" },
+  { slug: "taim-2026",      label_az: "TAİM 2026",         label_ru: "TAİM 2026",         icon: "🎓" },
 ];

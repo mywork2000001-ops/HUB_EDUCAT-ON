@@ -6,18 +6,21 @@ type GradeSubject = { subject: Subject };
 type Grade = { id: number; number: number; label_az: string; slug: string; subjects: GradeSubject[] };
 
 const SUBJECT_PRESETS = [
-  { slug: "math",        label_az: "Riyaziyyat",      label_ru: "Математика",     icon: "📐" },
-  { slug: "informatics", label_az: "İnformatika",     label_ru: "Информатика",    icon: "💻" },
-  { slug: "physics",     label_az: "Fizika",          label_ru: "Физика",         icon: "⚛️" },
-  { slug: "chemistry",   label_az: "Kimya",           label_ru: "Химия",          icon: "🧪" },
-  { slug: "biology",     label_az: "Biologiya",       label_ru: "Биология",       icon: "🌿" },
-  { slug: "history",     label_az: "Tarix",           label_ru: "История",        icon: "📜" },
-  { slug: "language",    label_az: "Azərbaycan dili", label_ru: "Азерб. язык",    icon: "🗣️" },
-  { slug: "english",     label_az: "İngilis dili",    label_ru: "Английский язык",icon: "🌐" },
-  { slug: "geography",   label_az: "Coğrafiya",       label_ru: "География",      icon: "🌍" },
-  { slug: "arts",        label_az: "İncəsənət",       label_ru: "Искусство",      icon: "🎨" },
-  { slug: "music",       label_az: "Musiqi",          label_ru: "Музыка",         icon: "🎵" },
-  { slug: "pe",          label_az: "Bədən tərbiyəsi", label_ru: "Физкультура",    icon: "🏃" },
+  { slug: "math",         label_az: "Riyaziyyat",        label_ru: "Математика",        icon: "📐" },
+  { slug: "informatics",  label_az: "İnformatika",       label_ru: "Информатика",       icon: "💻" },
+  { slug: "algorithmics", label_az: "Alqoritmlər",       label_ru: "Алгоритмика",       icon: "🧩" },
+  { slug: "physics",      label_az: "Fizika",            label_ru: "Физика",            icon: "⚛️" },
+  { slug: "chemistry",    label_az: "Kimya",             label_ru: "Химия",             icon: "🧪" },
+  { slug: "biology",      label_az: "Biologiya",         label_ru: "Биология",          icon: "🌿" },
+  { slug: "history",      label_az: "Tarix",             label_ru: "История",           icon: "📜" },
+  { slug: "language",     label_az: "Azərbaycan dili",   label_ru: "Азерб. язык",       icon: "🗣️" },
+  { slug: "english",      label_az: "İngilis dili",      label_ru: "Английский язык",   icon: "🌐" },
+  { slug: "geography",    label_az: "Coğrafiya",         label_ru: "География",         icon: "🌍" },
+  { slug: "arts",         label_az: "İncəsənət",         label_ru: "Искусство",         icon: "🎨" },
+  { slug: "music",        label_az: "Musiqi",            label_ru: "Музыка",            icon: "🎵" },
+  { slug: "pe",           label_az: "Bədən tərbiyəsi",   label_ru: "Физкультура",       icon: "🏃" },
+  { slug: "block-exam",   label_az: "Blok İmtahan",      label_ru: "Блок Экзамен",      icon: "📝" },
+  { slug: "taim-2026",    label_az: "TAİM 2026",         label_ru: "TAİM 2026",         icon: "🎓" },
 ];
 
 const EMPTY_FORM = { label_az: "", label_ru: "", slug: "", icon: "" };

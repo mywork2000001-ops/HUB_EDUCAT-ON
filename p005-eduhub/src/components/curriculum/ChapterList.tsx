@@ -14,9 +14,13 @@ export type Chapter = {
 };
 
 const SUBJ_STYLE: Record<string, { badge: string; numBg: string }> = {
-  "math":       { badge: "bg-blue-100 text-blue-700 border-blue-200",    numBg: "bg-blue-50 text-blue-600" },
-  "block-exam": { badge: "bg-purple-100 text-purple-700 border-purple-200", numBg: "bg-purple-50 text-purple-600" },
-  "taim-2026":  { badge: "bg-emerald-100 text-emerald-700 border-emerald-200", numBg: "bg-emerald-50 text-emerald-600" },
+  "math":         { badge: "bg-blue-100 text-blue-700 border-blue-200",       numBg: "bg-blue-50 text-blue-600" },
+  "block-exam":   { badge: "bg-purple-100 text-purple-700 border-purple-200", numBg: "bg-purple-50 text-purple-600" },
+  "taim-2026":    { badge: "bg-emerald-100 text-emerald-700 border-emerald-200", numBg: "bg-emerald-50 text-emerald-600" },
+  "algorithmics": { badge: "bg-orange-100 text-orange-700 border-orange-200", numBg: "bg-orange-50 text-orange-600" },
+  "informatics":  { badge: "bg-cyan-100 text-cyan-700 border-cyan-200",       numBg: "bg-cyan-50 text-cyan-600" },
+  "physics":      { badge: "bg-violet-100 text-violet-700 border-violet-200", numBg: "bg-violet-50 text-violet-600" },
+  "chemistry":    { badge: "bg-teal-100 text-teal-700 border-teal-200",       numBg: "bg-teal-50 text-teal-600" },
 };
 const DEFAULT_STYLE = { badge: "bg-slate-100 text-slate-600 border-slate-200", numBg: "bg-slate-100 text-slate-600" };
 

@@ -6,9 +6,13 @@ import { ScheduleQuickAdd } from "@/components/schedule/ScheduleQuickAdd";
 export const dynamic = "force-dynamic";
 
 const SUBJ_META: Record<string, { az: string; icon: string; color: string; bg: string; border: string; text: string }> = {
-  "math":       { az: "Məktəb",       icon: "📐", color: "#3b82f6", bg: "bg-blue-50",    border: "border-blue-200",   text: "text-blue-700" },
-  "block-exam": { az: "Blok İmtahan", icon: "📝", color: "#a855f7", bg: "bg-purple-50",  border: "border-purple-200", text: "text-purple-700" },
-  "taim-2026":  { az: "TAİM 2026",    icon: "🎓", color: "#22c55e", bg: "bg-emerald-50", border: "border-emerald-200",text: "text-emerald-700" },
+  "math":          { az: "Riyaziyyat",   icon: "📐", color: "#3b82f6", bg: "bg-blue-50",     border: "border-blue-200",    text: "text-blue-700" },
+  "block-exam":    { az: "Blok İmtahan", icon: "📝", color: "#a855f7", bg: "bg-purple-50",   border: "border-purple-200",  text: "text-purple-700" },
+  "taim-2026":     { az: "TAİM 2026",    icon: "🎓", color: "#22c55e", bg: "bg-emerald-50",  border: "border-emerald-200", text: "text-emerald-700" },
+  "algorithmics":  { az: "Alqoritmlər",  icon: "🧩", color: "#f97316", bg: "bg-orange-50",   border: "border-orange-200",  text: "text-orange-700" },
+  "informatics":   { az: "İnformatika",  icon: "💻", color: "#06b6d4", bg: "bg-cyan-50",     border: "border-cyan-200",    text: "text-cyan-700" },
+  "physics":       { az: "Fizika",       icon: "⚛️", color: "#8b5cf6", bg: "bg-violet-50",   border: "border-violet-200",  text: "text-violet-700" },
+  "chemistry":     { az: "Kimya",        icon: "🧪", color: "#10b981", bg: "bg-teal-50",     border: "border-teal-200",    text: "text-teal-700" },
 };
 
 const DAY_AZ = ["Bazar", "B.ertəsi", "Çərşənbəaxşamı", "Çərşənbə", "Cümaxertəsi", "Cümə", "Şənbə"];

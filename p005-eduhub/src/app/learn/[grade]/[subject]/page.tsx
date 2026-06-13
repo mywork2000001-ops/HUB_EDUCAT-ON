@@ -47,8 +47,8 @@ export default async function LearnSubjectPage({ params }: Props) {
 
       <div className="max-w-3xl mx-auto px-4 py-6">
         <div className="mb-6">
-          <h1 className="text-xl font-bold text-white">{subjectLabel} — {gradeLabel}</h1>
-          <p className="text-slate-400 text-sm mt-0.5">
+          <h1 className="text-xl font-bold text-slate-900">{subjectLabel} — {gradeLabel}</h1>
+          <p className="text-slate-500 text-sm mt-0.5">
             {topics.length > 0
               ? `${topics.length} ${lang === "ru" ? "тем назначено" : "mövzu tə'yin edilib"}`
               : (lang === "ru" ? "Нет назначенных тем" : "Hələ tə'yinat yoxdur")}
@@ -56,14 +56,14 @@ export default async function LearnSubjectPage({ params }: Props) {
         </div>
 
         {topics.length === 0 ? (
-          <div className="py-16 rounded-2xl bg-slate-900 border border-slate-800 text-center">
+          <div className="py-16 rounded-2xl bg-slate-50 border border-slate-200 text-center">
             <p className="text-4xl mb-3">📋</p>
-            <p className="text-slate-400 text-sm">
+            <p className="text-slate-500 text-sm">
               {lang === "ru"
                 ? "Учитель ещё не назначил вам темы."
                 : "Müəllim sizə hələ mövzu tə'yin etməyib."}
             </p>
-            <p className="text-slate-600 text-xs mt-2">
+            <p className="text-slate-400 text-xs mt-2">
               {lang === "ru" ? "Скоро здесь появятся темы." : "Tezliklə burada mövzular görünəcək."}
             </p>
           </div>
@@ -73,24 +73,24 @@ export default async function LearnSubjectPage({ params }: Props) {
               <Link
                 key={topic.id}
                 href={`/learn/${gradeSlug}/${subjectSlug}/${topic.slug}`}
-                className="flex items-center gap-4 p-4 rounded-xl bg-slate-900 border border-slate-800
-                           hover:border-indigo-500/50 hover:bg-slate-800 transition-all group active:scale-[0.99]"
+                className="flex items-center gap-4 p-4 rounded-xl bg-white border border-slate-200 shadow-sm
+                           hover:border-indigo-300 hover:shadow-md hover:bg-indigo-50/20 transition-all group active:scale-[0.99]"
               >
-                <span className="w-9 h-9 rounded-full bg-slate-800 flex items-center justify-center
-                                 text-sm font-bold text-indigo-400 group-hover:bg-indigo-950 shrink-0 transition-colors">
+                <span className="w-9 h-9 rounded-full bg-indigo-100 flex items-center justify-center
+                                 text-sm font-bold text-indigo-600 group-hover:bg-indigo-600 group-hover:text-white shrink-0 transition-colors">
                   {idx + 1}
                 </span>
                 <div className="flex-1 min-w-0">
-                  <p className="font-medium text-slate-200 group-hover:text-white truncate">
+                  <p className="font-medium text-slate-800 group-hover:text-indigo-700 truncate">
                     {lang === "ru" ? topic.title_ru : topic.title_az}
                   </p>
                   {topic._count.resources > 0 && (
-                    <p className="text-xs text-slate-500 mt-0.5">
+                    <p className="text-xs text-slate-400 mt-0.5">
                       {topic._count.resources} {lang === "ru" ? "ресурс" : "resurs"}
                     </p>
                   )}
                 </div>
-                <span className="text-indigo-500 shrink-0 text-sm">→</span>
+                <span className="text-indigo-400 group-hover:text-indigo-600 shrink-0 text-sm transition-colors">→</span>
               </Link>
             ))}
           </div>

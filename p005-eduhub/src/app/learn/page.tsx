@@ -15,9 +15,13 @@ const PLATFORM_COLOR: Record<string, string> = {
 };
 
 const SUBJ_META: Record<string, { az: string; ru: string; icon: string; accent: string; light: string }> = {
-  "math":       { az: "Məktəb",       ru: "Школа",     icon: "📐", accent: "text-blue-700",    light: "bg-blue-50" },
-  "block-exam": { az: "Blok İmtahan", ru: "Блок",      icon: "📝", accent: "text-purple-700",  light: "bg-purple-50" },
-  "taim-2026":  { az: "TAİM 2026",    ru: "TAİM 2026", icon: "🎓", accent: "text-emerald-700", light: "bg-emerald-50" },
+  "math":         { az: "Riyaziyyat",   ru: "Математика",      icon: "📐", accent: "text-blue-700",    light: "bg-blue-50" },
+  "block-exam":   { az: "Blok İmtahan", ru: "Блок İmtahan",   icon: "📝", accent: "text-purple-700",  light: "bg-purple-50" },
+  "taim-2026":    { az: "TAİM 2026",    ru: "TAİM 2026",       icon: "🎓", accent: "text-emerald-700", light: "bg-emerald-50" },
+  "algorithmics": { az: "Alqoritmlər",  ru: "Алгоритмика",     icon: "🧩", accent: "text-orange-700",  light: "bg-orange-50" },
+  "informatics":  { az: "İnformatika",  ru: "Информатика",     icon: "💻", accent: "text-cyan-700",    light: "bg-cyan-50" },
+  "physics":      { az: "Fizika",       ru: "Физика",          icon: "⚛️", accent: "text-violet-700",  light: "bg-violet-50" },
+  "chemistry":    { az: "Kimya",        ru: "Химия",           icon: "🧪", accent: "text-teal-700",    light: "bg-teal-50" },
 };
 
 export default async function LearnPage({

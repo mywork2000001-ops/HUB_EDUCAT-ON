@@ -35,26 +35,26 @@ export default async function GradePage({ params }: Props) {
 
         <div className="mt-4 flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-white">{grade.label_az}</h1>
-            <p className="mt-1 text-slate-400 text-sm">Fənn seçin</p>
+            <h1 className="text-2xl font-bold text-slate-900">{grade.label_az}</h1>
+            <p className="mt-1 text-slate-500 text-sm">Fənn seçin</p>
           </div>
           <Link
             href="/dashboard/manage/subjects"
-            className="text-xs text-slate-500 hover:text-slate-300 transition-colors
-                       px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700"
+            className="text-xs text-slate-600 hover:text-slate-900 transition-colors
+                       px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 border border-slate-200"
           >
             + Fənn əlavə et
           </Link>
         </div>
 
         {subjects.length === 0 ? (
-          <div className="mt-6 py-16 rounded-2xl bg-slate-900 border border-slate-800 text-center">
+          <div className="mt-6 py-16 rounded-2xl bg-slate-50 border border-slate-200 text-center">
             <p className="text-4xl mb-3">📚</p>
-            <p className="text-slate-400 text-sm">Bu sinif üçün hələ fənn əlavə edilməyib.</p>
+            <p className="text-slate-500 text-sm">Bu sinif üçün hələ fənn əlavə edilməyib.</p>
             <Link
               href="/dashboard/manage/subjects"
-              className="inline-block mt-4 px-4 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-500
-                         text-white text-sm transition-colors"
+              className="inline-block mt-4 px-4 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-700
+                         text-white text-sm transition-colors shadow-sm"
             >
               Fənn əlavə et
             </Link>
@@ -65,15 +65,15 @@ export default async function GradePage({ params }: Props) {
               <Link
                 key={sub.slug}
                 href={`/dashboard/classes/${gradeSlug}/${sub.slug}`}
-                className="flex flex-col items-center gap-2 p-4 rounded-xl bg-slate-900
-                           border border-slate-800 hover:border-slate-600 hover:bg-slate-800
+                className="flex flex-col items-center gap-2 p-4 rounded-xl bg-white
+                           border border-slate-200 shadow-sm hover:border-indigo-300 hover:shadow-md
                            transition-all text-center group"
               >
                 <span className="text-3xl">{sub.icon ?? "📚"}</span>
-                <span className="text-sm font-medium text-slate-300 group-hover:text-white">
+                <span className="text-sm font-medium text-slate-700 group-hover:text-indigo-700">
                   {sub.label_az}
                 </span>
-                <span className="text-xs text-slate-600">{sub.label_ru}</span>
+                <span className="text-xs text-slate-400">{sub.label_ru}</span>
               </Link>
             ))}
           </div>
