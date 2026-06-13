@@ -75,7 +75,7 @@ export default function AssignmentsPage() {
     await load();
   }
 
-  const fd = "w-full bg-slate-800 text-white rounded-lg px-3 py-2 text-sm border border-slate-700 focus:outline-none focus:border-indigo-500";
+  const fd = "w-full bg-white text-slate-900 rounded-lg px-3 py-2 text-sm border border-slate-300 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/10 placeholder:text-slate-400";
 
   // Group assignments by target type for display
   const byClass: Record<string, Assignment[]> = {};
@@ -93,23 +93,23 @@ export default function AssignmentsPage() {
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-white">Tə'yinatlar</h1>
+          <h1 className="text-2xl font-bold text-slate-900">Tə'yinatlar</h1>
           <p className="text-slate-400 text-sm mt-0.5">Mövzuları sinif, qrup və ya şagirdə tə'yin edin</p>
         </div>
         <button onClick={() => setShowForm(!showForm)}
-          className="px-4 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-medium transition-colors">
+          className="px-4 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium transition-colors shadow-sm">
           {showForm ? "Ləğv et" : "+ Tə'yin et"}
         </button>
       </div>
 
       {/* Form */}
       {showForm && (
-        <form onSubmit={handleSubmit} className="bg-slate-900 rounded-2xl border border-slate-800 p-5 mb-6 space-y-4">
-          <h2 className="text-sm font-semibold text-slate-300">Yeni tə'yinat</h2>
+        <form onSubmit={handleSubmit} className="bg-white rounded-2xl border border-slate-200 shadow-sm p-5 mb-6 space-y-4">
+          <h2 className="text-sm font-semibold text-slate-700">Yeni tə'yinat</h2>
 
           {/* Topic */}
           <div>
-            <label className="block text-slate-400 text-xs mb-1">Mövzu</label>
+            <label className="block text-slate-600 text-xs font-medium mb-1">Mövzu</label>
             <select className={fd} value={form.item_id} onChange={(e) => setForm(f => ({ ...f, item_id: e.target.value }))} required>
               <option value="">Mövzu seçin…</option>
               {topics.map((t) => <option key={t.id} value={t.id}>{t.title_az}</option>)}
@@ -118,7 +118,7 @@ export default function AssignmentsPage() {
 
           {/* Target type toggle */}
           <div>
-            <label className="block text-slate-400 text-xs mb-1.5">Hədəf</label>
+            <label className="block text-slate-600 text-xs font-medium mb-1.5">Hədəf</label>
             <div className="flex gap-2">
               {[
                 { key: "class",   label: "🏫 Sinif / Qrup" },
@@ -126,7 +126,7 @@ export default function AssignmentsPage() {
               ].map(({ key, label }) => (
                 <button key={key} type="button"
                   onClick={() => setForm(f => ({ ...f, target: key }))}
-                  className={`px-4 py-1.5 rounded-lg text-sm transition-colors ${form.target === key ? "bg-indigo-600 text-white" : "bg-slate-800 text-slate-400 hover:text-white"}`}>
+                  className={`px-4 py-1.5 rounded-lg text-sm font-medium transition-colors border ${form.target === key ? "bg-indigo-600 text-white border-indigo-600" : "bg-white text-slate-600 border-slate-200 hover:border-indigo-300 hover:text-indigo-600"}`}>
                   {label}
                 </button>
               ))}
@@ -137,27 +137,27 @@ export default function AssignmentsPage() {
           {form.target === "class" && (
             <div className="space-y-3">
               <div>
-                <label className="block text-slate-400 text-xs mb-1">Sinif</label>
+                <label className="block text-slate-600 text-xs font-medium mb-1">Sinif</label>
                 {/* Existing class chips */}
                 {classes.length > 0 && (
                   <div className="flex flex-wrap gap-1.5 mb-2">
                     {classes.map((c) => (
                       <button key={c} type="button"
                         onClick={() => setForm(f => ({ ...f, class_name: c, custom_class: "" }))}
-                        className={`px-3 py-1 rounded-lg text-xs font-medium transition-colors ${
+                        className={`px-3 py-1 rounded-lg text-xs font-medium transition-colors border ${
                           form.class_name === c && form.class_name !== "__custom__"
-                            ? "bg-indigo-600 text-white"
-                            : "bg-slate-800 text-slate-400 hover:bg-slate-700 hover:text-white"
+                            ? "bg-indigo-600 text-white border-indigo-600"
+                            : "bg-white text-slate-600 border-slate-200 hover:border-indigo-300 hover:text-indigo-600"
                         }`}>
                         {c}
                       </button>
                     ))}
                     <button type="button"
                       onClick={() => setForm(f => ({ ...f, class_name: "__custom__" }))}
-                      className={`px-3 py-1 rounded-lg text-xs font-medium transition-colors ${
+                      className={`px-3 py-1 rounded-lg text-xs font-medium transition-colors border ${
                         form.class_name === "__custom__"
-                          ? "bg-slate-600 text-white"
-                          : "bg-slate-800/50 text-slate-500 hover:bg-slate-700 hover:text-slate-300 border border-dashed border-slate-700"
+                          ? "bg-slate-600 text-white border-slate-600"
+                          : "bg-white text-slate-500 border-dashed border-slate-300 hover:border-slate-400 hover:text-slate-700"
                       }`}>
                       + Yeni
                     </button>
@@ -171,7 +171,7 @@ export default function AssignmentsPage() {
                 )}
               </div>
               <div>
-                <label className="block text-slate-400 text-xs mb-1">Qrup <span className="text-slate-600">(istəyə görə)</span></label>
+                <label className="block text-slate-600 text-xs font-medium mb-1">Qrup <span className="text-slate-400">(istəyə görə)</span></label>
                 <input className={fd} value={form.group_name}
                   onChange={(e) => setForm(f => ({ ...f, group_name: e.target.value }))}
                   placeholder="Qrup 1 — boş qoyulsa bütün sinif üçün" />
@@ -182,7 +182,7 @@ export default function AssignmentsPage() {
           {/* Student target */}
           {form.target === "student" && (
             <div>
-              <label className="block text-slate-400 text-xs mb-1">Şagird</label>
+              <label className="block text-slate-600 text-xs font-medium mb-1">Şagird</label>
               <select className={fd} value={form.student_id}
                 onChange={(e) => setForm(f => ({ ...f, student_id: e.target.value }))} required>
                 <option value="">Şagird seçin…</option>
@@ -198,17 +198,17 @@ export default function AssignmentsPage() {
           {/* Due date + note */}
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="block text-slate-400 text-xs mb-1">Son tarix <span className="text-slate-600">(istəyə görə)</span></label>
+              <label className="block text-slate-600 text-xs font-medium mb-1">Son tarix <span className="text-slate-400">(istəyə görə)</span></label>
               <input className={fd} type="date" value={form.due_date} onChange={(e) => setForm(f => ({ ...f, due_date: e.target.value }))} />
             </div>
             <div>
-              <label className="block text-slate-400 text-xs mb-1">Qeyd <span className="text-slate-600">(istəyə görə)</span></label>
+              <label className="block text-slate-600 text-xs font-medium mb-1">Qeyd <span className="text-slate-400">(istəyə görə)</span></label>
               <input className={fd} value={form.note} onChange={(e) => setForm(f => ({ ...f, note: e.target.value }))} placeholder="Ev tapşırığı…" />
             </div>
           </div>
 
           <button type="submit" disabled={loading}
-            className="w-full bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 text-white font-medium rounded-lg py-2.5 text-sm transition-colors">
+            className="w-full bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 text-white font-medium rounded-xl py-2.5 text-sm transition-colors shadow-sm">
             {loading ? "Saxlanılır…" : "Tə'yin et"}
           </button>
         </form>
@@ -216,9 +216,9 @@ export default function AssignmentsPage() {
 
       {/* Empty state */}
       {assignments.length === 0 && (
-        <div className="py-16 rounded-2xl bg-slate-900 border border-slate-800 text-center">
+        <div className="py-16 rounded-2xl bg-white border border-slate-200 shadow-sm text-center">
           <p className="text-4xl mb-3">📋</p>
-          <p className="text-slate-400 text-sm">Hələ tə'yinat yoxdur.</p>
+          <p className="text-slate-400 text-sm font-medium">Hələ tə'yinat yoxdur.</p>
         </div>
       )}
 
@@ -230,21 +230,21 @@ export default function AssignmentsPage() {
               <p className="text-xs font-semibold text-slate-500 uppercase tracking-widest mb-2 px-1">
                 {group.includes("·") ? "👥" : "🏫"} {group}
               </p>
-              <div className="bg-slate-900 rounded-xl border border-slate-800 overflow-hidden">
+              <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
                 {list.map((a, i) => (
                   <div key={a.id}
-                    className={`flex items-center gap-3 px-4 py-3 ${i < list.length - 1 ? "border-b border-slate-800/60" : ""}`}>
+                    className={`flex items-center gap-3 px-4 py-3 hover:bg-slate-50 transition-colors ${i < list.length - 1 ? "border-b border-slate-100" : ""}`}>
                     <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium text-slate-200 truncate">{a.item.title_az}</p>
+                      <p className="text-sm font-medium text-slate-800 truncate">{a.item.title_az}</p>
                       {(a.due_date || a.note) && (
-                        <p className="text-xs text-slate-500 mt-0.5">
+                        <p className="text-xs text-slate-400 mt-0.5">
                           {a.due_date && <span>📅 {new Date(a.due_date).toLocaleDateString("az")}</span>}
                           {a.note && <span className="ml-2 italic">{a.note}</span>}
                         </p>
                       )}
                     </div>
                     <button onClick={() => handleDelete(a.id)}
-                      className="text-xs text-slate-600 hover:text-red-400 transition-colors px-2 py-1 rounded hover:bg-slate-800 shrink-0">
+                      className="text-xs text-slate-400 hover:text-red-500 transition-colors px-2 py-1 rounded-lg hover:bg-red-50 shrink-0">
                       Sil
                     </button>
                   </div>
@@ -259,13 +259,13 @@ export default function AssignmentsPage() {
       {individual.length > 0 && (
         <section>
           <p className="text-xs font-semibold text-slate-500 uppercase tracking-widest mb-2 px-1">👤 Fərdi tə'yinatlar</p>
-          <div className="bg-slate-900 rounded-xl border border-slate-800 overflow-hidden">
+          <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
             {individual.map((a, i) => (
               <div key={a.id}
-                className={`flex items-center gap-3 px-4 py-3 ${i < individual.length - 1 ? "border-b border-slate-800/60" : ""}`}>
+                className={`flex items-center gap-3 px-4 py-3 hover:bg-slate-50 transition-colors ${i < individual.length - 1 ? "border-b border-slate-100" : ""}`}>
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium text-slate-200 truncate">{a.item.title_az}</p>
-                  <p className="text-xs text-slate-500 mt-0.5">
+                  <p className="text-sm font-medium text-slate-800 truncate">{a.item.title_az}</p>
+                  <p className="text-xs text-slate-400 mt-0.5">
                     {a.student?.name}
                     {a.due_date && <span className="ml-2">📅 {new Date(a.due_date).toLocaleDateString("az")}</span>}
                     {a.note && <span className="ml-2 italic">{a.note}</span>}

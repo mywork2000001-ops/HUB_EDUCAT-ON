@@ -3,5 +3,5 @@ export const metadata = {
 };
 
 export default function LearnLayout({ children }: { children: React.ReactNode }) {
-  return <div className="min-h-screen bg-slate-950">{children}</div>;
+  return <div className="min-h-screen bg-slate-50">{children}</div>;
 }

@@ -107,9 +107,9 @@ async function main() {
   ) {
     return db.resource.upsert({
       where:  { curriculum_id_slug: { curriculum_id, slug } },
-      update: { content_url, is_published: true, type, title_az, title_ru, metadata: metadata ?? null },
+      update: { content_url, is_published: true, type, title_az, title_ru, metadata: (metadata ?? null) as never },
       create: { curriculum_id, slug, type, title_az, title_ru, content_url,
-                is_published: true, metadata: metadata ?? null },
+                is_published: true, metadata: (metadata ?? null) as never },
     });
   }
 

@@ -99,6 +99,7 @@ ROOT: C:/Users/Administrator/Documents/Claude/Projects/
 │   1. Активация Gmail: добавить GMAIL_APP_PASSWORD в Vercel (Google Account → Security → App Passwords)
 │   2. Создать контент для Grade 6 Fəsil 2–9 (math-6-class-2..9 HTML-уроки)
 │   3. Интегрировать P003 React App (src/) — добавить sendToHub в TestViewPage.tsx
+│   4. Задеплоить обновлённый UI в Vercel (REST API v13/deployments с gitSource)
 │
 ├── index.html                          ← MASTER HUB v4.0.0
 │                                         Data-driven карточки из PLATFORMS[]
@@ -331,6 +332,7 @@ ROOT: C:/Users/Administrator/Documents/Claude/Projects/
   │      │                        │            │ нужно добавить GMAIL_APP_PASSWORD в Vercel вручную
   P005   │ Контент Grade 6        │ 🔄 WIP     │ 9 mövzu seeded; class-2..9 без content (нет HTML)
   P005   │ Vercel деплой          │ ✅ LIVE    │ hub-educat-on.vercel.app (REST API deploy, не CLI)
+  P005   │ UI Light Redesign      │ ✅ DONE    │ светлая тема: bg-slate-50/white, тени, чистый sidebar
 ─────────┴────────────────────────┴───────────┴───────────────
 
  HUB АРХИТЕКТУРА index.html v4.0.0
@@ -865,3 +867,35 @@ ROOT: C:/Users/Administrator/Documents/Claude/Projects/
     Document Version: 2.1 | Last Updated: 2026-05-28
     Architecture: Hierarchical Multi-Agent System with Autonomous Workflows
     Math Engine: KaTeX (primary) + MathJax (fallback) + MathML (a11y)
+
+════════════════════════════════════════════════════════════════════
+ ИНТЕГРАЦИЯ P001–P004 КОНТЕНТА В P005 (выполнено 2026-06-14)
+════════════════════════════════════════════════════════════════════
+
+  Скрипт: prisma/seed-content.ts  (npx tsx prisma/seed-content.ts)
+  Все источники — только папки Projects/P001..P004.
+
+  ЧТО ДОБАВЛЕНО В SUPABASE:
+  • Grade 5 / Riyaziyyat  → 90 индивид. уроков P002-5 (Fəsil 1–8 × Dərs 1–N)
+  • Grade 5 / Blok İmtahan→ новый subject; 28 тем P003 + 4 теста (p1-s01-t1..t4)
+  • Grade 5 / TAİM 2026   → новый subject; 47 тестов P004 (38+6+3)
+
+  URL-схема ресурсов:
+  • P002-5 урок  : /api/content/P002_Math_5_Darslik/math-5-class-{N}/Lesson-{N}.html
+  • P003 тема    : /api/content/P003_Block_Exam/app/public/lessons/topics/topic-{NN}.html
+  • P003 тест    : /api/content/P003_Block_Exam/app/public/lessons/tests/{file}.html
+  • P004 тест    : /api/content/P004_TAIM_2026/test-{N}.html
+
+  SYNC СКРИПТ: prisma/sync.ts  (npx tsx prisma/sync.ts)
+  Запускать после добавления/удаления любых HTML файлов в P001–P004.
+  Идемпотентен — безопасно запускать повторно.
+  Логика:
+    • Файл на диске, нет в БД       → добавляет Resource (upsert)
+    • Файл удалён с диска, есть в БД → снимает is_published
+    • Файл уже есть в БД             → пропускает (alreadySynced)
+
+  СЛЕДУЮЩИЕ ШАГИ ДЛЯ КОНТЕНТА:
+  • P002-6: написать уроки для Fəsil 2–8 (только class-1/Lesson-1 есть)
+    → после создания файлов запустить sync.ts — ресурсы добавятся автоматически
+  • P002-5 class-2: восстановить Lesson-6, Lesson-15, Lesson-16 (удалены с диска)
+  • P003: разблокировать тесты секции 02+ (сейчас только t1–t4 доступны)

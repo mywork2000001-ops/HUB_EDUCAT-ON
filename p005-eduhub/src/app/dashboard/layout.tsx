@@ -13,7 +13,7 @@ async function getAvailableGrades() {
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
   const grades = await getAvailableGrades();
   return (
-    <div className="flex h-screen overflow-hidden bg-slate-950">
+    <div className="flex h-screen overflow-hidden bg-slate-50">
       <AppSidebar grades={grades} />
       <div className="flex-1 overflow-y-auto min-w-0">{children}</div>
     </div>

@@ -29,7 +29,7 @@ export default async function LearnPage() {
   );
   const idArray = [...assignedIds];
 
-  /* ── Full topic data — using real Prisma schema field names ── */
+  /* ── Full topic data ── */
   const topics = idArray.length > 0
     ? await db.curriculumItem.findMany({
         where:   { id: { in: idArray } },
@@ -106,19 +106,19 @@ export default async function LearnPage() {
   const firstName = student.name.split(/[\s_]+/)[0];
 
   return (
-    <div className="min-h-screen bg-slate-950">
+    <div className="min-h-screen bg-slate-50">
 
       {/* ── Header ── */}
-      <header className="sticky top-0 z-10 bg-slate-950/95 backdrop-blur-sm border-b border-slate-800">
+      <header className="sticky top-0 z-10 bg-white border-b border-slate-200 shadow-sm">
         <div className="max-w-2xl mx-auto px-4 py-3 flex items-center gap-3">
-          <div className="w-7 h-7 rounded-lg bg-indigo-600 flex items-center justify-center
-                          text-white font-bold text-xs shrink-0">
+          <div className="w-8 h-8 rounded-lg bg-indigo-600 flex items-center justify-center
+                          text-white font-bold text-sm shrink-0 shadow-sm">
             E
           </div>
 
           <div className="flex-1 min-w-0">
-            <p className="text-sm font-semibold text-white leading-tight truncate">{student.name}</p>
-            <p className="text-[11px] text-slate-500 leading-tight">
+            <p className="text-sm font-semibold text-slate-900 leading-tight truncate">{student.name}</p>
+            <p className="text-[11px] text-slate-400 leading-tight">
               {student.class_name}
               {student.group_name ? ` · ${student.group_name}` : ""}
             </p>
@@ -128,7 +128,7 @@ export default async function LearnPage() {
 
           <form action="/api/student/auth/logout" method="POST">
             <button type="submit"
-              className="text-xs text-slate-500 hover:text-red-400 transition-colors px-2 py-1 rounded">
+              className="text-xs text-slate-400 hover:text-red-500 transition-colors px-2 py-1 rounded-lg hover:bg-red-50">
               {T.logout}
             </button>
           </form>
@@ -139,9 +139,9 @@ export default async function LearnPage() {
 
         {/* ── Greeting ── */}
         <div>
-          <h1 className="text-2xl font-bold text-white">
+          <h1 className="text-2xl font-bold text-slate-900">
             {T.hi},{" "}
-            <span className="text-indigo-400">{firstName}</span>! 👋
+            <span className="text-indigo-600">{firstName}</span>! 👋
           </h1>
           <p className="text-slate-500 text-sm mt-1">
             {lang === "ru"
@@ -152,44 +152,37 @@ export default async function LearnPage() {
 
         {/* ── Stat cards ── */}
         <div className="grid grid-cols-3 gap-3">
-          <div className="bg-slate-900 rounded-2xl border border-slate-800 p-4 text-center">
-            <div className="text-2xl mb-1.5">📚</div>
-            <div className="text-2xl font-bold text-indigo-400">{topics.length}</div>
-            <div className="text-[11px] text-slate-600 mt-0.5 leading-tight">{T.assigned}</div>
-          </div>
-          <div className="bg-slate-900 rounded-2xl border border-slate-800 p-4 text-center">
-            <div className="text-2xl mb-1.5">✅</div>
-            <div className="text-2xl font-bold text-green-400">{totalTests}</div>
-            <div className="text-[11px] text-slate-600 mt-0.5 leading-tight">{T.tests}</div>
-          </div>
-          <div className="bg-slate-900 rounded-2xl border border-slate-800 p-4 text-center">
-            <div className="text-2xl mb-1.5">📊</div>
-            <div className={`text-2xl font-bold ${
-              avgScore >= 70 ? "text-green-400"
-              : avgScore >= 50 ? "text-yellow-400"
-              : avgScore > 0 ? "text-red-400"
-              : "text-slate-600"
-            }`}>
-              {avgScore > 0 ? `${avgScore}%` : "—"}
+          {[
+            { emoji: "📚", val: topics.length,                         label: T.assigned, color: "text-indigo-600",  bg: "bg-indigo-50" },
+            { emoji: "✅", val: totalTests,                             label: T.tests,    color: "text-emerald-600", bg: "bg-emerald-50" },
+            { emoji: "📊", val: avgScore > 0 ? `${avgScore}%` : "—",  label: T.avg,
+              color: avgScore >= 70 ? "text-emerald-600" : avgScore >= 50 ? "text-amber-600" : avgScore > 0 ? "text-rose-600" : "text-slate-400",
+              bg: "bg-white" },
+          ].map(({ emoji, val, label, color, bg }, i) => (
+            <div key={i} className={`${bg} rounded-2xl border border-slate-200 p-4 text-center shadow-sm`}>
+              <div className="text-2xl mb-1.5">{emoji}</div>
+              <div className={`text-2xl font-bold ${color}`}>{val}</div>
+              <div className="text-[11px] text-slate-400 mt-0.5 leading-tight">{label}</div>
             </div>
-            <div className="text-[11px] text-slate-600 mt-0.5 leading-tight">{T.avg}</div>
-          </div>
+          ))}
         </div>
 
         {/* ── Assigned topics ── */}
         <section>
           <div className="flex items-center gap-2 mb-3">
-            <h2 className="text-sm font-semibold text-slate-300">{T.myTopics}</h2>
+            <h2 className="text-sm font-semibold text-slate-700">{T.myTopics}</h2>
             {topics.length > 0 && (
-              <span className="text-xs text-slate-600">({topics.length})</span>
+              <span className="text-xs text-slate-400 bg-slate-200 rounded-full px-2 py-0.5">
+                {topics.length}
+              </span>
             )}
           </div>
 
           {topics.length === 0 ? (
-            <div className="bg-slate-900 rounded-2xl border border-slate-800 py-14 text-center">
+            <div className="bg-white rounded-2xl border border-slate-200 py-14 text-center shadow-sm">
               <p className="text-5xl mb-3">📋</p>
-              <p className="text-slate-400 text-sm font-medium">{T.noTopics}</p>
-              <p className="text-slate-700 text-xs mt-1.5">
+              <p className="text-slate-500 text-sm font-medium">{T.noTopics}</p>
+              <p className="text-slate-400 text-xs mt-1.5">
                 {lang === "ru" ? "Обратитесь к вашему учителю" : "Müəllimə müraciət edin"}
               </p>
             </div>
@@ -197,44 +190,42 @@ export default async function LearnPage() {
             <div className="space-y-5">
               {groups.map((group, gi) => (
                 <div key={gi}>
-                  {/* Subject header */}
                   <div className="flex items-center gap-2 mb-2 px-1">
                     <span className="text-lg">{group.icon ?? "📚"}</span>
-                    <span className="text-xs font-semibold text-slate-400 uppercase tracking-wide">
+                    <span className="text-xs font-semibold text-slate-500 uppercase tracking-wide">
                       {lang === "ru" ? group.label.ru : group.label.az}
                     </span>
-                    <span className="text-xs text-slate-700 ml-auto">
+                    <span className="text-xs text-slate-400 ml-auto">
                       {group.items.length}{" "}
                       {lang === "ru" ? "тем" : "mövzu"}
                     </span>
                   </div>
 
-                  {/* Topic cards */}
                   <div className="space-y-2">
                     {group.items.map((topic, ti) => (
                       <Link
                         key={topic.id}
                         href={`/learn/${group.gradeSlug}/${group.subjSlug}/${topic.slug}`}
-                        className="flex items-center gap-3.5 p-4 rounded-xl bg-slate-900
-                                   border border-slate-800 hover:border-indigo-500/50
-                                   hover:bg-slate-800/80 transition-all active:scale-[0.99] group"
+                        className="flex items-center gap-3.5 p-4 rounded-xl bg-white
+                                   border border-slate-200 hover:border-indigo-300
+                                   hover:shadow-sm transition-all active:scale-[0.99] group shadow-sm"
                       >
-                        <span className="w-8 h-8 rounded-full bg-slate-800 flex items-center
-                                         justify-center text-xs font-bold text-indigo-400
-                                         group-hover:bg-indigo-950 shrink-0 transition-colors">
+                        <span className="w-8 h-8 rounded-full bg-indigo-100 flex items-center
+                                         justify-center text-xs font-bold text-indigo-600
+                                         group-hover:bg-indigo-200 shrink-0 transition-colors">
                           {ti + 1}
                         </span>
                         <div className="flex-1 min-w-0">
-                          <p className="text-sm font-medium text-slate-200 group-hover:text-white truncate">
+                          <p className="text-sm font-medium text-slate-800 group-hover:text-indigo-700 truncate">
                             {lang === "ru" ? topic.title_ru : topic.title_az}
                           </p>
                           {topic._count.resources > 0 && (
-                            <p className="text-xs text-slate-600 mt-0.5">
+                            <p className="text-xs text-slate-400 mt-0.5">
                               {topic._count.resources} {T.resources}
                             </p>
                           )}
                         </div>
-                        <svg className="w-4 h-4 text-slate-600 group-hover:text-indigo-400 transition-colors shrink-0"
+                        <svg className="w-4 h-4 text-slate-300 group-hover:text-indigo-500 transition-colors shrink-0"
                           fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                           <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
                         </svg>
@@ -250,21 +241,21 @@ export default async function LearnPage() {
         {/* ── Recent results ── */}
         {recentResults.length > 0 && (
           <section>
-            <h2 className="text-sm font-semibold text-slate-300 mb-3">{T.recent}</h2>
-            <div className="bg-slate-900 rounded-2xl border border-slate-800 overflow-hidden">
+            <h2 className="text-sm font-semibold text-slate-700 mb-3">{T.recent}</h2>
+            <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm">
               {recentResults.map((r, i) => (
                 <div key={i}
-                  className="flex items-center gap-3 px-4 py-3.5 border-b border-slate-800/50 last:border-0">
+                  className="flex items-center gap-3 px-4 py-3.5 border-b border-slate-100 last:border-0 hover:bg-slate-50 transition-colors">
                   <span className="w-2 h-2 rounded-full shrink-0 mt-0.5"
                     style={{ backgroundColor: PLATFORM_COLOR[r.platform] ?? "#6366f1" }} />
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm text-slate-300 truncate">
+                    <p className="text-sm text-slate-700 truncate">
                       {r.lesson_title || r.platform}
                     </p>
-                    <p className="text-xs text-slate-600 mt-0.5 flex items-center gap-1.5">
+                    <p className="text-xs text-slate-400 mt-0.5 flex items-center gap-1.5">
                       <span className="text-[10px] font-medium px-1.5 py-0.5 rounded"
                         style={{
-                          backgroundColor: `${PLATFORM_COLOR[r.platform] ?? "#6366f1"}20`,
+                          backgroundColor: `${PLATFORM_COLOR[r.platform] ?? "#6366f1"}15`,
                           color: PLATFORM_COLOR[r.platform] ?? "#6366f1",
                         }}>
                         {r.platform}
@@ -277,14 +268,14 @@ export default async function LearnPage() {
                   </div>
                   <div className="text-right shrink-0">
                     <span className={`text-base font-bold ${
-                      r.percent >= 70 ? "text-green-400"
-                      : r.percent >= 50 ? "text-yellow-400"
-                      : "text-red-400"
+                      r.percent >= 70 ? "text-emerald-600"
+                      : r.percent >= 50 ? "text-amber-600"
+                      : "text-rose-600"
                     }`}>
                       {r.percent}%
                     </span>
                     {r.percent >= 70 && (
-                      <p className="text-[10px] text-green-700 mt-0.5">
+                      <p className="text-[10px] text-emerald-500 mt-0.5">
                         {lang === "ru" ? "Сдал" : "Keçdi"}
                       </p>
                     )}
@@ -297,7 +288,7 @@ export default async function LearnPage() {
 
         {/* ── Footer ── */}
         <div className="pb-4 text-center">
-          <Link href="/" className="text-xs text-slate-700 hover:text-slate-400 transition-colors">
+          <Link href="/" className="text-xs text-slate-300 hover:text-slate-500 transition-colors">
             EduHub © 2026
           </Link>
         </div>

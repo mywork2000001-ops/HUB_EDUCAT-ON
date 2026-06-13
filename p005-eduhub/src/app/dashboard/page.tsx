@@ -80,22 +80,22 @@ export default async function DashboardPage() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-6">
 
         {/* Registration summary */}
-        <div className="bg-slate-900 rounded-xl border border-slate-800/70 p-5">
-          <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-4">Qeydiyyat</p>
-          <div className="space-y-3">
+        <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-5">
+          <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-4">Qeydiyyat</p>
+          <div className="space-y-2">
             {[
               { label: "Qeydiyyatlı şagird", val: sys.studentCount, icon: "👥", href: "/dashboard/manage/students" },
               { label: "Aktiv sinif",         val: sys.gradeCount,    icon: "🏫", href: "/dashboard/classes" },
               { label: "Tə'yinat",            val: sys.assignCount,   icon: "📋", href: "/dashboard/manage/assignments" },
             ].map(({ label, val, icon, href }) => (
               <Link key={label} href={href}
-                className="flex items-center gap-3 p-3 rounded-lg bg-slate-800/40 hover:bg-slate-800
-                           transition-colors group">
+                className="flex items-center gap-3 p-3 rounded-lg bg-slate-50 hover:bg-indigo-50
+                           hover:text-indigo-700 transition-colors group">
                 <span className="text-lg">{icon}</span>
                 <div className="flex-1 min-w-0">
-                  <p className="text-xs text-slate-500">{label}</p>
+                  <p className="text-xs text-slate-500 group-hover:text-indigo-600">{label}</p>
                 </div>
-                <span className="text-lg font-bold text-white group-hover:text-indigo-300 transition-colors">
+                <span className="text-lg font-bold text-slate-800 group-hover:text-indigo-700 transition-colors">
                   {val}
                 </span>
               </Link>
@@ -104,26 +104,26 @@ export default async function DashboardPage() {
         </div>
 
         {/* Platform breakdown */}
-        <div className="bg-slate-900 rounded-xl border border-slate-800/70 p-5">
+        <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-5">
           <div className="flex items-center justify-between mb-4">
-            <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Platforma üzrə</p>
+            <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Platforma üzrə</p>
             {d.last7 > 0 && (
-              <span className="text-xs text-slate-600">Bu həftə: {d.last7}</span>
+              <span className="text-xs text-slate-400">Bu həftə: {d.last7}</span>
             )}
           </div>
           {d.byPlatform.length === 0 ? (
-            <p className="text-slate-600 text-sm py-4 text-center">Hələ nəticə yoxdur</p>
+            <p className="text-slate-400 text-sm py-4 text-center">Hələ nəticə yoxdur</p>
           ) : (
             <div className="space-y-3">
               {d.byPlatform.map(({ platform, count }) => (
                 <div key={platform}>
-                  <div className="flex items-center justify-between mb-1">
-                    <span className="text-xs font-medium text-slate-300">
+                  <div className="flex items-center justify-between mb-1.5">
+                    <span className="text-xs font-medium text-slate-700">
                       {PLATFORM_LABEL[platform] ?? platform}
                     </span>
-                    <span className="text-xs text-slate-500">{count}</span>
+                    <span className="text-xs text-slate-400">{count}</span>
                   </div>
-                  <div className="h-1.5 bg-slate-800 rounded-full overflow-hidden">
+                  <div className="h-1.5 bg-slate-100 rounded-full overflow-hidden">
                     <div className="h-full rounded-full transition-all"
                       style={{
                         width: `${Math.round(count / d.total * 100)}%`,
@@ -137,22 +137,22 @@ export default async function DashboardPage() {
         </div>
 
         {/* Quick actions */}
-        <div className="bg-slate-900 rounded-xl border border-slate-800/70 p-5">
-          <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-4">Sürətli əməliyyat</p>
+        <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-5">
+          <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-4">Sürətli əməliyyat</p>
           <div className="space-y-2">
             {[
-              { href: "/dashboard/manage/students/new", label: "Yeni şagird əlavə et",   icon: "👤", color: "hover:bg-indigo-950/50 hover:border-indigo-800/50 hover:text-indigo-300" },
-              { href: "/dashboard/manage/assignments",   label: "Mövzu tə'yin et",         icon: "📋", color: "hover:bg-blue-950/50 hover:border-blue-800/50 hover:text-blue-300"     },
-              { href: "/dashboard/manage/subjects",      label: "Fənn idarə et",           icon: "📚", color: "hover:bg-violet-950/50 hover:border-violet-800/50 hover:text-violet-300"},
-              { href: "/dashboard/analytics",            label: "Analitikaya bax",         icon: "📊", color: "hover:bg-emerald-950/50 hover:border-emerald-800/50 hover:text-emerald-300"},
-            ].map(({ href, label, icon, color }) => (
+              { href: "/dashboard/manage/students/new", label: "Yeni şagird əlavə et",   icon: "👤", accent: "hover:bg-indigo-50 hover:text-indigo-700 hover:border-indigo-200" },
+              { href: "/dashboard/manage/assignments",   label: "Mövzu tə'yin et",         icon: "📋", accent: "hover:bg-blue-50 hover:text-blue-700 hover:border-blue-200"     },
+              { href: "/dashboard/manage/subjects",      label: "Fənn idarə et",           icon: "📚", accent: "hover:bg-violet-50 hover:text-violet-700 hover:border-violet-200"},
+              { href: "/dashboard/analytics",            label: "Analitikaya bax",         icon: "📊", accent: "hover:bg-emerald-50 hover:text-emerald-700 hover:border-emerald-200"},
+            ].map(({ href, label, icon, accent }) => (
               <Link key={href} href={href}
                 className={`flex items-center gap-3 px-3 py-2.5 rounded-lg
-                            border border-slate-800/40 bg-slate-800/20 text-slate-400 text-sm
-                            transition-all ${color}`}>
+                            border border-slate-200 bg-slate-50 text-slate-600 text-sm
+                            transition-all ${accent}`}>
                 <span className="text-base">{icon}</span>
-                <span>{label}</span>
-                <span className="ml-auto text-xs opacity-50">→</span>
+                <span className="font-medium">{label}</span>
+                <span className="ml-auto text-xs opacity-40">→</span>
               </Link>
             ))}
           </div>
@@ -160,18 +160,18 @@ export default async function DashboardPage() {
       </div>
 
       {/* ── Recent results ── */}
-      <div className="bg-slate-900 rounded-xl border border-slate-800/70 overflow-hidden">
-        <div className="flex items-center justify-between px-5 py-4 border-b border-slate-800/70">
+      <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+        <div className="flex items-center justify-between px-5 py-4 border-b border-slate-100">
           <div>
-            <h2 className="text-sm font-semibold text-white">Son nəticələr</h2>
+            <h2 className="text-sm font-semibold text-slate-900">Son nəticələr</h2>
             {d.total > 0 && (
-              <p className="text-xs text-slate-600 mt-0.5">Ən son {Math.min(d.recent.length, 10)} qeyd</p>
+              <p className="text-xs text-slate-400 mt-0.5">Ən son {Math.min(d.recent.length, 10)} qeyd</p>
             )}
           </div>
           {d.total > 0 && (
             <Link href="/dashboard/results"
-              className="text-xs text-indigo-400 hover:text-indigo-300 transition-colors px-3 py-1.5
-                         rounded-lg hover:bg-indigo-950/30">
+              className="text-xs text-indigo-600 hover:text-indigo-700 transition-colors px-3 py-1.5
+                         rounded-lg hover:bg-indigo-50 font-medium">
               Hamısını gör →
             </Link>
           )}
@@ -180,61 +180,61 @@ export default async function DashboardPage() {
         {d.recent.length === 0 ? (
           <div className="py-16 text-center">
             <p className="text-4xl mb-3">📊</p>
-            <p className="text-slate-500 text-sm">Şagirdlər test bitirdikdə burada görünəcək.</p>
+            <p className="text-slate-400 text-sm">Şagirdlər test bitirdikdə burada görünəcək.</p>
           </div>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="bg-slate-950/40 border-b border-slate-800/50">
-                  <th className="px-5 py-3 text-left text-[11px] font-semibold text-slate-500 uppercase tracking-wider">Şagird</th>
-                  <th className="px-3 py-3 text-left text-[11px] font-semibold text-slate-500 uppercase tracking-wider hidden sm:table-cell">Sinif</th>
-                  <th className="px-3 py-3 text-left text-[11px] font-semibold text-slate-500 uppercase tracking-wider">Platform</th>
-                  <th className="px-3 py-3 text-left text-[11px] font-semibold text-slate-500 uppercase tracking-wider hidden md:table-cell">Mövzu</th>
-                  <th className="px-3 py-3 text-right text-[11px] font-semibold text-slate-500 uppercase tracking-wider">Nəticə</th>
-                  <th className="px-3 py-3 text-right text-[11px] font-semibold text-slate-500 uppercase tracking-wider hidden lg:table-cell">Tarix</th>
+                <tr className="bg-slate-50 border-b border-slate-100">
+                  <th className="px-5 py-3 text-left text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Şagird</th>
+                  <th className="px-3 py-3 text-left text-[11px] font-semibold text-slate-400 uppercase tracking-wider hidden sm:table-cell">Sinif</th>
+                  <th className="px-3 py-3 text-left text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Platform</th>
+                  <th className="px-3 py-3 text-left text-[11px] font-semibold text-slate-400 uppercase tracking-wider hidden md:table-cell">Mövzu</th>
+                  <th className="px-3 py-3 text-right text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Nəticə</th>
+                  <th className="px-3 py-3 text-right text-[11px] font-semibold text-slate-400 uppercase tracking-wider hidden lg:table-cell">Tarix</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-800/40">
+              <tbody className="divide-y divide-slate-100">
                 {d.recent.map((r, i) => (
                   <tr key={r.id}
-                    className={`transition-colors hover:bg-slate-800/30 ${i % 2 === 0 ? "" : "bg-slate-900/30"}`}>
+                    className={`transition-colors hover:bg-slate-50 ${i % 2 === 0 ? "bg-white" : "bg-slate-50/40"}`}>
                     <td className="px-5 py-3.5">
                       <div className="flex items-center gap-2.5">
-                        <div className="w-7 h-7 rounded-full bg-indigo-950 flex items-center justify-center
-                                        text-indigo-400 text-xs font-bold shrink-0">
+                        <div className="w-7 h-7 rounded-full bg-indigo-100 flex items-center justify-center
+                                        text-indigo-600 text-xs font-bold shrink-0">
                           {r.student_name.charAt(0).toUpperCase()}
                         </div>
-                        <span className="text-white font-medium">{r.student_name}</span>
+                        <span className="text-slate-800 font-medium">{r.student_name}</span>
                       </div>
                     </td>
                     <td className="px-3 py-3.5 hidden sm:table-cell">
-                      <span className="text-xs text-slate-500 bg-slate-800/60 px-2 py-0.5 rounded">
+                      <span className="text-xs text-slate-500 bg-slate-100 px-2 py-0.5 rounded-full">
                         {r.student_class || "—"}
                       </span>
                     </td>
                     <td className="px-3 py-3.5">
                       <span className="text-xs font-medium px-2 py-0.5 rounded-full border"
                         style={{
-                          backgroundColor: `${PLATFORM_HEX[r.platform] ?? "#6366f1"}15`,
-                          borderColor:     `${PLATFORM_HEX[r.platform] ?? "#6366f1"}40`,
+                          backgroundColor: `${PLATFORM_HEX[r.platform] ?? "#6366f1"}12`,
+                          borderColor:     `${PLATFORM_HEX[r.platform] ?? "#6366f1"}30`,
                           color:            PLATFORM_HEX[r.platform] ?? "#6366f1",
                         }}>
                         {r.platform}
                       </span>
                     </td>
-                    <td className="px-3 py-3.5 text-slate-400 text-xs max-w-[160px] truncate hidden md:table-cell">
+                    <td className="px-3 py-3.5 text-slate-500 text-xs max-w-[160px] truncate hidden md:table-cell">
                       {r.lesson_title || "—"}
                     </td>
                     <td className="px-3 py-3.5 text-right">
                       <div className="flex flex-col items-end gap-0.5">
                         <span className={`text-sm font-bold ${
-                          r.percent >= 70 ? "text-emerald-400" : r.percent >= 50 ? "text-amber-400" : "text-rose-400"
+                          r.percent >= 70 ? "text-emerald-600" : r.percent >= 50 ? "text-amber-600" : "text-rose-600"
                         }`}>{r.percent}%</span>
-                        <span className="text-[10px] text-slate-600">{r.score}/{r.total}</span>
+                        <span className="text-[10px] text-slate-400">{r.score}/{r.total}</span>
                       </div>
                     </td>
-                    <td className="px-3 py-3.5 text-right text-xs text-slate-600 hidden lg:table-cell">
+                    <td className="px-3 py-3.5 text-right text-xs text-slate-400 hidden lg:table-cell">
                       {r.finished_at
                         ? new Date(r.finished_at).toLocaleDateString("az-AZ", { day: "2-digit", month: "short" })
                         : "—"}

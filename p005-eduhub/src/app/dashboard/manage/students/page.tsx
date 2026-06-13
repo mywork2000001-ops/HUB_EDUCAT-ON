@@ -101,34 +101,34 @@ export default function StudentsManagePage() {
 
   function StudentRow({ s }: { s: Student }) {
     return (
-      <div className="flex items-start gap-3 px-4 py-3 border-b border-slate-800/50 last:border-0 hover:bg-slate-800/20 transition-colors">
-        <div className="w-9 h-9 rounded-full bg-indigo-950 flex items-center justify-center
-                        text-indigo-400 text-sm font-bold shrink-0 mt-0.5">
+      <div className="flex items-start gap-3 px-4 py-3 border-b border-slate-100 last:border-0 hover:bg-slate-50 transition-colors">
+        <div className="w-9 h-9 rounded-full bg-indigo-100 flex items-center justify-center
+                        text-indigo-600 text-sm font-bold shrink-0 mt-0.5">
           {s.name.charAt(0).toUpperCase()}
         </div>
         <div className="flex-1 min-w-0 grid grid-cols-1 sm:grid-cols-4 gap-1 sm:gap-3 items-center">
           <div className="min-w-0">
-            <p className="text-sm font-medium text-slate-200 truncate">{s.name}</p>
-            <p className="text-xs text-slate-500 truncate">{s.class_name}{s.group_name ? ` · ${s.group_name}` : ""}</p>
+            <p className="text-sm font-medium text-slate-800 truncate">{s.name}</p>
+            <p className="text-xs text-slate-400 truncate">{s.class_name}{s.group_name ? ` · ${s.group_name}` : ""}</p>
           </div>
           <div className="sm:col-span-2">
-            <p className="text-xs text-slate-500 mb-0.5">E-poçt (ID)</p>
-            <p className="text-xs font-mono text-indigo-300 select-all truncate">{s.email}</p>
+            <p className="text-xs text-slate-400 mb-0.5">E-poçt (ID)</p>
+            <p className="text-xs font-mono text-indigo-600 select-all truncate">{s.email}</p>
           </div>
           <div className="flex items-center gap-2 justify-end flex-wrap">
-            <span className={`text-xs px-2 py-0.5 rounded-full border ${
+            <span className={`text-xs px-2 py-0.5 rounded-full border font-medium ${
               s.is_active
-                ? "bg-green-900/30 text-green-400 border-green-800/50"
-                : "bg-slate-800 text-slate-500 border-slate-700"
+                ? "bg-emerald-50 text-emerald-700 border-emerald-200"
+                : "bg-slate-100 text-slate-500 border-slate-200"
             }`}>
               {s.is_active ? "Aktiv" : "Deaktiv"}
             </span>
             <button type="button" onClick={() => resetPassword(s)}
-              className="text-xs text-amber-500 hover:text-amber-300 px-2 py-1 rounded hover:bg-amber-950/30 transition-colors shrink-0">
+              className="text-xs text-amber-600 hover:text-amber-700 px-2 py-1 rounded-lg hover:bg-amber-50 transition-colors shrink-0 font-medium">
               🔑 Şifrə
             </button>
             <Link href={`/dashboard/manage/students/${s.id}`}
-              className="text-xs text-slate-500 hover:text-slate-300 px-2 py-1 rounded hover:bg-slate-800 transition-colors shrink-0">
+              className="text-xs text-slate-400 hover:text-slate-700 px-2 py-1 rounded-lg hover:bg-slate-100 transition-colors shrink-0">
               Düzəlt
             </Link>
           </div>
@@ -142,21 +142,21 @@ export default function StudentsManagePage() {
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-white">Şagirdlər</h1>
+          <h1 className="text-2xl font-bold text-slate-900">Şagirdlər</h1>
           <p className="text-slate-400 text-sm mt-0.5">{students.length} şagird qeydiyyatda</p>
         </div>
         <Link href="/dashboard/manage/students/new"
-          className="px-4 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-medium transition-colors">
+          className="px-4 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium transition-colors shadow-sm">
           + Yeni şagird
         </Link>
       </div>
 
       {/* Tabs */}
-      <div className="flex gap-1 mb-5 bg-slate-900 rounded-xl p-1 w-fit">
+      <div className="flex gap-1 mb-5 bg-slate-100 rounded-xl p-1 w-fit">
         {TABS.map((t) => (
           <button key={t.id} onClick={() => setTab(t.id)}
             className={`px-4 py-1.5 rounded-lg text-sm font-medium transition-colors ${
-              tab === t.id ? "bg-indigo-600 text-white" : "text-slate-400 hover:text-white"
+              tab === t.id ? "bg-white text-slate-900 shadow-sm" : "text-slate-500 hover:text-slate-700"
             }`}>
             {t.label}
           </button>
@@ -164,13 +164,13 @@ export default function StudentsManagePage() {
       </div>
 
       {loading ? (
-        <div className="py-16 text-center text-slate-500 text-sm">Yüklənir…</div>
+        <div className="py-16 text-center text-slate-400 text-sm">Yüklənir…</div>
       ) : students.length === 0 ? (
-        <div className="py-16 rounded-2xl bg-slate-900 border border-slate-800 text-center">
+        <div className="py-16 rounded-2xl bg-white border border-slate-200 shadow-sm text-center">
           <p className="text-4xl mb-3">👥</p>
-          <p className="text-slate-400 text-sm">Hələ şagird əlavə edilməyib.</p>
+          <p className="text-slate-500 text-sm">Hələ şagird əlavə edilməyib.</p>
           <Link href="/dashboard/manage/students/new"
-            className="inline-block mt-4 px-4 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white text-sm transition-colors">
+            className="inline-block mt-4 px-4 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white text-sm transition-colors shadow-sm">
             İlk şagirdi əlavə et
           </Link>
         </div>
@@ -179,16 +179,16 @@ export default function StudentsManagePage() {
           {Object.entries(byClass).map(([className, list]) => (
             <section key={className}>
               <div className="flex items-center gap-3 mb-2 px-1">
-                <h2 className="text-xs font-semibold text-slate-400 uppercase tracking-widest">
+                <h2 className="text-xs font-semibold text-slate-500 uppercase tracking-widest">
                   🏫 {className} sinfi — {list.length} şagird
                 </h2>
                 <button onClick={() => printCredentials(list, `${className} sinfi`)}
-                  className="ml-auto text-xs text-slate-500 hover:text-slate-300 px-2.5 py-1 rounded-lg
-                             bg-slate-800 hover:bg-slate-700 transition-colors flex items-center gap-1">
+                  className="ml-auto text-xs text-slate-500 hover:text-slate-700 px-2.5 py-1 rounded-lg
+                             bg-white border border-slate-200 hover:border-slate-300 transition-colors flex items-center gap-1 shadow-sm">
                   🖨️ Çap et
                 </button>
               </div>
-              <div className="bg-slate-900 rounded-xl border border-slate-800 overflow-hidden">
+              <div className="bg-white rounded-xl border border-slate-200 overflow-hidden shadow-sm">
                 {list.map((s) => <StudentRow key={s.id} s={s} />)}
               </div>
             </section>
@@ -196,7 +196,7 @@ export default function StudentsManagePage() {
         </div>
       ) : tab === "group" ? (
         Object.keys(byGroup).length === 0 ? (
-          <div className="py-16 rounded-2xl bg-slate-900 border border-slate-800 text-center">
+          <div className="py-16 rounded-2xl bg-white border border-slate-200 shadow-sm text-center">
             <p className="text-slate-400 text-sm">Qrupa aid şagird yoxdur.</p>
           </div>
         ) : (
@@ -204,16 +204,16 @@ export default function StudentsManagePage() {
             {Object.entries(byGroup).map(([groupKey, list]) => (
               <section key={groupKey}>
                 <div className="flex items-center gap-3 mb-2 px-1">
-                  <h2 className="text-xs font-semibold text-slate-400 uppercase tracking-widest">
+                  <h2 className="text-xs font-semibold text-slate-500 uppercase tracking-widest">
                     👥 {groupKey} — {list.length} şagird
                   </h2>
                   <button onClick={() => printCredentials(list, groupKey)}
-                    className="ml-auto text-xs text-slate-500 hover:text-slate-300 px-2.5 py-1 rounded-lg
-                               bg-slate-800 hover:bg-slate-700 transition-colors">
+                    className="ml-auto text-xs text-slate-500 hover:text-slate-700 px-2.5 py-1 rounded-lg
+                               bg-white border border-slate-200 hover:border-slate-300 transition-colors shadow-sm">
                     🖨️ Çap et
                   </button>
                 </div>
-                <div className="bg-slate-900 rounded-xl border border-slate-800 overflow-hidden">
+                <div className="bg-white rounded-xl border border-slate-200 overflow-hidden shadow-sm">
                   {list.map((s) => <StudentRow key={s.id} s={s} />)}
                 </div>
               </section>
@@ -223,16 +223,16 @@ export default function StudentsManagePage() {
       ) : (
         <div className="space-y-5">
           <div className="flex items-center gap-3 mb-2 px-1">
-            <h2 className="text-xs font-semibold text-slate-400 uppercase tracking-widest">
+            <h2 className="text-xs font-semibold text-slate-500 uppercase tracking-widest">
               👤 Bütün şagirdlər — {students.length} nəfər
             </h2>
             <button onClick={() => printCredentials(students, "Bütün şagirdlər")}
-              className="ml-auto text-xs text-slate-500 hover:text-slate-300 px-2.5 py-1 rounded-lg
-                         bg-slate-800 hover:bg-slate-700 transition-colors">
+              className="ml-auto text-xs text-slate-500 hover:text-slate-700 px-2.5 py-1 rounded-lg
+                         bg-white border border-slate-200 hover:border-slate-300 transition-colors shadow-sm">
               🖨️ Hamısını çap et
             </button>
           </div>
-          <div className="bg-slate-900 rounded-xl border border-slate-800 overflow-hidden">
+          <div className="bg-white rounded-xl border border-slate-200 overflow-hidden shadow-sm">
             {students.map((s) => <StudentRow key={s.id} s={s} />)}
           </div>
         </div>
@@ -240,47 +240,47 @@ export default function StudentsManagePage() {
 
       {/* ── Reset password modal ── */}
       {modal && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+        <div className="fixed inset-0 bg-black/30 backdrop-blur-sm z-50 flex items-center justify-center p-4"
           onClick={(e) => { if (e.target === e.currentTarget) setModal(null); }}>
-          <div className="bg-slate-900 rounded-2xl border border-slate-800 p-6 w-full max-w-sm shadow-2xl">
-            <h3 className="text-base font-bold text-white mb-1">Şifrəni sıfırla</h3>
-            <p className="text-xs text-slate-500 mb-5">{modal.student.name} · {modal.student.email}</p>
+          <div className="bg-white rounded-2xl border border-slate-200 p-6 w-full max-w-sm shadow-xl">
+            <h3 className="text-base font-bold text-slate-900 mb-1">Şifrəni sıfırla</h3>
+            <p className="text-xs text-slate-400 mb-5">{modal.student.name} · {modal.student.email}</p>
 
             {modal.loading ? (
-              <div className="py-8 text-center text-slate-500 text-sm">Yeni şifrə yaradılır…</div>
+              <div className="py-8 text-center text-slate-400 text-sm">Yeni şifrə yaradılır…</div>
             ) : modal.newPassword ? (
               <>
-                <div className="bg-amber-900/20 border border-amber-700/40 rounded-xl px-4 py-3 mb-4">
-                  <p className="text-xs text-amber-500 mb-1.5">Yeni şifrə (bir dəfə göstərilir)</p>
+                <div className="bg-amber-50 border border-amber-200 rounded-xl px-4 py-3 mb-4">
+                  <p className="text-xs text-amber-600 mb-1.5">Yeni şifrə (bir dəfə göstərilir)</p>
                   <div className="flex items-center gap-3">
-                    <p className="text-lg font-mono font-bold text-amber-300 tracking-widest select-all flex-1">
+                    <p className="text-lg font-mono font-bold text-amber-700 tracking-widest select-all flex-1">
                       {modal.newPassword}
                     </p>
                     <button type="button" onClick={copyPassword}
-                      className="text-xs text-slate-400 hover:text-white px-2.5 py-1.5 rounded-lg
-                                 bg-slate-800 hover:bg-slate-700 transition-colors whitespace-nowrap">
+                      className="text-xs text-slate-500 hover:text-slate-900 px-2.5 py-1.5 rounded-lg
+                                 bg-white border border-slate-200 hover:border-slate-300 transition-colors whitespace-nowrap shadow-sm">
                       {copied ? "✓ Kopyalandı" : "Kopyala"}
                     </button>
                   </div>
                 </div>
-                <p className="text-xs text-slate-600 mb-5 text-center">Şagirdə bu şifrəni ayrıca bildirin</p>
+                <p className="text-xs text-slate-400 mb-5 text-center">Şagirdə bu şifrəni ayrıca bildirin</p>
                 <button type="button" onClick={() => setModal(null)}
-                  className="w-full px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-sm font-medium transition-colors">
+                  className="w-full px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-sm font-medium transition-colors">
                   Bağla
                 </button>
               </>
             ) : (
               <>
-                <p className="text-sm text-slate-400 mb-5">
+                <p className="text-sm text-slate-600 mb-5">
                   Bu şagirdin şifrəsi avtomatik olaraq yenilənəcək. Köhnə şifrə artıq işləməyəcək.
                 </p>
                 <div className="flex gap-3">
                   <button type="button" onClick={() => setModal(null)}
-                    className="flex-1 px-4 py-2.5 rounded-xl border border-slate-700 hover:bg-slate-800 text-slate-300 text-sm font-medium transition-colors">
+                    className="flex-1 px-4 py-2.5 rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-600 text-sm font-medium transition-colors">
                     Ləğv et
                   </button>
                   <button type="button" onClick={() => resetPassword(modal.student)}
-                    className="flex-1 px-4 py-2.5 rounded-xl bg-amber-600 hover:bg-amber-500 text-white text-sm font-medium transition-colors">
+                    className="flex-1 px-4 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-white text-sm font-medium transition-colors shadow-sm">
                     Yenilə
                   </button>
                 </div>

@@ -13,13 +13,13 @@ interface Props {
   trend?:   { value: number; label: string };
 }
 
-const COLORS: Record<Color, { card: string; icon: string; text: string }> = {
-  indigo:  { card: "border-indigo-800/40",  icon: "bg-indigo-950/80 text-indigo-400",  text: "text-indigo-400"  },
-  blue:    { card: "border-blue-800/40",    icon: "bg-blue-950/80 text-blue-400",      text: "text-blue-400"    },
-  violet:  { card: "border-violet-800/40",  icon: "bg-violet-950/80 text-violet-400",  text: "text-violet-400"  },
-  emerald: { card: "border-emerald-800/40", icon: "bg-emerald-950/80 text-emerald-400",text: "text-emerald-400" },
-  amber:   { card: "border-amber-800/40",   icon: "bg-amber-950/80 text-amber-400",    text: "text-amber-400"   },
-  rose:    { card: "border-rose-800/40",    icon: "bg-rose-950/80 text-rose-400",      text: "text-rose-400"    },
+const COLORS: Record<Color, { iconBg: string; iconText: string; val: string }> = {
+  indigo:  { iconBg: "bg-indigo-100",  iconText: "text-indigo-600",  val: "text-indigo-600"  },
+  blue:    { iconBg: "bg-blue-100",    iconText: "text-blue-600",    val: "text-blue-600"    },
+  violet:  { iconBg: "bg-violet-100",  iconText: "text-violet-600",  val: "text-violet-600"  },
+  emerald: { iconBg: "bg-emerald-100", iconText: "text-emerald-600", val: "text-emerald-600" },
+  amber:   { iconBg: "bg-amber-100",   iconText: "text-amber-600",   val: "text-amber-600"   },
+  rose:    { iconBg: "bg-rose-100",    iconText: "text-rose-600",    val: "text-rose-600"    },
 };
 
 export function StatCard({ label, value, icon, sub, href, color = "indigo", trend }: Props) {
@@ -27,20 +27,19 @@ export function StatCard({ label, value, icon, sub, href, color = "indigo", tren
 
   const inner = (
     <div className={cn(
-      "bg-slate-900 rounded-xl border p-5 transition-all group",
-      c.card,
-      href && "hover:scale-[1.02] hover:shadow-lg hover:shadow-black/20 cursor-pointer",
+      "bg-white rounded-xl border border-slate-200 p-5 transition-all group shadow-sm",
+      href && "hover:shadow-md hover:border-slate-300 cursor-pointer",
     )}>
       <div className="flex items-start justify-between">
-        <div className={cn("w-10 h-10 rounded-xl flex items-center justify-center text-lg shrink-0", c.icon)}>
+        <div className={cn("w-10 h-10 rounded-xl flex items-center justify-center text-lg shrink-0", c.iconBg, c.iconText)}>
           {icon}
         </div>
         {trend && (
           <span className={cn(
             "text-xs font-semibold px-2 py-0.5 rounded-full",
             trend.value >= 0
-              ? "bg-emerald-950/50 text-emerald-400 border border-emerald-800/40"
-              : "bg-rose-950/50 text-rose-400 border border-rose-800/40",
+              ? "bg-emerald-50 text-emerald-700 border border-emerald-200"
+              : "bg-rose-50 text-rose-700 border border-rose-200",
           )}>
             {trend.value >= 0 ? "↑" : "↓"} {Math.abs(trend.value)}{trend.label}
           </span>
@@ -48,9 +47,9 @@ export function StatCard({ label, value, icon, sub, href, color = "indigo", tren
       </div>
 
       <div className="mt-4">
-        <p className="text-2xl font-bold text-white tracking-tight">{value}</p>
-        <p className="text-sm font-medium text-slate-300 mt-0.5">{label}</p>
-        {sub && <p className="text-xs text-slate-600 mt-1">{sub}</p>}
+        <p className={cn("text-2xl font-bold tracking-tight", c.val)}>{value}</p>
+        <p className="text-sm font-semibold text-slate-700 mt-0.5">{label}</p>
+        {sub && <p className="text-xs text-slate-400 mt-1">{sub}</p>}
       </div>
     </div>
   );
