@@ -1,7 +1,7 @@
 import { supabaseAdmin } from "@/lib/supabase";
 import { AiInsights } from "./AiInsights";
 
-export const revalidate = 300;
+export const revalidate = 60;
 
 const PLATFORM_LABEL: Record<string, string> = {
   P001: "DİM Testlər", P002: "Riyaziyyat Dərsliyi",

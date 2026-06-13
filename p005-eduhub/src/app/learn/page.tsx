@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import { cookies } from "next/headers";
 import { verifyStudentToken } from "@/lib/student-auth";
 import { getAssignedTopicIds } from "@/server/queries/assignments";
@@ -18,7 +19,7 @@ export default async function LearnPage() {
   const student = token ? await verifyStudentToken(token) : null;
   const lang    = (jar.get("eduhub-lang")?.value ?? "az") as "az" | "ru";
 
-  if (!student) return null;
+  if (!student) redirect("/learn/login");
 
   /* ── Assigned topic IDs ── */
   const assignedIds = await getAssignedTopicIds(

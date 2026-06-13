@@ -2,13 +2,15 @@ import { NextRequest, NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabase";
 import { sendResultNotification } from "@/lib/notify-email";
 
-const ALLOWED_ORIGINS = [
+const PROD_ORIGINS = [
   "https://ferid-hesenov.github.io",
   "https://mywork2000001-ops.github.io",
   "https://hub-educat-on.vercel.app",
-  "http://localhost:3000",
-  "http://localhost:3001",
 ];
+const DEV_ORIGINS = ["http://localhost:3000", "http://localhost:3001"];
+const ALLOWED_ORIGINS = process.env.NODE_ENV === "production"
+  ? PROD_ORIGINS
+  : [...PROD_ORIGINS, ...DEV_ORIGINS];
 
 function corsHeaders(req: NextRequest) {
   const origin = req.headers.get("origin") ?? "";

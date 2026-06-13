@@ -51,11 +51,14 @@ export function AppSidebar({ grades }: { grades: GradeItem[] }) {
       <nav className="flex-1 overflow-y-auto p-3 space-y-0.5">
 
         {/* Overview */}
-        <div className="mb-3">
-          {navLink("/dashboard", "📊", "İcmal", true)}
+        <div className="mb-1">
+          <p className="px-3 py-1.5 text-[10px] font-semibold uppercase tracking-widest text-slate-700">
+            Ümumi baxış
+          </p>
+          {navLink("/dashboard", "🏠", "İcmal", true)}
           {navLink("/dashboard/results", "📋", "Nəticələr")}
-          {navLink("/dashboard/students", "👥", "Statistika")}
-          {navLink("/dashboard/analytics", "📉", "Analitika")}
+          {navLink("/dashboard/students", "👥", "Şagird fəaliyyəti")}
+          {navLink("/dashboard/analytics", "📊", "Analitika")}
           {navLink("/dashboard/progress", "📈", "Proqres")}
         </div>
 
