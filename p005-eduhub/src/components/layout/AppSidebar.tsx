@@ -107,6 +107,7 @@ export function AppSidebar({ grades }: { grades: GradeItem[] }) {
 
         {sectionLabel("İdarəetmə")}
         {[
+          { href: "/dashboard/manage/classes",     icon: "🏫", label: "Siniflər & Qruplar" },
           { href: "/dashboard/manage/subjects",    icon: "📚", label: "Fənlər" },
           { href: "/dashboard/manage/students",    icon: "👥", label: "Şagirdlər" },
           { href: "/dashboard/manage/teachers",    icon: "👨‍🏫", label: "Müəllimlər" },

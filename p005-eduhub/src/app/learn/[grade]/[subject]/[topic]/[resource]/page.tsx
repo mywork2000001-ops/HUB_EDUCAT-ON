@@ -1,11 +1,12 @@
 import { notFound } from "next/navigation";
 import { cookies } from "next/headers";
 import { StudentNav } from "@/components/student/StudentNav";
-import { getResourceBySlug } from "@/server/queries/resources";
+import { getResourceBySlug, getResourcesByTopic } from "@/server/queries/resources";
 import { verifyStudentToken } from "@/lib/student-auth";
 import { getAssignedTopicIds } from "@/server/queries/assignments";
 import { GRADES, SUBJECTS, RESOURCE_TYPE_LABELS, RESOURCE_TYPE_COLOR } from "@/lib/constants";
 import { extractYouTubeId, isDirectVideo } from "@/lib/utils";
+import { VideoExplanationPanel } from "@/components/student/VideoExplanationPanel";
 
 interface Props {
   params: Promise<{
@@ -14,30 +15,32 @@ interface Props {
     topic:    string;
     resource: string;
   }>;
+  searchParams: Promise<{ vidopen?: string }>;
 }
 
-export default async function LearnResourcePage({ params }: Props) {
+export default async function LearnResourcePage({ params, searchParams }: Props) {
   const { grade: gradeSlug, subject: subjectSlug, topic: topicSlug, resource: resourceSlug } =
     await params;
+  const { vidopen } = await searchParams;
 
   const res = await getResourceBySlug(gradeSlug, subjectSlug, topicSlug, resourceSlug);
   if (!res) notFound();
 
-  // ── Access control: student must be assigned this topic ──
   const jar          = await cookies();
   const studentToken = jar.get("eduhub-student-token")?.value;
   const student      = studentToken ? await verifyStudentToken(studentToken) : null;
 
   if (student) {
-    const assignedIds = await getAssignedTopicIds(
-      student.id,
-      student.class_name,
-      student.group_name,
-    );
+    const assignedIds = await getAssignedTopicIds(student.id, student.class_name, student.group_name);
     if (!assignedIds.has(res.curriculum_id)) notFound();
   }
 
   const lang = (jar.get("eduhub-lang")?.value ?? "az") as "az" | "ru";
+
+  // ── Fetch video explanations for this topic (only if current resource is not VIDEO) ──
+  const explanationVideos = res.type !== "VIDEO"
+    ? await getResourcesByTopic(gradeSlug, subjectSlug, topicSlug, "VIDEO")
+    : [];
 
   const grade   = GRADES.find((g) => g.slug === gradeSlug);
   const subject = SUBJECTS.find((s) => s.slug === subjectSlug);
@@ -46,8 +49,12 @@ export default async function LearnResourcePage({ params }: Props) {
   const subjectLabel = subject?.label_az ?? subjectSlug;
   const title        = lang === "ru" ? res.title_ru : res.title_az;
   const typeLabel    = RESOURCE_TYPE_LABELS[res.type]?.[lang] ?? res.type;
-  const typeColor    = RESOURCE_TYPE_COLOR[res.type] ?? "bg-slate-800 text-slate-300 border-slate-700";
+  const typeColor    = RESOURCE_TYPE_COLOR[res.type] ?? "bg-slate-100 text-slate-600 border-slate-200";
   const meta         = res.metadata as Record<string, number | string | boolean> | null;
+
+  const isVideoOpen  = vidopen === "1" && explanationVideos.length > 0;
+  const firstVideo   = explanationVideos[0];
+  const firstVidId   = firstVideo ? extractYouTubeId(firstVideo.content_url ?? "") : null;
 
   return (
     <div className="flex flex-col h-screen bg-slate-950">
@@ -63,7 +70,7 @@ export default async function LearnResourcePage({ params }: Props) {
       />
 
       {/* Resource meta strip */}
-      <div className="px-4 py-3 bg-slate-900 border-b border-slate-800 flex items-center gap-3 flex-wrap shrink-0">
+      <div className="px-4 py-2.5 bg-slate-900 border-b border-slate-800 flex items-center gap-3 flex-wrap shrink-0">
         <span className={`text-xs px-2 py-0.5 rounded-md border font-medium ${typeColor}`}>
           {typeLabel}
         </span>
@@ -73,6 +80,26 @@ export default async function LearnResourcePage({ params }: Props) {
         {typeof meta?.duration_min === "number" && (
           <span className="text-xs text-slate-500">· {meta.duration_min} dəq</span>
         )}
+
+        {/* ── Video explanation button ── */}
+        {explanationVideos.length > 0 && (
+          <a
+            href={`?vidopen=${isVideoOpen ? "0" : "1"}`}
+            className={`flex items-center gap-1.5 text-xs font-semibold px-3 py-1 rounded-full transition-all ${
+              isVideoOpen
+                ? "bg-rose-500 text-white"
+                : "bg-rose-100 text-rose-700 hover:bg-rose-200 border border-rose-200"
+            }`}
+          >
+            ▶ {lang === "ru" ? "Объяснение" : "Vidyo izahat"}
+            {!isVideoOpen && explanationVideos.length > 1 && (
+              <span className="bg-rose-200 text-rose-700 rounded-full w-4 h-4 flex items-center justify-center text-[10px]">
+                {explanationVideos.length}
+              </span>
+            )}
+          </a>
+        )}
+
         {res.content_url && (
           <a
             href={res.content_url}
@@ -89,7 +116,20 @@ export default async function LearnResourcePage({ params }: Props) {
         )}
       </div>
 
-      {/* Content */}
+      {/* Video explanation panel (collapsible) */}
+      {isVideoOpen && explanationVideos.length > 0 && (
+        <VideoExplanationPanel
+          videos={explanationVideos.map(v => ({
+            title:       lang === "ru" ? v.title_ru : v.title_az,
+            content_url: v.content_url ?? "",
+            slug:        v.slug,
+          }))}
+          lang={lang}
+          basePath={`/learn/${gradeSlug}/${subjectSlug}/${topicSlug}`}
+        />
+      )}
+
+      {/* Main content */}
       <div className="flex-1 min-h-0 bg-black">
         {!res.content_url ? (
           <div className="flex flex-col items-center justify-center h-full text-center px-4">
@@ -105,7 +145,6 @@ export default async function LearnResourcePage({ params }: Props) {
             </span>
           </div>
         ) : res.type === "VIDEO" && extractYouTubeId(res.content_url) ? (
-          /* ── YouTube embed ── */
           <div className="w-full h-full flex items-center justify-center bg-black">
             <div className="w-full max-w-4xl aspect-video">
               <iframe
@@ -118,7 +157,6 @@ export default async function LearnResourcePage({ params }: Props) {
             </div>
           </div>
         ) : res.type === "VIDEO" && isDirectVideo(res.content_url) ? (
-          /* ── Native video ── */
           <div className="w-full h-full flex items-center justify-center bg-black">
             <video
               src={res.content_url}
@@ -129,7 +167,6 @@ export default async function LearnResourcePage({ params }: Props) {
             />
           </div>
         ) : (
-          /* ── Generic iframe (lessons, tests, etc.) ── */
           <iframe
             src={res.content_url}
             className="w-full h-full border-0"
