@@ -4,7 +4,7 @@ import { hashPassword } from "@/lib/student-auth";
 import { verifyTeacher } from "@/lib/verify-teacher";
 
 export async function GET(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
-  if (!verifyTeacher(req)) return NextResponse.json({ error: "Icazə yoxdur" }, { status: 401 });
+  if (!(await verifyTeacher(req))) return NextResponse.json({ error: "Icazə yoxdur" }, { status: 401 });
   const { id } = await params;
   try {
     const student = await db.student.findUniqueOrThrow({
@@ -18,7 +18,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
 }
 
 export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
-  if (!verifyTeacher(req)) return NextResponse.json({ error: "Icazə yoxdur" }, { status: 401 });
+  if (!(await verifyTeacher(req))) return NextResponse.json({ error: "Icazə yoxdur" }, { status: 401 });
 
   const { id } = await params;
   try {
@@ -49,7 +49,7 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
 }
 
 export async function DELETE(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
-  if (!verifyTeacher(req)) return NextResponse.json({ error: "Icazə yoxdur" }, { status: 401 });
+  if (!(await verifyTeacher(req))) return NextResponse.json({ error: "Icazə yoxdur" }, { status: 401 });
 
   const { id } = await params;
   try {

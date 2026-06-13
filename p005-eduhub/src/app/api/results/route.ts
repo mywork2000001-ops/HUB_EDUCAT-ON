@@ -1,14 +1,26 @@
 import { NextRequest, NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabase";
 
-const CORS = {
-  "Access-Control-Allow-Origin":  "*",
-  "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
-  "Access-Control-Allow-Headers": "Content-Type",
-};
+const ALLOWED_ORIGINS = [
+  "https://ferid-hesenov.github.io",
+  "https://hub-educat-on.vercel.app",
+  "http://localhost:3000",
+  "http://localhost:3001",
+];
 
-export async function OPTIONS() {
-  return new NextResponse(null, { status: 204, headers: CORS });
+function corsHeaders(req: NextRequest) {
+  const origin = req.headers.get("origin") ?? "";
+  const allowed = ALLOWED_ORIGINS.includes(origin) ? origin : ALLOWED_ORIGINS[1];
+  return {
+    "Access-Control-Allow-Origin":  allowed,
+    "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+    "Access-Control-Allow-Headers": "Content-Type",
+    "Vary": "Origin",
+  };
+}
+
+export async function OPTIONS(req: NextRequest) {
+  return new NextResponse(null, { status: 204, headers: corsHeaders(req) });
 }
 
 function noAdmin() {
@@ -44,9 +56,9 @@ export async function POST(req: NextRequest) {
       .single();
 
     if (error) throw error;
-    return NextResponse.json({ ok: true, id: data.id }, { headers: CORS });
+    return NextResponse.json({ ok: true, id: data.id }, { headers: corsHeaders(req) });
   } catch {
-    return NextResponse.json({ error: "Server xətası" }, { status: 500, headers: CORS });
+    return NextResponse.json({ error: "Server xətası" }, { status: 500, headers: corsHeaders(req) });
   }
 }
 
