@@ -62,6 +62,7 @@ export function AppSidebar({ grades }: { grades: GradeItem[] }) {
 
         {sectionLabel("Ümumi baxış")}
         {navLink("/dashboard", "🏠", "İcmal", true)}
+        {navLink("/dashboard/platforms", "🚀", "Platformalar")}
         {navLink("/dashboard/content", "📚", "Dərslər və Testlər")}
         {navLink("/dashboard/results", "📋", "Nəticələr")}
         {navLink("/dashboard/students", "👥", "Şagird fəaliyyəti")}
