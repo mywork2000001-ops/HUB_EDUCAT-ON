@@ -5,6 +5,7 @@ import { getResourceBySlug } from "@/server/queries/resources";
 import { verifyStudentToken } from "@/lib/student-auth";
 import { getAssignedTopicIds } from "@/server/queries/assignments";
 import { GRADES, SUBJECTS, RESOURCE_TYPE_LABELS, RESOURCE_TYPE_COLOR } from "@/lib/constants";
+import { extractYouTubeId, isDirectVideo } from "@/lib/utils";
 
 interface Props {
   params: Promise<{
@@ -89,15 +90,8 @@ export default async function LearnResourcePage({ params }: Props) {
       </div>
 
       {/* Content */}
-      <div className="flex-1 min-h-0">
-        {res.content_url ? (
-          <iframe
-            src={res.content_url}
-            className="w-full h-full border-0"
-            title={title}
-            allow="fullscreen"
-          />
-        ) : (
+      <div className="flex-1 min-h-0 bg-black">
+        {!res.content_url ? (
           <div className="flex flex-col items-center justify-center h-full text-center px-4">
             <div className="text-5xl mb-4">⏳</div>
             <p className="text-white font-semibold mb-2">{title}</p>
@@ -110,6 +104,38 @@ export default async function LearnResourcePage({ params }: Props) {
               {typeLabel}
             </span>
           </div>
+        ) : res.type === "VIDEO" && extractYouTubeId(res.content_url) ? (
+          /* ── YouTube embed ── */
+          <div className="w-full h-full flex items-center justify-center bg-black">
+            <div className="w-full max-w-4xl aspect-video">
+              <iframe
+                src={`https://www.youtube.com/embed/${extractYouTubeId(res.content_url)}?rel=0&autoplay=1`}
+                className="w-full h-full border-0 rounded-lg"
+                title={title}
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                allowFullScreen
+              />
+            </div>
+          </div>
+        ) : res.type === "VIDEO" && isDirectVideo(res.content_url) ? (
+          /* ── Native video ── */
+          <div className="w-full h-full flex items-center justify-center bg-black">
+            <video
+              src={res.content_url}
+              controls
+              autoPlay
+              className="w-full max-w-4xl max-h-full rounded-lg"
+              title={title}
+            />
+          </div>
+        ) : (
+          /* ── Generic iframe (lessons, tests, etc.) ── */
+          <iframe
+            src={res.content_url}
+            className="w-full h-full border-0"
+            title={title}
+            allow="fullscreen"
+          />
         )}
       </div>
     </div>

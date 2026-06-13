@@ -117,11 +117,36 @@ export function AddResourceForm({ topicId }: Props) {
 
       {/* Content URL */}
       <div>
-        <label className="block text-xs text-slate-400 mb-1">Məzmun URL (P001–P004)</label>
-        <input className={fd} placeholder="/api/content/P001_Math_5_DIM/5dim_sinif_testi2025/Lesson-1.html"
+        <label className="block text-xs text-slate-400 mb-1">
+          {form.type === "VIDEO" ? "YouTube linki / Video URL" : "Məzmun URL (P001–P004)"}
+        </label>
+        <input className={fd}
+          placeholder={
+            form.type === "VIDEO"
+              ? "https://www.youtube.com/watch?v=... və ya .mp4 URL"
+              : "/api/content/P001_Math_5_DIM/5dim_sinif_testi2025/Lesson-1.html"
+          }
           value={form.content_url}
           onChange={(e) => setForm((f) => ({ ...f, content_url: e.target.value }))} />
-        {hints.length > 0 && (
+
+        {form.type === "VIDEO" && (
+          <div className="mt-2 flex flex-wrap gap-1.5">
+            {[
+              { label: "YouTube linki", val: "https://www.youtube.com/watch?v=" },
+              { label: "YouTube Shorts", val: "https://youtube.com/shorts/" },
+              { label: "youtu.be", val: "https://youtu.be/" },
+            ].map(({ label, val }) => (
+              <button key={val} type="button"
+                onClick={() => setForm((f) => ({ ...f, content_url: val }))}
+                className="text-xs text-pink-400 hover:text-pink-200 bg-pink-950/30
+                           px-2 py-0.5 rounded hover:bg-pink-900/40 transition-colors border border-pink-900/30">
+                ▶ {label}
+              </button>
+            ))}
+          </div>
+        )}
+
+        {form.type !== "VIDEO" && hints.length > 0 && (
           <div className="mt-1.5 flex flex-wrap gap-1">
             {hints.map((h) => (
               <button key={h} type="button"
@@ -133,8 +158,11 @@ export function AddResourceForm({ topicId }: Props) {
             ))}
           </div>
         )}
+
         <p className="mt-1 text-xs text-slate-600">
-          Nümunə: /api/content/P001_Math_5_DIM/5dim_sinif_testi2025/Lesson-5.html
+          {form.type === "VIDEO"
+            ? "YouTube, youtu.be linki və ya birbaşa .mp4 URL"
+            : "Nümunə: /api/content/P001_Math_5_DIM/5dim_sinif_testi2025/Lesson-5.html"}
         </p>
       </div>
 

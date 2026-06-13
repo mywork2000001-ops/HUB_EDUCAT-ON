@@ -1,7 +1,7 @@
 import { db } from "@/lib/db";
 import Link from "next/link";
 
-export const revalidate = 300;
+export const dynamic = "force-dynamic";
 
 const PLATFORM_MAP: Record<string, { label: string; icon: string; color: string; bg: string; border: string }> = {
   "math":        { label: "Məktəb (P001 + P002)", icon: "📐", color: "text-blue-700",   bg: "bg-blue-50",   border: "border-blue-200" },

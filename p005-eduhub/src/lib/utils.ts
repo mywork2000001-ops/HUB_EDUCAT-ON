@@ -10,3 +10,14 @@ export function slugify(text: string): string {
     .replace(/--+/g, "-")
     .trim();
 }
+
+export function extractYouTubeId(url: string): string | null {
+  const m = url.match(
+    /(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/)|youtu\.be\/)([^&?/\s]{11})/,
+  );
+  return m?.[1] ?? null;
+}
+
+export function isDirectVideo(url: string): boolean {
+  return /\.(mp4|webm|ogg)(\?.*)?$/i.test(url);
+}
