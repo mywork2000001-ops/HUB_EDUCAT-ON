@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 interface Crumb {
   label: string;
@@ -11,9 +12,22 @@ interface Props {
   title: string;
   crumbs?: Crumb[];
   backHref: string;
+  lang?: "az" | "ru";
 }
 
-export function StudentNav({ title, crumbs, backHref }: Props) {
+export function StudentNav({ title, crumbs, backHref, lang = "az" }: Props) {
+  const router = useRouter();
+
+  async function toggleLang() {
+    const newLang = lang === "az" ? "ru" : "az";
+    await fetch("/api/lang", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ lang: newLang }),
+    });
+    router.refresh();
+  }
+
   return (
     <header className="sticky top-0 z-10 bg-slate-950/95 backdrop-blur-sm border-b border-slate-800">
       <div className="max-w-3xl mx-auto px-4 py-3 flex items-center gap-3">
@@ -47,6 +61,15 @@ export function StudentNav({ title, crumbs, backHref }: Props) {
           )}
           <p className="text-sm font-semibold text-white truncate">{title}</p>
         </div>
+
+        <button
+          onClick={toggleLang}
+          className="shrink-0 text-xs font-bold px-2.5 py-1.5 rounded-lg transition-colors
+                     bg-slate-800 text-slate-300 hover:bg-slate-700 hover:text-white"
+          title={lang === "az" ? "Rusca" : "Azərbaycanca"}
+        >
+          {lang === "az" ? "RU" : "AZ"}
+        </button>
 
         <Link
           href="/"
