@@ -1,6 +1,8 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  // On Vercel (CI=1), output .next to repo root so Vercel's adapter finds it at the default location
+  distDir: process.env.VERCEL ? "../.next" : ".next",
   headers: () => [
     {
       source: "/sw.js",
