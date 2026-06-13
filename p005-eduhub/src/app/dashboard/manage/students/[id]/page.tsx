@@ -105,7 +105,7 @@ export default function EditStudentPage() {
           <label className="block text-slate-300 text-sm mb-1.5">
             Yeni şifrə <span className="text-slate-500 font-normal">(boş qoyulsa dəyişmir)</span>
           </label>
-          <input className={field} type="text" value={form.password} onChange={(e) => set("password", e.target.value)}
+          <input className={field} type="password" value={form.password} onChange={(e) => set("password", e.target.value)}
             placeholder="Ən azı 6 simvol" minLength={6} />
         </div>
 

@@ -59,7 +59,7 @@ export default async function DashboardPage() {
           <p className="text-slate-400 text-sm mt-0.5">Şagird nəticələri və statistika</p>
         </div>
         <div className="flex gap-4">
-          <Link href="/dashboard/classes/grade-5" className="text-slate-400 hover:text-white text-sm transition-colors">
+          <Link href="/dashboard/classes" className="text-slate-400 hover:text-white text-sm transition-colors">
             Dərslər →
           </Link>
           <Link href="/" className="text-slate-400 hover:text-white text-sm transition-colors">

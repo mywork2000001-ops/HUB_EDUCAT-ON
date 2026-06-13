@@ -71,7 +71,7 @@ export default function NewStudentPage() {
         {/* Password */}
         <div>
           <label className="block text-slate-300 text-sm mb-1.5">Şifrə</label>
-          <input className={field} type="text" value={form.password} onChange={(e) => set("password", e.target.value)}
+          <input className={field} type="password" value={form.password} onChange={(e) => set("password", e.target.value)}
             required placeholder="Ən azı 6 simvol" minLength={6} />
         </div>
 

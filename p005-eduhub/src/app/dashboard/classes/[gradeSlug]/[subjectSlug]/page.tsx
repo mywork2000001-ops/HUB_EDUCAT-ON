@@ -1,8 +1,7 @@
 import Link from "next/link";
 import { BreadcrumbNav } from "@/components/curriculum/BreadcrumbNav";
 import { AppHeader } from "@/components/layout/AppHeader";
-import { getCurriculumItems } from "@/server/queries/curriculum";
-import { GRADES, SUBJECTS } from "@/lib/constants";
+import { getCurriculumItems, getGradeBySlug } from "@/server/queries/curriculum";
 import type { Lang } from "@/lib/constants";
 
 interface Props {
@@ -10,18 +9,22 @@ interface Props {
   searchParams: Promise<{ lang?: string }>;
 }
 
+export const revalidate = 60;
+
 export default async function SubjectPage({ params, searchParams }: Props) {
   const { gradeSlug, subjectSlug } = await params;
   const { lang = "az" }            = await searchParams;
 
-  const grade   = GRADES.find((g) => g.slug === gradeSlug);
-  const subject = SUBJECTS.find((s) => s.slug === subjectSlug);
-  const topics  = await getCurriculumItems(gradeSlug, subjectSlug);
+  const [gradeData, topics] = await Promise.all([
+    getGradeBySlug(gradeSlug),
+    getCurriculumItems(gradeSlug, subjectSlug),
+  ]);
 
-  const gradeLabel   = grade?.label     ?? gradeSlug;
-  const subjectLabel = lang === "ru"
-    ? (subject?.label_ru ?? subject?.label_az ?? subjectSlug)
-    : (subject?.label_az ?? subjectSlug);
+  const subjectData  = gradeData?.subjects.find((gs) => gs.subject.slug === subjectSlug)?.subject;
+  const gradeLabel   = gradeData ? gradeData.label_az : gradeSlug;
+  const subjectLabel = subjectData
+    ? (lang === "ru" ? subjectData.label_ru : subjectData.label_az)
+    : subjectSlug;
 
   return (
     <>

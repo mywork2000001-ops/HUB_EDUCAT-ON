@@ -63,7 +63,10 @@ export async function DELETE(req: NextRequest) {
       where: { grade_id_subject_id: { grade_id: gradeId, subject_id: subjectId } },
     });
     return NextResponse.json({ ok: true });
-  } catch {
+  } catch (err: unknown) {
+    const msg = err instanceof Error ? err.message : "";
+    if (msg.includes("P2003") || msg.includes("P2014"))
+      return NextResponse.json({ error: "Bu fənnin mövzuları var — əvvəl mövzuları silin" }, { status: 409 });
     return NextResponse.json({ error: "Tapılmadı" }, { status: 404 });
   }
 }
