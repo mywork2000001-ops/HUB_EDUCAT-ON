@@ -61,6 +61,7 @@ export function AppSidebar({ grades }: { grades: GradeItem[] }) {
 
         {sectionLabel("Ümumi baxış")}
         {navLink("/dashboard", "🏠", "İcmal", true)}
+        {navLink("/dashboard/content", "📚", "Dərslər və Testlər")}
         {navLink("/dashboard/results", "📋", "Nəticələr")}
         {navLink("/dashboard/students", "👥", "Şagird fəaliyyəti")}
         {navLink("/dashboard/analytics", "📊", "Analitika")}
@@ -99,12 +100,15 @@ export function AppSidebar({ grades }: { grades: GradeItem[] }) {
           + Bütün siniflər
         </Link>
 
+        {sectionLabel("Planlaşdırma")}
+        {navLink("/dashboard/schedule", "📅", "Həftəlik Cədvəl")}
+        {navLink("/dashboard/manage/assignments", "📋", "Tə'yinatlar")}
+
         {sectionLabel("İdarəetmə")}
         {[
           { href: "/dashboard/manage/subjects",    icon: "📚", label: "Fənlər" },
           { href: "/dashboard/manage/students",    icon: "👥", label: "Şagirdlər" },
           { href: "/dashboard/manage/teachers",    icon: "👨‍🏫", label: "Müəllimlər" },
-          { href: "/dashboard/manage/assignments", icon: "📋", label: "Tə'yinatlar" },
         ].map(({ href, icon, label }) => navLink(href, icon, label))}
       </nav>
 

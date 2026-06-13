@@ -9,7 +9,7 @@ type Assignment = {
   item: { title_az: string }; student: { name: string } | null;
 };
 
-const EMPTY = { item_id: "", target: "class", class_name: "", custom_class: "", group_name: "", student_id: "", due_date: "", note: "" };
+const EMPTY = { item_id: "", target: "class", class_name: "", custom_class: "", group_name: "", student_id: "", due_date: "", due_time: "", note: "" };
 
 export default function AssignmentsPage() {
   const [assignments, setAssignments] = useState<Assignment[]>([]);
@@ -56,7 +56,11 @@ export default function AssignmentsPage() {
         if (form.group_name.trim()) body.group_name = form.group_name.trim();
       }
       if (form.target === "student") body.student_id = form.student_id;
-      if (form.due_date) body.due_date = form.due_date;
+      if (form.due_date) {
+        // Combine date + time into ISO datetime
+        const dtStr = form.due_time ? `${form.due_date}T${form.due_time}:00` : `${form.due_date}T09:00:00`;
+        body.due_date = new Date(dtStr).toISOString();
+      }
       if (form.note.trim()) body.note = form.note.trim();
 
       const res = await fetch("/api/admin/assignments", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
@@ -196,10 +200,14 @@ export default function AssignmentsPage() {
           )}
 
           {/* Due date + note */}
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-3 gap-3">
             <div>
-              <label className="block text-slate-600 text-xs font-medium mb-1">Son tarix <span className="text-slate-400">(istəyə görə)</span></label>
+              <label className="block text-slate-600 text-xs font-medium mb-1">Tarix <span className="text-slate-400">(dərs günü)</span></label>
               <input className={fd} type="date" value={form.due_date} onChange={(e) => setForm(f => ({ ...f, due_date: e.target.value }))} />
+            </div>
+            <div>
+              <label className="block text-slate-600 text-xs font-medium mb-1">Vaxt <span className="text-slate-400">(saat)</span></label>
+              <input className={fd} type="time" value={form.due_time} onChange={(e) => setForm(f => ({ ...f, due_time: e.target.value }))} placeholder="09:00" />
             </div>
             <div>
               <label className="block text-slate-600 text-xs font-medium mb-1">Qeyd <span className="text-slate-400">(istəyə görə)</span></label>
@@ -237,9 +245,18 @@ export default function AssignmentsPage() {
                     <div className="flex-1 min-w-0">
                       <p className="text-sm font-medium text-slate-800 truncate">{a.item.title_az}</p>
                       {(a.due_date || a.note) && (
-                        <p className="text-xs text-slate-400 mt-0.5">
-                          {a.due_date && <span>📅 {new Date(a.due_date).toLocaleDateString("az")}</span>}
-                          {a.note && <span className="ml-2 italic">{a.note}</span>}
+                        <p className="text-xs text-slate-400 mt-0.5 flex items-center gap-2">
+                          {a.due_date && (
+                            <span className="flex items-center gap-1">
+                              📅 {new Date(a.due_date).toLocaleDateString("az")}
+                              {new Date(a.due_date).getHours() > 0 && (
+                                <span className="text-indigo-500 font-medium">
+                                  {new Date(a.due_date).toLocaleTimeString("az", { hour: "2-digit", minute: "2-digit" })}
+                                </span>
+                              )}
+                            </span>
+                          )}
+                          {a.note && <span className="italic">{a.note}</span>}
                         </p>
                       )}
                     </div>
