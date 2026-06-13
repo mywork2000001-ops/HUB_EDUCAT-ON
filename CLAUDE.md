@@ -1,39 +1,93 @@
 GLOBAL EDU-PLATFORM ORCHESTRATOR
 ════════════════════════════════════════════════════════════════════
- 0. LIVE PROJECT GRAPH  (актуально на 2026-06-12)
+ 0. LIVE PROJECT GRAPH  (актуально на 2026-06-13)
 ════════════════════════════════════════════════════════════════════
 
 ROOT: C:/Users/Administrator/Documents/Claude/Projects/
 │
 ├── p005-eduhub/                        ═══ ПРОЕКТ 5 (P005): Unified PWA Ecosystem ═══
 │   Назначение: Единая экосистема с бэкендом — Hub для P001–P004 + Teacher Dashboard
-│   Стек: Next.js 16 + TypeScript + TailwindCSS 4 + Supabase + Vercel PWA
-│   Статус: 🔄 WIP — базовая структура готова, нужна настройка Supabase
+│   Стек: Next.js 16 + TypeScript + TailwindCSS 4 + Supabase + Prisma 7 + Vercel PWA
+│   Статус: 🔄 WIP — архитектура готова, БД подключена, контент пустой
 │   Path: Projects/p005-eduhub/
 │
+│   SUPABASE (LIVE):
+│   Project ID : pdxaqrgsksjvnedrbsay
+│   Region     : Asia ap-northeast-2 (Seoul)
+│   URL         : https://pdxaqrgsksjvnedrbsay.supabase.co
+│   DB pooler  : aws-1-ap-northeast-2.pooler.supabase.com:5432 (Session mode)
+│   Учитель    : ferid@eduhub.az  (создан в Supabase Auth)
+│   ВАЖНО: прямой коннект db.*.supabase.co:5432 недоступен — только pooler!
+│
+│   ├── prisma/
+│   │   ├── schema.prisma               ← 5 моделей: Grade,Subject,GradeSubject,CurriculumItem,Resource
+│   │   └── seed.ts                     ← Grade 5 → Riyaziyyat → 8 mövzu → 3 sample resources
+│   ├── prisma.config.ts                ← Prisma 7 config (читает .env.local)
+│   │
 │   ├── src/app/
 │   │   ├── page.tsx                    ← Hub (4 карточки P001–P004)
 │   │   ├── auth/login/page.tsx         ← Страница входа учителя
-│   │   ├── dashboard/page.tsx          ← Teacher Dashboard (результаты)
+│   │   ├── dashboard/page.tsx          ← Teacher Dashboard (статистика — заглушки)
+│   │   ├── dashboard/classes/
+│   │   │   ├── layout.tsx              ← Shell с AppSidebar (grades 1–11)
+│   │   │   ├── [gradeSlug]/page.tsx    ← Выбор предмета
+│   │   │   ├── [gradeSlug]/[subjectSlug]/page.tsx       ← Список тем из БД
+│   │   │   ├── .../[topicSlug]/page.tsx                 ← ResourceGrid (ISR 3600s)
+│   │   │   └── .../[resourceSlug]/page.tsx              ← iframe / заглушка
 │   │   ├── api/results/route.ts        ← POST/GET результатов тестов
-│   │   └── api/auth/login/route.ts     ← Auth endpoint (Supabase)
+│   │   └── api/auth/login/route.ts     ← Auth endpoint (Supabase signInWithPassword)
+│   │
 │   ├── src/components/
-│   │   └── ServiceWorkerRegistration.tsx
-│   ├── src/lib/supabase.ts             ← Supabase client (anon + admin)
-│   ├── public/
-│   │   ├── manifest.json               ← PWA манифест
-│   │   ├── sw.js                       ← Service Worker (cache-first + network-first)
-│   │   ├── icon-192.png / icon-512.png ← PWA иконки
-│   ├── supabase-schema.sql             ← SQL схема (results + teacher_profiles)
-│   ├── .env.local                      ← SUPABASE_URL + ANON_KEY + SERVICE_ROLE_KEY
-│   └── next.config.ts                  ← SW/manifest headers
+│   │   ├── curriculum/
+│   │   │   ├── ResourceGrid.tsx        ← Группировка по типу, пустое состояние
+│   │   │   ├── ResourceCard.tsx        ← Карточка ресурса с бейджем типа
+│   │   │   └── BreadcrumbNav.tsx       ← Хлебные крошки
+│   │   └── layout/
+│   │       ├── AppSidebar.tsx          ← Sidebar: grades accordion по URL
+│   │       └── AppHeader.tsx           ← Header: AZ/RU toggle
+│   │
+│   ├── src/lib/
+│   │   ├── db.ts                       ← Prisma 7 singleton (PrismaPg adapter)
+│   │   ├── constants.ts                ← GRADES[], SUBJECTS[], RESOURCE_TYPE_*
+│   │   ├── utils.ts                    ← cn(), slugify()
+│   │   └── supabase.ts                 ← Supabase Auth client
+│   │
+│   ├── src/server/
+│   │   ├── queries/curriculum.ts       ← getCurriculumItems, getCurriculumItem
+│   │   ├── queries/resources.ts        ← getResourcesByTopic, getResourceBySlug
+│   │   └── actions/resources.ts        ← createResource, togglePublished
+│   │
+│   ├── src/types/index.ts              ← Re-export Prisma типов
+│   ├── src/middleware.ts               ← Auth guard: /dashboard/:path*
+│   ├── src/generated/prisma/           ← Авто-генерация Prisma 7 client
+│   ├── .env.local                      ← SUPABASE keys + DATABASE_URL (pooler)
+│   └── next.config.ts
+│
+│   ЧТО РАБОТАЕТ (2026-06-13):
+│   ✅ /auth/login → вход ferid@eduhub.az
+│   ✅ /dashboard → реальные статы из Supabase (7 результатов, 4 шагирда, 63%)
+│   ✅ /dashboard/results → таблица результатов (finished_at, цвета по %)
+│   ✅ /dashboard/students → карточки шагирдов с агрегатами
+│   ✅ /dashboard/classes/grade-5 → выбор предмета
+│   ✅ /dashboard/classes/grade-5/math → 8 тем из Prisma БД
+│   ✅ /dashboard/classes/grade-5/math/[тема] → 30+ ресурсов (seed перезапущен)
+│   ✅ /dashboard/classes/.../[resource] → iframe-плеер + кнопка "открыть в новой вкладке"
+│   ✅ Hub / → карточки P001-P004 ведут на реальные проекты (target="_blank")
+│   ✅ P001 → POST /api/results автоматически после завершения теста
+│   ✅ P004 → POST /api/results через /api/content/ P004_SYNC инжект
+│   ✅ Sidebar → показывает только grades из Prisma БД (grade-5, grade-6)
+│   ✅ Middleware → JWT валидация (exp + aud="authenticated")
+│   ✅ vercel.json → готов к деплою, CONTENT_BASE_URL для P001-P004 на CDN
+│
+│   ЧТО СДЕЛАНО ДОПОЛНИТЕЛЬНО (2026-06-13 ночь):
+│   ✅ Grade 6 seed: 9 mövzu добавлено в Prisma (Fəsil 1–9), class-1/Lesson-1.html → content_url
+│   ✅ P2_6() helper в seed.ts для Grade 6 content URLs
 │
 │   СЛЕДУЮЩИЕ ШАГИ P005:
-│   1. Создать проект на supabase.com → скопировать ключи в .env.local
-│   2. Запустить supabase-schema.sql в SQL Editor
-│   3. Создать учителя через Supabase Auth → Authentication → Users
-│   4. Деплой на Vercel: vercel --prod (или GitHub auto-deploy)
-│   5. Подключить P001/P004 → POST /api/results после завершения теста
+│   1. Настроить CONTENT_BASE_URL → GitHub Pages / CDN для Vercel production
+│   2. Деплой на Vercel: vercel --prod
+│   3. Проверить P001 sendToHub() через реальный тест
+│   4. Создать контент для Grade 6 Fəsil 2–9 (math-6-class-2..9)
 │
 ├── index.html                          ← MASTER HUB v4.0.0
 │                                         Data-driven карточки из PLATFORMS[]
@@ -69,13 +123,20 @@ ROOT: C:/Users/Administrator/Documents/Claude/Projects/
 │       └── assets/img/                 ← ~1 190 WebP/PNG изображений
 │           └── p[lesson]_[type]_[N].webp
 │
-├── P002_Math_5_Darslik/               ═══ ПРОЕКТ 2: Учебник (4-Pillar) ═══
+├── P002_Math_5_Darslik/               ═══ ПРОЕКТ 2: Учебник 5-й класс (4-Pillar) ═══
 │   ├── index.html                      ← Лендинг P002
 │   ├── math-5-class-1/                 ← Глава 1
 │   │   ├── index.html
 │   │   └── lesson-1.html … lesson-11.html
 │   ├── math-5-class-2/ … math-5-class-8/   (8 глав × 11 уроков = 88 файлов)
 │   └── [каждая глава содержит index.html + lesson-1..11.html]
+│
+├── P002_Math_6_Darslik/               ═══ ПРОЕКТ 2б: Учебник 6-й класс (4-Pillar) ═══
+│   Статус: 🔄 WIP — структура создана, контент только в Главе 1
+│   ├── index.html                      ← Лендинг P002-6
+│   ├── math-6-class-1/                 ← Глава 1 (Lesson-1.html ✅)
+│   ├── math-6-class-2/ … math-6-class-8/   (папки созданы, уроки пустые)
+│   └── [Seed в Supabase: Grade 6 ✅ — 9 mövzu seeded, только class-1/Lesson-1 имеет content_url]
 │
 ├── P003_Block_Exam/                    ═══ ПРОЕКТ 3 (P003) ═══
     │
@@ -215,7 +276,7 @@ ROOT: C:/Users/Administrator/Documents/Claude/Projects/
                смена пароля, история тестов (taim_history)
 
 ────────────────────────────────────────────────────────────────────
- МАТРИЦА СТАТУСОВ (на 2026-06-12)
+ МАТРИЦА СТАТУСОВ (на 2026-06-13)
 ────────────────────────────────────────────────────────────────────
 
   Проект │ Компонент              │ Статус    │ Кол-во файлов
@@ -224,8 +285,9 @@ ROOT: C:/Users/Administrator/Documents/Claude/Projects/
   P001   │ DİM Уроки              │ ✅ DONE    │ 17/17 уроков (Lesson-15 перестроен под std)
   P001   │ Изображения            │ ✅ DONE    │ ~1 190 WebP
   P001   │ Стандарт урока         │ ✅        │ examData + STORAGE_KEY + script.js; 4 варианта A/B/C/D × 10Q; AZ/RU/EN
-  P002   │ index.html (дашборд)   │ ✅ DONE    │ TAİM-style, AZ+RU
-  P002   │ Главы учебника         │ ⚠️ PART    │ 8 глав, 88 уроков
+  P002-5 │ index.html (дашборд)   │ ✅ DONE    │ TAİM-style, AZ+RU
+  P002-5 │ Главы учебника (5кл)   │ ⚠️ PART    │ 8 глав, 88 уроков (часть заполнена)
+  P002-6 │ Структура (6кл)        │ 🔄 WIP     │ 8 глав созданы, только Class-1/Lesson-1 ✅
   P003   │ Темы (topics)          │ ✅ DONE    │ 28/28 HTML
   P003   │ Тесты (tests)          │ 🔄 WIP     │ 4 разблокировано (t1–t4, секция 01 ✅)
   P003   │ Доказательства (proofs)│ 🔄 WIP     │ 3 HTML
@@ -235,9 +297,18 @@ ROOT: C:/Users/Administrator/Documents/Claude/Projects/
   P004   │ Fəsil sınaqları        │ ✅ DONE    │ 6 (fs1–fs6)
   P004   │ Ümumi sınaqlar         │ ✅ DONE    │ 3 (us1–us3)
   P004   │ PWA / offline          │ ✅ DONE    │ sw.js v12, manifest
-  P005   │ Next.js PWA структура  │ 🔄 WIP     │ Hub + Auth + Dashboard + API
-  P005   │ Supabase backend       │ ⏳ PENDING │ нужны ключи в .env.local
-  P005   │ Vercel деплой          │ ⏳ PENDING │ после настройки Supabase
+  P005   │ Архитектура (Prisma 7) │ ✅ DONE    │ schema+queries+components+routes+api/content
+  P005   │ Supabase БД            │ ✅ LIVE    │ Grade5+6 seed, 8 тем × 30+ ресурсов, 7 results
+  P005   │ Auth + Middleware       │ ✅ DONE    │ JWT валидация (exp+aud), cookie httpOnly
+  P005   │ Curriculum routes      │ ✅ DONE    │ /classes/[grade]/[subject]/[topic]/[resource]
+  P005   │ Dashboard pages        │ ✅ DONE    │ /results + /students с реальными данными
+  P005   │ Resource viewer        │ ✅ DONE    │ iframe + "открыть в новой вкладке" + metadata
+  P005   │ Hub карточки           │ ✅ DONE    │ P001-P004 via /api/content/ (target="_blank")
+  P005   │ P001 → API интеграция  │ ✅ DONE    │ sendToHub() в script.js, POST /api/results
+  P005   │ P004 → API интеграция  │ ✅ DONE    │ P004_SYNC inject в api/content route
+  P005   │ Sidebar                │ ✅ DONE    │ динамические grades из Prisma (grade-5, grade-6)
+  P005   │ Контент Grade 6        │ 🔄 WIP     │ 9 mövzu seeded; class-2..9 без content (нет HTML)
+  P005   │ Vercel деплой          │ ⏳ PENDING │ vercel.json готов, нужен CONTENT_BASE_URL
 ─────────┴────────────────────────┴───────────┴───────────────
 
  HUB АРХИТЕКТУРА index.html v4.0.0
@@ -299,11 +370,15 @@ ROOT: C:/Users/Administrator/Documents/Claude/Projects/
 2. SYSTEM ARCHITECTURE (ID-BASED)
    All work is organized into a scalable hierarchy:
    Root: C:/Users/Administrator/Documents/Claude/Projects/
-   Central Hub: index.html (The Master Entry Point — 2-card dashboard: P001 + P002).
+   Central Hub: index.html v4.0.0 (Master Entry Point — data-driven PLATFORMS[]: P001–P005 карточки).
    Shared Core: /_Shared_Core/ (Global style.css, script.js, textbook_engine.js, textbook_template.html).
    Project Folders: P[ID]_[Subject]\_[Grade/Type]
    P001_Math_5_DIM: DIM test bank — Lesson-X.html files (17 lessons, 1–17).
-   P002_Math_5_Darslik: Interactive textbook — Movzu-X.html files (mövzular 18+).
+   P002_Math_5_Darslik: Interactive textbook 5кл — lesson-X.html (8 глав × 11 уроков).
+   P002_Math_6_Darslik: Interactive textbook 6кл — WIP (8 глав, Lesson-1 готов).
+   P003_Block_Exam: React/Vite/TS app — 28 topics + tests + proofs + situational.
+   P004_TAIM_2026: PWA для MİQ — 47 тестов, AZ+RU, offline.
+   P005_EduHub: Next.js 16 + Supabase — unified hub + Teacher Dashboard.
    Internal: /assets/img/, /core/.
 3. TECHNICAL STANDARDS
    3.1 Languages

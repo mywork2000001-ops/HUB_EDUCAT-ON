@@ -1,6 +1,16 @@
 import { NextRequest, NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabase";
 
+const CORS = {
+  "Access-Control-Allow-Origin":  "*",
+  "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+  "Access-Control-Allow-Headers": "Content-Type",
+};
+
+export async function OPTIONS() {
+  return new NextResponse(null, { status: 204, headers: CORS });
+}
+
 function noAdmin() {
   return NextResponse.json({ error: "Server konfiqurasiyası xətası" }, { status: 500 });
 }
@@ -34,9 +44,9 @@ export async function POST(req: NextRequest) {
       .single();
 
     if (error) throw error;
-    return NextResponse.json({ ok: true, id: data.id });
+    return NextResponse.json({ ok: true, id: data.id }, { headers: CORS });
   } catch {
-    return NextResponse.json({ error: "Server xətası" }, { status: 500 });
+    return NextResponse.json({ error: "Server xətası" }, { status: 500, headers: CORS });
   }
 }
 

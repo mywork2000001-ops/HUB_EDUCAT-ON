@@ -1,0 +1,103 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ─── СПРАВОЧНИКИ ─────────────────────────────────────────────
+
+model Grade {
+  id       Int    @id @default(autoincrement())
+  number   Int    @unique
+  slug     String @unique
+  label_az String
+  label_ru String
+
+  subjects GradeSubject[]
+
+  @@map("grades")
+}
+
+model Subject {
+  id       Int     @id @default(autoincrement())
+  slug     String  @unique
+  label_az String
+  label_ru String
+  icon     String?
+
+  grades GradeSubject[]
+
+  @@map("subjects")
+}
+
+model GradeSubject {
+  grade_id   Int
+  subject_id Int
+  grade      Grade   @relation(fields: [grade_id], references: [id])
+  subject    Subject @relation(fields: [subject_id], references: [id])
+
+  curriculum_items CurriculumItem[]
+
+  @@id([grade_id, subject_id])
+  @@index([grade_id, subject_id])
+  @@map("grade_subjects")
+}
+
+// ─── УЧЕБНЫЙ ПЛАН ─────────────────────────────────────────────
+
+model CurriculumItem {
+  id          Int    @id @default(autoincrement())
+  grade_id    Int
+  subject_id  Int
+  slug        String
+  title_az    String
+  title_ru    String
+  order_index Int    @default(0)
+  parent_id   Int?
+
+  grade_subject GradeSubject     @relation(fields: [grade_id, subject_id], references: [grade_id, subject_id])
+  parent        CurriculumItem?  @relation("SubTopics", fields: [parent_id], references: [id])
+  children      CurriculumItem[] @relation("SubTopics")
+  resources     Resource[]
+
+  @@unique([grade_id, subject_id, slug])
+  @@index([grade_id, subject_id, order_index])
+  @@index([parent_id])
+  @@map("curriculum_items")
+}
+
+// ─── РЕСУРСЫ ──────────────────────────────────────────────────
+
+enum ResourceType {
+  LESSON
+  TEST
+  TAIM_TEST
+  BSQ
+  KSQ
+  WORKBOOK
+  VIDEO
+}
+
+model Resource {
+  id            Int          @id @default(autoincrement())
+  curriculum_id Int
+  type          ResourceType
+  slug          String
+  title_az      String
+  title_ru      String
+  content_url   String?
+  metadata      Json?
+  is_published  Boolean      @default(false)
+  created_at    DateTime     @default(now())
+
+  curriculum_item CurriculumItem @relation(fields: [curriculum_id], references: [id])
+
+  @@unique([curriculum_id, slug])
+  @@index([curriculum_id, type])
+  @@index([type, is_published])
+  @@map("resources")
+}
+

@@ -3,39 +3,43 @@ import Link from "next/link";
 const PLATFORMS = [
   {
     id: "P001",
-    href: "/dim",
+    href: "/api/content/P001_Math_5_DIM/5dim_sinif_testi2025/index.html",
     icon: "📊",
     title: "DİM Test Bankı",
     desc: "2025-ci il riyaziyyat testləri — 17 dərs, 680 sual",
     color: "from-blue-600 to-blue-800",
     badge: "V sinif",
+    stats: "17 dərs · 680 sual",
   },
   {
     id: "P002",
-    href: "/textbook",
+    href: "/api/content/P002_Math_5_Darslik/index.html",
     icon: "📖",
     title: "Riyaziyyat Dərsliyi",
-    desc: "İnteraktiv dərslik — 4 sütun sistemi, 28 mövzu",
+    desc: "İnteraktiv dərslik — 4 sütun sistemi, 88 dərs",
     color: "from-emerald-600 to-emerald-800",
     badge: "V sinif",
+    stats: "8 fəsil · 88 dərs",
   },
   {
     id: "P003",
-    href: "/exam",
+    href: "/api/content/P003_Block_Exam/app/dist/index.html",
     icon: "🎯",
     title: "Blok İmtahan",
-    desc: "Blok imtahana hazırlıq — testlər, sübutlar, situasiyalar",
+    desc: "Blok imtahana hazırlıq — mövzular, testlər, sübutlar",
     color: "from-violet-600 to-violet-800",
     badge: "V sinif",
+    stats: "28 mövzu · 8 test",
   },
   {
     id: "P004",
-    href: "/taim",
+    href: "/api/content/P004_TAIM_2026/index.html",
     icon: "🏫",
     title: "TAİM 2026",
     desc: "MİQ attestasiyasına hazırlıq — 47 test, 1500+ sual",
     color: "from-orange-600 to-orange-800",
     badge: "Müəllim",
+    stats: "47 test · 1500+ sual",
   },
 ];
 
@@ -57,10 +61,12 @@ export default function HomePage() {
 
       <section className="max-w-5xl mx-auto grid grid-cols-1 sm:grid-cols-2 gap-4 mb-10">
         {PLATFORMS.map((p) => (
-          <Link
+          <a
             key={p.id}
             href={p.href}
-            className={`relative rounded-2xl bg-gradient-to-br ${p.color} p-6 hover:scale-[1.02] transition-transform shadow-lg`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className={`relative rounded-2xl bg-gradient-to-br ${p.color} p-6 hover:scale-[1.02] transition-transform shadow-lg block`}
           >
             <span className="absolute top-4 right-4 text-xs bg-white/20 text-white px-2 py-0.5 rounded-full">
               {p.badge}
@@ -68,8 +74,11 @@ export default function HomePage() {
             <div className="text-4xl mb-3">{p.icon}</div>
             <h2 className="text-lg font-bold text-white mb-1">{p.title}</h2>
             <p className="text-white/80 text-sm leading-relaxed">{p.desc}</p>
-            <div className="mt-4 text-white/60 text-xs">{p.id} →</div>
-          </Link>
+            <div className="mt-4 flex items-center justify-between">
+              <span className="text-white/50 text-xs">{p.stats}</span>
+              <span className="text-white/70 text-xs font-medium">{p.id} →</span>
+            </div>
+          </a>
         ))}
       </section>
 

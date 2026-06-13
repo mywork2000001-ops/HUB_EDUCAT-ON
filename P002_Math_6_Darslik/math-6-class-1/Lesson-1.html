@@ -1,0 +1,1124 @@
+<!doctype html>
+<html lang="az">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dərs 1 — Fəsil 1: Natural ədədlər (icmal)</title>
+    <style>
+      :root {
+        --bg-dark: #0f0f1a;
+        --bg-card: rgba(255,255,255,0.05);
+        --bg-glass: rgba(255,255,255,0.08);
+        --border-glass: rgba(255,255,255,0.15);
+        --text-primary: #e8e8f0;
+        --text-secondary: #a0a0b8;
+        --accent: #00d4aa;
+        --accent-dim: rgba(0,212,170,0.2);
+        --accent-warm: #ff6b6b;
+        --accent-warm-dim: rgba(255,107,107,0.2);
+        --accent-blue: #4dabf7;
+        --accent-blue-dim: rgba(77,171,247,0.2);
+        --success: #51cf66;
+        --error: #ff6b6b;
+        --warning: #fcc419;
+      }
+      * { margin:0; padding:0; box-sizing:border-box; }
+      body { font-family:"Segoe UI",system-ui,-apple-system,sans-serif; background:var(--bg-dark); color:var(--text-primary); min-height:100vh; overflow-x:hidden; line-height:1.6; }
+      .bg-animation { position:fixed; top:0; left:0; width:100%; height:100%; z-index:-1; background:radial-gradient(ellipse at 20% 20%,rgba(0,212,170,0.08) 0%,transparent 50%),radial-gradient(ellipse at 80% 80%,rgba(77,171,247,0.08) 0%,transparent 50%),radial-gradient(ellipse at 50% 50%,rgba(255,107,107,0.05) 0%,transparent 60%); }
+      .bg-animation::before { content:""; position:absolute; width:200%; height:200%; top:-50%; left:-50%; background:repeating-linear-gradient(0deg,transparent,transparent 40px,rgba(255,255,255,0.02) 40px,rgba(255,255,255,0.02) 41px); animation:bgMove 20s linear infinite; }
+      @keyframes bgMove { 0%{transform:translateY(0)}100%{transform:translateY(40px)} }
+      nav { position:fixed; top:0; left:0; right:0; background:rgba(15,15,26,0.85); backdrop-filter:blur(20px); border-bottom:1px solid var(--border-glass); z-index:1000; padding:0 20px; }
+      .nav-container { max-width:1200px; margin:0 auto; display:flex; justify-content:space-between; align-items:center; height:60px; }
+      .logo { font-size:1.2rem; font-weight:700; background:linear-gradient(135deg,var(--accent),var(--accent-blue)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+      .nav-links { display:flex; gap:4px; list-style:none; }
+      .nav-links a { color:var(--text-secondary); text-decoration:none; padding:8px 14px; border-radius:8px; transition:all 0.3s; font-size:0.85rem; font-weight:500; cursor:pointer; border:none; background:transparent; }
+      .nav-links a:hover,.nav-links a.active { color:var(--text-primary); background:var(--bg-glass); }
+      .nav-links a.active { background:var(--accent-dim); color:var(--accent); }
+      section { display:none; opacity:0; padding:100px 20px 60px; max-width:1000px; margin:0 auto; transition:opacity 0.3s ease; }
+      section.active { display:block; opacity:1; animation:fadeIn 0.5s ease; }
+      @keyframes fadeIn { from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)} }
+      .card { background:var(--bg-card); backdrop-filter:blur(20px); border:1px solid var(--border-glass); border-radius:20px; padding:32px; margin-bottom:24px; transition:transform 0.3s,box-shadow 0.3s; }
+      .card:hover { transform:translateY(-2px); box-shadow:0 20px 40px rgba(0,0,0,0.3); }
+      .card-title { font-size:1.4rem; font-weight:700; margin-bottom:16px; display:flex; align-items:center; gap:12px; }
+      .card-title .icon { width:40px; height:40px; border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:1.3rem; }
+      .hero { text-align:center; padding:140px 20px 80px; }
+      .hero h1 { font-size:2.8rem; font-weight:800; margin-bottom:20px; background:linear-gradient(135deg,var(--accent),var(--accent-blue),var(--accent-warm)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; line-height:1.2; }
+      .hero p { font-size:1.1rem; color:var(--text-secondary); max-width:600px; margin:0 auto 40px; }
+      .btn { display:inline-flex; align-items:center; gap:8px; padding:13px 28px; border-radius:12px; border:none; font-size:1rem; font-weight:600; cursor:pointer; transition:all 0.3s; text-decoration:none; }
+      .btn-primary { background:linear-gradient(135deg,var(--accent),var(--accent-blue)); color:#000; }
+      .btn-primary:hover { transform:translateY(-2px); box-shadow:0 10px 30px var(--accent-dim); }
+      .btn-secondary { background:var(--bg-glass); color:var(--text-primary); border:1px solid var(--border-glass); }
+      .btn-secondary:hover { background:var(--bg-card); }
+      .btn:disabled { opacity:0.5; cursor:not-allowed; transform:none !important; }
+      /* Slider */
+      .generate-widget { background:var(--bg-card); border:1px solid var(--border-glass); border-radius:20px; padding:24px; }
+      .widget-slide { display:none; padding:12px 16px; animation:slideFade 0.3s ease; }
+      .widget-slide.active { display:block; }
+      @keyframes slideFade { from{opacity:0}to{opacity:1} }
+      .widget-slide h3 { font-size:1.3rem; color:var(--accent); margin-bottom:16px; }
+      .widget-slide p,.widget-slide li { color:var(--text-secondary); line-height:1.8; margin-bottom:10px; }
+      .widget-slide strong { color:var(--text-primary); }
+      .big-math { font-size:1.5rem; text-align:center; margin:18px 0; background:var(--bg-glass); padding:18px; border-radius:12px; font-weight:600; color:var(--text-primary); }
+      .widget-nav { display:flex; justify-content:space-between; margin-top:20px; }
+      .widget-progress { text-align:center; font-size:0.9rem; color:var(--text-secondary); margin-bottom:12px; }
+      /* Sequence */
+      .sequence-component { display:flex; flex-direction:column; gap:20px; position:relative; }
+      .sequence-step { background:var(--bg-card); border:1px solid var(--border-glass); border-radius:16px; padding:22px 22px 22px 68px; position:relative; transition:all 0.3s; }
+      .sequence-step:hover { border-color:var(--accent); transform:translateX(4px); }
+      .sequence-number { position:absolute; left:18px; top:18px; width:38px; height:38px; background:var(--accent); color:#000; border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:800; font-size:1rem; }
+      .sequence-step h4 { color:var(--text-primary); margin-bottom:6px; font-size:1.05rem; }
+      .sequence-step p { color:var(--text-secondary); line-height:1.7; }
+      /* Helpers */
+      .formula-box { background:var(--bg-glass); border:1px solid var(--border-glass); border-radius:12px; padding:18px; margin:14px 0; text-align:center; font-size:1.15rem; }
+      .tip-box { background:var(--accent-blue-dim); border-left:4px solid var(--accent-blue); padding:14px 18px; border-radius:0 12px 12px 0; margin:14px 0; }
+      .tip-box::before { content:"💡 "; }
+      .warning-box { background:var(--accent-warm-dim); border-left:4px solid var(--accent-warm); padding:14px 18px; border-radius:0 12px 12px 0; margin:14px 0; }
+      .warning-box::before { content:"⚠️ "; }
+      .highlight { background:var(--accent-dim); padding:2px 6px; border-radius:4px; color:var(--accent); font-weight:600; }
+      /* Problems */
+      .problem-card { background:var(--bg-card); border:1px solid var(--border-glass); border-radius:16px; padding:22px; margin-bottom:18px; }
+      .problem-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; }
+      .problem-number { background:var(--accent-dim); color:var(--accent); padding:4px 12px; border-radius:20px; font-size:0.85rem; font-weight:600; }
+      .problem-type { color:var(--text-secondary); font-size:0.85rem; }
+      .problem-text { font-size:1.05rem; margin-bottom:14px; line-height:1.8; }
+      .solution-btn { background:var(--accent-dim); color:var(--accent); border:1px solid var(--accent); padding:9px 18px; border-radius:8px; cursor:pointer; font-weight:600; transition:all 0.3s; }
+      .solution-btn:hover { background:var(--accent); color:#000; }
+      .solution { display:none; margin-top:18px; padding:18px; background:rgba(0,212,170,0.05); border-left:3px solid var(--accent); border-radius:0 12px 12px 0; }
+      .solution.active { display:block; animation:slideDown 0.3s ease; }
+      @keyframes slideDown { from{opacity:0;max-height:0}to{opacity:1;max-height:1000px} }
+      .solution-step { margin-bottom:10px; padding:6px 0; border-bottom:1px solid var(--border-glass); }
+      .solution-step:last-child { border-bottom:none; }
+      .step-num { display:inline-block; width:22px; height:22px; background:var(--accent); color:#000; border-radius:50%; text-align:center; line-height:22px; font-size:0.78rem; font-weight:700; margin-right:8px; }
+      /* Quiz */
+      .quiz-container { background:var(--bg-card); border:1px solid var(--border-glass); border-radius:20px; padding:28px; }
+      .quiz-progress { display:flex; justify-content:space-between; align-items:center; margin-bottom:22px; flex-wrap:wrap; gap:8px; }
+      .progress-bar { flex:1; height:8px; background:var(--bg-glass); border-radius:4px; margin:0 14px; overflow:hidden; min-width:80px; }
+      .progress-fill { height:100%; background:linear-gradient(90deg,var(--accent),var(--accent-blue)); border-radius:4px; transition:width 0.5s ease; width:0%; }
+      .quiz-question { font-size:1.15rem; margin-bottom:22px; padding:18px; background:var(--bg-glass); border-radius:12px; border-left:4px solid var(--accent); }
+      .quiz-options { display:grid; gap:10px; }
+      .quiz-option { background:var(--bg-glass); border:2px solid var(--border-glass); border-radius:12px; padding:14px 18px; cursor:pointer; transition:all 0.3s; display:flex; align-items:center; gap:12px; }
+      .quiz-option:hover { border-color:var(--accent); background:var(--accent-dim); }
+      .quiz-option.correct { border-color:var(--success); background:rgba(81,207,102,0.15); }
+      .quiz-option.wrong { border-color:var(--error); background:rgba(255,107,107,0.15); }
+      .quiz-option.disabled { pointer-events:none; opacity:0.7; }
+      .option-letter { width:30px; height:30px; border-radius:8px; background:var(--bg-card); display:flex; align-items:center; justify-content:center; font-weight:700; flex-shrink:0; }
+      .quiz-nav { display:flex; justify-content:space-between; margin-top:22px; }
+      .stat { background:var(--bg-glass); padding:12px 22px; border-radius:12px; text-align:center; min-width:90px; border:1px solid var(--border-glass); }
+      .stat-value { font-size:1.4rem; font-weight:700; color:var(--accent); }
+      .stat-label { font-size:0.82rem; color:var(--text-secondary); }
+      .timer { position:fixed; top:80px; right:20px; background:var(--bg-card); backdrop-filter:blur(20px); border:1px solid var(--border-glass); border-radius:16px; padding:14px 22px; font-size:1.2rem; font-weight:700; font-variant-numeric:tabular-nums; z-index:999; box-shadow:0 10px 30px rgba(0,0,0,0.3); }
+      .timer.warning { border-color:var(--warning); color:var(--warning); animation:pulse 1s infinite; }
+      .timer.danger { border-color:var(--error); color:var(--error); animation:pulse 0.5s infinite; }
+      @keyframes pulse { 0%,100%{transform:scale(1)}50%{transform:scale(1.05)} }
+      .results-container { text-align:center; padding:36px; }
+      .score-circle { width:180px; height:180px; border-radius:50%; background:conic-gradient(var(--accent) calc(var(--score)*3.6deg),var(--bg-glass) 0); margin:0 auto 28px; display:flex; align-items:center; justify-content:center; position:relative; }
+      .score-circle::before { content:""; position:absolute; width:152px; height:152px; background:var(--bg-dark); border-radius:50%; }
+      .score-value { position:relative; font-size:2.6rem; font-weight:800; color:var(--accent); }
+      .score-label { font-size:1.1rem; color:var(--text-secondary); margin-bottom:6px; }
+      .score-message { font-size:1.4rem; font-weight:700; margin-bottom:28px; }
+      .results-breakdown { display:grid; grid-template-columns:repeat(auto-fit,minmax(130px,1fr)); gap:14px; max-width:560px; margin:0 auto 28px; }
+      .breakdown-item { background:var(--bg-glass); padding:14px; border-radius:12px; }
+      .breakdown-value { font-size:1.4rem; font-weight:700; color:var(--accent); }
+      .breakdown-label { font-size:0.82rem; color:var(--text-secondary); }
+      .hidden { display:none !important; }
+      sup { font-size:0.7em; vertical-align:super; }
+      @media(max-width:768px) { .hero h1{font-size:2rem} .nav-links{display:none} .timer{top:70px;right:10px;font-size:1rem;padding:9px 14px} .card{padding:18px} section{padding:80px 14px 40px} }
+      /* === BILINGUAL === */
+      .ru-t{display:none}
+      body.ru .az-t{display:none}
+      body.ru .ru-t{display:revert}
+      .lang-sw{display:flex;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);border-radius:8px;overflow:hidden;margin-left:auto}
+      .lbtn{background:none;border:none;color:var(--text-secondary);font-size:.78rem;font-weight:700;padding:5px 11px;cursor:pointer;font-family:inherit;transition:all .2s}
+      .lbtn.active{background:var(--accent);color:#000}
+    </style>
+  </head>
+  <body>
+    <div class="bg-animation"></div>
+    <nav>
+      <div class="nav-container">
+        <div class="logo">📐 Dərs 1 — Fəsil 1</div>
+        <ul class="nav-links">
+          <li><a href="#" class="active" data-section="home"><span class="az-t">Ana səhifə</span><span class="ru-t">Главная</span></a></li>
+          <li><a href="#" data-section="theory"><span class="az-t">Nəzəriyyə</span><span class="ru-t">Теория</span></a></li>
+          <li><a href="#" data-section="algorithm"><span class="az-t">Alqoritm</span><span class="ru-t">Алгоритм</span></a></li>
+          <li><a href="#" data-section="yoxlama"><span class="az-t">Yoxlama</span><span class="ru-t">Проверка</span></a></li>
+          <li><a href="#" data-section="examples"><span class="az-t">Məsələlər</span><span class="ru-t">Задачи</span></a></li>
+          <li><a href="#" data-section="trainer"><span class="az-t">Trenajör</span><span class="ru-t">Тренажёр</span></a></li>
+          <li><a href="#" data-section="assessment"><span class="az-t">Attestasiya</span><span class="ru-t">Аттестация</span></a></li>
+        </ul>
+        <div class="lang-sw">
+          <button class="lbtn active" id="lbAZ" onclick="setLang('az')">AZ</button>
+          <button class="lbtn" id="lbRU" onclick="setLang('ru')">RU</button>
+        </div>
+      </div>
+    </nav>
+
+    <!-- HOME -->
+    <section id="home" class="active">
+      <div class="hero">
+        <h1><span class="az-t">Fəsil 1: Natural Ədədlər</span><span class="ru-t">Глава 1: Натуральные числа</span></h1>
+        <p><span class="az-t">6-cı sinif · Bütün fəslin icmalı. 11 dərsdə nəyi öyrənəcəksiniz.</span><span class="ru-t">6-й класс · Обзор всей главы. Что вы узнаете в 11 уроках.</span></p>
+        <div style="display:flex;gap:14px;justify-content:center;flex-wrap:wrap;">
+          <button class="btn btn-primary" onclick="showSection('theory')"><span class="az-t">Öyrənməyə başla</span><span class="ru-t">Начать обучение</span></button>
+          <button class="btn btn-secondary" onclick="showSection('assessment')"><span class="az-t">Bilikləri yoxla</span><span class="ru-t">Проверить знания</span></button>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title"><span class="icon" style="background:var(--accent-dim)">🎯</span><span class="az-t">Fəsildə nə öyrənəcəksiniz</span><span class="ru-t">Что изучим в главе</span></div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:18px;">
+          <div class="card" style="padding:18px">
+            <h3 style="color:var(--accent);margin-bottom:6px"><span class="az-t">Natural ədədlər</span><span class="ru-t">Натуральные числа</span></h3>
+            <p style="color:var(--text-secondary)"><span class="az-t">Qüvvət əməlləri: a², a³. Ədədi ifadələrin qiyməti. Əməliyyatların sırası.</span><span class="ru-t">Возведение в степень: a², a³. Значение числовых выражений. Порядок действий.</span></p>
+          </div>
+          <div class="card" style="padding:18px">
+            <h3 style="color:var(--accent-blue);margin-bottom:6px"><span class="az-t">Bölənlər və bölünənlər</span><span class="ru-t">Делители и кратные</span></h3>
+            <p style="color:var(--text-secondary)"><span class="az-t">Ədədin bölənlərini tapmaq. Sadə və mürəkkəb ədədlər. Bölünmə əlamətləri.</span><span class="ru-t">Нахождение делителей. Простые и составные числа. Признаки делимости.</span></p>
+          </div>
+          <div class="card" style="padding:18px">
+            <h3 style="color:var(--accent-warm);margin-bottom:6px"><span class="az-t">ƏBOB və ƏKOB</span><span class="ru-t">НОД и НОК</span></h3>
+            <p style="color:var(--text-secondary)"><span class="az-t">Eyler-Venn diaqramı. Ən böyük ortaq böləni tapmaq. Ən kiçik ortaq bölünəni tapmaq.</span><span class="ru-t">Диаграмма Эйлера-Венна. Нахождение НОД. Нахождение НОК.</span></p>
+          </div>
+          <div class="card" style="padding:18px">
+            <h3 style="color:var(--warning);margin-bottom:6px"><span class="az-t">Kəsrlər</span><span class="ru-t">Дроби</span></h3>
+            <p style="color:var(--text-secondary)"><span class="az-t">Kəsrlərin ixtisarı. Ortaq məxrəc. Kəsrlərlə əməllər.</span><span class="ru-t">Сокращение дробей. Общий знаменатель. Действия с дробями.</span></p>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title"><span class="icon" style="background:var(--accent-blue-dim)">📋</span><span class="az-t">Dərslərin siyahısı</span><span class="ru-t">Список уроков</span></div>
+        <div style="display:grid;gap:8px;">
+          <div style="background:var(--bg-glass);border-radius:10px;padding:11px 16px;border-left:3px solid var(--accent);"><strong style="color:var(--accent)"><span class="az-t">Dərs 1</span><span class="ru-t">Урок 1</span></strong> — <span class="az-t">Fəslin icmalı (bu dərs)</span><span class="ru-t">Обзор главы (этот урок)</span></div>
+          <div style="background:var(--bg-glass);border-radius:10px;padding:11px 16px;"><strong style="color:var(--accent)"><span class="az-t">Dərs 2</span><span class="ru-t">Урок 2</span></strong> — <span class="az-t">Qüvvətə yüksəltmə. a² və a³</span><span class="ru-t">Возведение в степень. a² и a³</span></div>
+          <div style="background:var(--bg-glass);border-radius:10px;padding:11px 16px;"><strong style="color:var(--accent)"><span class="az-t">Dərs 3</span><span class="ru-t">Урок 3</span></strong> — <span class="az-t">Ədədi ifadələr. Əməliyyatların sırası</span><span class="ru-t">Числовые выражения. Порядок действий</span></div>
+          <div style="background:var(--bg-glass);border-radius:10px;padding:11px 16px;"><strong style="color:var(--accent-blue)"><span class="az-t">Dərs 4</span><span class="ru-t">Урок 4</span></strong> — <span class="az-t">Bölənlər. Sadə və mürəkkəb ədədlər</span><span class="ru-t">Делители. Простые и составные числа</span></div>
+          <div style="background:var(--bg-glass);border-radius:10px;padding:11px 16px;"><strong style="color:var(--accent-blue)"><span class="az-t">Dərs 5</span><span class="ru-t">Урок 5</span></strong> — <span class="az-t">Bölünmə əlamətləri (2, 3, 5, 9, 10)</span><span class="ru-t">Признаки делимости (2, 3, 5, 9, 10)</span></div>
+          <div style="background:var(--bg-glass);border-radius:10px;padding:11px 16px;"><strong style="color:var(--accent-blue)"><span class="az-t">Dərs 6</span><span class="ru-t">Урок 6</span></strong> — <span class="az-t">ƏBOB: Eyler-Venn diaqramı</span><span class="ru-t">НОД: диаграмма Эйлера-Венна</span></div>
+          <div style="background:var(--bg-glass);border-radius:10px;padding:11px 16px;"><strong style="color:var(--accent-warm)"><span class="az-t">Dərs 7</span><span class="ru-t">Урок 7</span></strong> — <span class="az-t">ƏKOB: tətbiqi məsələlər</span><span class="ru-t">НОК: прикладные задачи</span></div>
+          <div style="background:var(--bg-glass);border-radius:10px;padding:11px 16px;"><strong style="color:var(--accent-warm)"><span class="az-t">Dərs 8</span><span class="ru-t">Урок 8</span></strong> — <span class="az-t">Kəsrlərin ixtisarı</span><span class="ru-t">Сокращение дробей</span></div>
+          <div style="background:var(--bg-glass);border-radius:10px;padding:11px 16px;"><strong style="color:var(--warning)"><span class="az-t">Dərs 9–11</span><span class="ru-t">Уроки 9–11</span></strong> — <span class="az-t">Kəsrlərlə əməllər, mətn məsələləri</span><span class="ru-t">Действия с дробями, текстовые задачи</span></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title"><span class="icon" style="background:var(--accent-dim)">🎯</span><span class="az-t">Dərsin məqsədləri</span><span class="ru-t">Цели урока</span></div>
+        <ul style="list-style:none;display:grid;gap:8px;">
+          <li style="background:var(--bg-glass);border-radius:9px;padding:9px 14px;border-left:3px solid var(--accent);"><span class="az-t">Natural ədədin qüvvətini tapmaq</span><span class="ru-t">Находить степень натурального числа</span></li>
+          <li style="background:var(--bg-glass);border-radius:9px;padding:9px 14px;border-left:3px solid var(--accent);"><span class="az-t">Qüvvət daxil olan ədədi ifadənin qiymətini hesablamaq</span><span class="ru-t">Вычислять значение числового выражения со степенью</span></li>
+          <li style="background:var(--bg-glass);border-radius:9px;padding:9px 14px;border-left:3px solid var(--accent-blue);"><span class="az-t">Sadə və mürəkkəb ədədləri müəyyən etmək</span><span class="ru-t">Определять простые и составные числа</span></li>
+          <li style="background:var(--bg-glass);border-radius:9px;padding:9px 14px;border-left:3px solid var(--accent-blue);"><span class="az-t">Natural ədədi sadə vuruqlara ayırmaq</span><span class="ru-t">Разлагать натуральное число на простые множители</span></li>
+          <li style="background:var(--bg-glass);border-radius:9px;padding:9px 14px;border-left:3px solid var(--accent-warm);"><span class="az-t">ƏBOB və ƏKOB-u tapmaq</span><span class="ru-t">Находить НОД и НОК</span></li>
+          <li style="background:var(--bg-glass);border-radius:9px;padding:9px 14px;border-left:3px solid var(--accent-warm);"><span class="az-t">Qarşılıqlı sadə ədədləri müəyyən etmək</span><span class="ru-t">Определять взаимно простые числа</span></li>
+          <li style="background:var(--bg-glass);border-radius:9px;padding:9px 14px;border-left:3px solid var(--warning);"><span class="az-t">ƏBOB və ƏKOB-dan istifadə etməklə kəsrlər üzərindən hesablamalar aparmaq</span><span class="ru-t">Использовать НОД и НОК для вычислений с дробями</span></li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- THEORY -->
+    <section id="theory">
+      <div class="card">
+        <div class="card-title"><span class="icon" style="background:var(--accent-dim)">📖</span><span class="az-t">Vizual nəzəriyyə</span><span class="ru-t">Визуальная теория</span></div>
+        <p style="color:var(--text-secondary);margin-bottom:18px"><span class="az-t">Slaydları çevirin. Hər slayd — fəslin əsas mövzusu.</span><span class="ru-t">Листайте слайды. Каждый слайд — ключевая тема главы.</span></p>
+        <div class="generate-widget">
+          <div class="widget-progress"><span class="az-t">Slayd</span><span class="ru-t">Слайд</span> <span id="slide-num">1</span> / <span id="slide-total">10</span></div>
+          <div id="track-slides">
+
+            <div class="widget-slide active">
+              <h3>🔢 <span class="az-t">Natural ədədlər nədir?</span><span class="ru-t">Что такое натуральные числа?</span></h3>
+              <p><span class="az-t"><strong>Natural ədədlər</strong> — əşyaları saymaq üçün istifadə olunan ədədlər: 1, 2, 3, 4, 5 …</span><span class="ru-t"><strong>Натуральные числа</strong> — числа для счёта предметов: 1, 2, 3, 4, 5 …</span></p>
+              <div class="big-math">1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, …</div>
+              <p><span class="az-t">Natural sıra <span class="highlight">1</span>-dən başlayır və sonsuz davam edir.</span><span class="ru-t">Натуральный ряд начинается с <span class="highlight">1</span> и продолжается бесконечно.</span></p>
+              <div class="tip-box"><span class="az-t">0 natural ədəd deyil. Natural ədədlər yalnız müsbət tam ədədlərdir.</span><span class="ru-t">0 — не натуральное число. Натуральные числа — только положительные целые.</span></div>
+            </div>
+
+            <div class="widget-slide">
+              <h3>⬆️ <span class="az-t">Qüvvətə yüksəltmə</span><span class="ru-t">Возведение в степень</span></h3>
+              <p><span class="az-t">Eyni ədədin özünə vurulması — <strong>qüvvət</strong> əməlidir.</span><span class="ru-t">Умножение числа на само себя — действие <strong>возведения в степень</strong>.</span></p>
+              <div class="big-math">a² = a · a &nbsp;|&nbsp; a³ = a · a · a</div>
+              <p><span class="az-t">Nümunələr:</span><span class="ru-t">Примеры:</span></p>
+              <div style="display:grid;gap:8px;margin:12px 0;">
+                <div style="background:var(--bg-glass);border-radius:8px;padding:10px 14px;">3<sup>2</sup> = 3 · 3 = <strong style="color:var(--accent)">9</strong></div>
+                <div style="background:var(--bg-glass);border-radius:8px;padding:10px 14px;">2<sup>3</sup> = 2 · 2 · 2 = <strong style="color:var(--accent)">8</strong></div>
+                <div style="background:var(--bg-glass);border-radius:8px;padding:10px 14px;">5<sup>2</sup> = 5 · 5 = <strong style="color:var(--accent)">25</strong></div>
+              </div>
+              <div class="warning-box"><span class="az-t">a² oxunuşu: «a kvadrat», a³: «a kub». Göstərici 0-dan böyük natural ədəddir.</span><span class="ru-t">a² читается «a в квадрате», a³: «a в кубе». Показатель — натуральное число, большее 0.</span></div>
+            </div>
+
+            <div class="widget-slide">
+              <h3>📐 <span class="az-t">Əməliyyatların sırası</span><span class="ru-t">Порядок действий</span></h3>
+              <p><span class="az-t">Mürəkkəb ifadələrdə əməliyyatlar müəyyən sıra ilə yerinə yetirilir:</span><span class="ru-t">В сложных выражениях действия выполняются в определённом порядке:</span></p>
+              <div style="display:grid;gap:10px;margin:14px 0;">
+                <div style="background:var(--bg-glass);border-radius:10px;padding:13px;border-left:4px solid var(--accent);"><strong style="color:var(--accent)"><span class="az-t">1-ci:</span><span class="ru-t">1-е:</span></strong> <span class="az-t">Mötərizə içindəki əməllər</span><span class="ru-t">Действия в скобках</span></div>
+                <div style="background:var(--bg-glass);border-radius:10px;padding:13px;border-left:4px solid var(--accent-blue);"><strong style="color:var(--accent-blue)"><span class="az-t">2-ci:</span><span class="ru-t">2-е:</span></strong> <span class="az-t">Qüvvət, kök</span><span class="ru-t">Степень, корень</span></div>
+                <div style="background:var(--bg-glass);border-radius:10px;padding:13px;border-left:4px solid var(--accent-warm);"><strong style="color:var(--accent-warm)"><span class="az-t">3-cü:</span><span class="ru-t">3-е:</span></strong> <span class="az-t">Vurma və bölmə (soldan sağa)</span><span class="ru-t">Умножение и деление (слева направо)</span></div>
+                <div style="background:var(--bg-glass);border-radius:10px;padding:13px;border-left:4px solid var(--warning);"><strong style="color:var(--warning)"><span class="az-t">4-cü:</span><span class="ru-t">4-е:</span></strong> <span class="az-t">Toplama və çıxma (soldan sağa)</span><span class="ru-t">Сложение и вычитание (слева направо)</span></div>
+              </div>
+              <div class="formula-box">(8³ − 96 : 8) · 2² = (512 − 12) · 4 = 500 · 4 = <strong style="color:var(--accent)">2000</strong></div>
+            </div>
+
+            <div class="widget-slide">
+              <h3>🔍 <span class="az-t">Bölənlər</span><span class="ru-t">Делители</span></h3>
+              <p><span class="az-t"><strong>a ədədinin böləni</strong> — a-nı qalıqsız böldən natural ədəd.</span><span class="ru-t"><strong>Делитель числа a</strong> — натуральное число, на которое a делится без остатка.</span></p>
+              <div class="formula-box"><span class="az-t">12-nin bölənləri: 1, 2, 3, 4, 6, 12</span><span class="ru-t">Делители числа 12: 1, 2, 3, 4, 6, 12</span></div>
+              <p><span class="az-t">Hər ədədin <span class="highlight">1</span> və <span class="highlight">özü</span> bölənidir.</span><span class="ru-t">Каждое число имеет делители <span class="highlight">1</span> и <span class="highlight">само себя</span>.</span></p>
+              <div class="tip-box"><span class="az-t">Bölünmə əlamətləri: 2-yə — cüt; 5-ə — 0 və ya 5 ilə bitir; 3-ə — rəqəmlərin cəmi 3-ə bölünür; 9-a — rəqəmlərin cəmi 9-a bölünür.</span><span class="ru-t">Признаки делимости: на 2 — чётное; на 5 — кончается на 0 или 5; на 3 — сумма цифр делится на 3; на 9 — сумма цифр делится на 9.</span></div>
+            </div>
+
+            <div class="widget-slide">
+              <h3>🧩 <span class="az-t">Sadə və mürəkkəb ədədlər</span><span class="ru-t">Простые и составные числа</span></h3>
+              <p><span class="az-t"><strong>Sadə ədəd</strong> — yalnız 2 böləni var: 1 və özü.<br><strong>Mürəkkəb ədəd</strong> — 2-dən çox böləni var.</span><span class="ru-t"><strong>Простое число</strong> — ровно 2 делителя: 1 и само себя.<br><strong>Составное число</strong> — более 2 делителей.</span></p>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:14px 0;">
+                <div style="background:var(--accent-dim);border-radius:12px;padding:14px;text-align:center;"><strong style="color:var(--accent)"><span class="az-t">Sadə</span><span class="ru-t">Простые</span></strong><br><span style="color:var(--text-secondary);">2, 3, 5, 7, 11, 13, 17, 19, 23, 29…</span></div>
+                <div style="background:var(--accent-warm-dim);border-radius:12px;padding:14px;text-align:center;"><strong style="color:var(--accent-warm)"><span class="az-t">Mürəkkəb</span><span class="ru-t">Составные</span></strong><br><span style="color:var(--text-secondary);">4, 6, 8, 9, 10, 12, 14, 15, 16…</span></div>
+              </div>
+              <div class="warning-box"><span class="az-t">1 nə sadə, nə də mürəkkəb ədəddir. 2 yeganə cüt sadə ədəddir.</span><span class="ru-t">1 — не простое и не составное. 2 — единственное чётное простое число.</span></div>
+            </div>
+
+            <div class="widget-slide">
+              <h3>🔄 <span class="az-t">Bölünənlər</span><span class="ru-t">Кратные числа</span></h3>
+              <p><span class="az-t"><strong>a ədədinin bölünəni</strong> — a-ya bölünən ədəd (a·k, burada k ∈ ℕ).</span><span class="ru-t"><strong>Кратное числа a</strong> — число вида a·k, где k ∈ ℕ.</span></p>
+              <div class="formula-box"><span class="az-t">5-in bölünənləri: 5, 10, 15, 20, 25, 30, …</span><span class="ru-t">Кратные числа 5: 5, 10, 15, 20, 25, 30, …</span></div>
+              <p><span class="az-t">Hər ədəd özünün bölünənidir; bölünənlər sonsuz çoxdur.</span><span class="ru-t">Каждое число является своим кратным; кратных бесконечно много.</span></p>
+              <div class="tip-box"><span class="az-t">Böləni tapırıq: a ÷ b = tam ədəd → b, a-nın bölənidir.<br>Bölünəni tapırıq: a · k (k = 1, 2, 3 …).</span><span class="ru-t">Делитель: a ÷ b = целое → b является делителем a.<br>Кратное: a · k (k = 1, 2, 3 …).</span></div>
+            </div>
+
+            <div class="widget-slide">
+              <h3>🌀 <span class="az-t">ƏBOB — Ən Böyük Ortaq Böləni</span><span class="ru-t">НОД — Наибольший Общий Делитель</span></h3>
+              <p><span class="az-t"><strong>ƏBOB(a, b)</strong> — a və b ədədlərinin ümumi bölənlərindən ən böyüyü.</span><span class="ru-t"><strong>НОД(a, b)</strong> — наибольший из общих делителей чисел a и b.</span></p>
+              <div class="formula-box"><span class="az-t">ƏBOB(12, 8) = 4 &nbsp;|&nbsp; ƏBOB(40, 50) = 10</span><span class="ru-t">НОД(12, 8) = 4 &nbsp;|&nbsp; НОД(40, 50) = 10</span></div>
+              <p><span class="az-t"><strong>Eyler-Venn üsulu:</strong> iki çevrənin kəsişməsindəki ortaq bölənlərin ən böyüyü ƏBOB-dur.</span><span class="ru-t"><strong>Метод Эйлера-Венна:</strong> наибольший из общих делителей в пересечении кругов — это НОД.</span></p>
+              <svg viewBox="0 0 300 120" aria-label="Venn diaqramı: 12 və 18 ədədlərinin ortaq bölənləri" style="width:100%;max-width:300px;display:block;margin:12px auto;">
+                <circle cx="110" cy="60" r="55" fill="rgba(0,212,170,0.12)" stroke="#00d4aa" stroke-width="2"/>
+                <circle cx="190" cy="60" r="55" fill="rgba(77,171,247,0.12)" stroke="#4dabf7" stroke-width="2"/>
+                <text x="75" y="55" fill="#00d4aa" font-size="11" text-anchor="middle" font-family="Segoe UI,sans-serif">1, 2</text>
+                <text x="75" y="70" fill="#00d4aa" font-size="11" text-anchor="middle" font-family="Segoe UI,sans-serif">4</text>
+                <text x="150" y="55" fill="#e8e8f0" font-size="12" font-weight="700" text-anchor="middle" font-family="Segoe UI,sans-serif">1,2,3</text>
+                <text x="150" y="72" fill="#fcc419" font-size="12" font-weight="700" text-anchor="middle" font-family="Segoe UI,sans-serif">6</text>
+                <text x="225" y="55" fill="#4dabf7" font-size="11" text-anchor="middle" font-family="Segoe UI,sans-serif">9, 18</text>
+                <text x="110" y="108" fill="#00d4aa" font-size="11" text-anchor="middle" font-family="Segoe UI,sans-serif">12</text>
+                <text x="190" y="108" fill="#4dabf7" font-size="11" text-anchor="middle" font-family="Segoe UI,sans-serif">18</text>
+              </svg>
+            </div>
+
+            <div class="widget-slide">
+              <h3>⚙️ <span class="az-t">ƏKOB — Ən Kiçik Ortaq Bölünəni</span><span class="ru-t">НОК — Наименьшее Общее Кратное</span></h3>
+              <p><span class="az-t"><strong>ƏKOB(a, b)</strong> — a və b ədədlərinin ortaq bölünənlərindən ən kiçiyi.</span><span class="ru-t"><strong>НОК(a, b)</strong> — наименьшее из общих кратных чисел a и b.</span></p>
+              <div class="formula-box"><span class="az-t">ƏKOB(4, 6) = 12 &nbsp;|&nbsp; ƏKOB(12, 18) = 36</span><span class="ru-t">НОК(4, 6) = 12 &nbsp;|&nbsp; НОК(12, 18) = 36</span></div>
+              <p><span class="az-t">Faydalı əlaqə: <span class="highlight">ƏBOB(a,b) · ƏKOB(a,b) = a · b</span></span><span class="ru-t">Полезная связь: <span class="highlight">НОД(a,b) · НОК(a,b) = a · b</span></span></p>
+              <div class="tip-box"><span class="az-t">Saat dişlisi məsələsindəki kimi: hər iki dişlinin eyni nöqtəyə dönmək üçün lazım olan ən az addım = ƏKOB.</span><span class="ru-t">Как в задаче о шестернях: минимальное число шагов для возврата в исходное положение = НОК.</span></div>
+            </div>
+
+            <div class="widget-slide">
+              <h3>½ <span class="az-t">Kəsrlərin ixtisarı</span><span class="ru-t">Сокращение дробей</span></h3>
+              <p><span class="az-t">Kəsri ixtisar etmək — sayı və məxrəci onların ƏBOB-una bölmək.</span><span class="ru-t">Сократить дробь — разделить числитель и знаменатель на их НОД.</span></p>
+              <div class="formula-box"><span class="az-t">12/16 → ƏBOB(12,16)=4 → 3/4 &nbsp;|&nbsp; 14/49 → ƏBOB(14,49)=7 → 2/7</span><span class="ru-t">12/16 → НОД(12,16)=4 → 3/4 &nbsp;|&nbsp; 14/49 → НОД(14,49)=7 → 2/7</span></div>
+              <p><span class="az-t">İxtisar olunan kəsr eyni dəyəri saxlayır, sadəcə daha kiçik rəqəmlərlə yazılır.</span><span class="ru-t">Сокращённая дробь сохраняет то же значение, но записывается меньшими числами.</span></p>
+              <div class="warning-box"><span class="az-t">Tam ixtisar: sayı və məxrəci onların ƏBOB-una böldükdə alınan kəsrin ƏBOB-u 1 olmalıdır.</span><span class="ru-t">Полное сокращение: после деления на НОД новый НОД числителя и знаменателя равен 1.</span></div>
+            </div>
+
+            <div class="widget-slide">
+              <h3>🔐 <span class="az-t">Sadə ədədlər — rəqəmsal kilidlər</span><span class="ru-t">Простые числа — цифровые замки</span></h3>
+              <p><span class="az-t">Sadə ədədlər yalnız nəzəri deyil — <strong>real həyatda məlumatların şifrələnməsinin əsasını</strong> təşkil edir.</span><span class="ru-t">Простые числа — не только теория: они составляют <strong>основу шифрования данных в реальной жизни</strong>.</span></p>
+              <p><span class="az-t">Şifrələmə (RSA) zamanı iki böyük sadə ədəd seçilir, onların hasili şifrə açarına çevrilir. Bu mürəkkəb ədədi sadə vuruqlara ayırmaq <strong>praktiki cəhətdən mümkün deyil</strong> — məhz buna görə məlumat qorunur.</span><span class="ru-t">В шифровании RSA выбираются два больших простых числа, их произведение — ключ. Разложить его на множители <strong>практически невозможно</strong> — именно так защищаются данные.</span></p>
+              <div class="formula-box"><span class="az-t">p × q = N &nbsp;(şifrə) &nbsp;|&nbsp; p, q — böyük sadə ədədlər</span><span class="ru-t">p × q = N &nbsp;(ключ) &nbsp;|&nbsp; p, q — большие простые числа</span></div>
+              <div class="tip-box"><span class="az-t">Mühəndislik, tikinti və istehsalda iş qrafiklərini uyğunlaşdırmaq üçün ƏBOB və ƏKOB-dan istifadə olunur.</span><span class="ru-t">В инженерии, строительстве и производстве НОД и НОК используются для согласования рабочих графиков.</span></div>
+            </div>
+
+            <div class="widget-slide">
+              <h3>🌀 <span class="az-t">Ulam Spiralı</span><span class="ru-t">Спираль Улама</span></h3>
+              <p><span class="az-t">1963-cü ildə Amerika riyaziyyatçısı <strong>Stanislav Ulam</strong> natural ədədləri spiral şəklində düzdükdə, <strong>sadə ədədlər qeyri-adi naxış</strong> əmələ gətirir — diaqonal xətlər boyunca qruplaşır.</span><span class="ru-t">В 1963 году математик <strong>Станислав Улам</strong> расположил натуральные числа по спирали и обнаружил, что <strong>простые числа образуют необычный узор</strong> — группируются вдоль диагоналей.</span></p>
+              <div id="ulam-svg" style="text-align:center;margin:10px 0;"></div>
+              <div class="tip-box"><span class="az-t">Sarı hücrələr sadə ədədlərdir. Onların xətti düzülüşü riyaziyyatçıları hələ də düşündürür.</span><span class="ru-t">Жёлтые клетки — простые числа. Их линейное расположение до сих пор удивляет математиков.</span></div>
+            </div>
+
+            <div class="widget-slide">
+              <h3>✅ <span class="az-t">Fəsil 1 — icmal</span><span class="ru-t">Глава 1 — итог</span></h3>
+              <p><span class="az-t">Bu fəsildə öyrəndikləriniz:</span><span class="ru-t">Что вы изучили в этой главе:</span></p>
+              <div style="display:grid;gap:7px;margin:14px 0;">
+                <div style="background:var(--bg-glass);border-radius:9px;padding:9px 13px;"><span class="az-t">✔ Qüvvət əməli: a², a³</span><span class="ru-t">✔ Возведение в степень: a², a³</span></div>
+                <div style="background:var(--bg-glass);border-radius:9px;padding:9px 13px;"><span class="az-t">✔ Əməliyyatların sırası (mötərizə → qüvvət → · ÷ → + −)</span><span class="ru-t">✔ Порядок действий (скобки → степень → · ÷ → + −)</span></div>
+                <div style="background:var(--bg-glass);border-radius:9px;padding:9px 13px;"><span class="az-t">✔ Bölənlər, bölünənlər, bölünmə əlamətləri</span><span class="ru-t">✔ Делители, кратные, признаки делимости</span></div>
+                <div style="background:var(--bg-glass);border-radius:9px;padding:9px 13px;"><span class="az-t">✔ Sadə və mürəkkəb ədədlər</span><span class="ru-t">✔ Простые и составные числа</span></div>
+                <div style="background:var(--bg-glass);border-radius:9px;padding:9px 13px;"><span class="az-t">✔ ƏBOB — Eyler-Venn diaqramı ilə</span><span class="ru-t">✔ НОД — с диаграммой Эйлера-Венна</span></div>
+                <div style="background:var(--bg-glass);border-radius:9px;padding:9px 13px;"><span class="az-t">✔ ƏKOB — tətbiqi məsələlər</span><span class="ru-t">✔ НОК — прикладные задачи</span></div>
+                <div style="background:var(--bg-glass);border-radius:9px;padding:9px 13px;"><span class="az-t">✔ Kəsrlərin ixtisarı</span><span class="ru-t">✔ Сокращение дробей</span></div>
+              </div>
+              <div class="tip-box"><span class="az-t">Trenajörə və attestasiyaya keçin — bilikləri möhkəmləndirin!</span><span class="ru-t">Перейдите к тренажёру и аттестации — закрепите знания!</span></div>
+            </div>
+
+          </div>
+          <div class="widget-nav">
+            <button type="button" class="btn btn-secondary" onclick="prevSlide()"><span class="az-t">← Geri</span><span class="ru-t">← Назад</span></button>
+            <button type="button" class="btn btn-primary" onclick="nextSlide()"><span class="az-t">İrəli →</span><span class="ru-t">Вперёд →</span></button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ALGORITHM -->
+    <section id="algorithm">
+      <div class="card">
+        <div class="card-title"><span class="icon" style="background:var(--accent-blue-dim)">🪜</span><span class="az-t">Addım-addım alqoritmlər</span><span class="ru-t">Пошаговые алгоритмы</span></div>
+        <div class="sequence-component">
+          <div class="sequence-step">
+            <div class="sequence-number">1</div>
+            <h4><span class="az-t">Qüvvəti hesablamaq</span><span class="ru-t">Вычислить степень</span></h4>
+            <p><span class="az-t">Göstərici neçədirsə, ədədi həmin dəfə özünə vur: a<sup>n</sup> = a·a·…·a (n dəfə). Əvvəlcə mötərizəni, sonra qüvvəti hesabla.</span><span class="ru-t">Перемножь число на себя столько раз, сколько показатель степени: a<sup>n</sup> = a·a·…·a (n раз). Сначала скобки, потом степень.</span></p>
+          </div>
+          <div class="sequence-step">
+            <div class="sequence-number">2</div>
+            <h4><span class="az-t">Ədədin bölənlərini tapmaq</span><span class="ru-t">Найти делители числа</span></h4>
+            <p><span class="az-t">1-dən √a-ya qədər hər natural ədədi yoxla — bölürsə, həm o, həm də a÷o böləndir. Sadəsə: yalnız 1 və özü bölən kimi qalır.</span><span class="ru-t">Проверяй каждое натуральное число от 1 до √a: если делится, то и оно, и a÷оно — делители. Если простое — остаётся только 1 и само число.</span></p>
+          </div>
+          <div class="sequence-step">
+            <div class="sequence-number">3</div>
+            <h4><span class="az-t">ƏBOB tapmaq (Eyler-Venn)</span><span class="ru-t">Найти НОД (Эйлер-Венн)</span></h4>
+            <p><span class="az-t">İki ədədin bölənlərini ayrıca yaz → ümumi bölənləri seç → onların ən böyüyü = ƏBOB.</span><span class="ru-t">Запиши делители двух чисел отдельно → выбери общие → наибольший из них = НОД.</span></p>
+          </div>
+          <div class="sequence-step">
+            <div class="sequence-number">4</div>
+            <h4><span class="az-t">ƏKOB tapmaq</span><span class="ru-t">Найти НОК</span></h4>
+            <p><span class="az-t">İki ədədin bölünənlərini yaz → ilk ortaq bölünəni tap = ƏKOB. Alternativ: ƏKOB = a·b ÷ ƏBOB(a,b).</span><span class="ru-t">Запиши кратные двух чисел → найди первое общее = НОК. Альтернатива: НОК = a·b ÷ НОД(a,b).</span></p>
+          </div>
+          <div class="sequence-step">
+            <div class="sequence-number">5</div>
+            <h4><span class="az-t">Kəsri ixtisar etmək</span><span class="ru-t">Сократить дробь</span></h4>
+            <p><span class="az-t">ƏBOB(say, məxrəc) hesabla → sayı və məxrəci ƏBOB-a böl → alınan kəsr tam ixtisar olunmuşdur.</span><span class="ru-t">Найди НОД(числитель, знаменатель) → раздели оба на НОД → полученная дробь полностью сокращена.</span></p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- YOXLAMA -->
+    <section id="yoxlama">
+      <div class="card">
+        <div class="card-title"><span class="icon" style="background:var(--accent-warm-dim)">📋</span><span class="az-t">İlkin yoxlama — 5-ci sinif bilikləri</span><span class="ru-t">Предварительная проверка — знания 5-го класса</span></div>
+        <p style="color:var(--text-secondary);margin-bottom:18px;"><span class="az-t">Yeni mövzuya keçməzdən əvvəl kəsrlərlə işləməyi yoxlayın.</span><span class="ru-t">Перед новой темой проверьте умение работать с дробями.</span></p>
+      </div>
+
+      <div class="card">
+        <div class="card-title"><span class="icon" style="background:var(--accent-dim)">🔢</span><span class="az-t">Hesablayın</span><span class="ru-t">Вычислите</span></div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px;">
+          <div class="problem-card" style="margin:0;">
+            <div class="problem-header"><span class="problem-number">a</span></div>
+            <div class="problem-text">1³⁄₅ + ⁷⁄₆</div>
+            <button class="solution-btn" onclick="toggleSolution('y1a')"><span class="az-t">Cavab</span><span class="ru-t">Ответ</span></button>
+            <div class="solution" id="y1a"><div class="solution-step"><span class="step-num">1</span>⁸⁄₅ + ⁷⁄₆ = ⁴⁸⁄₃₀ + ³⁵⁄₃₀ = ⁸³⁄₃₀ = <strong style="color:var(--accent)">2²³⁄₃₀</strong></div></div>
+          </div>
+          <div class="problem-card" style="margin:0;">
+            <div class="problem-header"><span class="problem-number">b</span></div>
+            <div class="problem-text">7 − ⁸⁄₃</div>
+            <button class="solution-btn" onclick="toggleSolution('y1b')"><span class="az-t">Cavab</span><span class="ru-t">Ответ</span></button>
+            <div class="solution" id="y1b"><div class="solution-step"><span class="step-num">1</span>²¹⁄₃ − ⁸⁄₃ = ¹³⁄₃ = <strong style="color:var(--accent)">4⅓</strong></div></div>
+          </div>
+          <div class="problem-card" style="margin:0;">
+            <div class="problem-header"><span class="problem-number">c</span></div>
+            <div class="problem-text">¼ + ½</div>
+            <button class="solution-btn" onclick="toggleSolution('y1c')"><span class="az-t">Cavab</span><span class="ru-t">Ответ</span></button>
+            <div class="solution" id="y1c"><div class="solution-step"><span class="step-num">1</span>¼ + ²⁄₄ = ³⁄₄ = <strong style="color:var(--accent)">³⁄₄</strong></div></div>
+          </div>
+          <div class="problem-card" style="margin:0;">
+            <div class="problem-header"><span class="problem-number">d</span></div>
+            <div class="problem-text">1½ − ⁴⁄₅</div>
+            <button class="solution-btn" onclick="toggleSolution('y1d')"><span class="az-t">Cavab</span><span class="ru-t">Ответ</span></button>
+            <div class="solution" id="y1d"><div class="solution-step"><span class="step-num">1</span>¹⁵⁄₁₀ − ⁸⁄₁₀ = <strong style="color:var(--accent)">⁷⁄₁₀</strong></div></div>
+          </div>
+          <div class="problem-card" style="margin:0;">
+            <div class="problem-header"><span class="problem-number">e</span></div>
+            <div class="problem-text">¾ × ⁴⁄₃</div>
+            <button class="solution-btn" onclick="toggleSolution('y1e')"><span class="az-t">Cavab</span><span class="ru-t">Ответ</span></button>
+            <div class="solution" id="y1e"><div class="solution-step"><span class="step-num">1</span>¹²⁄₁₂ = <strong style="color:var(--accent)">1</strong></div></div>
+          </div>
+          <div class="problem-card" style="margin:0;">
+            <div class="problem-header"><span class="problem-number">f</span></div>
+            <div class="problem-text">³⁄₂ ÷ 6</div>
+            <button class="solution-btn" onclick="toggleSolution('y1f')"><span class="az-t">Cavab</span><span class="ru-t">Ответ</span></button>
+            <div class="solution" id="y1f"><div class="solution-step"><span class="step-num">1</span>³⁄₂ × ⅙ = ³⁄₁₂ = <strong style="color:var(--accent)">¼</strong></div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title"><span class="icon" style="background:var(--accent-blue-dim)">✂️</span><span class="az-t">Kəsrləri ixtisar edin</span><span class="ru-t">Сократите дроби</span></div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;">
+          <div class="problem-card" style="margin:0;padding:16px;">
+            <div class="problem-text" style="font-size:1.1rem;text-align:center;font-weight:700;">¹²⁄₁₆</div>
+            <button class="solution-btn" onclick="toggleSolution('yr1')" style="width:100%;margin-top:8px;"><span class="az-t">Cavab</span><span class="ru-t">Ответ</span></button>
+            <div class="solution" id="yr1"><div class="solution-step"><span class="az-t">ƏBOB(12,16)=4 → <strong>³⁄₄</strong></span><span class="ru-t">НОД(12,16)=4 → <strong>³⁄₄</strong></span></div></div>
+          </div>
+          <div class="problem-card" style="margin:0;padding:16px;">
+            <div class="problem-text" style="font-size:1.1rem;text-align:center;font-weight:700;">¹⁵⁄₂₅</div>
+            <button class="solution-btn" onclick="toggleSolution('yr2')" style="width:100%;margin-top:8px;"><span class="az-t">Cavab</span><span class="ru-t">Ответ</span></button>
+            <div class="solution" id="yr2"><div class="solution-step"><span class="az-t">ƏBOB(15,25)=5 → <strong>³⁄₅</strong></span><span class="ru-t">НОД(15,25)=5 → <strong>³⁄₅</strong></span></div></div>
+          </div>
+          <div class="problem-card" style="margin:0;padding:16px;">
+            <div class="problem-text" style="font-size:1.1rem;text-align:center;font-weight:700;">¹²⁄₂₇</div>
+            <button class="solution-btn" onclick="toggleSolution('yr3')" style="width:100%;margin-top:8px;"><span class="az-t">Cavab</span><span class="ru-t">Ответ</span></button>
+            <div class="solution" id="yr3"><div class="solution-step"><span class="az-t">ƏBOB(12,27)=3 → <strong>⁴⁄₉</strong></span><span class="ru-t">НОД(12,27)=3 → <strong>⁴⁄₉</strong></span></div></div>
+          </div>
+          <div class="problem-card" style="margin:0;padding:16px;">
+            <div class="problem-text" style="font-size:1.1rem;text-align:center;font-weight:700;">²⁴⁄₃₆</div>
+            <button class="solution-btn" onclick="toggleSolution('yr4')" style="width:100%;margin-top:8px;"><span class="az-t">Cavab</span><span class="ru-t">Ответ</span></button>
+            <div class="solution" id="yr4"><div class="solution-step"><span class="az-t">ƏBOB(24,36)=12 → <strong>²⁄₃</strong></span><span class="ru-t">НОД(24,36)=12 → <strong>²⁄₃</strong></span></div></div>
+          </div>
+          <div class="problem-card" style="margin:0;padding:16px;">
+            <div class="problem-text" style="font-size:1.1rem;text-align:center;font-weight:700;">¹⁶⁄₂₄</div>
+            <button class="solution-btn" onclick="toggleSolution('yr5')" style="width:100%;margin-top:8px;"><span class="az-t">Cavab</span><span class="ru-t">Ответ</span></button>
+            <div class="solution" id="yr5"><div class="solution-step"><span class="az-t">ƏBOB(16,24)=8 → <strong>²⁄₃</strong></span><span class="ru-t">НОД(16,24)=8 → <strong>²⁄₃</strong></span></div></div>
+          </div>
+          <div class="problem-card" style="margin:0;padding:16px;">
+            <div class="problem-text" style="font-size:1.1rem;text-align:center;font-weight:700;">¹⁴⁄₄₉</div>
+            <button class="solution-btn" onclick="toggleSolution('yr6')" style="width:100%;margin-top:8px;"><span class="az-t">Cavab</span><span class="ru-t">Ответ</span></button>
+            <div class="solution" id="yr6"><div class="solution-step"><span class="az-t">ƏBOB(14,49)=7 → <strong>²⁄₇</strong></span><span class="ru-t">НОД(14,49)=7 → <strong>²⁄₇</strong></span></div></div>
+          </div>
+          <div class="problem-card" style="margin:0;padding:16px;">
+            <div class="problem-text" style="font-size:1.1rem;text-align:center;font-weight:700;">²⁸⁄₄₂</div>
+            <button class="solution-btn" onclick="toggleSolution('yr7')" style="width:100%;margin-top:8px;"><span class="az-t">Cavab</span><span class="ru-t">Ответ</span></button>
+            <div class="solution" id="yr7"><div class="solution-step"><span class="az-t">ƏBOB(28,42)=14 → <strong>²⁄₃</strong></span><span class="ru-t">НОД(28,42)=14 → <strong>²⁄₃</strong></span></div></div>
+          </div>
+          <div class="problem-card" style="margin:0;padding:16px;">
+            <div class="problem-text" style="font-size:1.1rem;text-align:center;font-weight:700;">³⁰⁄₄₂</div>
+            <button class="solution-btn" onclick="toggleSolution('yr8')" style="width:100%;margin-top:8px;"><span class="az-t">Cavab</span><span class="ru-t">Ответ</span></button>
+            <div class="solution" id="yr8"><div class="solution-step"><span class="az-t">ƏBOB(30,42)=6 → <strong>⁵⁄₇</strong></span><span class="ru-t">НОД(30,42)=6 → <strong>⁵⁄₇</strong></span></div></div>
+          </div>
+          <div class="problem-card" style="margin:0;padding:16px;">
+            <div class="problem-text" style="font-size:1.1rem;text-align:center;font-weight:700;">³⁴⁄₅₁</div>
+            <button class="solution-btn" onclick="toggleSolution('yr9')" style="width:100%;margin-top:8px;"><span class="az-t">Cavab</span><span class="ru-t">Ответ</span></button>
+            <div class="solution" id="yr9"><div class="solution-step"><span class="az-t">ƏBOB(34,51)=17 → <strong>²⁄₃</strong></span><span class="ru-t">НОД(34,51)=17 → <strong>²⁄₃</strong></span></div></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- EXAMPLES -->
+    <section id="examples">
+      <div class="card">
+        <div class="card-title"><span class="icon" style="background:var(--accent-dim)">📝</span><span class="az-t">Tapşırıqlar 1–11 — tam həll</span><span class="ru-t">Задания 1–11 — полное решение</span></div>
+      </div>
+
+      <!-- ── CƏLB EDİCİ MƏSƏLƏ: SAATSAZ ─────────────────────── -->
+      <div class="problem-card" style="border-color:var(--accent);border-width:2px;">
+        <div class="problem-header">
+          <span class="problem-number" style="background:var(--accent);color:#000;"><span class="az-t">Cəlb edici</span><span class="ru-t">Занимательная</span></span>
+          <span class="problem-type"><span class="az-t">ƏKOB · Saat dişliləri</span><span class="ru-t">НОК · Шестерни часов</span></span>
+        </div>
+        <div class="problem-text">
+          <span class="az-t">Saatsaz saat mexanizmini işə salmazdan əvvəl hər arxın üzərində A, B və C nöqtələrini qeyd etdi. Kiçik arxın 12, orta arxın 18, böyük arxın 24 dişi var.<br><br>
+          • Böyük və kiçik arx ən azı neçə dövr etdikdən sonra A və C nöqtələri yenidən ilkin mövqeyinə qayıdar?<br>
+          • Hər arx ən azı neçə dövr etdikdən sonra A, B və C nöqtələri yenidən ilkin mövqeyinə qayıdar?</span>
+          <span class="ru-t">Часовщик перед запуском механизма пометил точки A, B и C на каждой шестерне. Малая шестерня имеет 12 зубьев, средняя — 18, большая — 24.<br><br>
+          • Через сколько минимум оборотов большой и малой шестерни точки A и C вернутся в исходное положение?<br>
+          • Через сколько минимум оборотов каждой шестерни все точки A, B и C вернутся в исходное положение?</span>
+        </div>
+        <button class="solution-btn" onclick="toggleSolution('sol-gear')"><span class="az-t">Həlli göstər</span><span class="ru-t">Показать решение</span></button>
+        <div class="solution" id="sol-gear">
+          <div class="solution-step"><span class="step-num">1</span><span class="az-t">A və C üçün: ƏKOB(12, 24) = 24 diş ötüşməsi lazımdır</span><span class="ru-t">Для A и C: НОК(12, 24) = 24 зубьев нужно передать</span></div>
+          <div class="solution-step"><span class="step-num">2</span><span class="az-t">Böyük arx: 24÷24 = <strong>1 dövr</strong>; Kiçik arx: 24÷12 = <strong>2 dövr</strong></span><span class="ru-t">Большая: 24÷24 = <strong>1 оборот</strong>; Малая: 24÷12 = <strong>2 оборота</strong></span></div>
+          <div class="solution-step"><span class="step-num">3</span><span class="az-t">A, B, C üçün: ƏKOB(12, 18, 24) = 72</span><span class="ru-t">Для A, B, C: НОК(12, 18, 24) = 72</span></div>
+          <div class="solution-step"><span class="step-num">4</span><span class="az-t">Kiçik: 72÷12=6 dövr; Orta: 72÷18=4 dövr; Böyük: 72÷24=<strong style="color:var(--accent)">3 dövr</strong></span><span class="ru-t">Малая: 72÷12=6 об.; Средняя: 72÷18=4 об.; Большая: 72÷24=<strong style="color:var(--accent)">3 об.</strong></span></div>
+        </div>
+      </div>
+
+      <!-- ── TAPŞIRIQ 1 ────────────────────────────────────────── -->
+      <div class="problem-card">
+        <div class="problem-header">
+          <span class="problem-number"><span class="az-t">Tapşırıq 1</span><span class="ru-t">Задание 1</span></span>
+          <span class="problem-type"><span class="az-t">Qüvvət · Əməliyyat sırası (a–f)</span><span class="ru-t">Степень · Порядок действий (a–f)</span></span>
+        </div>
+        <div class="problem-text"><span class="az-t">Əmələri yerinə yetirin:</span><span class="ru-t">Выполните действия:</span><br>
+        a) (225 − (15·2 + 12) ÷ 7) · 2<br>
+        b) (345 + (28÷4 − 2)·11) ÷ 16<br>
+        c) 3² + 60 ÷ 2² − 7<br>
+        d) 56 − (108 ÷ 3² + 18)<br>
+        e) (8³ − 96÷8) · 2² + 2·3³<br>
+        f) (5³ + 75÷3) · 3² − 5²·2</div>
+        <button class="solution-btn" onclick="toggleSolution('sol-t1')"><span class="az-t">Həlli göstər</span><span class="ru-t">Показать решение</span></button>
+        <div class="solution" id="sol-t1">
+          <div class="solution-step"><span class="step-num">a</span>(225 − (30+12)÷7)·2 = (225−42÷7)·2 = (225−6)·2 = 219·2 = <strong style="color:var(--accent)">438</strong></div>
+          <div class="solution-step"><span class="step-num">b</span>(345 + (7−2)·11)÷16 = (345+55)÷16 = 400÷16 = <strong style="color:var(--accent)">25</strong></div>
+          <div class="solution-step"><span class="step-num">c</span>9 + 60÷4 − 7 = 9+15−7 = <strong style="color:var(--accent)">17</strong></div>
+          <div class="solution-step"><span class="step-num">d</span>56 − (108÷9+18) = 56−(12+18) = 56−30 = <strong style="color:var(--accent)">26</strong></div>
+          <div class="solution-step"><span class="step-num">e</span>(512−12)·4 + 2·27 = 500·4+54 = 2000+54 = <strong style="color:var(--accent)">2054</strong></div>
+          <div class="solution-step"><span class="step-num">f</span>(125+25)·9 − 25·2 = 150·9−50 = 1350−50 = <strong style="color:var(--accent)">1300</strong></div>
+        </div>
+      </div>
+
+      <!-- ── TAPŞIRIQ 2 ────────────────────────────────────────── -->
+      <div class="problem-card">
+        <div class="problem-header">
+          <span class="problem-number"><span class="az-t">Tapşırıq 2</span><span class="ru-t">Задание 2</span></span>
+          <span class="problem-type"><span class="az-t">Bölənlər · Sadə/mürəkkəb (a–f)</span><span class="ru-t">Делители · Простые/составные (a–f)</span></span>
+        </div>
+        <div class="problem-text"><span class="az-t">Ədədin bölənlərini tapın. Sadə ədəd olub-olmadığını müəyyən edin:</span><span class="ru-t">Найдите делители числа. Определите, является ли оно простым:</span><br>
+        a) 7 &nbsp; b) 20 &nbsp; c) 24 &nbsp; d) 31 &nbsp; e) 40 &nbsp; f) 29</div>
+        <button class="solution-btn" onclick="toggleSolution('sol-t2')"><span class="az-t">Həlli göstər</span><span class="ru-t">Показать решение</span></button>
+        <div class="solution" id="sol-t2">
+          <div class="solution-step"><span class="step-num">a</span><span class="az-t">7 → bölənlər: 1, 7 → <strong style="color:var(--accent)">Sadə</strong></span><span class="ru-t">7 → делители: 1, 7 → <strong style="color:var(--accent)">Простое</strong></span></div>
+          <div class="solution-step"><span class="step-num">b</span><span class="az-t">20 → 1, 2, 4, 5, 10, 20 → <strong style="color:var(--accent-warm)">Mürəkkəb</strong></span><span class="ru-t">20 → 1, 2, 4, 5, 10, 20 → <strong style="color:var(--accent-warm)">Составное</strong></span></div>
+          <div class="solution-step"><span class="step-num">c</span><span class="az-t">24 → 1, 2, 3, 4, 6, 8, 12, 24 → <strong style="color:var(--accent-warm)">Mürəkkəb</strong></span><span class="ru-t">24 → 1, 2, 3, 4, 6, 8, 12, 24 → <strong style="color:var(--accent-warm)">Составное</strong></span></div>
+          <div class="solution-step"><span class="step-num">d</span><span class="az-t">31 → 1, 31 → <strong style="color:var(--accent)">Sadə</strong></span><span class="ru-t">31 → 1, 31 → <strong style="color:var(--accent)">Простое</strong></span></div>
+          <div class="solution-step"><span class="step-num">e</span><span class="az-t">40 → 1, 2, 4, 5, 8, 10, 20, 40 → <strong style="color:var(--accent-warm)">Mürəkkəb</strong></span><span class="ru-t">40 → 1, 2, 4, 5, 8, 10, 20, 40 → <strong style="color:var(--accent-warm)">Составное</strong></span></div>
+          <div class="solution-step"><span class="step-num">f</span><span class="az-t">29 → 1, 29 → <strong style="color:var(--accent)">Sadə</strong></span><span class="ru-t">29 → 1, 29 → <strong style="color:var(--accent)">Простое</strong></span></div>
+        </div>
+      </div>
+
+      <!-- ── TAPŞIRIQ 3 ────────────────────────────────────────── -->
+      <div class="problem-card">
+        <div class="problem-header">
+          <span class="problem-number"><span class="az-t">Tapşırıq 3</span><span class="ru-t">Задание 3</span></span>
+          <span class="problem-type"><span class="az-t">Bölünənlər — ilk 5 (a–f)</span><span class="ru-t">Кратные — первые 5 (a–f)</span></span>
+        </div>
+        <div class="problem-text"><span class="az-t">Ədədin beş bölünənini tapın:</span><span class="ru-t">Найдите пять кратных числа:</span><br>
+        a) 11 &nbsp; b) 15 &nbsp; c) 14 &nbsp; d) 23 &nbsp; e) 30 &nbsp; f) 40</div>
+        <button class="solution-btn" onclick="toggleSolution('sol-t3')"><span class="az-t">Həlli göstər</span><span class="ru-t">Показать решение</span></button>
+        <div class="solution" id="sol-t3">
+          <div class="solution-step"><span class="step-num">a</span>11: <strong>11, 22, 33, 44, 55</strong></div>
+          <div class="solution-step"><span class="step-num">b</span>15: <strong>15, 30, 45, 60, 75</strong></div>
+          <div class="solution-step"><span class="step-num">c</span>14: <strong>14, 28, 42, 56, 70</strong></div>
+          <div class="solution-step"><span class="step-num">d</span>23: <strong>23, 46, 69, 92, 115</strong></div>
+          <div class="solution-step"><span class="step-num">e</span>30: <strong>30, 60, 90, 120, 150</strong></div>
+          <div class="solution-step"><span class="step-num">f</span>40: <strong>40, 80, 120, 160, 200</strong></div>
+        </div>
+      </div>
+
+      <!-- ── TAPŞIRIQ 4 ────────────────────────────────────────── -->
+      <div class="problem-card">
+        <div class="problem-header">
+          <span class="problem-number"><span class="az-t">Tapşırıq 4</span><span class="ru-t">Задание 4</span></span>
+          <span class="problem-type"><span class="az-t">Eyler-Venn diaqramı: ƏBOB və ƏKOB</span><span class="ru-t">Диаграмма Эйлера-Венна: НОД и НОК</span></span>
+        </div>
+        <div class="problem-text"><span class="az-t">Eyler-Venn diaqramından istifadə etməklə tapın:<br>a) ƏBOB(40, 50) &nbsp; b) ƏKOB(20, 30)</span><span class="ru-t">Используя диаграмму Эйлера-Венна, найдите:<br>a) НОД(40, 50) &nbsp; b) НОК(20, 30)</span></div>
+        <button class="solution-btn" onclick="toggleSolution('sol-t4')"><span class="az-t">Həlli göstər</span><span class="ru-t">Показать решение</span></button>
+        <div class="solution" id="sol-t4">
+          <div class="solution-step"><span class="step-num">a</span><span class="az-t">40 bölənləri: {1,2,4,5,8,10,20,40}; 50 bölənləri: {1,2,5,10,25,50}; Kəsişmə: {1,2,5,10} → ƏBOB = <strong style="color:var(--accent)">10</strong></span><span class="ru-t">Делители 40: {1,2,4,5,8,10,20,40}; делители 50: {1,2,5,10,25,50}; Пересечение: {1,2,5,10} → НОД = <strong style="color:var(--accent)">10</strong></span></div>
+          <svg viewBox="0 0 280 110" aria-label="Venn: 40 və 50" style="max-width:280px;display:block;margin:8px auto;">
+            <circle cx="100" cy="55" r="50" fill="rgba(0,212,170,0.1)" stroke="#00d4aa" stroke-width="1.5"/>
+            <circle cx="180" cy="55" r="50" fill="rgba(77,171,247,0.1)" stroke="#4dabf7" stroke-width="1.5"/>
+            <text x="65" y="45" fill="#00d4aa" font-size="10" text-anchor="middle" font-family="sans-serif">4,8,20,40</text>
+            <text x="140" y="48" fill="#fcc419" font-size="11" font-weight="700" text-anchor="middle" font-family="sans-serif">1,2,5</text>
+            <text x="140" y="64" fill="#fcc419" font-size="11" font-weight="700" text-anchor="middle" font-family="sans-serif">10</text>
+            <text x="215" y="45" fill="#4dabf7" font-size="10" text-anchor="middle" font-family="sans-serif">25,50</text>
+            <text x="100" y="100" fill="#00d4aa" font-size="10" text-anchor="middle" font-family="sans-serif">40</text>
+            <text x="180" y="100" fill="#4dabf7" font-size="10" text-anchor="middle" font-family="sans-serif">50</text>
+          </svg>
+          <div class="solution-step"><span class="step-num">b</span><span class="az-t">20 bölünənləri: {20,40,60,80…}; 30 bölünənləri: {30,60,90…}; İlk ortaq: 60 → ƏKOB = <strong style="color:var(--accent)">60</strong></span><span class="ru-t">Кратные 20: {20,40,60,80…}; кратные 30: {30,60,90…}; Первое общее: 60 → НОК = <strong style="color:var(--accent)">60</strong></span></div>
+          <svg viewBox="0 0 280 110" aria-label="Venn: 20 və 30 bölünənləri" style="max-width:280px;display:block;margin:8px auto;">
+            <circle cx="100" cy="55" r="50" fill="rgba(0,212,170,0.1)" stroke="#00d4aa" stroke-width="1.5"/>
+            <circle cx="180" cy="55" r="50" fill="rgba(77,171,247,0.1)" stroke="#4dabf7" stroke-width="1.5"/>
+            <text x="65" y="50" fill="#00d4aa" font-size="10" text-anchor="middle" font-family="sans-serif">20,40,80</text>
+            <text x="65" y="64" fill="#00d4aa" font-size="10" text-anchor="middle" font-family="sans-serif">100,140…</text>
+            <text x="140" y="52" fill="#fcc419" font-size="11" font-weight="700" text-anchor="middle" font-family="sans-serif">60,120</text>
+            <text x="140" y="66" fill="#fcc419" font-size="10" text-anchor="middle" font-family="sans-serif">180…</text>
+            <text x="215" y="50" fill="#4dabf7" font-size="10" text-anchor="middle" font-family="sans-serif">30,90</text>
+            <text x="215" y="64" fill="#4dabf7" font-size="10" text-anchor="middle" font-family="sans-serif">150…</text>
+            <text x="100" y="100" fill="#00d4aa" font-size="10" text-anchor="middle" font-family="sans-serif">20</text>
+            <text x="180" y="100" fill="#4dabf7" font-size="10" text-anchor="middle" font-family="sans-serif">30</text>
+          </svg>
+        </div>
+      </div>
+
+      <!-- ── TAPŞIRIQ 5 ────────────────────────────────────────── -->
+      <div class="problem-card">
+        <div class="problem-header">
+          <span class="problem-number"><span class="az-t">Tapşırıq 5</span><span class="ru-t">Задание 5</span></span>
+          <span class="problem-type"><span class="az-t">ƏKOB — 5 cüt</span><span class="ru-t">НОК — 5 пар</span></span>
+        </div>
+        <div class="problem-text"><span class="az-t">Verilmiş ədədlərin bölünənlərindən ilk yeddisini yazın. Bu siyahıdan onların ən kiçik ortaq bölünənini tapın:</span><span class="ru-t">Запишите первые семь кратных данных чисел. Найдите наименьшее общее кратное:</span><br>
+        <span class="az-t">12 və 18 &nbsp;|&nbsp; 16 və 20 &nbsp;|&nbsp; 28 və 70 &nbsp;|&nbsp; 50 və 70 &nbsp;|&nbsp; 18 və 24</span><span class="ru-t">12 и 18 &nbsp;|&nbsp; 16 и 20 &nbsp;|&nbsp; 28 и 70 &nbsp;|&nbsp; 50 и 70 &nbsp;|&nbsp; 18 и 24</span></div>
+        <button class="solution-btn" onclick="toggleSolution('sol-t5')"><span class="az-t">Həlli göstər</span><span class="ru-t">Показать решение</span></button>
+        <div class="solution" id="sol-t5">
+          <div class="solution-step"><span class="step-num">1</span><span class="az-t">12 və 18 → ƏKOB(12,18) = <strong style="color:var(--accent)">36</strong> &nbsp;(12·18÷ƏBOB(12,18)=216÷6=36)</span><span class="ru-t">12 и 18 → НОК(12,18) = <strong style="color:var(--accent)">36</strong> &nbsp;(12·18÷НОД(12,18)=216÷6=36)</span></div>
+          <div class="solution-step"><span class="step-num">2</span><span class="az-t">16 və 20 → ƏKOB(16,20) = <strong style="color:var(--accent)">80</strong> &nbsp;(16·20÷4=80)</span><span class="ru-t">16 и 20 → НОК(16,20) = <strong style="color:var(--accent)">80</strong> &nbsp;(16·20÷4=80)</span></div>
+          <div class="solution-step"><span class="step-num">3</span><span class="az-t">28 və 70 → ƏKOB(28,70) = <strong style="color:var(--accent)">140</strong> &nbsp;(28·70÷14=140)</span><span class="ru-t">28 и 70 → НОК(28,70) = <strong style="color:var(--accent)">140</strong> &nbsp;(28·70÷14=140)</span></div>
+          <div class="solution-step"><span class="step-num">4</span><span class="az-t">50 və 70 → ƏKOB(50,70) = <strong style="color:var(--accent)">350</strong> &nbsp;(50·70÷10=350)</span><span class="ru-t">50 и 70 → НОК(50,70) = <strong style="color:var(--accent)">350</strong> &nbsp;(50·70÷10=350)</span></div>
+          <div class="solution-step"><span class="step-num">5</span><span class="az-t">18 və 24 → ƏKOB(18,24) = <strong style="color:var(--accent)">72</strong> &nbsp;(18·24÷6=72)</span><span class="ru-t">18 и 24 → НОК(18,24) = <strong style="color:var(--accent)">72</strong> &nbsp;(18·24÷6=72)</span></div>
+        </div>
+      </div>
+
+      <!-- ── TAPŞIRIQ 6 ────────────────────────────────────────── -->
+      <div class="problem-card">
+        <div class="problem-header">
+          <span class="problem-number"><span class="az-t">Tapşırıq 6</span><span class="ru-t">Задание 6</span></span>
+          <span class="problem-type"><span class="az-t">ƏBOB — 5 cüt</span><span class="ru-t">НОД — 5 пар</span></span>
+        </div>
+        <div class="problem-text"><span class="az-t">Verilmiş ədədlərin bölənləri siyahısını yazın. Bu siyahıdan onların ən böyük ortaq bölənini tapın:</span><span class="ru-t">Составьте список делителей данных чисел. Найдите наибольший общий делитель:</span><br>
+        <span class="az-t">20 və 24 &nbsp;|&nbsp; 30 və 36 &nbsp;|&nbsp; 45 və 60 &nbsp;|&nbsp; 15 və 20 &nbsp;|&nbsp; 33 və 55</span><span class="ru-t">20 и 24 &nbsp;|&nbsp; 30 и 36 &nbsp;|&nbsp; 45 и 60 &nbsp;|&nbsp; 15 и 20 &nbsp;|&nbsp; 33 и 55</span></div>
+        <button class="solution-btn" onclick="toggleSolution('sol-t6')"><span class="az-t">Həlli göstər</span><span class="ru-t">Показать решение</span></button>
+        <div class="solution" id="sol-t6">
+          <div class="solution-step"><span class="step-num">1</span><span class="az-t">20 və 24 → ortaq: 1,2,4 → ƏBOB = <strong style="color:var(--accent)">4</strong></span><span class="ru-t">20 и 24 → общие: 1,2,4 → НОД = <strong style="color:var(--accent)">4</strong></span></div>
+          <div class="solution-step"><span class="step-num">2</span><span class="az-t">30 və 36 → ortaq: 1,2,3,6 → ƏBOB = <strong style="color:var(--accent)">6</strong></span><span class="ru-t">30 и 36 → общие: 1,2,3,6 → НОД = <strong style="color:var(--accent)">6</strong></span></div>
+          <div class="solution-step"><span class="step-num">3</span><span class="az-t">45 və 60 → ortaq: 1,3,5,15 → ƏBOB = <strong style="color:var(--accent)">15</strong></span><span class="ru-t">45 и 60 → общие: 1,3,5,15 → НОД = <strong style="color:var(--accent)">15</strong></span></div>
+          <div class="solution-step"><span class="step-num">4</span><span class="az-t">15 və 20 → ortaq: 1,5 → ƏBOB = <strong style="color:var(--accent)">5</strong></span><span class="ru-t">15 и 20 → общие: 1,5 → НОД = <strong style="color:var(--accent)">5</strong></span></div>
+          <div class="solution-step"><span class="step-num">5</span><span class="az-t">33 və 55 → ortaq: 1,11 → ƏBOB = <strong style="color:var(--accent)">11</strong></span><span class="ru-t">33 и 55 → общие: 1,11 → НОД = <strong style="color:var(--accent)">11</strong></span></div>
+        </div>
+      </div>
+
+      <!-- ── TAPŞIRIQ 7 ────────────────────────────────────────── -->
+      <div class="problem-card">
+        <div class="problem-header">
+          <span class="problem-number"><span class="az-t">Tapşırıq 7</span><span class="ru-t">Задание 7</span></span>
+          <span class="problem-type"><span class="az-t">Kəsrlərin ixtisarı — 9 kəsr</span><span class="ru-t">Сокращение дробей — 9 дробей</span></span>
+        </div>
+        <div class="problem-text"><span class="az-t">Kəsrləri ixtisar edin:</span><span class="ru-t">Сократите дроби:</span><br>
+        ¹²⁄₁₆ &nbsp; ¹⁵⁄₂₅ &nbsp; ¹²⁄₂₇ &nbsp; ²⁴⁄₃₆ &nbsp; ¹⁶⁄₂₄ &nbsp; ¹⁴⁄₄₉ &nbsp; ²⁸⁄₄₂ &nbsp; ³⁰⁄₄₂ &nbsp; ³⁴⁄₅₁</div>
+        <button class="solution-btn" onclick="toggleSolution('sol-t7')"><span class="az-t">Həlli göstər</span><span class="ru-t">Показать решение</span></button>
+        <div class="solution" id="sol-t7">
+          <div class="solution-step"><span class="step-num">1</span><span class="az-t">¹²⁄₁₆ → ƏBOB=4 → <strong>³⁄₄</strong> &nbsp;|&nbsp; ¹⁵⁄₂₅ → ƏBOB=5 → <strong>³⁄₅</strong> &nbsp;|&nbsp; ¹²⁄₂₇ → ƏBOB=3 → <strong>⁴⁄₉</strong></span><span class="ru-t">¹²⁄₁₆ → НОД=4 → <strong>³⁄₄</strong> &nbsp;|&nbsp; ¹⁵⁄₂₅ → НОД=5 → <strong>³⁄₅</strong> &nbsp;|&nbsp; ¹²⁄₂₇ → НОД=3 → <strong>⁴⁄₉</strong></span></div>
+          <div class="solution-step"><span class="step-num">2</span><span class="az-t">²⁴⁄₃₆ → ƏBOB=12 → <strong>²⁄₃</strong> &nbsp;|&nbsp; ¹⁶⁄₂₄ → ƏBOB=8 → <strong>²⁄₃</strong> &nbsp;|&nbsp; ¹⁴⁄₄₉ → ƏBOB=7 → <strong>²⁄₇</strong></span><span class="ru-t">²⁴⁄₃₆ → НОД=12 → <strong>²⁄₃</strong> &nbsp;|&nbsp; ¹⁶⁄₂₄ → НОД=8 → <strong>²⁄₃</strong> &nbsp;|&nbsp; ¹⁴⁄₄₉ → НОД=7 → <strong>²⁄₇</strong></span></div>
+          <div class="solution-step"><span class="step-num">3</span><span class="az-t">²⁸⁄₄₂ → ƏBOB=14 → <strong>²⁄₃</strong> &nbsp;|&nbsp; ³⁰⁄₄₂ → ƏBOB=6 → <strong style="color:var(--accent)">⁵⁄₇</strong> &nbsp;|&nbsp; ³⁴⁄₅₁ → ƏBOB=17 → <strong>²⁄₃</strong></span><span class="ru-t">²⁸⁄₄₂ → НОД=14 → <strong>²⁄₃</strong> &nbsp;|&nbsp; ³⁰⁄₄₂ → НОД=6 → <strong style="color:var(--accent)">⁵⁄₇</strong> &nbsp;|&nbsp; ³⁴⁄₅₁ → НОД=17 → <strong>²⁄₃</strong></span></div>
+        </div>
+      </div>
+
+      <!-- ── TAPŞIRIQ 8 ────────────────────────────────────────── -->
+      <div class="problem-card">
+        <div class="problem-header">
+          <span class="problem-number"><span class="az-t">Tapşırıq 8</span><span class="ru-t">Задание 8</span></span>
+          <span class="problem-type"><span class="az-t">Kəsrlərlə hesablamalar (a–f)</span><span class="ru-t">Вычисления с дробями (a–f)</span></span>
+        </div>
+        <div class="problem-text"><span class="az-t">Hesablayın:</span><span class="ru-t">Вычислите:</span><br>
+        a) 1³⁄₅ + ⁷⁄₆ &nbsp;&nbsp; b) 7 − ⁸⁄₃ &nbsp;&nbsp; c) ¼ + ½<br>
+        d) 1½ − ⁴⁄₅ &nbsp;&nbsp; e) ¾ × ⁴⁄₃ &nbsp;&nbsp; f) ³⁄₂ ÷ 6</div>
+        <button class="solution-btn" onclick="toggleSolution('sol-t8')"><span class="az-t">Həlli göstər</span><span class="ru-t">Показать решение</span></button>
+        <div class="solution" id="sol-t8">
+          <div class="solution-step"><span class="step-num">a</span>⁸⁄₅ + ⁷⁄₆ = ⁴⁸⁄₃₀ + ³⁵⁄₃₀ = <strong style="color:var(--accent)">2²³⁄₃₀</strong></div>
+          <div class="solution-step"><span class="step-num">b</span>²¹⁄₃ − ⁸⁄₃ = ¹³⁄₃ = <strong style="color:var(--accent)">4⅓</strong></div>
+          <div class="solution-step"><span class="step-num">c</span>¼ + ²⁄₄ = <strong style="color:var(--accent)">³⁄₄</strong></div>
+          <div class="solution-step"><span class="step-num">d</span>¹⁵⁄₁₀ − ⁸⁄₁₀ = <strong style="color:var(--accent)">⁷⁄₁₀</strong></div>
+          <div class="solution-step"><span class="step-num">e</span>¹²⁄₁₂ = <strong style="color:var(--accent)">1</strong></div>
+          <div class="solution-step"><span class="step-num">f</span>³⁄₂ × ⅙ = ³⁄₁₂ = <strong style="color:var(--accent)">¼</strong></div>
+        </div>
+      </div>
+
+      <!-- ── TAPŞIRIQ 9 ────────────────────────────────────────── -->
+      <div class="problem-card">
+        <div class="problem-header">
+          <span class="problem-number"><span class="az-t">Tapşırıq 9</span><span class="ru-t">Задание 9</span></span>
+          <span class="problem-type"><span class="az-t">Dəyişənli ifadələr (a–c)</span><span class="ru-t">Выражения с переменными (a–c)</span></span>
+        </div>
+        <div class="problem-text">
+          <span class="az-t">Dəyişənin verilmiş qiymətlərində ifadənin uyğun qiymətlərini tapın:<br>
+          a) m = 4; 7; 11 olduqda m²<br>
+          b) n = 5; 6; 8 olduqda n³ + 1<br>
+          c) k = 2; 3; 4 olduqda 5² + k³</span>
+          <span class="ru-t">Найдите значения выражения при данных значениях переменной:<br>
+          a) при m = 4; 7; 11 найдите m²<br>
+          b) при n = 5; 6; 8 найдите n³ + 1<br>
+          c) при k = 2; 3; 4 найдите 5² + k³</span>
+        </div>
+        <button class="solution-btn" onclick="toggleSolution('sol-t9')"><span class="az-t">Həlli göstər</span><span class="ru-t">Показать решение</span></button>
+        <div class="solution" id="sol-t9">
+          <div class="solution-step"><span class="step-num">a</span>4²=16; 7²=49; 11²=<strong style="color:var(--accent)">121</strong></div>
+          <div class="solution-step"><span class="step-num">b</span>5³+1=126; 6³+1=217; 8³+1=<strong style="color:var(--accent)">513</strong></div>
+          <div class="solution-step"><span class="step-num">c</span>25+2³=25+8=33; 25+3³=25+27=52; 25+4³=25+64=<strong style="color:var(--accent)">89</strong></div>
+        </div>
+      </div>
+
+      <!-- ── TAPŞIRIQ 10 ───────────────────────────────────────── -->
+      <div class="problem-card">
+        <div class="problem-header">
+          <span class="problem-number"><span class="az-t">Tapşırıq 10</span><span class="ru-t">Задание 10</span></span>
+          <span class="problem-type"><span class="az-t">ƏBOB · Komanda məsələsi</span><span class="ru-t">НОД · Задача о командах</span></span>
+        </div>
+        <div class="problem-text">
+          <span class="az-t">Sinifdə 12 oğlan və 18 qız oxuyur. Uşaqlar hər birində eyni sayda oyunçu olmaqla komandalara bölündülər. Hər komanda ya oğlanlardan, ya da qızlardan ibarətdir. Ən azı neçə belə komanda alınar və hər komandada neçə uşaq olar?</span>
+          <span class="ru-t">В классе 12 мальчиков и 18 девочек. Детей разбили на команды с одинаковым числом игроков. Каждая команда — только мальчики или только девочки. Сколько таких команд получится и сколько детей в каждой?</span>
+        </div>
+        <button class="solution-btn" onclick="toggleSolution('sol-t10')"><span class="az-t">Həlli göstər</span><span class="ru-t">Показать решение</span></button>
+        <div class="solution" id="sol-t10">
+          <div class="solution-step"><span class="step-num">1</span><span class="az-t">Hər komandada eyni oyunçu sayı → ƏBOB(12, 18) tapırıq</span><span class="ru-t">Одинаковое число игроков → находим НОД(12, 18)</span></div>
+          <div class="solution-step"><span class="step-num">2</span><span class="az-t">12 = 2²·3; 18 = 2·3²; ƏBOB = 2·3 = <strong>6</strong></span><span class="ru-t">12 = 2²·3; 18 = 2·3²; НОД = 2·3 = <strong>6</strong></span></div>
+          <div class="solution-step"><span class="step-num">3</span><span class="az-t">Oğlan komandası: 12÷6=2; Qız komandası: 18÷6=3</span><span class="ru-t">Команды мальчиков: 12÷6=2; Команды девочек: 18÷6=3</span></div>
+          <div class="solution-step"><span class="step-num">4</span><span class="az-t">Cəmi: 2+3 = <strong style="color:var(--accent)">5 komanda</strong>, hər birində <strong style="color:var(--accent)">6 uşaq</strong></span><span class="ru-t">Итого: 2+3 = <strong style="color:var(--accent)">5 команд</strong>, в каждой <strong style="color:var(--accent)">6 учеников</strong></span></div>
+        </div>
+      </div>
+
+      <!-- ── TAPŞIRIQ 11 ───────────────────────────────────────── -->
+      <div class="problem-card">
+        <div class="problem-header">
+          <span class="problem-number"><span class="az-t">Tapşırıq 11</span><span class="ru-t">Задание 11</span></span>
+          <span class="problem-type"><span class="az-t">ƏKOB · Atlama ipi məsələsi</span><span class="ru-t">НОК · Задача о верёвке</span></span>
+        </div>
+        <div class="problem-text">
+          <span class="az-t">İdman malları hazırlayan sexdə atlama ipi hazırlamaq üçün bir top ip alınıb. Usta itkiyə yol vermədən topdakı ipi ya 5 m, ya da 6 m uzunluqlu hissələrə bölə bilər. Topda ən azı neçə metr ip var?</span>
+          <span class="ru-t">На производстве спортивного инвентаря купили катушку верёвки для скакалок. Мастер может разрезать верёвку без остатка на куски по 5 м или по 6 м. Сколько метров верёвки на катушке не менее?</span>
+        </div>
+        <button class="solution-btn" onclick="toggleSolution('sol-t11')"><span class="az-t">Həlli göstər</span><span class="ru-t">Показать решение</span></button>
+        <div class="solution" id="sol-t11">
+          <div class="solution-step"><span class="step-num">1</span><span class="az-t">Hər iki ölçüyə tam bölünən ən kiçik uzunluq = ƏKOB(5, 6)</span><span class="ru-t">Наименьшая длина, делящаяся на оба размера = НОК(5, 6)</span></div>
+          <div class="solution-step"><span class="step-num">2</span><span class="az-t">ƏBOB(5,6)=1 → ƏKOB = 5·6÷1 = <strong>30</strong></span><span class="ru-t">НОД(5,6)=1 → НОК = 5·6÷1 = <strong>30</strong></span></div>
+          <div class="solution-step"><span class="step-num">3</span><span class="az-t">Cavab: topda ən az <strong style="color:var(--accent)">30 metr</strong> ip var.</span><span class="ru-t">Ответ: на катушке не менее <strong style="color:var(--accent)">30 метров</strong> верёвки.</span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TRAINER -->
+    <section id="trainer">
+      <div class="card">
+        <div class="card-title"><span class="icon" style="background:var(--accent-dim)">🏋️</span><span class="az-t">Trenajör</span><span class="ru-t">Тренажёр</span></div>
+        <p style="color:var(--text-secondary);margin-bottom:22px"><span class="az-t">Təsadüfi suallar. İpucu düyməsindən istifadə edin.</span><span class="ru-t">Случайные вопросы. Используйте кнопку подсказки.</span></p>
+        <div class="quiz-container" style="margin-bottom:18px;">
+          <div id="trainer-question" style="font-size:1.3rem;text-align:center;margin-bottom:22px;padding:22px;background:var(--bg-glass);border-radius:12px;"><span class="az-t">«Yeni məsələ» düyməsini basın</span><span class="ru-t">Нажмите «Новая задача»</span></div>
+          <div style="display:flex;gap:10px;margin-bottom:18px;">
+            <input type="text" id="trainer-answer" placeholder="Cavabınız" style="flex:1;padding:13px 15px;background:var(--bg-glass);border:2px solid var(--border-glass);border-radius:12px;color:var(--text-primary);font-size:1rem;outline:none;" />
+            <button class="btn btn-primary" onclick="checkTrainer()" id="trainer-check-btn" disabled><span class="az-t">Yoxla</span><span class="ru-t">Проверить</span></button>
+          </div>
+          <div id="trainer-feedback" style="min-height:54px;margin-bottom:14px;"></div>
+          <div style="display:flex;gap:10px;justify-content:center;">
+            <button class="btn btn-secondary" onclick="newTrainerProblem()"><span class="az-t">Yeni məsələ</span><span class="ru-t">Новая задача</span></button>
+            <button class="btn btn-secondary" onclick="showTrainerHint()"><span class="az-t">İpucu</span><span class="ru-t">Подсказка</span></button>
+          </div>
+          <div id="trainer-hint" style="display:none;margin-top:18px;padding:14px;background:var(--accent-blue-dim);border-radius:12px;border-left:4px solid var(--accent-blue);"></div>
+        </div>
+        <div style="display:flex;justify-content:center;gap:20px;flex-wrap:wrap;">
+          <div class="stat"><div class="stat-value" id="trainer-correct">0</div><div class="stat-label"><span class="az-t">Düzgün</span><span class="ru-t">Верно</span></div></div>
+          <div class="stat"><div class="stat-value" id="trainer-total">0</div><div class="stat-label"><span class="az-t">Cəmi</span><span class="ru-t">Всего</span></div></div>
+          <div class="stat"><div class="stat-value" id="trainer-streak">0</div><div class="stat-label"><span class="az-t">Seriya</span><span class="ru-t">Серия</span></div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ASSESSMENT -->
+    <section id="assessment">
+      <div class="card">
+        <div class="card-title"><span class="icon" style="background:var(--accent-blue-dim)">🧪</span><span class="az-t">Attestasiya — 20 sual</span><span class="ru-t">Аттестация — 20 вопросов</span></div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:18px;">
+          <div class="card" style="padding:22px;text-align:center;">
+            <div style="font-size:2.6rem;margin-bottom:10px">🔍</div>
+            <h3 style="margin-bottom:6px"><span class="az-t">Diaqnostik test</span><span class="ru-t">Диагностический тест</span></h3>
+            <p style="color:var(--text-secondary);margin-bottom:18px"><span class="az-t">20 sual, dərhal izah.</span><span class="ru-t">20 вопросов, мгновенное объяснение.</span></p>
+            <button class="btn btn-primary" onclick="startDiagnostic()"><span class="az-t">Testi başlat</span><span class="ru-t">Начать тест</span></button>
+          </div>
+          <div class="card" style="padding:22px;text-align:center;">
+            <div style="font-size:2.6rem;margin-bottom:10px">⏱️</div>
+            <h3 style="margin-bottom:6px"><span class="az-t">Sürət viktonası</span><span class="ru-t">Скоростная викторина</span></h3>
+            <p style="color:var(--text-secondary);margin-bottom:18px"><span class="az-t">20 sual · 10 dəqiqə.</span><span class="ru-t">20 вопросов · 10 минут.</span></p>
+            <button class="btn btn-primary" onclick="startTimeAttack()"><span class="az-t">Başlat</span><span class="ru-t">Начать</span></button>
+          </div>
+        </div>
+      </div>
+      <div id="diagnostic-ui" style="display:none;">
+        <div class="card"><div class="card-title"><span class="icon" style="background:var(--accent-blue-dim)">🔍</span><span class="az-t">Diaqnostik test</span><span class="ru-t">Диагностический тест</span></div></div>
+        <div class="quiz-container">
+          <div class="quiz-progress">
+            <span><span class="az-t">Sual</span><span class="ru-t">Вопрос</span> <span id="diag-current">1</span> / <span id="diag-total">20</span></span>
+            <div class="progress-bar"><div class="progress-fill" id="diag-progress"></div></div>
+            <span id="diag-score">0 <span class="az-t">düzgün</span><span class="ru-t">верно</span></span>
+          </div>
+          <div class="quiz-question" id="diag-question"></div>
+          <div class="quiz-options" id="diag-options"></div>
+          <div class="quiz-nav">
+            <button class="btn btn-secondary" onclick="prevDiagnostic()" id="diag-prev" disabled><span class="az-t">← Geri</span><span class="ru-t">← Назад</span></button>
+            <button class="btn btn-primary" onclick="nextDiagnostic()" id="diag-next" disabled><span class="az-t">Növbəti →</span><span class="ru-t">Следующий →</span></button>
+          </div>
+          <div id="diag-explanation" style="display:none;margin-top:18px;padding:14px;background:var(--accent-dim);border-radius:12px;border-left:4px solid var(--accent);"></div>
+        </div>
+      </div>
+      <div id="timeattack-ui" style="display:none;">
+        <div class="timer hidden" id="ta-timer">10:00</div>
+        <div class="card"><div class="card-title"><span class="icon" style="background:var(--accent-warm-dim)">⏱️</span><span class="az-t">Sürət viktonası</span><span class="ru-t">Скоростная викторина</span></div></div>
+        <div class="quiz-container">
+          <div class="quiz-progress">
+            <span><span class="az-t">Sual</span><span class="ru-t">Вопрос</span> <span id="ta-current">1</span> / 20</span>
+            <div class="progress-bar"><div class="progress-fill" id="ta-progress"></div></div>
+          </div>
+          <div class="quiz-question" id="ta-question"></div>
+          <div class="quiz-options" id="ta-options"></div>
+        </div>
+      </div>
+      <div id="results-ui" style="display:none;">
+        <div class="card">
+          <div class="results-container">
+            <div class="score-label"><span class="az-t">Nəticəniz</span><span class="ru-t">Ваш результат</span></div>
+            <div class="score-circle" id="result-circle"><div class="score-value" id="result-percent">0%</div></div>
+            <div class="score-message" id="result-message"></div>
+            <div class="results-breakdown">
+              <div class="breakdown-item"><div class="breakdown-value" id="result-correct">0</div><div class="breakdown-label"><span class="az-t">Düzgün</span><span class="ru-t">Верно</span></div></div>
+              <div class="breakdown-item"><div class="breakdown-value" id="result-wrong">0</div><div class="breakdown-label"><span class="az-t">Xəta</span><span class="ru-t">Ошибки</span></div></div>
+              <div class="breakdown-item"><div class="breakdown-value" id="result-time">0:00</div><div class="breakdown-label"><span class="az-t">Vaxt</span><span class="ru-t">Время</span></div></div>
+              <div class="breakdown-item"><div class="breakdown-value" id="result-mastery">—</div><div class="breakdown-label"><span class="az-t">Səviyyə</span><span class="ru-t">Уровень</span></div></div>
+            </div>
+            <div style="display:flex;gap:14px;justify-content:center;flex-wrap:wrap;">
+              <button class="btn btn-primary" onclick="resetAssessment()"><span class="az-t">Yenidən keç</span><span class="ru-t">Пройти снова</span></button>
+              <button class="btn btn-secondary" onclick="showSection('theory')"><span class="az-t">Nəzəriyyəyə qayıt</span><span class="ru-t">Вернуться к теории</span></button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <script>
+      // ── Ulam Spiral ─────────────────────────────────────────────────────────
+      (function() {
+        const spiral = [[65,64,63,62,61,60,59,58,57],[66,37,36,35,34,33,32,31,56],[67,38,17,16,15,14,13,30,55],[68,39,18,5,4,3,12,29,54],[69,40,19,6,1,2,11,28,53],[70,41,20,7,8,9,10,27,52],[71,42,21,22,23,24,25,26,51],[72,43,44,45,46,47,48,49,50],[73,74,75,76,77,78,79,80,81]];
+        const primes = new Set([2,3,5,7,11,13,17,19,23,29,31,37,41,43,47,53,59,61,67,71,73,79]);
+        const cs = 20;
+        let s = '<svg viewBox="0 0 180 180" style="max-width:190px;display:block;margin:8px auto;border-radius:8px;background:rgba(255,255,255,0.03);" aria-label="Ulam spiralı 1-dən 81-ə qədər; sarı hücrələr sadə ədədlərdir">';
+        spiral.forEach((row, r) => row.forEach((n, c) => {
+          const x = c*cs, y = r*cs;
+          const clr = n===1 ? 'rgba(0,212,170,0.45)' : primes.has(n) ? '#fcc419' : 'rgba(255,255,255,0.05)';
+          const tc  = n===1 ? '#00d4aa' : primes.has(n) ? '#000' : '#505070';
+          const fw  = primes.has(n) ? '700' : '400';
+          s += `<rect x="${x+1}" y="${y+1}" width="18" height="18" rx="2" fill="${clr}"/><text x="${x+10}" y="${y+13}" text-anchor="middle" font-size="8" font-family="monospace" fill="${tc}" font-weight="${fw}">${n}</text>`;
+        }));
+        s += '</svg>';
+        const el = document.getElementById('ulam-svg');
+        if (el) el.innerHTML = s;
+      })();
+
+      // ── Navigation ──────────────────────────────────────────────────────────
+      function showSection(id) {
+        document.querySelectorAll('section').forEach(s => s.classList.remove('active'));
+        document.getElementById(id).classList.add('active');
+        document.querySelectorAll('.nav-links a').forEach(a => a.classList.remove('active'));
+        const link = document.querySelector('.nav-links a[data-section="' + id + '"]');
+        if (link) link.classList.add('active');
+        window.scrollTo(0, 0);
+      }
+      document.querySelectorAll('.nav-links a').forEach(link => {
+        link.addEventListener('click', e => { e.preventDefault(); showSection(link.dataset.section); });
+      });
+
+      // ── Slider ───────────────────────────────────────────────────────────────
+      let currentSlide = 0;
+      const slides = document.querySelectorAll('#track-slides .widget-slide');
+      const total = slides.length;
+      document.getElementById('slide-total').textContent = total;
+      function renderSlide() {
+        slides.forEach((s, i) => s.classList.toggle('active', i === currentSlide));
+        document.getElementById('slide-num').textContent = currentSlide + 1;
+      }
+      function nextSlide() { if (currentSlide < total - 1) { currentSlide++; renderSlide(); } }
+      function prevSlide() { if (currentSlide > 0) { currentSlide--; renderSlide(); } }
+      renderSlide();
+
+      // ── Solution toggle ──────────────────────────────────────────────────────
+      function toggleSolution(id) {
+        const el = document.getElementById(id);
+        el.classList.toggle('active');
+        const btn = el.previousElementSibling;
+        const isOpen = el.classList.contains('active');
+        btn.innerHTML = isOpen
+          ? '<span class="az-t">Həlli gizlət</span><span class="ru-t">Скрыть</span>'
+          : '<span class="az-t">Həlli göstər</span><span class="ru-t">Показать</span>';
+      }
+
+      // ── Language ─────────────────────────────────────────────────────────────
+      let lang = 'az';
+      function setLang(l) {
+        lang = l;
+        document.body.classList.toggle('ru', l === 'ru');
+        document.documentElement.lang = l;
+        document.getElementById('lbAZ').classList.toggle('active', l === 'az');
+        document.getElementById('lbRU').classList.toggle('active', l === 'ru');
+        document.getElementById('trainer-answer').placeholder = l === 'az' ? 'Cavabınız' : 'Ваш ответ';
+        if (!AppState.trainer.current) {
+          document.getElementById('trainer-question').innerHTML =
+            l === 'az'
+              ? '<span class="az-t">«Yeni məsələ» düyməsini basın</span><span class="ru-t">Нажмите «Новая задача»</span>'
+              : '<span class="az-t">«Yeni məsələ» düyməsini basın</span><span class="ru-t">Нажмите «Новая задача»</span>';
+        } else {
+          document.getElementById('trainer-question').textContent = AppState.trainer.current[l].q;
+        }
+        if (AppState.mode === 'diagnostic') renderDiagnostic();
+        if (AppState.mode === 'timeattack') renderTimeAttack();
+        const scoreEl = document.getElementById('diag-score');
+        if (scoreEl) scoreEl.innerHTML = AppState.diagnostic.score + ' <span class="az-t">düzgün</span><span class="ru-t">верно</span>';
+      }
+
+      // ── Questions bank ───────────────────────────────────────────────────────
+      const QUESTIONS = [
+        { az:{q:'3² nəyə bərabərdir?',expl:'3²=3·3=9.'}, ru:{q:'Чему равно 3²?',expl:'3²=3·3=9.'}, opts:['6','9','8','12'], correct:1 },
+        { az:{q:'2³ nəyə bərabərdir?',expl:'2³=2·2·2=8.'}, ru:{q:'Чему равно 2³?',expl:'2³=2·2·2=8.'}, opts:['6','8','16','4'], correct:1 },
+        { az:{q:'Hesablayın: (225 − (15·2 + 12) ÷ 7) · 2',expl:'(225−42:7)·2=(225−6)·2=219·2=438.'}, ru:{q:'Вычислите: (225 − (15·2 + 12) ÷ 7) · 2',expl:'(225−42:7)·2=(225−6)·2=219·2=438.'}, opts:['438','440','219','876'], correct:0 },
+        { az:{q:'Hesablayın: 3² + 60 ÷ 2² − 7',expl:'9+60:4−7=9+15−7=17.'}, ru:{q:'Вычислите: 3² + 60 ÷ 2² − 7',expl:'9+60:4−7=9+15−7=17.'}, opts:['17','15','20','11'], correct:0 },
+        { az:{q:'24 ədədinin neçə böləni var?',expl:'Bölənlər: 1,2,3,4,6,8,12,24 — 8 böləni.'}, ru:{q:'Сколько делителей у числа 24?',expl:'Делители: 1,2,3,4,6,8,12,24 — 8 делителей.'}, opts:['6','7','8','5'], correct:2 },
+        { az:{q:'Aşağıdakılardan hansı sadə ədəddir?',expl:'17 yalnız 1 və 17-yə bölünür — sadədir.'}, ru:{q:'Какое из чисел является простым?',expl:'17 делится только на 1 и 17 — простое.'}, opts:['9','15','17','21'], correct:2 },
+        { az:{q:'ƏBOB(12, 18) = ?',expl:'12=2²·3; 18=2·3²; ƏBOB=2·3=6.'}, ru:{q:'НОД(12, 18) = ?',expl:'12=2²·3; 18=2·3²; НОД=2·3=6.'}, opts:['6','3','9','12'], correct:0 },
+        { az:{q:'ƏKOB(12, 18) = ?',expl:'ƏKOB=12·18÷ƏBOB(12,18)=216÷6=36.'}, ru:{q:'НОК(12, 18) = ?',expl:'НОК=12·18÷НОД(12,18)=216÷6=36.'}, opts:['36','24','18','72'], correct:0 },
+        { az:{q:'ƏBOB(40, 50) = ?',expl:'Ortaq bölənlər: 1,2,5,10 → ƏBOB=10.'}, ru:{q:'НОД(40, 50) = ?',expl:'Общие делители: 1,2,5,10 → НОД=10.'}, opts:['5','10','20','2'], correct:1 },
+        { az:{q:'ƏKOB(5, 6) = ?',expl:'5 və 6 qarşılıqlı sadədir → ƏKOB=5·6=30.'}, ru:{q:'НОК(5, 6) = ?',expl:'5 и 6 взаимно просты → НОК=5·6=30.'}, opts:['11','30','15','60'], correct:1 },
+        { az:{q:'12/16 kəsrini ixtisar edin.',expl:'ƏBOB(12,16)=4 → 3/4.'}, ru:{q:'Сократите дробь 12/16.',expl:'НОД(12,16)=4 → 3/4.'}, opts:['3/4','6/8','2/4','4/5'], correct:0 },
+        { az:{q:'14/49 kəsrini ixtisar edin.',expl:'ƏBOB(14,49)=7 → 2/7.'}, ru:{q:'Сократите дробь 14/49.',expl:'НОД(14,49)=7 → 2/7.'}, opts:['7/24','1/3','2/7','3/7'], correct:2 },
+        { az:{q:'12/27 kəsrini ixtisar edin.',expl:'ƏBOB(12,27)=3 → 4/9.'}, ru:{q:'Сократите дробь 12/27.',expl:'НОД(12,27)=3 → 4/9.'}, opts:['4/9','3/9','2/7','6/13'], correct:0 },
+        { az:{q:'Sinifdə 12 oğlan, 18 qız var; eyni sayda oyunçulu komandalar. Komanda başına neçə oyunçu?',expl:'ƏBOB(12,18)=6 → hər komandada 6 oyunçu.'}, ru:{q:'В классе 12 мальчиков, 18 девочек; команды одинакового размера. Сколько игроков в команде?',expl:'НОД(12,18)=6 → в каждой команде 6 игроков.'}, opts:['6','3','9','2'], correct:0 },
+        { az:{q:'Kanat ya 5 m, ya 6 m kəsilə bilir, itkisiz. Ən az neçə metr?',expl:'ƏKOB(5,6)=30 metr.'}, ru:{q:'Канат режут на 5 м или 6 м без остатка. Минимальная длина?',expl:'НОК(5,6)=30 метров.'}, opts:['11','30','60','15'], correct:1 },
+        { az:{q:'m=7 olduqda m²=?',expl:'7²=7·7=49.'}, ru:{q:'При m=7 найдите m²=?',expl:'7²=7·7=49.'}, opts:['14','49','21','42'], correct:1 },
+        { az:{q:'n=5 olduqda n³+1=?',expl:'5³=125; 125+1=126.'}, ru:{q:'При n=5 найдите n³+1=?',expl:'5³=125; 125+1=126.'}, opts:['126','125','26','51'], correct:0 },
+        { az:{q:'Hesablayın: 56 − (108 ÷ 3² + 18)',expl:'108÷9=12; 12+18=30; 56−30=26.'}, ru:{q:'Вычислите: 56 − (108 ÷ 3² + 18)',expl:'108÷9=12; 12+18=30; 56−30=26.'}, opts:['26','30','38','20'], correct:0 },
+        { az:{q:'Aşağıdakı ədədlər içindən mürəkkəb olanı seçin:',expl:'9=3·3, 2-dən çox böləni var — mürəkkəbdir.'}, ru:{q:'Найдите составное число:',expl:'9=3·3, более 2 делителей — составное.'}, opts:['7','11','9','13'], correct:2 },
+        { az:{q:'ƏKOB(16, 20) = ?',expl:'16=2⁴; 20=2²·5; ƏKOB=2⁴·5=80.'}, ru:{q:'НОК(16, 20) = ?',expl:'16=2⁴; 20=2²·5; НОК=2⁴·5=80.'}, opts:['80','40','4','160'], correct:0 }
+      ];
+
+      // ── Trainer ──────────────────────────────────────────────────────────────
+      const AppState = {
+        trainer: { correct: 0, total: 0, streak: 0, current: null },
+        diagnostic: { current: 0, score: 0, answers: [] },
+        timeAttack: { current: 0, score: 0, timer: null, timeLeft: 600, startTime: 0, answers: [] },
+        mode: null
+      };
+
+      function newTrainerProblem() {
+        const p = QUESTIONS[Math.floor(Math.random() * QUESTIONS.length)];
+        AppState.trainer.current = p;
+        document.getElementById('trainer-question').textContent = p[lang].q;
+        document.getElementById('trainer-answer').value = '';
+        document.getElementById('trainer-feedback').innerHTML = '';
+        document.getElementById('trainer-hint').style.display = 'none';
+        document.getElementById('trainer-check-btn').disabled = false;
+      }
+      function showTrainerHint() {
+        if (!AppState.trainer.current) return;
+        const h = document.getElementById('trainer-hint');
+        h.style.display = 'block';
+        h.textContent = '💡 ' + AppState.trainer.current[lang].expl;
+      }
+      function checkTrainer() {
+        if (!AppState.trainer.current) return;
+        const val = document.getElementById('trainer-answer').value.trim();
+        if (!val) return;
+        AppState.trainer.total++;
+        const correctOpt = AppState.trainer.current.opts[AppState.trainer.current.correct];
+        const isCorrect = val.toLowerCase() === correctOpt.toLowerCase();
+        if (isCorrect) {
+          AppState.trainer.correct++;
+          AppState.trainer.streak++;
+          document.getElementById('trainer-feedback').innerHTML = '<div style="color:var(--success);font-weight:700;font-size:1.1rem;">✓ ' + (lang==='az'?'Düzgün!':'Верно!') + '</div>';
+        } else {
+          AppState.trainer.streak = 0;
+          document.getElementById('trainer-feedback').innerHTML = '<div style="color:var(--error);font-weight:700;font-size:1.1rem;">✗ ' + (lang==='az'?'Yanlış. Düzgün cavab: ':'Неверно. Правильный ответ: ') + correctOpt + '</div>';
+        }
+        document.getElementById('trainer-correct').textContent = AppState.trainer.correct;
+        document.getElementById('trainer-total').textContent = AppState.trainer.total;
+        document.getElementById('trainer-streak').textContent = AppState.trainer.streak;
+        document.getElementById('trainer-check-btn').disabled = true;
+      }
+      document.getElementById('trainer-answer').addEventListener('keypress', e => { if (e.key === 'Enter') checkTrainer(); });
+
+      // ── Diagnostic ───────────────────────────────────────────────────────────
+      function startDiagnostic() {
+        AppState.mode = 'diagnostic';
+        AppState.diagnostic = { current: 0, score: 0, answers: [] };
+        document.getElementById('diagnostic-ui').style.display = 'block';
+        document.getElementById('timeattack-ui').style.display = 'none';
+        document.getElementById('results-ui').style.display = 'none';
+        document.getElementById('diag-total').textContent = QUESTIONS.length;
+        renderDiagnostic();
+      }
+      function renderDiagnostic() {
+        const q = QUESTIONS[AppState.diagnostic.current];
+        document.getElementById('diag-current').textContent = AppState.diagnostic.current + 1;
+        document.getElementById('diag-score').innerHTML = AppState.diagnostic.score + ' <span class="az-t">düzgün</span><span class="ru-t">верно</span>';
+        document.getElementById('diag-progress').style.width = ((AppState.diagnostic.current + 1) / QUESTIONS.length * 100) + '%';
+        document.getElementById('diag-question').textContent = q[lang].q;
+        document.getElementById('diag-explanation').style.display = 'none';
+        document.getElementById('diag-next').disabled = true;
+        document.getElementById('diag-prev').disabled = AppState.diagnostic.current === 0;
+        const optsDiv = document.getElementById('diag-options');
+        optsDiv.innerHTML = '';
+        q.opts.forEach((opt, i) => {
+          const div = document.createElement('div');
+          div.className = 'quiz-option';
+          div.innerHTML = '<div class="option-letter">' + String.fromCharCode(65 + i) + '</div><div>' + opt + '</div>';
+          div.onclick = () => selectDiagnostic(i, div, q);
+          optsDiv.appendChild(div);
+        });
+      }
+      function selectDiagnostic(i, div, q) {
+        document.querySelectorAll('#diag-options .quiz-option').forEach(o => o.classList.add('disabled'));
+        const isCorrect = i === q.correct;
+        div.classList.add(isCorrect ? 'correct' : 'wrong');
+        if (!isCorrect) document.querySelectorAll('#diag-options .quiz-option')[q.correct].classList.add('correct');
+        if (isCorrect) AppState.diagnostic.score++;
+        AppState.diagnostic.answers.push(i);
+        const expl = document.getElementById('diag-explanation');
+        expl.textContent = (isCorrect ? '✓ ' : '✗ ') + q[lang].expl;
+        expl.style.display = 'block';
+        document.getElementById('diag-next').disabled = false;
+      }
+      function nextDiagnostic() {
+        if (AppState.diagnostic.current < QUESTIONS.length - 1) {
+          AppState.diagnostic.current++;
+          renderDiagnostic();
+        } else {
+          showResults(AppState.diagnostic.score, QUESTIONS.length, 0, 'diagnostic');
+        }
+      }
+      function prevDiagnostic() {
+        if (AppState.diagnostic.current > 0) { AppState.diagnostic.current--; renderDiagnostic(); }
+      }
+
+      // ── Time Attack ──────────────────────────────────────────────────────────
+      function startTimeAttack() {
+        AppState.mode = 'timeattack';
+        AppState.timeAttack = { current: 0, score: 0, timer: null, timeLeft: 600, startTime: Date.now(), answers: [] };
+        document.getElementById('diagnostic-ui').style.display = 'none';
+        document.getElementById('timeattack-ui').style.display = 'block';
+        document.getElementById('results-ui').style.display = 'none';
+        const timerEl = document.getElementById('ta-timer');
+        timerEl.classList.remove('hidden');
+        AppState.timeAttack.timer = setInterval(() => {
+          AppState.timeAttack.timeLeft--;
+          const m = Math.floor(AppState.timeAttack.timeLeft / 60);
+          const s = AppState.timeAttack.timeLeft % 60;
+          timerEl.textContent = m + ':' + (s < 10 ? '0' : '') + s;
+          timerEl.className = 'timer' + (AppState.timeAttack.timeLeft <= 60 ? ' danger' : AppState.timeAttack.timeLeft <= 120 ? ' warning' : '');
+          if (AppState.timeAttack.timeLeft <= 0) {
+            clearInterval(AppState.timeAttack.timer);
+            showResults(AppState.timeAttack.score, QUESTIONS.length, 0, 'timeattack');
+          }
+        }, 1000);
+        renderTimeAttack();
+      }
+      function renderTimeAttack() {
+        const q = QUESTIONS[AppState.timeAttack.current];
+        document.getElementById('ta-current').textContent = AppState.timeAttack.current + 1;
+        document.getElementById('ta-progress').style.width = ((AppState.timeAttack.current + 1) / QUESTIONS.length * 100) + '%';
+        document.getElementById('ta-question').textContent = q[lang].q;
+        const optsDiv = document.getElementById('ta-options');
+        optsDiv.innerHTML = '';
+        q.opts.forEach((opt, i) => {
+          const div = document.createElement('div');
+          div.className = 'quiz-option';
+          div.innerHTML = '<div class="option-letter">' + String.fromCharCode(65 + i) + '</div><div>' + opt + '</div>';
+          div.onclick = () => {
+            if (i === q.correct) AppState.timeAttack.score++;
+            AppState.timeAttack.answers.push(i);
+            if (AppState.timeAttack.current < QUESTIONS.length - 1) {
+              AppState.timeAttack.current++;
+              renderTimeAttack();
+            } else {
+              clearInterval(AppState.timeAttack.timer);
+              const elapsed = Math.round((Date.now() - AppState.timeAttack.startTime) / 1000);
+              showResults(AppState.timeAttack.score, QUESTIONS.length, elapsed, 'timeattack');
+            }
+          };
+          optsDiv.appendChild(div);
+        });
+      }
+
+      // ── Results ──────────────────────────────────────────────────────────────
+      function showResults(correct, total, elapsed, mode) {
+        document.getElementById('diagnostic-ui').style.display = 'none';
+        document.getElementById('timeattack-ui').style.display = 'none';
+        document.getElementById('results-ui').style.display = 'block';
+        const pct = Math.round(correct / total * 100);
+        document.getElementById('result-circle').style.setProperty('--score', pct);
+        document.getElementById('result-percent').textContent = pct + '%';
+        document.getElementById('result-correct').textContent = correct;
+        document.getElementById('result-wrong').textContent = total - correct;
+        const m = Math.floor(elapsed / 60), s = elapsed % 60;
+        document.getElementById('result-time').textContent = m + ':' + (s < 10 ? '0' : '') + s;
+        const masteryAZ = pct >= 90 ? 'Əla' : pct >= 70 ? 'Yaxşı' : pct >= 50 ? 'Qənaətbəxş' : 'Zəif';
+        const masteryRU = pct >= 90 ? 'Отлично' : pct >= 70 ? 'Хорошо' : pct >= 50 ? 'Удовлетворительно' : 'Слабо';
+        document.getElementById('result-mastery').textContent = lang === 'az' ? masteryAZ : masteryRU;
+        const msgAZ = pct >= 90 ? '🏆 Əla nəticə!' : pct >= 70 ? '👍 Yaxşı nəticə!' : '📚 Nəzəriyyəni təkrar edin';
+        const msgRU = pct >= 90 ? '🏆 Отлично!' : pct >= 70 ? '👍 Хорошо!' : '📚 Повторите теорию';
+        document.getElementById('result-message').textContent = lang === 'az' ? msgAZ : msgRU;
+      }
+      function resetAssessment() {
+        document.getElementById('diagnostic-ui').style.display = 'none';
+        document.getElementById('timeattack-ui').style.display = 'none';
+        document.getElementById('results-ui').style.display = 'none';
+        document.getElementById('ta-timer').classList.add('hidden');
+      }
+    </script>
+  </body>
+</html>

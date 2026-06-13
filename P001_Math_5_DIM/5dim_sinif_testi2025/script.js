@@ -78,6 +78,9 @@ const ui = {
   },
 };
 
+/* ── EduHub integration ── */
+const EDUHUB_RESULTS_URL = (window.EDUHUB_URL || "") + "/api/results";
+
 /* ── State ── */
 let state = {
   variantIndex:  0,
@@ -87,6 +90,9 @@ let state = {
   finished:      false,
   review:        false,
   lang:          "az",
+  studentName:   "",
+  studentClass:  "",
+  startedAt:     null,
 };
 
 let _slideDir = "right"; // "right" = forward, "left" = backward
@@ -97,20 +103,25 @@ function loadState() {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (raw) {
       const s = JSON.parse(raw);
-      if (s.answers)   state.answers   = s.answers;
-      if (s.timeLeft  != null) state.timeLeft  = s.timeLeft;
-      if (s.finished  != null) state.finished  = s.finished;
-      if (s.lang)      state.lang      = s.lang;
+      if (s.answers)        state.answers      = s.answers;
+      if (s.timeLeft != null) state.timeLeft   = s.timeLeft;
+      if (s.finished != null) state.finished   = s.finished;
+      if (s.lang)           state.lang         = s.lang;
+      if (s.startedAt)      state.startedAt    = s.startedAt;
     }
+    // student identity persists across lessons
+    state.studentName  = localStorage.getItem("dim_student_name")  || "";
+    state.studentClass = localStorage.getItem("dim_student_class") || "";
   } catch (e) {}
 }
 
 function saveState() {
   localStorage.setItem(STORAGE_KEY, JSON.stringify({
-    answers:  state.answers,
-    timeLeft: state.timeLeft,
-    finished: state.finished,
-    lang:     state.lang,
+    answers:   state.answers,
+    timeLeft:  state.timeLeft,
+    finished:  state.finished,
+    lang:      state.lang,
+    startedAt: state.startedAt,
   }));
 }
 
@@ -349,6 +360,35 @@ function finishExam() {
   saveState();
   clearInterval(_timerInterval);
   showResults();
+  sendToHub();
+}
+
+async function sendToHub() {
+  try {
+    const r = calculateResults();
+    const percent = Math.round((r.correct / r.total) * 100);
+    const name = state.studentName || localStorage.getItem("dim_student_name") || "Şagird";
+    const body = {
+      student_name:  name,
+      student_class: state.studentClass || localStorage.getItem("dim_student_class") || "",
+      platform:      "P001",
+      lesson_id:     typeof STORAGE_KEY !== "undefined" ? STORAGE_KEY : "",
+      lesson_title:  examData?.title?.[state.lang] || examData?.title?.az || "",
+      score:         r.correct,
+      total:         r.total,
+      percent,
+      answers:       state.answers,
+      started_at:    state.startedAt,
+      finished_at:   new Date().toISOString(),
+    };
+    await fetch(EDUHUB_RESULTS_URL, {
+      method:  "POST",
+      headers: { "Content-Type": "application/json" },
+      body:    JSON.stringify(body),
+    });
+  } catch {
+    // fail silently — results page still works
+  }
 }
 
 function calculateResults() {
@@ -490,11 +530,54 @@ function numberLine(min, max, step, points, labels) {
   return s;
 }
 
+/* ── Name modal ── */
+function showNameModal(onConfirm) {
+  const overlay = document.createElement("div");
+  overlay.id = "nameModal";
+  overlay.style.cssText = "position:fixed;inset:0;background:rgba(0,0,0,.7);display:flex;align-items:center;justify-content:center;z-index:9999";
+  const lang = state.lang;
+  const labels = {
+    az: { title:"Adınızı daxil edin", name:"Ad Soyad", cls:"Sinif (məs: 5)", btn:"Başla" },
+    ru: { title:"Введите ваше имя",   name:"Имя Фамилия", cls:"Класс (напр: 5)", btn:"Начать" },
+    en: { title:"Enter your name",    name:"Full Name", cls:"Class (e.g. 5)", btn:"Start" },
+  };
+  const L = labels[lang] || labels.az;
+  overlay.innerHTML = `
+    <div style="background:var(--surface,#1e293b);border:1px solid var(--border,#334155);border-radius:16px;padding:28px;width:min(340px,90vw);box-shadow:0 20px 60px rgba(0,0,0,.5)">
+      <h2 style="color:var(--text,#f1f5f9);font-size:1.1rem;font-weight:700;margin-bottom:18px">${L.title}</h2>
+      <input id="nm_name"  placeholder="${L.name}"  style="width:100%;padding:10px 14px;border-radius:8px;border:1px solid var(--border,#334155);background:var(--bg,#0f172a);color:var(--text,#f1f5f9);font-size:.95rem;margin-bottom:10px;box-sizing:border-box" />
+      <input id="nm_class" placeholder="${L.cls}"   style="width:100%;padding:10px 14px;border-radius:8px;border:1px solid var(--border,#334155);background:var(--bg,#0f172a);color:var(--text,#f1f5f9);font-size:.95rem;margin-bottom:18px;box-sizing:border-box" />
+      <button id="nm_btn" style="width:100%;padding:12px;border-radius:8px;background:var(--primary,#3b82f6);color:#fff;font-weight:700;font-size:1rem;border:none;cursor:pointer">${L.btn}</button>
+    </div>`;
+  document.body.appendChild(overlay);
+  document.getElementById("nm_btn").addEventListener("click", () => {
+    const name = (document.getElementById("nm_name").value || "").trim();
+    const cls  = (document.getElementById("nm_class").value || "").trim();
+    if (!name) { document.getElementById("nm_name").style.borderColor = "#ef4444"; return; }
+    state.studentName  = name;
+    state.studentClass = cls;
+    localStorage.setItem("dim_student_name",  name);
+    localStorage.setItem("dim_student_class", cls);
+    overlay.remove();
+    onConfirm();
+  });
+}
+
 /* ── Bootstrap ── */
 document.addEventListener("DOMContentLoaded", () => {
   loadState();
   renderAll();
   updateTimerDisplay();
-  if (!state.finished) startTimer();
-  else                  showResults();
+  if (state.finished) {
+    showResults();
+  } else if (!state.studentName) {
+    showNameModal(() => {
+      state.startedAt = new Date().toISOString();
+      saveState();
+      startTimer();
+    });
+  } else {
+    if (!state.startedAt) { state.startedAt = new Date().toISOString(); saveState(); }
+    startTimer();
+  }
 });
