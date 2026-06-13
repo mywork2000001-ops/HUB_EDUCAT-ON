@@ -21,7 +21,7 @@ function isTokenValid(token: string): boolean {
   }
 }
 
-export function middleware(req: NextRequest) {
+export function proxy(req: NextRequest) {
   const token = req.cookies.get("eduhub-token")?.value;
 
   if (!token || !isTokenValid(token)) {
