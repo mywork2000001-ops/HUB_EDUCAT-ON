@@ -37,8 +37,14 @@ export async function POST(req: NextRequest) {
 export async function DELETE(req: NextRequest) {
   if (!verifyTeacher(req)) return NextResponse.json({ error: "Icazə yoxdur" }, { status: 401 });
 
-  const id = Number(new URL(req.url).searchParams.get("id"));
-  if (!id) return NextResponse.json({ error: "id tələb olunur" }, { status: 400 });
-  await db.assignment.delete({ where: { id } });
-  return NextResponse.json({ ok: true });
+  const idStr = new URL(req.url).searchParams.get("id");
+  const id = Number(idStr);
+  if (!idStr || isNaN(id) || id <= 0)
+    return NextResponse.json({ error: "Düzgün id tələb olunur" }, { status: 400 });
+  try {
+    await db.assignment.delete({ where: { id } });
+    return NextResponse.json({ ok: true });
+  } catch {
+    return NextResponse.json({ error: "Tə'yinat tapılmadı" }, { status: 404 });
+  }
 }

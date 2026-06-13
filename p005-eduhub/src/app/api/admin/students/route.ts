@@ -20,6 +20,8 @@ export async function POST(req: NextRequest) {
     const { name, email, password, class_name, group_name } = await req.json();
     if (!name || !email || !password || !class_name)
       return NextResponse.json({ error: "Bütün sahələri doldurun" }, { status: 400 });
+    if (String(password).length < 6)
+      return NextResponse.json({ error: "Şifrə minimum 6 simvol olmalıdır" }, { status: 400 });
 
     const existing = await db.student.findUnique({ where: { email: email.toLowerCase().trim() } });
     if (existing)

@@ -1,9 +1,11 @@
 import bcrypt from "bcryptjs";
 import { SignJWT, jwtVerify } from "jose";
 
-const SECRET = new TextEncoder().encode(
-  process.env.STUDENT_JWT_SECRET ?? "eduhub-student-fallback-secret-change-in-prod"
-);
+function getSecret(): Uint8Array {
+  const s = process.env.STUDENT_JWT_SECRET;
+  if (!s) throw new Error("STUDENT_JWT_SECRET env var is not set");
+  return new TextEncoder().encode(s);
+}
 
 export async function hashPassword(plain: string): Promise<string> {
   return bcrypt.hash(plain, 10);
@@ -25,12 +27,12 @@ export async function signStudentToken(payload: StudentPayload): Promise<string>
     .setProtectedHeader({ alg: "HS256" })
     .setIssuedAt()
     .setExpirationTime("7d")
-    .sign(SECRET);
+    .sign(getSecret());
 }
 
 export async function verifyStudentToken(token: string): Promise<StudentPayload | null> {
   try {
-    const { payload } = await jwtVerify(token, SECRET);
+    const { payload } = await jwtVerify(token, getSecret());
     return payload as unknown as StudentPayload;
   } catch {
     return null;

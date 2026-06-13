@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { jwtVerify } from "jose";
 
 function isTeacherTokenValid(token: string): boolean {
   try {
@@ -14,22 +15,18 @@ function isTeacherTokenValid(token: string): boolean {
   }
 }
 
-function isStudentTokenValid(token: string): boolean {
+async function isStudentTokenValid(token: string): Promise<boolean> {
+  const secret = process.env.STUDENT_JWT_SECRET;
+  if (!secret) return false;
   try {
-    const parts = token.split(".");
-    if (parts.length !== 3) return false;
-    const raw = parts[1].replace(/-/g, "+").replace(/_/g, "/");
-    const payload = JSON.parse(atob(raw));
-    if (!payload.exp || payload.exp < Math.floor(Date.now() / 1000)) return false;
-    // Student tokens have "id" field (cuid), not "aud"
-    if (!payload.id || !payload.class_name) return false;
+    await jwtVerify(token, new TextEncoder().encode(secret));
     return true;
   } catch {
     return false;
   }
 }
 
-export function proxy(req: NextRequest) {
+export async function proxy(req: NextRequest) {
   const { pathname } = req.nextUrl;
 
   // ── Teacher routes ──────────────────────────────────────────
@@ -47,7 +44,7 @@ export function proxy(req: NextRequest) {
   // ── Student routes ──────────────────────────────────────────
   if (pathname.startsWith("/learn") && !pathname.startsWith("/learn/login")) {
     const token = req.cookies.get("eduhub-student-token")?.value;
-    if (!token || !isStudentTokenValid(token)) {
+    if (!token || !(await isStudentTokenValid(token))) {
       const url = req.nextUrl.clone();
       url.pathname = "/learn/login";
       const response = NextResponse.redirect(url);

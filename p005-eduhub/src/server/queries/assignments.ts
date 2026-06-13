@@ -6,9 +6,16 @@ export async function getAssignedTopicIds(
   groupName: string | null,
 ): Promise<Set<number>> {
   try {
-    const orClauses: object[] = [{ class_name: className }];
-    if (groupName) orClauses.push({ group_name: groupName });
-    orClauses.push({ student_id: studentId });
+    const orClauses: object[] = [
+      // Whole-class assignments (no group restriction) for this student's class
+      { class_name: className, group_name: null },
+      // Individual assignments for this specific student
+      { student_id: studentId },
+    ];
+    if (groupName) {
+      // Group assignments must match BOTH the class AND the group
+      orClauses.push({ class_name: className, group_name: groupName });
+    }
 
     const rows = await db.assignment.findMany({
       where: { OR: orClauses },

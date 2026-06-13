@@ -81,10 +81,14 @@ export default function AssignmentsPage() {
         <form onSubmit={handleSubmit} className="bg-slate-900 rounded-2xl border border-slate-800 p-5 mb-6 space-y-4">
           <h2 className="text-sm font-semibold text-slate-300">Yeni tə'yinat</h2>
 
-          {/* Topic selector — manual input until /api/admin/assignments/topics is ready */}
           <div>
-            <label className="block text-slate-400 text-xs mb-1">Mövzu ID</label>
-            <input className={field} type="number" value={form.item_id} onChange={(e) => setForm(f => ({ ...f, item_id: e.target.value }))} required placeholder="Mövzu ID (1, 2, 3…)" />
+            <label className="block text-slate-400 text-xs mb-1">Mövzu</label>
+            <select className={field} value={form.item_id} onChange={(e) => setForm(f => ({ ...f, item_id: e.target.value }))} required>
+              <option value="">Mövzu seçin…</option>
+              {topics.map((t) => (
+                <option key={t.id} value={t.id}>{t.title_az}</option>
+              ))}
+            </select>
           </div>
 
           <div>
