@@ -54,7 +54,9 @@ export function AppSidebar({ grades }: { grades: GradeItem[] }) {
         <div className="mb-3">
           {navLink("/dashboard", "📊", "İcmal", true)}
           {navLink("/dashboard/results", "📋", "Nəticələr")}
-          {navLink("/dashboard/students", "📈", "Statistika")}
+          {navLink("/dashboard/students", "👥", "Statistika")}
+          {navLink("/dashboard/analytics", "📉", "Analitika")}
+          {navLink("/dashboard/progress", "📈", "Proqres")}
         </div>
 
         {/* Grades */}
