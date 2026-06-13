@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { SUBJECTS } from "@/lib/constants";
 
@@ -18,7 +18,13 @@ function getActiveSegments(pathname: string) {
 
 export function AppSidebar({ grades }: { grades: GradeItem[] }) {
   const pathname = usePathname();
+  const router = useRouter();
   const { gradeSlug: activeGrade, subjectSlug: activeSubject } = getActiveSegments(pathname);
+
+  async function handleLogout() {
+    await fetch("/api/auth/logout", { method: "POST" });
+    router.push("/auth/login");
+  }
 
   return (
     <aside className="hidden lg:flex lg:flex-col w-60 shrink-0 bg-slate-900 border-r border-slate-800 overflow-y-auto">
@@ -102,6 +108,13 @@ export function AppSidebar({ grades }: { grades: GradeItem[] }) {
           <span>🏠</span>
           <span>Ana Səhifə</span>
         </Link>
+        <button
+          onClick={handleLogout}
+          className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-sm text-slate-500 hover:bg-red-900/30 hover:text-red-400 transition-colors mt-1"
+        >
+          <span>🚪</span>
+          <span>Çıxış</span>
+        </button>
       </div>
     </aside>
   );
