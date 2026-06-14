@@ -1,7 +1,17 @@
 import { NextRequest, NextResponse } from "next/server";
 import { supabaseAuth } from "@/lib/supabase";
+import { checkRateLimit } from "@/lib/rate-limit";
 
 export async function POST(req: NextRequest) {
+  const ip = req.headers.get("x-forwarded-for")?.split(",")[0].trim() ?? "unknown";
+  const rl = await checkRateLimit(`login:${ip}`, 5, 10 * 60 * 1000);
+  if (!rl.allowed) {
+    return NextResponse.json(
+      { error: "Çox sayda uğursuz cəhd. Bir az gözləyin." },
+      { status: 429, headers: { "Retry-After": String(rl.retryAfterSec) } },
+    );
+  }
+
   try {
     const { email, password } = await req.json();
 
@@ -24,7 +34,7 @@ export async function POST(req: NextRequest) {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: "lax",
-      maxAge: 60 * 60 * 24 * 7,
+      maxAge: 60 * 60, // 1 hour — matches Supabase access_token TTL
       path: "/",
     });
 

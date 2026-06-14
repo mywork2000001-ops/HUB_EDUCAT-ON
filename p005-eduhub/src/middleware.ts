@@ -4,24 +4,15 @@ import { jwtVerify } from "jose";
 function enc(s: string) { return new TextEncoder().encode(s); }
 
 async function isTeacherTokenValid(token: string): Promise<boolean> {
-  // Structural pre-check (no crypto, no network)
-  try {
-    const parts = token.split(".");
-    if (parts.length !== 3) return false;
-    const raw     = parts[1].replace(/-/g, "+").replace(/_/g, "/");
-    const payload = JSON.parse(atob(raw));
-    if (!payload.exp || payload.exp < Math.floor(Date.now() / 1000)) return false;
-    if (payload.aud !== "authenticated") return false;
-  } catch { return false; }
-
-  // If SUPABASE_JWT_SECRET is configured, verify signature; otherwise accept structural check.
-  // Data-level security is enforced separately via verifyTeacher() in every API route.
   const secret = process.env.SUPABASE_JWT_SECRET;
-  if (!secret) return true;
+  // Missing secret means the deployment is misconfigured — deny, never accept.
+  if (!secret) return false;
   try {
-    await jwtVerify(token, enc(secret));
-    return true;
-  } catch { return false; }
+    const { payload } = await jwtVerify(token, enc(secret), { audience: "authenticated" });
+    return !!payload;
+  } catch {
+    return false;
+  }
 }
 
 async function isStudentTokenValid(token: string): Promise<boolean> {
@@ -30,7 +21,9 @@ async function isStudentTokenValid(token: string): Promise<boolean> {
   try {
     await jwtVerify(token, enc(secret));
     return true;
-  } catch { return false; }
+  } catch {
+    return false;
+  }
 }
 
 export async function middleware(req: NextRequest) {
@@ -49,7 +42,8 @@ export async function middleware(req: NextRequest) {
   }
 
   // ── Student routes ──────────────────────────────────────────────
-  if (pathname.startsWith("/learn") && !pathname.startsWith("/learn/login")) {
+  // Use exact match for /learn/login to avoid fragile startsWith with trailing slashes.
+  if (pathname.startsWith("/learn") && pathname !== "/learn/login") {
     const token = req.cookies.get("eduhub-student-token")?.value;
     if (!token || !(await isStudentTokenValid(token))) {
       const url = req.nextUrl.clone();

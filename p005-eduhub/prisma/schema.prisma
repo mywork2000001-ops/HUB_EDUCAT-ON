@@ -105,19 +105,19 @@ model Resource {
 // ─── NƏTICƏLƏR (Supabase vasitəsilə idarə olunur) ─────────────
 
 model Result {
-  id            String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  id            String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   student_name  String
-  student_class String   @default("")
+  student_class String    @default("")
   platform      String
-  lesson_id     String   @default("")
-  lesson_title  String   @default("")
+  lesson_id     String    @default("")
+  lesson_title  String    @default("")
   score         Int
   total         Int
   percent       Int
-  answers       Json     @default("{}")
+  answers       Json      @default("{}")
   started_at    DateTime?
   finished_at   DateTime?
-  created_at    DateTime @default(now())
+  created_at    DateTime  @default(now())
 
   @@map("results")
 }
@@ -140,20 +140,30 @@ model Student {
 }
 
 model Assignment {
-  id         Int      @id @default(autoincrement())
+  id         Int       @id @default(autoincrement())
   class_name String?
   group_name String?
   student_id String?
   item_id    Int
   due_date   DateTime?
   note       String?
-  created_at DateTime @default(now())
+  created_at DateTime  @default(now())
 
   item    CurriculumItem @relation(fields: [item_id], references: [id], onDelete: Cascade)
   student Student?       @relation(fields: [student_id], references: [id], onDelete: SetNull)
 
-  @@index([class_name])
-  @@index([student_id])
+  // Partial unique indexes must be created via raw SQL migration:
+  //   CREATE UNIQUE INDEX uq_assignment_class_item
+  //     ON assignments (class_name, item_id)
+  //     WHERE group_name IS NULL AND student_id IS NULL;
+  //   CREATE UNIQUE INDEX uq_assignment_group_item
+  //     ON assignments (class_name, group_name, item_id)
+  //     WHERE student_id IS NULL;
+  //   CREATE UNIQUE INDEX uq_assignment_student_item
+  //     ON assignments (student_id, item_id)
+  //     WHERE class_name IS NULL;
+  // Until that migration runs, duplicate-prevention is handled by skipDuplicates in activate route.
+  @@index([class_name, item_id])
+  @@index([student_id, item_id])
   @@map("assignments")
 }
-
