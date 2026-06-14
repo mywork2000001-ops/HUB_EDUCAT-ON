@@ -1,7 +1,8 @@
-import Link from "next/link";
-import { BreadcrumbNav } from "@/components/curriculum/BreadcrumbNav";
 import { AppHeader } from "@/components/layout/AppHeader";
 import { getGradeBySlug } from "@/server/queries/curriculum";
+import { db } from "@/lib/db";
+import { supabaseAdmin } from "@/lib/supabase";
+import { GradeDashboard, type ResultRow } from "./GradeDashboard";
 
 interface Props {
   params: Promise<{ gradeSlug: string }>;
@@ -11,8 +12,16 @@ export const revalidate = 60;
 
 export default async function GradePage({ params }: Props) {
   const { gradeSlug } = await params;
-  const grade    = await getGradeBySlug(gradeSlug);
-  const subjects = grade?.subjects?.map((gs) => gs.subject) ?? [];
+  const gradeNumber   = gradeSlug.replace("grade-", "");
+
+  const [grade, students] = await Promise.all([
+    getGradeBySlug(gradeSlug),
+    db.student.findMany({
+      where:   { class_name: { startsWith: gradeNumber } },
+      orderBy: [{ class_name: "asc" }, { name: "asc" }],
+      select:  { id: true, name: true, email: true, class_name: true, group_name: true, is_active: true },
+    }),
+  ]);
 
   if (!grade) {
     return (
@@ -22,63 +31,29 @@ export default async function GradePage({ params }: Props) {
     );
   }
 
+  let results: ResultRow[] = [];
+  if (supabaseAdmin) {
+    const { data } = await supabaseAdmin
+      .from("results")
+      .select("student_name,student_class,platform,lesson_id,lesson_title,percent,score,total,finished_at")
+      .ilike("student_class", `${gradeNumber}%`)
+      .order("finished_at", { ascending: false })
+      .limit(1000);
+    results = (data ?? []) as ResultRow[];
+  }
+
+  const subjects = grade.subjects.map((gs) => gs.subject);
+
   return (
     <>
       <AppHeader title={grade.label_az} />
-      <div className="p-6 max-w-4xl">
-        <BreadcrumbNav
-          crumbs={[
-            { label: "Siniflər" },
-            { label: grade.label_az },
-          ]}
-        />
-
-        <div className="mt-4 flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl font-bold text-slate-900">{grade.label_az}</h1>
-            <p className="mt-1 text-slate-500 text-sm">Fənn seçin</p>
-          </div>
-          <Link
-            href="/dashboard/manage/subjects"
-            className="text-xs text-slate-600 hover:text-slate-900 transition-colors
-                       px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 border border-slate-200"
-          >
-            + Fənn əlavə et
-          </Link>
-        </div>
-
-        {subjects.length === 0 ? (
-          <div className="mt-6 py-16 rounded-2xl bg-slate-50 border border-slate-200 text-center">
-            <p className="text-4xl mb-3">📚</p>
-            <p className="text-slate-500 text-sm">Bu sinif üçün hələ fənn əlavə edilməyib.</p>
-            <Link
-              href="/dashboard/manage/subjects"
-              className="inline-block mt-4 px-4 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-700
-                         text-white text-sm transition-colors shadow-sm"
-            >
-              Fənn əlavə et
-            </Link>
-          </div>
-        ) : (
-          <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
-            {subjects.map((sub) => (
-              <Link
-                key={sub.slug}
-                href={`/dashboard/classes/${gradeSlug}/${sub.slug}`}
-                className="flex flex-col items-center gap-2 p-4 rounded-xl bg-white
-                           border border-slate-200 shadow-sm hover:border-indigo-300 hover:shadow-md
-                           transition-all text-center group"
-              >
-                <span className="text-3xl">{sub.icon ?? "📚"}</span>
-                <span className="text-sm font-medium text-slate-700 group-hover:text-indigo-700">
-                  {sub.label_az}
-                </span>
-                <span className="text-xs text-slate-400">{sub.label_ru}</span>
-              </Link>
-            ))}
-          </div>
-        )}
-      </div>
+      <GradeDashboard
+        gradeSlug={gradeSlug}
+        gradeLabel={grade.label_az}
+        subjects={subjects}
+        students={students}
+        results={results}
+      />
     </>
   );
 }
