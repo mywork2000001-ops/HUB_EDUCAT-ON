@@ -1,37 +1,41 @@
 import { NextRequest, NextResponse } from "next/server";
-import { jwtVerify } from "jose";
+import { jwtVerify, createRemoteJWKSet } from "jose";
 
 function enc(s: string) { return new TextEncoder().encode(s); }
 
+// JWKS set is cached per Edge worker instance — fetched once on first request,
+// refreshed automatically when Supabase rotates keys (unknown kid triggers re-fetch).
+let _jwks: ReturnType<typeof createRemoteJWKSet> | null = null;
+function getJWKS(supabaseUrl: string) {
+  if (!_jwks) {
+    _jwks = createRemoteJWKSet(
+      new URL(`${supabaseUrl}/auth/v1/.well-known/jwks.json`),
+    );
+  }
+  return _jwks;
+}
+
 async function isTeacherTokenValid(token: string): Promise<boolean> {
-  const secret = process.env.SUPABASE_JWT_SECRET;
-
-  if (secret) {
-    // Fast path: local crypto — no network call
-    try {
-      const { payload } = await jwtVerify(token, enc(secret), { audience: "authenticated" });
-      return !!payload;
-    } catch {
-      return false;
-    }
-  }
-
-  // Fallback: SUPABASE_JWT_SECRET not configured — verify via Supabase Admin REST API.
-  // Add SUPABASE_JWT_SECRET to env vars to skip this network call on every request.
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const serviceKey  = process.env.SUPABASE_SERVICE_ROLE_KEY;
-  if (!supabaseUrl || !serviceKey) return false;
-  try {
-    const res = await fetch(`${supabaseUrl}/auth/v1/user`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-        apikey: serviceKey,
-      },
-    });
-    return res.ok;
-  } catch {
-    return false;
+
+  // Legacy path: HS256 shared secret (only works for tokens signed before key rotation)
+  const secret = process.env.SUPABASE_JWT_SECRET;
+  if (secret) {
+    try {
+      await jwtVerify(token, enc(secret), { audience: "authenticated" });
+      return true;
+    } catch { /* new ECC token — fall through to JWKS */ }
   }
+
+  // Primary path: ECC (P-256) via JWKS — keys cached in-process, no per-request network call
+  if (supabaseUrl) {
+    try {
+      await jwtVerify(token, getJWKS(supabaseUrl), { audience: "authenticated" });
+      return true;
+    } catch { return false; }
+  }
+
+  return false;
 }
 
 async function isStudentTokenValid(token: string): Promise<boolean> {
