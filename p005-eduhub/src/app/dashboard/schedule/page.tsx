@@ -2,6 +2,7 @@ import { db } from "@/lib/db";
 import Link from "next/link";
 import { LiveClock } from "@/components/ui/LiveClock";
 import { ScheduleQuickAdd } from "@/components/schedule/ScheduleQuickAdd";
+import { ActivationPanel } from "@/components/schedule/ActivationPanel";
 
 export const dynamic = "force-dynamic";
 
@@ -33,9 +34,9 @@ async function getWeekAssignments(from: Date, to: Date) {
 export default async function SchedulePage({
   searchParams,
 }: {
-  searchParams: Promise<{ week?: string }>;
+  searchParams: Promise<{ week?: string; view?: string }>;
 }) {
-  const { week = "0" } = await searchParams;
+  const { week = "0", view = "schedule" } = await searchParams;
   const offset = Math.max(-4, Math.min(4, parseInt(week) || 0));
 
   /* ── Week bounds (Mon–Sun) ── */
@@ -96,8 +97,52 @@ export default async function SchedulePage({
     },
   });
 
+  /* ── Grade-subjects for ActivationPanel ── */
+  const gradeSubjects = await db.gradeSubject.findMany({
+    include: { grade: true, subject: true },
+    orderBy: [{ grade_id: "asc" }, { subject_id: "asc" }],
+  });
+  const gradeSubjectsList = gradeSubjects.map(gs => ({
+    gradeSlug:   gs.grade.slug,
+    gradeNumber: gs.grade.number,
+    gradeLabel:  gs.grade.label_az,
+    subjSlug:    gs.subject.slug,
+    subjLabel:   gs.subject.label_az,
+    subjIcon:    gs.subject.icon,
+  }));
+
+  const isActivate = view === "activate";
+
   return (
-    <div className="p-6 max-w-full overflow-x-auto">
+    <div className={`p-6 ${isActivate ? "" : "max-w-full overflow-x-auto"}`}>
+
+      {/* ── View tabs ── */}
+      <div className="flex items-center gap-2 mb-6">
+        <Link href="?view=schedule"
+          className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold transition-colors border ${
+            !isActivate
+              ? "bg-indigo-600 text-white border-indigo-600 shadow-sm"
+              : "bg-white text-slate-600 border-slate-200 hover:border-slate-300"
+          }`}>
+          📅 Cədvəl
+        </Link>
+        <Link href="?view=activate"
+          className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold transition-colors border ${
+            isActivate
+              ? "bg-indigo-600 text-white border-indigo-600 shadow-sm"
+              : "bg-white text-slate-600 border-slate-200 hover:border-slate-300"
+          }`}>
+          🎯 Aktivasiya
+        </Link>
+      </div>
+
+      {/* ── Activation panel ── */}
+      {isActivate && (
+        <ActivationPanel gradeSubjectsList={gradeSubjectsList} />
+      )}
+
+      {/* ── Schedule calendar (hidden when activate view) ── */}
+      {!isActivate && (<>
 
       {/* ── Header ── */}
       <div className="mb-6 flex flex-col sm:flex-row sm:items-center gap-4">
@@ -271,6 +316,8 @@ export default async function SchedulePage({
           </Link>
         </div>
       )}
+
+      </>)}
     </div>
   );
 }
