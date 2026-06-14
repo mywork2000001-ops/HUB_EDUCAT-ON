@@ -12,11 +12,11 @@ const ALLOWED_ORIGINS = process.env.NODE_ENV === "production"
   ? PROD_ORIGINS
   : [...PROD_ORIGINS, ...DEV_ORIGINS];
 
-function corsHeaders(req: NextRequest) {
+function corsHeaders(req: NextRequest): Record<string, string> {
   const origin = req.headers.get("origin") ?? "";
-  const allowed = ALLOWED_ORIGINS.includes(origin) ? origin : ALLOWED_ORIGINS[2];
+  const allowed = ALLOWED_ORIGINS.includes(origin) ? origin : null;
   return {
-    "Access-Control-Allow-Origin":  allowed,
+    ...(allowed ? { "Access-Control-Allow-Origin": allowed } : {}),
     "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
     "Access-Control-Allow-Headers": "Content-Type",
     "Vary": "Origin",
@@ -24,7 +24,11 @@ function corsHeaders(req: NextRequest) {
 }
 
 export async function OPTIONS(req: NextRequest) {
-  return new NextResponse(null, { status: 204, headers: corsHeaders(req) });
+  const headers = corsHeaders(req);
+  if (!headers["Access-Control-Allow-Origin"]) {
+    return new NextResponse(null, { status: 403 });
+  }
+  return new NextResponse(null, { status: 204, headers });
 }
 
 export async function POST(req: NextRequest) {

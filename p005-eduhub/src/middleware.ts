@@ -1,12 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { jwtVerify } from "jose";
 
-function getEncoder(secret: string) {
-  return new TextEncoder().encode(secret);
-}
+function enc(s: string) { return new TextEncoder().encode(s); }
 
 async function isTeacherTokenValid(token: string): Promise<boolean> {
-  // Structural pre-check (cheap, no crypto)
+  // Fast structural pre-check (no crypto)
   try {
     const parts = token.split(".");
     if (parts.length !== 3) return false;
@@ -16,52 +14,53 @@ async function isTeacherTokenValid(token: string): Promise<boolean> {
     if (payload.aud !== "authenticated") return false;
   } catch { return false; }
 
-  // Cryptographic signature check (requires SUPABASE_JWT_SECRET in env)
+  // Cryptographic signature verification
   const secret = process.env.SUPABASE_JWT_SECRET;
-  if (secret) {
-    try {
-      await jwtVerify(token, getEncoder(secret));
-      return true;
-    } catch { return false; }
+  if (!secret) {
+    // Production MUST have the secret — reject without it
+    if (process.env.NODE_ENV === "production") return false;
+    // Dev-only fallback: structural check already passed above
+    return true;
   }
-
-  // Fallback: structural check only (set SUPABASE_JWT_SECRET for full security)
-  return true;
+  try {
+    await jwtVerify(token, enc(secret));
+    return true;
+  } catch { return false; }
 }
 
 async function isStudentTokenValid(token: string): Promise<boolean> {
   const secret = process.env.STUDENT_JWT_SECRET;
   if (!secret) return false;
   try {
-    await jwtVerify(token, getEncoder(secret));
+    await jwtVerify(token, enc(secret));
     return true;
   } catch { return false; }
 }
 
-export async function proxy(req: NextRequest) {
+export async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
 
-  // ── Teacher routes ──────────────────────────────────────────
+  // ── Teacher routes ──────────────────────────────────────────────
   if (pathname.startsWith("/dashboard")) {
     const token = req.cookies.get("eduhub-token")?.value;
     if (!token || !(await isTeacherTokenValid(token))) {
       const url = req.nextUrl.clone();
       url.pathname = "/auth/login";
-      const response = NextResponse.redirect(url);
-      if (token) response.cookies.delete("eduhub-token");
-      return response;
+      const res = NextResponse.redirect(url);
+      if (token) res.cookies.delete("eduhub-token");
+      return res;
     }
   }
 
-  // ── Student routes ──────────────────────────────────────────
+  // ── Student routes ──────────────────────────────────────────────
   if (pathname.startsWith("/learn") && !pathname.startsWith("/learn/login")) {
     const token = req.cookies.get("eduhub-student-token")?.value;
     if (!token || !(await isStudentTokenValid(token))) {
       const url = req.nextUrl.clone();
       url.pathname = "/learn/login";
-      const response = NextResponse.redirect(url);
-      if (token) response.cookies.delete("eduhub-student-token");
-      return response;
+      const res = NextResponse.redirect(url);
+      if (token) res.cookies.delete("eduhub-student-token");
+      return res;
     }
   }
 

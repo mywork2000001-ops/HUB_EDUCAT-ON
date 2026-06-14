@@ -20,10 +20,11 @@ export async function PATCH(req: NextRequest) {
   try {
     const body = await req.json();
     const data: Record<string, unknown> = {};
-    if (body.title_az    !== undefined) data.title_az    = String(body.title_az).trim();
-    if (body.title_ru    !== undefined) data.title_ru    = String(body.title_ru).trim();
-    if (body.content_url !== undefined) data.content_url = body.content_url ? String(body.content_url).trim() : null;
+    if (body.title_az     !== undefined) data.title_az     = String(body.title_az).trim();
+    if (body.title_ru     !== undefined) data.title_ru     = String(body.title_ru).trim();
+    if (body.content_url  !== undefined) data.content_url  = body.content_url ? String(body.content_url).trim() : null;
     if (body.is_published !== undefined) data.is_published = Boolean(body.is_published);
+    if (body.metadata     !== undefined) data.metadata     = body.metadata ?? null;
     const resource = await db.resource.update({ where: { id }, data });
     return NextResponse.json({ resource });
   } catch {
@@ -34,7 +35,7 @@ export async function PATCH(req: NextRequest) {
 export async function POST(req: NextRequest) {
   if (!(await verifyTeacher(req))) return NextResponse.json({ error: "Icazə yoxdur" }, { status: 401 });
   try {
-    const { curriculum_id, type, title_az, title_ru, content_url } = await req.json();
+    const { curriculum_id, type, title_az, title_ru, content_url, metadata } = await req.json();
     if (!curriculum_id || !type || !title_az)
       return NextResponse.json({ error: "Mövzu, növ və başlıq tələb olunur" }, { status: 400 });
 
@@ -55,6 +56,7 @@ export async function POST(req: NextRequest) {
         title_az: String(title_az).trim(),
         title_ru: title_ru ? String(title_ru).trim() : String(title_az).trim(),
         content_url: content_url ? String(content_url).trim() : null,
+        metadata: metadata ?? null,
         is_published: true,
       },
     });

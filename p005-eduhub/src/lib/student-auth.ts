@@ -33,7 +33,16 @@ export async function signStudentToken(payload: StudentPayload): Promise<string>
 export async function verifyStudentToken(token: string): Promise<StudentPayload | null> {
   try {
     const { payload } = await jwtVerify(token, getSecret());
-    return payload as unknown as StudentPayload;
+    const p = payload as Record<string, unknown>;
+    if (typeof p.id !== "string" || typeof p.name !== "string" || typeof p.class_name !== "string") {
+      return null;
+    }
+    return {
+      id:         p.id,
+      name:       p.name,
+      class_name: p.class_name,
+      group_name: typeof p.group_name === "string" ? p.group_name : null,
+    };
   } catch {
     return null;
   }

@@ -20,6 +20,7 @@ type Resource = {
   content_url: string | null;
   is_published: boolean;
   created_at: string;
+  metadata?: { duration_min?: number; questions_count?: number } | null;
 };
 
 const TYPE_LABELS: Record<string, string> = {
@@ -52,7 +53,17 @@ function toEmbedUrl(raw: string): string {
   return s;
 }
 
-const EMPTY_FORM = { title_az: "", title_ru: "", url: "", type: "VIDEO" as string };
+type FormState = { title_az: string; title_ru: string; url: string; type: string; duration_min: string; questions_count: string };
+const EMPTY_FORM: FormState = { title_az: "", title_ru: "", url: "", type: "VIDEO", duration_min: "", questions_count: "" };
+
+const META_TYPES_QUESTIONS = new Set(["TEST", "TAIM_TEST", "BSQ", "KSQ"]);
+
+function buildMetadata(f: FormState): Record<string, number> | null {
+  const meta: Record<string, number> = {};
+  if (f.duration_min && Number(f.duration_min) > 0)      meta.duration_min    = Number(f.duration_min);
+  if (f.questions_count && Number(f.questions_count) > 0) meta.questions_count = Number(f.questions_count);
+  return Object.keys(meta).length ? meta : null;
+}
 
 export default function ResourcesManagePage() {
   const [topics,       setTopics]       = useState<Topic[]>([]);
@@ -60,10 +71,10 @@ export default function ResourcesManagePage() {
   const [resources,    setResources]    = useState<Resource[]>([]);
   const [loadingRes,   setLoadingRes]   = useState(false);
   const [showForm,     setShowForm]     = useState(false);
-  const [form,         setForm]         = useState(EMPTY_FORM);
+  const [form,         setForm]         = useState<FormState>(EMPTY_FORM);
   const [saving,       setSaving]       = useState(false);
   const [editId,       setEditId]       = useState<number | null>(null);
-  const [editForm,     setEditForm]     = useState(EMPTY_FORM);
+  const [editForm,     setEditForm]     = useState<FormState>(EMPTY_FORM);
   const [editSaving,   setEditSaving]   = useState(false);
 
   useEffect(() => {
@@ -104,6 +115,7 @@ export default function ResourcesManagePage() {
           title_az:      form.title_az.trim(),
           title_ru:      form.title_ru.trim() || form.title_az.trim(),
           content_url:   embedUrl || null,
+          metadata:      buildMetadata(form),
         }),
       });
       if (!res.ok) { const d = await res.json(); throw new Error(d.error); }
@@ -132,7 +144,14 @@ export default function ResourcesManagePage() {
 
   function startEdit(r: Resource) {
     setEditId(r.id);
-    setEditForm({ title_az: r.title_az, title_ru: r.title_ru, url: r.content_url ?? "", type: r.type });
+    setEditForm({
+      title_az:       r.title_az,
+      title_ru:       r.title_ru,
+      url:            r.content_url ?? "",
+      type:           r.type,
+      duration_min:   r.metadata?.duration_min   ? String(r.metadata.duration_min)   : "",
+      questions_count: r.metadata?.questions_count ? String(r.metadata.questions_count) : "",
+    });
     setShowForm(false);
   }
 
@@ -149,6 +168,7 @@ export default function ResourcesManagePage() {
           title_az:    editForm.title_az.trim(),
           title_ru:    editForm.title_ru.trim() || editForm.title_az.trim(),
           content_url: embedUrl || null,
+          metadata:    buildMetadata(editForm),
         }),
       });
       if (!res.ok) throw new Error("Xəta");
@@ -286,6 +306,24 @@ export default function ResourcesManagePage() {
                     )}
                   </div>
 
+                  {form.type === "VIDEO" && (
+                    <div>
+                      <label className="block text-xs font-medium text-slate-600 mb-1">Müddət (dəq)</label>
+                      <input type="number" min="1" max="999" className={fd} value={form.duration_min}
+                        onChange={(e) => setForm((f) => ({ ...f, duration_min: e.target.value }))}
+                        placeholder="Məs: 12" />
+                    </div>
+                  )}
+
+                  {META_TYPES_QUESTIONS.has(form.type) && (
+                    <div>
+                      <label className="block text-xs font-medium text-slate-600 mb-1">Sual sayı</label>
+                      <input type="number" min="1" max="999" className={fd} value={form.questions_count}
+                        onChange={(e) => setForm((f) => ({ ...f, questions_count: e.target.value }))}
+                        placeholder="Məs: 30" />
+                    </div>
+                  )}
+
                   <button type="submit" disabled={saving}
                     className="w-full bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 text-white font-medium rounded-xl py-2.5 text-sm transition-colors shadow-sm">
                     {saving ? "Əlavə edilir…" : "Əlavə et"}
@@ -330,6 +368,22 @@ export default function ResourcesManagePage() {
                             {editForm.type === "VIDEO" && editForm.url && (
                               <p className="text-xs text-indigo-500">→ embed: {toEmbedUrl(editForm.url)}</p>
                             )}
+                            {editForm.type === "VIDEO" && (
+                              <div>
+                                <label className="block text-xs font-medium text-slate-600 mb-1">Müddət (dəq)</label>
+                                <input type="number" min="1" max="999" className={fd} value={editForm.duration_min}
+                                  onChange={(e) => setEditForm((f) => ({ ...f, duration_min: e.target.value }))}
+                                  placeholder="Məs: 12" />
+                              </div>
+                            )}
+                            {META_TYPES_QUESTIONS.has(editForm.type) && (
+                              <div>
+                                <label className="block text-xs font-medium text-slate-600 mb-1">Sual sayı</label>
+                                <input type="number" min="1" max="999" className={fd} value={editForm.questions_count}
+                                  onChange={(e) => setEditForm((f) => ({ ...f, questions_count: e.target.value }))}
+                                  placeholder="Məs: 30" />
+                              </div>
+                            )}
                             <div className="flex gap-2">
                               <button type="submit" disabled={editSaving}
                                 className="flex-1 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 text-white text-xs font-medium transition-colors">
@@ -355,11 +409,19 @@ export default function ResourcesManagePage() {
                                 </span>
                               </div>
                               <p className="text-sm font-medium text-slate-800 truncate">{r.title_az}</p>
-                              {r.content_url && (
-                                <p className="text-xs text-slate-400 truncate mt-0.5">
-                                  {r.content_url.length > 60 ? r.content_url.slice(0, 60) + "…" : r.content_url}
-                                </p>
-                              )}
+                              <div className="flex items-center gap-2 mt-0.5 flex-wrap">
+                                {r.metadata?.duration_min && (
+                                  <span className="text-xs text-slate-400">⏱ {r.metadata.duration_min} dəq</span>
+                                )}
+                                {r.metadata?.questions_count && (
+                                  <span className="text-xs text-slate-400">❓ {r.metadata.questions_count} sual</span>
+                                )}
+                                {r.content_url && (
+                                  <span className="text-xs text-slate-400 truncate max-w-[200px]">
+                                    {r.content_url.length > 50 ? r.content_url.slice(0, 50) + "…" : r.content_url}
+                                  </span>
+                                )}
+                              </div>
                             </div>
                             <div className="flex items-center gap-1 shrink-0">
                               {/* Preview link */}

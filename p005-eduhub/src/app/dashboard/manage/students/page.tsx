@@ -74,6 +74,22 @@ export default function StudentsManagePage() {
     setModal({ student, newPassword: data.plainPassword ?? null, loading: false });
   }
 
+  async function toggleActive(id: string, currentStatus: boolean) {
+    // Optimistic update
+    setStudents((prev) => prev.map((s) => s.id === id ? { ...s, is_active: !currentStatus } : s));
+    try {
+      const res = await fetch(`/api/admin/students/${id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ is_active: !currentStatus }),
+      });
+      if (!res.ok) throw new Error();
+    } catch {
+      // Revert on error
+      setStudents((prev) => prev.map((s) => s.id === id ? { ...s, is_active: currentStatus } : s));
+    }
+  }
+
   function copyPassword() {
     if (!modal?.newPassword) return;
     navigator.clipboard.writeText(modal.newPassword).then(() => {
@@ -101,14 +117,19 @@ export default function StudentsManagePage() {
 
   function StudentRow({ s }: { s: Student }) {
     return (
-      <div className="flex items-start gap-3 px-4 py-3 border-b border-slate-100 last:border-0 hover:bg-slate-50 transition-colors">
-        <div className="w-9 h-9 rounded-full bg-indigo-100 flex items-center justify-center
-                        text-indigo-600 text-sm font-bold shrink-0 mt-0.5">
+      <div className={`flex items-start gap-3 px-4 py-3 border-b border-slate-100 last:border-0 transition-colors ${
+        s.is_active ? "hover:bg-slate-50" : "bg-slate-50/60 hover:bg-slate-100/60"
+      }`}>
+        <div className={`w-9 h-9 rounded-full flex items-center justify-center text-sm font-bold shrink-0 mt-0.5 ${
+          s.is_active ? "bg-indigo-100 text-indigo-600" : "bg-slate-200 text-slate-400"
+        }`}>
           {s.name.charAt(0).toUpperCase()}
         </div>
         <div className="flex-1 min-w-0 grid grid-cols-1 sm:grid-cols-4 gap-1 sm:gap-3 items-center">
           <div className="min-w-0">
-            <p className="text-sm font-medium text-slate-800 truncate">{s.name}</p>
+            <p className={`text-sm font-medium truncate ${s.is_active ? "text-slate-800" : "text-slate-400 line-through"}`}>
+              {s.name}
+            </p>
             <p className="text-xs text-slate-400 truncate">{s.class_name}{s.group_name ? ` · ${s.group_name}` : ""}</p>
           </div>
           <div className="sm:col-span-2">
@@ -116,13 +137,18 @@ export default function StudentsManagePage() {
             <p className="text-xs font-mono text-indigo-600 select-all truncate">{s.email}</p>
           </div>
           <div className="flex items-center gap-2 justify-end flex-wrap">
-            <span className={`text-xs px-2 py-0.5 rounded-full border font-medium ${
-              s.is_active
-                ? "bg-emerald-50 text-emerald-700 border-emerald-200"
-                : "bg-slate-100 text-slate-500 border-slate-200"
-            }`}>
-              {s.is_active ? "Aktiv" : "Deaktiv"}
-            </span>
+            {/* Active toggle — clickable */}
+            <button
+              type="button"
+              onClick={() => toggleActive(s.id, s.is_active)}
+              title={s.is_active ? "Deaktiv et" : "Aktivləşdir"}
+              className={`text-xs px-2 py-0.5 rounded-full border font-medium transition-colors cursor-pointer ${
+                s.is_active
+                  ? "bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-red-50 hover:text-red-600 hover:border-red-200"
+                  : "bg-slate-100 text-slate-500 border-slate-200 hover:bg-emerald-50 hover:text-emerald-700 hover:border-emerald-200"
+              }`}>
+              {s.is_active ? "✓ Aktiv" : "✕ Deaktiv"}
+            </button>
             <button type="button" onClick={() => resetPassword(s)}
               className="text-xs text-amber-600 hover:text-amber-700 px-2 py-1 rounded-lg hover:bg-amber-50 transition-colors shrink-0 font-medium">
               🔑 Şifrə
