@@ -2,6 +2,20 @@ import { NextRequest, NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabase";
 import { verifyTeacher } from "@/lib/verify-teacher";
 
+// GET /api/admin/settings — return current teacher profile
+export async function GET(req: NextRequest) {
+  if (!(await verifyTeacher(req))) return NextResponse.json({ error: "Icazə yoxdur" }, { status: 401 });
+  if (!supabaseAdmin) return NextResponse.json({ error: "Server xətası" }, { status: 500 });
+  const token = req.cookies.get("eduhub-token")?.value ?? "";
+  const { data } = await supabaseAdmin.auth.getUser(token);
+  const user = data.user;
+  return NextResponse.json({
+    email:      user?.email ?? "",
+    name:       user?.user_metadata?.full_name ?? user?.email?.split("@")[0] ?? "Müəllim",
+    created_at: user?.created_at ?? null,
+  });
+}
+
 // PATCH /api/admin/settings — change teacher's own password
 export async function PATCH(req: NextRequest) {
   if (!(await verifyTeacher(req))) return NextResponse.json({ error: "Icazə yoxdur" }, { status: 401 });
