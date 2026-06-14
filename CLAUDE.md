@@ -58,7 +58,7 @@ ROOT: C:/Users/Administrator/Documents/Claude/Projects/
 │   │   └── actions/resources.ts        ← createResource, togglePublished
 │   │
 │   ├── src/types/index.ts              ← Re-export Prisma типов
-│   ├── src/proxy.ts                    ← Next.js 16 middleware (НЕ middleware.ts!): /dashboard/* + /learn/*
+│   ├── src/middleware.ts               ← Next.js 16 middleware (правильное имя!): /dashboard/* + /learn/*
 │   ├── src/generated/prisma/           ← Авто-генерация Prisma 7 client
 │   ├── .env.local                      ← SUPABASE keys + DATABASE_URL (pooler)
 │   └── next.config.ts
@@ -83,12 +83,12 @@ ROOT: C:/Users/Administrator/Documents/Claude/Projects/
 │   ✅ P003 → POST /api/results через _Shared_Core/send-to-hub.js (4 теста)
 │   ✅ P004 → POST /api/results через /api/content/ P004_SYNC инжект
 │   ✅ Sidebar → Фənlər · Şagirdlər · Müəllimlər · Tə'yinatlar · Tənzimləmələr
-│   ✅ proxy.ts → JWT валидация /dashboard/* + /learn/* (Next.js 16 = proxy.ts, не middleware.ts!)
+│   ✅ middleware.ts → JWT валидация /dashboard/* + /learn/* (Next.js 16 = src/middleware.ts, export middleware)
 │   ✅ Vercel → задеплоен, CONTENT_BASE_URL=https://mywork2000001-ops.github.io/HUB_EDUCAT-ON
 │   ✅ Email-уведомления → код готов (nodemailer), GMAIL_USER + NOTIFY_EMAIL в Vercel
 │
 │   КЛЮЧЕВЫЕ ТЕХНИЧЕСКИЕ ДЕТАЛИ:
-│   • Next.js 16: middleware называется proxy.ts (export async function proxy), НЕ middleware.ts
+│   • Next.js 16: middleware называется src/middleware.ts (export async function middleware) — НЕ proxy.ts!
 │   • Ученики: bcryptjs + jose JWT в eduhub-student-token cookie, STUDENT_JWT_SECRET env var
 │   • display_password: хранится открытым текстом в students таблице для отображения учителю
 │   • send-to-hub.js: monkey-patches showResults()/showResult() — работает без изменения логики
@@ -317,7 +317,7 @@ ROOT: C:/Users/Administrator/Documents/Claude/Projects/
   P004   │ PWA / offline          │ ✅ DONE    │ sw.js v12, manifest
   P005   │ Архитектура (Prisma 7) │ ✅ DONE    │ schema+queries+components+routes+api/content
   P005   │ Supabase БД            │ ✅ LIVE    │ Grade5+6 seed, 8 тем × 30+ ресурсов
-  P005   │ Auth + proxy.ts        │ ✅ DONE    │ Next.js 16: proxy.ts (не middleware.ts!)
+  P005   │ Auth + middleware.ts   │ ✅ DONE    │ Next.js 16: src/middleware.ts (export middleware)
   P005   │ Ученики + JWT          │ ✅ DONE    │ bcryptjs + jose, eduhub-student-token, display_password
   P005   │ Curriculum routes      │ ✅ DONE    │ /classes/[grade]/[subject]/[topic]/[resource]
   P005   │ Управление шагирдами   │ ✅ DONE    │ 3-вкладочный UI, показ паролей, печать карточек
