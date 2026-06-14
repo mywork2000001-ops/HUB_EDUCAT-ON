@@ -23,6 +23,7 @@ export default function LoginPage() {
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Xəta baş verdi");
+      router.refresh();
       router.push("/dashboard");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Xəta baş verdi");

@@ -37,7 +37,7 @@ export default function StudentLoginPage() {
 
   const tx = T[lang];
 
-  async function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setError("");
     setLoading(true);
@@ -86,7 +86,7 @@ export default function StudentLoginPage() {
         </div>
 
         {/* Card */}
-        <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 space-y-4">
+        <form onSubmit={handleSubmit} className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 space-y-4">
 
           <div className="space-y-1.5">
             <label className="block text-sm font-medium text-slate-700">{tx.email}</label>
@@ -130,8 +130,7 @@ export default function StudentLoginPage() {
             </div>
           )}
 
-          <button type="button" onClick={handleSubmit as unknown as React.MouseEventHandler}
-            disabled={loading}
+          <button type="submit" disabled={loading}
             className="w-full bg-gradient-to-r from-indigo-600 to-violet-600
                        hover:from-indigo-700 hover:to-violet-700
                        disabled:opacity-50 disabled:cursor-not-allowed
@@ -147,7 +146,7 @@ export default function StudentLoginPage() {
               </span>
             ) : tx.submit}
           </button>
-        </div>
+        </form>
 
         <div className="mt-5 text-center space-y-2">
           <p className="text-slate-400 text-xs">{tx.hint}</p>
