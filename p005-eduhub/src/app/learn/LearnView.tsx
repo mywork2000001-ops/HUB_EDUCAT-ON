@@ -273,7 +273,7 @@ function LessonSection({
           {lesson.resources.map(r => {
             const done = isCompleted(r, results);
             const num  = lessonNums.get(r.id) ?? 1;
-            const href = `/learn/${lesson.gradeSlug}/${lesson.subjectSlug}/${lesson.parentSlug}/${lesson.slug}/${r.slug}`;
+            const href = `/learn/${lesson.gradeSlug}/${lesson.subjectSlug}/${lesson.slug}/${r.slug}`;
             return (
               <div key={r.id} className="flex flex-col items-center gap-1.5">
                 <ResourceIcon type={r.type} num={num} done={done} href={href} />

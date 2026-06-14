@@ -5,7 +5,6 @@ import { getStudentCurriculumTree, getStudentSchedule } from "@/server/queries/a
 import { supabaseAdmin } from "@/lib/supabase";
 import { LangToggle } from "@/components/student/LangToggle";
 import { LiveClock } from "@/components/ui/LiveClock";
-import { LearnView } from "./LearnView";
 
 export const dynamic = "force-dynamic";
 
@@ -80,7 +79,7 @@ export default async function LearnPage({
     if (!res || !item.parent) return null;
     const grade = item.grade_subject.grade.slug;
     const subj  = item.grade_subject.subject.slug;
-    return `/learn/${grade}/${subj}/${item.parent.slug}/${item.slug}/${res.slug}`;
+    return `/learn/${grade}/${subj}/${item.slug}/${res.slug}`;
   }
 
   const todayKey = new Date().toISOString().slice(0, 10);
@@ -243,92 +242,98 @@ export default async function LearnPage({
           </section>
         )}
 
-        {/* ── Upcoming schedule / Calendar ── */}
-        {byDate.size > 0 && (
-          <section>
+        {/* ── All assigned lessons ── */}
+        {subjects.length > 0 ? (
+          <section className="pb-2">
             <h2 className="text-sm font-semibold text-slate-700 mb-3 flex items-center gap-2">
-              <span className="text-base">📅</span>
-              {T.schedule}
+              <span className="text-base">📚</span>
+              {lang === "ru" ? "Мои уроки" : "Dərslər"}
+              <span className="ml-auto text-[10px] font-bold bg-indigo-100 text-indigo-600 px-2 py-0.5 rounded-full">
+                {totalTopics}
+              </span>
             </h2>
             <div className="space-y-3">
-              {[...byDate.entries()].map(([dateKey, items]) => (
-                <div key={dateKey} className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
-                  {/* Date header */}
-                  <div className="flex items-center gap-2 px-4 py-2.5 bg-indigo-50 border-b border-indigo-100">
-                    <span className="text-xs font-bold text-indigo-700 capitalize">
-                      {formatDateLabel(dateKey)}
-                    </span>
-                    <span className="text-[10px] text-indigo-400 ml-auto bg-indigo-100 rounded-full px-2 py-0.5">
-                      {items.length} {T.lesson}
-                    </span>
-                  </div>
-
-                  {/* Schedule items */}
-                  {items.map((s, ii) => {
-                    const dt      = s.due_date!;
-                    const hasTime = dt.getHours() > 0 || dt.getMinutes() > 0;
-                    const subj    = SUBJ_META[s.item.grade_subject.subject.slug];
-                    const url     = getLessonUrl(s);
-                    return (
-                      <div key={s.id}
-                        className={`flex items-center gap-3 px-4 py-3 ${ii < items.length - 1 ? "border-b border-slate-100" : ""}`}>
-
-                        {/* Time column */}
-                        <div className="shrink-0 w-14 text-center">
-                          {hasTime ? (
-                            <span className="text-sm font-bold text-indigo-600 tabular-nums">
-                              {dt.toLocaleTimeString("az", { hour: "2-digit", minute: "2-digit" })}
-                            </span>
-                          ) : (
-                            <span className="text-xl">{subj?.icon ?? "📚"}</span>
-                          )}
-                        </div>
-
-                        <div className="w-px h-8 bg-slate-200 shrink-0" />
-
-                        {/* Content */}
-                        <div className="flex-1 min-w-0">
-                          <p className="text-sm font-medium text-slate-800 truncate">
-                            {lang === "ru" ? s.item.title_ru : s.item.title_az}
-                          </p>
-                          <div className="flex items-center gap-2 mt-0.5">
-                            {subj && (
-                              <span className={`text-[10px] font-semibold ${subj.accent} ${subj.light} px-1.5 py-0.5 rounded`}>
-                                {subj.icon} {lang === "ru" ? subj.ru : subj.az}
-                              </span>
-                            )}
-                            {s.note && (
-                              <span className="text-[10px] text-amber-600 italic truncate">{s.note}</span>
+              {subjects.flatMap(subj =>
+                subj.modules.map(mod => (
+                  <div key={mod.id} className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+                    {/* Module header */}
+                    <div className="px-4 py-2.5 bg-slate-50 border-b border-slate-100 flex items-center gap-2">
+                      <span className="text-base">{SUBJ_META[subj.slug]?.icon ?? "📚"}</span>
+                      <div className="flex-1 min-w-0">
+                        <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
+                          {lang === "ru" ? subj.label_ru : subj.label_az}
+                        </span>
+                        <span className="text-[10px] text-slate-300 mx-1.5">·</span>
+                        <span className="text-[11px] font-semibold text-slate-600">
+                          {lang === "ru" ? mod.title_ru : mod.title_az}
+                        </span>
+                      </div>
+                      <span className="text-[10px] text-slate-300 shrink-0">{mod.lessons.length} dərs</span>
+                    </div>
+                    {/* Lessons */}
+                    <div className="divide-y divide-slate-50">
+                      {mod.lessons.map(lesson => {
+                        const firstRes = lesson.resources[0];
+                        const href = firstRes
+                          ? `/learn/${lesson.gradeSlug}/${lesson.subjectSlug}/${lesson.slug}/${firstRes.slug}`
+                          : null;
+                        const done = allResults.some(r =>
+                          r.percent >= 70 &&
+                          lesson.resources.some(res =>
+                            (r.lesson_id ?? "").includes(res.slug) ||
+                            (res.content_url ?? "").includes(r.lesson_id ?? "")
+                          )
+                        );
+                        return (
+                          <div key={lesson.id} className="flex items-center gap-3 px-4 py-3">
+                            <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold shrink-0 ${
+                              done ? "bg-emerald-100 text-emerald-700" : "bg-indigo-50 text-indigo-600"
+                            }`}>
+                              {done ? "✓" : lesson.order_index}
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <p className="text-sm font-medium text-slate-800 leading-tight truncate">
+                                {lang === "ru" ? lesson.title_ru : lesson.title_az}
+                              </p>
+                              {lesson.resources.length > 0 && (
+                                <p className="text-[10px] text-slate-400 mt-0.5">
+                                  {lesson.resources.length} resurs
+                                </p>
+                              )}
+                            </div>
+                            {href ? (
+                              <a href={href}
+                                className="shrink-0 px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700
+                                           text-white text-xs font-bold transition-colors shadow-sm whitespace-nowrap">
+                                {lang === "ru" ? "Начать →" : "Başla →"}
+                              </a>
+                            ) : (
+                              <span className="shrink-0 text-[10px] text-slate-400 italic">Resurs yoxdur</span>
                             )}
                           </div>
-                        </div>
-
-                        {/* Start button */}
-                        {url && (
-                          <a href={url}
-                            className="shrink-0 px-3 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-700
-                                       text-white text-[11px] font-bold transition-colors shadow-sm whitespace-nowrap">
-                            {T.start}
-                          </a>
-                        )}
-                      </div>
-                    );
-                  })}
-                </div>
-              ))}
+                        );
+                      })}
+                    </div>
+                  </div>
+                ))
+              )}
             </div>
           </section>
+        ) : (
+          !todayItems.length && (
+            <div className="py-16 text-center">
+              <p className="text-4xl mb-3">📋</p>
+              <p className="text-slate-500 text-sm font-medium">
+                {lang === "ru" ? "Нет назначенных уроков" : "Tə'yin edilmiş dərs yoxdur"}
+              </p>
+              <p className="text-slate-400 text-xs mt-1">
+                {lang === "ru" ? "Обратитесь к учителю" : "Müəllimdən dərs tə'yin etməsini xahiş edin"}
+              </p>
+            </div>
+          )
         )}
 
       </div>
-
-      {/* ── Algorithmics-style curriculum view ── */}
-      <LearnView
-        subjects={subjects}
-        lang={lang}
-        results={allResults}
-        studentName={student.name}
-      />
 
       {/* ── Recent results strip (bottom) ── */}
       {recentResults.length > 0 && (

@@ -373,7 +373,9 @@ export function ActivationPanel({
         {/* Toolbar */}
         <div className="flex items-center justify-between mb-4 gap-3">
           <div className="flex items-center gap-3 min-w-0">
-            <h3 className="text-base font-bold text-slate-800 shrink-0">Dərs aktivasiyası</h3>
+            <h3 className="text-base font-bold text-slate-800 shrink-0">
+              {targetMode === "student" ? "Dərs seçimi" : "Dərs aktivasiyası"}
+            </h3>
             {(loadingTree || loadingAssign) && (
               <div className="w-4 h-4 border-2 border-indigo-400 border-t-transparent rounded-full animate-spin shrink-0" />
             )}
@@ -436,8 +438,58 @@ export function ActivationPanel({
           </div>
         )}
 
-        {/* Module list */}
-        {hasTarget && !loadingTree && modules.length > 0 && (
+        {/* Flat lesson list — student mode */}
+        {hasTarget && !loadingTree && modules.length > 0 && targetMode === "student" && (
+          <div className="space-y-2">
+            {modules.map(m => (
+              <div key={m.id} className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+                <div className="px-4 py-2.5 bg-slate-50 border-b border-slate-100 flex items-center gap-2">
+                  <span className="text-[11px] font-bold text-slate-500">📁 {m.title_az}</span>
+                  <span className="text-[10px] text-slate-300 ml-auto">{m.lessons.length} dərs</span>
+                </div>
+                <div className="divide-y divide-slate-50">
+                  {m.lessons.length === 0 && (
+                    <p className="px-4 py-3 text-xs text-slate-400 italic">Bu modul üçün dərs yoxdur</p>
+                  )}
+                  {m.lessons.map(l => {
+                    const on = selectedIds.has(l.id);
+                    return (
+                      <div key={l.id}
+                        onClick={() => toggleLesson(l.id)}
+                        className={`flex items-center gap-3 px-4 py-3 cursor-pointer transition-colors select-none ${
+                          on ? "bg-indigo-50/40 hover:bg-indigo-50/60" : "hover:bg-slate-50"
+                        }`}>
+                        <div className={`relative w-9 h-5 rounded-full shrink-0 transition-colors ${on ? "bg-indigo-500" : "bg-slate-200"}`}>
+                          <div className={`absolute top-0.5 w-4 h-4 rounded-full bg-white shadow-sm transition-all duration-200 ${on ? "left-4" : "left-0.5"}`} />
+                        </div>
+                        <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold shrink-0 transition-colors ${
+                          on ? "bg-indigo-600 text-white" : "bg-slate-100 text-slate-400"
+                        }`}>{l.order}</div>
+                        <div className="flex-1 min-w-0">
+                          <p className={`text-sm font-medium leading-tight truncate transition-colors ${on ? "text-slate-800" : "text-slate-500"}`}>
+                            {l.title_az}
+                          </p>
+                          {l.resources.length > 0 && (
+                            <div className="flex items-center gap-1.5 mt-0.5">
+                              {l.resources.map(r => (
+                                <span key={r.id} title={r.title_az} className="text-[11px] opacity-60">{RES_ICON[r.type] ?? "📄"}</span>
+                              ))}
+                              <span className="text-[10px] text-slate-300">{l.resources.length} resurs</span>
+                            </div>
+                          )}
+                        </div>
+                        {on && <span className="text-[11px] text-indigo-500 font-semibold shrink-0">✓ Seçildi</span>}
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* Module-grouped list — class / group mode */}
+        {hasTarget && !loadingTree && modules.length > 0 && targetMode !== "student" && (
           <div className="space-y-3">
             {modules.map(m => {
               const allSel  = modAllSel(m);
