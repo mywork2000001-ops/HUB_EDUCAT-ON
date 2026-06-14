@@ -35,28 +35,32 @@ export async function getStudentSchedule(
     orClauses.push({ class_name: className, group_name: groupName });
   }
 
-  return await db.assignment.findMany({
-    where: {
-      OR: orClauses,
-      due_date: { gte: new Date(Date.now() - 24 * 3600 * 1000) },
-    },
-    include: {
-      item: {
-        include: {
-          parent:        { select: { slug: true } },
-          grade_subject: { include: { grade: true, subject: true } },
-          resources: {
-            where:   { is_published: true },
-            orderBy: { id: "asc" },
-            take:    1,
-            select:  { slug: true, type: true },
+  try {
+    return await db.assignment.findMany({
+      where: {
+        OR: orClauses,
+        due_date: { gte: new Date(Date.now() - 24 * 3600 * 1000) },
+      },
+      include: {
+        item: {
+          include: {
+            parent:        { select: { slug: true } },
+            grade_subject: { include: { grade: true, subject: true } },
+            resources: {
+              where:   { is_published: true },
+              orderBy: { id: "asc" },
+              take:    1,
+              select:  { slug: true, type: true },
+            },
           },
         },
       },
-    },
-    orderBy: { due_date: "asc" },
-    take: 20,
-  });
+      orderBy: { due_date: "asc" },
+      take: 20,
+    });
+  } catch {
+    return [];
+  }
 }
 
 // ── Student curriculum tree (for Algorithmics-style /learn view) ──────────────
