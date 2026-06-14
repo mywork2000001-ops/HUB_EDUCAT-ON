@@ -66,12 +66,12 @@ export default function EditStudentPage() {
     }
   }
 
-  const field = "w-full bg-slate-800 text-white rounded-lg px-4 py-2.5 text-sm border border-slate-700 focus:outline-none focus:border-indigo-500 placeholder:text-slate-500";
+  const field = "w-full bg-white text-slate-900 rounded-lg px-4 py-2.5 text-sm border border-slate-200 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/10 placeholder:text-slate-400";
 
   if (notFound) return (
     <div className="p-6 max-w-lg">
-      <p className="text-red-400 text-sm">Şagird tapılmadı.</p>
-      <Link href="/dashboard/manage/students" className="text-indigo-400 text-sm mt-2 block hover:underline">← Geri</Link>
+      <p className="text-red-600 text-sm">Şagird tapılmadı.</p>
+      <Link href="/dashboard/manage/students" className="text-indigo-600 text-sm mt-2 block hover:underline">← Geri</Link>
     </div>
   );
 
@@ -80,30 +80,30 @@ export default function EditStudentPage() {
   return (
     <div className="p-6 max-w-lg">
       <div className="flex items-center gap-3 mb-6">
-        <Link href="/dashboard/manage/students" className="text-slate-400 hover:text-white text-sm transition-colors">← Geri</Link>
+        <Link href="/dashboard/manage/students" className="text-slate-400 hover:text-slate-700 text-sm transition-colors">← Geri</Link>
         <div>
-          <h1 className="text-xl font-bold text-white">Şagirdi düzəlt</h1>
+          <h1 className="text-xl font-bold text-slate-900">Şagirdi düzəlt</h1>
           <p className="text-slate-500 text-xs mt-0.5">{student.email}</p>
         </div>
       </div>
 
-      <form onSubmit={handleSubmit} className="bg-slate-900 rounded-2xl p-6 space-y-4">
+      <form onSubmit={handleSubmit} className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 space-y-4">
         {/* Name */}
         <div>
-          <label className="block text-slate-300 text-sm mb-1.5">Ad Soyad</label>
+          <label className="block text-slate-600 text-sm mb-1.5">Ad Soyad</label>
           <input className={field} value={form.name} onChange={(e) => set("name", e.target.value)} required />
         </div>
 
         {/* Email */}
         <div>
-          <label className="block text-slate-300 text-sm mb-1.5">E-poçt</label>
+          <label className="block text-slate-600 text-sm mb-1.5">E-poçt</label>
           <input className={field} type="email" value={form.email} onChange={(e) => set("email", e.target.value)} required />
         </div>
 
         {/* Password */}
         <div>
-          <label className="block text-slate-300 text-sm mb-1.5">
-            Yeni şifrə <span className="text-slate-500 font-normal">(boş qoyulsa dəyişmir)</span>
+          <label className="block text-slate-600 text-sm mb-1.5">
+            Yeni şifrə <span className="text-slate-400 font-normal">(boş qoyulsa dəyişmir)</span>
           </label>
           <input className={field} type="password" value={form.password} onChange={(e) => set("password", e.target.value)}
             placeholder="Ən azı 6 simvol" minLength={6} />
@@ -111,7 +111,7 @@ export default function EditStudentPage() {
 
         {/* Class — smart selector */}
         <div>
-          <label className="block text-slate-300 text-sm mb-1.5">Sinif</label>
+          <label className="block text-slate-600 text-sm mb-1.5">Sinif</label>
           {classes.length > 0 && (
             <div className="flex flex-wrap gap-1.5 mb-2">
               {classes.map((c) => (
@@ -119,7 +119,7 @@ export default function EditStudentPage() {
                   className={`px-3 py-1 rounded-lg text-xs font-medium transition-colors ${
                     form.class_name === c
                       ? "bg-indigo-600 text-white"
-                      : "bg-slate-800 text-slate-400 hover:bg-slate-700 hover:text-white"
+                      : "bg-slate-100 text-slate-600 hover:bg-slate-200 hover:text-slate-900"
                   }`}>
                   {c}
                 </button>
@@ -132,27 +132,27 @@ export default function EditStudentPage() {
 
         {/* Group */}
         <div>
-          <label className="block text-slate-300 text-sm mb-1.5">Qrup <span className="text-slate-500 font-normal">(istəyə görə)</span></label>
+          <label className="block text-slate-600 text-sm mb-1.5">Qrup <span className="text-slate-400 font-normal">(istəyə görə)</span></label>
           <input className={field} value={form.group_name} onChange={(e) => set("group_name", e.target.value)} placeholder="Qrup 1" />
         </div>
 
         {/* Active */}
         <label className="flex items-center gap-3 cursor-pointer select-none py-1">
           <input type="checkbox" checked={form.is_active} onChange={(e) => set("is_active", e.target.checked)} className="w-4 h-4 accent-indigo-600" />
-          <span className="text-slate-300 text-sm">Aktiv hesab</span>
+          <span className="text-slate-700 text-sm">Aktiv hesab</span>
         </label>
 
         {error && (
-          <div className="bg-red-500/10 border border-red-500/30 text-red-400 text-sm rounded-lg px-3 py-2">{error}</div>
+          <div className="bg-red-50 border border-red-200 text-red-600 text-sm rounded-lg px-3 py-2">{error}</div>
         )}
 
         <div className="flex gap-3 pt-1">
           <button type="submit" disabled={loading}
-            className="flex-1 bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 text-white font-medium rounded-lg py-2.5 text-sm transition-colors">
+            className="flex-1 bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 text-white font-medium rounded-lg py-2.5 text-sm transition-colors shadow-sm">
             {loading ? "Saxlanılır…" : "Yadda saxla"}
           </button>
           <button type="button" onClick={handleDelete} disabled={loading}
-            className="px-5 py-2.5 rounded-lg bg-red-900/30 hover:bg-red-900/50 text-red-400 text-sm transition-colors disabled:opacity-50">
+            className="px-5 py-2.5 rounded-lg bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 text-sm transition-colors disabled:opacity-50">
             Sil
           </button>
         </div>

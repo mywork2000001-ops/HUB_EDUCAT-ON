@@ -144,6 +144,7 @@ export default async function DashboardPage() {
               { href: "/dashboard/manage/students/new", label: "Yeni şagird əlavə et",   icon: "👤", accent: "hover:bg-indigo-50 hover:text-indigo-700 hover:border-indigo-200" },
               { href: "/dashboard/manage/assignments",   label: "Mövzu tə'yin et",         icon: "📋", accent: "hover:bg-blue-50 hover:text-blue-700 hover:border-blue-200"     },
               { href: "/dashboard/manage/subjects",      label: "Fənn idarə et",           icon: "📚", accent: "hover:bg-violet-50 hover:text-violet-700 hover:border-violet-200"},
+              { href: "/dashboard/manage/resources",       label: "Video resurs əlavə et",   icon: "🎬", accent: "hover:bg-pink-50 hover:text-pink-700 hover:border-pink-200"      },
               { href: "/dashboard/analytics",            label: "Analitikaya bax",         icon: "📊", accent: "hover:bg-emerald-50 hover:text-emerald-700 hover:border-emerald-200"},
             ].map(({ href, label, icon, accent }) => (
               <Link key={href} href={href}

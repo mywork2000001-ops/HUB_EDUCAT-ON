@@ -2,6 +2,35 @@ import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { verifyTeacher } from "@/lib/verify-teacher";
 
+export async function GET(req: NextRequest) {
+  if (!(await verifyTeacher(req))) return NextResponse.json({ error: "Icazə yoxdur" }, { status: 401 });
+  const topicId = Number(new URL(req.url).searchParams.get("topic_id"));
+  if (!topicId) return NextResponse.json({ error: "topic_id tələb olunur" }, { status: 400 });
+  const resources = await db.resource.findMany({
+    where: { curriculum_id: topicId },
+    orderBy: [{ type: "asc" }, { created_at: "asc" }],
+  });
+  return NextResponse.json({ resources });
+}
+
+export async function PATCH(req: NextRequest) {
+  if (!(await verifyTeacher(req))) return NextResponse.json({ error: "Icazə yoxdur" }, { status: 401 });
+  const id = Number(new URL(req.url).searchParams.get("id"));
+  if (!id) return NextResponse.json({ error: "id tələb olunur" }, { status: 400 });
+  try {
+    const body = await req.json();
+    const data: Record<string, unknown> = {};
+    if (body.title_az    !== undefined) data.title_az    = String(body.title_az).trim();
+    if (body.title_ru    !== undefined) data.title_ru    = String(body.title_ru).trim();
+    if (body.content_url !== undefined) data.content_url = body.content_url ? String(body.content_url).trim() : null;
+    if (body.is_published !== undefined) data.is_published = Boolean(body.is_published);
+    const resource = await db.resource.update({ where: { id }, data });
+    return NextResponse.json({ resource });
+  } catch {
+    return NextResponse.json({ error: "Tapılmadı" }, { status: 404 });
+  }
+}
+
 export async function POST(req: NextRequest) {
   if (!(await verifyTeacher(req))) return NextResponse.json({ error: "Icazə yoxdur" }, { status: 401 });
   try {

@@ -112,6 +112,7 @@ export function AppSidebar({ grades }: { grades: GradeItem[] }) {
           { href: "/dashboard/manage/subjects",    icon: "📚", label: "Fənlər" },
           { href: "/dashboard/manage/students",    icon: "👥", label: "Şagirdlər" },
           { href: "/dashboard/manage/teachers",    icon: "👨‍🏫", label: "Müəllimlər" },
+          { href: "/dashboard/manage/resources",   icon: "🎬", label: "Video Resurslar" },
         ].map(({ href, icon, label }) => navLink(href, icon, label))}
       </nav>
 
