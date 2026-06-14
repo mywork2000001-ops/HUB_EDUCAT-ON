@@ -3,12 +3,13 @@
 import { useState, useEffect } from "react";
 
 interface Props {
-  className?: string;
-  showDate?:  boolean;
-  locale?:    string;
+  className?:   string;
+  showDate?:    boolean;
+  showSeconds?: boolean;
+  locale?:      string;
 }
 
-export function LiveClock({ className = "", showDate = false, locale = "az" }: Props) {
+export function LiveClock({ className = "", showDate = false, showSeconds = false, locale = "az" }: Props) {
   const [now, setNow] = useState<Date | null>(null);
 
   useEffect(() => {
@@ -17,12 +18,14 @@ export function LiveClock({ className = "", showDate = false, locale = "az" }: P
     return () => clearInterval(id);
   }, []);
 
-  if (!now) return null; // avoid hydration mismatch
+  if (!now) return null;
 
-  const timeStr = now.toLocaleTimeString(locale === "ru" ? "ru-RU" : "az-AZ", {
+  const loc     = locale === "ru" ? "ru-RU" : "az-AZ";
+  const timeStr = now.toLocaleTimeString(loc, {
     hour: "2-digit", minute: "2-digit",
+    ...(showSeconds ? { second: "2-digit" } : {}),
   });
-  const dateStr = now.toLocaleDateString(locale === "ru" ? "ru-RU" : "az-AZ", {
+  const dateStr = now.toLocaleDateString(loc, {
     weekday: "short", day: "numeric", month: "short",
   });
 
