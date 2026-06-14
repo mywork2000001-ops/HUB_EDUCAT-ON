@@ -15,7 +15,7 @@ export default function TeachersManagePage() {
   const [teachers, setTeachers] = useState<Teacher[]>([]);
   const [loading,  setLoading]  = useState(true);
   const [adding,   setAdding]   = useState(false);
-  const [form,     setForm]     = useState({ email: "", password: "", name: "" });
+  const [form,     setForm]     = useState({ email: "", password: "", name: "", role: "teacher" });
   const [msg,      setMsg]      = useState<{ ok: boolean; text: string } | null>(null);
   const [delId,    setDelId]    = useState<string | null>(null);
 
@@ -40,7 +40,7 @@ export default function TeachersManagePage() {
     const d = await r.json();
     if (!r.ok) { setMsg({ ok: false, text: d.error }); return; }
     setMsg({ ok: true, text: "Müəllim uğurla əlavə edildi" });
-    setForm({ email: "", password: "", name: "" });
+    setForm({ email: "", password: "", name: "", role: "teacher" });
     setAdding(false);
     load();
   }
@@ -54,8 +54,24 @@ export default function TeachersManagePage() {
     load();
   }
 
+  async function handleRoleToggle(id: string, currentRole: string) {
+    const newRole = currentRole === "main_teacher" ? "teacher" : "main_teacher";
+    const r = await fetch(`/api/admin/teachers?id=${id}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ role: newRole }),
+    });
+    const d = await r.json();
+    if (!r.ok) { setMsg({ ok: false, text: d.error }); return; }
+    setMsg({
+      ok: true,
+      text: `Rol dəyişdirildi: ${newRole === "main_teacher" ? "Baş müəllim" : "Müəllim"}`,
+    });
+    load();
+  }
+
   return (
-    <div className="p-6 max-w-4xl">
+    <div className="p-6 max-w-5xl">
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="text-2xl font-bold text-slate-900">Müəllimlər</h1>
@@ -77,7 +93,7 @@ export default function TeachersManagePage() {
         <form onSubmit={handleAdd}
           className="mb-6 bg-white border border-slate-200 shadow-sm rounded-xl p-5 space-y-4">
           <h2 className="text-sm font-semibold text-slate-700">Yeni müəllim əlavə et</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             <div>
               <label className="block text-xs font-medium text-slate-600 mb-1">Ad Soyad</label>
               <input value={form.name} onChange={e => setForm(f => ({ ...f, name: e.target.value }))}
@@ -92,6 +108,14 @@ export default function TeachersManagePage() {
               <label className="block text-xs font-medium text-slate-600 mb-1">Şifrə * (min 8)</label>
               <input required type="password" value={form.password} onChange={e => setForm(f => ({ ...f, password: e.target.value }))}
                 className={inputCls} placeholder="••••••••" minLength={8} />
+            </div>
+            <div>
+              <label className="block text-xs font-medium text-slate-600 mb-1">Rol</label>
+              <select value={form.role} onChange={e => setForm(f => ({ ...f, role: e.target.value }))}
+                className={inputCls}>
+                <option value="teacher">Müəllim</option>
+                <option value="main_teacher">Baş müəllim</option>
+              </select>
             </div>
           </div>
           <button type="submit"
@@ -112,10 +136,10 @@ export default function TeachersManagePage() {
         <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
           <div className="grid grid-cols-12 px-4 py-2.5 border-b border-slate-100 text-xs font-semibold text-slate-400 uppercase tracking-wider bg-slate-50">
             <span className="col-span-3">Ad</span>
-            <span className="col-span-4">E-poçt</span>
+            <span className="col-span-3">E-poçt</span>
             <span className="col-span-2">Son giriş</span>
             <span className="col-span-2">Status</span>
-            <span className="col-span-1"></span>
+            <span className="col-span-2">Rol</span>
           </div>
           {teachers.map((t) => (
             <div key={t.id}
@@ -126,7 +150,7 @@ export default function TeachersManagePage() {
                 </div>
                 <span className="text-slate-800 truncate font-medium">{t.name || "—"}</span>
               </div>
-              <div className="col-span-4">
+              <div className="col-span-3">
                 <p className="text-slate-500 font-mono text-xs truncate">{t.email}</p>
               </div>
               <div className="col-span-2">
@@ -143,7 +167,17 @@ export default function TeachersManagePage() {
                   {t.confirmed ? "Aktiv" : "Gözləyir"}
                 </span>
               </div>
-              <div className="col-span-1 flex justify-end">
+              <div className="col-span-2 flex items-center gap-2">
+                <button
+                  onClick={() => handleRoleToggle(t.id, t.role)}
+                  className={`text-xs px-2.5 py-1 rounded-full border font-semibold transition-colors ${
+                    t.role === "main_teacher"
+                      ? "bg-purple-50 text-purple-700 border-purple-200 hover:bg-purple-100"
+                      : "bg-slate-50 text-slate-600 border-slate-200 hover:bg-slate-100"
+                  }`}
+                  title={t.role === "main_teacher" ? "Müəllimə çevir" : "Baş müəllimə çevir"}>
+                  {t.role === "main_teacher" ? "👑 Baş müəllim" : "👨‍🏫 Müəllim"}
+                </button>
                 {delId === t.id ? (
                   <div className="flex gap-1">
                     <button onClick={() => handleDelete(t.id)}

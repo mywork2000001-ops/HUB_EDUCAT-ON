@@ -28,15 +28,34 @@ export default function HomePage() {
             <p className="text-slate-400 text-sm mt-1.5">Rolunuzu seçib daxil olun</p>
           </div>
 
+          {/* Main teacher entry */}
+          <Link href="/auth/login"
+            className="group flex items-center gap-5 p-5 rounded-2xl border border-purple-500/30
+                       bg-gradient-to-br from-purple-950 to-slate-900
+                       hover:border-purple-500/70 hover:shadow-lg hover:shadow-purple-900/40
+                       transition-all active:scale-[0.98]">
+            <div className="w-14 h-14 rounded-xl bg-purple-600/20 border border-purple-500/30
+                            flex items-center justify-center text-2xl shrink-0">
+              👑
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="font-bold text-white">Baş Müəllim</p>
+              <p className="text-slate-400 text-xs mt-0.5 leading-relaxed">
+                Müəllimləri idarə et, tam admin paneli, bütün statistikalar
+              </p>
+            </div>
+            <span className="text-purple-400 text-lg group-hover:translate-x-1 transition-transform shrink-0">→</span>
+          </Link>
+
           {/* Teacher entry */}
           <Link href="/auth/login"
             className="group flex items-center gap-5 p-5 rounded-2xl border border-indigo-500/30
                        bg-gradient-to-br from-indigo-950 to-slate-900
                        hover:border-indigo-500/70 hover:shadow-lg hover:shadow-indigo-900/40
                        transition-all active:scale-[0.98]">
-            <div className="w-13 h-13 rounded-xl bg-indigo-600/20 border border-indigo-500/30
-                            flex items-center justify-center text-2xl shrink-0 w-14 h-14">
-              🏫
+            <div className="w-14 h-14 rounded-xl bg-indigo-600/20 border border-indigo-500/30
+                            flex items-center justify-center text-2xl shrink-0">
+              👨‍🏫
             </div>
             <div className="flex-1 min-w-0">
               <p className="font-bold text-white">Müəllim</p>

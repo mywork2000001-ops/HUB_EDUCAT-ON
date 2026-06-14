@@ -2,9 +2,16 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
+import { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
 import { LiveClock } from "@/components/ui/LiveClock";
 import { useTeacherLang } from "@/hooks/useTeacherLang";
+
+function getTeacherRoleFromCookie(): string {
+  if (typeof document === "undefined") return "teacher";
+  const match = document.cookie.match(/(?:^|;\s*)eduhub-teacher-role=([^;]*)/);
+  return match ? decodeURIComponent(match[1]) : "teacher";
+}
 
 type GradeItem = { number: number; slug: string; label_az: string };
 
@@ -75,6 +82,13 @@ export function AppSidebar({ grades }: { grades: GradeItem[] }) {
   const [lang]         = useTeacherLang();
   const t              = LABELS[lang];
   const gradeSlug      = pathname.match(/\/classes\/([^/]+)/)?.[1];
+  const [teacherRole, setTeacherRole] = useState<string>("teacher");
+
+  useEffect(() => {
+    setTeacherRole(getTeacherRoleFromCookie());
+  }, []);
+
+  const isMainTeacher = teacherRole === "main_teacher";
 
   async function handleLogout() {
     await fetch("/api/auth/logout", { method: "POST" });
@@ -126,6 +140,14 @@ export function AppSidebar({ grades }: { grades: GradeItem[] }) {
             showSeconds
             locale={lang}
           />
+        </div>
+
+        {/* Role badge */}
+        <div className="mt-2 px-2 py-1.5 rounded-lg bg-slate-100 flex items-center gap-2">
+          <span className="text-sm">{isMainTeacher ? "👑" : "👨‍🏫"}</span>
+          <span className="text-xs font-semibold text-slate-700">
+            {isMainTeacher ? "Baş müəllim" : "Müəllim"}
+          </span>
         </div>
       </div>
 
@@ -183,7 +205,7 @@ export function AppSidebar({ grades }: { grades: GradeItem[] }) {
         {navLink("/dashboard/manage/assignments", "📋", t.assignments)}
         {navLink("/dashboard/manage/classes",     "🏫", t.cls_groups)}
         {navLink("/dashboard/manage/students",    "👥", t.students)}
-        {navLink("/dashboard/manage/teachers",    "👨‍🏫", t.teachers)}
+        {isMainTeacher && navLink("/dashboard/manage/teachers", "👨‍🏫", t.teachers)}
         {navLink("/dashboard/manage/subjects",    "📚", t.subjects)}
         {navLink("/dashboard/manage/resources",   "🎬", t.resources)}
       </nav>

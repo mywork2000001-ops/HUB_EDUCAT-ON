@@ -8,9 +8,20 @@ type GradeSubjectItem = {
   subjSlug: string; subjLabel: string; subjIcon: string | null;
 };
 type StudentItem = { id: string; name: string; class_name: string; group_name: string | null };
-type LessonItem  = { id: number; title_az: string; order: number; code: string; due_date: string | null; status: string; enabled: boolean };
+type ResourceChip = { id: number; slug: string; type: string; title_az: string; content_url: string | null };
+type LessonItem  = { id: number; title_az: string; order: number; code: string; due_date: string | null; status: string; enabled: boolean; resources?: ResourceChip[] };
 type ModuleItem  = { id: number; title_az: string; order: number; lessons: LessonItem[] };
 type LessonState = { enabled: boolean; date: string; time: string; status: "OPEN" | "CLOSED" };
+
+const TYPE_ICONS: Record<string, string> = {
+  LESSON:    "📖",
+  TEST:      "📝",
+  TAIM_TEST: "🎓",
+  BSQ:       "📋",
+  KSQ:       "📋",
+  VIDEO:     "🎬",
+  WORKBOOK:  "📓",
+};
 
 // ── Main component ─────────────────────────────────────────────────────────────
 export function GroupSchedule({ gradeSubjectsList }: { gradeSubjectsList: GradeSubjectItem[] }) {
@@ -349,10 +360,28 @@ export function GroupSchedule({ gradeSubjectsList }: { gradeSubjectsList: GradeS
                             />
                           </div>
 
-                          {/* Title + code */}
+                          {/* Title + code + resource chips */}
                           <div className="min-w-0">
                             <p className="text-sm font-medium text-slate-800 leading-tight truncate">{l.title_az}</p>
                             <p className="text-[10px] text-slate-400 font-mono mt-0.5">{l.code}</p>
+                            {(l.resources?.length ?? 0) > 0 && (
+                              <div className="mt-1 flex flex-wrap gap-1">
+                                {l.resources!.map(r => {
+                                  const filename = r.content_url?.split("/").pop() ?? r.slug;
+                                  return (
+                                    <a key={r.id}
+                                      href={r.content_url ?? "#"}
+                                      target="_blank" rel="noopener noreferrer"
+                                      className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded border border-slate-200
+                                                 bg-slate-50 hover:bg-indigo-50 hover:border-indigo-200
+                                                 text-[10px] text-slate-500 hover:text-indigo-600 font-mono
+                                                 transition-colors">
+                                      {TYPE_ICONS[r.type] ?? "📄"} {filename}
+                                    </a>
+                                  );
+                                })}
+                              </div>
+                            )}
                           </div>
 
                           {/* Status badge */}

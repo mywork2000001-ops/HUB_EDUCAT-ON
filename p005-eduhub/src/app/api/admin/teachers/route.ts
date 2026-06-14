@@ -31,7 +31,8 @@ export async function POST(req: NextRequest) {
   if (!supabaseAdmin) return NextResponse.json({ error: "Server konfiqurasiyası xətası" }, { status: 500 });
 
   try {
-    const { email, password, name } = await req.json();
+    const { email, password, name, role = "teacher" } = await req.json();
+    const validRole = ["main_teacher", "teacher"].includes(role) ? role : "teacher";
 
     if (!email || !password)
       return NextResponse.json({ error: "E-poçt və şifrə tələb olunur" }, { status: 400 });
@@ -42,7 +43,7 @@ export async function POST(req: NextRequest) {
       email,
       password,
       email_confirm: true,
-      user_metadata: { full_name: name ?? "", role: "teacher" },
+      user_metadata: { full_name: name ?? "", role: validRole },
     });
 
     if (error) {
@@ -52,6 +53,29 @@ export async function POST(req: NextRequest) {
     }
 
     return NextResponse.json({ teacher: { id: data.user.id, email: data.user.email } }, { status: 201 });
+  } catch {
+    return NextResponse.json({ error: "Server xətası" }, { status: 500 });
+  }
+}
+
+export async function PATCH(req: NextRequest) {
+  if (!(await verifyTeacher(req))) return NextResponse.json({ error: "Icazə yoxdur" }, { status: 401 });
+  if (!supabaseAdmin) return NextResponse.json({ error: "Server konfiqurasiyası xətası" }, { status: 500 });
+
+  const { searchParams } = new URL(req.url);
+  const id = searchParams.get("id");
+  if (!id) return NextResponse.json({ error: "ID tələb olunur" }, { status: 400 });
+
+  try {
+    const { role } = await req.json();
+    if (!["main_teacher", "teacher"].includes(role))
+      return NextResponse.json({ error: "Yanlış rol" }, { status: 400 });
+
+    const { error } = await supabaseAdmin.auth.admin.updateUserById(id, {
+      user_metadata: { role },
+    });
+    if (error) return NextResponse.json({ error: error.message }, { status: 400 });
+    return NextResponse.json({ ok: true });
   } catch {
     return NextResponse.json({ error: "Server xətası" }, { status: 500 });
   }

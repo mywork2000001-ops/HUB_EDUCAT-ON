@@ -25,6 +25,13 @@ export async function GET(req: NextRequest) {
         },
       },
       orderBy: { order_index: "asc" },
+      include: {
+        resources: {
+          where:   { is_published: true },
+          orderBy: { id: "asc" },
+          select:  { id: true, slug: true, type: true, title_az: true, content_url: true },
+        },
+      },
     }),
     db.assignment.findMany({
       where: groupName
@@ -49,13 +56,14 @@ export async function GET(req: NextRequest) {
       .map((c, ci) => {
         const a = assignMap.get(c.id);
         return {
-          id:       c.id,
-          title_az: c.title_az,
-          order:    ci + 1,
-          code:     `M${pi + 1}D${ci + 1}`,
-          due_date: a?.due_date?.toISOString() ?? null,
-          status:   a?.status ?? "OPEN",
-          enabled:  !!a,
+          id:        c.id,
+          title_az:  c.title_az,
+          order:     ci + 1,
+          code:      `M${pi + 1}D${ci + 1}`,
+          due_date:  a?.due_date?.toISOString() ?? null,
+          status:    a?.status ?? "OPEN",
+          enabled:   !!a,
+          resources: (c as { resources?: unknown[] }).resources ?? [],
         };
       }),
   }));

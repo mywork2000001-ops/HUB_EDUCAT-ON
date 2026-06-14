@@ -6,6 +6,8 @@ type Topic = {
   id: number;
   title_az: string;
   order_index: number;
+  parent_id: number | null;
+  parent: { id: number; title_az: string } | null;
   grade_subject: {
     grade:   { label_az: string };
     subject: { label_az: string; slug: string };
@@ -251,15 +253,38 @@ export default function ResourcesManagePage() {
   }
 
   // ── Derived state ──
-  const grouped: Record<string, { label: string; topics: Topic[] }> = {};
+
+  // Build hierarchy: group by grade+subject, then modules with their lesson children
+  const hierarchy: Record<string, {
+    label: string;
+    modules: Array<{
+      id: number;
+      title_az: string;
+      order_index: number;
+      isLeaf: boolean; // true if no children exist in the full topic list
+      children: Array<{ id: number; title_az: string; order_index: number }>;
+    }>;
+  }> = {};
+
   for (const t of topics) {
+    if (t.parent_id !== null) continue; // children are attached under their parent below
     const gLabel = t.grade_subject.grade.label_az;
     const sLabel = t.grade_subject.subject.label_az;
     const key    = `${gLabel} — ${sLabel}`;
-    if (!grouped[key]) grouped[key] = { label: key, topics: [] };
-    grouped[key].topics.push(t);
+    if (!hierarchy[key]) hierarchy[key] = { label: key, modules: [] };
+    const children = topics
+      .filter((c) => c.parent_id === t.id)
+      .sort((a, b) => a.order_index - b.order_index);
+    hierarchy[key].modules.push({
+      id:          t.id,
+      title_az:    t.title_az,
+      order_index: t.order_index,
+      isLeaf:      children.length === 0,
+      children,
+    });
   }
 
+  // Search matches both parent and child items
   const filteredTopics = topicSearch.trim()
     ? topics.filter((t) => t.title_az.toLowerCase().includes(topicSearch.toLowerCase()))
     : null;
@@ -310,19 +335,43 @@ export default function ResourcesManagePage() {
                 </button>
               ))
             ) : (
-              Object.entries(grouped).map(([key, { label, topics: grpTopics }]) => (
+              Object.entries(hierarchy).map(([key, { label, modules }]) => (
                 <div key={key}>
-                  <div className="px-4 py-2 bg-slate-50 border-b border-slate-100">
+                  {/* Grade + Subject header */}
+                  <div className="px-4 py-2 bg-slate-50 border-b border-slate-100 sticky top-0 z-10">
                     <p className="text-xs font-semibold text-slate-500 uppercase tracking-widest truncate">{label}</p>
                   </div>
-                  {grpTopics.map((t) => (
-                    <button key={t.id} onClick={() => selectTopic(t.id)}
-                      className={`w-full text-left px-4 py-2.5 border-b border-slate-50 transition-colors flex items-center gap-2 ${
-                        topicId === t.id ? "bg-indigo-50 text-indigo-700" : "text-slate-700 hover:bg-slate-50"
-                      }`}>
-                      <span className="text-xs text-slate-400 w-6 shrink-0 font-mono">{t.order_index}.</span>
-                      <span className="text-sm truncate">{t.title_az}</span>
-                    </button>
+                  {modules.map((mod) => (
+                    <div key={mod.id}>
+                      {mod.isLeaf ? (
+                        /* Leaf module — no children, directly selectable */
+                        <button onClick={() => selectTopic(mod.id)}
+                          className={`w-full text-left px-4 py-2.5 border-b border-slate-50 transition-colors flex items-center gap-2 ${
+                            topicId === mod.id ? "bg-indigo-50 text-indigo-700" : "text-slate-700 hover:bg-slate-50"
+                          }`}>
+                          <span className="text-xs text-slate-400 w-6 shrink-0 font-mono">{mod.order_index}.</span>
+                          <span className="text-sm truncate font-medium">{mod.title_az}</span>
+                        </button>
+                      ) : (
+                        <>
+                          {/* Module header — non-selectable section divider */}
+                          <div className="px-4 py-2 bg-slate-800 border-b border-slate-700 flex items-center gap-2">
+                            <span className="text-xs text-slate-400 font-mono w-5 shrink-0">{mod.order_index}.</span>
+                            <span className="text-xs font-semibold text-slate-200 uppercase tracking-wide truncate">{mod.title_az}</span>
+                          </div>
+                          {/* Lesson (child) rows indented under module */}
+                          {mod.children.map((lesson) => (
+                            <button key={lesson.id} onClick={() => selectTopic(lesson.id)}
+                              className={`w-full text-left pl-8 pr-4 py-2 border-b border-slate-50 transition-colors flex items-center gap-2 ${
+                                topicId === lesson.id ? "bg-indigo-50 text-indigo-700" : "text-slate-600 hover:bg-slate-50"
+                              }`}>
+                              <span className="text-[10px] text-slate-300 w-5 shrink-0 font-mono">{lesson.order_index}</span>
+                              <span className="text-sm truncate">{lesson.title_az}</span>
+                            </button>
+                          ))}
+                        </>
+                      )}
+                    </div>
                   ))}
                 </div>
               ))

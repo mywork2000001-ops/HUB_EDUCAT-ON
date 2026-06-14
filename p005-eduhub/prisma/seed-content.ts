@@ -303,6 +303,28 @@ const P004_UMUMI = [
   { slug: "us3", file: "test-us3.html", az: "Ümumi Sınaq 3 — 50 sual",  ru: "Итоговый тест 3 — 50 вопросов" },
 ];
 
+// ─── P001 DİM 2025 lesson data ───────────────────────────────────────────────
+
+const P001_LESSONS = [
+  { n:  1, az: "Natural ədədlərin yazılması və oxunması",        ru: "Запись и чтение натуральных чисел" },
+  { n:  2, az: "Natural ədədlərin toplanması və çıxılması",      ru: "Сложение и вычитание натуральных чисел" },
+  { n:  3, az: "Natural ədədlərin vurulması və bölünməsi",       ru: "Умножение и деление натуральных чисел" },
+  { n:  4, az: "Adi kəsrlər",                                    ru: "Обыкновенные дроби" },
+  { n:  5, az: "Adi kəsrlərin müqayisəsi",                      ru: "Сравнение обыкновенных дробей" },
+  { n:  6, az: "Adi kəsrlərin toplanması və çıxılması",         ru: "Сложение и вычитание обыкновенных дробей" },
+  { n:  7, az: "Adi kəsrlərin vurulması və bölünməsi",          ru: "Умножение и деление обыкновенных дробей" },
+  { n:  8, az: "Onluq Kəsrlər",                                  ru: "Десятичные дроби" },
+  { n:  9, az: "Adi və Onluq Kəsrlər — Qarışıq Əməllər",       ru: "Обыкновенные и десятичные дроби — смешанные действия" },
+  { n: 10, az: "Faizlər",                                        ru: "Проценты" },
+  { n: 11, az: "Birinci Yarımil — Yekunlaşdırıcı Test",         ru: "I полугодие — Итоговый тест" },
+  { n: 12, az: "Tənliklər və Bərabərsizliklər",                 ru: "Уравнения и неравенства" },
+  { n: 13, az: "Müstəvi Fiqurlar",                              ru: "Плоские фигуры" },
+  { n: 14, az: "Fəza Fiqurları",                                ru: "Пространственные фигуры" },
+  { n: 15, az: "Statistika və Məlumatların Təsviri",            ru: "Статистика и представление данных" },
+  { n: 16, az: "İkinci Yarımil — Yekunlaşdırıcı Test",          ru: "II полугодие — Итоговый тест" },
+  { n: 17, az: "İllik Material — Yekunlaşdırıcı Test",          ru: "Годовой материал — Итоговый тест" },
+];
+
 // ─── MAIN ─────────────────────────────────────────────────────────────────────
 
 async function main() {
@@ -310,6 +332,50 @@ async function main() {
   const grade5 = await db.grade.findUniqueOrThrow({ where: { number: 5 } });
   const grade6 = await db.grade.findUniqueOrThrow({ where: { number: 6 } });
   const math   = await db.subject.findUniqueOrThrow({ where: { slug: "math" } });
+
+  // ── 0. P001: DİM 2025 subject + 17 test lessons ───────────────────────────
+  console.log("\n📊 P001: Setting up DİM 2025…");
+
+  const dim = await db.subject.upsert({
+    where:  { slug: "dim-2025" },
+    update: {},
+    create: { slug: "dim-2025", label_az: "DİM 2025", label_ru: "ДИМ 2025", icon: "📊" },
+  });
+
+  await db.gradeSubject.upsert({
+    where:  { grade_id_subject_id: { grade_id: grade5.id, subject_id: dim.id } },
+    update: {},
+    create: { grade_id: grade5.id, subject_id: dim.id },
+  });
+
+  const dimModule = await db.curriculumItem.upsert({
+    where:  { grade_id_subject_id_slug: { grade_id: grade5.id, subject_id: dim.id, slug: "dim-modul-1" } },
+    update: {},
+    create: {
+      grade_id: grade5.id, subject_id: dim.id, slug: "dim-modul-1",
+      title_az: "DİM 2025 — V sinif Testləri", title_ru: "ДИМ 2025 — Тесты 5-й класс",
+      order_index: 1,
+    },
+  });
+
+  for (const lesson of P001_LESSONS) {
+    const slug = `dim-lesson-${String(lesson.n).padStart(2, "0")}`;
+    const item = await db.curriculumItem.upsert({
+      where:  { grade_id_subject_id_slug: { grade_id: grade5.id, subject_id: dim.id, slug } },
+      update: {},
+      create: {
+        grade_id: grade5.id, subject_id: dim.id, slug,
+        title_az: `Dərs ${lesson.n}: ${lesson.az}`,
+        title_ru: `Урок ${lesson.n}: ${lesson.ru}`,
+        order_index: lesson.n, parent_id: dimModule.id,
+      },
+    });
+    await res(item.id, `dim-test-${lesson.n}`, "TEST",
+      `DİM Test — ${lesson.az}`, `ДИМ Тест — ${lesson.ru}`,
+      P1(lesson.n), { duration_min: 90, questions_per_variant: 10, variants: 4 },
+    );
+  }
+  console.log(`  ✓ P001: 1 modul + 17 dərs seeded under Grade 5 DİM 2025`);
 
   // ── 1. P002-5: Add individual lessons to existing Grade 5 topics ───────────
   console.log("\n📚 P002-5: Adding individual lesson resources…");

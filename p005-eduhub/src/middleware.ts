@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { jwtVerify, createRemoteJWKSet } from "jose";
+import { jwtVerify, createRemoteJWKSet, decodeJwt } from "jose";
 
 function enc(s: string) { return new TextEncoder().encode(s); }
 
@@ -61,6 +61,22 @@ export async function middleware(req: NextRequest) {
       const res = NextResponse.redirect(url);
       if (token) res.cookies.delete("eduhub-token");
       return res;
+    }
+    // Extract role from JWT payload and propagate as a client-readable cookie
+    try {
+      const payload = decodeJwt(token);
+      const meta = payload.user_metadata as Record<string, string> | undefined;
+      const role = meta?.role ?? "teacher";
+      const res = NextResponse.next();
+      res.cookies.set("eduhub-teacher-role", role, {
+        httpOnly: false,
+        sameSite: "lax",
+        path: "/",
+        maxAge: 60 * 60 * 24 * 7,
+      });
+      return res;
+    } catch {
+      return NextResponse.next();
     }
   }
 
