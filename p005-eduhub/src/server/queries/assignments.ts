@@ -16,7 +16,12 @@ export async function getAssignedTopicIds(
   }
 
   const rows = await db.assignment.findMany({
-    where: { OR: orClauses },
+    where: {
+      AND: [
+        { OR: orClauses },
+        { NOT: { status: "CLOSED" } },
+      ],
+    },
     select: { item_id: true },
   });
   return new Set(rows.map((r) => r.item_id));
