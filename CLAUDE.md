@@ -1,6 +1,6 @@
 GLOBAL EDU-PLATFORM ORCHESTRATOR
 ════════════════════════════════════════════════════════════════════
- 0. LIVE PROJECT GRAPH  (актуально на 2026-06-14)
+ 0. LIVE PROJECT GRAPH  (актуально на 2026-06-14, обновлено 2026-06-14)
 ════════════════════════════════════════════════════════════════════
 
 ROOT: C:/Users/Administrator/Documents/Claude/Projects/
@@ -30,11 +30,15 @@ ROOT: C:/Users/Administrator/Documents/Claude/Projects/
 │   │   ├── dashboard/page.tsx          ← Teacher Dashboard (статистика — заглушки)
 │   │   ├── dashboard/classes/
 │   │   │   ├── layout.tsx              ← Shell с AppSidebar (grades 1–11)
-│   │   │   ├── [gradeSlug]/page.tsx    ← Выбор предмета
+│   │   │   ├── [gradeSlug]/page.tsx    ← Server: fetch students+results → <GradeDashboard>
+│   │   │   ├── [gradeSlug]/GradeDashboard.tsx  ← Client: 4 вкладки (Şagirdlər/Nəticə/Naliyyət/Siniflər)
 │   │   │   ├── [gradeSlug]/[subjectSlug]/page.tsx       ← Список тем из БД
 │   │   │   ├── .../[topicSlug]/page.tsx                 ← ResourceGrid (ISR 3600s)
 │   │   │   └── .../[resourceSlug]/page.tsx              ← iframe / заглушка
+│   │   ├── dashboard/schedule/page.tsx ← Cədvəl (недельный грид) + 🎯 Aktivasiya tab
 │   │   ├── api/results/route.ts        ← POST/GET результатов тестов
+│   │   ├── api/admin/schedule/activate/route.ts  ← GET/PUT bulk toggle assignments
+│   │   ├── api/admin/schedule/tree/route.ts      ← GET curriculum tree (grade+subject)
 │   │   └── api/auth/login/route.ts     ← Auth endpoint (Supabase signInWithPassword)
 │   │
 │   ├── src/components/
@@ -42,9 +46,12 @@ ROOT: C:/Users/Administrator/Documents/Claude/Projects/
 │   │   │   ├── ResourceGrid.tsx        ← Группировка по типу, пустое состояние
 │   │   │   ├── ResourceCard.tsx        ← Карточка ресурса с бейджем типа
 │   │   │   └── BreadcrumbNav.tsx       ← Хлебные крошки
+│   │   ├── schedule/
+│   │   │   ├── ScheduleQuickAdd.tsx    ← Быстрое добавление в расписание
+│   │   │   └── ActivationPanel.tsx     ← Teacher: class/group/student → toggle lessons ON/OFF
 │   │   └── layout/
-│   │       ├── AppSidebar.tsx          ← Sidebar: grades accordion по URL
-│   │       └── AppHeader.tsx           ← Header: AZ/RU toggle
+│   │       ├── AppSidebar.tsx          ← Sidebar: 4 секции, clock с секундами, AZ/RU
+│   │       └── AppHeader.tsx           ← Header: lang toggle (localStorage)
 │   │
 │   ├── src/lib/
 │   │   ├── db.ts                       ← Prisma 7 singleton (PrismaPg adapter)
@@ -55,6 +62,8 @@ ROOT: C:/Users/Administrator/Documents/Claude/Projects/
 │   ├── src/server/
 │   │   ├── queries/curriculum.ts       ← getCurriculumItems, getCurriculumItem
 │   │   ├── queries/resources.ts        ← getResourcesByTopic, getResourceBySlug
+│   │   ├── queries/assignments.ts      ← getAssignedTopicIds, getStudentSchedule,
+│   │   │                                  getStudentCurriculumTree (Subject→Module→Lesson→Resource)
 │   │   └── actions/resources.ts        ← createResource, togglePublished
 │   │
 │   ├── src/types/index.ts              ← Re-export Prisma типов
@@ -68,21 +77,29 @@ ROOT: C:/Users/Administrator/Documents/Claude/Projects/
 │   ✅ /dashboard → реальные статы из Supabase
 │   ✅ /dashboard/results → таблица результатов (finished_at, цвета по %)
 │   ✅ /dashboard/students → карточки шагирдов с агрегатами
-│   ✅ /dashboard/classes/grade-5 → выбор предмета (из БД, не хардкод)
+│   ✅ /dashboard/classes/grade-5 → 4-вкладочный GradeDashboard (Şagirdlər / Nəticə / Naliyyət / Siniflər)
+│   │      Tab1: таблица учеников с avg%, прогресс-баром, фильтром по классу
+│   │      Tab2: результаты по платформам, sparkline-бары
+│   │      Tab3: grade book матрица (ученик × урок, цветные кружки)
+│   │      Tab4: карточки групп с переходом к ученикам
 │   ✅ /dashboard/classes/grade-5/math → темы из Prisma БД
 │   ✅ /dashboard/classes/.../[resource] → iframe-плеер + кнопка "открыть в новой вкладке"
+│   ✅ /dashboard/schedule → Cədvəl (недельный грид) + 🎯 Aktivasiya tab
+│   │      Aktivasiya: выбор class/group/student → subject tabs → toggle модулей/уроков → PUT /api/admin/schedule/activate
 │   ✅ /dashboard/manage/subjects → добавление предметов по классам (12 пресетов)
 │   ✅ /dashboard/manage/students → шагирды + пароли (3 вкладки: sinif/qrup/fərdi) + печать карточек
 │   ✅ /dashboard/manage/teachers → список + добавление + удаление учителей (Supabase Auth Admin)
 │   ✅ /dashboard/manage/assignments → назначение тем классу/группе/индивидуально
 │   ✅ /dashboard/manage/settings → смена пароля учителя (верификация текущего + updateUserById)
-│   ✅ /learn → ученический интерфейс: логин, AZ/RU, только назначенные темы
+│   ✅ /learn → Algorithmics-стиль: 2-колонка (левая: модули + SVG progress rings, правая: уроки + иконки ресурсов)
+│   │      Левая панель: Module 1/2/3... с кружком прогресса (пустой/частичный/полный)
+│   │      Правая: DƏRS N. ЗАГОЛОВОК → purple circles (уроки) + gold stars (тесты), green ✓ если percent≥70
 │   ✅ Hub / → карточки P001-P004, P005 активен (hub-educat-on.vercel.app)
 │   ✅ P001 → POST /api/results автоматически (sendToHub в script.js)
 │   ✅ P002 → POST /api/results через _Shared_Core/send-to-hub.js (60 уроков)
 │   ✅ P003 → POST /api/results через _Shared_Core/send-to-hub.js (4 теста)
 │   ✅ P004 → POST /api/results через /api/content/ P004_SYNC инжект
-│   ✅ Sidebar → Фənlər · Şagirdlər · Müəllimlər · Tə'yinatlar · Tənzimləmələr
+│   ✅ Sidebar → 4 секции (Əsas/Tədris/Siniflər/İdarəetmə), clock с секундами вверху, lang в Tənzimləmələr
 │   ✅ middleware.ts → JWT валидация /dashboard/* + /learn/* (Next.js 16 = src/middleware.ts, export middleware)
 │   ✅ Vercel → задеплоен, CONTENT_BASE_URL=https://mywork2000001-ops.github.io/HUB_EDUCAT-ON
 │   ✅ Email-уведомления → код готов (nodemailer), GMAIL_USER + NOTIFY_EMAIL в Vercel
@@ -94,6 +111,11 @@ ROOT: C:/Users/Administrator/Documents/Claude/Projects/
 │   • send-to-hub.js: monkey-patches showResults()/showResult() — работает без изменения логики
 │   • Vercel deploy: CLI не работает (>5000 файлов). Использовать REST API v13/deployments с gitSource
 │   • Vercel teamId: team_GqPN0ZvGk4tUA9Z0fmfSoGwa | projectId: prj_dgKcqYTpK2unDtHylZaikV8LYLF4
+│   • useTeacherLang hook: localStorage('eduhub_lang'), SSR-safe (default 'az'), используется в Sidebar/Header/Settings
+│   • Activation API: PUT /api/admin/schedule/activate → атомарная замена (delete old + createMany new)
+│   • Activation target matching: class_name+group_name=null (весь класс) | class_name+group_name (qrup) | student_id
+│   • getStudentCurriculumTree: если item.parent_id=null (модуль), показать всех children; если child, инферить модуль из parent
+│   • GradeDashboard bestMap: Map<"name|||class|||lessonTitle", best_percent> для grade book
 │
 │   СЛЕДУЮЩИЕ ШАГИ P005:
 │   1. Активация Gmail: добавить GMAIL_APP_PASSWORD в Vercel (Google Account → Security → App Passwords)
@@ -333,6 +355,9 @@ ROOT: C:/Users/Administrator/Documents/Claude/Projects/
   P005   │ Контент Grade 6        │ 🔄 WIP     │ 9 mövzu seeded; class-2..9 без content (нет HTML)
   P005   │ Vercel деплой          │ ✅ LIVE    │ hub-educat-on.vercel.app (REST API deploy, не CLI)
   P005   │ UI Light Redesign      │ ✅ DONE    │ светлая тема: bg-slate-50/white, тени, чистый sidebar
+  P005   │ Grade Dashboard        │ ✅ DONE    │ /classes/[grade] → 4 вкладки: ученики/нəтиceler/naliyyat/siniflər
+  P005   │ Schedule Aktivasiya    │ ✅ DONE    │ /schedule?view=activate → ActivationPanel (class→lesson toggle)
+  P005   │ Student /learn UI      │ ✅ DONE    │ Algorithmics-style: module sidebar (SVG rings) + lesson icons
 ─────────┴────────────────────────┴───────────┴───────────────
 
  HUB АРХИТЕКТУРА index.html v4.0.0
