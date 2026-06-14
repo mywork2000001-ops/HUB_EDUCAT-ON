@@ -107,7 +107,7 @@ ROOT: C:/Users/Administrator/Documents/Claude/Projects/
 │   КЛЮЧЕВЫЕ ТЕХНИЧЕСКИЕ ДЕТАЛИ:
 │   • Next.js 16: middleware называется src/middleware.ts (export async function middleware) — НЕ proxy.ts!
 │   • Ученики: bcryptjs + jose JWT в eduhub-student-token cookie, STUDENT_JWT_SECRET env var
-│   • display_password: хранится открытым текстом в students таблице для отображения учителю
+│   • display_password: НЕ хранится в БД. plainPassword возвращается ОДИН раз в API-ответе при создании/сбросе, в БД только bcrypt-хеш
 │   • send-to-hub.js: monkey-patches showResults()/showResult() — работает без изменения логики
 │   • Vercel deploy: CLI не работает (>5000 файлов). Использовать REST API v13/deployments с gitSource
 │   • Vercel teamId: team_GqPN0ZvGk4tUA9Z0fmfSoGwa | projectId: prj_dgKcqYTpK2unDtHylZaikV8LYLF4
@@ -340,7 +340,7 @@ ROOT: C:/Users/Administrator/Documents/Claude/Projects/
   P005   │ Архитектура (Prisma 7) │ ✅ DONE    │ schema+queries+components+routes+api/content
   P005   │ Supabase БД            │ ✅ LIVE    │ Grade5+6 seed, 8 тем × 30+ ресурсов
   P005   │ Auth + middleware.ts   │ ✅ DONE    │ Next.js 16: src/middleware.ts (export middleware)
-  P005   │ Ученики + JWT          │ ✅ DONE    │ bcryptjs + jose, eduhub-student-token, display_password
+  P005   │ Ученики + JWT          │ ✅ DONE    │ bcryptjs + jose, eduhub-student-token, plaintext только в API-ответе (не в БД)
   P005   │ Curriculum routes      │ ✅ DONE    │ /classes/[grade]/[subject]/[topic]/[resource]
   P005   │ Управление шагирдами   │ ✅ DONE    │ 3-вкладочный UI, показ паролей, печать карточек
   P005   │ Управление учителями   │ ✅ DONE    │ /manage/teachers, CRUD через Supabase Auth Admin

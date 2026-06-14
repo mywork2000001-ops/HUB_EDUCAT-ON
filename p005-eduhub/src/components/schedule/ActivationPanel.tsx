@@ -212,7 +212,10 @@ export function ActivationPanel({
         body:    JSON.stringify(body),
       });
       setOriginalIds(new Set(selectedIds));
-      setSavedMsg(`✓ ${selectedIds.size} dərs aktivləşdirildi`);
+      const target = targetMode === "student" && studentSel
+        ? students.find(s => s.id === studentSel)?.name ?? "şagird"
+        : classSel;
+      setSavedMsg(`✓ ${selectedIds.size} dərs — ${target}`);
       setTimeout(() => setSavedMsg(""), 3000);
     } catch {}
     setSaving(false);
@@ -290,17 +293,34 @@ export function ActivationPanel({
             </div>
           )}
 
-          {/* Student dropdown */}
-          {targetMode === "student" && classSel && (
+          {/* Student dropdown — shown directly in student mode, no class pre-selection required */}
+          {targetMode === "student" && (
             <div>
               <p className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider mb-2">Şagird</p>
-              <select value={studentSel} onChange={e => setStudentSel(e.target.value)}
+              <select
+                value={studentSel}
+                onChange={e => {
+                  const id = e.target.value;
+                  setStudentSel(id);
+                  // Auto-fill class from selected student so curriculum tree loads correctly
+                  const found = students.find(s => s.id === id);
+                  if (found) setClassSel(found.class_name);
+                }}
                 className="w-full text-xs border border-slate-200 rounded-lg px-2.5 py-2 bg-white focus:outline-none focus:border-indigo-400 text-slate-700">
-                <option value="">— Seçin —</option>
-                {studentsForGroup.map(s => (
-                  <option key={s.id} value={s.id}>{s.name}</option>
-                ))}
+                <option value="">— Şagird seçin —</option>
+                {[...students]
+                  .sort((a, b) => a.class_name.localeCompare(b.class_name) || a.name.localeCompare(b.name))
+                  .map(s => (
+                    <option key={s.id} value={s.id}>
+                      {s.name} · {s.class_name}{s.group_name ? ` (${s.group_name})` : ""}
+                    </option>
+                  ))}
               </select>
+              {studentSel && classSel && (
+                <p className="text-[10px] text-indigo-500 mt-1.5 font-medium">
+                  Sinif: {classSel} · Sağ paneldən dərsi seçib saxlayın
+                </p>
+              )}
             </div>
           )}
         </div>
@@ -310,7 +330,11 @@ export function ActivationPanel({
           <p className="text-[11px] font-bold text-slate-400 uppercase tracking-widest mb-3">📚 Fənn</p>
           {subjectsForGrade.length === 0 ? (
             <p className="text-xs text-slate-400 italic">
-              {classSel ? "Bu sinif üçün fənn yoxdur" : "Sinif seçin"}
+              {classSel
+                ? "Bu sinif üçün fənn yoxdur"
+                : targetMode === "student"
+                  ? "Əvvəlcə şagird seçin"
+                  : "Sinif seçin"}
             </p>
           ) : (
             <div className="space-y-1">

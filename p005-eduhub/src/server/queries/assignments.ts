@@ -1,27 +1,25 @@
 import { db } from "@/lib/db";
 
+// CONTRACT: studentId, className, groupName MUST come from a verified JWT payload,
+// never from raw URL params. Callers that violate this allow class-name spoofing.
 export async function getAssignedTopicIds(
   studentId: string,
   className: string,
   groupName: string | null,
 ): Promise<Set<number>> {
-  try {
-    const orClauses: object[] = [
-      { class_name: className, group_name: null },
-      { student_id: studentId },
-    ];
-    if (groupName) {
-      orClauses.push({ class_name: className, group_name: groupName });
-    }
-
-    const rows = await db.assignment.findMany({
-      where: { OR: orClauses },
-      select: { item_id: true },
-    });
-    return new Set(rows.map((r) => r.item_id));
-  } catch {
-    return new Set();
+  const orClauses: object[] = [
+    { class_name: className, group_name: null },
+    { student_id: studentId },
+  ];
+  if (groupName) {
+    orClauses.push({ class_name: className, group_name: groupName });
   }
+
+  const rows = await db.assignment.findMany({
+    where: { OR: orClauses },
+    select: { item_id: true },
+  });
+  return new Set(rows.map((r) => r.item_id));
 }
 
 export async function getStudentSchedule(
@@ -29,34 +27,36 @@ export async function getStudentSchedule(
   className: string,
   groupName: string | null,
 ) {
-  try {
-    const orClauses: object[] = [
-      { class_name: className, group_name: null },
-      { student_id: studentId },
-    ];
-    if (groupName) {
-      orClauses.push({ class_name: className, group_name: groupName });
-    }
+  const orClauses: object[] = [
+    { class_name: className, group_name: null },
+    { student_id: studentId },
+  ];
+  if (groupName) {
+    orClauses.push({ class_name: className, group_name: groupName });
+  }
 
-    const rows = await db.assignment.findMany({
-      where: {
-        OR: orClauses,
-        due_date: { gte: new Date(Date.now() - 24 * 3600 * 1000) },
-      },
-      include: {
-        item: {
-          include: {
-            grade_subject: { include: { grade: true, subject: true } },
+  return await db.assignment.findMany({
+    where: {
+      OR: orClauses,
+      due_date: { gte: new Date(Date.now() - 24 * 3600 * 1000) },
+    },
+    include: {
+      item: {
+        include: {
+          parent:        { select: { slug: true } },
+          grade_subject: { include: { grade: true, subject: true } },
+          resources: {
+            where:   { is_published: true },
+            orderBy: { id: "asc" },
+            take:    1,
+            select:  { slug: true, type: true },
           },
         },
       },
-      orderBy: { due_date: "asc" },
-      take: 20,
-    });
-    return rows;
-  } catch {
-    return [];
-  }
+    },
+    orderBy: { due_date: "asc" },
+    take: 20,
+  });
 }
 
 // ── Student curriculum tree (for Algorithmics-style /learn view) ──────────────
@@ -108,7 +108,7 @@ export async function getStudentCurriculumTree(
       },
     },
     orderBy: { order_index: "asc" },
-  }).catch(() => []);
+  });
 
   const sMap = new Map<string, { data: Omit<CurriculumSubject, "modules">; mMap: Map<number, CurriculumModule> }>();
 
