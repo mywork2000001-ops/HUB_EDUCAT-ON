@@ -1,469 +1,901 @@
-<!DOCTYPE html>
+﻿<!doctype html>
 <html lang="az">
-<head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>Natural ədədlərin onluq say sistemındə yazılışı</title>
-<style>
-*{box-sizing:border-box;margin:0;padding:0}
-body{font-family:system-ui,-apple-system,sans-serif;background:#0f172a;color:#e2e8f0;min-height:100vh}
-.exam-header{background:#1e293b;border-bottom:1px solid #334155;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:10}
-.exam-title{font-weight:700;font-size:13px;color:#f97316;line-height:1.3}
-.timer{font-size:18px;font-weight:800;font-variant-numeric:tabular-nums;background:#0f172a;padding:4px 12px;border-radius:8px;border:1px solid #334155;color:#e2e8f0;white-space:nowrap}
-.timer.warn{color:#f97316}.timer.danger{color:#ef4444;animation:pulse 1s infinite}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
-.prog-bar{height:4px;background:#1e293b}
-.prog-fill{height:100%;background:#f97316;transition:width .3s}
-.body{max-width:700px;margin:0 auto;padding:28px 16px}
-.start{text-align:center;padding:40px 20px}
-.start h2{font-size:22px;font-weight:800;color:#f97316;margin-bottom:6px}
-.start .section-tag{font-size:12px;color:#64748b;margin-bottom:14px;background:#1e293b;display:inline-block;padding:4px 10px;border-radius:20px}
-.start p{color:#94a3b8;font-size:14px;margin-bottom:20px}
-.info-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:20px 0}
-.info-card{background:#1e293b;border-radius:10px;padding:14px;text-align:center}
-.info-card .val{font-size:24px;font-weight:800;color:#f97316}
-.info-card .lbl{font-size:11px;color:#94a3b8;margin-top:3px}
-.note{font-size:12px;color:#475569;margin-bottom:24px}
-.q-panel{display:none}
-.q-counter{font-size:12px;color:#94a3b8;margin-bottom:10px;display:flex;align-items:center;justify-content:space-between}
-.q-text{font-size:16px;line-height:1.7;font-weight:500;margin-bottom:22px;color:#f1f5f9}
-.options{display:flex;flex-direction:column;gap:10px}
-.opt{background:#1e293b;border:1.5px solid #334155;border-radius:10px;padding:12px 16px;text-align:left;cursor:pointer;transition:all .15s;font-size:14px;color:#e2e8f0;display:flex;align-items:center;gap:12px;width:100%}
-.opt:hover{background:rgba(249,115,22,.08);border-color:rgba(249,115,22,.4)}
-.opt.sel{background:rgba(249,115,22,.15);border-color:#f97316;color:#f97316;font-weight:600}
-.opt.correct{background:rgba(34,197,94,.15);border-color:#22c55e;color:#22c55e;font-weight:600}
-.opt.wrong{background:rgba(239,68,68,.12);border-color:#ef4444;color:#ef4444}
-.opt-lbl{width:26px;height:26px;background:#334155;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0}
-.opt.sel .opt-lbl{background:#f97316;color:#0f172a}
-.opt.correct .opt-lbl{background:#22c55e;color:#0f172a}
-.opt.wrong .opt-lbl{background:#ef4444;color:#fff}
-.feedback{margin-top:14px;padding:12px 14px;border-radius:10px;font-size:13px;line-height:1.6;display:none}
-.feedback.ok{background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.3);color:#86efac}
-.feedback.ng{background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.3);color:#fca5a5}
-.nav{display:flex;gap:10px;margin-top:24px;flex-wrap:wrap}
-.btn{padding:10px 20px;border-radius:8px;border:none;cursor:pointer;font-size:13px;font-weight:600;transition:all .15s}
-.btn-outline{background:transparent;border:1.5px solid #475569;color:#94a3b8}
-.btn-outline:hover{border-color:#94a3b8;color:#e2e8f0}
-.btn-primary{background:#f97316;color:#fff}
-.btn-primary:hover{background:#ea6c0e}
-.btn-primary:disabled{background:#475569;cursor:not-allowed}
-.q-dots{display:flex;flex-wrap:wrap;gap:4px;margin-top:16px}
-.dot{width:22px;height:22px;border-radius:4px;background:#1e293b;border:1px solid #334155;font-size:9px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:#64748b;transition:all .1s}
-.dot.done{background:rgba(249,115,22,.2);border-color:#f97316;color:#f97316;font-weight:700}
-.dot.current{background:#f97316;color:#fff;font-weight:700}
-.dot.correct{background:rgba(34,197,94,.2);border-color:#22c55e;color:#22c55e}
-.dot.wrong{background:rgba(239,68,68,.15);border-color:#ef4444;color:#ef4444}
-.result{display:none;text-align:center;padding:32px 20px}
-.score-ring{width:130px;height:130px;border-radius:50%;border:10px solid #1e293b;margin:0 auto 16px;display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:800;position:relative}
-.score-ring::before{content:'';position:absolute;inset:-10px;border-radius:50%;background:conic-gradient(#f97316 calc(var(--p,0)*1%),#1e293b 0);z-index:-1}
-.res-title{font-size:22px;font-weight:800;margin-bottom:6px}
-.res-sub{color:#94a3b8;font-size:14px;margin-bottom:20px}
-.res-actions{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
-.review{text-align:left;margin-top:28px;display:flex;flex-direction:column;gap:8px}
-.ri{background:#1e293b;border-radius:8px;padding:12px 14px;border-left:4px solid}
-.ri.ok{border-color:#22c55e}.ri.ng{border-color:#ef4444}
-.rq{font-size:13px;color:#cbd5e1;margin-bottom:5px}
-.ra{font-size:12px;margin-bottom:3px}
-.ra .ok-a{color:#22c55e}.ra .ng-a{color:#ef4444}
-.re{font-size:11px;color:#64748b;margin-top:3px}
-.hidden{display:none!important}
-@media(max-width:480px){.info-grid{grid-template-columns:1fr 1fr}.q-text{font-size:14px}.exam-title{font-size:11px}}
-</style>
-</head>
-<body>
-
-<div class="exam-header hidden" id="hdr">
-  <div class="exam-title">📝 Natural ədədlər — Onluq say sistemi</div>
-  <div class="timer" id="tmr">40:00</div>
-</div>
-<div class="prog-bar"><div class="prog-fill" id="pg" style="width:0%"></div></div>
-
-<div class="body">
-
-  <!-- START -->
-  <div class="start" id="start">
-    <div class="section-tag">Hissə I · Bölmə 1 · Mövzu 1</div>
-    <h2>Natural ədədlərin onluq say sistemındə yazılışı</h2>
-    <p>DİM test bankından 30 sual — cüt/tək ifadələr, rəqəmli ədədlər, ardıcıl ədədlər</p>
-    <div class="info-grid">
-      <div class="info-card"><div class="val">30</div><div class="lbl">Sual sayı</div></div>
-      <div class="info-card"><div class="val">40</div><div class="lbl">Dəqiqə</div></div>
-      <div class="info-card"><div class="val">★★</div><div class="lbl">Çətinlik</div></div>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Natural ədədlərin onluq say sistemındə yazılışı</title>
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        font-family:
+          system-ui,
+          -apple-system,
+          sans-serif;
+        background: #0f172a;
+        color: #e2e8f0;
+        min-height: 100vh;
+      }
+      .exam-header {
+        background: #1e293b;
+        border-bottom: 1px solid #334155;
+        padding: 12px 16px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        position: sticky;
+        top: 0;
+        z-index: 10;
+      }
+      .exam-title {
+        font-weight: 700;
+        font-size: 13px;
+        color: #f97316;
+        line-height: 1.3;
+      }
+      .timer {
+        font-size: 18px;
+        font-weight: 800;
+        font-variant-numeric: tabular-nums;
+        background: #0f172a;
+        padding: 4px 12px;
+        border-radius: 8px;
+        border: 1px solid #334155;
+        color: #e2e8f0;
+        white-space: nowrap;
+      }
+      .timer.warn {
+        color: #f97316;
+      }
+      .timer.danger {
+        color: #ef4444;
+        animation: pulse 1s infinite;
+      }
+      @keyframes pulse {
+        0%,
+        100% {
+          opacity: 1;
+        }
+        50% {
+          opacity: 0.4;
+        }
+      }
+      .prog-bar {
+        height: 4px;
+        background: #1e293b;
+      }
+      .prog-fill {
+        height: 100%;
+        background: #f97316;
+        transition: width 0.3s;
+      }
+      .body {
+        max-width: 700px;
+        margin: 0 auto;
+        padding: 28px 16px;
+      }
+      .start {
+        text-align: center;
+        padding: 40px 20px;
+      }
+      .start h2 {
+        font-size: 22px;
+        font-weight: 800;
+        color: #f97316;
+        margin-bottom: 6px;
+      }
+      .start .section-tag {
+        font-size: 12px;
+        color: #64748b;
+        margin-bottom: 14px;
+        background: #1e293b;
+        display: inline-block;
+        padding: 4px 10px;
+        border-radius: 20px;
+      }
+      .start p {
+        color: #94a3b8;
+        font-size: 14px;
+        margin-bottom: 20px;
+      }
+      .info-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 12px;
+        margin: 20px 0;
+      }
+      .info-card {
+        background: #1e293b;
+        border-radius: 10px;
+        padding: 14px;
+        text-align: center;
+      }
+      .info-card .val {
+        font-size: 24px;
+        font-weight: 800;
+        color: #f97316;
+      }
+      .info-card .lbl {
+        font-size: 11px;
+        color: #94a3b8;
+        margin-top: 3px;
+      }
+      .note {
+        font-size: 12px;
+        color: #475569;
+        margin-bottom: 24px;
+      }
+      .q-panel {
+        display: none;
+      }
+      .q-counter {
+        font-size: 12px;
+        color: #94a3b8;
+        margin-bottom: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+      .q-text {
+        font-size: 16px;
+        line-height: 1.7;
+        font-weight: 500;
+        margin-bottom: 22px;
+        color: #f1f5f9;
+      }
+      .options {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+      .opt {
+        background: #1e293b;
+        border: 1.5px solid #334155;
+        border-radius: 10px;
+        padding: 12px 16px;
+        text-align: left;
+        cursor: pointer;
+        transition: all 0.15s;
+        font-size: 14px;
+        color: #e2e8f0;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        width: 100%;
+      }
+      .opt:hover {
+        background: rgba(249, 115, 22, 0.08);
+        border-color: rgba(249, 115, 22, 0.4);
+      }
+      .opt.sel {
+        background: rgba(249, 115, 22, 0.15);
+        border-color: #f97316;
+        color: #f97316;
+        font-weight: 600;
+      }
+      .opt.correct {
+        background: rgba(34, 197, 94, 0.15);
+        border-color: #22c55e;
+        color: #22c55e;
+        font-weight: 600;
+      }
+      .opt.wrong {
+        background: rgba(239, 68, 68, 0.12);
+        border-color: #ef4444;
+        color: #ef4444;
+      }
+      .opt-lbl {
+        width: 26px;
+        height: 26px;
+        background: #334155;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 11px;
+        font-weight: 700;
+        flex-shrink: 0;
+      }
+      .opt.sel .opt-lbl {
+        background: #f97316;
+        color: #0f172a;
+      }
+      .opt.correct .opt-lbl {
+        background: #22c55e;
+        color: #0f172a;
+      }
+      .opt.wrong .opt-lbl {
+        background: #ef4444;
+        color: #fff;
+      }
+      .feedback {
+        margin-top: 14px;
+        padding: 12px 14px;
+        border-radius: 10px;
+        font-size: 13px;
+        line-height: 1.6;
+        display: none;
+      }
+      .feedback.ok {
+        background: rgba(34, 197, 94, 0.1);
+        border: 1px solid rgba(34, 197, 94, 0.3);
+        color: #86efac;
+      }
+      .feedback.ng {
+        background: rgba(239, 68, 68, 0.08);
+        border: 1px solid rgba(239, 68, 68, 0.3);
+        color: #fca5a5;
+      }
+      .nav {
+        display: flex;
+        gap: 10px;
+        margin-top: 24px;
+        flex-wrap: wrap;
+      }
+      .btn {
+        padding: 10px 20px;
+        border-radius: 8px;
+        border: none;
+        cursor: pointer;
+        font-size: 13px;
+        font-weight: 600;
+        transition: all 0.15s;
+      }
+      .btn-outline {
+        background: transparent;
+        border: 1.5px solid #475569;
+        color: #94a3b8;
+      }
+      .btn-outline:hover {
+        border-color: #94a3b8;
+        color: #e2e8f0;
+      }
+      .btn-primary {
+        background: #f97316;
+        color: #fff;
+      }
+      .btn-primary:hover {
+        background: #ea6c0e;
+      }
+      .btn-primary:disabled {
+        background: #475569;
+        cursor: not-allowed;
+      }
+      .q-dots {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 4px;
+        margin-top: 16px;
+      }
+      .dot {
+        width: 22px;
+        height: 22px;
+        border-radius: 4px;
+        background: #1e293b;
+        border: 1px solid #334155;
+        font-size: 9px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        color: #64748b;
+        transition: all 0.1s;
+      }
+      .dot.done {
+        background: rgba(249, 115, 22, 0.2);
+        border-color: #f97316;
+        color: #f97316;
+        font-weight: 700;
+      }
+      .dot.current {
+        background: #f97316;
+        color: #fff;
+        font-weight: 700;
+      }
+      .dot.correct {
+        background: rgba(34, 197, 94, 0.2);
+        border-color: #22c55e;
+        color: #22c55e;
+      }
+      .dot.wrong {
+        background: rgba(239, 68, 68, 0.15);
+        border-color: #ef4444;
+        color: #ef4444;
+      }
+      .result {
+        display: none;
+        text-align: center;
+        padding: 32px 20px;
+      }
+      .score-ring {
+        width: 130px;
+        height: 130px;
+        border-radius: 50%;
+        border: 10px solid #1e293b;
+        margin: 0 auto 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 26px;
+        font-weight: 800;
+        position: relative;
+      }
+      .score-ring::before {
+        content: "";
+        position: absolute;
+        inset: -10px;
+        border-radius: 50%;
+        background: conic-gradient(#f97316 calc(var(--p, 0) * 1%), #1e293b 0);
+        z-index: -1;
+      }
+      .res-title {
+        font-size: 22px;
+        font-weight: 800;
+        margin-bottom: 6px;
+      }
+      .res-sub {
+        color: #94a3b8;
+        font-size: 14px;
+        margin-bottom: 20px;
+      }
+      .res-actions {
+        display: flex;
+        gap: 10px;
+        justify-content: center;
+        flex-wrap: wrap;
+      }
+      .review {
+        text-align: left;
+        margin-top: 28px;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+      .ri {
+        background: #1e293b;
+        border-radius: 8px;
+        padding: 12px 14px;
+        border-left: 4px solid;
+      }
+      .ri.ok {
+        border-color: #22c55e;
+      }
+      .ri.ng {
+        border-color: #ef4444;
+      }
+      .rq {
+        font-size: 13px;
+        color: #cbd5e1;
+        margin-bottom: 5px;
+      }
+      .ra {
+        font-size: 12px;
+        margin-bottom: 3px;
+      }
+      .ra .ok-a {
+        color: #22c55e;
+      }
+      .ra .ng-a {
+        color: #ef4444;
+      }
+      .re {
+        font-size: 11px;
+        color: #64748b;
+        margin-top: 3px;
+      }
+      .hidden {
+        display: none !important;
+      }
+      @media (max-width: 480px) {
+        .info-grid {
+          grid-template-columns: 1fr 1fr;
+        }
+        .q-text {
+          font-size: 14px;
+        }
+        .exam-title {
+          font-size: 11px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="exam-header hidden" id="hdr">
+      <div class="exam-title">📝 Natural ədədlər — Onluq say sistemi</div>
+      <div class="timer" id="tmr">40:00</div>
     </div>
-    <p class="note">Hər suala cavab verdikdən sonra izahı görəcəksiniz.</p>
-    <button class="btn btn-primary" onclick="startTest()" style="padding:14px 40px;font-size:15px">Testi başla</button>
-  </div>
-
-  <!-- QUESTION -->
-  <div class="q-panel" id="qpanel">
-    <div class="q-counter">
-      <span id="qnum">Sual 1 / 30</span>
-      <span id="qscore">0 / 0</span>
+    <div class="prog-bar">
+      <div class="prog-fill" id="pg" style="width: 0%"></div>
     </div>
-    <div class="q-text" id="qtext"></div>
-    <div class="options" id="opts"></div>
-    <div class="feedback" id="fb"></div>
-    <div class="nav">
-      <button class="btn btn-outline" onclick="prevQ()" id="btnPrev">← Əvvəlki</button>
-      <button class="btn btn-primary" onclick="nextQ()" id="btnNext" disabled>Növbəti →</button>
-      <button class="btn btn-primary hidden" onclick="showResult()" id="btnFinish">Nəticəni gör</button>
+
+    <div class="body">
+      <!-- START -->
+      <div class="start" id="start">
+        <div class="section-tag">Hissə I · Bölmə 1 · Mövzu 1</div>
+        <h2>Natural ədədlərin onluq say sistemındə yazılışı</h2>
+        <p>
+          DİM test bankından 30 sual — cüt/tək ifadələr, rəqəmli ədədlər,
+          ardıcıl ədədlər
+        </p>
+        <div class="info-grid">
+          <div class="info-card">
+            <div class="val">30</div>
+            <div class="lbl">Sual sayı</div>
+          </div>
+          <div class="info-card">
+            <div class="val">40</div>
+            <div class="lbl">Dəqiqə</div>
+          </div>
+          <div class="info-card">
+            <div class="val">★★</div>
+            <div class="lbl">Çətinlik</div>
+          </div>
+        </div>
+        <p class="note">Hər suala cavab verdikdən sonra izahı görəcəksiniz.</p>
+        <button
+          class="btn btn-primary"
+          onclick="startTest()"
+          style="padding: 14px 40px; font-size: 15px"
+        >
+          Testi başla
+        </button>
+      </div>
+
+      <!-- QUESTION -->
+      <div class="q-panel" id="qpanel">
+        <div class="q-counter">
+          <span id="qnum">Sual 1 / 30</span>
+          <span id="qscore">0 / 0</span>
+        </div>
+        <div class="q-text" id="qtext"></div>
+        <div class="options" id="opts"></div>
+        <div class="feedback" id="fb"></div>
+        <div class="nav">
+          <button class="btn btn-outline" onclick="prevQ()" id="btnPrev">
+            ← Əvvəlki
+          </button>
+          <button
+            class="btn btn-primary"
+            onclick="nextQ()"
+            id="btnNext"
+            disabled
+          >
+            Növbəti →
+          </button>
+          <button
+            class="btn btn-primary hidden"
+            onclick="showResult()"
+            id="btnFinish"
+          >
+            Nəticəni gör
+          </button>
+        </div>
+        <div class="q-dots" id="dots"></div>
+      </div>
+
+      <!-- RESULT -->
+      <div class="result" id="result">
+        <div class="score-ring" id="ring"><span id="ringTxt"></span></div>
+        <div class="res-title" id="resTitle"></div>
+        <div class="res-sub" id="resSub"></div>
+        <div class="res-actions">
+          <button class="btn btn-outline" onclick="restartTest()">
+            Yenidən başla
+          </button>
+          <button
+            class="btn btn-primary"
+            onclick="window.parent.postMessage({ type: 'CLOSE_LESSON' }, '*')"
+          >
+            Geri qayıt
+          </button>
+        </div>
+        <div class="review" id="review"></div>
+      </div>
     </div>
-    <div class="q-dots" id="dots"></div>
-  </div>
 
-  <!-- RESULT -->
-  <div class="result" id="result">
-    <div class="score-ring" id="ring"><span id="ringTxt"></span></div>
-    <div class="res-title" id="resTitle"></div>
-    <div class="res-sub" id="resSub"></div>
-    <div class="res-actions">
-      <button class="btn btn-outline" onclick="restartTest()">Yenidən başla</button>
-      <button class="btn btn-primary" onclick="window.parent.postMessage({type:'CLOSE_LESSON'},'*')">Geri qayıt</button>
-    </div>
-    <div class="review" id="review"></div>
-  </div>
+    <script>
+      const QS = [
+        {
+          q: "İfadələrdən hansının qiyməti hər zaman natural ədəd olar?",
+          o: ["x² − 1", "n² + 1", "n² − n", "2n − 1", "x − 1"],
+          a: 1,
+          e: "n²+1 həmişə ≥ 2 olduğundan hər zaman natural ədəd olur. Digər ifadələr bəzi tam qiymətlər üçün 0 və ya mənfi ola bilər (məs. x²−1=0 x=1 üçün).",
+        },
+        {
+          q: "(7a − 3)² ifadəsinin qiyməti tək ədəddir (a ∈ ℕ). Aşağıdakılardan hansının qiyməti cüt ədəd olar?",
+          o: ["a² − 1", "5a + 2", "a² + a + 1", "4a − 3", "a + 1"],
+          a: 1,
+          e: "(7a−3)² tək ⟹ 7a−3 tək ⟹ 7a cüt ⟹ a cüt. Cüt a üçün: 5a = cüt, 5a+2 = cüt+cüt = cüt ✓",
+        },
+        {
+          q: "(3x − 1)² ifadəsinin qiyməti cüt ədəddir (x ∈ ℕ). Aşağıdakılardan hansının qiyməti cüt ədəd olar?",
+          o: ["x² − 3x + 1", "9x² − 2x", "5x − 2x²", "7x + 5", "3x + 2"],
+          a: 3,
+          e: "(3x−1)² cüt ⟹ 3x−1 cüt ⟹ 3x tək ⟹ x tək. Tək x üçün: 7x = tək, 7x+5 = tək+tək = cüt ✓",
+        },
+        {
+          q: "x cüt, y tək olduqda hansı ifadənin qiyməti tək olar?",
+          o: ["3x + 5", "3x + 2y", "x + y + 1", "x² + 2y", "(x + 2y)²"],
+          a: 0,
+          e: "x cüt, y tək: 3x = cüt, 3x+5 = cüt+tək = tək ✓. Digərləri: 3x+2y = cüt+cüt = cüt; x+y+1 = cüt+tək+1 = cüt; x²+2y = cüt; (x+2y)² = cüt.",
+        },
+        {
+          q: "x tək, y tək olduqda hansı ifadənin qiyməti cüt olar?",
+          o: ["x + y + 1", "xy + 2", "x² + y² − 1", "(x − y)²", "2x + y"],
+          a: 3,
+          e: "x tək, y tək: x−y = tək−tək = cüt ⟹ (x−y)² = cüt² = cüt ✓. Qeyd: x+y+1 = cüt+1 = tək; xy+2 = tək+cüt = tək; x²+y²−1 = tək+tək−1 = tək.",
+        },
+        {
+          q: "x və y hər ikisi cüt ədəd olduqda hansı ifadənin qiyməti tək olar?",
+          o: ["5xy", "x + y", "x² + y", "xy + x", "x² − y² + 1"],
+          a: 4,
+          e: "x, y cüt: x² = cüt, y² = cüt ⟹ x²−y² = cüt ⟹ x²−y²+1 = cüt+1 = tək ✓. Digərləri hamısı cütdür.",
+        },
+        {
+          q: "Ardıcıl 100 natural ədədin ən kiçik və ən böyük ədədlərinin cəmi 629-a bərabərdir. Bu ardıcıl ədədlərin ən kiçiyi hansıdır?",
+          o: ["255", "325", "225", "265", "305"],
+          a: 3,
+          e: "Ən kiçik n, ən böyük n+99 olsun. n + (n+99) = 629 ⟹ 2n = 530 ⟹ n = 265.",
+        },
+        {
+          q: "āb + b̄a = 110 olduqda, a + b cəmini tapın.",
+          o: ["8", "9", "10", "11", "12"],
+          a: 2,
+          e: "āb = 10a+b, b̄a = 10b+a. āb + b̄a = 11(a+b) = 110 ⟹ a+b = 10.",
+        },
+        {
+          q: "İkirəqəmli āb ədədi üçün āb = 2a + 4b şərti ödənilirsə, a + b cəmini tapın.",
+          o: ["9", "10", "11", "12", "13"],
+          a: 2,
+          e: "10a+b = 2a+4b ⟹ 8a = 3b ⟹ b = 8a/3. Tam həll: a = 3, b = 8 ⟹ āb = 38. Yoxla: 2·3+4·8 = 6+32 = 38 ✓. a+b = 11.",
+        },
+        {
+          q: "İkirəqəmli āb ədədi üçün āb = 3a + 4b şərti ödənilirsə, b − a fərqini tapın.",
+          o: ["2", "3", "4", "5", "6"],
+          a: 2,
+          e: "10a+b = 3a+4b ⟹ 7a = 3b. Tam həll: a = 3, b = 7 ⟹ āb = 37. Yoxla: 3·3+4·7 = 9+28 = 37 ✓. b−a = 4.",
+        },
+        {
+          q: "āb ədədi üçün āb = 2a + 5b şərtini ödəyən iki rəqəmli ədədlərin ən böyüyü ilə ən kiçiyinin fərqini tapın.",
+          o: ["24", "30", "36", "48", "12"],
+          a: 2,
+          e: "10a+b = 2a+5b ⟹ 8a = 4b ⟹ b = 2a. a∈{1,2,3,4}: āb∈{12, 24, 36, 48}. Fərq = 48−12 = 36.",
+        },
+        {
+          q: "āb ədədi üçün āb = 4a + 2b şərtini ödəyən neçə iki rəqəmli ədəd mövcuddur?",
+          o: ["1", "2", "3", "4", "5"],
+          a: 0,
+          e: "10a+b = 4a+2b ⟹ 6a = b. b ≤ 9 şərti altında yalnız a = 1, b = 6 keçərlidir: āb = 16. Yalnız 1 ədəd.",
+        },
+        {
+          q: "āb − b̄a = 27 olduqda, a − b fərqini tapın.",
+          o: ["1", "2", "3", "4", "5"],
+          a: 2,
+          e: "āb − b̄a = (10a+b) − (10b+a) = 9(a−b) = 27 ⟹ a−b = 3.",
+        },
+        {
+          q: "a + b = 9 və āb − b̄a = 27 olduqda, āb ədədini tapın.",
+          o: ["54", "63", "72", "81", "45"],
+          a: 1,
+          e: "9(a−b) = 27 ⟹ a−b = 3. a+b = 9 ilə birgə: a = 6, b = 3. āb = 63.",
+        },
+        {
+          q: "Ardıcıl 3 cüt ədədin cəmi 78-dir. Bu ədədlərin ən böyüyünü tapın.",
+          o: ["24", "26", "28", "30", "32"],
+          a: 2,
+          e: "2k + (2k+2) + (2k+4) = 6k+6 = 78 ⟹ k = 12. Ən böyük = 2(12)+4 = 28.",
+        },
+        {
+          q: "Ardıcıl 4 tək ədədin cəmi 80-dir. Bu ədədlərin ən kiçiyini tapın.",
+          o: ["15", "17", "19", "21", "23"],
+          a: 1,
+          e: "(2k+1)+(2k+3)+(2k+5)+(2k+7) = 8k+16 = 80 ⟹ k = 8. Ən kiçik = 2(8)+1 = 17.",
+        },
+        {
+          q: "n tək ədəd olduqda (n² − 1) / 8 ifadəsinin qiyməti həmişə hansı növ ədəd olar?",
+          o: [
+            "Həmişə cüt ədəd",
+            "Həmişə tək ədəd",
+            "Həmişə tam natural ədəd",
+            "Həmişə kəsr ədəd",
+            "Həmişə mənfi ədəd",
+          ],
+          a: 2,
+          e: "n = 2k+1 olsun. n²−1 = (2k+1)²−1 = 4k²+4k = 4k(k+1). k(k+1) həmişə cütdür (ardıcıl tam ədədlər), ona görə 8 | 4k(k+1) ⟹ (n²−1)/8 həmişə tam natural ədəddir.",
+        },
+        {
+          q: "1 + 3 + 5 + ... + 19 = a olduqda, 2221 + 2223 + 2225 + ... + 2239 cəmini a vasitəsilə ifadə edin.",
+          o: ["22000 · a", "22200 · a", "22200 + a", "22300 + a", "2220 + a"],
+          a: 2,
+          e: "1+3+...+19: ilk 10 tək ədəd, cəm = 10² = 100 ⟹ a = 100. 2221+...+2239: 10 həd, orta = 2230, cəm = 10·2230 = 22300 = 22200+100 = 22200+a.",
+        },
+        {
+          q: "233 + 237 + 241 + ... + 257 cəmini tapın.",
+          o: ["1610", "1715", "1820", "1505", "1925"],
+          a: 1,
+          e: "Fərq = 4. Həd sayı = (257−233)/4 + 1 = 7. Cəm = 7 × (233+257)/2 = 7 × 245 = 1715.",
+        },
+        {
+          q: "1 + 2 + 3 + ... + n = 300 olduqda, n-i tapın.",
+          o: ["20", "22", "24", "25", "30"],
+          a: 2,
+          e: "n(n+1)/2 = 300 ⟹ n(n+1) = 600. n = 24: 24 × 25 = 600 ✓",
+        },
+        {
+          q: "Ardıcıl 100 natural ədədin cəmi 14950-dir. Bu ədədlərin ən böyüyünü tapın.",
+          o: ["149", "159", "169", "189", "199"],
+          a: 4,
+          e: "Ən kiçik n olsun: 100n + (0+1+...+99) = 100n + 4950 = 14950 ⟹ n = 100. Ən böyük = 100+99 = 199.",
+        },
+        {
+          q: "İki natural ədədin cəmi 474, fərqi 30-dur. Bu ədədlərin böyüyünü tapın.",
+          o: ["240", "244", "248", "252", "256"],
+          a: 3,
+          e: "a + b = 474, a − b = 30. Toplayaraq: 2a = 504 ⟹ a = 252.",
+        },
+        {
+          q: "āb ikirəqəmli ədədi üçün (āb − b̄a) / (a + b) = 7 olduqda, a · b hasilini tapın.",
+          o: ["6", "7", "8", "9", "10"],
+          a: 2,
+          e: "9(a−b)/(a+b) = 7 ⟹ 9a−9b = 7a+7b ⟹ 2a = 16b ⟹ a = 8b. b = 1, a = 8: a·b = 8. āb = 81.",
+        },
+        {
+          q: "āb ikirəqəmli ədədi üçün (āb − b̄a) / (a + b) = 5 olduqda, āb ədədini tapın.",
+          o: ["54", "63", "72", "81", "36"],
+          a: 2,
+          e: "9(a−b)/(a+b) = 5 ⟹ 9a−9b = 5a+5b ⟹ 4a = 14b ⟹ 2a = 7b. b = 2, a = 7: āb = 72.",
+        },
+        {
+          q: "12²² · 7¹⁶ + 19²³ ifadəsinin son rəqəmini tapın.",
+          o: ["1", "3", "5", "7", "9"],
+          a: 1,
+          e: "12^n son rəqəm dövrü 4: 2,4,8,6,... 22 mod 4 = 2 ⟹ 12²² son rəqəm 4. 7^n dövrü 4: 7,9,3,1,... 16 mod 4 = 0 ⟹ 7¹⁶ son rəqəm 1. Hasil son rəqəm: 4×1 = 4. 19^n dövrü 2: 9,1,... 23 tək ⟹ 19²³ son rəqəm 9. Cəm: 4+9 = 13, son rəqəm 3.",
+        },
+        {
+          q: "2 + 4 + 6 + ... + 2n = 182 olduqda, n-i tapın.",
+          o: ["11", "12", "13", "14", "15"],
+          a: 2,
+          e: "2(1+2+...+n) = 2·n(n+1)/2 = n(n+1) = 182. n = 13: 13×14 = 182 ✓",
+        },
+        {
+          q: "Ardıcıl 50 natural ədədin cəmi 2675-dir. Bu ədədlərin ən kiçiyini tapın.",
+          o: ["25", "27", "29", "31", "33"],
+          a: 2,
+          e: "Ən kiçik n: 50n + (0+1+...+49) = 50n + 1225 = 2675 ⟹ 50n = 1450 ⟹ n = 29.",
+        },
+        {
+          q: "a + b = 23 və a² + b² = 265 olduqda, a · b hasilini tapın.",
+          o: ["120", "125", "130", "132", "140"],
+          a: 3,
+          e: "(a+b)² = a²+2ab+b² ⟹ 23² = 265+2ab ⟹ 529 = 265+2ab ⟹ 2ab = 264 ⟹ ab = 132.",
+        },
+        {
+          q: "a · b = 48 və a + b = 14 olduqda, |a − b| qiymətini tapın.",
+          o: ["2", "4", "6", "8", "10"],
+          a: 0,
+          e: "(a−b)² = (a+b)² − 4ab = 196 − 192 = 4 ⟹ |a−b| = 2.",
+        },
+        {
+          q: "āb ədədi üçün āb − b̄a = 45 olduqda, bu şərti ödəyən neçə iki rəqəmli ādāb ədədi var?",
+          o: ["4", "5", "6", "7", "8"],
+          a: 1,
+          e: "9(a−b) = 45 ⟹ a−b = 5. Mümkün cütlər: (5,0),(6,1),(7,2),(8,3),(9,4) ⟹ 5 ədəd: 50,61,72,83,94.",
+        },
+        {
+          q: "Üç ardıcıl natural ədədin cəmi 150 olduqda, orta ədədi tapın.",
+          o: ["48", "49", "50", "51", "52"],
+          a: 2,
+          e: "Üç ardıcıl ədəd: n−1, n, n+1. Cəm = 3n = 150 ⟹ n = 50. Orta ədəd 50-dir.",
+        },
+      ];
 
-</div>
+      let cur = 0,
+        answers = Array(QS.length).fill(-1),
+        answered = Array(QS.length).fill(false);
+      let timerID,
+        secs = 40 * 60,
+        started = false,
+        correct = 0;
 
-<script>
-const QS = [
-  {
-    q: "İfadələrdən hansının qiyməti hər zaman natural ədəd olar?",
-    o: ["x² − 1", "n² + 1", "n² − n", "2n − 1", "x − 1"],
-    a: 1,
-    e: "n²+1 həmişə ≥ 2 olduğundan hər zaman natural ədəd olur. Digər ifadələr bəzi tam qiymətlər üçün 0 və ya mənfi ola bilər (məs. x²−1=0 x=1 üçün)."
-  },
-  {
-    q: "(7a − 3)² ifadəsinin qiyməti tək ədəddir (a ∈ ℕ). Aşağıdakılardan hansının qiyməti cüt ədəd olar?",
-    o: ["a² − 1", "5a + 2", "a² + a + 1", "4a − 3", "a + 1"],
-    a: 1,
-    e: "(7a−3)² tək ⟹ 7a−3 tək ⟹ 7a cüt ⟹ a cüt. Cüt a üçün: 5a = cüt, 5a+2 = cüt+cüt = cüt ✓"
-  },
-  {
-    q: "(3x − 1)² ifadəsinin qiyməti cüt ədəddir (x ∈ ℕ). Aşağıdakılardan hansının qiyməti cüt ədəd olar?",
-    o: ["x² − 3x + 1", "9x² − 2x", "5x − 2x²", "7x + 5", "3x + 2"],
-    a: 3,
-    e: "(3x−1)² cüt ⟹ 3x−1 cüt ⟹ 3x tək ⟹ x tək. Tək x üçün: 7x = tək, 7x+5 = tək+tək = cüt ✓"
-  },
-  {
-    q: "x cüt, y tək olduqda hansı ifadənin qiyməti tək olar?",
-    o: ["3x + 5", "3x + 2y", "x + y + 1", "x² + 2y", "(x + 2y)²"],
-    a: 0,
-    e: "x cüt, y tək: 3x = cüt, 3x+5 = cüt+tək = tək ✓. Digərləri: 3x+2y = cüt+cüt = cüt; x+y+1 = cüt+tək+1 = cüt; x²+2y = cüt; (x+2y)² = cüt."
-  },
-  {
-    q: "x tək, y tək olduqda hansı ifadənin qiyməti cüt olar?",
-    o: ["x + y + 1", "xy + 2", "x² + y² − 1", "(x − y)²", "2x + y"],
-    a: 3,
-    e: "x tək, y tək: x−y = tək−tək = cüt ⟹ (x−y)² = cüt² = cüt ✓. Qeyd: x+y+1 = cüt+1 = tək; xy+2 = tək+cüt = tək; x²+y²−1 = tək+tək−1 = tək."
-  },
-  {
-    q: "x və y hər ikisi cüt ədəd olduqda hansı ifadənin qiyməti tək olar?",
-    o: ["5xy", "x + y", "x² + y", "xy + x", "x² − y² + 1"],
-    a: 4,
-    e: "x, y cüt: x² = cüt, y² = cüt ⟹ x²−y² = cüt ⟹ x²−y²+1 = cüt+1 = tək ✓. Digərləri hamısı cütdür."
-  },
-  {
-    q: "Ardıcıl 100 natural ədədin ən kiçik və ən böyük ədədlərinin cəmi 629-a bərabərdir. Bu ardıcıl ədədlərin ən kiçiyi hansıdır?",
-    o: ["255", "325", "225", "265", "305"],
-    a: 3,
-    e: "Ən kiçik n, ən böyük n+99 olsun. n + (n+99) = 629 ⟹ 2n = 530 ⟹ n = 265."
-  },
-  {
-    q: "āb + b̄a = 110 olduqda, a + b cəmini tapın.",
-    o: ["8", "9", "10", "11", "12"],
-    a: 2,
-    e: "āb = 10a+b, b̄a = 10b+a. āb + b̄a = 11(a+b) = 110 ⟹ a+b = 10."
-  },
-  {
-    q: "İkirəqəmli āb ədədi üçün āb = 2a + 4b şərti ödənilirsə, a + b cəmini tapın.",
-    o: ["9", "10", "11", "12", "13"],
-    a: 2,
-    e: "10a+b = 2a+4b ⟹ 8a = 3b ⟹ b = 8a/3. Tam həll: a = 3, b = 8 ⟹ āb = 38. Yoxla: 2·3+4·8 = 6+32 = 38 ✓. a+b = 11."
-  },
-  {
-    q: "İkirəqəmli āb ədədi üçün āb = 3a + 4b şərti ödənilirsə, b − a fərqini tapın.",
-    o: ["2", "3", "4", "5", "6"],
-    a: 2,
-    e: "10a+b = 3a+4b ⟹ 7a = 3b. Tam həll: a = 3, b = 7 ⟹ āb = 37. Yoxla: 3·3+4·7 = 9+28 = 37 ✓. b−a = 4."
-  },
-  {
-    q: "āb ədədi üçün āb = 2a + 5b şərtini ödəyən iki rəqəmli ədədlərin ən böyüyü ilə ən kiçiyinin fərqini tapın.",
-    o: ["24", "30", "36", "48", "12"],
-    a: 2,
-    e: "10a+b = 2a+5b ⟹ 8a = 4b ⟹ b = 2a. a∈{1,2,3,4}: āb∈{12, 24, 36, 48}. Fərq = 48−12 = 36."
-  },
-  {
-    q: "āb ədədi üçün āb = 4a + 2b şərtini ödəyən neçə iki rəqəmli ədəd mövcuddur?",
-    o: ["1", "2", "3", "4", "5"],
-    a: 0,
-    e: "10a+b = 4a+2b ⟹ 6a = b. b ≤ 9 şərti altında yalnız a = 1, b = 6 keçərlidir: āb = 16. Yalnız 1 ədəd."
-  },
-  {
-    q: "āb − b̄a = 27 olduqda, a − b fərqini tapın.",
-    o: ["1", "2", "3", "4", "5"],
-    a: 2,
-    e: "āb − b̄a = (10a+b) − (10b+a) = 9(a−b) = 27 ⟹ a−b = 3."
-  },
-  {
-    q: "a + b = 9 və āb − b̄a = 27 olduqda, āb ədədini tapın.",
-    o: ["54", "63", "72", "81", "45"],
-    a: 1,
-    e: "9(a−b) = 27 ⟹ a−b = 3. a+b = 9 ilə birgə: a = 6, b = 3. āb = 63."
-  },
-  {
-    q: "Ardıcıl 3 cüt ədədin cəmi 78-dir. Bu ədədlərin ən böyüyünü tapın.",
-    o: ["24", "26", "28", "30", "32"],
-    a: 2,
-    e: "2k + (2k+2) + (2k+4) = 6k+6 = 78 ⟹ k = 12. Ən böyük = 2(12)+4 = 28."
-  },
-  {
-    q: "Ardıcıl 4 tək ədədin cəmi 80-dir. Bu ədədlərin ən kiçiyini tapın.",
-    o: ["15", "17", "19", "21", "23"],
-    a: 1,
-    e: "(2k+1)+(2k+3)+(2k+5)+(2k+7) = 8k+16 = 80 ⟹ k = 8. Ən kiçik = 2(8)+1 = 17."
-  },
-  {
-    q: "n tək ədəd olduqda (n² − 1) / 8 ifadəsinin qiyməti həmişə hansı növ ədəd olar?",
-    o: ["Həmişə cüt ədəd", "Həmişə tək ədəd", "Həmişə tam natural ədəd", "Həmişə kəsr ədəd", "Həmişə mənfi ədəd"],
-    a: 2,
-    e: "n = 2k+1 olsun. n²−1 = (2k+1)²−1 = 4k²+4k = 4k(k+1). k(k+1) həmişə cütdür (ardıcıl tam ədədlər), ona görə 8 | 4k(k+1) ⟹ (n²−1)/8 həmişə tam natural ədəddir."
-  },
-  {
-    q: "1 + 3 + 5 + ... + 19 = a olduqda, 2221 + 2223 + 2225 + ... + 2239 cəmini a vasitəsilə ifadə edin.",
-    o: ["22000 · a", "22200 · a", "22200 + a", "22300 + a", "2220 + a"],
-    a: 2,
-    e: "1+3+...+19: ilk 10 tək ədəd, cəm = 10² = 100 ⟹ a = 100. 2221+...+2239: 10 həd, orta = 2230, cəm = 10·2230 = 22300 = 22200+100 = 22200+a."
-  },
-  {
-    q: "233 + 237 + 241 + ... + 257 cəmini tapın.",
-    o: ["1610", "1715", "1820", "1505", "1925"],
-    a: 1,
-    e: "Fərq = 4. Həd sayı = (257−233)/4 + 1 = 7. Cəm = 7 × (233+257)/2 = 7 × 245 = 1715."
-  },
-  {
-    q: "1 + 2 + 3 + ... + n = 300 olduqda, n-i tapın.",
-    o: ["20", "22", "24", "25", "30"],
-    a: 2,
-    e: "n(n+1)/2 = 300 ⟹ n(n+1) = 600. n = 24: 24 × 25 = 600 ✓"
-  },
-  {
-    q: "Ardıcıl 100 natural ədədin cəmi 14950-dir. Bu ədədlərin ən böyüyünü tapın.",
-    o: ["149", "159", "169", "189", "199"],
-    a: 4,
-    e: "Ən kiçik n olsun: 100n + (0+1+...+99) = 100n + 4950 = 14950 ⟹ n = 100. Ən böyük = 100+99 = 199."
-  },
-  {
-    q: "İki natural ədədin cəmi 474, fərqi 30-dur. Bu ədədlərin böyüyünü tapın.",
-    o: ["240", "244", "248", "252", "256"],
-    a: 3,
-    e: "a + b = 474, a − b = 30. Toplayaraq: 2a = 504 ⟹ a = 252."
-  },
-  {
-    q: "āb ikirəqəmli ədədi üçün (āb − b̄a) / (a + b) = 7 olduqda, a · b hasilini tapın.",
-    o: ["6", "7", "8", "9", "10"],
-    a: 2,
-    e: "9(a−b)/(a+b) = 7 ⟹ 9a−9b = 7a+7b ⟹ 2a = 16b ⟹ a = 8b. b = 1, a = 8: a·b = 8. āb = 81."
-  },
-  {
-    q: "āb ikirəqəmli ədədi üçün (āb − b̄a) / (a + b) = 5 olduqda, āb ədədini tapın.",
-    o: ["54", "63", "72", "81", "36"],
-    a: 2,
-    e: "9(a−b)/(a+b) = 5 ⟹ 9a−9b = 5a+5b ⟹ 4a = 14b ⟹ 2a = 7b. b = 2, a = 7: āb = 72."
-  },
-  {
-    q: "12²² · 7¹⁶ + 19²³ ifadəsinin son rəqəmini tapın.",
-    o: ["1", "3", "5", "7", "9"],
-    a: 1,
-    e: "12^n son rəqəm dövrü 4: 2,4,8,6,... 22 mod 4 = 2 ⟹ 12²² son rəqəm 4. 7^n dövrü 4: 7,9,3,1,... 16 mod 4 = 0 ⟹ 7¹⁶ son rəqəm 1. Hasil son rəqəm: 4×1 = 4. 19^n dövrü 2: 9,1,... 23 tək ⟹ 19²³ son rəqəm 9. Cəm: 4+9 = 13, son rəqəm 3."
-  },
-  {
-    q: "2 + 4 + 6 + ... + 2n = 182 olduqda, n-i tapın.",
-    o: ["11", "12", "13", "14", "15"],
-    a: 2,
-    e: "2(1+2+...+n) = 2·n(n+1)/2 = n(n+1) = 182. n = 13: 13×14 = 182 ✓"
-  },
-  {
-    q: "Ardıcıl 50 natural ədədin cəmi 2675-dir. Bu ədədlərin ən kiçiyini tapın.",
-    o: ["25", "27", "29", "31", "33"],
-    a: 2,
-    e: "Ən kiçik n: 50n + (0+1+...+49) = 50n + 1225 = 2675 ⟹ 50n = 1450 ⟹ n = 29."
-  },
-  {
-    q: "a + b = 23 və a² + b² = 265 olduqda, a · b hasilini tapın.",
-    o: ["120", "125", "130", "132", "140"],
-    a: 3,
-    e: "(a+b)² = a²+2ab+b² ⟹ 23² = 265+2ab ⟹ 529 = 265+2ab ⟹ 2ab = 264 ⟹ ab = 132."
-  },
-  {
-    q: "a · b = 48 və a + b = 14 olduqda, |a − b| qiymətini tapın.",
-    o: ["2", "4", "6", "8", "10"],
-    a: 0,
-    e: "(a−b)² = (a+b)² − 4ab = 196 − 192 = 4 ⟹ |a−b| = 2."
-  },
-  {
-    q: "āb ədədi üçün āb − b̄a = 45 olduqda, bu şərti ödəyən neçə iki rəqəmli ādāb ədədi var?",
-    o: ["4", "5", "6", "7", "8"],
-    a: 1,
-    e: "9(a−b) = 45 ⟹ a−b = 5. Mümkün cütlər: (5,0),(6,1),(7,2),(8,3),(9,4) ⟹ 5 ədəd: 50,61,72,83,94."
-  },
-  {
-    q: "Üç ardıcıl natural ədədin cəmi 150 olduqda, orta ədədi tapın.",
-    o: ["48", "49", "50", "51", "52"],
-    a: 2,
-    e: "Üç ardıcıl ədəd: n−1, n, n+1. Cəm = 3n = 150 ⟹ n = 50. Orta ədəd 50-dir."
-  }
-];
+      function startTest() {
+        document.getElementById("start").style.display = "none";
+        document.getElementById("qpanel").style.display = "block";
+        document.getElementById("hdr").classList.remove("hidden");
+        started = true;
+        buildDots();
+        showQ(0);
+        timerID = setInterval(tick, 1000);
+        updateTimer();
+      }
 
-let cur=0, answers=Array(QS.length).fill(-1), answered=Array(QS.length).fill(false);
-let timerID, secs=40*60, started=false, correct=0;
+      function tick() {
+        secs--;
+        updateTimer();
+        if (secs <= 0) {
+          clearInterval(timerID);
+          showResult();
+        }
+      }
 
-function startTest(){
-  document.getElementById('start').style.display='none';
-  document.getElementById('qpanel').style.display='block';
-  document.getElementById('hdr').classList.remove('hidden');
-  started=true;
-  buildDots();
-  showQ(0);
-  timerID=setInterval(tick,1000);
-  updateTimer();
-}
+      function updateTimer() {
+        const m = Math.floor(secs / 60),
+          s = secs % 60;
+        const el = document.getElementById("tmr");
+        el.textContent =
+          (m < 10 ? "0" : "") + m + ":" + (s < 10 ? "0" : "") + s;
+        el.className =
+          "timer" + (secs < 300 ? " danger" : secs < 600 ? " warn" : "");
+      }
 
-function tick(){
-  secs--;
-  updateTimer();
-  if(secs<=0){clearInterval(timerID);showResult();}
-}
+      function buildDots() {
+        const c = document.getElementById("dots");
+        c.innerHTML = "";
+        QS.forEach((_, i) => {
+          const d = document.createElement("div");
+          d.className = "dot" + (i === 0 ? " current" : "");
+          d.textContent = i + 1;
+          d.onclick = () => {
+            if (answered[i]) showQ(i);
+          };
+          c.appendChild(d);
+        });
+      }
 
-function updateTimer(){
-  const m=Math.floor(secs/60), s=secs%60;
-  const el=document.getElementById('tmr');
-  el.textContent=(m<10?'0':'')+m+':'+(s<10?'0':'')+s;
-  el.className='timer'+(secs<300?' danger':secs<600?' warn':'');
-}
+      function showQ(i) {
+        cur = i;
+        const q = QS[i];
+        document.getElementById("qnum").textContent =
+          "Sual " + (i + 1) + " / " + QS.length;
+        document.getElementById("qtext").textContent = q.q;
+        const oc = document.getElementById("opts");
+        oc.innerHTML = "";
+        q.o.forEach((opt, j) => {
+          const b = document.createElement("button");
+          b.className = "opt" + (answers[i] === j ? " sel" : "");
+          if (answered[i]) {
+            if (j === q.a) b.className = "opt correct";
+            else if (answers[i] === j) b.className = "opt wrong";
+          }
+          b.innerHTML = `<span class="opt-lbl">${["A", "B", "C", "D", "E"][j]}</span>${opt}`;
+          if (!answered[i]) b.onclick = () => selectOpt(j);
+          oc.appendChild(b);
+        });
+        const fb = document.getElementById("fb");
+        if (answered[i]) {
+          fb.style.display = "block";
+          const ok = answers[i] === q.a;
+          fb.className = "feedback " + (ok ? "ok" : "ng");
+          fb.textContent =
+            (ok
+              ? "✓ Düzdür! "
+              : "✗ Səhv! Düzgün cavab: " +
+                ["A", "B", "C", "D", "E"][q.a] +
+                ". ") + q.e;
+        } else {
+          fb.style.display = "none";
+          fb.className = "feedback";
+        }
+        document.getElementById("btnPrev").style.display =
+          i === 0 ? "none" : "";
+        const isLast = i === QS.length - 1;
+        const nextBtn = document.getElementById("btnNext");
+        const finBtn = document.getElementById("btnFinish");
+        if (isLast) {
+          nextBtn.classList.add("hidden");
+          if (answered[i]) finBtn.classList.remove("hidden");
+          else finBtn.classList.add("hidden");
+        } else {
+          nextBtn.classList.remove("hidden");
+          finBtn.classList.add("hidden");
+          nextBtn.disabled = !answered[i];
+        }
+        updateDots();
+        updateScore();
+        document.getElementById("pg").style.width =
+          ((i + 1) / QS.length) * 100 + "%";
+      }
 
-function buildDots(){
-  const c=document.getElementById('dots');
-  c.innerHTML='';
-  QS.forEach((_,i)=>{
-    const d=document.createElement('div');
-    d.className='dot'+(i===0?' current':'');
-    d.textContent=i+1;
-    d.onclick=()=>{if(answered[i])showQ(i);};
-    c.appendChild(d);
-  });
-}
+      function selectOpt(j) {
+        if (answered[cur]) return;
+        answers[cur] = j;
+        answered[cur] = true;
+        if (j === QS[cur].a) correct++;
+        showQ(cur);
+      }
 
-function showQ(i){
-  cur=i;
-  const q=QS[i];
-  document.getElementById('qnum').textContent='Sual '+(i+1)+' / '+QS.length;
-  document.getElementById('qtext').textContent=q.q;
-  const oc=document.getElementById('opts');
-  oc.innerHTML='';
-  q.o.forEach((opt,j)=>{
-    const b=document.createElement('button');
-    b.className='opt'+(answers[i]===j?' sel':'');
-    if(answered[i]){
-      if(j===q.a) b.className='opt correct';
-      else if(answers[i]===j) b.className='opt wrong';
-    }
-    b.innerHTML=`<span class="opt-lbl">${['A','B','C','D','E'][j]}</span>${opt}`;
-    if(!answered[i]) b.onclick=()=>selectOpt(j);
-    oc.appendChild(b);
-  });
-  const fb=document.getElementById('fb');
-  if(answered[i]){
-    fb.style.display='block';
-    const ok=answers[i]===q.a;
-    fb.className='feedback '+(ok?'ok':'ng');
-    fb.textContent=(ok?'✓ Düzdür! ':'✗ Səhv! Düzgün cavab: '+['A','B','C','D','E'][q.a]+'. ')+q.e;
-  } else {
-    fb.style.display='none';
-    fb.className='feedback';
-  }
-  document.getElementById('btnPrev').style.display=i===0?'none':'';
-  const isLast=i===QS.length-1;
-  const nextBtn=document.getElementById('btnNext');
-  const finBtn=document.getElementById('btnFinish');
-  if(isLast){
-    nextBtn.classList.add('hidden');
-    if(answered[i]) finBtn.classList.remove('hidden');
-    else finBtn.classList.add('hidden');
-  } else {
-    nextBtn.classList.remove('hidden');
-    finBtn.classList.add('hidden');
-    nextBtn.disabled=!answered[i];
-  }
-  updateDots();
-  updateScore();
-  document.getElementById('pg').style.width=((i+1)/QS.length*100)+'%';
-}
+      function nextQ() {
+        if (cur < QS.length - 1) showQ(cur + 1);
+      }
+      function prevQ() {
+        if (cur > 0) showQ(cur - 1);
+      }
 
-function selectOpt(j){
-  if(answered[cur]) return;
-  answers[cur]=j;
-  answered[cur]=true;
-  if(j===QS[cur].a) correct++;
-  showQ(cur);
-}
+      function updateDots() {
+        document.querySelectorAll(".dot").forEach((d, i) => {
+          d.className = "dot";
+          if (answered[i])
+            d.className += " " + (answers[i] === QS[i].a ? "correct" : "wrong");
+          if (i === cur) d.className += " current";
+        });
+      }
 
-function nextQ(){if(cur<QS.length-1) showQ(cur+1);}
-function prevQ(){if(cur>0) showQ(cur-1);}
+      function updateScore() {
+        const done = answered.filter(Boolean).length;
+        document.getElementById("qscore").textContent = correct + " / " + done;
+      }
 
-function updateDots(){
-  document.querySelectorAll('.dot').forEach((d,i)=>{
-    d.className='dot';
-    if(answered[i]) d.className+=' '+(answers[i]===QS[i].a?'correct':'wrong');
-    if(i===cur) d.className+=' current';
-  });
-}
-
-function updateScore(){
-  const done=answered.filter(Boolean).length;
-  document.getElementById('qscore').textContent=correct+' / '+done;
-}
-
-function showResult(){
-  clearInterval(timerID);
-  document.getElementById('qpanel').style.display='none';
-  document.getElementById('result').style.display='block';
-  const pct=Math.round(correct/QS.length*100);
-  document.getElementById('ring').style.setProperty('--p',pct);
-  document.getElementById('ringTxt').textContent=correct+'/'+QS.length;
-  const title=pct>=80?'Əla nəticə! 🎉':pct>=60?'Yaxşı cəhd! 💪':'Daha çox təkrar lazımdır 📚';
-  document.getElementById('resTitle').textContent=title;
-  document.getElementById('resSub').textContent='Düzgün cavab: '+correct+' / '+QS.length+' ('+pct+'%)';
-  const rv=document.getElementById('review');
-  rv.innerHTML='<div style="font-weight:700;margin-bottom:12px;color:#94a3b8">Sualların icmalı:</div>';
-  QS.forEach((q,i)=>{
-    const ok=answers[i]===q.a;
-    const d=document.createElement('div');
-    d.className='ri '+(ok?'ok':'ng');
-    d.innerHTML=`<div class="rq">${i+1}. ${q.q}</div>
-      <div class="ra">${ok?'<span class="ok-a">✓ Düzgün</span>':'<span class="ng-a">✗ Sizin: '+['A','B','C','D','E'][answers[i]]+'</span> → <span class="ok-a">Düzgün: '+['A','B','C','D','E'][q.a]+'</span>'}</div>
+      function showResult() {
+        clearInterval(timerID);
+        document.getElementById("qpanel").style.display = "none";
+        document.getElementById("result").style.display = "block";
+        const pct = Math.round((correct / QS.length) * 100);
+        document.getElementById("ring").style.setProperty("--p", pct);
+        document.getElementById("ringTxt").textContent =
+          correct + "/" + QS.length;
+        const title =
+          pct >= 80
+            ? "Əla nəticə! 🎉"
+            : pct >= 60
+              ? "Yaxşı cəhd! 💪"
+              : "Daha çox təkrar lazımdır 📚";
+        document.getElementById("resTitle").textContent = title;
+        document.getElementById("resSub").textContent =
+          "Düzgün cavab: " + correct + " / " + QS.length + " (" + pct + "%)";
+        const rv = document.getElementById("review");
+        rv.innerHTML =
+          '<div style="font-weight:700;margin-bottom:12px;color:#94a3b8">Sualların icmalı:</div>';
+        QS.forEach((q, i) => {
+          const ok = answers[i] === q.a;
+          const d = document.createElement("div");
+          d.className = "ri " + (ok ? "ok" : "ng");
+          d.innerHTML = `<div class="rq">${i + 1}. ${q.q}</div>
+      <div class="ra">${ok ? '<span class="ok-a">✓ Düzgün</span>' : '<span class="ng-a">✗ Sizin: ' + ["A", "B", "C", "D", "E"][answers[i]] + '</span> → <span class="ok-a">Düzgün: ' + ["A", "B", "C", "D", "E"][q.a] + "</span>"}</div>
       <div class="re">${q.e}</div>`;
-    rv.appendChild(d);
-  });
-  try{
-    const key='dim_test_progress_v2';
-    const p=JSON.parse(localStorage.getItem(key)||'{}');
-    p['p1-s01-t1']={completed:true,score:{points:correct,max:QS.length},date:new Date().toISOString()};
-    localStorage.setItem(key,JSON.stringify(p));
-    window.parent.postMessage({type:'LESSON_COMPLETE',payload:{itemId:'p1-s01-t1',points:correct,maxPoints:QS.length}},'*');
-  }catch(e){}
-}
+          rv.appendChild(d);
+        });
+        try {
+          const key = "dim_test_progress_v2";
+          const p = JSON.parse(localStorage.getItem(key) || "{}");
+          p["p1-s01-t1"] = {
+            completed: true,
+            score: { points: correct, max: QS.length },
+            date: new Date().toISOString(),
+          };
+          localStorage.setItem(key, JSON.stringify(p));
+          window.parent.postMessage(
+            {
+              type: "LESSON_COMPLETE",
+              payload: {
+                itemId: "p1-s01-t1",
+                points: correct,
+                maxPoints: QS.length,
+              },
+            },
+            "*",
+          );
+        } catch (e) {}
+      }
 
-function restartTest(){
-  cur=0; answers=Array(QS.length).fill(-1); answered=Array(QS.length).fill(false);
-  correct=0; secs=40*60;
-  document.getElementById('result').style.display='none';
-  document.getElementById('qpanel').style.display='block';
-  buildDots(); showQ(0);
-  clearInterval(timerID);
-  timerID=setInterval(tick,1000);
-  updateTimer();
-}
-</script>
+      function restartTest() {
+        cur = 0;
+        answers = Array(QS.length).fill(-1);
+        answered = Array(QS.length).fill(false);
+        correct = 0;
+        secs = 40 * 60;
+        document.getElementById("result").style.display = "none";
+        document.getElementById("qpanel").style.display = "block";
+        buildDots();
+        showQ(0);
+        clearInterval(timerID);
+        timerID = setInterval(tick, 1000);
+        updateTimer();
+      }
+    </script>
+  
+  <script>window.EDUHUB_PLATFORM='P003';</script>
+  <script src="https://mywork2000001-ops.github.io/HUB_EDUCAT-ON/_Shared_Core/send-to-hub.js"></script>
 </body>
 </html>
