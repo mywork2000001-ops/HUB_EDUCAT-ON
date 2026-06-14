@@ -92,46 +92,45 @@ export default function ManageSubjectsPage() {
   return (
     <div className="p-6 max-w-4xl">
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-white">Fənlər</h1>
-        <p className="text-slate-400 text-sm mt-0.5">Hər sinif üçün fənlər idarə edin</p>
+        <h1 className="text-2xl font-bold text-slate-900">Fənlər</h1>
+        <p className="text-slate-500 text-sm mt-0.5">Hər sinif üçün fənlər idarə edin</p>
       </div>
 
-      <div className="space-y-4">
+      <div className="space-y-3">
         {grades.map((grade) => {
           const isOpen = openGrade === grade.id;
           const gradeSubjects = grade.subjects.map((gs) => gs.subject);
-          // Subjects not yet added to this grade
           const available = allSubjects.filter(
             (s) => !gradeSubjects.some((gs) => gs.id === s.id)
           );
 
           return (
-            <div key={grade.id} className="bg-slate-900 rounded-xl border border-slate-800 overflow-hidden">
+            <div key={grade.id} className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
               <button
                 onClick={() => setOpenGrade(isOpen ? null : grade.id)}
-                className="w-full flex items-center justify-between px-4 py-3 hover:bg-slate-800 transition-colors"
+                className="w-full flex items-center justify-between px-4 py-3.5 hover:bg-slate-50 transition-colors"
               >
                 <div className="flex items-center gap-3">
-                  <span className="text-slate-300 font-medium">{grade.label_az}</span>
-                  <span className="text-xs text-slate-500 bg-slate-800 px-2 py-0.5 rounded-full">
+                  <span className="font-semibold text-slate-800">{grade.label_az}</span>
+                  <span className="text-xs text-slate-400 bg-slate-100 px-2 py-0.5 rounded-full">
                     {gradeSubjects.length} fənn
                   </span>
                 </div>
-                <span className="text-slate-500 text-xs">{isOpen ? "▲" : "▼"}</span>
+                <span className="text-slate-400 text-xs">{isOpen ? "▲" : "▼"}</span>
               </button>
 
               {isOpen && (
-                <div className="border-t border-slate-800 p-4 space-y-4">
+                <div className="border-t border-slate-100 p-4 space-y-4">
                   {/* Existing subjects */}
                   {gradeSubjects.length > 0 && (
                     <div className="flex flex-wrap gap-2">
                       {gradeSubjects.map((sub) => (
-                        <div key={sub.id} className="flex items-center gap-1.5 bg-slate-800 rounded-lg px-3 py-1.5">
+                        <div key={sub.id} className="flex items-center gap-1.5 bg-slate-100 rounded-lg px-3 py-1.5 border border-slate-200">
                           <span>{sub.icon ?? "📚"}</span>
-                          <span className="text-sm text-slate-200">{sub.label_az}</span>
+                          <span className="text-sm text-slate-700 font-medium">{sub.label_az}</span>
                           <button
                             onClick={() => handleRemove(grade.id, sub.id)}
-                            className="ml-1 text-slate-500 hover:text-red-400 transition-colors text-xs"
+                            className="ml-1 text-slate-400 hover:text-red-500 transition-colors text-xs"
                           >
                             ✕
                           </button>
@@ -141,48 +140,22 @@ export default function ManageSubjectsPage() {
                   )}
 
                   {/* Add form */}
-                  <div className="pt-2 border-t border-slate-800/60">
-                    <p className="text-xs font-semibold text-slate-400 mb-3">Fənn əlavə et</p>
+                  <div className="pt-2 border-t border-slate-100">
+                    <p className="text-xs font-semibold text-slate-500 mb-3">Fənn əlavə et</p>
 
-                    {/* Presets */}
-                    <div className="mb-3">
-                      <p className="text-xs text-slate-500 mb-1.5">Hazır fənlər:</p>
-                      <div className="flex flex-wrap gap-1.5">
-                        {SUBJECT_PRESETS.map((p) => {
-                          const alreadyAdded = gradeSubjects.some((gs) => gs.slug === p.slug);
-                          return (
-                            <button
-                              key={p.slug}
-                              onClick={() => !alreadyAdded && applyPreset(p)}
-                              disabled={alreadyAdded}
-                              className={`px-2.5 py-1 rounded-lg text-xs transition-colors ${
-                                alreadyAdded
-                                  ? "bg-slate-800/40 text-slate-600 cursor-not-allowed"
-                                  : form.slug === p.slug
-                                    ? "bg-indigo-600 text-white"
-                                    : "bg-slate-800 text-slate-400 hover:bg-slate-700 hover:text-white"
-                              }`}
-                            >
-                              {p.icon} {p.label_az}
-                            </button>
-                          );
-                        })}
-                      </div>
-                    </div>
-
-                    {/* Existing subjects not in grade */}
+                    {/* Existing subjects from other grades — copy without re-creating */}
                     {available.length > 0 && (
                       <div className="mb-3">
-                        <p className="text-xs text-slate-500 mb-1.5">Mövcud fənlər (digər siniflər üçün):</p>
+                        <p className="text-xs text-slate-400 mb-1.5">Digər sinifdən köçür:</p>
                         <div className="flex flex-wrap gap-1.5">
                           {available.map((s) => (
                             <button
                               key={s.id}
                               onClick={() => { setUseExisting(s.id); setForm(EMPTY_FORM); }}
-                              className={`px-2.5 py-1 rounded-lg text-xs transition-colors ${
+                              className={`px-2.5 py-1 rounded-lg text-xs font-medium transition-colors border ${
                                 useExisting === s.id
-                                  ? "bg-green-700 text-white"
-                                  : "bg-slate-800/60 text-slate-400 hover:bg-slate-700 hover:text-white border border-dashed border-slate-700"
+                                  ? "bg-indigo-600 text-white border-indigo-600"
+                                  : "bg-white text-slate-600 border-slate-300 hover:border-indigo-400 hover:text-indigo-700"
                               }`}
                             >
                               {s.icon ?? "📚"} {s.label_az}
